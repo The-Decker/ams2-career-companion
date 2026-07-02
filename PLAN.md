@@ -1,0 +1,94 @@
+# AMS2 Historical Career & Team Tycoon Companion — Product Plan
+
+## Context
+
+Mike wants the go-to Windows desktop app for running custom historical seasons in Automobilista 2 as a **career/tycoon simulator**. AMS2's built-in championship mode is deliberately bypassed (it can't hand-pick entry lists, has no era-correct scoring, no carry-over, max 4 saves); instead every race is run as an in-game single-player custom race and the result is recorded in the app. The app owns everything around the race: historical calendars and entry lists, real driver names via community skin packs + AMS2 Custom AI files, era-correct standings, and a career layer where a driver carries over season to season, gets offers, ages, and where a managed team can go bankrupt. Primary focus: historical open-wheel F1 starting from the earliest era car; every other AMS2 series is a configurable bonus.
+
+This plan is grounded in a 9-agent research/design pass (5 web-research agents verifying AMS2 modding facts against primary sources, 3 design agents, ~560k tokens). Key findings are baked in below.
+
+## Decisions locked with Mike (2026-07-02)
+
+1. **Start era:** Formula Vintage, late 1960s (F-Vintage Gen1 ≈ 1966–67) — the longest possible career arc.
+2. **Results:** manual-first — v1 ships a fast keyboard-first entry screen (<90s/race target); automatic capture arrives in Phase 2.
+3. **AI grids:** the app **generates AMS2 Custom AI files** (real names, per-season ratings, livery bindings) before every round — the killer feature.
+4. **Player role:** both **Driver Career** and **Team Owner-Driver** modes exist in the product, chosen at career start. Sequencing: v1 ships Driver Career; Owner-Driver lands in Phase 3 on top of the Phase-2 team-ledger economy (it is strictly additive, no schema rewrites — the data model supports it from day one).
+
+## Critical facts established by research (correcting initial assumptions)
+
+- **Custom AI files are XML, not JSON**, and live in the **game install dir**, not Documents: `<Steam>\steamapps\common\Automobilista 2\UserData\CustomAIDrivers\<VehicleClass>.xml` (e.g. `F-Vintage_Gen1.xml`). Root `<custom_ai_drivers>`, entries `<driver livery_name="...">` (attribute, **case-sensitive**, must exactly match the livery display name) with child elements: `name`, `country` (3-letter), and floats 0.0–1.0: `race_skill`, `qualifying_skill`, `aggression`, `defending`, `stamina`, `consistency`, `start_reactions`, `wet_skill`, `tyre_management`, `fuel_management`, `blue_flag_conceding`, `weather_tyre_changes`, `avoidance_of_mistakes`, `avoidance_of_forced_mistakes`, `vehicle_reliability`. Since v1.6.9.8 the same files accept `weight_scalar` / `power_scalar` / `drag_scalar` (~0.900–1.100, **also affects the player's car** — period-correct car spread made physical) and `setup_downforce(_randomness)`. Per-track overrides via a `tracks="Track_Id1,Track_Id2"` attribute. Custom AI names propagate into shared memory, single-player only.
+- **Livery binding mechanism:** skin packs install DDS + override XML under `Documents\Automobilista 2\Vehicles\Textures\CustomLiveries\Overrides\`; the `LIVERY_OVERRIDE NAME="..."` attribute defines the display name the custom-AI `livery_name` must match exactly. Preflight scanning of installed override XMLs kills the #1 failure mode (case/special-char mismatches).
+- **Class → real season map** (post-v1.6.9 renames): F-Vintage Gen1=1966-67, Gen2=1969-70 · F-Retro Gen1=1974-75, Gen2=1978-80, Gen3=1983 · F-Classic Gen1=1986, Gen2=1988, Gen3=1990, Gen4=1991 · F-HiTech Gen1=1992, Gen2=1993 (DLC) · Formula Edge=1995 · F-V10 Gen1=1997-98, Gen2=2000-01, Gen3=2005 · F-V8 Gen1=2006, Gen2=2008, Gen3=2011-13 · F-Hybrid Gen1=2016, Gen2=2019, Gen3=2022. Junior ladder (karts, F-Vee, F-Trainer, F-Junior, F-Inter, F-3) and F-USA Gen1/2/3 (1995/1998/2000 CART) + F-USA 2023 exist for bonus series. 44 historic track layouts (Monza 1971, Spa 1970/1993, Silverstone 1975, Hockenheim 1977/1988, Imola 1972/1988, Interlagos 1976/1991, Adelaide 1988, Jerez 1988, Kyalami 1976, Montreal 1988/1991, Österreichring 1974/1977, Nordschleife 1971, etc.). Machine-readable class/livery/track libraries exist in `FitzHastings/AMS2CustomDriversUtil` (Apache-2.0) to bundle and refresh.
+- **Historical data seed:** **f1db** (github.com/f1db/f1db, **CC BY 4.0**, 1950–present, per-race releases, SQLite/JSON/CSV) provides full season entry lists (driver→team→chassis→engine, with per-driver round ranges), results, and official standings — the only open source with true entrant structures, and a free test oracle for the points engine. jolpica-f1 (Ergast successor) is CC BY-NC-SA — online lookups only, not for redistribution.
+- **Era scoring quirks the points engine must support** (all catalogued in research, all data-driven): era points tables (8-6-4-3-2 +FL … 25-18-…), fastest-lap point with fractional splits (1/7 pt), best-N dropped scores incl. split-season variants (1967–1980), shared drives (split pre-1958, zero after), the six half-points races + 2022 sliding scale, constructors best-car-only 1958–79 (championship exists only from 1958), Indy 500 as drivers-only round with guest entrants (1950–60), excluded-driver rule (1997 Schumacher), countback tiebreaks.
+- **Result capture options** (Phase 2): AMS2 exposes the PC2 shared-memory API via memory-mapped file `$pcars2$` (struct v14; participants[64] with names incl. custom AI names, positions, race states FINISHED/RETIRED/DSQ, fastest laps). CrewChiefV4 (C#) has portable marshalling code; `AMS2_SessionLogger` proves the end-of-session snapshot recipe. Second Monitor writes rich per-session JSON reports to `Documents\SecondMonitor\Reports` (two community trackers already import them). No native AMS2 offline results export exists.
+- **Competitive landscape:** Rewind GP (closest: historical F1 career, shared-memory capture, season packs — but F1-only, no economy), Race Pace (living career, not historical), For the Win (stalled 2024), Racing Life (discontinued), Second Monitor championships (no career). **No active tool does team finances/bankruptcy/tycoon.** Reiza plans an official career mode toward **end of 2026** — ship a differentiated MVP well before then; our moat is era-correct scoring + tycoon economy + all-era coverage + pack format that references the existing OverTake ecosystem.
+
+## Product design (synthesized)
+
+**Pillars:** (1) The sim never decides on-track outcomes — it shapes inputs (generated custom AI XML) and consumes outputs (results); no hidden dice-roll races. (2) Deterministic, journaled, replayable — one master seed, named PCG32 streams, append-only journal; "re-simulate from round 1" is a menu item. (3) Canon by default, divergence by choice (living-world mode later). (4) Everything is data — points rules, ratings, salary bands, event decks all live in JSON packs.
+
+**Core loop (repeats 16–30×/season):**
+Pre-race briefing (AMS2 setup checklist with exact in-game names + copy buttons; custom AI XML auto-staged with backup/restore of e.g. NAMeS files; file-watcher shows ⚠ if another tool touches it) → player races in AMS2 → post-race keyboard-first result entry (type car number or 2–3 letters of surname against unplaced drivers; DNF phase with bulk-confirm + optional one-letter reasons; single-key DSQ/penalties; Ctrl+Z; ~80s for a 26-car grid) → confirm screen shows computed points, animated standings delta, one generated headline → apply: points, money, reputation, form, events.
+
+**Career sim (Driver Career, v1):** reputation + **overperformance index** (expected finish derived from team car rating + driver estimate vs actual) drives deterministic season-end offer generation (team archetype weights; pay-driver seats are era-correct and first-class). Team **budget tiers 1–5** drift from results-vs-expectation and drive generated AI strength + the player's own livery scalars (your tier-4 car really is slower). AI aging curves (era-shifted peaks), canon retirements with seeded foreshadowing, news feed generated from journal entries. Player **pace anchor** calibrates from results vs known generated AI values → recommends the in-game difficulty slider and feeds OPI. Era transitions carry lineage IDs (team.lotus, driver.g_hill), prestige and inflation-rescaled money across packs.
+
+**Phase 2/3 tycoon:** full team ledger (sponsors with health decay, prize fund, engine supplier contracts, crash repair costs from DNF causes, dev spend with diminishing returns) → damped bankruptcy spiral with a legible crisis ladder (warning → pay-driver → skip rounds, entries vanish from generated grids → fold or prestige-weighted rescue). Owner-Driver mode = ledger controls + second-seat hiring on top of everything above; privateer flavor (1967–75 customer cars) falls out nearly free.
+
+## Architecture
+
+**Stack: .NET (latest LTS) + WPF, MVVM (CommunityToolkit.Mvvm), single self-contained exe** (`PublishSingleFile`, ~70–90 MB, zero prerequisites for end users). Rationale: every hard integration — memory-mapped `$pcars2$` reads, FileSystemWatcher, XML generation, SQLite — is first-party .NET, and the only proven AMS2 shared-memory marshalling reference (CrewChiefV4) is C#. Dev machine needs exactly one install: the .NET SDK. (Avalonia is the fallback if cross-platform ever matters; logic stays out of the UI layer.)
+
+**Solution layout:**
+- `Companion.Core` — domain model, points/standings engine, career sim, pack loader/validator. *No I/O, no WPF, no DB.*
+- `Companion.Data` — SQLite persistence (Microsoft.Data.Sqlite, WAL), migrations.
+- `Companion.Ams2` — Steam install detection (registry + `libraryfolders.vdf`), custom-AI XML writer + backup/restore, livery/class/track library, preflight validator; later: `$pcars2$` reader, Second Monitor watcher.
+- `Companion.App` — WPF shell.
+- `Companion.Tests` — xunit incl. the f1db oracle suite.
+
+**Storage:** one SQLite file per career (`*.ams2career`) — relational career state, crash-safe, versioned migrations; raw result payloads archived as blobs so standings can be recomputed after engine fixes. **Season packs = plain JSON folders** under `Documents\AMS2CareerCompanion\Packs\` — Notepad-editable, shareable as zips, validated on import against a bundled JSON Schema, **immutable and pinned** (copied + hashed into the career DB at season start). Packs **reference** OverTake skin packs by name/URL rather than shipping textures.
+
+**Season pack schema v1** (the product's long-term moat — community-extensible): `pack.json` manifest (packId, version, requires: DLC + skin packs) · `season.json` calendar (round, date, `championship: true/false`, AMS2 track `xml_name` binding + `fallbackTracks` for missing venues, laps/distance, guest entries for Indy-style rounds, per-round AI overrides) · teams (car model, performance scalars, reliability, prestige, budget tier) · drivers (ratings in custom-AI vocabulary, track form) · entries (team+driver+number+`rounds` ranges for mid-season swaps + exact `ams2LiveryName`) · `pointsSystem` as pure data (pointsTable, fastestLap w/ splitOnTie, bestN whole/splitSeason segments, sharedDrivePolicy, halfPointsRule, constructors exists/bestCarOnly/excludedRounds, tiebreak chain, fractional points).
+
+**Points engine:** pure function library, exact rational arithmetic, outputs per-round snapshots with gross vs counted points and explicit dropped-results lists. **Oracle-tested: replay f1db's raw results for 1950–2026 through the engine and assert equality with official standings** — the single highest-leverage quality investment, nearly free because f1db ships the answers.
+
+**Custom-AI generation pipeline (v1):** resolve round grid (rounds ranges + career swaps + guest entries) → merge ratings (pack baseline → track form → round overrides → career form) → normalize skills across the entry list → map budget tier/car rating through era-authored scalar spread → preflight (class filename vs bundled library; every livery name vs installed `CustomLiveries\Overrides\*.xml` scan; grid size vs track AI cap) → timestamped backup of any existing class XML → write UTF-8, XML-escaped file including the player's entry (so scalars apply to their car).
+
+## Phased roadmap
+
+**Phase 0 — Toolchain (half a day):** install .NET SDK (winget), scaffold solution, git init, xunit wiring.
+
+**Phase 1 — MVP "the season manager loop + a driver's life" (the v1 exe):**
+- M1: Core domain + data-driven points engine + f1db oracle harness (fixtures generated from the f1db SQLite release).
+- M2: Pack format + loader/validator + two bundled reference packs: **1967 (F-Vintage_Gen1, the chosen start era)** and **1988 (F-Classic_Gen2**, the most-downloaded skin-pack ecosystem, exercises multi-model livery mapping + best-11 dropped scores).
+- M3: `Companion.Ams2`: Steam detect, bundled class/livery/track library (seeded from AMS2CustomDriversUtil, refreshable as a data file), XML writer + backup/restore + preflight validation.
+- M4: WPF shell: new-career wizard (season pick → content verification with proceed-anyway → seat pick: replace a historical driver or add yourself → period-correct rules preset), Race Day briefing, **manual result entry** (keyboard grammar above), confirm screen, standings (drivers/constructors/round matrix with rules-explainer chip), season review.
+- M5: Career sim v1: seeds + journal, OPI + reputation, tier economy, season-end offers, aging/retirement (canon), pace anchor + difficulty recommendation, news headlines from journal templates.
+- M6: Era transition v1 (lineage carryover, bridge-or-block missing years), polish, single-exe publish.
+
+**Phase 2 — Auto-capture + living world:** in-app `$pcars2$` end-of-session snapshot reader (port CrewChiefV4 structs) pre-filling the confirm screen; Second Monitor JSON watcher as alternative; full team ledger economy + bankruptcy crisis ladder; mid-season driver market, personal sponsors, rumor system; living-world roster divergence.
+
+**Phase 3 — Owner-Driver mode** (budget allocation, sponsor negotiation, second-seat hiring, bankruptcy as fail state with fallback to driver-for-hire), privateer flavor, rivalries, title-permutation math, hardcore aging toggle.
+
+**Phase 4 — Ecosystem breadth:** season pack creator GUI + in-app pack browser; non-F1 series packs (F-USA/CART 1995/98/2000, Group C, GT1, DTM Group A, stock car) and junior-ladder career paths (karts → F-Vee/F-Trainer → F-3 → F1); guest drives (Indy 500, Le Mans); AMS2CM interop; localization.
+
+## Verification
+
+- **Points engine:** xunit oracle suite replaying f1db official standings for every supported season (start: 1966–1991 range + spot-checks across all eras); fractional/shared-drive/split-season unit tests.
+- **XML generator:** golden-file tests against the verified schema; validate output parses in AMS2CustomDriversUtil's model; livery-name round-trip tests with special characters (&, ã); backup/restore integrity tests.
+- **End-to-end:** on Mike's machine with AMS2 installed — stage a generated 1967 grid, run a short custom race, confirm real names/liveries/strength spread appear in-game, enter the result, verify standings; timed result-entry usability check against the 90-second target.
+- **Sim determinism:** re-simulate-from-round-1 reproduces byte-identical journal given the same imported results; duplicate import is idempotent.
+
+## Risks
+
+- **Reiza's official career mode (late 2026):** ship MVP fast; differentiate on historical eras, era-correct scoring, tycoon economy — areas Reiza won't cover.
+- **Livery-name binding fragility:** mitigated by preflight scanning + file watcher; guaranteed edge cases remain across community packs.
+- **Game-update churn** (class renames like v1.6.9, shared-memory version bumps): class/track/livery libraries are updatable data files, not compiled-in; packs pin game-version-tested; manual entry always works.
+- **Writing into Program Files** (Steam ACLs, non-standard libraries): detect + surface permission problems; manual folder picker fallback.
+- **Manual-entry fatigue** is the retention risk — the 90-second target needs early usability testing; Phase-2 auto-capture is the durable fix (Rewind GP already has it — visible gap until then).
+- **Scope creep vs "lightweight single exe":** enforce one-screen interstitials, minimal-narrative toggle, MVP cut above.
+
+## Open questions (non-blocking, revisit during build)
+
+- Bundle a third reference pack (1975 F-Retro Gen1 — strong existing skin pack) in v1?
+- Distribution/update channel: OverTake.gg download + GitHub releases; auto-update mechanism later?
+- Pack licensing guidance for community authors (ratings/names are facts; recommend CC BY 4.0, f1db attribution).
