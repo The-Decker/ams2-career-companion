@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Companion.Ams2/Companion.Ams2.csproj" />
+    <Project Path="src/Companion.App/Companion.App.csproj" />
+    <Project Path="src/Companion.Core/Companion.Core.csproj" />
+    <Project Path="src/Companion.Data/Companion.Data.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Companion.Tests/Companion.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Companion.FixtureGen/Companion.FixtureGen.csproj" />
+  </Folder>
+</Solution>

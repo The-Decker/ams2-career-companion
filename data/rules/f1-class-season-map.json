@@ -1,0 +1,43 @@
+{
+  "$comment": "AMS2 vehicle class -> real F1 seasons, verified against the local install's .crd data (build 23820506, 2026-07-02) - NOT the stale research rename guesses. ams2Class is the exact case-sensitive internal class name (= CustomAIDrivers filename base and classes.json xmlName). realSeasons are the championship years the class credibly represents (from research + community consensus). gameYear is what the install's .crd files say, kept for traceability where it differs from the era.",
+  "f1Ladder": [
+    { "ams2Class": "F-Vintage_Gen1", "realSeasons": [1966, 1967], "notes": "2 models; Lotus 49 / Repco Brabham analogues. Chosen career start era." },
+    { "ams2Class": "F-Vintage_Gen2", "realSeasons": [1969, 1970], "notes": "4 models incl. Brabham BT26A, Lotus 49C." },
+    { "ams2Class": "F-Retro_Gen1", "realSeasons": [1974, 1975], "notes": "5 models incl. Lotus 72E, McLaren M23, Brabham BT44." },
+    { "ams2Class": "F-Retro_Gen2", "realSeasons": [1978, 1979, 1980], "notes": "Incl. Lotus 79, BT46B fan car, BT49 (BRL DLC)." },
+    { "ams2Class": "F-Retro_Gen3", "realSeasons": [1983], "notes": "Incl. MP4/1C, BT52 (BRL DLC)." },
+    { "ams2Class": "F-Classic_Gen1", "realSeasons": [1986], "notes": "Incl. Lotus 98T (BRL DLC)." },
+    { "ams2Class": "F-Classic_Gen2", "realSeasons": [1988], "notes": "M1 top NA / M2 mid NA / M3 turbo; + MP4/4 (BRL DLC). Reference-pack era #2." },
+    { "ams2Class": "F-Classic_Gen3", "realSeasons": [1990], "notes": "M1 V12, M2 V8, M3 V10; + MP4/5B." },
+    { "ams2Class": "F-Classic_Gen4", "realSeasons": [1991], "notes": "M1 V12, M2 V10, M3 V8; + MP4/6." },
+    { "ams2Class": "Mclaren_MP46", "realSeasons": [1991], "notes": "One-car class (MP4/6); the MP4/5 (1989) .crd also sits in this class per game data." },
+    { "ams2Class": "F-Hitech_Gen1", "realSeasons": [1992], "notes": "Lowercase 't' confirmed in game data (research wrote F-HiTech). Formula HiTech DLC; + MP4/7A. _HD/_LD downforce sub-classes exist." },
+    { "ams2Class": "F-Hitech_Gen2", "realSeasons": [1993], "notes": "+ MP4/8. _HD/_LD sub-classes exist." },
+    { "ams2Class": "FE-G1", "realSeasons": [1995], "notes": "Internal name for Formula Edge Gen1 (formula_edge_g1m1/2/3: V12/V10/V8). F-V12 (1 car, 1995) still coexists as its own class - NOT renamed." },
+    { "ams2Class": "F-V10_Gen1", "realSeasons": [1997, 1998], "notes": "" },
+    { "ams2Class": "F-V10_Gen2", "realSeasons": [2000, 2001], "notes": "Formula_V10_M (2002) variant model exists in-class." },
+    { "ams2Class": "F-V10_Gen3", "realSeasons": [2005], "gameYear": 2006, "notes": "Renault R25 era; .crd says 2006 - treat as 2005 per community consensus." },
+    { "ams2Class": "F-V8_Gen1", "realSeasons": [2006], "notes": "Incl. Renault R26 analogue." },
+    { "ams2Class": "F-V8_Gen2", "realSeasons": [2008], "notes": "Incl. R28. No F-V8_Gen3 exists in game data." },
+    { "ams2Class": "F-Reiza", "realSeasons": [2011, 2012, 2013], "gameYear": 2010, "notes": "NOT renamed to F-V8_Gen3 (research was wrong); single 2010-spec car covering the 2011-13 V8 era." },
+    { "ams2Class": "F-Ultimate_Gen1", "realSeasons": [2016], "notes": "No F-Hybrid family exists in game data - research renames were display-level at most." },
+    { "ams2Class": "F-Ultimate", "realSeasons": [2019], "gameYear": 2019, "notes": ".crd for formula_ultimate_2016 carries year 2019 (game data quirk)." },
+    { "ams2Class": "F-Ultimate_Gen2_RET", "realSeasons": [2022], "notes": "" },
+    { "ams2Class": "F-Ultimate_Gen2", "realSeasons": [2024], "notes": "Missing from the research era table entirely; newest hybrid-era class." }
+  ],
+  "juniorLadder": [
+    { "ams2Class": "Kart125cc", "notes": "Karts: 5 stock variants (KartGX390, KartRental, KartShifter, SuperKart, KartCross as Kartcross)." },
+    { "ams2Class": "F-Vee", "notes": "F-Vee Gen1; F-Vee_Gen2 separate class." },
+    { "ams2Class": "F-Trainer", "notes": "+ F-Trainer_A (Advanced)." },
+    { "ams2Class": "F-Junior", "realSeasons": [1962], "notes": "Lotus 22." },
+    { "ams2Class": "F-Inter", "notes": "" },
+    { "ams2Class": "F-3", "realSeasons": [1999, 2009], "notes": "Dallara F301/F309." }
+  ],
+  "fUsa": [
+    { "ams2Class": "F-USA_Gen1", "realSeasons": [1995], "notes": "CART 1995: cart_lola_t95_*, cart_reynard_95i_* per-engine cars; _SO/_SS/_SW track-config classes exist alongside." },
+    { "ams2Class": "F-USA_Gen2", "realSeasons": [1998], "notes": "CART 1998: cart_reynard_98i_* + others." },
+    { "ams2Class": "F-USA_Gen3", "realSeasons": [2000], "notes": "CART 2000: cart_lola_b2k00_*, cart_reynard_2ki_*." },
+    { "ams2Class": "F-USA_2022", "realSeasons": [2022], "notes": "Present in install; absent from research table." },
+    { "ams2Class": "F-USA_2023", "realSeasons": [2023], "notes": "_SO/_SS/_SW oval-config classes exist alongside." }
+  ]
+}
