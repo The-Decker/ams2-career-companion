@@ -1,30 +1,37 @@
 {
-  "$comment": "Curated placeholder suggestions for historical venues missing from AMS2 (locked decision #6). Keyed by f1db circuit id. 'suggestions' are AMS2 track ids from data/ams2/tracks.json, ranked best-first; generators pick the first id present in the library, and the round keeps its historical identity with laps recomputed to preserve real race distance. Rationale documents the character match so pack authors can disagree deliberately.",
+  "$comment": "Curated placeholder suggestions for historical venues missing from AMS2 (locked decision #6). Keyed by f1db circuit id. 'suggestions' are AMS2 track ids from data/ams2/tracks.json, ranked best-first; generators pick the first id present in the track library (remaining present ids become the round's fallbacks), and the round keeps its historical identity with laps recomputed to preserve real race distance. Optional 'eraOverrides' re-rank the suggestions for later seasons: a generator uses the entry with the greatest fromYear <= season year, else the base list. Rationale documents the character match so pack authors can disagree deliberately.",
   "venues": {
     "zandvoort": {
       "name": "Circuit Park Zandvoort",
-      "suggestions": ["spielberg_historic", "silverstone_1975", "brandshatch_gp"],
-      "rationale": "Fast, flowing, old-school sweepers; Osterreichring 1974 is the closest period-correct rhythm."
+      "suggestions": ["spielberg_vintage", "spielberg_historic", "silverstone_1975", "brandshatch_gp"],
+      "rationale": "Fast, flowing, old-school sweepers; Osterreichring 1974 (spielberg_vintage, pre-chicane) is the closest period-correct rhythm — the 1977 layout (spielberg_historic) adds the Hella-Licht chicane and ranks second. Silverstone 1975 was dropped to third: it usually doubles as the same season's British GP venue."
     },
-    "le-mans-bugatti": {
+    "bugatti": {
       "name": "Circuit Bugatti, Le Mans",
-      "suggestions": ["rouen", "rouen_short"],
-      "rationale": "Rouen-les-Essarts is period French road racing and actually hosted the French GP (1968)."
+      "suggestions": ["le_mans_bugatti", "rouen", "rouen_short"],
+      "rationale": "The venue EXISTS in AMS2 as le_mans_bugatti (modern layout of the same venue) — from format v1.1 that binding is NOT a placeholder; this entry stays for id lookup and for authors preferring era-correct French road racing (Rouen-les-Essarts hosted the French GP in 1968)."
     },
     "mexico-city": {
-      "name": "Autodromo Hermanos Rodriguez",
+      "name": "Autódromo Hermanos Rodríguez",
       "suggestions": ["interlagos_historic", "monza_1971"],
-      "rationale": "Long flat-out sections ending in a fast final corner; historic Interlagos adds the altitude-era Latin American character."
+      "rationale": "Long flat-out sections ending in a fast final corner; historic Interlagos adds the altitude-era Latin American character.",
+      "eraOverrides": [
+        {
+          "fromYear": 1981,
+          "suggestions": ["interlagos_1991", "interlagos_historic"],
+          "rationale": "The 7.9 km historic Interlagos left F1 after 1980; for 1980s+ seasons the 1991 layout is period-correct, keeps the Latin American venue character, and its 4.33 km lap nearly matches Mexico City's 4.42 km (near-identical lap counts)."
+        }
+      ]
     },
     "detroit": {
       "name": "Detroit Street Circuit",
-      "suggestions": ["adelaide_historic"],
-      "rationale": "Concrete-lined street circuit of the same era; Adelaide 1988 is the only historic street layout in AMS2."
+      "suggestions": ["long_beach", "adelaide_historic"],
+      "rationale": "Long Beach hosted the United States GP West 1976-1983: a concrete-lined US street circuit of the same era and country — the better character match already proven in the f1-1988 reference pack. Adelaide 1988 remains a street-circuit alternative but usually doubles as the same season's Australian GP venue."
     },
     "paul-ricard": {
       "name": "Circuit Paul Ricard",
-      "suggestions": ["hockenheim_1988", "silverstone_1991"],
-      "rationale": "Mistral-straight-plus-chicanes character maps to old Hockenheim's flat-out forest blasts."
+      "suggestions": ["le_mans_bugatti", "hockenheim_1988", "silverstone_1991"],
+      "rationale": "Le Mans Bugatti keeps the French GP at a French Grand Prix venue (as the f1-1988 reference pack does); old Hockenheim's Mistral-like flat-out forest blasts are the character match but usually double as the same season's German GP venue."
     },
     "anderstorp": {
       "name": "Scandinavian Raceway, Anderstorp",

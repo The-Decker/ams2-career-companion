@@ -274,6 +274,34 @@ public class PackStructuralValidatorTests
         AssertError(Validate(pack), "opponents=0");
     }
 
+    [Fact]
+    public void Validate_PlaceholderRoundWithoutRealVenue_IsAnError()
+    {
+        var pack = ValidPack();
+        var rounds = pack.Season.Rounds.ToArray();
+        rounds[0] = rounds[0] with
+        {
+            Track = rounds[0].Track with { IsPlaceholder = true, RealVenue = null },
+        };
+        pack = pack with { Season = pack.Season with { Rounds = rounds } };
+
+        AssertError(Validate(pack), "placeholder track but names no realVenue");
+    }
+
+    [Fact]
+    public void Validate_PlaceholderRoundWithRealVenue_IsClean()
+    {
+        var pack = ValidPack();
+        var rounds = pack.Season.Rounds.ToArray();
+        rounds[0] = rounds[0] with
+        {
+            Track = rounds[0].Track with { IsPlaceholder = true, RealVenue = "Circuit Park Zandvoort" },
+        };
+        pack = pack with { Season = pack.Season with { Rounds = rounds } };
+
+        AssertNoErrors(Validate(pack));
+    }
+
     // ---------- dates ----------
 
     [Fact]

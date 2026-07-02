@@ -54,10 +54,21 @@ public sealed record PackRound
 
 public sealed record PackTrackRef
 {
-    /// <summary>Internal id from data/ams2/tracks.json.</summary>
+    /// <summary>Internal id from data/ams2/tracks.json — the AMS2 track actually driven,
+    /// which for placeholder rounds is NOT the historical venue.</summary>
     public required string Id { get; init; }
 
-    /// <summary>Stand-in layouts when the venue/era layout is missing.</summary>
+    /// <summary>The historical venue's name, shown in the briefing, standings, and records
+    /// regardless of what track is driven (v1.1, locked decision #6).</summary>
+    public string? RealVenue { get; init; }
+
+    /// <summary>True when the historical venue does not exist in AMS2 and <see cref="Id"/>
+    /// is an explicit placeholder. Placeholder rounds recompute laps so the REAL race
+    /// distance in km is preserved at the placeholder's lap length.</summary>
+    public bool IsPlaceholder { get; init; }
+
+    /// <summary>Alternates when <see cref="Id"/> itself is missing locally (unowned DLC) —
+    /// a different problem than placeholder substitution.</summary>
     public IReadOnlyList<string> Fallbacks { get; init; } = [];
 }
 

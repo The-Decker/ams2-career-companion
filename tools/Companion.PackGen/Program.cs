@@ -1,13 +1,19 @@
 // Companion.PackGen — generates the bundled reference season packs (F1 1967, F1 1988) as
-// plain-JSON pack folders per docs/dev/season-pack-format.md (format v1).
+// plain-JSON pack folders per docs/dev/season-pack-format.md (format v1 + the v1.1
+// placeholder-venue addendum: every round carries realVenue/isPlaceholder, and placeholder
+// rounds recompute laps to preserve the REAL race distance at the stand-in's lap length).
 //
 // Sources reconciled:
-//   - f1db SQLite release (CC BY 4.0): season calendar (round/GP/date/real laps) + entrants
+//   - f1db SQLite release (CC BY 4.0): season calendar (round/GP/date/real laps), the circuit
+//     per race (realVenue + historical distance; race.distance is km), and entrants
 //     (driver <-> constructor <-> rounds).
 //   - Installed community custom-AI XMLs (jusk et al.): the PROVEN livery names + AI ratings
-//     that bind against the deployed skinpacks on this machine.
+//     that bind against the deployed skinpacks on this machine, including per-track
+//     (tracks="...") override entries carried into round aiOverrides where configured.
 //   - data/ams2/{tracks,vehicles,classes}.json: content library used to verify every id emitted.
 //   - data/rules/f1-points-systems.json: pointsSystem copied VERBATIM per season.
+//   - data/rules/placeholder-venues.json: the single source of truth for placeholder stand-in
+//     selection (first suggestion present in the track library wins; era overrides re-rank).
 //
 // Usage: Companion.PackGen <f1db.db> <ams2DataDir> <customAiDir> <outDir>
 //   ams2DataDir  = repo data/ams2 (rules are resolved as ../rules relative to it)
@@ -37,8 +43,11 @@ string outDir = Path.GetFullPath(args[3]);
 string rulesPath = Path.GetFullPath(Path.Combine(ams2DataDir, "..", "rules", "f1-points-systems.json"));
 string overridesRoot = Path.GetFullPath(Path.Combine(customAiDir, "..", "..", "Vehicles", "Textures", "CustomLiveries", "Overrides"));
 
+string placeholderVenuesPath = Path.GetFullPath(Path.Combine(ams2DataDir, "..", "rules", "placeholder-venues.json"));
+
 var library = ContentLibrary.Load(ams2DataDir);
 var rules = JsonNode.Parse(File.ReadAllText(rulesPath))!.AsObject();
+var placeholderVenues = PlaceholderVenues.Load(placeholderVenuesPath, library);
 
 var seasons = new[] { SeasonConfigs.F1_1967(), SeasonConfigs.F1_1988() };
 int exitCode = 0;
@@ -47,7 +56,7 @@ foreach (var cfg in seasons)
 {
     try
     {
-        var report = PackBuilder.Build(cfg, dbPath, customAiDir, overridesRoot, library, rules, outDir);
+        var report = PackBuilder.Build(cfg, dbPath, customAiDir, overridesRoot, library, rules, placeholderVenues, outDir);
         report.Print();
         if (report.HasErrors) exitCode = 1;
     }
@@ -62,7 +71,13 @@ return exitCode;
 
 // ---------------------------------------------------------------------------------------------
 
-internal sealed record TrackBinding(string TrackId, string[] Fallbacks, string Note);
+/// <summary>Authored AMS2 binding for one grand prix. Non-placeholder bindings name the track
+/// (the venue exists in AMS2, possibly as an era-different layout — NOT a placeholder; such
+/// rounds keep the historical lap count because the venue is real and only the layout evolved).
+/// Placeholder bindings (<see cref="IsPlaceholder"/> true, <see cref="TrackId"/> null) resolve
+/// the stand-in from data/rules/placeholder-venues.json and recompute laps to preserve the real
+/// race distance; <see cref="Note"/> is appended after the generated substitution sentence.</summary>
+internal sealed record TrackBinding(string? TrackId, string[] Fallbacks, string Note, bool IsPlaceholder = false);
 
 internal sealed record TeamMeta(int Prestige, int BudgetTier);
 
@@ -92,6 +107,23 @@ internal sealed class SeasonConfig
     /// <summary>Authored fallback when the override folders cannot be scanned. Key = number (by-number
     /// strategy) or normalized team token (by-prefix strategy); value = vehicle id.</summary>
     public required Dictionary<string, string> ModelMapFallback { get; init; }
+
+    /// <summary>f1db driver id -> authored country correction (IOC code) with the reason kept
+    /// beside the value. Applied over the community XML's country; every application is
+    /// documented in pack.json notes.</summary>
+    public Dictionary<string, (string Country, string Reason)> CountryCorrections { get; init; } = new();
+
+    /// <summary>true = carry the source XML's per-track (tracks="...") entries into the matching
+    /// rounds' aiOverrides as partial ratings patches (absolute 0-1 values, same vocabulary).</summary>
+    public bool CarryPerTrackOverrides { get; init; }
+
+    /// <summary>Override-XML track id -> grand prix id, for per-track entries authored against a
+    /// layout the calendar does not use (e.g. jusk's Azure_Circuit_2021 patches belong to the
+    /// Monaco round even though the pack drives azure_circuit_88 — same venue).</summary>
+    public Dictionary<string, string> OverrideTrackAliases { get; init; } = new(StringComparer.Ordinal);
+
+    /// <summary>Authored pack.json notes appended after the generated coverage/correction notes.</summary>
+    public string[] ExtraNotes { get; init; } = [];
 }
 
 internal static class SeasonConfigs
@@ -115,18 +147,17 @@ internal static class SeasonConfigs
         {
             ["south-africa"] = new("kyalami_historic", ["kyalami_2019"], ""),
             ["monaco"] = new("azure_circuit_88", ["azure_circuit"], ""),
-            ["netherlands"] = new("silverstone_1975", [],
-                "Zandvoort is not available in AMS2; Silverstone 1975 stands in for the Dutch GP."),
+            ["netherlands"] = new(null, [], "", IsPlaceholder: true),
             ["belgium"] = new("spa-francorchamps_1970", [], ""),
-            ["france"] = new("rouen", ["le_mans_bugatti"],
-                "The 1967 French GP ran at the Bugatti Circuit, Le Mans; era-correct Rouen-les-Essarts stands in (AMS2's Le Mans Bugatti is the modern layout)."),
+            ["france"] = new("le_mans_bugatti", ["rouen"],
+                "The 1967 French GP ran at the Bugatti Circuit, Le Mans — AMS2's Le Mans Bugatti is the modern layout of the SAME venue, so this is not a placeholder and the historical lap count is kept; era-correct Rouen-les-Essarts is the fallback."),
             ["great-britain"] = new("silverstone_1975nc", ["silverstone_1975"], ""),
             ["germany"] = new("nurb_1971_nords", [], ""),
             ["canada"] = new("mosport_1971", [], ""),
             ["italy"] = new("monza_1971", [], ""),
-            ["united-states"] = new("watkins_glen_1971_short", [], ""),
-            ["mexico"] = new("interlagos_historic", [],
-                "Mexico City is not available in AMS2; historic Interlagos stands in for the Mexican GP."),
+            ["united-states"] = new("watkins_glen_1971_short", [],
+                "AMS2's Watkins Glen layouts are 1971+; the venue is real, so the historical lap count is kept on the era-different layout."),
+            ["mexico"] = new(null, [], "", IsPlaceholder: true),
         },
         TeamMetas = new()
         {
@@ -156,6 +187,21 @@ internal static class SeasonConfigs
             ["18"] = "formula_vintage_g1m2", ["19"] = "formula_vintage_g1m2", ["22"] = "formula_vintage_g1m2",
             ["30"] = "formula_vintage_g1m2",
         },
+        CarryPerTrackOverrides = true,
+        OverrideTrackAliases = new(StringComparer.Ordinal)
+        {
+            // jusk authored several 1967 per-track patches against layouts this calendar does
+            // not drive; each maps to the calendar round at the SAME venue.
+            ["azure_circuit_2021"] = "monaco",
+            ["watkins_glen_s"] = "united-states",
+            ["spa-francorchamps_1993"] = "belgium",
+            ["nordschleife_2020"] = "germany",
+            ["nordschleife_2020_24hr"] = "germany",
+        },
+        ExtraNotes =
+        [
+            "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. Entries authored against layouts this calendar does not drive (Azure_Circuit_2021, Watkins_Glen_S, Spa_Francorchamps_1993, Nordschleife_2020/_24hr) are mapped to the calendar round at the same venue (Monaco, Watkins Glen, Spa, Nurburgring).",
+        ],
     };
 
     public static SeasonConfig F1_1988() => new()
@@ -178,26 +224,26 @@ internal static class SeasonConfigs
             ["brazil"] = new("jacarepagua_historic", [], ""),
             ["san-marino"] = new("imola_88", [], ""),
             ["monaco"] = new("azure_circuit_88", ["azure_circuit"], ""),
-            ["mexico"] = new("interlagos_1991", [],
-                "Mexico City (Hermanos Rodriguez) is not available in AMS2; Interlagos 1991 stands in as a period Latin-American venue."),
+            ["mexico"] = new(null, [],
+                "Interlagos 1991 keeps the period Latin-American venue character.", IsPlaceholder: true),
             ["canada"] = new("montrealhistoric", [], ""),
-            ["detroit"] = new("long_beach", [],
-                "The Detroit street circuit is not available in AMS2; Long Beach stands in as the era's US street-circuit substitute."),
-            ["france"] = new("le_mans_bugatti", [],
-                "Paul Ricard is not available in AMS2; Le Mans Bugatti stands in as the French venue."),
+            ["detroit"] = new(null, [],
+                "Long Beach hosted the United States GP West 1976-1983 — the era's US street-race character.", IsPlaceholder: true),
+            ["france"] = new(null, [],
+                "Keeps the French GP at a French Grand Prix venue.", IsPlaceholder: true),
             ["great-britain"] = new("silverstone_1991", ["silverstone_1975"],
-                "No 1988 Silverstone layout in AMS2; the 1991 layout is used (Silverstone 1975 with chicane is the era-closest alternative)."),
+                "No 1988 Silverstone layout in AMS2; the venue is real, so the historical lap count is kept on the 1991 layout (Silverstone 1975 with chicane is the era-closest alternative)."),
             ["germany"] = new("hockenheim_1988", [], ""),
             ["hungary"] = new("hungaroring_gp_2025", [],
-                "AMS2 ships the 2025 Hungaroring; the layout is largely unchanged in character since 1986."),
+                "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."),
             ["belgium"] = new("spa-francorchamps_1993", [],
-                "No 1988 Spa layout in AMS2; the 1993 layout is the closest era."),
+                "No 1988 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the 1993 layout."),
             ["italy"] = new("monza_1991", [],
-                "No 1988 Monza in AMS2; the 1991 layout matches the era."),
+                "No 1988 Monza in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1991 layout."),
             ["portugal"] = new("estoril_1988", [], ""),
             ["spain"] = new("jerez_1988", [], ""),
             ["japan"] = new("kansai_gp", [],
-                "Suzuka appears in AMS2 as Kansai; the modern GP layout stands in for 1988."),
+                "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."),
             ["australia"] = new("adelaide_historic", [], ""),
         },
         TeamMetas = new()
@@ -237,6 +283,15 @@ internal static class SeasonConfigs
             ["lotus"] = "formula_classic_g2m3", ["zakspeed"] = "formula_classic_g2m3",
             ["mclaren"] = "mclaren_mp44",
         },
+        CountryCorrections = new(StringComparer.Ordinal)
+        {
+            // Round-1 verification finding: the community XML lists Martini as SWE.
+            ["pierluigi-martini"] = ("ITA", "Martini is Italian (f1db nationality: italy); the source XML's SWE is a data-entry error"),
+        },
+        ExtraNotes =
+        [
+            "The source custom-AI XML carries a large per-track (tracks=\"...\") override set; those patches are not carried into this pack's aiOverrides in this version.",
+        ],
     };
 }
 
@@ -245,15 +300,33 @@ internal static class SeasonConfigs
 internal sealed class ContentLibrary
 {
     public required Dictionary<string, int> TrackMaxAi { get; init; }   // track id -> maxAiParticipants
+    public required Dictionary<string, int> TrackLengthMeters { get; init; } // track id -> lap length (m)
+    public required Dictionary<string, string> TrackNames { get; init; }     // track id -> trackName
+    public required Dictionary<string, string> TrackIdByName { get; init; }  // lowercased trackName -> id
     public required HashSet<string> VehicleIds { get; init; }
     public required Dictionary<string, HashSet<string>> ClassVehicles { get; init; } // class xmlName -> vehicle ids
+
+    /// <summary>Human display for setupGuide notes: the game's trackName with underscores
+    /// opened up ("Spielberg_Vintage" -> "Spielberg Vintage").</summary>
+    public string TrackDisplayName(string trackId) =>
+        TrackNames.TryGetValue(trackId, out var name) && name.Length > 0 ? name.Replace('_', ' ') : trackId;
 
     public static ContentLibrary Load(string ams2DataDir)
     {
         var tracks = JsonNode.Parse(File.ReadAllText(Path.Combine(ams2DataDir, "tracks.json")))!;
         var trackMaxAi = new Dictionary<string, int>(StringComparer.Ordinal);
+        var trackLength = new Dictionary<string, int>(StringComparer.Ordinal);
+        var trackNames = new Dictionary<string, string>(StringComparer.Ordinal);
+        var trackIdByName = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var t in tracks["tracks"]!.AsArray())
-            trackMaxAi[t!["id"]!.GetValue<string>()] = t["maxAiParticipants"]?.GetValue<int>() ?? 0;
+        {
+            string id = t!["id"]!.GetValue<string>();
+            trackMaxAi[id] = t["maxAiParticipants"]?.GetValue<int>() ?? 0;
+            trackLength[id] = t["lengthMeters"]?.GetValue<int>() ?? 0;
+            string name = t["trackName"]?.GetValue<string>() ?? "";
+            trackNames[id] = name;
+            if (name.Length > 0) trackIdByName.TryAdd(name.ToLowerInvariant(), id);
+        }
 
         var vehicles = JsonNode.Parse(File.ReadAllText(Path.Combine(ams2DataDir, "vehicles.json")))!;
         var vehicleIds = new HashSet<string>(StringComparer.Ordinal);
@@ -269,13 +342,83 @@ internal sealed class ContentLibrary
             classVehicles[c["xmlName"]!.GetValue<string>()] = set;
         }
 
-        return new ContentLibrary { TrackMaxAi = trackMaxAi, VehicleIds = vehicleIds, ClassVehicles = classVehicles };
+        return new ContentLibrary
+        {
+            TrackMaxAi = trackMaxAi,
+            TrackLengthMeters = trackLength,
+            TrackNames = trackNames,
+            TrackIdByName = trackIdByName,
+            VehicleIds = vehicleIds,
+            ClassVehicles = classVehicles,
+        };
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+
+/// <summary>data/rules/placeholder-venues.json — the single source of truth for placeholder
+/// stand-in selection, keyed by f1db circuit id. Every suggestion id (base and era-override)
+/// is validated against the track library at load: the curated file must never dangle.</summary>
+internal sealed class PlaceholderVenues
+{
+    private sealed record Venue(string Name, string[] Suggestions, List<(int FromYear, string[] Suggestions)> EraOverrides);
+
+    private readonly Dictionary<string, Venue> _venues;
+
+    private PlaceholderVenues(Dictionary<string, Venue> venues) => _venues = venues;
+
+    public static PlaceholderVenues Load(string path, ContentLibrary library)
+    {
+        var root = JsonNode.Parse(File.ReadAllText(path))!.AsObject();
+        var venues = new Dictionary<string, Venue>(StringComparer.Ordinal);
+        foreach (var (circuitId, node) in root["venues"]!.AsObject())
+        {
+            var obj = node!.AsObject();
+            var suggestions = obj["suggestions"]!.AsArray().Select(s => s!.GetValue<string>()).ToArray();
+            var eras = new List<(int, string[])>();
+            if (obj["eraOverrides"] is JsonArray eraArr)
+            {
+                foreach (var era in eraArr)
+                    eras.Add((era!["fromYear"]!.GetValue<int>(),
+                        era["suggestions"]!.AsArray().Select(s => s!.GetValue<string>()).ToArray()));
+            }
+
+            foreach (var id in suggestions.Concat(eras.SelectMany(e => e.Item2)))
+                if (!library.TrackMaxAi.ContainsKey(id))
+                    throw new InvalidOperationException(
+                        $"placeholder-venues.json: '{circuitId}' suggestion '{id}' is not in tracks.json");
+
+            venues[circuitId] = new Venue(obj["name"]!.GetValue<string>(), suggestions, eras);
+        }
+        return new PlaceholderVenues(venues);
+    }
+
+    /// <summary>Ranked stand-in suggestions for a venue as seen from <paramref name="year"/>:
+    /// the era override with the greatest fromYear &lt;= year wins, else the base list.</summary>
+    public string[] SuggestionsFor(string circuitId, int year)
+    {
+        if (!_venues.TryGetValue(circuitId, out var venue))
+            throw new InvalidOperationException(
+                $"no placeholder-venues.json entry for f1db circuit '{circuitId}' — add one (it is the single source of truth for stand-ins)");
+        var era = venue.EraOverrides
+            .Where(e => e.FromYear <= year)
+            .OrderByDescending(e => e.FromYear)
+            .Select(e => e.Suggestions)
+            .FirstOrDefault();
+        return era ?? venue.Suggestions;
     }
 }
 
 internal sealed record AiDriver(
     string LiveryName, string TeamToken, string? Number, string Name, string Country,
     List<KeyValuePair<string, double>> Ratings, double? VehicleReliability);
+
+/// <summary>A per-track (tracks="...") override entry: an absolute partial ratings patch for
+/// the driver bound to <paramref name="LiveryName"/> at the named track layouts. Fields the
+/// pack's aiOverrides patch vocabulary lacks arrive in <paramref name="DroppedFields"/>.</summary>
+internal sealed record AiTrackOverride(
+    string LiveryName, string[] Tracks,
+    List<KeyValuePair<string, double>> Ratings, List<string> DroppedFields);
 
 internal static class AiXml
 {
@@ -285,6 +428,13 @@ internal static class AiXml
         "raceSkill", "qualifyingSkill", "aggression", "defending", "stamina", "consistency",
         "startReactions", "wetSkill", "tyreManagement", "fuelManagement", "blueFlagConceding",
         "weatherTyreChanges", "avoidanceOfMistakes", "avoidanceOfForcedMistakes",
+    ];
+
+    // The subset the pack aiOverrides patch type (PackRatingsPatch) supports, in canonical order.
+    private static readonly string[] PatchRatingOrder =
+    [
+        "raceSkill", "qualifyingSkill", "aggression", "defending", "stamina", "consistency",
+        "startReactions", "wetSkill", "tyreManagement", "avoidanceOfMistakes",
     ];
 
     /// <summary>Parses a community custom-AI XML leniently (comments stripped first: several
@@ -335,6 +485,46 @@ internal static class AiXml
         return result;
     }
 
+    /// <summary>Parses the per-track override entries (elements with a tracks= attribute).
+    /// Ratings are kept in the pack patch vocabulary (canonical order); anything else the
+    /// patch type lacks (fuel_management, blue_flag_conceding, weather_tyre_changes,
+    /// avoidance_of_forced_mistakes, vehicle_reliability) is reported as dropped.</summary>
+    public static List<AiTrackOverride> ParsePerTrackOverrides(string xmlPath)
+    {
+        string text = File.ReadAllText(xmlPath);
+        text = Regex.Replace(text, "<!--.*?-->", "", RegexOptions.Singleline);
+        var doc = XDocument.Parse(text);
+
+        var result = new List<AiTrackOverride>();
+        foreach (var el in doc.Root!.Elements("driver"))
+        {
+            string? tracksAttr = el.Attribute("tracks")?.Value;
+            if (string.IsNullOrWhiteSpace(tracksAttr)) continue;   // base entry
+            string livery = el.Attribute("livery_name")?.Value ?? "";
+            var tracks = tracksAttr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            var ratings = new Dictionary<string, double>(StringComparer.Ordinal);
+            var dropped = new List<string>();
+            foreach (var child in el.Elements())
+            {
+                string key = child.Name.LocalName;
+                if (key is "name" or "country") continue;
+                if (!double.TryParse(child.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
+                    continue;
+                string camel = SnakeToCamel(key);
+                if (PatchRatingOrder.Contains(camel, StringComparer.Ordinal)) ratings[camel] = value;
+                else dropped.Add(camel);
+            }
+
+            var ordered = new List<KeyValuePair<string, double>>();
+            foreach (var key in PatchRatingOrder)
+                if (ratings.Remove(key, out double v)) ordered.Add(new(key, v));
+
+            result.Add(new AiTrackOverride(livery, tracks, ordered, dropped));
+        }
+        return result;
+    }
+
     private static string SnakeToCamel(string snake)
     {
         var parts = snake.Split('_', StringSplitOptions.RemoveEmptyEntries);
@@ -347,7 +537,13 @@ internal static class AiXml
 
 // ---------------------------------------------------------------------------------------------
 
-internal sealed record RaceRow(int Round, string GpId, string GpName, string Date, int Laps);
+/// <summary>One f1db race. <paramref name="CircuitFullName"/> is the realVenue emitted on every
+/// round; <paramref name="DistanceKm"/> is f1db race.distance (kilometres — verified: distance =
+/// laps x course_length), with <paramref name="CourseLengthKm"/> kept for the laps-x-length
+/// fallback when distance is absent.</summary>
+internal sealed record RaceRow(
+    int Round, string GpId, string GpName, string Date, int Laps,
+    string CircuitId, string CircuitFullName, double? DistanceKm, double? CourseLengthKm);
 
 internal sealed record EntrantRow(
     string ConstructorId, string ConstructorName, string EngineId,
@@ -360,14 +556,21 @@ internal static class F1Db
         var list = new List<RaceRow>();
         using var cmd = con.CreateCommand();
         cmd.CommandText = """
-            SELECT r.round, r.grand_prix_id, gp.full_name, r.date, r.laps
-            FROM race r JOIN grand_prix gp ON gp.id = r.grand_prix_id
+            SELECT r.round, r.grand_prix_id, gp.full_name, r.date, r.laps,
+                   r.circuit_id, c.full_name, r.distance, r.course_length
+            FROM race r
+            JOIN grand_prix gp ON gp.id = r.grand_prix_id
+            JOIN circuit c ON c.id = r.circuit_id
             WHERE r.year = $y ORDER BY r.round
             """;
         cmd.Parameters.AddWithValue("$y", year);
         using var rd = cmd.ExecuteReader();
         while (rd.Read())
-            list.Add(new RaceRow(rd.GetInt32(0), rd.GetString(1), rd.GetString(2), rd.GetString(3), rd.GetInt32(4)));
+            list.Add(new RaceRow(
+                rd.GetInt32(0), rd.GetString(1), rd.GetString(2), rd.GetString(3), rd.GetInt32(4),
+                rd.GetString(5), rd.GetString(6),
+                rd.IsDBNull(7) ? null : rd.GetDouble(7),
+                rd.IsDBNull(8) ? null : rd.GetDouble(8)));
         return list;
     }
 
@@ -409,12 +612,14 @@ internal sealed class PackReport
     public List<string> ExcludedLiveries { get; } = [];
     public List<string> UncoveredEntrants { get; } = [];
     public List<string> SubstitutedVenues { get; } = [];
+    public List<string> PlaceholderRounds { get; } = [];
     public List<string> Warnings { get; } = [];
     public bool HasErrors => UnmatchedLiveries.Count > 0;
 
     public void Print()
     {
         Console.WriteLine($"[{PackId}] rounds={Rounds} teams={Teams} drivers={Drivers} entries={Entries}");
+        foreach (var s in PlaceholderRounds) Console.WriteLine($"[{PackId}] placeholder: {s}");
         foreach (var s in SubstitutedVenues) Console.WriteLine($"[{PackId}] substituted: {s}");
         foreach (var s in ExcludedLiveries) Console.WriteLine($"[{PackId}] excluded livery: {s}");
         foreach (var s in UnmatchedLiveries) Console.WriteLine($"[{PackId}] UNMATCHED livery: {s}");
@@ -431,11 +636,19 @@ internal static class PackBuilder
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
+    /// <summary>A calendar round with its AMS2 binding fully resolved: placeholder stand-ins
+    /// picked from the curated file, laps recomputed to preserve the real distance, and the
+    /// setupGuide note composed.</summary>
+    private sealed record ResolvedRound(
+        RaceRow Race, string TrackId, string[] Fallbacks, bool IsPlaceholder,
+        string RealVenue, int Laps, string Note);
+
     public static PackReport Build(
         SeasonConfig cfg, string dbPath, string customAiDir, string overridesRoot,
-        ContentLibrary library, JsonObject rules, string outDir)
+        ContentLibrary library, JsonObject rules, PlaceholderVenues placeholderVenues, string outDir)
     {
         var report = new PackReport { PackId = cfg.PackId };
+        var manifestNotes = new List<string>();
 
         // -- inputs -------------------------------------------------------------------------
         var aiDrivers = AiXml.ParseBaseDrivers(Path.Combine(customAiDir, cfg.AiXmlFileName));
@@ -525,13 +738,27 @@ internal static class PackBuilder
 
             string driverId = "driver." + chosen[0].DriverId.Replace('-', '_');
             if (driverIdsEmitted.Add(driverId))
-                driversOut.Add((driverId, chosen[0].DriverName, ai.Country, chosen[0].BornYear, ai.Ratings));
+            {
+                string country = ai.Country;
+                if (cfg.CountryCorrections.TryGetValue(chosen[0].DriverId, out var correction))
+                {
+                    manifestNotes.Add(
+                        $"Authored correction: {chosen[0].DriverName} country '{ai.Country}' -> '{correction.Country}' — {correction.Reason}.");
+                    country = correction.Country;
+                }
+                driversOut.Add((driverId, chosen[0].DriverName, country, chosen[0].BornYear, ai.Ratings));
+            }
 
             entriesOut.Add((TeamId(constructorId), driverId, ai.Number ?? "", rounds, ai.LiveryName));
         }
 
         foreach (var row in entrants.Where(r => !coveredRows.Contains(r)))
-            report.UncoveredEntrants.Add($"{row.DriverName} ({row.ConstructorId}+{row.EngineId}, rounds {FormatRounds(row.Rounds)})");
+        {
+            string desc = $"{row.DriverName} ({row.ConstructorId}+{row.EngineId}, rounds {FormatRounds(row.Rounds)})";
+            report.UncoveredEntrants.Add(desc);
+            manifestNotes.Add(
+                $"Coverage: f1db {cfg.Year} entrant {desc} has no livery in the referenced skinpack/AI set and is not included in this pack.");
+        }
 
         // -- car model binding per team --------------------------------------------------------
         var classVehicles = library.ClassVehicles[cfg.Ams2Class];
@@ -565,24 +792,29 @@ internal static class PackBuilder
                 report.Warnings.Add($"team {team.ConstructorId}: no authored prestige/budgetTier; defaulting to 2/2");
         }
 
-        // -- verify tracks + compute per-round opponents ---------------------------------------
+        // -- resolve tracks: placeholders from the curated file, laps preserving distance ------
+        var resolvedRounds = new List<ResolvedRound>();
         foreach (var race in races)
         {
             if (!cfg.Tracks.TryGetValue(race.GpId, out var binding))
                 throw new InvalidOperationException($"no track binding authored for grand prix '{race.GpId}'");
-            foreach (var id in binding.Fallbacks.Prepend(binding.TrackId))
-                if (!library.TrackMaxAi.ContainsKey(id))
-                    throw new InvalidOperationException($"track id '{id}' (round {race.Round}) not in tracks.json");
-            if (binding.Note.Length > 0)
-                report.SubstitutedVenues.Add($"round {race.Round} {race.GpName}: {binding.TrackId} — {binding.Note}");
+            resolvedRounds.Add(ResolveRound(cfg, race, binding, library, placeholderVenues, report));
         }
+
+        // -- carry per-track AI override entries into round aiOverrides -------------------------
+        var aiOverridesByRound = cfg.CarryPerTrackOverrides
+            ? CarryPerTrackOverrides(cfg, customAiDir, library, resolvedRounds, entriesOut, report, manifestNotes)
+            : new Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>>();
+
+        manifestNotes.AddRange(cfg.ExtraNotes);
 
         // -- emit ------------------------------------------------------------------------------
         string packDir = Path.Combine(outDir, cfg.PackId);
         Directory.CreateDirectory(packDir);
 
-        WriteJson(Path.Combine(packDir, "pack.json"), BuildPackJson(cfg));
-        WriteJson(Path.Combine(packDir, "season.json"), BuildSeasonJson(cfg, races, pointsSystem, entriesOut, library));
+        WriteJson(Path.Combine(packDir, "pack.json"), BuildPackJson(cfg, manifestNotes));
+        WriteJson(Path.Combine(packDir, "season.json"),
+            BuildSeasonJson(cfg, resolvedRounds, pointsSystem, entriesOut, library, aiOverridesByRound));
         WriteJson(Path.Combine(packDir, "teams.json"), BuildTeamsJson(cfg, teams));
         WriteJson(Path.Combine(packDir, "drivers.json"), BuildDriversJson(driversOut));
         WriteJson(Path.Combine(packDir, "entries.json"), BuildEntriesJson(entriesOut));
@@ -597,40 +829,187 @@ internal static class PackBuilder
         return report;
     }
 
+    // -- v1.1 round resolution: real venues, placeholder stand-ins, distance-preserving laps ----
+
+    private static ResolvedRound ResolveRound(
+        SeasonConfig cfg, RaceRow race, TrackBinding binding,
+        ContentLibrary library, PlaceholderVenues placeholderVenues, PackReport report)
+    {
+        string realVenue = race.CircuitFullName;
+
+        if (!binding.IsPlaceholder)
+        {
+            // The AMS2 track IS the venue (possibly an era-different layout, possibly under a
+            // fantasy name): keep the historical lap count — the venue is real, the layout evolved.
+            if (binding.TrackId is null)
+                throw new InvalidOperationException($"non-placeholder binding for '{race.GpId}' names no track id");
+            foreach (var id in binding.Fallbacks.Prepend(binding.TrackId))
+                if (!library.TrackMaxAi.ContainsKey(id))
+                    throw new InvalidOperationException($"track id '{id}' (round {race.Round}) not in tracks.json");
+            if (binding.Note.Length > 0)
+                report.SubstitutedVenues.Add($"round {race.Round} {race.GpName}: {binding.TrackId} — {binding.Note}");
+            return new ResolvedRound(race, binding.TrackId, binding.Fallbacks, false, realVenue, race.Laps, binding.Note);
+        }
+
+        // Placeholder: the venue does not exist in AMS2 at all. Stand-in comes from the curated
+        // file (first suggestion in the track library; the rest become fallbacks) and laps are
+        // recomputed so the REAL race distance is preserved at the stand-in's lap length.
+        var suggestions = placeholderVenues.SuggestionsFor(race.CircuitId, cfg.Year);
+        var present = suggestions.Where(library.TrackMaxAi.ContainsKey).ToArray();
+        if (present.Length == 0)
+            throw new InvalidOperationException(
+                $"no placeholder suggestion for circuit '{race.CircuitId}' (round {race.Round}) exists in the track library");
+        string trackId = present[0];
+
+        double distanceKm = race.DistanceKm
+            ?? race.Laps * (race.CourseLengthKm
+                ?? throw new InvalidOperationException(
+                    $"f1db has neither distance nor course_length for round {race.Round} ({race.GpName})"));
+        int lengthMeters = library.TrackLengthMeters[trackId];
+        if (lengthMeters <= 0)
+            throw new InvalidOperationException($"track '{trackId}' has no lengthMeters in tracks.json");
+        int laps = Math.Max(1, (int)Math.Round(distanceKm * 1000.0 / lengthMeters, MidpointRounding.AwayFromZero));
+
+        string display = library.TrackDisplayName(trackId);
+        string kmText = distanceKm.ToString("0.#", CultureInfo.InvariantCulture);
+        string note = $"Placeholder for {realVenue} — {race.Laps} laps / {kmText} km reproduced as {laps} laps of {display}.";
+        if (binding.Note.Length > 0) note += " " + binding.Note;
+
+        report.PlaceholderRounds.Add(
+            $"round {race.Round} {race.GpName}: {realVenue} -> {trackId} ({race.Laps} laps / {kmText} km -> {laps} laps)");
+        return new ResolvedRound(race, trackId, present.Skip(1).ToArray(), true, realVenue, laps, note);
+    }
+
+    // -- per-track AI override carry-over (round-1 finding: jusk's tracks="..." entries) --------
+
+    private static Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>> CarryPerTrackOverrides(
+        SeasonConfig cfg, string customAiDir, ContentLibrary library,
+        List<ResolvedRound> rounds,
+        List<(string TeamId, string DriverId, string Number, SortedSet<int> Rounds, string Livery)> entries,
+        PackReport report, List<string> manifestNotes)
+    {
+        var result = new Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>>();
+
+        var driverByLivery = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var e in entries) driverByLivery.TryAdd(e.Livery, e.DriverId);
+
+        // Primary track id -> round numbers driving it (a season could visit a layout twice).
+        var roundsByTrackId = new Dictionary<string, List<int>>(StringComparer.Ordinal);
+        var roundsByGpId = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var r in rounds)
+        {
+            if (!roundsByTrackId.TryGetValue(r.TrackId, out var list)) roundsByTrackId[r.TrackId] = list = [];
+            list.Add(r.Race.Round);
+            roundsByGpId[r.Race.GpId] = r.Race.Round;
+        }
+
+        foreach (var ov in AiXml.ParsePerTrackOverrides(Path.Combine(customAiDir, cfg.AiXmlFileName)))
+        {
+            if (!driverByLivery.TryGetValue(ov.LiveryName, out var driverId))
+            {
+                report.Warnings.Add(
+                    $"per-track override for livery '{ov.LiveryName}' matches no pack entry — skipped");
+                continue;
+            }
+            if (ov.DroppedFields.Count > 0)
+                manifestNotes.Add(
+                    $"aiOverrides: field(s) {string.Join(", ", ov.DroppedFields)} from the source XML's per-track entry for '{ov.LiveryName}' are not in the pack patch vocabulary and were dropped.");
+            if (ov.Ratings.Count == 0)
+                continue;
+
+            var targetRounds = new SortedSet<int>();
+            foreach (var trackName in ov.Tracks)
+            {
+                if (!library.TrackIdByName.TryGetValue(trackName.ToLowerInvariant(), out var trackId))
+                {
+                    report.Warnings.Add(
+                        $"per-track override for '{ov.LiveryName}': track '{trackName}' is not in the track library — skipped");
+                    continue;
+                }
+                if (roundsByTrackId.TryGetValue(trackId, out var direct))
+                    targetRounds.UnionWith(direct);
+                else if (cfg.OverrideTrackAliases.TryGetValue(trackId, out var gpId)
+                         && roundsByGpId.TryGetValue(gpId, out int aliased))
+                    targetRounds.Add(aliased);
+                else
+                    report.Warnings.Add(
+                        $"per-track override for '{ov.LiveryName}': track '{trackName}' ({trackId}) matches no calendar round — skipped");
+            }
+
+            foreach (int round in targetRounds)
+            {
+                if (!result.TryGetValue(round, out var byDriver))
+                    result[round] = byDriver = new SortedDictionary<string, List<KeyValuePair<string, double>>>(StringComparer.Ordinal);
+                if (!byDriver.TryGetValue(driverId, out var patch))
+                    byDriver[driverId] = patch = [];
+                foreach (var kv in ov.Ratings)
+                {
+                    int existing = patch.FindIndex(p => p.Key == kv.Key);
+                    if (existing < 0) { patch.Add(kv); continue; }
+                    if (Math.Abs(patch[existing].Value - kv.Value) > 1e-9)
+                        report.Warnings.Add(
+                            $"per-track override conflict for '{ov.LiveryName}' round {round} {kv.Key}: " +
+                            $"{patch[existing].Value} vs {kv.Value} — the later XML entry wins");
+                    patch[existing] = kv;
+                }
+            }
+        }
+
+        return result;
+    }
+
     // -- json shapes (contract: docs/dev/season-pack-format.md) --------------------------------
 
-    private static JsonObject BuildPackJson(SeasonConfig cfg) => new()
+    private static JsonObject BuildPackJson(SeasonConfig cfg, List<string> notes)
     {
-        ["packId"] = cfg.PackId,
-        ["name"] = cfg.PackName,
-        ["version"] = "1.0.0",
-        ["formatVersion"] = 1,
-        ["gameVersionTested"] = "1.6.9.82",
-        ["license"] = "CC BY 4.0",
-        ["attribution"] = new JsonArray(cfg.Attribution.Select(a => (JsonNode)a).ToArray()),
-        ["requires"] = new JsonObject
+        var pack = new JsonObject
         {
-            ["dlc"] = new JsonArray(),
-            ["skinPacks"] = new JsonArray(new JsonObject
+            ["packId"] = cfg.PackId,
+            ["name"] = cfg.PackName,
+            ["version"] = "1.1.0",
+            ["formatVersion"] = 1,
+            ["gameVersionTested"] = "1.6.9.82",
+            ["license"] = "CC BY 4.0",
+            ["attribution"] = new JsonArray(cfg.Attribution.Select(a => (JsonNode)a).ToArray()),
+            ["requires"] = new JsonObject
             {
-                ["name"] = cfg.SkinPackName,
-                ["overridesFolder"] = cfg.OverridesFolder,
-            }),
-        },
-    };
+                ["dlc"] = new JsonArray(),
+                ["skinPacks"] = new JsonArray(new JsonObject
+                {
+                    ["name"] = cfg.SkinPackName,
+                    ["overridesFolder"] = cfg.OverridesFolder,
+                }),
+            },
+        };
+        if (notes.Count > 0)
+            pack["notes"] = new JsonArray(notes.Select(n => (JsonNode)n).ToArray());
+        return pack;
+    }
 
     private static JsonObject BuildSeasonJson(
-        SeasonConfig cfg, List<RaceRow> races, JsonNode pointsSystem,
+        SeasonConfig cfg, List<ResolvedRound> rounds, JsonNode pointsSystem,
         List<(string TeamId, string DriverId, string Number, SortedSet<int> Rounds, string Livery)> entries,
-        ContentLibrary library)
+        ContentLibrary library,
+        Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>> aiOverridesByRound)
     {
         var roundsArr = new JsonArray();
-        foreach (var race in races)
+        foreach (var round in rounds)
         {
-            var binding = cfg.Tracks[race.GpId];
+            var race = round.Race;
             int entryCount = entries.Count(e => e.Rounds.Contains(race.Round));
             // Contract: setupGuide.session.opponents + 1 (player) must fit the venue AI cap.
-            int opponents = Math.Min(entryCount, library.TrackMaxAi[binding.TrackId] - 1);
+            int opponents = Math.Min(entryCount, library.TrackMaxAi[round.TrackId] - 1);
+
+            var aiOverrides = new JsonObject();
+            if (aiOverridesByRound.TryGetValue(race.Round, out var byDriver))
+            {
+                foreach (var (driverId, patch) in byDriver)
+                {
+                    var patchObj = new JsonObject();
+                    foreach (var kv in patch) patchObj[kv.Key] = kv.Value;
+                    aiOverrides[driverId] = patchObj;
+                }
+            }
 
             roundsArr.Add(new JsonObject
             {
@@ -640,10 +1019,12 @@ internal static class PackBuilder
                 ["championship"] = true,
                 ["track"] = new JsonObject
                 {
-                    ["id"] = binding.TrackId,
-                    ["fallbacks"] = new JsonArray(binding.Fallbacks.Select(f => (JsonNode)f).ToArray()),
+                    ["realVenue"] = round.RealVenue,
+                    ["id"] = round.TrackId,
+                    ["isPlaceholder"] = round.IsPlaceholder,
+                    ["fallbacks"] = new JsonArray(round.Fallbacks.Select(f => (JsonNode)f).ToArray()),
                 },
-                ["laps"] = race.Laps,
+                ["laps"] = round.Laps,
                 ["setupGuide"] = new JsonObject
                 {
                     ["session"] = new JsonObject
@@ -655,10 +1036,10 @@ internal static class PackBuilder
                         ["timeProgression"] = "1x",
                         ["mandatoryPitStop"] = false,
                     },
-                    ["notes"] = binding.Note,
+                    ["notes"] = round.Note,
                 },
                 ["guestEntries"] = new JsonArray(),
-                ["aiOverrides"] = new JsonObject(),
+                ["aiOverrides"] = aiOverrides,
             });
         }
 

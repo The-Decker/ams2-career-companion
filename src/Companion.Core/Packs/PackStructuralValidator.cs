@@ -128,6 +128,13 @@ public static class PackStructuralValidator
                 issues.Add(Error(
                     $"Round {round.Round} ({round.Name}) has laps={round.Laps}; every round needs at least 1 lap."));
 
+            // v1.1 placeholder venues (locked decision #6): the historical identity must
+            // survive the substitution.
+            if (round.Track.IsPlaceholder && string.IsNullOrWhiteSpace(round.Track.RealVenue))
+                issues.Add(Error(
+                    $"Round {round.Round} ({round.Name}) uses a placeholder track but names no realVenue — " +
+                    "the historical venue must stay on record."));
+
             if (round.SetupGuide is null)
             {
                 issues.Add(round.Championship

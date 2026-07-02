@@ -1,4 +1,4 @@
-# Season pack format v1 (M2 contract — draft)
+# Season pack format v1.1 (M2 contract)
 
 A season pack is a plain JSON folder (Notepad-editable, zip-shareable) under
 `Documents\AMS2CareerCompanion\Packs\<packId>\`. Validated against a bundled JSON Schema on
@@ -43,8 +43,12 @@ Locked product decisions this format encodes:
         "overridesFolder": "F1_Season_1967"     // folder name under CustomLiveries\Overrides\<vehicle>\
       }
     ]
-  }
-}
+  },
+  "notes": [                                    // OPTIONAL (v1.1, additive): pack-level free text —
+    "Coverage: f1db 1967 entrant ... has no livery in the referenced skinpack and is not included.",
+    "Authored correction: Pierluigi Martini country 'SWE' -> 'ITA' — ..."
+  ]                                             // entrant-coverage caveats, authored data corrections,
+}                                               // and mapping notes that belong to the pack, not a round
 ```
 
 ## season.json
@@ -64,10 +68,12 @@ Locked product decisions this format encodes:
       "date": "1967-01-02",
       "championship": true,                     // false = non-championship event
       "track": {
-        "id": "kyalami_historic",               // internal id from data/ams2/tracks.json
-        "fallbacks": ["kyalami_2020"]           // when the venue/era layout is missing
+        "realVenue": "Kyalami Racing Circuit",  // v1.1: historical venue, ALWAYS present (display + records)
+        "id": "kyalami_historic",               // internal id from data/ams2/tracks.json — the track driven
+        "isPlaceholder": false,                 // v1.1: true when the real venue does not exist in AMS2
+        "fallbacks": ["kyalami_2019"]           // alternates when `id` itself is missing locally (DLC)
       },
-      "laps": 80,                               // 100% historical race distance
+      "laps": 80,                               // 100% historical race distance (see v1.1 for placeholders)
       "setupGuide": {
         "session": {                            // exact in-game custom-race settings
           "opponents": 17,                      // grid minus player; preflight checks vs track AI cap
@@ -116,30 +122,45 @@ Locked product decisions this format encodes:
 } ] }
 ```
 
-## v1.1 addendum — placeholder venues (locked decision #6, applies after the initial M2 build)
+## v1.1 — placeholder venues (locked decision #6, IMPLEMENTED)
 
-The `track` block and `laps` rule are extended for venues that do not exist in AMS2:
+Implemented in the DTOs (`PackTrackRef.RealVenue`/`IsPlaceholder`), the structural validator,
+Companion.PackGen, and both reference packs. The `track` block and `laps` rule are extended for
+venues that do not exist in AMS2:
 
 ```jsonc
 "track": {
   "realVenue": "Circuit Park Zandvoort",  // historical venue, ALWAYS present (display + records)
-  "id": "silverstone_1975",               // the AMS2 track actually driven
+  "id": "spielberg_vintage",              // the AMS2 track actually driven (the stand-in)
   "isPlaceholder": true,                  // true when the real venue is not in AMS2
-  "fallbacks": []                         // alternates when `id` itself is missing locally (DLC not owned)
+  "fallbacks": ["spielberg_historic"]     // alternates when `id` itself is missing locally (DLC not owned)
 },
-"laps": 64,   // placeholder rounds: laps = round(historical race distance km / placeholder lap km)
+"laps": 64,   // placeholder rounds: laps = round(historical race distance / placeholder lap length), min 1
               // — the 100%-distance rule preserves DISTANCE, not the historical lap count
 ```
 
-- Non-placeholder rounds: `realVenue` = the venue's historical name, `isPlaceholder` false,
-  `laps` = the historical lap count (unchanged from v1).
+- Non-placeholder rounds: `realVenue` = the venue's historical name (the f1db circuit full
+  name), `isPlaceholder` false, `laps` = the historical lap count (unchanged from v1). This
+  INCLUDES era-different layouts of the real venue (silverstone_1991 for 1988,
+  watkins_glen_1971_short for 1967, kansai_gp for Suzuka, azure_circuit_88 for Monaco): the
+  venue is real — only the layout evolved — so the historical lap count stays.
+- `isPlaceholder: true` only when the venue does not exist in AMS2 in any era/fantasy-name
+  guise (1967 Zandvoort & Mexico City; 1988 Mexico City, Detroit, Paul Ricard). Stand-in
+  selection is curated in `data/rules/placeholder-venues.json` (single source of truth: first
+  suggestion present in the track library wins; `eraOverrides` re-rank per season era; the
+  remaining present suggestions become the round's `fallbacks`).
 - The round's name, date, and records always show the real venue; the briefing and standings
-  label the substitution ("Dutch Grand Prix — placeholder: Silverstone 1975").
-- `setupGuide.session.laps` follows the recomputed value; `setupGuide.notes` should state the
-  real venue and distance being reproduced.
-- Validation: placeholder rounds must have `realVenue` and `isPlaceholder: true`; the
-  historical distance derivation goes in the generator (f1db race distance ÷ placeholder
-  `lengthMeters` from the track library).
+  label the substitution ("Dutch Grand Prix — placeholder: Spielberg Vintage").
+- The session block has no laps field — the round's recomputed `laps` is authoritative for the
+  in-game session; `setupGuide.notes` MUST state the real venue and the distance being
+  reproduced, e.g. "Placeholder for Circuit Park Zandvoort — 90 laps / 377.4 km reproduced as
+  64 laps of Spielberg Vintage."
+- Validation: placeholder rounds must have `realVenue` and `isPlaceholder: true`
+  (`PackStructuralValidator` errors otherwise); the historical distance derivation lives in the
+  generator (f1db `race.distance`, in km — else historical laps × f1db circuit length — ÷ the
+  placeholder's `lengthMeters` from the track library).
+- `pack.json` gains an OPTIONAL `notes: string[]` (additive): entrant-coverage caveats,
+  authored data corrections, per-track override mapping notes.
 
 ## Validation on import
 

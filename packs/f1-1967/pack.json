@@ -1,7 +1,7 @@
 {
   "packId": "f1-1967",
   "name": "Formula One 1967",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "formatVersion": 1,
   "gameVersionTested": "1.6.9.82",
   "license": "CC BY 4.0",
@@ -17,5 +17,43 @@
         "overridesFolder": "F1_Season_1967"
       }
     ]
-  }
+  },
+  "notes": [
+    "Coverage: f1db 1967 entrant Bruce McLaren (eagle+weslake, rounds 5-7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Ludovico Scarfiotti (eagle+weslake, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant David Hobbs (brm+brm, rounds 6,8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Al Pease (eagle+climax, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Silvio Moser (cooper+ats, rounds 6) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Alan Rees (cooper+maserati, rounds 6) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Richard Attwood (cooper+maserati, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Jacky Ickx (cooper+maserati, rounds 9-10) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Brian Redman (lola+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Bob Anderson (brabham+climax, rounds 1-6) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Jo Schlesser (matra+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Gerhard Mitter (brabham+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Guy Ligier (cooper+maserati, rounds 4-5) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Jo Bonnier (cooper+maserati, rounds 1,4,6-11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant John Love (cooper+climax, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant David Hobbs (lola+bmw, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Luki Botha (brabham+climax, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Johnny Servoz-Gavin (matra+ford, rounds 2) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Mike Fisher (lotus+brm, rounds 8,11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Piers Courage (lotus+brm, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Chris Irwin (lotus+brm, rounds 3) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Piers Courage (brm+brm, rounds 2,6) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Chris Irwin (brm+brm, rounds 4-11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Brian Hart (protos+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Kurt Ahrens, Jr. (protos+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Alan Rees (brabham+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Sam Tingle (lds+climax, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Mike Parkes (ferrari+ferrari, rounds 3-4) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Jonathan Williams (ferrari+ferrari, rounds 11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Dave Charlton (brabham+climax, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Jackie Oliver (lotus+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Eppie Wietzes (lotus+ford, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Giancarlo Baghetti (lotus+ford, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Moisés Solana (lotus+ford, rounds 10-11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1967 entrant Tom Jones (cooper+climax, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. Entries authored against layouts this calendar does not drive (Azure_Circuit_2021, Watkins_Glen_S, Spa_Francorchamps_1993, Nordschleife_2020/_24hr) are mapped to the calendar round at the same venue (Monaco, Watkins Glen, Spa, Nurburgring)."
+  ]
 }

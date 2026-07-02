@@ -25,6 +25,11 @@ public sealed record PackManifest
     public IReadOnlyList<string> Attribution { get; init; } = [];
 
     public PackRequirements Requires { get; init; } = new();
+
+    /// <summary>Author/generator free-text notes (v1.1, optional, additive): entrant-coverage
+    /// caveats, authored data corrections, and mapping notes that belong to the pack as a whole
+    /// rather than a single round. Absent in v1 packs.</summary>
+    public IReadOnlyList<string> Notes { get; init; } = [];
 }
 
 public sealed record PackRequirements

@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Companion.Ams2.ContentLibrary;
 using Companion.Ams2.Packs;
 using Companion.Ams2.Preflight;
@@ -145,6 +147,82 @@ public class ReferencePackTests
         foreach (var trackId in trackIds)
         {
             Assert.DoesNotContain(errorMessages, m => m.Contains($"'{trackId}'"));
+        }
+    }
+
+    // ---------- v1.1: real venues + placeholder distance preservation ----------
+
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_EveryRoundNamesItsRealVenue(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        foreach (var round in pack.Season.Rounds)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(round.Track.RealVenue),
+                $"{packId} round {round.Round} ({round.Name}) has no track.realVenue — " +
+                "v1.1 keeps the historical venue on record for every round.");
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_PlaceholderNotesNameTheRealVenue(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        var placeholders = pack.Season.Rounds.Where(r => r.Track.IsPlaceholder).ToList();
+        // Both reference packs substitute venues AMS2 does not have (1967: Zandvoort, Mexico
+        // City; 1988: Mexico City, Detroit, Paul Ricard) — no placeholders means the flag broke.
+        Assert.NotEmpty(placeholders);
+
+        foreach (var round in placeholders)
+        {
+            string? notes = round.SetupGuide?.Notes;
+            Assert.False(string.IsNullOrWhiteSpace(notes),
+                $"{packId} round {round.Round} ({round.Name}) is a placeholder but has no setupGuide notes.");
+            Assert.Contains(round.Track.RealVenue!, notes, StringComparison.Ordinal);
+        }
+    }
+
+    /// <summary>Placeholder rounds preserve the REAL race distance, not the historical lap
+    /// count: laps must equal round(historical distance / stand-in lap length) as stated in the
+    /// notes, and must differ from the historical lap count unless the math genuinely lands
+    /// there (1988 Mexico on Interlagos 1991: 67 -> 68 laps, near-identical lap lengths).</summary>
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_PlaceholderLapsPreserveTheHistoricalDistance(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        foreach (var round in pack.Season.Rounds.Where(r => r.Track.IsPlaceholder))
+        {
+            string notes = round.SetupGuide?.Notes ?? "";
+            var match = Regex.Match(notes,
+                @"(?<hist>\d+) laps / (?<km>\d+(?:\.\d+)?) km reproduced as (?<laps>\d+) laps");
+            Assert.True(match.Success,
+                $"{packId} round {round.Round} ({round.Name}): placeholder notes must state " +
+                $"'<historical> laps / <km> km reproduced as <laps> laps' — got: \"{notes}\"");
+
+            int historicalLaps = int.Parse(match.Groups["hist"].Value, CultureInfo.InvariantCulture);
+            double distanceKm = double.Parse(match.Groups["km"].Value, CultureInfo.InvariantCulture);
+            int statedLaps = int.Parse(match.Groups["laps"].Value, CultureInfo.InvariantCulture);
+
+            Assert.True(round.Laps == statedLaps,
+                $"{packId} round {round.Round}: laps={round.Laps} but the notes claim {statedLaps}.");
+
+            var track = Library.Value.Tracks[round.Track.Id];
+            int expected = Math.Max(1, (int)Math.Round(
+                distanceKm * 1000.0 / track.LengthMeters, MidpointRounding.AwayFromZero));
+            Assert.True(expected == round.Laps,
+                $"{packId} round {round.Round}: {distanceKm} km over {track.Id} " +
+                $"({track.LengthMeters} m) is {expected} laps, but the round has {round.Laps}.");
+
+            Assert.True(round.Laps != historicalLaps || expected == historicalLaps,
+                $"{packId} round {round.Round}: placeholder laps equal the historical lap count " +
+                $"({historicalLaps}) but the distance math gives {expected} — the historical " +
+                "count was copied instead of recomputed.");
         }
     }
 
