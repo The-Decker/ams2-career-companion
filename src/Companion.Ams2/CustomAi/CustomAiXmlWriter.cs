@@ -23,8 +23,12 @@ public static class CustomAiXmlWriter
             Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
         };
 
-        var builder = new StringBuilder();
-        using (var writer = XmlWriter.Create(builder, settings))
+        // A plain StringBuilder writer would make XmlWriter declare encoding="utf-16" (strings
+        // are UTF-16) while WriteToDirectory saves UTF-8 bytes — a lying declaration that
+        // strict parsers reject ("no Unicode byte order mark"). Utf8StringWriter keeps the
+        // declaration truthful: the file IS UTF-8.
+        var stringWriter = new Utf8StringWriter();
+        using (var writer = XmlWriter.Create(stringWriter, settings))
         {
             writer.WriteStartDocument();
             if (file.HeaderComment is { Length: > 0 } comment)
@@ -38,7 +42,14 @@ public static class CustomAiXmlWriter
             writer.WriteEndDocument();
         }
 
-        return builder.ToString();
+        return stringWriter.ToString();
+    }
+
+    /// <summary>StringWriter that reports UTF-8 so the XML declaration matches the encoding
+    /// the file is actually saved with.</summary>
+    private sealed class Utf8StringWriter : StringWriter
+    {
+        public override Encoding Encoding { get; } = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
     }
 
     public static void WriteToDirectory(CustomAiFile file, string customAiDriversDirectory)

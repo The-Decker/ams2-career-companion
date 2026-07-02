@@ -26,7 +26,9 @@ public sealed record PackDriver
         new Dictionary<string, double>();
 }
 
-/// <summary>Driver ratings in the AMS2 custom-AI vocabulary verbatim, each 0.0–1.0.</summary>
+/// <summary>Driver ratings in the AMS2 custom-AI vocabulary verbatim, each 0.0–1.0.
+/// The last four are optional: not every era/pack authors them (fuelManagement matters on
+/// ovals; the others default to the stock driver's values when omitted).</summary>
 public sealed record PackDriverRatings
 {
     public required double RaceSkill { get; init; }
@@ -39,8 +41,13 @@ public sealed record PackDriverRatings
     public required double WetSkill { get; init; }
     public required double TyreManagement { get; init; }
     public required double AvoidanceOfMistakes { get; init; }
+    public double? BlueFlagConceding { get; init; }
+    public double? WeatherTyreChanges { get; init; }
+    public double? AvoidanceOfForcedMistakes { get; init; }
+    public double? FuelManagement { get; init; }
 
-    /// <summary>Every rating with its camelCase JSON name, for range validation and mapping.</summary>
+    /// <summary>Every authored rating with its camelCase JSON name, for range validation and
+    /// mapping (optional ratings appear only when set).</summary>
     public IEnumerable<(string Name, double Value)> Enumerate()
     {
         yield return ("raceSkill", RaceSkill);
@@ -53,6 +60,10 @@ public sealed record PackDriverRatings
         yield return ("wetSkill", WetSkill);
         yield return ("tyreManagement", TyreManagement);
         yield return ("avoidanceOfMistakes", AvoidanceOfMistakes);
+        if (BlueFlagConceding is { } blueFlagConceding) yield return ("blueFlagConceding", blueFlagConceding);
+        if (WeatherTyreChanges is { } weatherTyreChanges) yield return ("weatherTyreChanges", weatherTyreChanges);
+        if (AvoidanceOfForcedMistakes is { } avoidanceOfForcedMistakes) yield return ("avoidanceOfForcedMistakes", avoidanceOfForcedMistakes);
+        if (FuelManagement is { } fuelManagement) yield return ("fuelManagement", fuelManagement);
     }
 }
 
@@ -69,6 +80,10 @@ public sealed record PackRatingsPatch
     public double? WetSkill { get; init; }
     public double? TyreManagement { get; init; }
     public double? AvoidanceOfMistakes { get; init; }
+    public double? BlueFlagConceding { get; init; }
+    public double? WeatherTyreChanges { get; init; }
+    public double? AvoidanceOfForcedMistakes { get; init; }
+    public double? FuelManagement { get; init; }
 
     /// <summary>Only the ratings the patch actually sets, with their camelCase JSON names.</summary>
     public IEnumerable<(string Name, double Value)> Enumerate()
@@ -83,5 +98,9 @@ public sealed record PackRatingsPatch
         if (WetSkill is { } wetSkill) yield return ("wetSkill", wetSkill);
         if (TyreManagement is { } tyreManagement) yield return ("tyreManagement", tyreManagement);
         if (AvoidanceOfMistakes is { } avoidanceOfMistakes) yield return ("avoidanceOfMistakes", avoidanceOfMistakes);
+        if (BlueFlagConceding is { } blueFlagConceding) yield return ("blueFlagConceding", blueFlagConceding);
+        if (WeatherTyreChanges is { } weatherTyreChanges) yield return ("weatherTyreChanges", weatherTyreChanges);
+        if (AvoidanceOfForcedMistakes is { } avoidanceOfForcedMistakes) yield return ("avoidanceOfForcedMistakes", avoidanceOfForcedMistakes);
+        if (FuelManagement is { } fuelManagement) yield return ("fuelManagement", fuelManagement);
     }
 }
