@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Companion.Core\Companion.Core.csproj" />
     <ProjectReference Include="..\Companion.Data\Companion.Data.csproj" />
     <ProjectReference Include="..\Companion.Ams2\Companion.Ams2.csproj" />
+    <ProjectReference Include="..\Companion.ViewModels\Companion.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
