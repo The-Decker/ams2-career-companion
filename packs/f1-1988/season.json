@@ -1,0 +1,445 @@
+{
+  "year": 1988,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Classic_Gen2",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "wholeSeason": 11
+    },
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "Brazilian Grand Prix",
+      "date": "1988-04-03",
+      "championship": true,
+      "track": {
+        "id": "jacarepagua_historic",
+        "fallbacks": []
+      },
+      "laps": 60,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-04-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "San Marino Grand Prix",
+      "date": "1988-05-01",
+      "championship": true,
+      "track": {
+        "id": "imola_88",
+        "fallbacks": []
+      },
+      "laps": 60,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1988-05-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "Monaco Grand Prix",
+      "date": "1988-05-15",
+      "championship": true,
+      "track": {
+        "id": "azure_circuit_88",
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1988-05-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Mexican Grand Prix",
+      "date": "1988-05-29",
+      "championship": true,
+      "track": {
+        "id": "interlagos_1991",
+        "fallbacks": []
+      },
+      "laps": 67,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-05-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Mexico City (Hermanos Rodriguez) is not available in AMS2; Interlagos 1991 stands in as a period Latin-American venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "Canadian Grand Prix",
+      "date": "1988-06-12",
+      "championship": true,
+      "track": {
+        "id": "montrealhistoric",
+        "fallbacks": []
+      },
+      "laps": 69,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-06-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "Detroit Grand Prix",
+      "date": "1988-06-19",
+      "championship": true,
+      "track": {
+        "id": "long_beach",
+        "fallbacks": []
+      },
+      "laps": 63,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-06-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The Detroit street circuit is not available in AMS2; Long Beach stands in as the era's US street-circuit substitute."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "French Grand Prix",
+      "date": "1988-07-03",
+      "championship": true,
+      "track": {
+        "id": "le_mans_bugatti",
+        "fallbacks": []
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-07-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Paul Ricard is not available in AMS2; Le Mans Bugatti stands in as the French venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "British Grand Prix",
+      "date": "1988-07-10",
+      "championship": true,
+      "track": {
+        "id": "silverstone_1991",
+        "fallbacks": [
+          "silverstone_1975"
+        ]
+      },
+      "laps": 65,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-07-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1988 Silverstone layout in AMS2; the 1991 layout is used (Silverstone 1975 with chicane is the era-closest alternative)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "German Grand Prix",
+      "date": "1988-07-24",
+      "championship": true,
+      "track": {
+        "id": "hockenheim_1988",
+        "fallbacks": []
+      },
+      "laps": 44,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-07-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "Hungarian Grand Prix",
+      "date": "1988-08-07",
+      "championship": true,
+      "track": {
+        "id": "hungaroring_gp_2025",
+        "fallbacks": []
+      },
+      "laps": 76,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-08-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the layout is largely unchanged in character since 1986."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Belgian Grand Prix",
+      "date": "1988-08-28",
+      "championship": true,
+      "track": {
+        "id": "spa-francorchamps_1993",
+        "fallbacks": []
+      },
+      "laps": 43,
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1988-08-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1988 Spa layout in AMS2; the 1993 layout is the closest era."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "name": "Italian Grand Prix",
+      "date": "1988-09-11",
+      "championship": true,
+      "track": {
+        "id": "monza_1991",
+        "fallbacks": []
+      },
+      "laps": 51,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-09-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1988 Monza in AMS2; the 1991 layout matches the era."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "name": "Portuguese Grand Prix",
+      "date": "1988-09-25",
+      "championship": true,
+      "track": {
+        "id": "estoril_1988",
+        "fallbacks": []
+      },
+      "laps": 70,
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1988-09-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "name": "Spanish Grand Prix",
+      "date": "1988-10-02",
+      "championship": true,
+      "track": {
+        "id": "jerez_1988",
+        "fallbacks": []
+      },
+      "laps": 72,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-10-02",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "name": "Japanese Grand Prix",
+      "date": "1988-10-30",
+      "championship": true,
+      "track": {
+        "id": "kansai_gp",
+        "fallbacks": []
+      },
+      "laps": 51,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1988-10-30",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Suzuka appears in AMS2 as Kansai; the modern GP layout stands in for 1988."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "name": "Australian Grand Prix",
+      "date": "1988-11-13",
+      "championship": true,
+      "track": {
+        "id": "adelaide_historic",
+        "fallbacks": []
+      },
+      "laps": 82,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1988-11-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

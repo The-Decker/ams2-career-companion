@@ -88,11 +88,39 @@ public sealed class Ams2ContentLibrary
             // Class and livery names are case-SENSITIVE: the game matches CustomAIDrivers
             // filenames and livery_name attributes exactly, so the library must too.
             Classes = classes.Classes.ToDictionary(c => c.XmlName, StringComparer.Ordinal),
-            Vehicles = vehicles.Vehicles.ToDictionary(v => v.Id, StringComparer.Ordinal),
+            Vehicles = DeduplicateVehicles(vehicles.Vehicles),
             Tracks = tracks.Tracks.ToDictionary(t => t.Id, StringComparer.Ordinal),
             Liveries = liveries.Classes.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal),
             ExtractedFrom = classes.ExtractedFrom ?? "unknown",
         };
+    }
+
+    /// <summary>
+    /// The install genuinely ships duplicate .crd basenames (stock_corolla_23.crd exists in both
+    /// Vehicles\stock_corolla\ and Vehicles\stock_corolla_23\), so an extracted vehicles.json may
+    /// carry duplicate ids. Resolve deterministically instead of throwing: the entry whose dir
+    /// matches its id wins (the canonical copy — same rule as Companion.ContentExtract); with no
+    /// dir-named entry, the first occurrence wins.
+    /// </summary>
+    private static Dictionary<string, Ams2Vehicle> DeduplicateVehicles(IReadOnlyList<Ams2Vehicle> vehicles)
+    {
+        var byId = new Dictionary<string, Ams2Vehicle>(vehicles.Count, StringComparer.Ordinal);
+        foreach (var vehicle in vehicles)
+        {
+            if (!byId.TryGetValue(vehicle.Id, out var kept))
+            {
+                byId.Add(vehicle.Id, vehicle);
+            }
+            else if (IsDirNamed(vehicle) && !IsDirNamed(kept))
+            {
+                byId[vehicle.Id] = vehicle;
+            }
+        }
+        return byId;
+
+        // Paths on the (Windows) install are case-insensitive, unlike the game's class names.
+        static bool IsDirNamed(Ams2Vehicle v) =>
+            string.Equals(v.Dir, v.Id, StringComparison.OrdinalIgnoreCase);
     }
 
     private static T ReadFile<T>(string path)

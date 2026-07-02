@@ -23,7 +23,10 @@ Four product decisions are locked (see HANDOFF.md) — do not re-litigate them.
   library (`data/ams2/*.json`, extracted from the local install), preflight validation.
 - `src/Companion.App` — WPF shell (MVVM, CommunityToolkit.Mvvm).
 - `data/ams2/` — machine-extracted content libraries (classes/vehicles/tracks/liveries) with
-  provenance; refreshable data, never compiled in.
+  provenance; refreshable data, never compiled in. Regenerate vehicles.json + classes.json with
+  `dotnet run --project tools/Companion.ContentExtract -- "<AMS2 install>" data/ams2` — it parses
+  every `Vehicles\*\*.crd` and resolves the install's genuine duplicate .crd basenames (the
+  dir-named copy wins; `Ams2ContentLibrary.Load` applies the same rule as a backstop).
 
 ## Machine specifics (Mike's desktop)
 

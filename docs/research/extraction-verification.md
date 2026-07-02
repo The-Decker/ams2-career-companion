@@ -171,3 +171,19 @@ F-Ultimate_Gen2_RET, F-USA_2022, Group 5, Group 7, GT3N, GT4N, GTO, LMP3, Mclare
 SST); stock livery names for them need in-game extraction (-showLiveryIDs) or a newer community
 library. Runtime preflight scans installed override XMLs regardless, so generated grids for
 skinpack-based seasons are unaffected.
+
+## Addendum 2 (2026-07-02, duplicate ids + committed pipeline)
+
+The all-crd re-extraction of Addendum 1 introduced **duplicate vehicle ids**: the install
+genuinely ships duplicate .crd basenames (`stock_corolla_23.crd` in both `Vehicles\stock_corolla\`
+— a leftover internally referencing Stock_Corolla_21 assets — and `Vehicles\stock_corolla_23\`;
+likewise `stock_cruze_23.crd` in `stock_cruze_20\` and `stock_cruze_23\`), which crashed
+`Ams2ContentLibrary.Load` (duplicate dictionary key). Fixed durably:
+
+1. **The extraction is now a committed tool** — `tools/Companion.ContentExtract` (usage in
+   CLAUDE.md) regenerates vehicles.json + classes.json from the install and resolves duplicate
+   ids: the .crd whose parent folder matches its basename wins; dropped copies are reported.
+   Output is ordinal-sorted and semantically verified equal to the previous hand-deduplicated
+   data (538 vehicles / 194 classes).
+2. **`Ams2ContentLibrary.Load` no longer throws on duplicate vehicle ids** — same dir-named-wins
+   rule, first-occurrence tie-break (regression tests in `Ams2ContentLibraryTests`).

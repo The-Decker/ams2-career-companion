@@ -1,0 +1,324 @@
+{
+  "year": 1967,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Vintage_Gen1",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "split": {
+        "firstRounds": 6,
+        "firstCount": 5,
+        "secondRounds": 5,
+        "secondCount": 4
+      }
+    },
+    "constructors": {
+      "bestCarOnly": true,
+      "bestN": "sameAsDrivers"
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "South African Grand Prix",
+      "date": "1967-01-02",
+      "championship": true,
+      "track": {
+        "id": "kyalami_historic",
+        "fallbacks": [
+          "kyalami_2019"
+        ]
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 11,
+          "startTime": "14:00",
+          "date": "1967-01-02",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Monaco Grand Prix",
+      "date": "1967-05-07",
+      "championship": true,
+      "track": {
+        "id": "azure_circuit_88",
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 100,
+      "setupGuide": {
+        "session": {
+          "opponents": 16,
+          "startTime": "14:00",
+          "date": "1967-05-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "Dutch Grand Prix",
+      "date": "1967-06-04",
+      "championship": true,
+      "track": {
+        "id": "silverstone_1975",
+        "fallbacks": []
+      },
+      "laps": 90,
+      "setupGuide": {
+        "session": {
+          "opponents": 14,
+          "startTime": "14:00",
+          "date": "1967-06-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Zandvoort is not available in AMS2; Silverstone 1975 stands in for the Dutch GP."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Belgian Grand Prix",
+      "date": "1967-06-18",
+      "championship": true,
+      "track": {
+        "id": "spa-francorchamps_1970",
+        "fallbacks": []
+      },
+      "laps": 28,
+      "setupGuide": {
+        "session": {
+          "opponents": 13,
+          "startTime": "14:00",
+          "date": "1967-06-18",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "French Grand Prix",
+      "date": "1967-07-02",
+      "championship": true,
+      "track": {
+        "id": "rouen",
+        "fallbacks": [
+          "le_mans_bugatti"
+        ]
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 11,
+          "startTime": "14:00",
+          "date": "1967-07-02",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The 1967 French GP ran at the Bugatti Circuit, Le Mans; era-correct Rouen-les-Essarts stands in (AMS2's Le Mans Bugatti is the modern layout)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "British Grand Prix",
+      "date": "1967-07-15",
+      "championship": true,
+      "track": {
+        "id": "silverstone_1975nc",
+        "fallbacks": [
+          "silverstone_1975"
+        ]
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 13,
+          "startTime": "14:00",
+          "date": "1967-07-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "German Grand Prix",
+      "date": "1967-08-06",
+      "championship": true,
+      "track": {
+        "id": "nurb_1971_nords",
+        "fallbacks": []
+      },
+      "laps": 15,
+      "setupGuide": {
+        "session": {
+          "opponents": 15,
+          "startTime": "14:00",
+          "date": "1967-08-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "Canadian Grand Prix",
+      "date": "1967-08-27",
+      "championship": true,
+      "track": {
+        "id": "mosport_1971",
+        "fallbacks": []
+      },
+      "laps": 90,
+      "setupGuide": {
+        "session": {
+          "opponents": 11,
+          "startTime": "14:00",
+          "date": "1967-08-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "Italian Grand Prix",
+      "date": "1967-09-10",
+      "championship": true,
+      "track": {
+        "id": "monza_1971",
+        "fallbacks": []
+      },
+      "laps": 68,
+      "setupGuide": {
+        "session": {
+          "opponents": 13,
+          "startTime": "14:00",
+          "date": "1967-09-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "United States Grand Prix",
+      "date": "1967-10-01",
+      "championship": true,
+      "track": {
+        "id": "watkins_glen_1971_short",
+        "fallbacks": []
+      },
+      "laps": 108,
+      "setupGuide": {
+        "session": {
+          "opponents": 14,
+          "startTime": "14:00",
+          "date": "1967-10-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Mexican Grand Prix",
+      "date": "1967-10-22",
+      "championship": true,
+      "track": {
+        "id": "interlagos_historic",
+        "fallbacks": []
+      },
+      "laps": 65,
+      "setupGuide": {
+        "session": {
+          "opponents": 14,
+          "startTime": "14:00",
+          "date": "1967-10-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Mexico City is not available in AMS2; historic Interlagos stands in for the Mexican GP."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

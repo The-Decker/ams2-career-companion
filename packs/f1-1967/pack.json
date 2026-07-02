@@ -1,0 +1,21 @@
+{
+  "packId": "f1-1967",
+  "name": "Formula One 1967",
+  "version": "1.0.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from 'Custom AI by jusk - F1 1967 Season' (F-Vintage_Gen1.xml), matching Alain Fry's F1 1967 skinpack"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1967 Season (Alain Fry)",
+        "overridesFolder": "F1_Season_1967"
+      }
+    ]
+  }
+}

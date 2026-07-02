@@ -116,6 +116,31 @@ Locked product decisions this format encodes:
 } ] }
 ```
 
+## v1.1 addendum — placeholder venues (locked decision #6, applies after the initial M2 build)
+
+The `track` block and `laps` rule are extended for venues that do not exist in AMS2:
+
+```jsonc
+"track": {
+  "realVenue": "Circuit Park Zandvoort",  // historical venue, ALWAYS present (display + records)
+  "id": "silverstone_1975",               // the AMS2 track actually driven
+  "isPlaceholder": true,                  // true when the real venue is not in AMS2
+  "fallbacks": []                         // alternates when `id` itself is missing locally (DLC not owned)
+},
+"laps": 64,   // placeholder rounds: laps = round(historical race distance km / placeholder lap km)
+              // — the 100%-distance rule preserves DISTANCE, not the historical lap count
+```
+
+- Non-placeholder rounds: `realVenue` = the venue's historical name, `isPlaceholder` false,
+  `laps` = the historical lap count (unchanged from v1).
+- The round's name, date, and records always show the real venue; the briefing and standings
+  label the substitution ("Dutch Grand Prix — placeholder: Silverstone 1975").
+- `setupGuide.session.laps` follows the recomputed value; `setupGuide.notes` should state the
+  real venue and distance being reproduced.
+- Validation: placeholder rounds must have `realVenue` and `isPlaceholder: true`; the
+  historical distance derivation goes in the generator (f1db race distance ÷ placeholder
+  `lengthMeters` from the track library).
+
 ## Validation on import
 
 1. Schema-valid JSON (bundled JSON Schema, clear line-level errors).

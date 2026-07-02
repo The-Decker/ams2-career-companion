@@ -1,0 +1,70 @@
+{
+  "$comment": "Curated placeholder suggestions for historical venues missing from AMS2 (locked decision #6). Keyed by f1db circuit id. 'suggestions' are AMS2 track ids from data/ams2/tracks.json, ranked best-first; generators pick the first id present in the library, and the round keeps its historical identity with laps recomputed to preserve real race distance. Rationale documents the character match so pack authors can disagree deliberately.",
+  "venues": {
+    "zandvoort": {
+      "name": "Circuit Park Zandvoort",
+      "suggestions": ["spielberg_historic", "silverstone_1975", "brandshatch_gp"],
+      "rationale": "Fast, flowing, old-school sweepers; Osterreichring 1974 is the closest period-correct rhythm."
+    },
+    "le-mans-bugatti": {
+      "name": "Circuit Bugatti, Le Mans",
+      "suggestions": ["rouen", "rouen_short"],
+      "rationale": "Rouen-les-Essarts is period French road racing and actually hosted the French GP (1968)."
+    },
+    "mexico-city": {
+      "name": "Autodromo Hermanos Rodriguez",
+      "suggestions": ["interlagos_historic", "monza_1971"],
+      "rationale": "Long flat-out sections ending in a fast final corner; historic Interlagos adds the altitude-era Latin American character."
+    },
+    "detroit": {
+      "name": "Detroit Street Circuit",
+      "suggestions": ["adelaide_historic"],
+      "rationale": "Concrete-lined street circuit of the same era; Adelaide 1988 is the only historic street layout in AMS2."
+    },
+    "paul-ricard": {
+      "name": "Circuit Paul Ricard",
+      "suggestions": ["hockenheim_1988", "silverstone_1991"],
+      "rationale": "Mistral-straight-plus-chicanes character maps to old Hockenheim's flat-out forest blasts."
+    },
+    "anderstorp": {
+      "name": "Scandinavian Raceway, Anderstorp",
+      "suggestions": ["hockenheim_1977", "silverstone_1975"],
+      "rationale": "Flat, runway-straight dominated layout."
+    },
+    "dijon": {
+      "name": "Dijon-Prenois",
+      "suggestions": ["brandshatch_gp", "estoril_1988"],
+      "rationale": "Short, fast, elevation-swooping natural-terrain circuit."
+    },
+    "phoenix": {
+      "name": "Phoenix Street Circuit",
+      "suggestions": ["adelaide_historic"],
+      "rationale": "90-degree street circuit; Adelaide is the era's street stand-in."
+    },
+    "dallas": {
+      "name": "Fair Park, Dallas",
+      "suggestions": ["adelaide_historic"],
+      "rationale": "Street circuit stand-in."
+    },
+    "las-vegas": {
+      "name": "Caesars Palace, Las Vegas",
+      "suggestions": ["adelaide_historic"],
+      "rationale": "Flat car-park street circuit; nearest character available."
+    },
+    "magny-cours": {
+      "name": "Circuit de Nevers Magny-Cours",
+      "suggestions": ["barcelona_gp_1999", "brandshatch_gp"],
+      "rationale": "Modern-era French technical layout; 90s Barcelona is the era-typical technical GP track."
+    },
+    "melbourne": {
+      "name": "Albert Park, Melbourne",
+      "suggestions": ["adelaide_modern", "montrealmodern"],
+      "rationale": "Australian parkland semi-street; modern Adelaide keeps the country and character."
+    },
+    "estoril-pre-94": {
+      "name": "Autodromo do Estoril (pre-1994)",
+      "suggestions": ["estoril_1988"],
+      "rationale": "Exists directly as Cascais 1988 in AMS2 - listed for id lookup convenience."
+    }
+  }
+}

@@ -29,6 +29,14 @@
     <None Include="..\..\data\rules\f1-points-systems.json"
           Link="Fixtures\rules\f1-points-systems.json"
           CopyToOutputDirectory="PreserveNewest" />
+    <!-- The real extracted AMS2 content library, for living validation of the shipped packs. -->
+    <None Include="..\..\data\ams2\*.json"
+          Link="Fixtures\ams2\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+    <!-- The reference season packs themselves (packs/<packId>/*.json). -->
+    <None Include="..\..\packs\**\*.json"
+          Link="packs\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
