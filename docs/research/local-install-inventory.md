@@ -68,7 +68,15 @@ Disabled: `jusk's CART 1998 Custom AI v0.2.zip` (CART 1998 *skins* are deployed,
 
 ### Deployed pack labels seen under Overrides
 
-`F1_Season_1967/1969/1986/1988/1990/1991/1992/1993/1995/1997/2000/2001/2012/2020`, `F1_1974`, `F1_1978_Season`, `F1_1985`, `F1 2024 Skinpack`, `CART 1995`, `Cart1998`, `Cart2000`, `NASCAR_Cup_1992`, `Stock_g3`, `DTM1991`, `BMW Procar 1980`, `GTWC`, `GT97`, `2005` (FIA GT), `jtn`/`JTN` (GT4 pack), `BritishF3`, `F3_WCP`, `FJunior_FB`, `FF_Festival_DuratecChampions`, `RSR_74`, `C3 RC`/`C3 RCC`, `ultimagtr`, `Ad Personam`, plus cosmetic sets (Helmets, Suits, Rims, Interior, Vinyls, ...).
+`F1_Season_1967/1969/1986/1988/1990/1991/1992/1993/1995/1997/2000/2020`, `F1_1974`, `F1_1978_Season`, `F1_1985`, `CART 1995`, `Cart1998`, `Cart2000`, `NASCAR_Cup_1992`, `Stock_g3`, `DTM1991`, `BMW Procar 1980`, `GTWC`, `GT97`, `2005` (FIA GT), `jtn`/`JTN` (GT4 pack), `BritishF3`, `F3_WCP`, `FJunior_FB`, `FF_Festival_DuratecChampions`, `RSR_74`, `C3 RC`/`C3 RCC`, `ultimagtr`, `Ad Personam`, plus cosmetic sets (Helmets, Suits, Rims, Interior, Vinyls, ...).
+
+**⚠ Safety-car-only labels (verified 2026-07-03 — do NOT count as deployed season skin packs):**
+`F1_Season_2001` exists ONLY under `Overrides\camaro_ss_safetycar`, and `F1_Season_2012` +
+`F1 2024 Skinpack` exist ONLY under `Overrides\mercedes_amg_sc` — all three are cosmetic
+safety-car skins. The actual class model dirs (`formula_v10\formula_v10_m`/`mclaren_mp416`
+for 2001, `formula_reiza` for 2012, `formula_ultimate_2024` for 2024) contain no season pack
+subfolders, just their `<model>_dist.xml`. Season-pack readiness for 2001/2012/2024 is
+therefore **ai-only at best**, not skin-deployed.
 
 ### The 1967 / Alain Fry question: INSTALLED and binding
 
