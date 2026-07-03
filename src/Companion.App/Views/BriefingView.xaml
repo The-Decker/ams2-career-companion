@@ -225,15 +225,19 @@
                 </Border>
             </Popup>
 
-            <!-- staging outcome banner -->
+            <!-- staging outcome banner: green = staged/no-op, amber = the expected
+                 community-file force gate (a choice, not a failure), red = real failure -->
             <Border CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
                     Visibility="{Binding LastStageOutcome, Converter={StaticResource NullCollapsed}}">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
+                            <DataTrigger Binding="{Binding BannerTone}" Value="Success">
                                 <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding BannerTone}" Value="Info">
+                                <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -243,8 +247,11 @@
                         <Style TargetType="TextBlock">
                             <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
+                                <DataTrigger Binding="{Binding BannerTone}" Value="Success">
                                     <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding BannerTone}" Value="Info">
+                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -259,14 +266,40 @@
                            Text="⚠ The staged file was modified outside the app — re-stage before racing." />
             </Border>
 
-            <!-- preflight / staging detail messages -->
-            <ItemsControl ItemsSource="{Binding StageMessages}" Margin="0,8,0,24">
+            <!-- preflight / staging summary messages (the livery scan is ONE line here) -->
+            <ItemsControl ItemsSource="{Binding StageMessages}" Margin="0,8,0,12">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <!-- per-file livery-scan details (unreadable files): collapsed by default -->
+            <StackPanel Margin="0,0,0,24"
+                        Visibility="{Binding HasStageDetails, Converter={StaticResource BoolVisible}}">
+                <Button HorizontalAlignment="Left" Command="{Binding ToggleStageDetailsCommand}"
+                        ToolTip="The files the livery scan could not read, one line each">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                            <Setter Property="Content" Value="Show details ▸" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding StageDetailsExpanded}" Value="True">
+                                    <Setter Property="Content" Value="Hide details ▾" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <ItemsControl ItemsSource="{Binding StageDetails}" Margin="12,4,0,0"
+                              Visibility="{Binding StageDetailsExpanded, Converter={StaticResource BoolVisible}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

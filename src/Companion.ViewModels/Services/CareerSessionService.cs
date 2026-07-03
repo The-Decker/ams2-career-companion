@@ -514,23 +514,46 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 "No AMS2 installation was found — nothing was staged. Verify the game is installed " +
                 "(or configure the install folder) and try again.");
 
-        var (installedLiveries, scanWarnings) = _environment.ScanInstalledLiveries(installation);
-        messages.AddRange(scanWarnings.Select(w => $"Warning: livery scan: {w}"));
+        // ONE aggregate line for the livery scan; the per-file unreadable list rides along
+        // as collapsed details, never as a wall of warning rows.
+        var scan = _environment.ScanInstalledLiveries(installation);
+        if (scan.FilesScanned > 0)
+            messages.Add(scan.Summary);
+        var details = scan.UnreadableFiles;
 
         var preflight = GridStager.Preflight(
-            file, _environment.ContentLibrary, installedLiveries, plan.TrackId, plan.Seats.Count);
+            file, _environment.ContentLibrary, scan.Liveries, plan.TrackId, plan.Seats.Count);
         messages.AddRange(preflight.Issues.Select(i => $"{i.Severity}: {i.Message}"));
 
         if (preflight.HasErrors)
         {
             messages.Add("Staging aborted — fix the preflight errors above and stage again.");
-            return new StageOutcome { Success = false, Messages = messages };
+            return new StageOutcome { Success = false, Messages = messages, Details = details };
         }
 
         try
         {
-            var result = GridStager.Stage(
+            var result = GridStager.StageOrRefuse(
                 file, installation.CustomAiDriversDirectory, _environment.Clock.GetUtcNow(), force);
+
+            if (result.RequiresForce)
+            {
+                // The community-file force gate is an EXPECTED choice, not a failure: the
+                // briefing renders this outcome as an informational (amber) banner with the
+                // existing "Stage anyway (backup first)" escape hatch.
+                messages.Add(
+                    $"Your installed {file.VehicleClass}.xml differs from this round's grid " +
+                    "(community NAMeS file). 'Stage anyway' takes a timestamped backup first.");
+                return new StageOutcome
+                {
+                    Success = false,
+                    BlockedByForceGate = true,
+                    WrittenPath = null,
+                    Messages = messages,
+                    Details = details,
+                };
+            }
+
             messages.Add(result.Report);
             return new StageOutcome
             {
@@ -539,18 +562,20 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 BackupPath = result.BackupPath,
                 NoOpAlreadyMatches = result.NoOpAlreadyMatches,
                 Messages = messages,
+                Details = details,
             };
         }
         catch (Exception ex) when (ex is InvalidOperationException or IOException or UnauthorizedAccessException)
         {
-            return Failed(messages, ex.Message);
+            return Failed(messages, ex.Message, details);
         }
     }
 
-    private static StageOutcome Failed(List<string> messages, string message)
+    private static StageOutcome Failed(
+        List<string> messages, string message, IReadOnlyList<string>? details = null)
     {
         messages.Add(message);
-        return new StageOutcome { Success = false, Messages = messages };
+        return new StageOutcome { Success = false, Messages = messages, Details = details ?? [] };
     }
 
     // ---------- season-end restore (IAiFileRestore) ----------

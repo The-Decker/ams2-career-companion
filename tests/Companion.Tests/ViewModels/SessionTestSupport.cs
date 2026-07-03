@@ -220,9 +220,12 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public void Apply(ResultDraft draft) => Applied.Add(draft);
 
-    public StandingsSnapshot? CurrentStandings() => null;
+    public StandingsSnapshot? CurrentStandings() => Snapshots.Count > 0 ? Snapshots[^1] : null;
 
-    public IReadOnlyList<StandingsSnapshot> AllSnapshots() => [];
+    /// <summary>Snapshots returned by <see cref="AllSnapshots"/> (empty by default).</summary>
+    public List<StandingsSnapshot> Snapshots { get; } = [];
+
+    public IReadOnlyList<StandingsSnapshot> AllSnapshots() => Snapshots;
 
     public int? SliderRecommendation { get; set; }
 

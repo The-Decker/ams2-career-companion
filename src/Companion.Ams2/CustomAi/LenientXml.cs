@@ -1,0 +1,76 @@
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace Companion.Ams2.CustomAi;
+
+/// <summary>
+/// The lenient pre-processing shared by every reader of COMMUNITY-AUTHORED XML (custom-AI
+/// NAMeS files, skin-pack livery overrides). Community files are routinely not well-formed:
+/// header comments contain '--' runs (tables drawn with dashes), attribute values carry raw
+/// ampersands ("Bang &amp; Olufsen" written as "Bang &amp;"), and attribute spacing is
+/// nonstandard (<c>tracks ="..."</c> — which XML itself tolerates). The game reads these
+/// files anyway — so must we: <see cref="Clean"/> repairs what a real XML parse can survive,
+/// and <see cref="ExtractAttributeValues"/> is the last-resort scrape for files whose markup
+/// is broken beyond parsing (mismatched tags, multiple roots, misplaced declarations).
+/// </summary>
+public static class LenientXml
+{
+    /// <summary>Comment-strips then ampersand-repairs <paramref name="text"/> — the standard
+    /// cleaning pass to run before handing community XML to a real parser.</summary>
+    public static string Clean(string text) => RepairBareAmpersands(StripComments(text));
+
+    /// <summary>Removes every <c>&lt;!-- ... --&gt;</c> block by literal scan. Community
+    /// headers draw tables with '-' runs, which is illegal inside XML comments — the whole
+    /// comment goes, so the parser never sees it. An unterminated comment swallows the rest
+    /// of the file (matching how browsers treat it).</summary>
+    public static string StripComments(string text)
+    {
+        var result = new StringBuilder(text.Length);
+        int position = 0;
+        while (true)
+        {
+            int start = text.IndexOf("<!--", position, StringComparison.Ordinal);
+            if (start < 0)
+            {
+                result.Append(text, position, text.Length - position);
+                break;
+            }
+
+            result.Append(text, position, start - position);
+            int end = text.IndexOf("-->", start + 4, StringComparison.Ordinal);
+            if (end < 0)
+                break;
+            position = end + 3;
+        }
+        return result.ToString();
+    }
+
+    /// <summary>Escapes '&amp;' characters that do not start a character/entity reference —
+    /// community names and texture paths like "Bang &amp; Olufsen" or "AMG&amp;co\skin.dds"
+    /// are written with a raw ampersand.</summary>
+    public static string RepairBareAmpersands(string text) =>
+        BareAmpersand.Replace(text, "&amp;");
+
+    private static readonly Regex BareAmpersand =
+        new(@"&(?!(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#x[0-9A-Fa-f]+);)", RegexOptions.Compiled);
+
+    /// <summary>
+    /// Last-resort extraction for markup no XML parser survives: scrapes the values of
+    /// <paramref name="attributeName"/> from every <paramref name="elementName"/> start tag
+    /// by regex, element and attribute names case-insensitive, in document order. Empty
+    /// values are skipped. Returns an empty list when nothing matches — the caller decides
+    /// whether that makes the file a warning.
+    /// </summary>
+    public static IReadOnlyList<string> ExtractAttributeValues(
+        string text, string elementName, string attributeName)
+    {
+        var pattern = new Regex(
+            $@"<\s*{Regex.Escape(elementName)}\b[^>]*?\b{Regex.Escape(attributeName)}\s*=\s*""([^""]*)""",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        return pattern.Matches(text)
+            .Select(m => m.Groups[1].Value)
+            .Where(v => v.Length > 0)
+            .ToList();
+    }
+}

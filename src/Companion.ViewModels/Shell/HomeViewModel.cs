@@ -195,7 +195,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             model,
             onApply: () => ApplyDraft(draft),
             onBack: () => CurrentContent = _resultEntry,
-            displayName: DriverDisplayName,
+            displayName: PackDisplayNames.ResolverFor(_session.Pack),
             minimalNarrative: _settings?.Current.MinimalNarrative ?? false);
     }
 
@@ -306,9 +306,6 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             ConfirmResultCommand.NotifyCanExecuteChanged();
         }
     }
-
-    private string DriverDisplayName(string driverId) =>
-        _session.Pack.Drivers.FirstOrDefault(d => d.Id == driverId)?.Name ?? driverId;
 
     public void Dispose()
     {

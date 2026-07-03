@@ -292,7 +292,12 @@ public sealed class SessionServiceTests : IDisposable
 
         var refused = session.StageCurrentGrid();
         Assert.False(refused.Success);
-        Assert.Contains(refused.Messages, m => m.Contains("requires force"));
+        // The gate is an EXPECTED choice, not a failure: the outcome says so explicitly and
+        // carries the calm explanation the amber banner shows.
+        Assert.True(refused.BlockedByForceGate);
+        Assert.Contains(refused.Messages, m =>
+            m.Contains("Your installed F-Vintage_Gen1.xml differs from this round's grid") &&
+            m.Contains("'Stage anyway' takes a timestamped backup first"));
         Assert.Equal(communityFile, File.ReadAllText(StagedFilePath)); // untouched
 
         var forced = ((IForceStaging)session).StageCurrentGrid(force: true);

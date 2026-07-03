@@ -1,6 +1,4 @@
 using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -40,9 +38,9 @@ public sealed record CommunityAiFile
 /// well-formed XML: header comments contain '--' runs (calendar tables drawn with dashes),
 /// attribute spacing is nonstandard (<c>tracks ="..."</c>), and livery names carry raw
 /// ampersands ("Bang &amp; Olufsen" written as "Bang &amp;"). The game reads them anyway — so
-/// must we: comments are stripped and bare ampersands escaped BEFORE the XML parse, and
-/// per-entry oddities degrade to warnings, never exceptions. Only hopelessly broken markup
-/// throws (as <see cref="InvalidOperationException"/>).
+/// must we: <see cref="LenientXml.Clean"/> strips comments and escapes bare ampersands BEFORE
+/// the XML parse, and per-entry oddities degrade to warnings, never exceptions. Only
+/// hopelessly broken markup throws (as <see cref="InvalidOperationException"/>).
 /// </summary>
 public static class CommunityAiReader
 {
@@ -65,7 +63,7 @@ public static class CommunityAiReader
     public static CommunityAiFile Parse(string xmlText)
     {
         var warnings = new List<string>();
-        string cleaned = RepairBareAmpersands(StripComments(xmlText));
+        string cleaned = LenientXml.Clean(xmlText);
 
         XDocument document;
         try
@@ -136,42 +134,6 @@ public static class CommunityAiReader
             Warnings = warnings,
         };
     }
-
-    // ---------- lenient pre-processing ----------
-
-    /// <summary>Removes every <c>&lt;!-- ... --&gt;</c> block by literal scan. Community
-    /// headers draw tables with '-' runs, which is illegal inside XML comments — the whole
-    /// comment goes, so the parser never sees it. An unterminated comment swallows the rest
-    /// of the file (matching how browsers treat it).</summary>
-    private static string StripComments(string text)
-    {
-        var result = new StringBuilder(text.Length);
-        int position = 0;
-        while (true)
-        {
-            int start = text.IndexOf("<!--", position, StringComparison.Ordinal);
-            if (start < 0)
-            {
-                result.Append(text, position, text.Length - position);
-                break;
-            }
-
-            result.Append(text, position, start - position);
-            int end = text.IndexOf("-->", start + 4, StringComparison.Ordinal);
-            if (end < 0)
-                break;
-            position = end + 3;
-        }
-        return result.ToString();
-    }
-
-    /// <summary>Escapes '&amp;' characters that do not start a character/entity reference —
-    /// community livery names like "Bang &amp; Olufsen" are written with a raw ampersand.</summary>
-    private static string RepairBareAmpersands(string text) =>
-        BareAmpersand.Replace(text, "&amp;");
-
-    private static readonly Regex BareAmpersand =
-        new(@"&(?!(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#x[0-9A-Fa-f]+);)", RegexOptions.Compiled);
 
     // ---------- element access (case-lenient) ----------
 

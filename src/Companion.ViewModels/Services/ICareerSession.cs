@@ -146,7 +146,18 @@ public sealed record StageOutcome
     /// true; <see cref="WrittenPath"/> points at the installed file satisfying the round.</summary>
     public bool NoOpAlreadyMatches { get; init; }
 
+    /// <summary>True when staging wrote nothing ONLY because the installed class XML is the
+    /// user's own community file (no generated marker) and staging over it requires the
+    /// explicit "Stage anyway" choice. Success is false, but this is an EXPECTED gate, not a
+    /// failure — the briefing shows an informational (amber) banner, never a red one.</summary>
+    public bool BlockedByForceGate { get; init; }
+
     public required IReadOnlyList<string> Messages { get; init; }
+
+    /// <summary>Per-file detail lines behind <see cref="Messages"/>' aggregate summaries
+    /// (e.g. the livery scan's unreadable files) — shown collapsed behind an expander,
+    /// never as a wall of rows.</summary>
+    public IReadOnlyList<string> Details { get; init; } = [];
 }
 
 /// <summary>What the result-entry screen produces. Positions are implied by list order.</summary>

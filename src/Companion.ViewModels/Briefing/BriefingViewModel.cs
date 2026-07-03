@@ -7,6 +7,17 @@ using Companion.ViewModels.Services;
 
 namespace Companion.ViewModels.Briefing;
 
+/// <summary>How the staging outcome banner should read: green for staged/no-op, amber for
+/// the expected community-file force gate (an informational choice, not a failure), red
+/// only for real failures (preflight errors, no install, IO trouble).</summary>
+public enum StageBannerTone
+{
+    None,
+    Success,
+    Info,
+    Error,
+}
+
 /// <summary>
 /// The Race Day briefing screen (ux-round contract, corrected briefing section): the setup
 /// guide as a manual CHECK-OFF CHECKLIST — AMS2's custom-race settings are arrow-steppers,
@@ -225,6 +236,30 @@ public sealed partial class BriefingViewModel : ObservableObject
 
     public IReadOnlyList<string> StageMessages => LastStageOutcome?.Messages ?? [];
 
+    /// <summary>The banner color the view renders: green (staged or no-op match), amber for
+    /// the expected community-file force gate, red only for real failures.</summary>
+    public StageBannerTone BannerTone => LastStageOutcome switch
+    {
+        null => StageBannerTone.None,
+        { Success: true } => StageBannerTone.Success,
+        { BlockedByForceGate: true } => StageBannerTone.Info,
+        _ => StageBannerTone.Error,
+    };
+
+    /// <summary>Per-file detail lines (e.g. the livery scan's unreadable files) behind the
+    /// aggregate <see cref="StageMessages"/> — collapsed by default.</summary>
+    public IReadOnlyList<string> StageDetails => LastStageOutcome?.Details ?? [];
+
+    public bool HasStageDetails => StageDetails.Count > 0;
+
+    /// <summary>The expander state for <see cref="StageDetails"/>; resets to collapsed on
+    /// every new staging outcome.</summary>
+    [ObservableProperty]
+    private bool _stageDetailsExpanded;
+
+    [RelayCommand]
+    private void ToggleStageDetails() => StageDetailsExpanded = !StageDetailsExpanded;
+
     /// <summary>True when the session supports the explicit force-stage escape hatch (staging
     /// over a file the app did not generate, e.g. a curated community NAMeS file).</summary>
     public bool CanForceStage => _session is IForceStaging;
@@ -252,8 +287,12 @@ public sealed partial class BriefingViewModel : ObservableObject
         LastStageOutcome = outcome;
         StageSucceeded = outcome.Success;
         StagedFileTouchedExternally = false;
+        StageDetailsExpanded = false;
         StageBanner = ComposeBanner(outcome);
         OnPropertyChanged(nameof(StageMessages));
+        OnPropertyChanged(nameof(BannerTone));
+        OnPropertyChanged(nameof(StageDetails));
+        OnPropertyChanged(nameof(HasStageDetails));
 
         if (outcome.Success && outcome.WrittenPath is { Length: > 0 } path)
             _watcher?.Watch(path);
@@ -261,10 +300,17 @@ public sealed partial class BriefingViewModel : ObservableObject
             _watcher?.Stop();
     }
 
-    /// <summary>Always states which of the three staging outcomes happened:
-    /// no-op (installed file already matches) / staged (with backup path) / aborted.</summary>
+    /// <summary>Always states which of the staging outcomes happened: no-op (installed file
+    /// already matches) / staged (with backup path) / gated behind the explicit Stage-anyway
+    /// choice (informational, amber) / aborted (red).</summary>
     private static string ComposeBanner(StageOutcome outcome)
     {
+        if (outcome.BlockedByForceGate)
+            return outcome.Messages.Count > 0
+                ? outcome.Messages[^1] // the calm explanation — this is a choice, not a failure
+                : "Your installed AI file differs from this round's grid. " +
+                  "'Stage anyway' takes a timestamped backup first.";
+
         if (!outcome.Success)
             return outcome.Messages.Count > 0
                 ? $"Staging failed — {outcome.Messages[^1]}"

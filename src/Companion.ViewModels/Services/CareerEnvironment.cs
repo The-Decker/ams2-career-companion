@@ -58,14 +58,15 @@ public sealed class CareerEnvironment
     };
 
     /// <summary>Scans installed skin-pack livery overrides for this machine (install-side and
-    /// Documents-side roots). A missing install just narrows the scan — never a failure.</summary>
-    public (IReadOnlyList<InstalledLivery> Liveries, IReadOnlyList<string> Warnings) ScanInstalledLiveries(
-        Ams2Installation? installation)
+    /// Documents-side roots). A missing install just narrows the scan — never a failure.
+    /// Returns the structured result: the UI reports its <see cref="LiveryScanResult.Summary"/>
+    /// as one line, with the unreadable files behind a collapsed details section.</summary>
+    public LiveryScanResult ScanInstalledLiveries(Ams2Installation? installation)
     {
         // A nonexistent placeholder root is simply skipped by the scanner.
         string installDirectory = installation?.InstallDirectory
             ?? Path.Combine(DocumentsDirectory, "_no-ams2-install");
-        return LiveryOverrideScanner.Scan(
+        return LiveryOverrideScanner.ScanDetailed(
             LiveryOverrideScanner.CandidateOverrideRoots(installDirectory, DocumentsDirectory));
     }
 }

@@ -12,10 +12,12 @@ public enum WizardStep
     Confirm = 3,
 }
 
-/// <summary>One line of the verification step: a structural/content/scan finding.</summary>
-public sealed record VerificationItem(bool IsError, string Message)
+/// <summary>One line of the verification step: a structural/content/scan finding. Info
+/// items (e.g. the livery-scan summary when every file was readable) are purely
+/// informational — they never trigger the proceed-anyway gate.</summary>
+public sealed record VerificationItem(bool IsError, string Message, bool IsInfo = false)
 {
-    public string Severity => IsError ? "Error" : "Warning";
+    public string Severity => IsError ? "Error" : IsInfo ? "Info" : "Warning";
 }
 
 /// <summary>One selectable seat: a pack entry with the ratings and team context that make

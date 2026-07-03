@@ -170,12 +170,28 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     public bool HasErrors => VerificationItems.Any(i => i.IsError);
 
-    public bool HasWarnings => VerificationItems.Any(i => !i.IsError);
+    /// <summary>Info items (the livery-scan summary when everything read fine) never gate.</summary>
+    public bool HasWarnings => VerificationItems.Any(i => i is { IsError: false, IsInfo: false });
+
+    /// <summary>Per-file livery-scan detail lines (the unreadable files) behind the ONE
+    /// aggregate summary item — rendered in a collapsed-by-default details section instead
+    /// of a wall of per-file rows.</summary>
+    public IReadOnlyList<string> LiveryScanDetails { get; private set; } = [];
+
+    public bool HasLiveryScanDetails => LiveryScanDetails.Count > 0;
+
+    [ObservableProperty]
+    private bool _liveryScanDetailsExpanded;
+
+    [RelayCommand]
+    private void ToggleLiveryScanDetails() => LiveryScanDetailsExpanded = !LiveryScanDetailsExpanded;
 
     private void RunVerification()
     {
         VerificationItems.Clear();
         ProceedAnyway = false;
+        LiveryScanDetails = [];
+        LiveryScanDetailsExpanded = false;
 
         var pack = Pack!;
 
@@ -183,17 +199,30 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             VerificationItems.Add(new VerificationItem(
                 issue.Severity == PackIssueSeverity.Error, issue.Message));
 
+        // The livery scan reports as ONE aggregate line: an info item when every override
+        // file yielded its liveries (lenient recovery included), a single warning when some
+        // files stayed unreadable — with the per-file list behind the collapsed details.
         var installation = _environment.LocateInstall();
-        var (installedLiveries, scanWarnings) = _environment.ScanInstalledLiveries(installation);
-        foreach (string warning in scanWarnings)
-            VerificationItems.Add(new VerificationItem(false, $"Livery scan: {warning}"));
+        var scan = _environment.ScanInstalledLiveries(installation);
+        if (scan.FilesScanned > 0)
+        {
+            LiveryScanDetails = scan.UnreadableFiles;
+            VerificationItems.Add(new VerificationItem(
+                IsError: false,
+                scan.UnreadableFiles.Count > 0
+                    ? $"{scan.Summary} — the unreadable files are listed under details."
+                    : scan.Summary,
+                IsInfo: scan.UnreadableFiles.Count == 0));
+        }
 
-        foreach (var issue in PackContentValidator.Validate(pack, _environment.ContentLibrary, installedLiveries).Issues)
+        foreach (var issue in PackContentValidator.Validate(pack, _environment.ContentLibrary, scan.Liveries).Issues)
             VerificationItems.Add(new VerificationItem(
                 issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Error, issue.Message));
 
         OnPropertyChanged(nameof(HasErrors));
         OnPropertyChanged(nameof(HasWarnings));
+        OnPropertyChanged(nameof(LiveryScanDetails));
+        OnPropertyChanged(nameof(HasLiveryScanDetails));
         OnPropertyChanged(nameof(CanGoNext));
         NextCommand.NotifyCanExecuteChanged();
     }

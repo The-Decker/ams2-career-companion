@@ -182,7 +182,36 @@
                     </CheckBox>
                 </StackPanel>
                 <Border Style="{StaticResource Panel}">
-                    <Grid>
+                    <DockPanel>
+                        <!-- per-file livery-scan details (unreadable files): collapsed by default -->
+                        <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0"
+                                    Visibility="{Binding HasLiveryScanDetails, Converter={StaticResource BoolVisible}}">
+                            <Button HorizontalAlignment="Left" Command="{Binding ToggleLiveryScanDetailsCommand}"
+                                    ToolTip="The files the livery scan could not read, one line each">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                                        <Setter Property="Content" Value="Show details ▸" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LiveryScanDetailsExpanded}" Value="True">
+                                                <Setter Property="Content" Value="Hide details ▾" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" Focusable="False"
+                                          Visibility="{Binding LiveryScanDetailsExpanded, Converter={StaticResource BoolVisible}}">
+                                <ItemsControl ItemsSource="{Binding LiveryScanDetails}" Margin="12,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" Style="{StaticResource Faint}"
+                                                       TextWrapping="Wrap" Margin="0,1" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                        <Grid>
                         <TextBlock Foreground="{StaticResource SuccessBrush}" FontSize="15"
                                    Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}">
                             <Run FontFamily="Segoe MDL2 Assets" Text="&#xE73E;" /><Run Text="  All clear — the pack verifies clean against this install." />
@@ -202,6 +231,9 @@
                                                             <DataTrigger Binding="{Binding IsError}" Value="True">
                                                                 <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
                                                             </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsInfo}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                                            </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
@@ -212,6 +244,9 @@
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsError}" Value="True">
                                                                     <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsInfo}" Value="True">
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -225,7 +260,8 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </ScrollViewer>
-                    </Grid>
+                        </Grid>
+                    </DockPanel>
                 </Border>
             </DockPanel>
 
