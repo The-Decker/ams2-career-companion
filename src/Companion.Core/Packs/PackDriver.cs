@@ -27,20 +27,24 @@ public sealed record PackDriver
 }
 
 /// <summary>Driver ratings in the AMS2 custom-AI vocabulary verbatim, each 0.0–1.0.
-/// The last four are optional: not every era/pack authors them (fuelManagement matters on
-/// ovals; the others default to the stock driver's values when omitted).</summary>
+/// Only raceSkill and qualifyingSkill are required — they are the pace stats the career sim
+/// and the difficulty anchor read, and every real community AI file provides them. Every
+/// other stat is optional, mirroring the game format exactly: an omitted stat keeps the stock
+/// driver's default in-game (jusk's 1986 set, for instance, ships no start_reactions). Keeping
+/// them optional preserves NAMeS-first fidelity — a generated file omits precisely what the
+/// installed file omits, so diff-aware staging stays a no-op.</summary>
 public sealed record PackDriverRatings
 {
     public required double RaceSkill { get; init; }
     public required double QualifyingSkill { get; init; }
-    public required double Aggression { get; init; }
-    public required double Defending { get; init; }
-    public required double Stamina { get; init; }
-    public required double Consistency { get; init; }
-    public required double StartReactions { get; init; }
-    public required double WetSkill { get; init; }
-    public required double TyreManagement { get; init; }
-    public required double AvoidanceOfMistakes { get; init; }
+    public double? Aggression { get; init; }
+    public double? Defending { get; init; }
+    public double? Stamina { get; init; }
+    public double? Consistency { get; init; }
+    public double? StartReactions { get; init; }
+    public double? WetSkill { get; init; }
+    public double? TyreManagement { get; init; }
+    public double? AvoidanceOfMistakes { get; init; }
     public double? BlueFlagConceding { get; init; }
     public double? WeatherTyreChanges { get; init; }
     public double? AvoidanceOfForcedMistakes { get; init; }
@@ -52,14 +56,14 @@ public sealed record PackDriverRatings
     {
         yield return ("raceSkill", RaceSkill);
         yield return ("qualifyingSkill", QualifyingSkill);
-        yield return ("aggression", Aggression);
-        yield return ("defending", Defending);
-        yield return ("stamina", Stamina);
-        yield return ("consistency", Consistency);
-        yield return ("startReactions", StartReactions);
-        yield return ("wetSkill", WetSkill);
-        yield return ("tyreManagement", TyreManagement);
-        yield return ("avoidanceOfMistakes", AvoidanceOfMistakes);
+        if (Aggression is { } aggression) yield return ("aggression", aggression);
+        if (Defending is { } defending) yield return ("defending", defending);
+        if (Stamina is { } stamina) yield return ("stamina", stamina);
+        if (Consistency is { } consistency) yield return ("consistency", consistency);
+        if (StartReactions is { } startReactions) yield return ("startReactions", startReactions);
+        if (WetSkill is { } wetSkill) yield return ("wetSkill", wetSkill);
+        if (TyreManagement is { } tyreManagement) yield return ("tyreManagement", tyreManagement);
+        if (AvoidanceOfMistakes is { } avoidanceOfMistakes) yield return ("avoidanceOfMistakes", avoidanceOfMistakes);
         if (BlueFlagConceding is { } blueFlagConceding) yield return ("blueFlagConceding", blueFlagConceding);
         if (WeatherTyreChanges is { } weatherTyreChanges) yield return ("weatherTyreChanges", weatherTyreChanges);
         if (AvoidanceOfForcedMistakes is { } avoidanceOfForcedMistakes) yield return ("avoidanceOfForcedMistakes", avoidanceOfForcedMistakes);

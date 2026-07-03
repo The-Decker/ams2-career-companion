@@ -1,0 +1,31 @@
+{
+  "packId": "f1-1993",
+  "name": "Formula One 1993",
+  "version": "1.1.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from 'Custom AI by jusk - IMMERSION Modding Group - F1 1993 Season' v0.3 (F-Hitech_Gen2.xml), matching the F1_Season_1993 skinpack (IMG)"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1993 Season (IMG)",
+        "overridesFolder": "F1_Season_1993"
+      }
+    ]
+  },
+  "notes": [
+    "Coverage: f1db 1993 entrant Jan Lammers (march+ilmor, rounds none — the March-Ilmor entry withdrew before the season started) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1993 entrant Jean-Marc Gounon (march+ilmor, rounds none — the March-Ilmor entry withdrew before the season started) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "The source AI file ships what-if liveries excluded from this pack: 'Williams-Renault #0 A. Senna' and 'Williams-Renault #1 N. Mansell' (Senna stayed at McLaren and Mansell left for IndyCar in 1993; the skinpack's _Sen/_Man override variants carry those alternate realities), and 'McLaren-Ford #8 M. Häkkinen' (a duplicate — Häkkinen took over the #7 seat from round 14 while Senna kept #8 all season, so the #7 Häkkinen livery is used).",
+    "The 'McLaren-Ford #7 M. Häkkinen' livery ships in the skinpack's late-season override variant (mclaren_mp48_late.xml), not in the base mclaren_mp48.xml set (which carries Andretti #7 and Senna #8) — activate the late-season variant for rounds 14-16, otherwise content verification will warn for that livery.",
+    "Authored mapping: the source XML names Lotus #11 'Alessandro Zanardi'; f1db lists him as Alex Zanardi (alex-zanardi) — same driver, carried as driver.alex_zanardi with the f1db name.",
+    "Authored model binding: the F1_Season_1993 skinpack stores the BMS Scuderia Italia liveries ('Lola-Ferrari #21/#22', f1db constructor 'lola') under the 'BMS' DDS prefix on formula_hitech_g2m1.",
+    "Round 4 uses the Imola 1988 layout, whose AMS2 AI cap is 25 cars; the 26-car 1993 entry is capped at 24 opponents plus the player there.",
+    "The skinpack ships per-round livery override variants (..._01Kyalami.xml through ..._16Adelaide.xml plus early/mid/late-season sets) beside each model's base override XML; livery display names are identical across the numbered variants (round-specific paint only), so this pack's bindings resolve whichever is active — except the late-season McLaren set noted above."
+  ]
+}

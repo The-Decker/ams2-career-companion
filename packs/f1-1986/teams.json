@@ -1,0 +1,214 @@
+{
+  "teams": [
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-TAG",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Renault",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams-Honda",
+      "carVehicleIds": [
+        "formula_classic_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.brabham",
+      "name": "Brabham-BMW",
+      "carVehicleIds": [
+        "formula_classic_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 4,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Renault",
+      "carVehicleIds": [
+        "lotus_98t"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.zakspeed",
+      "name": "Zakspeed",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.lola",
+      "name": "Lola-Ford",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.arrows",
+      "name": "Arrows-BMW",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.benetton",
+      "name": "Benetton-BMW",
+      "carVehicleIds": [
+        "formula_classic_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 3,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.osella",
+      "name": "Osella-Alfa Romeo",
+      "carVehicleIds": [
+        "formula_classic_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.minardi",
+      "name": "Minardi-Motori Moderni",
+      "carVehicleIds": [
+        "formula_classic_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 1,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.ligier",
+      "name": "Ligier-Renault",
+      "carVehicleIds": [
+        "formula_classic_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ags",
+      "name": "AGS-Motori Moderni",
+      "carVehicleIds": [
+        "formula_classic_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 1,
+      "budgetTier": 1
+    }
+  ]
+}

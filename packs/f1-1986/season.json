@@ -1,0 +1,484 @@
+{
+  "year": 1986,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Classic_Gen1",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "wholeSeason": 11
+    },
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "Brazilian Grand Prix",
+      "date": "1986-03-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Internacional Nelson Piquet",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-03-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Spanish Grand Prix",
+      "date": "1986-04-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuito de Jerez",
+        "id": "jerez_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 72,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-04-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Jerez 1988 is the same original layout Jerez opened with; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "San Marino Grand Prix",
+      "date": "1986-04-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 60,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-04-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Imola 1988 is the same pre-1995 layout driven in 1986; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Monaco Grand Prix",
+      "date": "1986-05-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1986-05-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "Belgian Grand Prix",
+      "date": "1986-05-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 43,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-05-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1986 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "Canadian Grand Prix",
+      "date": "1986-06-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 69,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-06-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's historic Montreal is the 1988-spec layout; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "Detroit Grand Prix",
+      "date": "1986-06-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Detroit Street Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "adelaide_historic"
+        ]
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-06-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Detroit Street Circuit — 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 — the era's US street-race character."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "French Grand Prix",
+      "date": "1986-07-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Paul Ricard",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "hockenheim_1988",
+          "silverstone_1991"
+        ]
+      },
+      "laps": 73,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-07-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Paul Ricard — 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "British Grand Prix",
+      "date": "1986-07-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Brands Hatch",
+        "id": "brandshatch_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-07-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Brands Hatch GP is the modern layout of the same venue; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "German Grand Prix",
+      "date": "1986-07-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 44,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-07-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Hockenheim 1988 is the same configuration driven in 1986; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Hungarian Grand Prix",
+      "date": "1986-08-10",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 76,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-08-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "name": "Austrian Grand Prix",
+      "date": "1986-08-17",
+      "championship": true,
+      "track": {
+        "realVenue": "Red Bull Ring",
+        "id": "spielberg_historic",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "spielberg_vintage"
+        ]
+      },
+      "laps": 52,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-08-17",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The 1986 Austrian GP ran the Österreichring — AMS2's Spielberg Historic, the 1977 layout with the Hella-Licht chicane still driven in 1986; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "name": "Italian Grand Prix",
+      "date": "1986-09-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 51,
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1986-09-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1986 Monza in AMS2; the venue is real, so the historical lap count is kept on the era-closest 1991 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "name": "Portuguese Grand Prix",
+      "date": "1986-09-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1986-09-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Cascais 1988 (Estoril) is the same layout driven in 1986; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "name": "Mexican Grand Prix",
+      "date": "1986-10-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Hermanos Rodríguez",
+        "id": "interlagos_1991",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "interlagos_historic"
+        ]
+      },
+      "laps": 70,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-10-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 68 laps / 300.6 km reproduced as 70 laps of Interlagos 1991. Interlagos 1991 keeps the period Latin-American venue character."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "name": "Australian Grand Prix",
+      "date": "1986-10-26",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 82,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1986-10-26",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

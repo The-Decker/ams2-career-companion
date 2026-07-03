@@ -1,0 +1,485 @@
+{
+  "year": 1990,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Classic_Gen3",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "wholeSeason": 11
+    },
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "United States Grand Prix",
+      "date": "1990-03-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Phoenix Street Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "adelaide_historic"
+        ]
+      },
+      "laps": 86,
+      "setupGuide": {
+        "session": {
+          "opponents": 35,
+          "startTime": "14:00",
+          "date": "1990-03-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Phoenix Street Circuit — 72 laps / 273.6 km reproduced as 86 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 — the era's US street-race character; Adelaide already hosts this season's Australian GP."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Brazilian Grand Prix",
+      "date": "1990-03-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo José Carlos Pace",
+        "id": "interlagos_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 71,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1990-03-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Interlagos 1991 is the same rebuilt layout the 1990 Brazilian GP ran (4.325 km); the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "San Marino Grand Prix",
+      "date": "1990-05-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1990-05-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Monaco Grand Prix",
+      "date": "1990-05-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1990-05-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "Canadian Grand Prix",
+      "date": "1990-06-10",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "setupGuide": {
+        "session": {
+          "opponents": 35,
+          "startTime": "14:00",
+          "date": "1990-06-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "Mexican Grand Prix",
+      "date": "1990-06-24",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Hermanos Rodríguez",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "interlagos_1991",
+          "interlagos_historic"
+        ]
+      },
+      "laps": 61,
+      "setupGuide": {
+        "session": {
+          "opponents": 35,
+          "startTime": "14:00",
+          "date": "1990-06-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 69 laps / 305 km reproduced as 61 laps of Jacarepagua Historic. Jacarepaguá keeps the era's Latin-American GP venue character; from 1990 the Brazilian GP itself runs at Interlagos, so the Interlagos stand-ins would double-book the venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "French Grand Prix",
+      "date": "1990-07-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Paul Ricard",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "hockenheim_1988",
+          "silverstone_1991"
+        ]
+      },
+      "laps": 73,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1990-07-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Paul Ricard — 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "British Grand Prix",
+      "date": "1990-07-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_1975"
+        ]
+      },
+      "laps": 64,
+      "setupGuide": {
+        "session": {
+          "opponents": 34,
+          "startTime": "14:00",
+          "date": "1990-07-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1990 Silverstone layout in AMS2; the venue is real, so the historical lap count is kept on the 1991 layout (Silverstone 1975 with chicane is the era-closest alternative)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "German Grand Prix",
+      "date": "1990-07-29",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 45,
+      "setupGuide": {
+        "session": {
+          "opponents": 34,
+          "startTime": "14:00",
+          "date": "1990-07-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "Hungarian Grand Prix",
+      "date": "1990-08-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 77,
+      "setupGuide": {
+        "session": {
+          "opponents": 35,
+          "startTime": "14:00",
+          "date": "1990-08-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Belgian Grand Prix",
+      "date": "1990-08-26",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 44,
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1990-08-26",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1990 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "name": "Italian Grand Prix",
+      "date": "1990-09-09",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1990-09-09",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1990 Monza in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1991 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "name": "Portuguese Grand Prix",
+      "date": "1990-09-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1990-09-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "name": "Spanish Grand Prix",
+      "date": "1990-09-30",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuito de Jerez",
+        "id": "jerez_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 73,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1990-09-30",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "name": "Japanese Grand Prix",
+      "date": "1990-10-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Suzuka Circuit",
+        "id": "kansai_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "setupGuide": {
+        "session": {
+          "opponents": 30,
+          "startTime": "14:00",
+          "date": "1990-10-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "name": "Australian Grand Prix",
+      "date": "1990-11-04",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 81,
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1990-11-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

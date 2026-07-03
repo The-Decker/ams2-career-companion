@@ -1,0 +1,30 @@
+{
+  "packId": "f1-1986",
+  "name": "Formula One 1986",
+  "version": "1.1.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from the community F-Classic_Gen1_1986.xml custom-AI set, matching the F1_Season_1986 skinpack (jusk)"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1986 Season (jusk)",
+        "overridesFolder": "F1_Season_1986"
+      }
+    ]
+  },
+  "notes": [
+    "Coverage: f1db 1986 entrant Andrea de Cesaris (minardi+motori-moderni, rounds 1-16) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1986 entrant Allen Berg (osella+alfa-romeo, rounds 7-12,14-16) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1986 entrant Alex Caffi (osella+alfa-romeo, rounds 13) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "The source custom-AI XML carries a large per-track (tracks=\"...\") override set; those patches are not carried into this pack's aiOverrides in this version.",
+    "The source custom-AI XML carries no vehicle_reliability values on its base entries, so every team uses the generator default reliability of 0.5.",
+    "Authored display: engine acronyms are upper-cased in team names (McLaren-TAG, Brabham-BMW, Arrows-BMW, Benetton-BMW) — the generator's title-casing would emit 'Tag'/'Bmw'.",
+    "Mapping note: f1db's circuit full name for the 1986 Austrian GP venue is the modern 'Red Bull Ring'; the 1986 race ran the Österreichring at the same Spielberg site, and AMS2's Spielberg Historic (1977 layout, driven through 1987) is the era-correct binding — the round is not a placeholder."
+  ]
+}

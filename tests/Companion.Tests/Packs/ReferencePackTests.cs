@@ -33,7 +33,21 @@ public class ReferencePackTests
         return Ams2ContentLibrary.Load(Ams2DataDirectory);
     });
 
-    public static TheoryData<string> ReferencePackIds() => new() { "f1-1967", "f1-1969", "f1-1988" };
+    /// <summary>Every pack folder shipped in the repo — the living-validation suite is
+    /// directory-driven, so a newly added season pack is held to the exemplar bar
+    /// automatically (load, structural + content validation, v1.1 venue rules).</summary>
+    public static TheoryData<string> ReferencePackIds()
+    {
+        var data = new TheoryData<string>();
+        foreach (var dir in Directory.GetDirectories(PacksDirectory).OrderBy(d => d, StringComparer.Ordinal))
+            data.Add(Path.GetFileName(dir));
+        return data;
+    }
+
+    /// <summary>The three original exemplars, which every era of the format was proven against
+    /// and which the placeholder mechanism is known to exercise.</summary>
+    public static TheoryData<string> KnownPlaceholderPackIds() =>
+        new() { "f1-1967", "f1-1969", "f1-1988" };
 
     // ---------- loading ----------
 
@@ -167,6 +181,17 @@ public class ReferencePackTests
         }
     }
 
+    /// <summary>The known-placeholder exemplars must actually mark placeholders — a floor that
+    /// catches the isPlaceholder flag silently breaking. (A newer pack whose venues all exist
+    /// in AMS2 legitimately has none, so this is asserted only for the known set.)</summary>
+    [Theory]
+    [MemberData(nameof(KnownPlaceholderPackIds))]
+    public void KnownReferencePack_HasPlaceholderRounds(string packId)
+    {
+        var pack = LoadPack(packId);
+        Assert.Contains(pack.Season.Rounds, r => r.Track.IsPlaceholder);
+    }
+
     [Theory]
     [MemberData(nameof(ReferencePackIds))]
     public void ReferencePack_PlaceholderNotesNameTheRealVenue(string packId)
@@ -174,10 +199,6 @@ public class ReferencePackTests
         var pack = LoadPack(packId);
 
         var placeholders = pack.Season.Rounds.Where(r => r.Track.IsPlaceholder).ToList();
-        // Every reference pack substitutes venues AMS2 does not have (1967: Zandvoort, Mexico
-        // City; 1969: Montjuïc, Zandvoort, Clermont-Ferrand, Mexico City; 1988: Mexico City,
-        // Detroit, Paul Ricard) — no placeholders means the flag broke.
-        Assert.NotEmpty(placeholders);
 
         foreach (var round in placeholders)
         {
