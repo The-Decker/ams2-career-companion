@@ -79,6 +79,12 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
 - *Known test-infra flakes to harden (not product bugs):* a render-harness STA timing race and
   an EraSignAndContinue SQLite parallel-disposal race — both pass on retry.
 
+## ✅ v0.3.4 — complete F1 fleet (2026-07-03, 1032/1032)
+
+- **13 bundled seasons now:** added 1974, 1978, 1991, 1995, 2000 from installed sets. A career
+  can chain 1967 → 2000 across eras. Every livery verbatim in the installed AI files; per-round
+  grid blocks (historical starters, track-cap-limited); points systems oracle-verified.
+
 ## ⏸ Awaiting Mike — career hub direction
 
 - **Career hub design spec is written** (docs/dev/career-hub-design.md) — a 3-design judge

@@ -28,7 +28,7 @@ depth is opt-in. Design already synthesized in `docs/dev/career-hub-design.md`.
 | Stage | Scope | Needs you? | Status |
 |---|---|---|---|
 | **0 · Hygiene** | Harden 2 known test-infra flakes (below); fold in any bugs from your camping-trip testing | No | Ready |
-| **1 · Content** | Remaining F1 fleet (1974, 1978, 1991, 1995, 2000) from your installed sets; season-readiness score in the wizard; apply the grid-cap number if you have it | No | Ready |
+| **1 · Content** | ~~Remaining F1 fleet (1974/78/91/95/2000)~~ ✅ **DONE (v0.3.4, 13 packs)**. Still open: season-readiness score in the wizard; apply the grid-cap number if you have it | No | Partly done |
 | **2 · Hub Increment 1** | The hub shell (re-home the loop verbatim → tab rail) + News feed over the journal + EraTheme swap | **Q1–Q5** | Blocked on you |
 | **3 · Hub Increment 2** | Team + Career/History lens tabs + the "Why?" inspector (read-only over existing state) | Q2 | After Stage 2 |
 | **4 · Hub Increment 3** | First minigame (Setup Gamble or Media Moment) + Contracts-as-era-documents | Q5 | After Stage 3 |
