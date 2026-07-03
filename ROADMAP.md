@@ -70,6 +70,15 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
 - **DNF textbox focus** (caret vanished) and **mech/acc undo** fixed — verified with a new
   off-screen WPF **render harness** (now a permanent repo project for catching view regressions).
 
+## ✅ v0.3.3 — DNF/DSQ row UX (2026-07-03, 977/977)
+
+- **Enter now commits** in the DNF/DSQ reason boxes (the grammar was swallowing Enter before
+  the box saw it); finished rows collapse to a compact **driver + team + reason** label; the
+  text box **disappears** when done and **reappears on click** to edit — no more remove-and-re-add.
+- **Team name** shown on both DNF and DSQ rows. All 8 interactions render-harness verified live.
+- *Known test-infra flakes to harden (not product bugs):* a render-harness STA timing race and
+  an EraSignAndContinue SQLite parallel-disposal race — both pass on retry.
+
 ## ⏸ Awaiting Mike — career hub direction
 
 - **Career hub design spec is written** (docs/dev/career-hub-design.md) — a 3-design judge
