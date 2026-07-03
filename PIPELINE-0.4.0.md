@@ -65,3 +65,28 @@ sacred keyboard-grammar/keystroke-budget tests untouched, and gets a version bum
 2. Confirm Ctrl+Z-after-mech/acc works in v0.3.3.
 3. (Optional) drop me the per-class grid cap.
 4. Say go — I run Stage 0 + Stage 1 autonomously, then build the hub Stage 2→4 to your answers.
+
+## Resume prompt — paste this into a NEW thread (fill the blanks)
+
+> Resume the AMS2 Career Companion project in `Z:\Claude Code\ams2-career-companion` — it's a
+> git repo and everything is committed (last tag v0.3.3, suite 977/977). Read
+> `PIPELINE-0.4.0.md`, `ROADMAP.md`, and `docs/dev/career-hub-design.md` to get oriented, then
+> continue toward v0.4.0.
+>
+> My answers to the 5 hub design questions:
+> - Q1 tab reveal: ______
+> - Q2 "Why?" inspector scope: ______
+> - Q3 era-skin depth for v1: ______
+> - Q4 tear-off "own windows": ______
+> - Q5 first minigame: ______
+>
+> Confirmations: Ctrl+Z after mech/acc → [works / still broken]; per-class grid cap → [number /
+> none found]; bugs I found while testing → [list / none].
+>
+> Plan: run Stage 0 (flake hardening) + Stage 1 (remaining fleet + wizard readiness score)
+> autonomously, then build hub Increments 1–3 to my answers, version-bumping + publishing each
+> stage and tagging v0.4.0 at the gate.
+
+(Even a bare "resume the AMS2 Career Companion in Z:\Claude Code\ams2-career-companion, read
+PIPELINE-0.4.0.md and continue" works — the machine facts auto-load from memory and the repo
+docs carry the rest. The blanks above just save a round-trip.)
