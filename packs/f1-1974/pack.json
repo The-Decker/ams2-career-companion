@@ -1,0 +1,38 @@
+{
+  "packId": "f1-1974",
+  "name": "Formula One 1974",
+  "version": "1.1.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from 'Custom AI by jusk - F1 1974 Season' (F-Retro_Gen1.xml), matching Klukkluk's F1 1974 skinpack (F-Retro-G1 - 1974 v1.1, deployed under Overrides\\F1_1974)"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1974 Season (Klukkluk)",
+        "overridesFolder": "F1_1974"
+      }
+    ]
+  },
+  "notes": [
+    "1974 F1 ran a large, highly fluid entry (18 constructors, 60+ drivers across the year). Each pack entry binds one AI-set livery to one driver+team for the rounds that driver actually started that car per f1db (RACE_RESULT minus DNQ/DNPQ/DNS). Drivers who switched teams mid-season (e.g. Carlos Pace: Surtees rounds 1-7, then Brabham 10-15; Jochen Mass: Surtees 1-11, then McLaren 14-15; Chris Amon: his own Amon car at Spain, then the works BRM 14-15) appear as multiple entries.",
+    "Chris Amon's rounds 14-15 BRM stint has no dedicated livery in the AI set; he ran the works BRM P201 in team-mate Pescarolo's #15 car, so his entry uses the verbatim AI slot livery 'Team BRM GB - H. Pescarolo #15' for those two rounds.",
+    "Vehicle bindings by engine/marque analogue within F-Retro_Gen1 (5 models): Lotus -> lotus_72e, McLaren -> mclaren_m23, Ferrari and BRM (flat-12 / V12) -> formula_retro_v12, all Ford-Cosworth DFV teams -> formula_retro (the class's Brabham BT44).",
+    "Placeholders (v1.1, distance-preserving laps): Spain/Jarama -> Jerez 1988; Belgium/Nivelles-Baulers -> Spa-Francorchamps 1993; Sweden/Anderstorp -> Hockenheim 1977; Netherlands/Zandvoort -> Silverstone 1975; France/Dijon-Prenois -> Estoril 1988. All other rounds use real venues (Buenos Aires No.15, historic Interlagos/Kyalami, Azure/Monaco, Brands Hatch, Nordschleife, Spielberg Vintage = the 1974 pre-chicane Osterreichring, Monza 1971, Mosport 1971, Watkins Glen 1971 GP).",
+    "Coverage: f1db 1974 entrant Jean-Pierre Jabouille (Surtees / Iso-Marlboro) only ever DNQ'd in 1974 (never started a race per f1db) and is not included as a pack entry.",
+    "Coverage: f1db 1974 entrant Richard Robarts also appears in the AI set with an Iso-Marlboro FW #20 livery, but f1db records no Iso-Marlboro start for him (his 1974 starts were all with Brabham, which the pack covers), so that Iso livery is not bound.",
+    "Coverage: f1db 1974 entrant Gijs van Lennep (Iso-Marlboro FW #21) started only the Belgian GP; the AI set carries his livery, and he is covered by the Iso-Marlboro entry - his dedicated one-off livery row shares Laffite's #21 slot and is not separately bound.",
+    "Coverage: f1db 1974 entrant Rikky von Opel appears in the AI set with a Team Ensign #22 livery, but f1db records his 1974 starts only with Brabham (which the pack covers as 'Goodyear Racing - R von Opel #8'); the Ensign livery is not bound.",
+    "Coverage: f1db 1974 entrant Howden Ganley (Maki Engineering #25) did not qualify a Maki in 1974 per f1db; his covered starts are the two March rounds, bound as 'March Goodyear - H. Ganley #10'.",
+    "Coverage: AI-set entrant John Nicholson (Pinch (Plant) Ltd #29, Lyncar) only DNQ'd the 1974 British GP per f1db and is not included.",
+    "Coverage: AI-set entrant Larry Perkins (Dalton-Amon Int. #30) only DNQ'd the 1974 German GP per f1db and is not included.",
+    "Coverage: f1db 1974 entrant Ian Scheckter appears in the AI set with a Hesketh #31 livery, but f1db records his only 1974 start with Lotus (South African GP), bound as 'Team Gunston - I. Scheckter #29'; the Hesketh livery is not bound.",
+    "Coverage: AI-set entrant Carlo Facetti (Scuderia Finotto #31, Brabham) only DNQ'd the 1974 Italian GP per f1db and is not included.",
+    "Coverage: f1db 1974 entrant Helmuth Koinigg appears in the AI set with a Scuderia Finotto #32 (Brabham) livery, but f1db records his 1974 starts with Surtees (Canada, USA), bound as 'Surtees Matchbox - H. Koinigg #19'; the Finotto livery is not bound.",
+    "Coverage: AI-set entrant David Purley (Token Racing #42) only DNQ'd the 1974 British GP per f1db and is not included; Tom Pryce's one-off Token start (Belgian GP) is bound to the shared #42 livery 'Token Racing - D. Purley #42', the verbatim AI livery name for that slot."
+  ]
+}

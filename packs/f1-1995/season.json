@@ -1,0 +1,1022 @@
+{
+  "year": 1995,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "FE-G1",
+  "pointsSystem": {
+    "racePoints": [
+      10,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    },
+    "pointsAdjustments": [
+      {
+        "constructor": "benetton+renault",
+        "delta": "-10",
+        "reason": "Brazilian GP fuel-irregularity ruling: Schumacher's win reinstated for the drivers championship only; constructors points stripped."
+      },
+      {
+        "constructor": "williams+renault",
+        "delta": "-6",
+        "reason": "Same ruling for Coulthard's P2."
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "Brazilian Grand Prix",
+      "date": "1995-03-26",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo José Carlos Pace",
+        "id": "interlagos_1993",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "interlagos_1991"
+        ]
+      },
+      "laps": 71,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.david_coulthard",
+          "driver.gerhard_berger",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
+          "driver.mark_blundell",
+          "driver.mika_salo",
+          "driver.aguri_suzuki",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.gianni_morbidelli",
+          "driver.taki_inoue",
+          "driver.luca_badoer",
+          "driver.roberto_moreno",
+          "driver.karl_wendlinger",
+          "driver.damon_hill",
+          "driver.johnny_herbert",
+          "driver.bertrand_gachot",
+          "driver.rubens_barrichello",
+          "driver.jos_verstappen",
+          "driver.ukyo_katayama",
+          "driver.eddie_irvine",
+          "driver.domenico_schiattarella",
+          "driver.heinz_harald_frentzen",
+          "driver.olivier_panis"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1995-03-26",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Argentine Grand Prix",
+      "date": "1995-04-09",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Juan y Oscar Gálvez",
+        "id": "buenos_aires_6t",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "buenos_aires_6"
+        ]
+      },
+      "laps": 72,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.damon_hill",
+          "driver.jean_alesi",
+          "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.heinz_harald_frentzen",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.ukyo_katayama",
+          "driver.domenico_schiattarella",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.mika_salo",
+          "driver.aguri_suzuki",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.taki_inoue",
+          "driver.rubens_barrichello",
+          "driver.jos_verstappen",
+          "driver.david_coulthard",
+          "driver.mark_blundell",
+          "driver.eddie_irvine",
+          "driver.andrea_montermini",
+          "driver.mika_hakkinen",
+          "driver.bertrand_gachot",
+          "driver.karl_wendlinger"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1995-04-09",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the Buenos Aires No.6 layout used for the 1995 Argentine GP; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "San Marino Grand Prix",
+      "date": "1995-04-30",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 63,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.damon_hill",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
+          "driver.johnny_herbert",
+          "driver.eddie_irvine",
+          "driver.olivier_panis",
+          "driver.nigel_mansell",
+          "driver.aguri_suzuki",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.luca_badoer",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.karl_wendlinger",
+          "driver.bertrand_gachot",
+          "driver.domenico_schiattarella",
+          "driver.rubens_barrichello",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
+          "driver.andrea_montermini",
+          "driver.jos_verstappen",
+          "driver.taki_inoue",
+          "driver.michael_schumacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1995-04-30",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1995 Imola layout in AMS2; the venue is real, so the historical lap count is kept on the era-adjacent 1988 layout. Imola 1988's AI cap is 25, so the 26-car San Marino entry is capped at 24 opponents plus the player here."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Spanish Grand Prix",
+      "date": "1995-05-14",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Barcelona-Catalunya",
+        "id": "barcelona_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "barcelona_gp_1999"
+        ]
+      },
+      "laps": 65,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.gerhard_berger",
+          "driver.damon_hill",
+          "driver.eddie_irvine",
+          "driver.olivier_panis",
+          "driver.rubens_barrichello",
+          "driver.heinz_harald_frentzen",
+          "driver.martin_brundle",
+          "driver.mika_salo",
+          "driver.gianni_morbidelli",
+          "driver.jos_verstappen",
+          "driver.karl_wendlinger",
+          "driver.pierluigi_martini",
+          "driver.domenico_schiattarella",
+          "driver.ukyo_katayama",
+          "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.taki_inoue",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.jean_alesi",
+          "driver.luca_badoer",
+          "driver.nigel_mansell",
+          "driver.pedro_diniz"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1995-05-14",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "Monaco Grand Prix",
+      "date": "1995-05-28",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.damon_hill",
+          "driver.gerhard_berger",
+          "driver.johnny_herbert",
+          "driver.mark_blundell",
+          "driver.heinz_harald_frentzen",
+          "driver.pierluigi_martini",
+          "driver.jean_christophe_boullion",
+          "driver.gianni_morbidelli",
+          "driver.pedro_diniz",
+          "driver.luca_badoer",
+          "driver.olivier_panis",
+          "driver.mika_salo",
+          "driver.rubens_barrichello",
+          "driver.bertrand_gachot",
+          "driver.jean_alesi",
+          "driver.martin_brundle",
+          "driver.taki_inoue",
+          "driver.ukyo_katayama",
+          "driver.eddie_irvine",
+          "driver.david_coulthard",
+          "driver.roberto_moreno",
+          "driver.mika_hakkinen",
+          "driver.andrea_montermini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-05-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "Canadian Grand Prix",
+      "date": "1995-06-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "montrealhistoric"
+        ]
+      },
+      "laps": 68,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.jean_alesi",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.olivier_panis",
+          "driver.michael_schumacher",
+          "driver.gianni_morbidelli",
+          "driver.mika_salo",
+          "driver.luca_badoer",
+          "driver.taki_inoue",
+          "driver.martin_brundle",
+          "driver.gerhard_berger",
+          "driver.pierluigi_martini",
+          "driver.roberto_moreno",
+          "driver.damon_hill",
+          "driver.mark_blundell",
+          "driver.ukyo_katayama",
+          "driver.bertrand_gachot",
+          "driver.heinz_harald_frentzen",
+          "driver.pedro_diniz",
+          "driver.jean_christophe_boullion",
+          "driver.andrea_montermini",
+          "driver.david_coulthard",
+          "driver.johnny_herbert",
+          "driver.mika_hakkinen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-06-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "French Grand Prix",
+      "date": "1995-07-02",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Nevers Magny-Cours",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "brandshatch_gp",
+          "barcelona_gp_1999"
+        ]
+      },
+      "laps": 73,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.damon_hill",
+          "driver.david_coulthard",
+          "driver.martin_brundle",
+          "driver.jean_alesi",
+          "driver.rubens_barrichello",
+          "driver.mika_hakkinen",
+          "driver.olivier_panis",
+          "driver.eddie_irvine",
+          "driver.heinz_harald_frentzen",
+          "driver.mark_blundell",
+          "driver.gerhard_berger",
+          "driver.luca_badoer",
+          "driver.gianni_morbidelli",
+          "driver.mika_salo",
+          "driver.roberto_moreno",
+          "driver.andrea_montermini",
+          "driver.jean_christophe_boullion",
+          "driver.bertrand_gachot",
+          "driver.pierluigi_martini",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.taki_inoue",
+          "driver.pedro_diniz"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-07-02",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit de Nevers Magny-Cours — 72 laps / 306.0 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (the f1-1988/1992 pack convention); the 90s-Barcelona suggestion doubles as this season's Spanish GP venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "British Grand Prix",
+      "date": "1995-07-16",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_2001"
+        ]
+      },
+      "laps": 61,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.johnny_herbert",
+          "driver.jean_alesi",
+          "driver.david_coulthard",
+          "driver.olivier_panis",
+          "driver.mark_blundell",
+          "driver.heinz_harald_frentzen",
+          "driver.pierluigi_martini",
+          "driver.mika_salo",
+          "driver.jean_christophe_boullion",
+          "driver.luca_badoer",
+          "driver.rubens_barrichello",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.michael_schumacher",
+          "driver.damon_hill",
+          "driver.max_papis",
+          "driver.ukyo_katayama",
+          "driver.andrea_montermini",
+          "driver.mika_hakkinen",
+          "driver.gerhard_berger",
+          "driver.martin_brundle",
+          "driver.taki_inoue",
+          "driver.pedro_diniz",
+          "driver.eddie_irvine"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-07-16",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "German Grand Prix",
+      "date": "1995-07-30",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 45,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.david_coulthard",
+          "driver.gerhard_berger",
+          "driver.johnny_herbert",
+          "driver.jean_christophe_boullion",
+          "driver.aguri_suzuki",
+          "driver.ukyo_katayama",
+          "driver.andrea_montermini",
+          "driver.eddie_irvine",
+          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
+          "driver.luca_badoer",
+          "driver.giovanni_lavaggi",
+          "driver.roberto_moreno",
+          "driver.rubens_barrichello",
+          "driver.mark_blundell",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.pierluigi_martini",
+          "driver.taki_inoue",
+          "driver.pedro_diniz",
+          "driver.damon_hill",
+          "driver.mika_salo",
+          "driver.max_papis"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-07-30",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "Hungarian Grand Prix",
+      "date": "1995-08-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 77,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.damon_hill",
+          "driver.david_coulthard",
+          "driver.gerhard_berger",
+          "driver.johnny_herbert",
+          "driver.heinz_harald_frentzen",
+          "driver.olivier_panis",
+          "driver.rubens_barrichello",
+          "driver.luca_badoer",
+          "driver.pedro_lamy",
+          "driver.jean_christophe_boullion",
+          "driver.michael_schumacher",
+          "driver.andrea_montermini",
+          "driver.eddie_irvine",
+          "driver.martin_brundle",
+          "driver.mika_salo",
+          "driver.mark_blundell",
+          "driver.ukyo_katayama",
+          "driver.max_papis",
+          "driver.jean_alesi",
+          "driver.pedro_diniz",
+          "driver.taki_inoue",
+          "driver.roberto_moreno",
+          "driver.giovanni_lavaggi",
+          "driver.mika_hakkinen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-08-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Belgian Grand Prix",
+      "date": "1995-08-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 44,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.damon_hill",
+          "driver.martin_brundle",
+          "driver.heinz_harald_frentzen",
+          "driver.mark_blundell",
+          "driver.rubens_barrichello",
+          "driver.johnny_herbert",
+          "driver.mika_salo",
+          "driver.olivier_panis",
+          "driver.pedro_lamy",
+          "driver.jean_christophe_boullion",
+          "driver.taki_inoue",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.ukyo_katayama",
+          "driver.giovanni_lavaggi",
+          "driver.luca_badoer",
+          "driver.gerhard_berger",
+          "driver.eddie_irvine",
+          "driver.max_papis",
+          "driver.andrea_montermini",
+          "driver.david_coulthard",
+          "driver.jean_alesi",
+          "driver.mika_hakkinen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-08-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1995 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "name": "Italian Grand Prix",
+      "date": "1995-09-10",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.johnny_herbert",
+          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
+          "driver.mark_blundell",
+          "driver.mika_salo",
+          "driver.jean_christophe_boullion",
+          "driver.max_papis",
+          "driver.taki_inoue",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama",
+          "driver.jean_alesi",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.luca_badoer",
+          "driver.michael_schumacher",
+          "driver.damon_hill",
+          "driver.olivier_panis",
+          "driver.david_coulthard",
+          "driver.martin_brundle",
+          "driver.giovanni_lavaggi",
+          "driver.pedro_lamy"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1995-09-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "name": "Portuguese Grand Prix",
+      "date": "1995-09-24",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 71,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.david_coulthard",
+          "driver.michael_schumacher",
+          "driver.damon_hill",
+          "driver.gerhard_berger",
+          "driver.jean_alesi",
+          "driver.heinz_harald_frentzen",
+          "driver.johnny_herbert",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.eddie_irvine",
+          "driver.rubens_barrichello",
+          "driver.jean_christophe_boullion",
+          "driver.mika_salo",
+          "driver.luca_badoer",
+          "driver.taki_inoue",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.andrea_montermini",
+          "driver.mika_hakkinen",
+          "driver.jean_denis_deletraz",
+          "driver.olivier_panis",
+          "driver.pedro_lamy",
+          "driver.ukyo_katayama",
+          "driver.max_papis"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-09-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "name": "European Grand Prix",
+      "date": "1995-10-01",
+      "championship": true,
+      "track": {
+        "realVenue": "Nürburgring",
+        "id": "nurburgring_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 67,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.jean_alesi",
+          "driver.david_coulthard",
+          "driver.rubens_barrichello",
+          "driver.johnny_herbert",
+          "driver.eddie_irvine",
+          "driver.martin_brundle",
+          "driver.mika_hakkinen",
+          "driver.pedro_lamy",
+          "driver.mika_salo",
+          "driver.luca_badoer",
+          "driver.max_papis",
+          "driver.pedro_diniz",
+          "driver.gabriele_tarquini",
+          "driver.jean_denis_deletraz",
+          "driver.damon_hill",
+          "driver.andrea_montermini",
+          "driver.jean_christophe_boullion",
+          "driver.gerhard_berger",
+          "driver.roberto_moreno",
+          "driver.heinz_harald_frentzen",
+          "driver.olivier_panis",
+          "driver.mark_blundell",
+          "driver.taki_inoue"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-10-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the modern Nürburgring GP-Strecke; the venue is real and the GP layout is largely as raced in 1995, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "name": "Pacific Grand Prix",
+      "date": "1995-10-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Okayama International Circuit (TI Circuit Aida)",
+        "id": "jerez_1988",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "donington_gp"
+        ]
+      },
+      "laps": 73,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.david_coulthard",
+          "driver.damon_hill",
+          "driver.gerhard_berger",
+          "driver.jean_alesi",
+          "driver.johnny_herbert",
+          "driver.heinz_harald_frentzen",
+          "driver.olivier_panis",
+          "driver.mark_blundell",
+          "driver.jan_magnussen",
+          "driver.eddie_irvine",
+          "driver.mika_salo",
+          "driver.pedro_lamy",
+          "driver.ukyo_katayama",
+          "driver.luca_badoer",
+          "driver.roberto_moreno",
+          "driver.pedro_diniz",
+          "driver.rubens_barrichello",
+          "driver.gianni_morbidelli",
+          "driver.taki_inoue",
+          "driver.andrea_montermini",
+          "driver.aguri_suzuki",
+          "driver.jean_christophe_boullion",
+          "driver.bertrand_gachot"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1995-10-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for the Okayama International Circuit (TI Circuit Aida) — 83 laps / 307.3 km reproduced as 73 laps of Jerez 1988. Aida is not in AMS2; Jerez 1988 is a tight, technical, period-correct permanent circuit of similar rhythm and is free on the 1995 calendar (the Spanish GP runs at Barcelona)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "name": "Japanese Grand Prix",
+      "date": "1995-10-29",
+      "championship": true,
+      "track": {
+        "realVenue": "Suzuka Circuit",
+        "id": "kansai_classic",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "kansai_gp"
+        ]
+      },
+      "laps": 53,
+      "grid": {
+        "size": 23,
+        "starterDriverIds": [
+          "driver.michael_schumacher",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.eddie_irvine",
+          "driver.olivier_panis",
+          "driver.mika_salo",
+          "driver.mark_blundell",
+          "driver.heinz_harald_frentzen",
+          "driver.luca_badoer",
+          "driver.karl_wendlinger",
+          "driver.pedro_lamy",
+          "driver.taki_inoue",
+          "driver.damon_hill",
+          "driver.david_coulthard",
+          "driver.pedro_diniz",
+          "driver.jean_alesi",
+          "driver.andrea_montermini",
+          "driver.gerhard_berger",
+          "driver.rubens_barrichello",
+          "driver.ukyo_katayama",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.gianni_morbidelli"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 22,
+          "startTime": "14:00",
+          "date": "1995-10-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the classic (pre-2003) layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 17,
+      "name": "Australian Grand Prix",
+      "date": "1995-11-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 81,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.damon_hill",
+          "driver.olivier_panis",
+          "driver.gianni_morbidelli",
+          "driver.mark_blundell",
+          "driver.mika_salo",
+          "driver.pedro_lamy",
+          "driver.pedro_diniz",
+          "driver.bertrand_gachot",
+          "driver.ukyo_katayama",
+          "driver.johnny_herbert",
+          "driver.eddie_irvine",
+          "driver.heinz_harald_frentzen",
+          "driver.gerhard_berger",
+          "driver.martin_brundle",
+          "driver.michael_schumacher",
+          "driver.jean_alesi",
+          "driver.roberto_moreno",
+          "driver.rubens_barrichello",
+          "driver.david_coulthard",
+          "driver.taki_inoue",
+          "driver.karl_wendlinger",
+          "driver.andrea_montermini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1995-11-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

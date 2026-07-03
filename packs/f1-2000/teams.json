@@ -1,0 +1,169 @@
+{
+    "teams":  [
+                  {
+                      "id":  "team.mclaren",
+                      "name":  "McLaren-Mercedes",
+                      "carVehicleIds":  [
+                                            "mclaren_mp416"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.ferrari",
+                      "name":  "Ferrari",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.85,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.williams",
+                      "name":  "Williams-BMW",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.74,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.benetton",
+                      "name":  "Benetton-Playlife",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.bar",
+                      "name":  "BAR-Honda",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.82,
+                      "prestige":  3,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.jordan",
+                      "name":  "Jordan-Mugen-Honda",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.71,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.jaguar",
+                      "name":  "Jaguar-Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.82,
+                      "prestige":  3,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.sauber",
+                      "name":  "Sauber-Petronas",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.84,
+                      "prestige":  2,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.arrows",
+                      "name":  "Arrows-Supertec",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.64,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.prost",
+                      "name":  "Prost-Peugeot",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.52,
+                      "prestige":  2,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.minardi",
+                      "name":  "Minardi-Fondmetal",
+                      "carVehicleIds":  [
+                                            "formula_v10"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.74,
+                      "prestige":  2,
+                      "budgetTier":  1
+                  }
+              ]
+}

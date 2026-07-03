@@ -1,0 +1,274 @@
+{
+  "teams": [
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Ford",
+      "carVehicleIds": [
+        "lotus_72e"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.6,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Ford",
+      "carVehicleIds": [
+        "mclaren_m23"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.58,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.brabham",
+      "name": "Brabham-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.52,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_retro_v12"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.62,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.brm",
+      "name": "BRM",
+      "carVehicleIds": [
+        "formula_retro_v12"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.35,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.shadow",
+      "name": "Shadow-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.45,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.surtees",
+      "name": "Surtees-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.iso_marlboro",
+      "name": "Iso-Marlboro-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.38,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.march",
+      "name": "March-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.hesketh",
+      "name": "Hesketh-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ensign",
+      "name": "Ensign-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.3,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.lola",
+      "name": "Lola-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.33,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.trojan",
+      "name": "Trojan-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.28,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.token",
+      "name": "Token-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.25,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.amon",
+      "name": "Amon-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.2,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.parnelli",
+      "name": "Parnelli-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.penske",
+      "name": "Penske-Ford",
+      "carVehicleIds": [
+        "formula_retro"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 2,
+      "budgetTier": 2
+    }
+  ]
+}

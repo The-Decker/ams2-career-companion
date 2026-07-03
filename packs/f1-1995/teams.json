@@ -1,0 +1,199 @@
+{
+  "teams": [
+    {
+      "id": "team.benetton",
+      "name": "Benetton-Renault",
+      "carVehicleIds": [
+        "formula_edge_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.84,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Yamaha",
+      "carVehicleIds": [
+        "formula_edge_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.7,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams-Renault",
+      "carVehicleIds": [
+        "formula_edge_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.74,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Mercedes",
+      "carVehicleIds": [
+        "formula_edge_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.68,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.footwork",
+      "name": "Footwork-Hart",
+      "carVehicleIds": [
+        "formula_edge_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.45,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.simtek",
+      "name": "Simtek-Ford",
+      "carVehicleIds": [
+        "formula_edge_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.49,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.jordan",
+      "name": "Jordan-Peugeot",
+      "carVehicleIds": [
+        "formula_edge_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.62,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.pacific",
+      "name": "Pacific-Ford",
+      "carVehicleIds": [
+        "formula_edge_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.28,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.forti",
+      "name": "Forti-Ford",
+      "carVehicleIds": [
+        "formula_edge_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.24,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.minardi",
+      "name": "Minardi-Ford",
+      "carVehicleIds": [
+        "formula_edge_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.43,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.ligier",
+      "name": "Ligier-Mugen-Honda",
+      "carVehicleIds": [
+        "formula_edge_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.63,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_edge_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.82,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.sauber",
+      "name": "Sauber-Ford",
+      "carVehicleIds": [
+        "formula_edge_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.72,
+      "prestige": 3,
+      "budgetTier": 3
+    }
+  ]
+}

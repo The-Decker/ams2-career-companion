@@ -33,6 +33,11 @@
       "suggestions": ["brandshatch_gp", "adelaide_historic"],
       "rationale": "Fast parkland street circuit plunging over Barcelona's Montjuïc hill — huge elevation swings and a sweeping, committed rhythm (Spanish GP 1969/71/73/75). Brands Hatch GP's natural-terrain dips and cambered sweepers are the closest rhythm match in AMS2; Adelaide 1988 keeps the street-circuit walls but is flat and right-angled by comparison. Caveat: Brands Hatch hosted the real British GP in even years 1964-1970 — even-year pack authors should re-rank."
     },
+    "nivelles": {
+      "name": "Nivelles-Baulers",
+      "suggestions": ["spa-francorchamps_1993", "brandshatch_gp"],
+      "rationale": "Nivelles-Baulers (Belgian GP 1972, 1974) was a flat, featureless purpose-built autodrome with no AMS2 counterpart. Spa-Francorchamps 1993 keeps the Belgian GP in Belgium on the country's other, era-adjacent grand prix venue (as the f1-1990 Belgian round does); Brands Hatch GP is a natural-terrain alternative but hosts the era's British GP in years when the calendar runs there."
+    },
     "clermont-ferrand": {
       "name": "Charade Circuit",
       "suggestions": ["rouen", "rouen_short", "le_mans_bugatti"],
@@ -118,6 +123,11 @@
       "name": "Autodromo do Estoril (pre-1994)",
       "suggestions": ["estoril_1988"],
       "rationale": "Exists directly as Cascais 1988 in AMS2 - listed for id lookup convenience."
+    },
+    "aida": {
+      "name": "TI Circuit, Aida (Okayama International Circuit)",
+      "suggestions": ["jerez_1988", "donington_gp"],
+      "rationale": "Aida's tight, technical, stop-start 3.7 km permanent layout (Pacific GP 1994-1995) has no AMS2 counterpart; Jerez 1988 is a period-correct permanent circuit of similar low-speed technical rhythm and is free on both Pacific-GP calendars (the Spanish GP runs at Barcelona/Catalunya). Donington GP is the natural-terrain technical alternative."
     }
   }
 }
