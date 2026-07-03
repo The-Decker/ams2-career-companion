@@ -27,13 +27,17 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
 - **Gate 3 — Auto-capture (Phase 2):** race with shared memory on; the result screen
   pre-fills itself.
 
-## ▶ In progress — M6: era transition + content growth
+## ✅ M6 — era transition + first content growth (2026-07-03, v0.2.0, 822/822)
 
-- Era-transition engine: lineage carryover (`team.lotus`, `driver.j_clark`), age/rep/OPI
-  carry, prestige + Budget-Unit rescale across packs, bridge-or-block for gap years.
-- **f1-1969 pack** generated from your installed jusk F-Vintage_Gen2 set (skinpack already
-  deployed) — the first real transition target: 1967 → bridge 1968 → 1969.
-- Season-review "sign & continue" flow; release build v0.2.
+- Era-transition engine: lineage carryover, age/rep/OPI carry, 1968 bridged (deterministic
+  aging/retirement per gap year; Jim Clark departs, f1db-verified), cross-transition
+  byte-identical replay.
+- **f1-1969 pack**: 26/26 liveries bound to the installed jusk set, per-track overrides
+  carried, every f1db 1969 entrant included or coverage-noted.
+- Season review "Sign & start 1969" flow with the bridge note; reopen lands in the latest
+  season. **→ Gate 2 is ready to test.**
+
+## ▶ In progress
 
 ## ⏭ Next (Phase 1 wrap)
 
