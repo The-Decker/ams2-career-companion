@@ -16,13 +16,14 @@ public static class PackContentValidator
     public static PreflightReport Validate(
         SeasonPack pack,
         Ams2ContentLibrary library,
-        IReadOnlyCollection<InstalledLivery> installedLiveries)
+        IReadOnlyCollection<InstalledLivery> installedLiveries,
+        InstalledAiNameSet? installedAiNames = null)
     {
         var issues = new List<PreflightIssue>();
 
         bool classExists = CheckClass(pack.Season, library, issues);
         CheckTracksAndAiCaps(pack.Season, library, issues);
-        CheckLiveries(pack, library, installedLiveries, issues);
+        CheckLiveries(pack, library, installedLiveries, installedAiNames, issues);
         CheckTeamCars(pack, library, classExists, issues);
 
         return new PreflightReport { Issues = issues };
@@ -119,13 +120,25 @@ public static class PackContentValidator
         SeasonPack pack,
         Ams2ContentLibrary library,
         IReadOnlyCollection<InstalledLivery> installedLiveries,
+        InstalledAiNameSet? installedAiNames,
         List<PreflightIssue> issues)
     {
         string ams2Class = pack.Season.Ams2Class;
 
-        var known = installedLiveries.Select(l => l.Name).ToHashSet(StringComparer.Ordinal);
-        if (library.Liveries.TryGetValue(ams2Class, out var entry))
-            known.UnionWith(entry.StockLib1563);
+        // PRIMARY: names the installed NAMeS/AI file for this class defines ("found before
+        // overwritten"). A name it declares binds in-game whatever the skin state — never warn.
+        var aiNames = installedAiNames is { LiveryNames.Count: > 0 }
+            ? installedAiNames.LiveryNames.ToHashSet(StringComparer.Ordinal)
+            : [];
+
+        var skins = installedLiveries.Select(l => l.Name).ToHashSet(StringComparer.Ordinal);
+        var stock = library.Liveries.TryGetValue(ams2Class, out var entry)
+            ? entry.StockLib1563.ToHashSet(StringComparer.Ordinal)
+            : [];
+
+        var known = new HashSet<string>(aiNames, StringComparer.Ordinal);
+        known.UnionWith(skins);
+        known.UnionWith(stock);
 
         var bound = pack.Entries.Select(e => e.Ams2LiveryName)
             .Concat(pack.Season.Rounds.SelectMany(r => r.GuestEntries).Select(g => g.Ams2LiveryName))
@@ -134,13 +147,26 @@ public static class PackContentValidator
         if (known.Count == 0)
         {
             issues.Add(Warning(
-                $"No livery reference data for class {ams2Class} (no installed overrides scanned, " +
-                $"no stock library entry) — livery bindings cannot be verified. {RequiredSkinPacks(pack.Manifest)}"));
+                $"No livery reference data for class {ams2Class} (no installed AI file, no installed " +
+                $"overrides scanned, no stock library entry) — livery bindings cannot be verified. {RequiredSkinPacks(pack.Manifest)}"));
             return;
         }
 
         foreach (var livery in bound)
         {
+            // (1) The installed AI file defines this name — it binds. The skin may fall back to
+            // default; that is at most an INFO note, never a warning (user manages skins).
+            if (aiNames.Contains(livery))
+            {
+                if (!skins.Contains(livery) && !stock.Contains(livery))
+                    issues.Add(Info(
+                        $"Livery '{livery}' is defined by your installed {ams2Class} AI file — the name binds. " +
+                        "No matching skin was scanned, so it may fall back to the default skin; " +
+                        "manage skins with the pack's own selector."));
+                continue;
+            }
+
+            // (2) A skin override or stock name also binds.
             if (known.Contains(livery))
                 continue;
 
@@ -151,8 +177,8 @@ public static class PackContentValidator
             issues.Add(Warning(nearMiss is not null
                 ? $"Livery '{livery}' does not exactly match installed/known livery '{nearMiss}' " +
                   "(case or whitespace differs — the binding is exact-match)."
-                : $"Livery '{livery}' was not found among installed skin overrides or known stock names " +
-                  $"for {ams2Class} — the entry will not bind. {RequiredSkinPacks(pack.Manifest)}"));
+                : $"Livery '{livery}' was not found in your installed {ams2Class} AI file, installed skin " +
+                  $"overrides, or known stock names — the entry will not bind. {RequiredSkinPacks(pack.Manifest)}"));
         }
     }
 
@@ -206,4 +232,7 @@ public static class PackContentValidator
 
     private static PreflightIssue Warning(string message) =>
         new() { Severity = PreflightSeverity.Warning, Message = message };
+
+    private static PreflightIssue Info(string message) =>
+        new() { Severity = PreflightSeverity.Info, Message = message };
 }

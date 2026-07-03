@@ -127,7 +127,13 @@
                         Command="{Binding UndoCommand}" IsEnabled="{Binding CanUndo}"
                         ToolTip="Undo the last placement, DNF, DSQ, or reorder — keyboard or mouse (Ctrl+Z)" />
 
+                <!-- IsUndoEnabled=False ON PURPOSE (BUG B): the grammar owns Ctrl+Z (unlimited undo
+                     across every placement / DNF / DSQ / reorder, via OnPreviewKeyDown → vm.Undo).
+                     The TextBox's built-in per-keystroke undo would otherwise be a second Ctrl+Z
+                     owner that can swallow the chord depending on where focus landed after a mouse
+                     action (e.g. picking Mech/Acc), making that change look un-undoable. One owner. -->
                 <TextBox x:Name="InputBox" FontSize="20" FontFamily="Consolas" Padding="12,9"
+                         IsUndoEnabled="False"
                          Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}">
                     <TextBox.Style>
                         <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">

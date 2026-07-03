@@ -521,8 +521,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             messages.Add(scan.Summary);
         var details = scan.UnreadableFiles;
 
+        // PRIMARY name authority: the user's installed CustomAIDrivers class file. A name it
+        // defines is valid whatever the skin state — no false "won't bind" warning.
+        var installedAiNames = _environment.ScanInstalledAiNames(installation, file.VehicleClass);
+
         var preflight = GridStager.Preflight(
-            file, _environment.ContentLibrary, scan.Liveries, plan.TrackId, plan.Seats.Count);
+            file, _environment.ContentLibrary, scan.Liveries, plan.TrackId, plan.Seats.Count, installedAiNames);
         messages.AddRange(preflight.Issues.Select(i => $"{i.Severity}: {i.Message}"));
 
         if (preflight.HasErrors)
@@ -533,8 +537,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
         try
         {
+            // NAMeS-primary staging ("found before overwritten"): the installed class file is
+            // read before any write and, for every seat it already defines, its name + base
+            // ratings win — only this round's / the career's delta (measured against the pinned
+            // pack's own driver baseline) is applied over them.
             var result = GridStager.StageOrRefuse(
-                file, installation.CustomAiDriversDirectory, _environment.Clock.GetUtcNow(), force);
+                file, installation.CustomAiDriversDirectory, _environment.Clock.GetUtcNow(), force,
+                PackBaselineByLivery());
 
             if (result.RequiresForce)
             {
@@ -543,7 +552,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 // existing "Stage anyway (backup first)" escape hatch.
                 messages.Add(
                     $"Your installed {file.VehicleClass}.xml differs from this round's grid " +
-                    "(community NAMeS file). 'Stage anyway' takes a timestamped backup first.");
+                    "(community NAMeS file). Your installed names/AI are kept — only this round's " +
+                    "grid selection and your career changes are applied. 'Stage anyway' takes a " +
+                    "timestamped backup first.");
                 return new StageOutcome
                 {
                     Success = false,
@@ -577,6 +588,58 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         messages.Add(message);
         return new StageOutcome { Success = false, Messages = messages, Details = details ?? [] };
     }
+
+    /// <summary>The pinned pack's OWN per-livery driver baseline (before any trackForm/aiOverride
+    /// or career effect) keyed by <c>ams2LiveryName</c> — the delta reference for NAMeS-primary
+    /// staging (<see cref="GridStager.MergeInstalledPrimary"/>). Each entry's livery maps to a
+    /// <see cref="CustomAiDriver"/> carrying that pack driver's raw ratings/name/country, so
+    /// staging can tell a genuine round/career change (generated != this baseline) from a stale
+    /// pinned value (generated == this baseline) and keep the user's installed value in the
+    /// latter case. First entry per livery wins (guest entries fill liveries entries.json omits).</summary>
+    private IReadOnlyDictionary<string, CustomAiDriver> PackBaselineByLivery()
+    {
+        var driversById = Pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
+        var byLivery = new Dictionary<string, CustomAiDriver>(StringComparer.Ordinal);
+
+        void Add(string liveryName, string driverId)
+        {
+            if (byLivery.ContainsKey(liveryName))
+                return;
+            if (driversById.TryGetValue(driverId, out var driver))
+                byLivery[liveryName] = ToBaselineDriver(liveryName, driver);
+        }
+
+        foreach (var entry in Pack.Entries)
+            Add(entry.Ams2LiveryName, entry.DriverId);
+        foreach (var guest in Pack.Season.Rounds.SelectMany(r => r.GuestEntries))
+            Add(guest.Ams2LiveryName, guest.DriverId);
+
+        return byLivery;
+    }
+
+    /// <summary>Maps a pinned-pack driver's raw baseline ratings onto the custom-AI vocabulary
+    /// (no trackForm, no aiOverrides, no career drift) — the reference the staging merge diffs
+    /// the generated round file against.</summary>
+    private static CustomAiDriver ToBaselineDriver(string liveryName, Companion.Core.Packs.PackDriver driver) => new()
+    {
+        LiveryName = liveryName,
+        Name = driver.Name,
+        Country = driver.Country,
+        RaceSkill = driver.Ratings.RaceSkill,
+        QualifyingSkill = driver.Ratings.QualifyingSkill,
+        Aggression = driver.Ratings.Aggression,
+        Defending = driver.Ratings.Defending,
+        Stamina = driver.Ratings.Stamina,
+        Consistency = driver.Ratings.Consistency,
+        StartReactions = driver.Ratings.StartReactions,
+        WetSkill = driver.Ratings.WetSkill,
+        TyreManagement = driver.Ratings.TyreManagement,
+        AvoidanceOfMistakes = driver.Ratings.AvoidanceOfMistakes,
+        BlueFlagConceding = driver.Ratings.BlueFlagConceding,
+        WeatherTyreChanges = driver.Ratings.WeatherTyreChanges,
+        AvoidanceOfForcedMistakes = driver.Ratings.AvoidanceOfForcedMistakes,
+        FuelManagement = driver.Ratings.FuelManagement,
+    };
 
     // ---------- season-end restore (IAiFileRestore) ----------
 

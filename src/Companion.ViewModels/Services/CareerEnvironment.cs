@@ -69,4 +69,16 @@ public sealed class CareerEnvironment
         return LiveryOverrideScanner.ScanDetailed(
             LiveryOverrideScanner.CandidateOverrideRoots(installDirectory, DocumentsDirectory));
     }
+
+    /// <summary>Scans the user's INSTALLED CustomAIDrivers class file for the livery names it
+    /// declares — the PRIMARY authority for which names are valid (locked decision #7, "found
+    /// before overwritten"). A missing install or class file yields an empty
+    /// (<see cref="InstalledAiNameSet.Found"/>=false) set — the preflight then falls back to
+    /// skins + stock alone.</summary>
+    public InstalledAiNameSet ScanInstalledAiNames(Ams2Installation? installation, string vehicleClass)
+    {
+        if (installation is null)
+            return InstalledAiNameSet.Empty(vehicleClass);
+        return InstalledAiNameScanner.Scan(installation.CustomAiDriversDirectory, vehicleClass);
+    }
 }

@@ -39,8 +39,14 @@ public partial class ResultEntryView : UserControl
                 FocusInput();
         };
 
-        // After any drop (handled inside the behavior) the input box gets focus back.
-        AddHandler(DragDrop.DropEvent, new DragEventHandler((_, _) => FocusInput()), handledEventsToo: true);
+        // After any drop (handled inside the behavior) the input box gets focus back — but
+        // never when a reason/detail/DSQ box is the active editor, or the drop would yank the
+        // caret out of a box the user just started typing in (BUG A).
+        AddHandler(DragDrop.DropEvent, new DragEventHandler((_, _) =>
+        {
+            if (!IsEditableTextEntryFocused())
+                FocusInput();
+        }), handledEventsToo: true);
     }
 
     private ResultEntryViewModel? ViewModel => DataContext as ResultEntryViewModel;
@@ -96,12 +102,45 @@ public partial class ResultEntryView : UserControl
 
     // ---------- focus pinning: the entry box always has focus ----------
 
-    /// <summary>Left-click releases only — a right-click must not steal focus from the
-    /// context menu it is about to open.</summary>
+    /// <summary>Left-click releases pin the grammar input back (typing must always work —
+    /// decision 8), EXCEPT when the click lands in — or focus already sits within — an editable
+    /// text-entry box other than InputBox (the DNF custom-cause box, the DSQ reason box, the
+    /// insert-position box). Re-focusing those away instantly yanked the caret the user was
+    /// trying to place (BUG A). A right-click must not steal focus from the context menu it is
+    /// about to open, so only left releases pin.</summary>
     private void OnPreviewMouseUp(object sender, MouseButtonEventArgs e)
     {
-        if (e.ChangedButton == MouseButton.Left && !InsertPositionPopup.IsOpen)
-            FocusInput();
+        if (e.ChangedButton != MouseButton.Left || InsertPositionPopup.IsOpen)
+            return;
+
+        // The click's own focus-set to a TextBox happens before this deferred re-focus would
+        // run; if the target (or the currently-focused element) is an editable box other than
+        // InputBox, leave the caret where the user put it.
+        if (IsEditableTextEntryTarget(e.OriginalSource) || IsEditableTextEntryFocused())
+            return;
+
+        FocusInput();
+    }
+
+    /// <summary>True when keyboard focus currently sits in an editable TextBox that is NOT the
+    /// grammar InputBox — the DNF custom-cause box, the DSQ reason box, or the insert-position
+    /// box. Those own the caret; the grammar-input pin must stand down for them.</summary>
+    private bool IsEditableTextEntryFocused() =>
+        Keyboard.FocusedElement is TextBox { IsReadOnly: false } box && !ReferenceEquals(box, InputBox);
+
+    /// <summary>True when a click's target is (or lives inside) an editable TextBox other than
+    /// InputBox — checked on mouse-up before the box has necessarily taken keyboard focus.</summary>
+    private bool IsEditableTextEntryTarget(object? source)
+    {
+        for (DependencyObject? node = source as DependencyObject; node is not null;
+             node = node is Visual or System.Windows.Media.Media3D.Visual3D
+                 ? VisualTreeHelper.GetParent(node)
+                 : LogicalTreeHelper.GetParent(node))
+        {
+            if (node is TextBox { IsReadOnly: false } box)
+                return !ReferenceEquals(box, InputBox);
+        }
+        return false;
     }
 
     private void FocusInput() =>

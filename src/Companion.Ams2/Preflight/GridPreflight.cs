@@ -10,6 +10,12 @@ public enum PreflightSeverity
 
     /// <summary>Something looks off but the game will still run (proceed-anyway territory).</summary>
     Warning,
+
+    /// <summary>A neutral, non-gating note (never blocks, never an amber "proceed-anyway"
+    /// warning). Used for NAMeS-primary observations the user manages themselves — e.g. a
+    /// name the installed AI file defines but has no deployed skin, which binds a name and
+    /// falls back to the default skin (managed via the pack's own selector, not this app).</summary>
+    Info,
 }
 
 public sealed record PreflightIssue
@@ -26,9 +32,10 @@ public sealed record PreflightReport
 
 /// <summary>
 /// Validates a generated custom-AI grid before it is staged: class name against the content
-/// library (exact case — the filename IS the binding), livery names against installed skin
-/// overrides + known stock names (the #1 community failure mode), grid size against the
-/// venue's AI cap, per-track override ids against the track library.
+/// library (exact case — the filename IS the binding), livery names against the installed
+/// NAMeS/AI file (PRIMARY — "found before overwritten") then installed skin overrides + known
+/// stock names, grid size against the venue's AI cap, per-track override ids against the track
+/// library.
 /// </summary>
 public static class GridPreflight
 {
@@ -37,12 +44,13 @@ public static class GridPreflight
         Ams2ContentLibrary library,
         IReadOnlyCollection<InstalledLivery> installedLiveries,
         string? trackId = null,
-        int? gridSize = null)
+        int? gridSize = null,
+        InstalledAiNameSet? installedAiNames = null)
     {
         var issues = new List<PreflightIssue>();
 
         CheckClassName(file, library, issues);
-        CheckLiveryNames(file, library, installedLiveries, issues);
+        CheckLiveryNames(file, library, installedLiveries, installedAiNames, issues);
         CheckTrackReferences(file, library, issues);
         CheckGridSize(library, trackId, gridSize ?? file.Drivers.Count(d => d.Tracks.Count == 0), issues);
 
@@ -68,18 +76,41 @@ public static class GridPreflight
         });
     }
 
+    /// <summary>
+    /// Livery validity, NAMeS-primary (Mike's requirement: the installed names/AI mod must be
+    /// PRIMARY if found, "found before overwritten"). Precedence:
+    /// <list type="number">
+    /// <item>A name the INSTALLED AI FILE defines is VALID — no issue at all, whatever the skin
+    /// state, because that file is the authority for what binds in-game.</item>
+    /// <item>A name in an installed SKIN OVERRIDE or the STOCK library also binds — no issue.</item>
+    /// <item>A name the AI file defines but with NO deployed skin is at most an INFO note (the
+    /// name binds; the skin falls back to default — managed with the pack's own selector),
+    /// never a Warning.</item>
+    /// <item>A name in NEITHER the AI file NOR skins NOR stock is the only real Warning.</item>
+    /// </list>
+    /// </summary>
     private static void CheckLiveryNames(
         CustomAiFile file,
         Ams2ContentLibrary library,
         IReadOnlyCollection<InstalledLivery> installedLiveries,
+        InstalledAiNameSet? installedAiNames,
         List<PreflightIssue> issues)
     {
-        var installed = installedLiveries.Select(l => l.Name).ToHashSet(StringComparer.Ordinal);
+        // PRIMARY: names the installed NAMeS/AI file for this class defines. Found before
+        // overwritten — if the user's own AI file declares the livery, it is valid, period.
+        var aiNames = installedAiNames is { LiveryNames.Count: > 0 }
+            ? installedAiNames.LiveryNames.ToHashSet(StringComparer.Ordinal)
+            : [];
+
+        var skins = installedLiveries.Select(l => l.Name).ToHashSet(StringComparer.Ordinal);
         var stock = library.Liveries.TryGetValue(file.VehicleClass, out var entry)
             ? entry.StockLib1563.ToHashSet(StringComparer.Ordinal)
             : [];
 
-        var known = new HashSet<string>(installed, StringComparer.Ordinal);
+        // "known" = valid names across every source. The AI file is one of them (and takes
+        // precedence for the INFO-vs-Warning decision below).
+        var known = new HashSet<string>(aiNames, StringComparer.Ordinal);
+        known.UnionWith(skins);
         known.UnionWith(stock);
 
         var duplicates = file.Drivers
@@ -97,6 +128,24 @@ public static class GridPreflight
 
         foreach (var driver in file.Drivers.DistinctBy(d => d.LiveryName, StringComparer.Ordinal))
         {
+            // (1) The installed AI file defines this name — it binds. The skin may or may not
+            // be deployed; either way this is never a Warning.
+            if (aiNames.Contains(driver.LiveryName))
+            {
+                if (!skins.Contains(driver.LiveryName) && !stock.Contains(driver.LiveryName))
+                {
+                    issues.Add(new PreflightIssue
+                    {
+                        Severity = PreflightSeverity.Info,
+                        Message = $"Livery '{driver.LiveryName}' is defined by your installed {file.VehicleClass} " +
+                                  "AI file — the name binds. No matching skin was scanned, so it may fall back to " +
+                                  "the default skin; manage skins with the pack's own selector.",
+                    });
+                }
+                continue;
+            }
+
+            // (2) A skin override or stock name also binds — no issue.
             if (known.Count > 0 && known.Contains(driver.LiveryName))
                 continue;
 
@@ -115,11 +164,12 @@ public static class GridPreflight
             }
             else if (known.Count > 0)
             {
+                // (4) In NEITHER the AI file NOR skins NOR stock — the only real Warning.
                 issues.Add(new PreflightIssue
                 {
                     Severity = PreflightSeverity.Warning,
-                    Message = $"Livery '{driver.LiveryName}' was not found among installed skin overrides or known " +
-                              $"stock names for {file.VehicleClass} — the entry will not bind unless the pack is installed.",
+                    Message = $"Livery '{driver.LiveryName}' was not found in your installed {file.VehicleClass} AI file, " +
+                              "installed skin overrides, or known stock names — the entry will not bind unless the pack is installed.",
                 });
             }
         }
@@ -129,8 +179,8 @@ public static class GridPreflight
             issues.Add(new PreflightIssue
             {
                 Severity = PreflightSeverity.Warning,
-                Message = $"No livery reference data for class {file.VehicleClass} (no installed overrides scanned, " +
-                          "no stock library entry) — livery bindings cannot be verified.",
+                Message = $"No livery reference data for class {file.VehicleClass} (no installed AI file, no installed " +
+                          "overrides scanned, no stock library entry) — livery bindings cannot be verified.",
             });
         }
     }

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Off-screen WPF render harness for the ResultEntry view-layer regressions (v0.3.1 → v0.3.2).
+    This is a SEPARATE test project from Companion.Tests ON PURPOSE: hosting a real WPF control
+    requires net10.0-windows + UseWPF + a reference to the WinExe App project, none of which the
+    WPF-free Companion.Tests (net10.0) project can carry without changing its target. The sacred
+    946-test suite stays exactly as it was. These tests self-skip on non-Windows / non-STA.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- The App project is a WinExe; referencing it emits a harmless MSB3270-style note. -->
+    <NoWarn>$(NoWarn);MSB3270;NETSDK1152</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Companion.App\Companion.App.csproj" />
+    <ProjectReference Include="..\..\src\Companion.Core\Companion.Core.csproj" />
+    <ProjectReference Include="..\..\src\Companion.ViewModels\Companion.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -215,9 +215,16 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 IsInfo: scan.UnreadableFiles.Count == 0));
         }
 
-        foreach (var issue in PackContentValidator.Validate(pack, _environment.ContentLibrary, scan.Liveries).Issues)
+        // PRIMARY name authority: the user's installed CustomAIDrivers class file. A name it
+        // defines is valid whatever the skin state — the briefing/verification screens must not
+        // show a false "won't bind" warning for a name the installed AI file already defines.
+        var installedAiNames = _environment.ScanInstalledAiNames(installation, pack.Season.Ams2Class);
+
+        foreach (var issue in PackContentValidator
+                     .Validate(pack, _environment.ContentLibrary, scan.Liveries, installedAiNames).Issues)
             VerificationItems.Add(new VerificationItem(
-                issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Error, issue.Message));
+                issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Error, issue.Message,
+                IsInfo: issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Info));
 
         OnPropertyChanged(nameof(HasErrors));
         OnPropertyChanged(nameof(HasWarnings));
