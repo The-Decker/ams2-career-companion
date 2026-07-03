@@ -62,6 +62,17 @@ public partial class ResultEntryView : UserControl
         if (InsertPositionPopup.IsOpen)
             return;
 
+        // KEY-ROUTING GUARD (v0.3.3): when the caret sits in an editable box OTHER than the
+        // grammar InputBox — the DNF custom-cause box or the DSQ reason box — the key belongs to
+        // that box, not the grammar. OnPreviewKeyDown is a tunnel handler at the UserControl level
+        // (root→leaf), so without this early return it would fire BEFORE OnDnfDetailKeyDown /
+        // OnDsqReasonKeyDown and swallow Enter/Esc (executing Submit/Confirm) so the user "can't
+        // press Enter" in those boxes. The v0.3.2 fix guarded the MOUSE pin (OnPreviewMouseUp) but
+        // not this key route. Grammar keys still work when InputBox (or any non-text surface) holds
+        // focus. (The insert-position box has its own KeyDown handler and is covered above.)
+        if (IsEditableTextEntryFocused())
+            return;
+
         switch (e.Key)
         {
             case Key.Enter:
@@ -173,21 +184,59 @@ public partial class ResultEntryView : UserControl
         }
     }
 
-    /// <summary>The inline M/A/O picker on a freshly dropped DNF row. Picking m/a closes the
-    /// picker; "o" keeps it open so a custom cause can be typed. Never blocks — the DNF is
-    /// already committed and removable whether or not this is touched.</summary>
+    /// <summary>The inline M/A/O picker on a DNF row's editor. Picking m/a records a concrete
+    /// cause and closes the editor (row → compact DISPLAY, via the VM clearing
+    /// EditingReasonDriverId), returning focus to the grammar box. Picking "o" keeps the editor
+    /// open and reveals the custom-cause box, into which the caret is dropped so the user can
+    /// type straight away. Never blocks — the DNF is already committed and removable whether or
+    /// not this is touched.</summary>
     private void OnReasonPickClick(object sender, RoutedEventArgs e)
     {
-        if (ViewModel is { } vm &&
-            sender is FrameworkElement { Tag: string reason } element &&
-            DriverIdOf(element.DataContext) is { } id)
+        if (ViewModel is not { } vm ||
+            sender is not FrameworkElement { Tag: string reason } element ||
+            DriverIdOf(element.DataContext) is not { } id)
+            return;
+
+        vm.SetDnfReason(id, reason); // for m/a this also clears EditingReasonDriverId (editor hides)
+        e.Handled = true;
+
+        if (reason == "o")
         {
-            vm.SetDnfReason(id, reason);
-            e.Handled = true;
-            // "Other" keeps the row's picker open (custom box); m/a return focus to typing.
-            if (reason != "o")
-                FocusInput();
+            // Reveal + focus the custom-cause box so typing works immediately. Background priority
+            // (below the Input-priority pin) so the box, not the grammar InputBox, keeps the caret.
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+            {
+                if (vm.EditingReasonDriverId == id)
+                    FindEditorBoxFor(id)?.Focus();
+            });
         }
+        else
+        {
+            FocusInput();
+        }
+    }
+
+    /// <summary>The editor's "Done" affordance — commit whatever is in the box and close the
+    /// editor (row → compact DISPLAY). A mouse-only equivalent of pressing Enter in the box, for
+    /// users who reach for a button. Commits EXPLICITLY (rather than relying on LostFocus, which
+    /// may not have fired yet, and which never fires once the box is collapsed) so the typed text
+    /// is never lost. Never blocks.</summary>
+    private void OnReasonPickDone(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is { } vm && DriverIdOf((sender as FrameworkElement)?.DataContext) is { } id)
+        {
+            if (FindEditorBoxFor(id) is { } box)
+            {
+                // Route through the same commit path the box's own handlers use.
+                if (box.DataContext is DnfEntry)
+                    OnDnfDetailChanged(box, e);
+                else
+                    OnDsqReasonChanged(box, e);
+            }
+            vm.StopEditingReason();
+        }
+        e.Handled = true;
+        FocusInput();
     }
 
     /// <summary>The custom-cause text box on an "Other" DNF row — commits on Enter / lost
@@ -202,14 +251,90 @@ public partial class ResultEntryView : UserControl
     {
         if (e.Key == Key.Enter && sender is TextBox box)
         {
+            // Enter COMMITS the custom cause AND closes the editor (row → compact DISPLAY): the
+            // "when the values are done the text box must disappear" behaviour. Without the
+            // StopEditingReason the box stayed put (Mike's report). The key-routing guard above
+            // lets this handler see Enter at all.
             OnDnfDetailChanged(box, e);
+            ViewModel?.StopEditingReason();
             e.Handled = true;
             FocusInput();
         }
         else if (e.Key == Key.Escape)
         {
+            // Esc closes the editor too; the box was OneWay-bound to Detail, so any uncommitted
+            // text is simply discarded (reverting is fine per the spec).
+            ViewModel?.StopEditingReason();
             e.Handled = true;
             FocusInput();
+        }
+    }
+
+    /// <summary>CLICK-TO-EDIT: a left-click on a resolved (DNF or DSQ) row's display area opens
+    /// that row's inline reason editor, seeded with its current reason/detail — the "click on the
+    /// driver, the box comes back up with the options so you can modify it" behaviour that
+    /// replaces remove-then-readd. Only one row edits at a time (the VM enforces it). Does not
+    /// mark the event handled, so drag-to-move and the context menu still work; the deferred
+    /// focus-pin in OnPreviewMouseUp then lands on the freshly-realised editor box (a text-entry
+    /// target), leaving the caret ready to type. A no-op if the row is somehow not resolved.</summary>
+    private void OnResolvedRowClick(object sender, MouseButtonEventArgs e)
+    {
+        if (ViewModel is not { } vm || sender is not FrameworkElement element ||
+            DriverIdOf(element.DataContext) is not { } id)
+            return;
+
+        // Already editing this row: leave it open (a second click must not toggle it shut, which
+        // would fight the box the user is trying to click into).
+        if (vm.EditingReasonDriverId == id)
+            return;
+
+        vm.BeginEditingReason(id);
+
+        // After layout realises the editor, re-seed its box from the VM (so an undo/redo that
+        // changed the stored reason without touching the box is reflected) and drop the caret in
+        // so the user can type straight away (DNF custom-cause box only when the reason is already
+        // "o"; DSQ reason box always). Deferred at Background priority — LOWER than the Input-
+        // priority FocusInput pin OnPreviewMouseUp schedules on this same click — so the editor
+        // box wins the caret last, not the grammar InputBox.
+        Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+        {
+            if (vm.EditingReasonDriverId != id)
+                return;
+            if (FindEditorBoxFor(id) is { } box)
+            {
+                if (box.DataContext is not DnfEntry)
+                    box.Text = vm.DsqReasonOf(id); // DNF box is Detail-bound; DSQ box is seeded here
+                box.Focus();
+                box.SelectAll();
+            }
+        });
+    }
+
+    /// <summary>The editable reason box for a driver's open editor — the DSQ reason box, or the
+    /// DNF custom-cause box when the DNF reason is "o". Walks the realised visual tree; null when
+    /// no box is currently shown (e.g. a DNF still on Mechanical/Accident).</summary>
+    private TextBox? FindEditorBoxFor(string driverId)
+    {
+        foreach (var box in Descendants<TextBox>(this))
+        {
+            if (ReferenceEquals(box, InputBox) || box.IsReadOnly)
+                continue;
+            if (DriverIdOf(box.DataContext) == driverId)
+                return box;
+        }
+        return null;
+    }
+
+    private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
+    {
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T match)
+                yield return match;
+            foreach (var descendant in Descendants<T>(child))
+                yield return descendant;
         }
     }
 
@@ -258,12 +383,18 @@ public partial class ResultEntryView : UserControl
     {
         if (e.Key == Key.Enter && sender is TextBox box)
         {
+            // Enter COMMITS the DSQ reason AND closes the editor (row → compact DISPLAY, showing
+            // the reason as a label): "you can't press enter to enter your dsq reasons" — before
+            // the key-routing guard the grammar swallowed Enter and the box never committed nor
+            // hid.
             OnDsqReasonChanged(box, e);
+            ViewModel?.StopEditingReason();
             e.Handled = true;
             FocusInput();
         }
         else if (e.Key == Key.Escape)
         {
+            ViewModel?.StopEditingReason();
             e.Handled = true;
             FocusInput();
         }

@@ -39,6 +39,7 @@
     <conv:EnumEqualsToVisibilityConverter x:Key="EnumVisible" />
     <conv:AlternationPositionConverter x:Key="AltPosition" />
     <conv:DnfReasonConverter x:Key="DnfReason" />
+    <conv:DsqReasonLabelConverter x:Key="DsqReasonLabel" />
     <conv:StringEqualsToVisibilityConverter x:Key="StringEqualsVisible" />
     <conv:GlyphBrushConverter x:Key="GlyphBrush" />
     <conv:CandidatesVisibilityConverter x:Key="CandidatesVisible" />

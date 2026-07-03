@@ -118,6 +118,9 @@ public sealed class ResultEntryRenderTests
 
             const string id = "d.hulme";
             Assert.True(vm.MarkDsq(id));
+            // v0.3.3: a DSQ row starts in its compact DISPLAY state (no box). Open the editor the
+            // way click-to-edit does before the reason box is realised.
+            vm.BeginEditingReason(id);
             host.Layout();
 
             var reasonBox = host.FindDsqReasonBox(id);
@@ -136,6 +139,297 @@ public sealed class ResultEntryRenderTests
             WpfRenderHarness.Pump();
 
             Assert.Equal("Underweight", vm.DsqReasonOf(id));
+        });
+    }
+
+    // ========== v0.3.3: Enter commits + editor hides, click-to-edit, team name ==========
+
+    /// <summary>DNF acceptance criterion (Mike: "you still can not press enter when entering the
+    /// dnf values"): mark a DNF, open "Other", type "Engine fire" in the custom box, and raise a
+    /// REAL Enter FROM the box through the tunnel+bubble route. The key-routing guard must let the
+    /// box's OnDnfDetailKeyDown handle it (NOT the grammar), so: (1) the detail SAVES, (2) the
+    /// editor HIDES (EditingReasonDriverId null and the custom box no longer visible), and (3) the
+    /// row's compact DISPLAY shows "Engine fire" + the team name.</summary>
+    [Fact]
+    public void Dnf_TypeCustomCause_EnterSavesAndHidesEditor_AndRowShowsReasonPlusTeam()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            const string id = "d.clark";
+            Assert.True(vm.MarkDnf(id));        // fresh DNF, reason "o"
+            vm.ReasonPickerDriverId = id;       // fresh-drop auto-opens the editor
+            host.Layout();
+
+            var detailBox = host.FindDnfDetailBox(id);
+            Assert.NotNull(detailBox);
+            detailBox!.Focus();
+            Keyboard.Focus(detailBox);
+            detailBox.Text = "Engine fire";
+
+            // The load-bearing step: a real Enter raised FROM the box. If the grammar guard were
+            // missing, the UserControl's preview handler would eat this and run Submit/Confirm.
+            bool handled = host.RaiseKeyDown(detailBox, Key.Enter);
+            host.Layout();
+            WpfRenderHarness.Pump();
+
+            Assert.True(handled, "Enter in the DNF custom-cause box must be handled by the box, not swallowed.");
+
+            // (1) saved
+            var entry = vm.Dnfs.Single(d => d.Seat.DriverId == id);
+            Assert.Equal("o", entry.Reason);
+            Assert.Equal("Engine fire", entry.Detail);
+
+            // (2) editor hidden
+            Assert.Null(vm.EditingReasonDriverId);
+            Assert.False(host.IsEffectivelyVisible(host.FindDnfDetailBox(id)),
+                "The custom-cause box must be hidden once the value is committed.");
+
+            // (3) DISPLAY shows the custom reason + the team name
+            Assert.Equal("Engine fire", host.RenderedDnfReasonText(id));
+            Assert.Contains(host.RenderedTeamNameTexts(), t => t.Contains("Jim Clark")); // "Team Jim Clark"
+        });
+    }
+
+    /// <summary>DSQ acceptance criterion (Mike: "you cant press enter to enter your dsq reasons it
+    /// just stays at what you typed. the text box stays as well"): mark a DSQ, click the row to
+    /// edit, type "Underweight", raise a REAL Enter FROM the box. The reason SAVES, the box HIDES,
+    /// and the row's DISPLAY shows "Underweight" + the team name.</summary>
+    [Fact]
+    public void Dsq_ClickToEdit_TypeReason_EnterSavesAndHidesEditor_AndRowShowsReasonPlusTeam()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            const string id = "d.hulme";
+            Assert.True(vm.MarkDsq(id));
+            host.Layout();
+
+            // Click the compact DISPLAY row to open its editor (click-to-edit).
+            vm.BeginEditingReason(id);
+            host.Layout();
+
+            var reasonBox = host.FindDsqReasonBox(id);
+            Assert.NotNull(reasonBox);
+            reasonBox!.Focus();
+            Keyboard.Focus(reasonBox);
+            reasonBox.Text = "Underweight";
+
+            bool handled = host.RaiseKeyDown(reasonBox, Key.Enter);
+            host.Layout();
+            WpfRenderHarness.Pump();
+
+            Assert.True(handled, "Enter in the DSQ reason box must be handled by the box, not swallowed.");
+
+            // saved
+            Assert.Equal("Underweight", vm.DsqReasonOf(id));
+            // editor hidden
+            Assert.Null(vm.EditingReasonDriverId);
+            Assert.False(host.IsEffectivelyVisible(host.FindDsqReasonBox(id)),
+                "The DSQ reason box must be hidden once the value is committed.");
+            // DISPLAY shows the reason + team
+            Assert.Equal("Underweight", host.RenderedDsqReasonText(id));
+            Assert.Contains(host.RenderedTeamNameTexts(), t => t.Contains("Denny Hulme")); // "Team Denny Hulme"
+        });
+    }
+
+    /// <summary>Click-to-edit re-opens a DONE row seeded with its current value — no remove/re-add
+    /// (Mike: "when you click on the driver, the box comes back up with the options"). Save a DSQ
+    /// reason, close, then click the row again: the editor reappears and its box is seeded with the
+    /// saved reason.</summary>
+    [Fact]
+    public void ClickingADoneDsqRow_ReopensEditor_SeededWithCurrentValue()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            const string id = "d.hulme";
+            Assert.True(vm.MarkDsq(id));
+            Assert.True(vm.SetDsqReason(id, "Illegal wing"));
+            vm.StopEditingReason(); // back to DISPLAY
+            host.Layout();
+
+            // Row is DONE: the box is hidden.
+            Assert.Null(vm.EditingReasonDriverId);
+            Assert.False(host.IsEffectivelyVisible(host.FindDsqReasonBox(id)));
+
+            // Click-to-edit via the same VM entry point the row's click handler calls.
+            vm.BeginEditingReason(id);
+            host.Layout();
+
+            var box = host.FindDsqReasonBox(id);
+            Assert.NotNull(box);
+            Assert.True(host.IsEffectivelyVisible(box), "The editor must reappear on click-to-edit.");
+            // Seed the box the way OnResolvedRowClick's deferred step does, then confirm the value.
+            box!.Text = vm.DsqReasonOf(id);
+            Assert.Equal("Illegal wing", box.Text);
+        });
+    }
+
+    /// <summary>Click-to-edit re-opens a DONE "Other" DNF row seeded with its custom cause. The DNF
+    /// custom box is Detail-bound, so simply opening the editor shows the saved text.</summary>
+    [Fact]
+    public void ClickingADoneDnfRow_ReopensEditor_SeededWithCurrentDetail()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            const string id = "d.clark";
+            Assert.True(vm.MarkDnf(id));
+            Assert.True(vm.SetDnfDetail(id, "Gearbox", driverAttributed: false));
+            vm.StopEditingReason();
+            host.Layout();
+
+            Assert.Null(vm.EditingReasonDriverId);
+            Assert.False(host.IsEffectivelyVisible(host.FindDnfDetailBox(id)));
+
+            vm.BeginEditingReason(id);
+            host.Layout();
+
+            var box = host.FindDnfDetailBox(id);
+            Assert.NotNull(box);
+            Assert.True(host.IsEffectivelyVisible(box), "The DNF editor must reappear on click-to-edit.");
+            Assert.Equal("Gearbox", box!.Text); // Detail-bound → seeded automatically
+        });
+    }
+
+    /// <summary>Team name is present on BOTH a DNF and a DSQ row's rendered visual tree at once
+    /// (requirement 5). Mark one of each and assert both team names render.</summary>
+    [Fact]
+    public void TeamName_RendersOnBothDnfAndDsqRows()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            // MarkDnf/MarkDsq do NOT open the editor themselves (the drop handler sets the picker
+            // id separately), so both rows render in their compact DISPLAY state — which is exactly
+            // where the team name must show.
+            Assert.True(vm.MarkDnf("d.clark"));
+            Assert.True(vm.MarkDsq("d.hulme"));
+            host.Layout();
+
+            var teams = host.RenderedTeamNameTexts();
+            Assert.Contains(teams, t => t.Contains("Jim Clark"));   // DNF row team
+            Assert.Contains(teams, t => t.Contains("Denny Hulme")); // DSQ row team
+        });
+    }
+
+    /// <summary>The grammar STILL gets Enter when the InputBox is focused (requirement 1 / 7): a
+    /// placement via the grammar works. With focus in InputBox the key-routing guard stands down,
+    /// so the UserControl's OnPreviewKeyDown runs Submit — placing the highlighted candidate.</summary>
+    [Fact]
+    public void GrammarStillGetsEnter_WhenInputBoxFocused_PlacesTheCandidate()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+            host.Layout();
+
+            host.InputBox.Focus();
+            Keyboard.Focus(host.InputBox);
+            vm.Input = "brab"; // unambiguous surname prefix → Jack Brabham
+            host.Layout();
+            Assert.Equal("d.brabham", vm.SelectedCandidate?.DriverId);
+
+            // A real Enter from the focused InputBox: the guard must NOT fire (InputBox is exempt),
+            // so the grammar's Submit runs and places the candidate.
+            bool handled = host.RaiseKeyDown(host.InputBox, Key.Enter);
+            host.Layout();
+
+            Assert.True(handled, "Enter in the grammar box must be handled by the grammar.");
+            Assert.Contains(vm.Classified, s => s.DriverId == "d.brabham");
+            Assert.Equal("", vm.Input); // Submit cleared it
+        });
+    }
+
+    /// <summary>Freshly-dropped DNF auto-opens its editor so a reason can be picked immediately
+    /// (requirement 4): setting the picker id realises the M/A/O buttons and shows the editor.</summary>
+    [Fact]
+    public void FreshlyDroppedDnf_AutoOpensEditor()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            const string id = "d.clark";
+            Assert.True(vm.MarkDnf(id));
+            vm.ReasonPickerDriverId = id; // the drop handler does this on a fresh DNF drop
+            host.Layout();
+
+            Assert.Equal(id, vm.EditingReasonDriverId);
+            var mech = host.FindReasonButton(id, "m");
+            Assert.NotNull(mech);
+            Assert.True(host.IsEffectivelyVisible(mech), "A fresh DNF's reason picker must be visible.");
+        });
+    }
+
+    /// <summary>Changing a DNF reason from the editor is dynamic and undoable (requirements 6/7):
+    /// on a done Mechanical DNF, click-to-edit then pick Accident — the row updates and a single
+    /// Ctrl+Z (vm.Undo) reverts it, all with no remove/re-add.</summary>
+    [Fact]
+    public void ClickToEdit_ChangeDnfReason_IsDynamicAndUndoable()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+
+            const string id = "d.clark";
+            Assert.True(vm.MarkDnf(id, "m"));
+            host.Layout();
+            Assert.Equal("mechanical", host.RenderedDnfReasonText(id));
+
+            // Click-to-edit, then pick Accident through the REAL button.
+            vm.BeginEditingReason(id);
+            host.Layout();
+            host.RaiseButtonClick(host.FindReasonButton(id, "a")!);
+            host.Layout();
+
+            Assert.Equal("a", vm.Dnfs.Single(d => d.Seat.DriverId == id).Reason);
+            Assert.Equal("accident", host.RenderedDnfReasonText(id));
+            Assert.Null(vm.EditingReasonDriverId); // picking a/m closes the editor
+
+            // One undo reverts the reason change — no remove/re-add.
+            vm.UndoCommand.Execute(null);
+            host.Layout();
+            Assert.Equal("m", vm.Dnfs.Single(d => d.Seat.DriverId == id).Reason);
+            Assert.Equal("mechanical", host.RenderedDnfReasonText(id));
         });
     }
 
@@ -395,25 +689,102 @@ public sealed class ResultEntryRenderTests
         public void RaiseButtonClick(Button button) =>
             button.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, button));
 
+        /// <summary>Raise a real key-down for <paramref name="key"/> FROM <paramref name="source"/>,
+        /// modelling WPF's own two-phase input dispatch: first the tunneling PreviewKeyDown
+        /// (root→leaf — this is where the UserControl's OnPreviewKeyDown key-routing guard lives),
+        /// and, ONLY if that left the event unhandled, the bubbling KeyDown (leaf→root — where the
+        /// box's own OnDnfDetailKeyDown / OnDsqReasonKeyDown handlers live). Returns whether the
+        /// event ended up handled. This is exactly the routing that decides "does Enter belong to
+        /// the grammar or to the box": if the guard fails, the preview handler eats Enter here and
+        /// the box handler never runs.</summary>
+        public bool RaiseKeyDown(UIElement source, Key key)
+        {
+            var presentationSource = PresentationSource.FromVisual(View)
+                ?? throw new InvalidOperationException("No PresentationSource for the view.");
+
+            var preview = new KeyEventArgs(Keyboard.PrimaryDevice, presentationSource, 0, key)
+            {
+                RoutedEvent = Keyboard.PreviewKeyDownEvent,
+            };
+            source.RaiseEvent(preview);
+            if (preview.Handled)
+                return true;
+
+            var bubble = new KeyEventArgs(Keyboard.PrimaryDevice, presentationSource, 0, key)
+            {
+                RoutedEvent = Keyboard.KeyDownEvent,
+            };
+            source.RaiseEvent(bubble);
+            return bubble.Handled;
+        }
+
+        /// <summary>Is this element realised AND effectively visible (itself and every ancestor up to
+        /// the view Visible)? Used to assert an editor has HIDDEN (Collapsed) or SHOWN.</summary>
+        public bool IsEffectivelyVisible(UIElement? element)
+        {
+            for (DependencyObject? node = element; node is not null; node = VisualTreeHelper.GetParent(node))
+            {
+                if (node is UIElement ui && ui.Visibility != Visibility.Visible)
+                    return false;
+                if (ReferenceEquals(node, View))
+                    break;
+            }
+            return element is not null;
+        }
+
+        /// <summary>Every team-name string rendered anywhere in the realised visual tree — the
+        /// TextBlocks whose Text was produced by the " — {0}" TeamName StringFormat. Used to prove
+        /// a DNF/DSQ row actually shows its team.</summary>
+        public IReadOnlyList<string> RenderedTeamNameTexts() =>
+            Descendants<System.Windows.Controls.TextBlock>(View)
+                .Where(tb => IsEffectivelyVisible(tb))
+                .Select(tb => tb.Text)
+                .Where(t => !string.IsNullOrEmpty(t) && t.Contains('—'))
+                .ToArray();
+
+        /// <summary>The DSQ row's compact DISPLAY reason label text (after the " · " separator) —
+        /// e.g. "Underweight" or "disqualified". Only the DSQ reason label uses a "·"-separated Run
+        /// whose row DataContext is a GridSeat (the DNF one's is a DnfEntry).</summary>
+        public string? RenderedDsqReasonText(string driverId)
+        {
+            foreach (var tb in Descendants<System.Windows.Controls.TextBlock>(View))
+            {
+                if ((tb.DataContext as GridSeat)?.DriverId != driverId)
+                    continue;
+                var runs = tb.Inlines.OfType<System.Windows.Documents.Run>().Select(r => r.Text).ToArray();
+                string joined = string.Concat(runs);
+                int i = joined.IndexOf('·');
+                if (i >= 0)
+                    return joined[(i + 1)..].Trim();
+            }
+            return null;
+        }
+
         /// <summary>The reason text actually rendered on a driver's DNF row — read straight out of
         /// the realised visual tree (the <c>DnfReasonConverter</c> output shown to the user), so an
         /// assertion on it proves the ROW updated, not just the viewmodel. Returns e.g. "mechanical"
         /// or "retired" (the word the converter yields for "m" / "o-without-detail").</summary>
         public string? RenderedDnfReasonText(string driverId)
         {
-            // The DNF row template puts the reason in a TextBlock built from two <Run>s: " — " and
-            // the DnfReasonConverter output. A TextBlock composed of explicit Runs reports Text=""
-            // (the Text property only mirrors simple content), so read the Runs directly. Find the
-            // row whose DataContext is this driver's DnfEntry and whose inlines start with " — ".
+            // The DNF row's DISPLAY line puts the reason in a TextBlock built from two <Run>s: a
+            // separator (" · ") and the DnfReasonConverter output. A TextBlock composed of explicit
+            // Runs reports Text="" (the Text property only mirrors simple content), so read the Runs
+            // directly. The team-name TextBlock on the same row is Text-bound (no Runs), so the only
+            // Run-bearing TextBlock for this DnfEntry is the reason label — return its last run,
+            // trimmed of the leading separator. (v0.3.3 split the row into DISPLAY/EDIT states and
+            // moved the reason to a "·" separator; this reads whichever run carries the word.)
             foreach (var tb in Descendants<System.Windows.Controls.TextBlock>(View))
             {
                 if (DnfEntryOf(tb.DataContext)?.Seat.DriverId != driverId)
                     continue;
                 var runs = tb.Inlines.OfType<System.Windows.Documents.Run>().Select(r => r.Text).ToArray();
                 string joined = string.Concat(runs);
-                int dash = joined.IndexOf('—');
-                if (dash >= 0)
-                    return joined[(dash + 1)..].Trim();
+                // The reason label is the only TextBlock whose runs carry the "·" separator — the
+                // team-name TextBlock uses " — " and the badge/name carry no separator, so "·"
+                // uniquely identifies the reason word (e.g. "mechanical" / "retired").
+                int i = joined.IndexOf('·');
+                if (i >= 0)
+                    return joined[(i + 1)..].Trim();
             }
             return null;
         }

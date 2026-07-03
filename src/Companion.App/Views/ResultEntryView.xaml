@@ -7,7 +7,10 @@
              PreviewMouseUp="OnPreviewMouseUp"
              Focusable="False">
     <UserControl.Resources>
+        <!-- Visible on the ONE row currently being edited (EditingReasonDriverId == row id) — the
+             EDIT state's editor. The inverted twin drives the compact DISPLAY state. -->
         <b:StringsEqualToVisibilityConverter x:Key="StringsEqualVisible" />
+        <b:StringsEqualToVisibilityConverter x:Key="StringsEqualHidden" Invert="True" />
 
         <!-- a seat line: number, name, team; players get a marker -->
         <DataTemplate x:Key="SeatLine">
@@ -330,41 +333,67 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Margin="4,3" Background="Transparent"
-                                                    ContextMenu="{StaticResource DriverRowMenu}"
-                                                    ToolTip="Drag back to Remaining to unmark; right-click for more">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
-                                                           FontWeight="SemiBold" />
-                                                <TextBlock Text="{Binding Seat.DriverName}" />
-                                                <!-- reason label: custom text when present, else the m/a/o word -->
-                                                <TextBlock Foreground="{StaticResource TextMutedBrush}">
-                                                    <Run Text=" — " /><Run Text="{Binding Mode=OneWay, Converter={StaticResource DnfReason}}" />
-                                                </TextBlock>
-                                            </StackPanel>
-                                            <!-- inline reason picker: appears on the freshly dropped row. NON-BLOCKING —
-                                                 the DNF is already recorded; Remove takes it straight back to Remaining
-                                                 whether or not a reason was chosen (the mistaken-DNF fix) -->
-                                            <StackPanel Margin="46,3,0,0">
+                                                    ContextMenu="{StaticResource DriverRowMenu}">
+                                            <!-- ===== DISPLAY state (default, "done"): DNF + name + TEAM + reason label,
+                                                 no editor. Click anywhere on it to edit (the box comes back seeded). ===== -->
+                                            <StackPanel Orientation="Horizontal" Background="Transparent"
+                                                        MouseLeftButtonUp="OnResolvedRowClick" Cursor="Hand"
+                                                        ToolTip="Click to change the reason; drag back to Remaining to unmark; right-click for more">
                                                 <StackPanel.Visibility>
-                                                    <MultiBinding Converter="{StaticResource StringsEqualVisible}">
-                                                        <Binding Path="DataContext.ReasonPickerDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                    <MultiBinding Converter="{StaticResource StringsEqualHidden}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                                         <Binding Path="Seat.DriverId" />
                                                     </MultiBinding>
                                                 </StackPanel.Visibility>
+                                                <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                           FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
+                                                           Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                <!-- reason label: custom text when present, else the m/a/o word -->
+                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center">
+                                                    <Run Text=" · " /><Run Text="{Binding Mode=OneWay, Converter={StaticResource DnfReason}}" />
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <!-- ===== EDIT state: shown on the ONE row being edited (fresh drop, or a
+                                                 click on a done row). M/A/O picker + (when Other) custom box + fault
+                                                 toggle + Remove. NON-BLOCKING — the DNF is already recorded; Remove takes
+                                                 it straight back to Remaining whether or not a reason was chosen. ===== -->
+                                            <StackPanel Background="Transparent">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualVisible}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="Seat.DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <!-- keep the driver + team in view while editing, for context -->
                                                 <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                               FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
+                                                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
                                                     <Button Style="{StaticResource ReasonButton}" Content="Mech" Tag="m"
                                                             Click="OnReasonPickClick" ToolTip="Mechanical failure (no blame)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Acc" Tag="a"
                                                             Click="OnReasonPickClick" ToolTip="Accident (driver error)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Other" Tag="o"
                                                             Click="OnReasonPickClick" ToolTip="Other — name a custom cause" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Done"
+                                                            Click="OnReasonPickDone"
+                                                            ToolTip="Finish — hide the editor (also: press Enter in the box)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Remove"
                                                             Foreground="{StaticResource WarningBrush}"
                                                             Click="OnReasonPickRemove"
                                                             ToolTip="Mistake? Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
                                                 </StackPanel>
                                                 <!-- custom cause: only when the reason is "Other" -->
-                                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0"
+                                                <StackPanel Orientation="Horizontal" Margin="46,4,0,0"
                                                             Visibility="{Binding Reason, Converter={StaticResource StringEqualsVisible}, ConverterParameter=o}">
                                                     <TextBox Width="150" FontSize="12" Padding="5,1"
                                                              Text="{Binding Detail, Mode=OneWay}"
@@ -409,18 +438,70 @@
                                           b:ListDragDropBehavior.IsDragSource="True">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="4,3" Background="Transparent"
-                                                    ContextMenu="{StaticResource DriverRowMenu}"
-                                                    ToolTip="Drag back to Remaining to unmark; right-click for more">
-                                            <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
-                                                       FontWeight="SemiBold" VerticalAlignment="Center" />
-                                            <TextBlock Text="{Binding DriverName}" VerticalAlignment="Center" MinWidth="90" />
-                                            <!-- free-text DSQ reason, e.g. "Underweight", "Illegal wing" -->
-                                            <TextBox Width="150" FontSize="12" Padding="5,1" Margin="8,0,0,0"
-                                                     VerticalAlignment="Center"
-                                                     Loaded="OnDsqReasonLoaded"
-                                                     LostFocus="OnDsqReasonChanged" KeyDown="OnDsqReasonKeyDown"
-                                                     ToolTip="Reason for disqualification (Enter to confirm) — optional" />
+                                        <StackPanel Margin="4,3" Background="Transparent"
+                                                    ContextMenu="{StaticResource DriverRowMenu}">
+                                            <!-- ===== DISPLAY state (default, "done"): DSQ + name + TEAM + reason label
+                                                 (the custom reason, or "disqualified" when none). Click to edit. ===== -->
+                                            <StackPanel Orientation="Horizontal" Background="Transparent"
+                                                        MouseLeftButtonUp="OnResolvedRowClick" Cursor="Hand"
+                                                        ToolTip="Click to change the reason; drag back to Remaining to unmark; right-click for more">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualHidden}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
+                                                           FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
+                                                           Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center">
+                                                    <Run Text=" · " /><Run>
+                                                        <Run.Text>
+                                                            <MultiBinding Converter="{StaticResource DsqReasonLabel}">
+                                                                <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                                <Binding Path="DriverId" />
+                                                            </MultiBinding>
+                                                        </Run.Text>
+                                                    </Run>
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <!-- ===== EDIT state: the reason text box + Remove, on the ONE row being
+                                                 edited (click-to-edit). Enter in the box commits AND closes the editor. ===== -->
+                                            <StackPanel Background="Transparent">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualVisible}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
+                                                               FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
+                                                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
+                                                    <!-- free-text DSQ reason, e.g. "Underweight", "Illegal wing" -->
+                                                    <TextBox Width="150" FontSize="12" Padding="5,1"
+                                                             VerticalAlignment="Center"
+                                                             Loaded="OnDsqReasonLoaded"
+                                                             LostFocus="OnDsqReasonChanged" KeyDown="OnDsqReasonKeyDown"
+                                                             ToolTip="Reason for disqualification (Enter to confirm) — optional" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Done"
+                                                            Click="OnReasonPickDone"
+                                                            ToolTip="Finish — hide the editor (also: press Enter in the box)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Remove"
+                                                            Foreground="{StaticResource ErrorBrush}"
+                                                            Click="OnReasonPickRemove"
+                                                            ToolTip="Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
+                                                </StackPanel>
+                                            </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

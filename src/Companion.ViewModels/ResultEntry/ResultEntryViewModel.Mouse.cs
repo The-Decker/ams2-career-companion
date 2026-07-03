@@ -57,13 +57,47 @@ public sealed partial class ResultEntryViewModel
         OnPropertyChanged(nameof(SelectedDriverIds));
     }
 
-    // ---------- inline DNF reason picker (view state; set by the drop handler) ----------
+    // ---------- inline reason editor state (view state; the single "row being edited") ----------
 
-    /// <summary>The driver whose freshly-dropped DNF row shows the inline reason picker
-    /// (Mechanical / Accident / Other). Cleared by <see cref="SetDnfReason"/> and
-    /// <see cref="Unmark"/>; null hides every picker.</summary>
+    /// <summary>The one resolved driver (DNF or DSQ) whose row currently shows its inline reason
+    /// editor — the DNF Mechanical/Accident/Other picker (+ custom-cause box) or the DSQ reason
+    /// box. Exactly one row edits at a time; null means every row is in its compact DISPLAY state
+    /// (name + team + reason label, no editor). Set on a fresh DNF drop (so a reason can be picked
+    /// immediately) and by <see cref="BeginEditingReason"/> when a done row is clicked to edit;
+    /// cleared by <see cref="StopEditingReason"/>, and defensively by <see cref="SetDnfReason"/> /
+    /// <see cref="Unmark"/>. Pure UI state: never part of the draft, never undone.</summary>
     [ObservableProperty]
-    private string? reasonPickerDriverId;
+    private string? editingReasonDriverId;
+
+    /// <summary>Back-compat alias: the freshly-dropped DNF row's picker id is the same single
+    /// "row being edited" state. The drop handler and existing tests set/read this name; it is a
+    /// straight pass-through to <see cref="EditingReasonDriverId"/>.</summary>
+    public string? ReasonPickerDriverId
+    {
+        get => EditingReasonDriverId;
+        set => EditingReasonDriverId = value;
+    }
+
+    partial void OnEditingReasonDriverIdChanged(string? value) =>
+        OnPropertyChanged(nameof(ReasonPickerDriverId));
+
+    /// <summary>Open the inline reason editor on a resolved (DNF or DSQ) driver's row — the
+    /// click-to-edit gesture. Only one row edits at a time, so this replaces any currently-open
+    /// editor. No-op (leaves the editor closed) when the driver is not currently DNF'd or DSQ'd —
+    /// Remaining/classified rows have no reason to edit. Pure view state: nothing is pushed to
+    /// undo, the draft is untouched.</summary>
+    public void BeginEditingReason(string driverId)
+    {
+        bool resolvedOut =
+            _dnfs.Any(d => d.Seat.DriverId == driverId) ||
+            _disqualified.Any(s => s.DriverId == driverId);
+        EditingReasonDriverId = resolvedOut ? driverId : null;
+    }
+
+    /// <summary>Close the inline reason editor (Enter/Done/Esc/click-away), returning the row to
+    /// its compact DISPLAY state. Pure view state; the reason/detail itself is committed
+    /// separately by the Set*Reason/Set*Detail primitives before this is called.</summary>
+    public void StopEditingReason() => EditingReasonDriverId = null;
 
     // ---------- mouse primitives (each pushes the same undo snapshot the grammar uses) ----------
 

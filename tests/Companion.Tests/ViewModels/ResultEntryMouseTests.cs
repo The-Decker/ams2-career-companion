@@ -243,6 +243,80 @@ public class ResultEntryMouseTests
         Assert.Null(vm.ReasonPickerDriverId);
     }
 
+    // ---------- v0.3.3: the single "row being edited" state (DNF picker + DSQ box) ----------
+
+    [Fact]
+    public void BeginEditingReason_OpensOnResolvedRows_DnfAndDsq_ReplacingAnyOpenEditor()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart");
+        vm.MarkDsq("d.gurney");
+
+        // A DNF row can be edited.
+        vm.BeginEditingReason("d.stewart");
+        Assert.Equal("d.stewart", vm.EditingReasonDriverId);
+        Assert.Equal("d.stewart", vm.ReasonPickerDriverId); // the alias tracks it
+
+        // Editing another resolved row replaces the open editor — only one row edits at a time.
+        vm.BeginEditingReason("d.gurney");
+        Assert.Equal("d.gurney", vm.EditingReasonDriverId);
+    }
+
+    [Fact]
+    public void BeginEditingReason_IsNoOp_ForRemainingOrClassifiedDrivers()
+    {
+        var vm = Vm();
+        vm.InsertAt("d.clark", 0); // classified
+
+        vm.BeginEditingReason("d.brabham"); // still Remaining
+        Assert.Null(vm.EditingReasonDriverId);
+
+        vm.BeginEditingReason("d.clark"); // classified, not DNF/DSQ — no reason to edit
+        Assert.Null(vm.EditingReasonDriverId);
+    }
+
+    [Fact]
+    public void StopEditingReason_ReturnsRowToDisplay()
+    {
+        var vm = Vm();
+        vm.MarkDsq("d.gurney");
+        vm.BeginEditingReason("d.gurney");
+        Assert.Equal("d.gurney", vm.EditingReasonDriverId);
+
+        vm.StopEditingReason();
+        Assert.Null(vm.EditingReasonDriverId);
+    }
+
+    [Fact]
+    public void EditingState_IsPureViewState_NotUndone()
+    {
+        // Opening/closing the editor must never push to the undo stack (it is not a draft change).
+        var vm = Vm();
+        vm.MarkDsq("d.gurney"); // this DOES push one undo snapshot
+        bool couldUndoAfterMark = vm.CanUndo;
+
+        vm.BeginEditingReason("d.gurney");
+        vm.StopEditingReason();
+
+        Assert.Equal(couldUndoAfterMark, vm.CanUndo); // unchanged by edit open/close
+        // And a single undo still reverts the mark itself (edit state didn't consume an undo).
+        vm.UndoCommand.Execute(null);
+        Assert.DoesNotContain("d.gurney", Ids(vm.Disqualified));
+    }
+
+    [Fact]
+    public void ReasonPickerAlias_ReflectsEditingReasonDriverId_BothWays()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart");
+
+        vm.ReasonPickerDriverId = "d.stewart";
+        Assert.Equal("d.stewart", vm.EditingReasonDriverId); // set via alias → backing set
+
+        vm.EditingReasonDriverId = null;
+        Assert.Null(vm.ReasonPickerDriverId); // read via alias → backing read
+    }
+
     // ---------- the mistaken-DNF fix: removable BEFORE and AFTER a reason is set ----------
 
     [Fact]

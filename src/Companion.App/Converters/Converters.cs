@@ -142,6 +142,30 @@ public sealed class GlyphBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>DSQ reason → display label for a disqualified row's compact DISPLAY state. The custom
+/// reason verbatim when one is set (e.g. "Underweight"), else the plain word "disqualified".
+/// Values: [0] the ResultEntryViewModel, [1] the row's driver id (string). Bound through the VM
+/// (rather than the seat) because the DSQ reason lives in the viewmodel keyed by driver id; the
+/// binding rides on Disqualified changing so it refreshes when a reason is committed.</summary>
+public sealed class DsqReasonLabelConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.Length >= 2 &&
+            values[0] is Companion.ViewModels.ResultEntry.ResultEntryViewModel vm &&
+            values[1] is string driverId)
+        {
+            string reason = vm.DsqReasonOf(driverId);
+            if (!string.IsNullOrWhiteSpace(reason))
+                return reason.Trim();
+        }
+        return "disqualified";
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Candidates dropdown visibility: candidates exist AND (the input has text, or the
 /// DNF phase is on — where the remaining drivers ARE the candidates for bare-Enter bulking).
 /// Values: [0] Candidates.Count (int), [1] Input (string), [2] IsDnfPhase (bool).</summary>
