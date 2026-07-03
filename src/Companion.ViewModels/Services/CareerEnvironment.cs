@@ -27,6 +27,17 @@ public sealed class CareerEnvironment
     /// requires it (<see cref="Rules"/> throws a clear error when it is missing).</summary>
     public string? RulesDirectory { get; init; }
 
+    /// <summary>Season-pack search roots for era-transition discovery (M6 sign-and-continue).
+    /// Null = <see cref="PackDiscovery.DefaultSearchRoots"/> (the exe-adjacent packs folder,
+    /// then Documents\AMS2CareerCompanion\Packs). A Func so the app can fold in the settings
+    /// screen's live custom pack folders (assigned after <see cref="CreateDefault"/>, hence
+    /// settable); tests pin a fixed list.</summary>
+    public Func<IReadOnlyList<string>>? PackSearchRoots { get; set; }
+
+    /// <summary>The pack search roots to scan right now (see <see cref="PackSearchRoots"/>).</summary>
+    public IReadOnlyList<string> ResolvePackSearchRoots() =>
+        PackSearchRoots?.Invoke() ?? PackDiscovery.DefaultSearchRoots(DocumentsDirectory);
+
     private CareerRulesData? _rules;
 
     /// <summary>The parsed career rules data, loaded once and cached — every fold and season

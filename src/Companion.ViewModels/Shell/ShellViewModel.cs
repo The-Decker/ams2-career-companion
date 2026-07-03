@@ -23,6 +23,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     private HomeViewModel? _home;
     private ObservableObject? _beforeSettings;
+    private string? _currentCareerPath;
 
     public ShellViewModel(
         CareerEnvironment environment,
@@ -84,6 +85,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     private void OnCareerCreated(object? sender, CareerCreatedEventArgs e)
     {
         Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName);
+        _currentCareerPath = e.CareerFilePath;
         AttachHome(e.Session);
     }
 
@@ -104,6 +106,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         }
 
         Start.RecordCareer(path, session.Summary.CareerName);
+        _currentCareerPath = path;
         AttachHome(session);
     }
 
@@ -114,7 +117,30 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         _beforeSettings = null;
         OnPropertyChanged(nameof(Wizard));
         _home = new HomeViewModel(session, _watcherFactory(), settings: _settings);
+        _home.NextSeasonStarted += OnNextSeasonStarted;
         Current = _home;
+    }
+
+    /// <summary>Sign-and-continue (M6): the new season is persisted but the open session
+    /// still points at the finished one — dispose it and reopen the career file, which lands
+    /// in the new season's round 1 briefing (OpenCareer opens the LATEST season).</summary>
+    private void OnNextSeasonStarted(object? sender, EventArgs e)
+    {
+        string? path = _currentCareerPath;
+        CloseHome();
+        if (path is null)
+        {
+            GoToStart();
+            return;
+        }
+
+        OpenCareer(path);
+        if (Current is HomeViewModel)
+            return;
+
+        // The reopen failed (StatusError explains) — never leave a disposed screen showing.
+        Start.Refresh();
+        Current = Start;
     }
 
     /// <summary>Back to the start screen (also the wizard's Cancel). Closes the open career.</summary>
@@ -124,6 +150,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         CloseHome();
         Wizard = null;
         _beforeSettings = null;
+        _currentCareerPath = null;
         OnPropertyChanged(nameof(Wizard));
         StatusError = null;
         Start.Refresh();
@@ -132,8 +159,12 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     private void CloseHome()
     {
-        _home?.Dispose();
-        _home = null;
+        if (_home is not null)
+        {
+            _home.NextSeasonStarted -= OnNextSeasonStarted;
+            _home.Dispose();
+            _home = null;
+        }
     }
 
     // ---------- settings screen ----------

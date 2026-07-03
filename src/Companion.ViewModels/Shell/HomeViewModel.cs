@@ -65,8 +65,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(
-        nameof(HeaderTitle), nameof(RoundText), nameof(StandingText), nameof(IsSeasonReview),
-        nameof(FormText), nameof(HasForm))]
+        nameof(HeaderTitle), nameof(SeasonYearText), nameof(RoundText), nameof(StandingText),
+        nameof(IsSeasonReview), nameof(FormText), nameof(HasForm))]
     private CareerSummary _summary;
 
     public string HeaderTitle
@@ -80,6 +80,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 : $"{Summary.CareerName} · {season}";
         }
     }
+
+    /// <summary>The season year, rendered big in the career header — multi-season careers
+    /// (M6) make "which year am I in?" the header's first question.</summary>
+    public string SeasonYearText => Summary.SeasonYear.ToString();
 
     public string RoundText => Summary.SeasonComplete
         ? "Season complete"
@@ -259,10 +263,19 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>Raised after the review's sign-and-continue persisted the next season: the
+    /// session (and this Home) now point at the FINISHED season, so the shell must reopen
+    /// the career file — it lands in the new season's round 1 briefing.</summary>
+    public event EventHandler? NextSeasonStarted;
+
     /// <summary>Season completion navigates HERE: the review + offers screen (final
-    /// standings, journal digest, offer letters, NAMeS restore, era-transition note).</summary>
-    private void ShowSeasonReview() =>
-        CurrentContent = new SeasonReviewViewModel(_session);
+    /// standings, journal digest, offer letters, NAMeS restore, era sign-and-continue).</summary>
+    private void ShowSeasonReview()
+    {
+        var review = new SeasonReviewViewModel(_session);
+        review.SeasonSigned += (_, _) => NextSeasonStarted?.Invoke(this, EventArgs.Empty);
+        CurrentContent = review;
+    }
 
     /// <summary>Home's share of the shell-level Esc (non-destructive back only): standings →
     /// back to the round in progress; confirm → back to the result entry (the draft

@@ -1,0 +1,382 @@
+{
+  "year": 1969,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Vintage_Gen2",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "split": {
+        "firstRounds": 6,
+        "firstCount": 5,
+        "secondRounds": 5,
+        "secondCount": 4
+      }
+    },
+    "constructors": {
+      "bestCarOnly": true,
+      "bestN": "sameAsDrivers"
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "South African Grand Prix",
+      "date": "1969-03-01",
+      "championship": true,
+      "track": {
+        "realVenue": "Kyalami Racing Circuit",
+        "id": "kyalami_historic",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "kyalami_2019"
+        ]
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 14,
+          "startTime": "14:00",
+          "date": "1969-03-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Spanish Grand Prix",
+      "date": "1969-05-04",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuito de Montjuïc",
+        "id": "brandshatch_gp",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "adelaide_historic"
+        ]
+      },
+      "laps": 87,
+      "setupGuide": {
+        "session": {
+          "opponents": 13,
+          "startTime": "14:00",
+          "date": "1969-05-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuito de Montjuïc — 90 laps / 341.2 km reproduced as 87 laps of BrandsHatch GP."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "Monaco Grand Prix",
+      "date": "1969-05-18",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 80,
+      "setupGuide": {
+        "session": {
+          "opponents": 13,
+          "startTime": "14:00",
+          "date": "1969-05-18",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {
+        "driver.jean_pierre_beltoise": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.92
+        },
+        "driver.john_surtees": {
+          "raceSkill": 0.85,
+          "qualifyingSkill": 0.89
+        }
+      }
+    },
+    {
+      "round": 4,
+      "name": "Dutch Grand Prix",
+      "date": "1969-06-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Park Zandvoort",
+        "id": "spielberg_vintage",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "spielberg_historic",
+          "silverstone_1975",
+          "brandshatch_gp"
+        ]
+      },
+      "laps": 64,
+      "setupGuide": {
+        "session": {
+          "opponents": 15,
+          "startTime": "14:00",
+          "date": "1969-06-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Park Zandvoort — 90 laps / 377.4 km reproduced as 64 laps of Spielberg Vintage."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "French Grand Prix",
+      "date": "1969-07-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Charade Circuit",
+        "id": "rouen",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "rouen_short",
+          "le_mans_bugatti"
+        ]
+      },
+      "laps": 47,
+      "setupGuide": {
+        "session": {
+          "opponents": 12,
+          "startTime": "14:00",
+          "date": "1969-07-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Charade Circuit — 38 laps / 306.1 km reproduced as 47 laps of Rouen."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "British Grand Prix",
+      "date": "1969-07-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1975nc",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_1975"
+        ]
+      },
+      "laps": 84,
+      "setupGuide": {
+        "session": {
+          "opponents": 16,
+          "startTime": "14:00",
+          "date": "1969-07-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {
+        "driver.john_surtees": {
+          "raceSkill": 0.85,
+          "qualifyingSkill": 0.89
+        }
+      }
+    },
+    {
+      "round": 7,
+      "name": "German Grand Prix",
+      "date": "1969-08-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Nürburgring",
+        "id": "nurb_1971_nords",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 14,
+      "setupGuide": {
+        "session": {
+          "opponents": 18,
+          "startTime": "14:00",
+          "date": "1969-08-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "Italian Grand Prix",
+      "date": "1969-09-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1971",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 68,
+      "setupGuide": {
+        "session": {
+          "opponents": 14,
+          "startTime": "14:00",
+          "date": "1969-09-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {
+        "driver.chris_amon": {
+          "raceSkill": 0.68,
+          "qualifyingSkill": 0.69,
+          "aggression": 0.39,
+          "defending": 0.31,
+          "stamina": 0.73,
+          "consistency": 0.61,
+          "startReactions": 0.81,
+          "wetSkill": 0.71,
+          "tyreManagement": 0.63,
+          "avoidanceOfMistakes": 0.37
+        }
+      }
+    },
+    {
+      "round": 9,
+      "name": "Canadian Grand Prix",
+      "date": "1969-09-20",
+      "championship": true,
+      "track": {
+        "realVenue": "Canadian Tire Motorsport Park",
+        "id": "mosport_1971",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 90,
+      "setupGuide": {
+        "session": {
+          "opponents": 15,
+          "startTime": "14:00",
+          "date": "1969-09-20",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "United States Grand Prix",
+      "date": "1969-10-05",
+      "championship": true,
+      "track": {
+        "realVenue": "Watkins Glen International",
+        "id": "watkins_glen_1971_short",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 108,
+      "setupGuide": {
+        "session": {
+          "opponents": 17,
+          "startTime": "14:00",
+          "date": "1969-10-05",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Watkins Glen layouts are 1971+; the venue is real, so the historical lap count is kept on the era-different layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Mexican Grand Prix",
+      "date": "1969-10-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Hermanos Rodríguez",
+        "id": "interlagos_historic",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "monza_1971"
+        ]
+      },
+      "laps": 41,
+      "setupGuide": {
+        "session": {
+          "opponents": 15,
+          "startTime": "14:00",
+          "date": "1969-10-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

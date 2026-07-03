@@ -69,6 +69,12 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+                <!-- the season year, big and first: multi-season careers live here (M6) -->
+                <TextBlock DockPanel.Dock="Left" Text="{Binding SeasonYearText}"
+                           FontSize="32" FontWeight="Bold"
+                           Foreground="{StaticResource AccentBrush}"
+                           VerticalAlignment="Center" Margin="0,0,16,0"
+                           ToolTip="The season your career is currently in" />
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding HeaderTitle}" FontSize="17" FontWeight="SemiBold" />
                     <TextBlock Style="{StaticResource Muted}" FontSize="13" Margin="0,2,0,0">

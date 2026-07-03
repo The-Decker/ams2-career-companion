@@ -66,10 +66,43 @@
                 </StackPanel>
             </Border>
 
-            <!-- era transition placeholder (M6) -->
-            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,12,0,0">
-                <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
-                           Text="{Binding EraTransitionText}" />
+            <!-- era transition: sign & continue (M6) -->
+            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,10" Margin="0,12,0,0">
+                <StackPanel>
+                    <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                               Text="{Binding EraTransitionText}" />
+                    <!-- bridge note: skipped years age through deterministically -->
+                    <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Text="{Binding BridgeNote}"
+                               Visibility="{Binding HasBridgeNote, Converter={StaticResource BoolVisible}}" />
+                    <Button HorizontalAlignment="Left" MinWidth="180" Margin="0,10,0,0"
+                            Style="{StaticResource AccentButton}"
+                            Content="{Binding SignButtonText}"
+                            Command="{Binding SignAndContinueCommand}"
+                            ToolTip="Carries your age, reputation, form and every team lineage into the next season's pack"
+                            Visibility="{Binding HasNextSeason, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock TextWrapping="Wrap" Margin="0,6,0,0"
+                               Text="Accept an offer letter above to enable signing.">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                <!-- the nudge shows only while signing is still blocked on the offer -->
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding HasNextSeason}" Value="True" />
+                                            <Condition Binding="{Binding OfferAccepted}" Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Text="{Binding TransitionError}"
+                               Visibility="{Binding TransitionError, Converter={StaticResource NullCollapsed}}" />
+                </StackPanel>
             </Border>
 
             <!-- NAMeS restore (locked decision #7c) -->

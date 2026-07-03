@@ -225,6 +225,41 @@ public sealed class ShellNavigationTests
     }
 
     [Fact]
+    public void Sign_and_continue_reopens_the_career_into_a_fresh_home()
+    {
+        var shell = CreateShell(out var factory, out var store);
+        factory.Session.AppliedRounds = 2; // season complete → home pins to the review
+        factory.Session.Next = new NextSeasonInfo
+        {
+            PackDirectory = @"Z:\packs\f1-1969",
+            PackId = "f1-1969",
+            PackName = "Formula One 1969",
+            SeasonYear = 1969,
+            BridgedYears = [1968],
+        };
+        var entry = store.Seed("Z:\\careers\\one.ams2career", "Career One");
+        shell.Start.Refresh();
+        shell.Start.ContinueCommand.Execute(entry);
+
+        var home = Assert.IsType<HomeViewModel>(shell.Current);
+        var review = Assert.IsType<SeasonReviewViewModel>(home.CurrentContent);
+        Assert.True(review.HasNextSeason);
+        Assert.Equal("Sign & start 1969", review.SignButtonText);
+
+        review.AcceptOfferCommand.Execute(review.Offers[0]);
+        review.SignAndContinueCommand.Execute(null);
+
+        // The transition went through the seam, the stale session was disposed, and the
+        // career was REOPENED — a fresh Home over the reopened (latest-season) session.
+        Assert.Equal(new[] { "team.brabham" }, factory.Session.SignedTeams);
+        Assert.True(factory.Session.Disposed);
+        Assert.Equal(2, factory.OpenCount);
+        var reopened = Assert.IsType<HomeViewModel>(shell.Current);
+        Assert.NotSame(home, reopened);
+        Assert.Null(shell.StatusError);
+    }
+
+    [Fact]
     public void Disposing_home_disposes_session_and_watcher()
     {
         var session = new FakeSession();
@@ -343,6 +378,14 @@ public sealed class ShellNavigationTests
 
         public void AcceptOffer(string teamId) => AcceptedOffers.Add(teamId);
 
+        public NextSeasonInfo? Next { get; set; }
+
+        public NextSeasonInfo? NextSeason() => Next;
+
+        public List<string> SignedTeams { get; } = [];
+
+        public void StartNextSeason(string teamId) => SignedTeams.Add(teamId);
+
         public void Dispose() => Disposed = true;
 
         private static GridSeat Seat(string id, string name, string number) => new()
@@ -368,6 +411,8 @@ public sealed class ShellNavigationTests
 
         public string? LastOpenedPath { get; private set; }
 
+        public int OpenCount { get; private set; }
+
         public Exception? OpenThrows { get; set; }
 
         public ICareerSession Create(CareerCreationRequest request) => Session;
@@ -377,6 +422,7 @@ public sealed class ShellNavigationTests
             if (OpenThrows is not null)
                 throw OpenThrows;
             LastOpenedPath = careerFilePath;
+            OpenCount++;
             return Session;
         }
     }

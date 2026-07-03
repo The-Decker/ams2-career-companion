@@ -3,6 +3,7 @@ using Companion.Ams2;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
 using Companion.Core.Career;
+using Companion.Core.Determinism;
 using Companion.Core.Grid;
 using Companion.Core.Json;
 using Companion.Core.Numerics;
@@ -42,6 +43,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     private readonly string _careerName;
     private readonly string _playerLiveryName;
     private readonly string _playerDriverId;
+    private readonly int _playerFirstSeasonAge;
     private readonly SeasonScoringDefinition _scoringDefinition;
 
     public SeasonPack Pack { get; }
@@ -64,6 +66,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         long masterSeed,
         string playerLiveryName,
         string playerDriverId,
+        int playerFirstSeasonAge,
         string baselineSource)
     {
         BaselineSource = baselineSource;
@@ -76,6 +79,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         MasterSeed = masterSeed;
         _playerLiveryName = playerLiveryName;
         _playerDriverId = playerDriverId;
+        _playerFirstSeasonAge = playerFirstSeasonAge;
         // The scoring definition's round domain is CHAMPIONSHIP rounds (same resolution the
         // structural validator checks): best-N segments and engine round numbers use the
         // championship ordinal, not the calendar position, when the calendar mixes in
@@ -181,6 +185,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             return new CareerSessionService(
                 database, environment, pack, request.CareerFilePath, seasonId,
                 request.CareerName, request.MasterSeed, request.PlayerLiveryName, playerDriverId,
+                PlayerAgeIn(pack, playerDriverId),
                 import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile);
         }
         catch
@@ -190,6 +195,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         }
     }
 
+    /// <summary>Opens a career into its CURRENT season — the LATEST season row — so a
+    /// multi-season career (M6 era transitions) always continues where the player is, never
+    /// back in a finished era. Single-season careers open exactly as before.</summary>
     public static CareerSessionService OpenCareer(string careerFilePath, CareerEnvironment environment)
     {
         if (!File.Exists(careerFilePath))
@@ -206,29 +214,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 throw new InvalidOperationException($"'{careerFilePath}' has no career row — not a career file?");
             (string careerName, long masterSeed) = careerRow;
 
-            var seasonRow = Query(database.Connection,
-                    "SELECT id, pack_id, pack_version FROM season ORDER BY id LIMIT 1;",
-                    r => (Id: r.GetInt64(0), PackId: r.GetString(1), PackVersion: r.GetString(2)))
-                .SingleOrDefault(defaultValue: default);
-            if (seasonRow.PackId is null)
+            var seasons = CareerStore.ReadSeasons(database);
+            if (seasons.Count == 0)
                 throw new InvalidOperationException($"'{careerFilePath}' has no season row.");
-            (long seasonId, string packId, string packVersion) = seasonRow;
+            var first = seasons[0];
+            var latest = seasons[^1];
 
-            var pinnedRow = Query(database.Connection,
-                    "SELECT pack_json, sha256 FROM pinned_pack WHERE pack_id = @id AND version = @packVersion;",
-                    r => (Blob: r.GetFieldValue<byte[]>(0), Sha: r.GetString(1)),
-                    ("@id", packId), ("@packVersion", packVersion))
-                .SingleOrDefault(defaultValue: default);
-            if (pinnedRow.Blob is null)
-                throw new InvalidOperationException(
-                    $"'{careerFilePath}' references pinned pack {packId} {packVersion}, which is missing.");
-
-            if (!string.Equals(PinnedPackEnvelope.Sha256Of(pinnedRow.Blob), pinnedRow.Sha, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException(
-                    $"Pinned pack {packId} {packVersion} in '{careerFilePath}' fails its integrity hash — " +
-                    "the career file is corrupt.");
-
-            var pack = PinnedPackEnvelope.FromBytes(pinnedRow.Blob).Parse();
+            // Pinned blobs come in two formats: the wizard's five-file envelope (season 1)
+            // and CareerStore.PinPack's canonical serialization (era-transition seasons).
+            // ReadPinnedPack verifies the sha256; LoadSeasonPack accepts both formats.
+            var pack = PinnedPackEnvelope.LoadSeasonPack(
+                CareerStore.ReadPinnedPack(database, latest.PackId, latest.PackVersion).PackJson);
 
             string? deltaJson = Query(database.Connection,
                     "SELECT delta_json FROM journal WHERE phase = 'career' AND entity = 'career' ORDER BY seq LIMIT 1;",
@@ -239,10 +235,47 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             var delta = JsonSerializer.Deserialize<CareerCreatedDelta>(deltaJson, CoreJson.Options)
                 ?? throw new InvalidOperationException("Career-created journal row deserialized to null.");
 
+            string playerLiveryName;
+            string playerDriverId;
+            string baselineSource;
+            int playerFirstSeasonAge;
+            if (latest.Id == first.Id)
+            {
+                // Single-season career: the wizard facts apply verbatim (byte-compat path).
+                playerLiveryName = delta.PlayerLiveryName;
+                playerDriverId = delta.PlayerDriverId;
+                baselineSource = delta.BaselineSource;
+                playerFirstSeasonAge = PlayerAgeIn(pack, playerDriverId);
+            }
+            else
+            {
+                // Era-transitioned career: the player's seat in the CURRENT season comes from
+                // the transition plan's start state (CareerStore.StartNextSeason persisted it);
+                // the driver id is the new pack's entry behind that livery — the seat the
+                // player took over, exactly like the wizard's season-1 seat pick.
+                var start = StateStore.ReadPlayerState(database, latest.Id, StateStore.StageStart)
+                    ?? throw new InvalidOperationException(
+                        $"Season {latest.Id} ({latest.Year}) has no start-of-season player state — " +
+                        "the career file is structurally inconsistent.");
+                playerLiveryName = start.LiveryName
+                    ?? throw new InvalidOperationException(
+                        $"Season {latest.Id} ({latest.Year})'s player state has no seat livery — " +
+                        "the era transition that started it was incomplete.");
+                playerDriverId = ResolvePlayerDriverId(pack, playerLiveryName);
+                baselineSource = BaselineSourcePack; // transition seasons pin pack-authored data
+
+                // The season-end pipeline ages the player by year distance from the FIRST
+                // season (ReplaySimInputs.PlayerAge contract) — derive the anchor age from
+                // the first season's pinned pack and the wizard's seat pick.
+                var firstPack = PinnedPackEnvelope.LoadSeasonPack(
+                    CareerStore.ReadPinnedPack(database, first.PackId, first.PackVersion).PackJson);
+                playerFirstSeasonAge = PlayerAgeIn(firstPack, delta.PlayerDriverId);
+            }
+
             return new CareerSessionService(
-                database, environment, pack, careerFilePath, seasonId,
-                careerName, masterSeed, delta.PlayerLiveryName, delta.PlayerDriverId,
-                delta.BaselineSource);
+                database, environment, pack, careerFilePath, latest.Id,
+                careerName, masterSeed, playerLiveryName, playerDriverId,
+                playerFirstSeasonAge, baselineSource);
         }
         catch
         {
@@ -250,6 +283,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             throw;
         }
     }
+
+    /// <summary>The player's age in <paramref name="pack"/>'s season: the Born year of the
+    /// driver whose entry the player took (the wizard's replace-a-historical-driver rule),
+    /// defaulting to 30 when the pack does not author one.</summary>
+    private static int PlayerAgeIn(SeasonPack pack, string playerDriverId) =>
+        pack.Season.Year - (
+            pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, playerDriverId, StringComparison.Ordinal))
+                ?.Born ?? pack.Season.Year - 30);
 
     /// <summary>Seeds the season's stage-'start' sim-input states — the wizard facts the fold
     /// and season end consume (docs/dev/career-sim.md): AI driver ages from the pack's Born
@@ -722,8 +763,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             : null;
 
     /// <summary>The rules data + wizard-fixed facts every fold and season end consumes.
-    /// Deterministically re-derived from the pinned pack and the app-shipped rules files, so
-    /// every session (and replay) constructs the identical inputs.</summary>
+    /// Deterministically re-derived from the pinned packs and the app-shipped rules files, so
+    /// every session (and replay) constructs the identical inputs. PlayerAge is the FIRST
+    /// season's age per the <see cref="ReplaySimInputs"/> contract — the season-end pipeline
+    /// offsets it by year distance itself, so era-transitioned seasons age correctly.</summary>
     private ReplaySimInputs SimInputs()
     {
         var rules = _environment.Rules;
@@ -733,9 +776,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             Archetypes = rules.Archetypes,
             Headlines = rules.Headlines,
             PlayerDriverId = _playerDriverId,
-            PlayerAge = Pack.Season.Year - (
-                Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, _playerDriverId, StringComparison.Ordinal))
-                    ?.Born ?? Pack.Season.Year - 30),
+            PlayerAge = _playerFirstSeasonAge,
         };
     }
 
@@ -815,6 +856,77 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 Cause = "offer-accepted",
             },
             NowUtc());
+    }
+
+    // ---------- era transition (M6 sign-and-continue) ----------
+
+    /// <summary>The next era pack per the v1 rule (see <see cref="ICareerSession.NextSeason"/>):
+    /// scans the environment's pack search roots and picks the readable pack with the
+    /// smallest season year strictly greater than the current season's. Null while the
+    /// season is incomplete or when nothing later exists.</summary>
+    public NextSeasonInfo? NextSeason()
+    {
+        if (!SeasonComplete)
+            return null;
+
+        var next = PackDiscovery.NextAfter(
+            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()), Pack.Season.Year);
+        if (next?.Manifest is null || next.SeasonYear is not { } year)
+            return null;
+
+        return new NextSeasonInfo
+        {
+            PackDirectory = next.Directory,
+            PackId = next.Manifest.PackId,
+            PackName = next.Manifest.Name,
+            SeasonYear = year,
+            BridgedYears = Enumerable.Range(Pack.Season.Year + 1, year - Pack.Season.Year - 1).ToList(),
+        };
+    }
+
+    /// <summary>Signs the accepted offer into the discovered next pack: builds the era
+    /// transition plan from the persisted season-end states — the exact inputs replay's
+    /// transition verification re-derives, so live and replay agree by construction — and
+    /// starts the new season atomically via <see cref="CareerStore.StartNextSeason"/>.
+    /// This session keeps pointing at the finished season afterwards; the shell reopens the
+    /// career file, which now lands in the new season (<see cref="OpenCareer"/>).</summary>
+    public void StartNextSeason(string teamId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(teamId);
+        if (!SeasonComplete)
+            throw new InvalidOperationException(
+                "The season is not complete — finish every round before signing for the next era.");
+        EnsureSeasonEnd();
+
+        var accepted = StateStore.ReadOffers(_database, _seasonId).FirstOrDefault(o => o.Accepted);
+        if (accepted is null)
+            throw new InvalidOperationException(
+                "No offer is accepted — accept an offer letter before signing for the next season.");
+        if (!string.Equals(accepted.Terms.TeamId, teamId, StringComparison.Ordinal))
+            throw new InvalidOperationException(
+                $"The accepted offer is from '{accepted.Terms.TeamId}', not '{teamId}' — " +
+                "sign the offer you accepted.");
+
+        var next = NextSeason()
+            ?? throw new InvalidOperationException(
+                "No next season pack was found — put a later-year season pack in the packs " +
+                "folder beside the app or in Documents\\AMS2CareerCompanion\\Packs, then sign again.");
+        var toPack = SeasonPackFiles.Read(next.PackDirectory).Parse();
+
+        var driversEnd = StateStore.ReadDriverStates(_database, _seasonId, StateStore.StageEnd);
+        var teamsEnd = StateStore.ReadTeamStates(_database, _seasonId, StateStore.StageEnd);
+        var playerEnd = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageEnd)
+            ?? throw new InvalidOperationException(
+                "The season-end player state is missing — the season-end pipeline never ran.");
+
+        var plan = EraTransition.Build(
+            Pack, toPack, driversEnd, teamsEnd, playerEnd, accepted.Terms,
+            new StreamFactory(MasterSeedU), _environment.Rules.AgingCurves,
+            SimInputs().CanonRetirements);
+        if (plan.ValidationErrors.Count > 0)
+            throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
+
+        CareerStore.StartNextSeason(_database, plan, toPack, NowUtc());
     }
 
     private static string? HeadlineText(string deltaJson)

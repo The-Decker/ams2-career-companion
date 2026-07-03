@@ -1,5 +1,5 @@
-// Companion.PackGen — generates the bundled reference season packs (F1 1967, F1 1988) as
-// plain-JSON pack folders per docs/dev/season-pack-format.md (format v1 + the v1.1
+// Companion.PackGen — generates the bundled reference season packs (F1 1967, F1 1969, F1 1988)
+// as plain-JSON pack folders per docs/dev/season-pack-format.md (format v1 + the v1.1
 // placeholder-venue addendum: every round carries realVenue/isPlaceholder, and placeholder
 // rounds recompute laps to preserve the REAL race distance at the stand-in's lap length).
 //
@@ -49,7 +49,7 @@ var library = ContentLibrary.Load(ams2DataDir);
 var rules = JsonNode.Parse(File.ReadAllText(rulesPath))!.AsObject();
 var placeholderVenues = PlaceholderVenues.Load(placeholderVenuesPath, library);
 
-var seasons = new[] { SeasonConfigs.F1_1967(), SeasonConfigs.F1_1988() };
+var seasons = new[] { SeasonConfigs.F1_1967(), SeasonConfigs.F1_1969(), SeasonConfigs.F1_1988() };
 int exitCode = 0;
 
 foreach (var cfg in seasons)
@@ -121,6 +121,14 @@ internal sealed class SeasonConfig
     /// layout the calendar does not use (e.g. jusk's Azure_Circuit_2021 patches belong to the
     /// Monaco round even though the pack drives azure_circuit_88 — same venue).</summary>
     public Dictionary<string, string> OverrideTrackAliases { get; init; } = new(StringComparer.Ordinal);
+
+    /// <summary>Per-round variant XMLs beside the base file (jusk's F-Vintage_Gen2_01Kyalami.xml
+    /// style), each mapped to a grand prix id. Every variant is mined the way the base file's
+    /// tracks="..." entries are: rating values that DIFFER from the season baseline become that
+    /// round's aiOverrides (patch vocabulary; anything else is reported as dropped), and a
+    /// pack.json note documents the file -> round mapping and whether the variant turned out to
+    /// be composition-only (a driver subset with no rating changes).</summary>
+    public (string FileName, string GpId)[] VariantFiles { get; init; } = [];
 
     /// <summary>Authored pack.json notes appended after the generated coverage/correction notes.</summary>
     public string[] ExtraNotes { get; init; } = [];
@@ -201,6 +209,92 @@ internal static class SeasonConfigs
         ExtraNotes =
         [
             "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. Entries authored against layouts this calendar does not drive (Azure_Circuit_2021, Watkins_Glen_S, Spa_Francorchamps_1993, Nordschleife_2020/_24hr) are mapped to the calendar round at the same venue (Monaco, Watkins Glen, Spa, Nurburgring).",
+        ],
+    };
+
+    public static SeasonConfig F1_1969() => new()
+    {
+        Year = 1969,
+        PackId = "f1-1969",
+        PackName = "Formula One 1969",
+        SeriesName = "Formula One World Championship",
+        Ams2Class = "F-Vintage_Gen2",
+        AiXmlFileName = "F-Vintage_Gen2.xml",
+        SkinPackName = "F1 1969 Season (Alain Fry)",
+        OverridesFolder = "F1_Season_1969",
+        Attribution =
+        [
+            "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+            "AI ratings from 'Custom AI by jusk - F1 1969 Season' (F-Vintage_Gen2.xml), matching Alain Fry's F1 1969 skinpack",
+        ],
+        Tracks = new()
+        {
+            ["south-africa"] = new("kyalami_historic", ["kyalami_2019"], ""),
+            ["spain"] = new(null, [], "", IsPlaceholder: true),          // Montjuïc — not in AMS2
+            ["monaco"] = new("azure_circuit_88", ["azure_circuit"], ""),
+            ["netherlands"] = new(null, [], "", IsPlaceholder: true),    // Zandvoort — not in AMS2
+            ["france"] = new(null, [], "", IsPlaceholder: true),         // Charade — not in AMS2
+            ["great-britain"] = new("silverstone_1975nc", ["silverstone_1975"], ""),
+            ["germany"] = new("nurb_1971_nords", [], ""),
+            ["italy"] = new("monza_1971", [], ""),
+            ["canada"] = new("mosport_1971", [], ""),
+            ["united-states"] = new("watkins_glen_1971_short", [],
+                "AMS2's Watkins Glen layouts are 1971+; the venue is real, so the historical lap count is kept on the era-different layout."),
+            ["mexico"] = new(null, [], "", IsPlaceholder: true),         // Mexico City — not in AMS2
+        },
+        TeamMetas = new()
+        {
+            // 1969: Matra-Ford (Tyrrell-run) is the class of the field; Ferrari is in its
+            // one-car crisis year (skipped rounds 7 and 11); BMW/Tecno are the German GP's
+            // works F2 efforts.
+            ["matra"] = new(4, 5),
+            ["lotus"] = new(5, 4),
+            ["brabham"] = new(4, 4),
+            ["mclaren"] = new(3, 4),
+            ["ferrari"] = new(5, 3),
+            ["brm"] = new(4, 3),
+            ["bmw"] = new(2, 3),
+            ["tecno"] = new(1, 2),
+        },
+        TeamNameFromLivery = true,
+        ModelFolders = ["brabham_bt26", "formula_vintage_g2m1", "formula_vintage_g2m2", "lotus_49c"],
+        ModelMapByNumber = true,
+        ModelMapFallback = new()
+        {
+            // From the deployed F1_Season_1969 DDS sets (car number -> model folder).
+            ["3"] = "brabham_bt26", ["4"] = "brabham_bt26", ["29"] = "brabham_bt26",
+            ["32"] = "brabham_bt26",
+            ["5"] = "formula_vintage_g2m1", ["6"] = "formula_vintage_g2m1",
+            ["7"] = "formula_vintage_g2m1", ["8"] = "formula_vintage_g2m1",
+            ["18"] = "formula_vintage_g2m1", ["20"] = "formula_vintage_g2m1",
+            ["26"] = "formula_vintage_g2m1", ["28"] = "formula_vintage_g2m1",
+            ["11"] = "formula_vintage_g2m2", ["12"] = "formula_vintage_g2m2",
+            ["14"] = "formula_vintage_g2m2", ["15"] = "formula_vintage_g2m2",
+            ["16"] = "formula_vintage_g2m2", ["17"] = "formula_vintage_g2m2",
+            ["19"] = "formula_vintage_g2m2", ["22"] = "formula_vintage_g2m2",
+            ["24"] = "formula_vintage_g2m2", ["25"] = "formula_vintage_g2m2",
+            ["1"] = "lotus_49c", ["2"] = "lotus_49c", ["9"] = "lotus_49c", ["10"] = "lotus_49c",
+        },
+        CarryPerTrackOverrides = true,
+        OverrideTrackAliases = new(StringComparer.Ordinal)
+        {
+            // jusk's Monaco patches are authored against the 2021 layout; the calendar drives
+            // azure_circuit_88 — same venue. Silverstone_1975_No_Chicane and Monza_1971 resolve
+            // directly to calendar rounds and need no alias.
+            ["azure_circuit_2021"] = "monaco",
+        },
+        VariantFiles =
+        [
+            ("F-Vintage_Gen2_01Kyalami.xml", "south-africa"),
+            ("F-Vintage_Gen2_02Silverstone.xml", "great-britain"),
+            ("F-Vintage_Gen2_03Nordschleiffe.xml", "germany"),
+            ("F-Vintage_Gen2_04WatkinsGlen.xml", "united-states"),
+        ],
+        ExtraNotes =
+        [
+            "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. The Azure_Circuit_2021 patches map to the Monaco round (this calendar drives azure_circuit_88 — same venue); Silverstone_1975_No_Chicane and Monza_1971 map directly to the British and Italian rounds.",
+            "The source XML's Monza entry for 'Ferrari #11 C. Amon' (tracks=\"Monza_1971\") is jusk's driver swap to Ernesto 'Tino' Brambilla, who stood in for the departed Amon at the Italian GP; the pack format has no per-round driver swap, so it is carried as a ratings patch on driver.chris_amon (f1db lists Brambilla as a round-8 Ferrari entrant, noted uncovered above).",
+            "Source variant files not mapped to a round: F-Vintage_Gen2_05Full.xml is byte-identical to the base F-Vintage_Gen2.xml (all 26 slots); F-Vintage_Gen2_06RegularF1.xml is jusk's default 18-regular grid for rounds without extras. Variant grid composition is playability-oriented (season regulars kept everywhere); this pack's per-round grids follow the f1db entry list via each entry's rounds range instead.",
         ],
     };
 
@@ -436,6 +530,11 @@ internal static class AiXml
         "raceSkill", "qualifyingSkill", "aggression", "defending", "stamina", "consistency",
         "startReactions", "wetSkill", "tyreManagement", "avoidanceOfMistakes",
     ];
+
+    /// <summary>True when the camelCased rating is representable in the pack aiOverrides
+    /// patch vocabulary (used by the per-round variant-file miner).</summary>
+    public static bool IsPatchRating(string camelKey) =>
+        PatchRatingOrder.Contains(camelKey, StringComparer.Ordinal);
 
     /// <summary>Parses a community custom-AI XML leniently (comments stripped first: several
     /// community files contain '--' inside comments, which strict XML rejects) and returns the
@@ -806,6 +905,10 @@ internal static class PackBuilder
             ? CarryPerTrackOverrides(cfg, customAiDir, library, resolvedRounds, entriesOut, report, manifestNotes)
             : new Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>>();
 
+        // -- mine per-round variant XMLs (rating diffs vs the base file) into aiOverrides -------
+        MineVariantFiles(cfg, customAiDir, aiDrivers, resolvedRounds, aiOverridesByRound,
+            entriesOut, report, manifestNotes);
+
         manifestNotes.AddRange(cfg.ExtraNotes);
 
         // -- emit ------------------------------------------------------------------------------
@@ -956,6 +1059,110 @@ internal static class PackBuilder
         }
 
         return result;
+    }
+
+    // -- per-round variant-file mining (jusk's <Base>_01Kyalami.xml style) ----------------------
+
+    /// <summary>Mines each configured variant XML against the season baseline (the base file's
+    /// entries): rating values that differ become the mapped round's aiOverrides, exactly like
+    /// the base file's tracks="..." carry-over; differing fields outside the patch vocabulary
+    /// are documented as dropped. Every variant gets a pack.json note stating the file -> round
+    /// mapping and its composition (jusk's 1969 set turned out composition-only: the variants
+    /// are driver subsets of the base file with zero rating changes).</summary>
+    private static void MineVariantFiles(
+        SeasonConfig cfg, string customAiDir, List<AiDriver> baseline,
+        List<ResolvedRound> rounds,
+        Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>> aiOverridesByRound,
+        List<(string TeamId, string DriverId, string Number, SortedSet<int> Rounds, string Livery)> entries,
+        PackReport report, List<string> manifestNotes)
+    {
+        if (cfg.VariantFiles.Length == 0) return;
+
+        var baselineByLivery = new Dictionary<string, AiDriver>(StringComparer.Ordinal);
+        foreach (var d in baseline) baselineByLivery.TryAdd(d.LiveryName, d);
+
+        var driverByLivery = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var e in entries) driverByLivery.TryAdd(e.Livery, e.DriverId);
+
+        var raceByGpId = rounds.ToDictionary(r => r.Race.GpId, r => r.Race, StringComparer.Ordinal);
+
+        foreach (var (fileName, gpId) in cfg.VariantFiles)
+        {
+            if (!raceByGpId.TryGetValue(gpId, out var race))
+            {
+                report.Warnings.Add($"variant file {fileName}: no calendar round for grand prix '{gpId}' — skipped");
+                continue;
+            }
+
+            var variant = AiXml.ParseBaseDrivers(Path.Combine(customAiDir, fileName));
+            int patchedValues = 0;
+            var dropped = new List<string>();
+
+            foreach (var v in variant)
+            {
+                if (!baselineByLivery.TryGetValue(v.LiveryName, out var b))
+                {
+                    report.Warnings.Add(
+                        $"variant {fileName}: livery '{v.LiveryName}' is not in the base file — skipped");
+                    continue;
+                }
+                if (v.Name != b.Name || v.Country != b.Country)
+                    report.Warnings.Add(
+                        $"variant {fileName}: '{v.LiveryName}' is {v.Name}/{v.Country} but the base file has " +
+                        $"{b.Name}/{b.Country} — identity changes are not representable, ratings mined only");
+
+                var baseRatings = new Dictionary<string, double>(StringComparer.Ordinal);
+                foreach (var kv in b.Ratings) baseRatings[kv.Key] = kv.Value;
+
+                foreach (var kv in v.Ratings)
+                {
+                    if (baseRatings.TryGetValue(kv.Key, out double bv) && Math.Abs(bv - kv.Value) <= 1e-9)
+                        continue;
+                    if (!AiXml.IsPatchRating(kv.Key))
+                    {
+                        dropped.Add($"{kv.Key} for '{v.LiveryName}'");
+                        continue;
+                    }
+                    if (!driverByLivery.TryGetValue(v.LiveryName, out var driverId))
+                    {
+                        report.Warnings.Add(
+                            $"variant {fileName}: rating diff for livery '{v.LiveryName}' matches no pack entry — skipped");
+                        continue;
+                    }
+
+                    if (!aiOverridesByRound.TryGetValue(race.Round, out var byDriver))
+                        aiOverridesByRound[race.Round] = byDriver =
+                            new SortedDictionary<string, List<KeyValuePair<string, double>>>(StringComparer.Ordinal);
+                    if (!byDriver.TryGetValue(driverId, out var patch))
+                        byDriver[driverId] = patch = [];
+
+                    int existing = patch.FindIndex(p => p.Key == kv.Key);
+                    if (existing < 0) patch.Add(kv);
+                    else
+                    {
+                        if (Math.Abs(patch[existing].Value - kv.Value) > 1e-9)
+                            report.Warnings.Add(
+                                $"variant {fileName} conflicts with an earlier override for '{v.LiveryName}' " +
+                                $"round {race.Round} {kv.Key}: {patch[existing].Value} vs {kv.Value} — the variant wins");
+                        patch[existing] = kv;
+                    }
+                    patchedValues++;
+                }
+
+                if (v.VehicleReliability is double vr && b.VehicleReliability is double br
+                    && Math.Abs(vr - br) > 1e-9)
+                    dropped.Add($"vehicleReliability for '{v.LiveryName}'");
+            }
+
+            string composition = patchedValues == 0
+                ? $"a composition-only subset of the base file ({variant.Count} of {baseline.Count} drivers, no rating changes)"
+                : $"{variant.Count} of {baseline.Count} drivers with {patchedValues} differing rating value(s) carried into the round's aiOverrides";
+            manifestNotes.Add(
+                $"Per-round variant file {fileName} maps to round {race.Round} ({race.GpName}): {composition}.");
+            if (dropped.Count > 0)
+                manifestNotes.Add(
+                    $"Variant {fileName}: differing field(s) not in the pack patch vocabulary were dropped: {string.Join("; ", dropped)}.");
+        }
     }
 
     // -- json shapes (contract: docs/dev/season-pack-format.md) --------------------------------

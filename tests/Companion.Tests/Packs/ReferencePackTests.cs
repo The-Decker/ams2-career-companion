@@ -8,8 +8,8 @@ using Companion.Core.Packs;
 namespace Companion.Tests.Packs;
 
 /// <summary>
-/// Living validation of the shipped reference packs (packs/f1-1967, packs/f1-1988): every pack
-/// in the repo must load through <see cref="PackLoader"/>, pass
+/// Living validation of the shipped reference packs (packs/f1-1967, packs/f1-1969,
+/// packs/f1-1988): every pack in the repo must load through <see cref="PackLoader"/>, pass
 /// <see cref="PackStructuralValidator"/> with no errors, and pass
 /// <see cref="PackContentValidator"/> against the REAL extracted content library
 /// (data/ams2/*.json, linked into the test output) with an empty installed-livery set.
@@ -33,7 +33,7 @@ public class ReferencePackTests
         return Ams2ContentLibrary.Load(Ams2DataDirectory);
     });
 
-    public static TheoryData<string> ReferencePackIds() => new() { "f1-1967", "f1-1988" };
+    public static TheoryData<string> ReferencePackIds() => new() { "f1-1967", "f1-1969", "f1-1988" };
 
     // ---------- loading ----------
 
@@ -59,16 +59,17 @@ public class ReferencePackTests
         return File.ReadAllText(path);
     }
 
-    // ---------- the repo must actually contain both reference packs ----------
+    // ---------- the repo must actually contain every reference pack ----------
 
     [Fact]
-    public void PacksFolder_ContainsBothReferencePacks()
+    public void PacksFolder_ContainsAllReferencePacks()
     {
         Assert.True(Directory.Exists(PacksDirectory),
             $"'{PacksDirectory}' missing — the packs None-Include did not copy anything.");
 
         var found = Directory.GetDirectories(PacksDirectory).Select(Path.GetFileName).ToHashSet();
         Assert.Contains("f1-1967", found);
+        Assert.Contains("f1-1969", found);
         Assert.Contains("f1-1988", found);
     }
 
@@ -173,8 +174,9 @@ public class ReferencePackTests
         var pack = LoadPack(packId);
 
         var placeholders = pack.Season.Rounds.Where(r => r.Track.IsPlaceholder).ToList();
-        // Both reference packs substitute venues AMS2 does not have (1967: Zandvoort, Mexico
-        // City; 1988: Mexico City, Detroit, Paul Ricard) — no placeholders means the flag broke.
+        // Every reference pack substitutes venues AMS2 does not have (1967: Zandvoort, Mexico
+        // City; 1969: Montjuïc, Zandvoort, Clermont-Ferrand, Mexico City; 1988: Mexico City,
+        // Detroit, Paul Ricard) — no placeholders means the flag broke.
         Assert.NotEmpty(placeholders);
 
         foreach (var round in placeholders)

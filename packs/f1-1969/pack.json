@@ -1,0 +1,50 @@
+{
+  "packId": "f1-1969",
+  "name": "Formula One 1969",
+  "version": "1.1.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from 'Custom AI by jusk - F1 1969 Season' (F-Vintage_Gen2.xml), matching Alain Fry's F1 1969 skinpack"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1969 Season (Alain Fry)",
+        "overridesFolder": "F1_Season_1969"
+      }
+    ]
+  },
+  "notes": [
+    "Coverage: f1db 1969 entrant Kurt Ahrens, Jr. (brabham+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Vic Elford (cooper+maserati, rounds 3) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Dieter Quester (bmw+bmw, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Hubert Hahne (bmw+bmw, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Peter Westbury (brabham+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Richard Attwood (lotus+ford, rounds 3) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant John Miles (lotus+ford, rounds 5-6,8-9,11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Al Pease (eagle+climax, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Johnny Servoz-Gavin (matra+ford, rounds 7,9-11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Bill Brack (brm+brm, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant John Cordts (brabham+climax, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Pedro Rodríguez (brm+brm, rounds 1-3) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Hans Herrmann (lotus+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Rolf Stommelen (lotus+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Ernesto Brambilla (ferrari+ferrari, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Xavier Perrot (brabham+ford, rounds 7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Sam Tingle (brabham+repco, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant John Love (lotus+ford, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "Coverage: f1db 1969 entrant Basil van Rooyen (mclaren+ford, rounds 1) has no livery in the referenced skinpack/AI set and is not included in this pack.",
+    "aiOverrides: field(s) blueFlagConceding, weatherTyreChanges, avoidanceOfForcedMistakes, vehicleReliability from the source XML's per-track entry for 'Ferrari #11 C. Amon' are not in the pack patch vocabulary and were dropped.",
+    "Per-round variant file F-Vintage_Gen2_01Kyalami.xml maps to round 1 (South African Grand Prix): a composition-only subset of the base file (19 of 26 drivers, no rating changes).",
+    "Per-round variant file F-Vintage_Gen2_02Silverstone.xml maps to round 6 (British Grand Prix): a composition-only subset of the base file (19 of 26 drivers, no rating changes).",
+    "Per-round variant file F-Vintage_Gen2_03Nordschleiffe.xml maps to round 7 (German Grand Prix): a composition-only subset of the base file (22 of 26 drivers, no rating changes).",
+    "Per-round variant file F-Vintage_Gen2_04WatkinsGlen.xml maps to round 10 (United States Grand Prix): a composition-only subset of the base file (20 of 26 drivers, no rating changes).",
+    "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. The Azure_Circuit_2021 patches map to the Monaco round (this calendar drives azure_circuit_88 — same venue); Silverstone_1975_No_Chicane and Monza_1971 map directly to the British and Italian rounds.",
+    "The source XML's Monza entry for 'Ferrari #11 C. Amon' (tracks=\"Monza_1971\") is jusk's driver swap to Ernesto 'Tino' Brambilla, who stood in for the departed Amon at the Italian GP; the pack format has no per-round driver swap, so it is carried as a ratings patch on driver.chris_amon (f1db lists Brambilla as a round-8 Ferrari entrant, noted uncovered above).",
+    "Source variant files not mapped to a round: F-Vintage_Gen2_05Full.xml is byte-identical to the base F-Vintage_Gen2.xml (all 26 slots); F-Vintage_Gen2_06RegularF1.xml is jusk's default 18-regular grid for rounds without extras. Variant grid composition is playability-oriented (season regulars kept everywhere); this pack's per-round grids follow the f1db entry list via each entry's rounds range instead."
+  ]
+}

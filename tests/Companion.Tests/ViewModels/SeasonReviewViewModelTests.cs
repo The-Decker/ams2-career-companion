@@ -54,8 +54,104 @@ public class SeasonReviewViewModelTests
         Assert.Equal(new[] { "Headline one", "Headline two" }, vm.Headlines);
         Assert.True(vm.HasHeadlines);
         Assert.False(vm.OfferAccepted);
-        Assert.Contains("M6", vm.EraTransitionText); // era transition is a labeled placeholder
+        // No next pack installed: the block explains what packs are and where they go.
+        Assert.False(vm.HasNextSeason);
+        Assert.Contains("season pack", vm.EraTransitionText, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("AMS2CareerCompanion\\Packs", vm.EraTransitionText);
+        Assert.Null(vm.BridgeNote);
+        Assert.False(vm.SignAndContinueCommand.CanExecute(null));
         Assert.False(vm.CanRestoreAiFile);           // plain session: no restore surface
+    }
+
+    // ---------- era transition: sign & continue (M6) ----------
+
+    private static NextSeasonInfo Next1969(params int[] bridged) => new()
+    {
+        PackDirectory = @"Z:\packs\f1-1969",
+        PackId = "f1-1969",
+        PackName = "Formula One 1969",
+        SeasonYear = 1969,
+        BridgedYears = bridged,
+    };
+
+    [Fact]
+    public void Sign_IsGatedOnAcceptedOffer_AndShowsYearAndBridgeNote()
+    {
+        var session = new FakeCareerSession { Review = Review(), Next = Next1969(1968) };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasNextSeason);
+        Assert.Equal("Sign & start 1969", vm.SignButtonText);
+        Assert.Equal("1968 has no pack — your career bridges through it.", vm.BridgeNote);
+        Assert.True(vm.HasBridgeNote);
+        Assert.Contains("1969", vm.EraTransitionText);
+
+        // No accepted offer yet: the sign action is unavailable.
+        Assert.False(vm.CanSign);
+        Assert.False(vm.SignAndContinueCommand.CanExecute(null));
+
+        vm.AcceptOfferCommand.Execute(vm.Offers[0]);
+        Assert.True(vm.CanSign);
+        Assert.True(vm.SignAndContinueCommand.CanExecute(null));
+
+        bool signed = false;
+        vm.SeasonSigned += (_, _) => signed = true;
+        vm.SignAndContinueCommand.Execute(null);
+
+        Assert.Equal(new[] { "team.lotus" }, session.SignedTeams);
+        Assert.True(signed);
+        Assert.Null(vm.TransitionError);
+    }
+
+    [Fact]
+    public void Sign_ConsecutiveSeasons_HaveNoBridgeNote()
+    {
+        var session = new FakeCareerSession
+        {
+            Review = Review(),
+            Next = Next1969() with { SeasonYear = 1968, PackId = "f1-1968", PackName = "Formula One 1968" },
+        };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasNextSeason);
+        Assert.Null(vm.BridgeNote);
+        Assert.False(vm.HasBridgeNote);
+        Assert.Equal("Sign & start 1968", vm.SignButtonText);
+    }
+
+    [Fact]
+    public void Sign_MultiYearGap_BridgeNoteSpansTheRange()
+    {
+        var session = new FakeCareerSession { Review = Review(), Next = Next1969(1968) with
+        {
+            SeasonYear = 1974,
+            BridgedYears = [1968, 1969, 1970, 1971, 1972, 1973],
+        } };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.Equal("1968–1973 have no packs — your career bridges through them.", vm.BridgeNote);
+    }
+
+    [Fact]
+    public void Sign_FailureSurfacesTheError_AndDoesNotNavigate()
+    {
+        var session = new FakeCareerSession
+        {
+            Review = Review(),
+            Next = Next1969(1968),
+            StartNextSeasonThrows = new InvalidOperationException(
+                "The accepted offer names team 'team.lotus', which does not exist in pack 'f1-1969'."),
+        };
+        var vm = new SeasonReviewViewModel(session);
+        vm.AcceptOfferCommand.Execute(vm.Offers[0]);
+
+        bool signed = false;
+        vm.SeasonSigned += (_, _) => signed = true;
+        vm.SignAndContinueCommand.Execute(null);
+
+        Assert.False(signed);
+        Assert.Empty(session.SignedTeams);
+        Assert.Contains("does not exist in pack 'f1-1969'", vm.TransitionError);
     }
 
     [Fact]

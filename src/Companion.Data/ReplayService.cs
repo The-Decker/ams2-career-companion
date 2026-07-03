@@ -71,8 +71,10 @@ public sealed record ReplayDivergence
 
     /// <summary>Which check diverged first: phase, entity, deltaJson, cause, round,
     /// extra-stored-row / missing-stored-row on a length mismatch, accepted-offer when a
-    /// stored accepted offer is absent from the regenerated set, or start-state when a
-    /// follow-on season's stored start rows differ from the rollover re-derivation.</summary>
+    /// stored accepted offer is absent from the regenerated set, start-state when a
+    /// follow-on season's stored start rows differ from the rollover (or era-transition)
+    /// re-derivation, or transition-validation when the re-derived era-transition plan
+    /// refuses a pack changeover the stored career performed.</summary>
     public required string Reason { get; init; }
 
     public string? StoredDeltaJson { get; init; }
@@ -311,6 +313,10 @@ public static class ReplayService
     /// report never costs data. Accepted-offer flags — a player choice, not derived state —
     /// are re-applied when identical; an accepted team missing from the regenerated offer
     /// set is a divergence, never a silent drop.
+    ///
+    /// This overload requires the whole career to run on ONE pack; multi-pack careers
+    /// (era transitions, M6) re-simulate through
+    /// <see cref="Resimulate(CareerDatabase, ulong, ReplaySimInputs)"/>.
     /// </summary>
     public static ReplayReport Resimulate(
         CareerDatabase db, SeasonPack pack, ulong masterSeed, ReplaySimInputs inputs)
@@ -321,6 +327,53 @@ public static class ReplayService
 
         VerifyPackIsThePinnedOne(db, pack, seasons);
 
+        var packs = new Dictionary<(string PackId, string Version), SeasonPack>
+        {
+            [(pack.Manifest.PackId, pack.Manifest.Version)] = pack,
+        };
+        return ResimulateCore(db, masterSeed, inputs, seasons, packs);
+    }
+
+    /// <summary>
+    /// Multi-pack re-simulation (M6, era transitions): every season resolves its own pinned
+    /// pack by (pack_id, version) — sha256-verified reads straight from the career file, so
+    /// there is no supplied-pack argument to get wrong. Season boundaries within one pack
+    /// verify through <see cref="SeasonRollover"/> exactly as before; boundaries that change
+    /// pack re-derive the transition start states AND the era.transition/era.* journal rows
+    /// through <see cref="EraTransition"/> and compare both — divergence rules identical to
+    /// the rollover path (report-only, one transaction, commit only when byte-identical).
+    /// </summary>
+    public static ReplayReport Resimulate(CareerDatabase db, ulong masterSeed, ReplaySimInputs inputs)
+    {
+        var seasons = CareerStore.ReadSeasons(db);
+        if (seasons.Count == 0)
+            return new ReplayReport { Identical = true, ComparedRows = 0 };
+
+        var packs = new Dictionary<(string PackId, string Version), SeasonPack>();
+        foreach (var key in seasons.Select(s => (s.PackId, s.PackVersion)).Distinct())
+        {
+            var pinned = CareerStore.ReadPinnedPack(db, key.PackId, key.PackVersion);
+            try
+            {
+                packs[key] = PinnedPackEnvelope.LoadSeasonPack(pinned.PackJson);
+            }
+            catch (Exception ex) when (ex is JsonException or InvalidDataException)
+            {
+                throw new InvalidDataException(
+                    $"The pinned copy of {key.PackId} {key.PackVersion} could not be parsed — " +
+                    $"the career file is damaged. ({ex.Message})", ex);
+            }
+        }
+        return ResimulateCore(db, masterSeed, inputs, seasons, packs);
+    }
+
+    private static ReplayReport ResimulateCore(
+        CareerDatabase db,
+        ulong masterSeed,
+        ReplaySimInputs inputs,
+        IReadOnlyList<SeasonRecord> seasons,
+        IReadOnlyDictionary<(string PackId, string Version), SeasonPack> packs)
+    {
         // Pre-read every input and stored artifact OUTSIDE the write transaction: the
         // regeneration below is pure computation over these plus the pack and seed.
         var acceptedOffers = ReadAcceptedOffers(db);
@@ -349,18 +402,38 @@ public static class ReplayService
         foreach (var current in preread)
         {
             var season = current.Season;
+            var pack = packs[(season.PackId, season.PackVersion)];
+            var regenerated = new List<(int? Round, JournalEvent Event)>();
 
-            // ---- follow-on seasons: start states must re-derive via the rollover ----
+            // ---- follow-on seasons: start states must re-derive via the rollover (same
+            // pack) or the era transition (pack changeover, M6) ----
             if (previousSeason is not null)
             {
-                divergence = VerifyRolloverStartStates(
-                    previousSeason.Season, previousEnd, acceptedOffers, current);
+                bool samePack =
+                    string.Equals(previousSeason.Season.PackId, season.PackId, StringComparison.Ordinal) &&
+                    string.Equals(previousSeason.Season.PackVersion, season.PackVersion, StringComparison.Ordinal);
+                if (samePack)
+                {
+                    divergence = VerifyRolloverStartStates(
+                        previousSeason.Season, previousEnd, acceptedOffers, current);
+                }
+                else
+                {
+                    var fromPack = packs[(previousSeason.Season.PackId, previousSeason.Season.PackVersion)];
+                    IReadOnlyList<JournalEvent> transitionRows;
+                    (divergence, transitionRows) = VerifyTransitionStartStates(
+                        previousSeason.Season, fromPack, pack, previousEnd,
+                        acceptedOffers, current, masterSeed, inputs);
+                    // The transition's journal rows were stored under this season before any
+                    // round — regenerate them at the head of the sequence for the byte-compare.
+                    foreach (var row in transitionRows)
+                        regenerated.Add((null, row));
+                }
                 if (divergence is not null)
                     break;
             }
 
             // ---- fold the rounds, in round order ----
-            var regenerated = new List<(int? Round, JournalEvent Event)>();
             var previousState = new RoundPlayerState
             {
                 Player = current.Results.Count > 0 || IsComplete(season)
@@ -727,6 +800,90 @@ public static class ReplayService
                 current.StartTeams, derived.Teams);
         }
         return null;
+    }
+
+    /// <summary>
+    /// The pack-changeover analogue of <see cref="VerifyRolloverStartStates"/> (M6): re-derives
+    /// the follow-on season's start states through <see cref="EraTransition.Build(SeasonPack, SeasonPack, SeasonEndResult, PlayerCareerState, PlayerOffer, StreamFactory, AgingCurveSet, IReadOnlyDictionary{string, int}?)"/>
+    /// from the previous season's REGENERATED end result plus the stored accepted offer, and
+    /// compares player/driver/team rows against the stored ones — divergence rules identical
+    /// to the rollover. On success it returns the transition's regenerated journal rows
+    /// (era.transition + era.bridge/era.departed/era.economy) so the byte-compare covers the
+    /// rows <see cref="CareerStore.StartNextSeason"/> stored under the new season.
+    /// </summary>
+    private static (ReplayDivergence? Divergence, IReadOnlyList<JournalEvent> TransitionRows)
+        VerifyTransitionStartStates(
+            SeasonRecord previousSeason,
+            SeasonPack fromPack,
+            SeasonPack toPack,
+            SeasonEndResult? previousEnd,
+            IReadOnlyList<(long SeasonId, string TeamId)> acceptedOffers,
+            StoredSeason current,
+            ulong masterSeed,
+            ReplaySimInputs inputs)
+    {
+        long seasonId = current.Season.Id;
+        if (previousEnd is null)
+            throw new InvalidOperationException(
+                $"Season {seasonId} follows season {previousSeason.Id}, which never completed — " +
+                "the career file is structurally inconsistent.");
+
+        string? acceptedTeam = acceptedOffers
+            .Where(a => a.SeasonId == previousSeason.Id)
+            .Select(a => a.TeamId)
+            .FirstOrDefault();
+        if (acceptedTeam is null)
+        {
+            return (new ReplayDivergence
+            {
+                SeasonId = seasonId,
+                Index = 0,
+                Reason = "accepted-offer",
+                StoredDeltaJson = null,
+                RegeneratedDeltaJson =
+                    $"season {seasonId} exists but season {previousSeason.Id} has no accepted offer",
+            }, []);
+        }
+
+        var offer = previousEnd.Offers.FirstOrDefault(o =>
+            string.Equals(o.TeamId, acceptedTeam, StringComparison.Ordinal));
+        if (offer is null)
+        {
+            return (new ReplayDivergence
+            {
+                SeasonId = seasonId,
+                Index = 0,
+                Reason = "accepted-offer",
+                StoredDeltaJson = acceptedTeam,
+                RegeneratedDeltaJson = string.Join(",", previousEnd.Offers.Select(o => o.TeamId)),
+            }, []);
+        }
+
+        var plan = EraTransition.Build(
+            fromPack, toPack, previousEnd, previousEnd.Player, offer,
+            new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements);
+        if (plan.ValidationErrors.Count > 0)
+        {
+            // A stored career started a season the plan would refuse today — the file was
+            // tampered with or the packs changed. Report, never crash, never lose data.
+            return (new ReplayDivergence
+            {
+                SeasonId = seasonId,
+                Index = 0,
+                Reason = "transition-validation",
+                StoredDeltaJson = null,
+                RegeneratedDeltaJson = string.Join(" | ", plan.ValidationErrors),
+            }, []);
+        }
+
+        if (current.StartPlayer is null || plan.Player != current.StartPlayer)
+            return (StartStateDivergence(seasonId, current.StartPlayer, plan.Player), []);
+        if (!plan.Drivers.SequenceEqual(current.StartDrivers))
+            return (StartStateDivergence(seasonId, current.StartDrivers, plan.Drivers), []);
+        if (!plan.Teams.SequenceEqual(current.StartTeams))
+            return (StartStateDivergence(seasonId, current.StartTeams, plan.Teams), []);
+
+        return (null, EraTransitionJournal.Rows(plan));
     }
 
     private static ReplayDivergence StartStateDivergence<T>(long seasonId, T? stored, T regenerated) =>

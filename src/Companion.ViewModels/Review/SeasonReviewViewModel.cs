@@ -27,7 +27,10 @@ public sealed partial class OfferLetterViewModel(SeasonOfferModel offer) : Obser
 /// The season review + offers screen (docs/dev/m5-fix-integration.md, "App wiring"): final
 /// standings, the journal's headline digest, the offer letters with accept-one (journaled),
 /// the one-click NAMeS restore of the pre-season AI file (locked decision #7c), and the era
-/// transition placeholder (M6). Shown by Home once every round has an applied result.
+/// transition sign-and-continue block (M6): after an offer is accepted and a next-era pack is
+/// discovered, "Sign &amp; start &lt;year&gt;" executes the transition and raises
+/// <see cref="SeasonSigned"/> so the shell reopens the career into the new season.
+/// Shown by Home once every round has an applied result.
 /// </summary>
 public sealed partial class SeasonReviewViewModel : ObservableObject
 {
@@ -45,6 +48,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
             (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(o)));
         _acceptedTeamId = Review?.AcceptedTeamId;
         CanRestoreAiFile = session is IAiFileRestore;
+        NextSeason = session.NextSeason();
     }
 
     /// <summary>The final-standings block (drivers/constructors tabs + round matrix).</summary>
@@ -84,7 +88,8 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
     public bool HasOffers => Offers.Count > 0;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(OfferAccepted))]
+    [NotifyPropertyChangedFor(nameof(OfferAccepted), nameof(CanSign))]
+    [NotifyCanExecuteChangedFor(nameof(SignAndContinueCommand))]
     private string? _acceptedTeamId;
 
     public bool OfferAccepted => AcceptedTeamId is not null;
@@ -115,11 +120,81 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         AcceptedTeamId = offer.TeamId;
     }
 
-    /// <summary>Era-transition placeholder (v1 single-season careers end here; M6 carries the
-    /// accepted seat into the next era pack).</summary>
-    public string EraTransitionText =>
-        "This career's season is complete. Era transition — carrying your accepted seat into " +
-        "the next season's pack — arrives in M6; your choice above is recorded in the journal.";
+    // ---------- era transition: sign & continue (M6) ----------
+
+    /// <summary>The discovered next era pack (v1 rule: the smallest season year greater than
+    /// this season's). Null when nothing later is installed — the block then explains what
+    /// season packs are and where they go.</summary>
+    public NextSeasonInfo? NextSeason { get; }
+
+    public bool HasNextSeason => NextSeason is not null;
+
+    /// <summary>What the era-transition block says: sign-and-continue guidance when a next
+    /// pack exists, otherwise the no-next-pack explainer (what packs are, where they go).</summary>
+    public string EraTransitionText => NextSeason is { } next
+        ? $"Your career continues: {next.PackName} is installed. Accept an offer above, then " +
+          $"sign to carry your age, reputation, form and every team lineage into {next.SeasonYear}."
+        : "This season is complete and no later season pack is installed, so the career pauses " +
+          "here. Season packs are plain JSON folders (pack.json, season.json, teams.json, " +
+          "drivers.json, entries.json) holding a year's calendar, entry list and ratings. Drop " +
+          "a later-year pack into Documents\\AMS2CareerCompanion\\Packs or the packs folder " +
+          "beside the app, reopen this career, and the \"Sign & start\" button appears right here.";
+
+    /// <summary>The bridge note when the next pack skips years, e.g. "1968 has no pack — your
+    /// career bridges through it." Null for consecutive seasons (or no next pack).</summary>
+    public string? BridgeNote
+    {
+        get
+        {
+            if (NextSeason is not { BridgedYears.Count: > 0 } next)
+                return null;
+            var years = next.BridgedYears;
+            return years.Count == 1
+                ? $"{years[0]} has no pack — your career bridges through it."
+                : $"{years[0]}–{years[^1]} have no packs — your career bridges through them.";
+        }
+    }
+
+    public bool HasBridgeNote => BridgeNote is not null;
+
+    public string SignButtonText => NextSeason is { } next
+        ? $"Sign & start {next.SeasonYear}"
+        : "Sign & start";
+
+    /// <summary>Signing requires both player inputs: an accepted offer and a next pack.</summary>
+    public bool CanSign => OfferAccepted && HasNextSeason;
+
+    /// <summary>Transition problems the user must see (the plan's validation errors — e.g.
+    /// the accepted team does not exist in the next pack).</summary>
+    [ObservableProperty]
+    private string? _transitionError;
+
+    /// <summary>Raised after the next season has been started and persisted — the shell
+    /// reopens the career file, which now lands in the new season's round 1 briefing.</summary>
+    public event EventHandler? SeasonSigned;
+
+    /// <summary>Executes EraTransition + CareerStore.StartNextSeason through the session seam,
+    /// surfacing validation errors instead of navigating. Raising <see cref="SeasonSigned"/>
+    /// is the LAST thing this command does: the shell's handler disposes this screen's
+    /// session, so nothing may touch it afterwards.</summary>
+    [RelayCommand(CanExecute = nameof(CanSign))]
+    private void SignAndContinue()
+    {
+        if (AcceptedTeamId is not { } teamId)
+            return;
+        try
+        {
+            _session.StartNextSeason(teamId);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or NotSupportedException)
+        {
+            TransitionError = ex.Message;
+            return;
+        }
+
+        TransitionError = null;
+        SeasonSigned?.Invoke(this, EventArgs.Empty);
+    }
 
     // ---------- NAMeS restore (locked decision #7c) ----------
 

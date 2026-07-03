@@ -27,6 +27,11 @@ public static class DataJournalPhases
     /// import event itself (like the import.* rows), not derived sim state.</summary>
     public const string ResultProvenance = "result";
 
+    /// <summary>The era-transition header row (M6): fromYear/toYear/bridgedYears + pack ids,
+    /// journaled by CareerStore.StartNextSeason under the NEW season and regenerated verbatim
+    /// by replay (derived sim state, so the byte-compare covers it).</summary>
+    public const string EraTransition = "era.transition";
+
     /// <summary>True for journal rows that record provenance about the outside world rather
     /// than derived sim state — exactly the rows the replay byte-compare excludes.</summary>
     public static bool IsProvenance(string phase) =>

@@ -31,11 +31,18 @@ public partial class App : Application
         try
         {
             string ams2DataDirectory = Path.Combine(AppContext.BaseDirectory, "data", "ams2");
+            var settings = new SettingsService(JsonSettingsStore.CreateDefault());
             var environment = CareerEnvironment.CreateDefault(ams2DataDirectory);
+            // Era-transition pack discovery (M6) searches the same roots as the wizard:
+            // the defaults plus the settings screen's live custom pack folders.
+            environment.PackSearchRoots = () =>
+            [
+                .. PackDiscovery.DefaultSearchRoots(environment.DocumentsDirectory),
+                .. settings.Current.PackFolders,
+            ];
             var factory = new CareerSessionFactory(environment);
             var recentCareers = RecentCareersStore.CreateDefault();
 
-            var settings = new SettingsService(JsonSettingsStore.CreateDefault());
             ApplyAppearance(settings.Current);
             settings.Changed += (_, current) => Dispatcher.Invoke(() => ApplyAppearance(current));
 

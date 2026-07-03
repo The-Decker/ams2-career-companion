@@ -51,7 +51,41 @@ public interface ICareerSession
     /// clears the previous one) and journals the choice. Throws when the team made no offer.</summary>
     void AcceptOffer(string teamId);
 
+    /// <summary>The next era pack for sign-and-continue (M6). Null while the season is
+    /// incomplete or when no discovered pack has a season year greater than the current one.
+    /// v1 rule: the pack with the SMALLEST year strictly greater than the current season year
+    /// wins; the years in between are bridged, never blocked. Additive member — sessions
+    /// without era-transition support report "no next pack".</summary>
+    NextSeasonInfo? NextSeason() => null;
+
+    /// <summary>Signs the ACCEPTED offer into the next era pack: builds the
+    /// <c>EraTransition</c> plan from the completed season's persisted end states and starts
+    /// the new season via <c>CareerStore.StartNextSeason</c>. <paramref name="teamId"/> must
+    /// be the accepted offer's team. Throws <see cref="InvalidOperationException"/> carrying
+    /// the plan's validation errors (e.g. the accepted team missing from the new pack) — the
+    /// review screen surfaces them. After success THIS session still points at the finished
+    /// season: reopen the career file to land in the new season. Additive member.</summary>
+    void StartNextSeason(string teamId) => throw new NotSupportedException(
+        "This career session does not support era transitions.");
+
     SeasonPack Pack { get; }
+}
+
+/// <summary>The discovered next era pack for the season review's sign-and-continue block.</summary>
+public sealed record NextSeasonInfo
+{
+    public required string PackDirectory { get; init; }
+
+    public required string PackId { get; init; }
+
+    public required string PackName { get; init; }
+
+    public required int SeasonYear { get; init; }
+
+    /// <summary>The years between the finished season and the next pack (ascending, empty
+    /// for consecutive years). v1 BRIDGES them: everyone ages through the gap — the review
+    /// shows the bridge note, e.g. "1968 has no pack — your career bridges through it".</summary>
+    public required IReadOnlyList<int> BridgedYears { get; init; }
 }
 
 public sealed record CareerSummary

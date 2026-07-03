@@ -34,4 +34,15 @@ public static class JournalPhases
     public const string OfferExtended = "offer.extended";
     public const string TeamTier = "team.tier";
     public const string Headline = "news.headline";
+
+    /// <summary>One row per bridged gap year of an era transition (M6): the aging +
+    /// retirement pass nobody played, keyed with the bridged year.</summary>
+    public const string EraBridge = "era.bridge";
+
+    /// <summary>An entity (team or driver) that does not reach the next era pack.</summary>
+    public const string EraDeparted = "era.departed";
+
+    /// <summary>The Budget-Unit rescale note across an era boundary (v1: identity — the
+    /// seam for the Phase-2 economy).</summary>
+    public const string EraEconomy = "era.economy";
 }

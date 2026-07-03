@@ -23,6 +23,16 @@
         }
       ]
     },
+    "montjuic": {
+      "name": "Circuito de Montjuïc",
+      "suggestions": ["brandshatch_gp", "adelaide_historic"],
+      "rationale": "Fast parkland street circuit plunging over Barcelona's Montjuïc hill — huge elevation swings and a sweeping, committed rhythm (Spanish GP 1969/71/73/75). Brands Hatch GP's natural-terrain dips and cambered sweepers are the closest rhythm match in AMS2; Adelaide 1988 keeps the street-circuit walls but is flat and right-angled by comparison. Caveat: Brands Hatch hosted the real British GP in even years 1964-1970 — even-year pack authors should re-rank."
+    },
+    "clermont-ferrand": {
+      "name": "Charade Circuit",
+      "suggestions": ["rouen", "rouen_short", "le_mans_bugatti"],
+      "rationale": "Charade's 8 km of volcanic mountain switchbacks (French GP 1965/69/70/72) is often called a faster mini-Nordschleife, but the Nordschleife itself usually doubles as the same season's German GP venue. Rouen-les-Essarts — the era's other French GP road course, with plunging downhill sweepers and cobbled hairpin — keeps the country, era, and public-road character; Le Mans Bugatti stays as the French-venue fallback."
+    },
     "detroit": {
       "name": "Detroit Street Circuit",
       "suggestions": ["long_beach", "adelaide_historic"],

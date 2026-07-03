@@ -235,6 +235,23 @@ internal sealed class FakeCareerSession : ICareerSession
     public List<string> AcceptedOffers { get; } = [];
 
     public void AcceptOffer(string teamId) => AcceptedOffers.Add(teamId);
+
+    // ---------- era transition (M6 sign-and-continue) ----------
+
+    public NextSeasonInfo? Next { get; set; }
+
+    public NextSeasonInfo? NextSeason() => Next;
+
+    public List<string> SignedTeams { get; } = [];
+
+    public Exception? StartNextSeasonThrows { get; set; }
+
+    public void StartNextSeason(string teamId)
+    {
+        if (StartNextSeasonThrows is not null)
+            throw StartNextSeasonThrows;
+        SignedTeams.Add(teamId);
+    }
 }
 
 internal sealed class FakeCareerFactory : ICareerFactory
