@@ -1,0 +1,255 @@
+using System.Text.Json;
+using Companion.Ams2;
+using Companion.Ams2.ContentLibrary;
+using Companion.Core.Grid;
+using Companion.Core.Json;
+using Companion.Core.Packs;
+using Companion.Core.Scoring;
+using Companion.ViewModels.Services;
+
+namespace Companion.Tests.ViewModels;
+
+/// <summary>Shared fixtures for the session/wizard/briefing viewmodel tests: the REAL
+/// extracted content library and f1-1967 pack from test output, environment factories, and
+/// an in-memory minimal library + pack builder for controlled failure cases.</summary>
+internal static class ViewModelTestData
+{
+    public static readonly Lazy<Ams2ContentLibrary> RealLibrary = new(() =>
+        Ams2ContentLibrary.Load(Path.Combine(AppContext.BaseDirectory, "Fixtures", "ams2")));
+
+    public static string RealPackDirectory =>
+        Path.Combine(AppContext.BaseDirectory, "packs", "f1-1967");
+
+    public static SeasonPack RealPack() => SeasonPackFiles.Read(RealPackDirectory).Parse();
+
+    public static CareerEnvironment Environment(
+        string documentsDirectory,
+        string? installDirectory = null,
+        Ams2ContentLibrary? library = null) => new()
+    {
+        ContentLibrary = library ?? RealLibrary.Value,
+        LocateInstall = () => installDirectory is null
+            ? null
+            : new Ams2Installation { InstallDirectory = installDirectory },
+        DocumentsDirectory = documentsDirectory,
+    };
+
+    /// <summary>A library that knows nothing — every class/track/vehicle check fails.</summary>
+    public static Ams2ContentLibrary EmptyLibrary() => new()
+    {
+        ExtractedFrom = "in-memory empty test library",
+        Classes = new Dictionary<string, Ams2Class>(StringComparer.Ordinal),
+        Vehicles = new Dictionary<string, Ams2Vehicle>(StringComparer.Ordinal),
+        Tracks = new Dictionary<string, Ams2Track>(StringComparer.Ordinal),
+        Liveries = new Dictionary<string, Ams2LiveryClassEntry>(StringComparer.Ordinal),
+    };
+}
+
+/// <summary>Builds a minimal valid two-round season pack (and its on-disk five-file form)
+/// plus a matching in-memory content library, for wizard-gating tests.</summary>
+internal static class TestPackBuilder
+{
+    public const string VintageClass = "F-Vintage_Gen1";
+    public const string VintageCar = "formula_vintage_g1m2";
+    public const string Track = "kyalami_historic";
+    public const string StockLivery1 = "Stock Livery #1";
+    public const string StockLivery2 = "Stock Livery #2";
+
+    public static Ams2ContentLibrary Library() => new()
+    {
+        ExtractedFrom = "in-memory test library",
+        Classes = new Dictionary<string, Ams2Class>(StringComparer.Ordinal)
+        {
+            [VintageClass] = new() { XmlName = VintageClass, Vehicles = [VintageCar] },
+        },
+        Vehicles = new Dictionary<string, Ams2Vehicle>(StringComparer.Ordinal)
+        {
+            [VintageCar] = new() { Id = VintageCar, Dir = VintageCar, VehicleClass = VintageClass },
+        },
+        Tracks = new Dictionary<string, Ams2Track>(StringComparer.Ordinal)
+        {
+            [Track] = new() { Id = Track, TrackName = "Kyalami Historic", MaxAiParticipants = 20 },
+        },
+        Liveries = new Dictionary<string, Ams2LiveryClassEntry>(StringComparer.Ordinal)
+        {
+            [VintageClass] = new() { Name = VintageClass, StockLib1563 = [StockLivery1, StockLivery2] },
+        },
+    };
+
+    public static SeasonPack TwoRoundPack(
+        string secondLivery = StockLivery2,
+        string secondTeamId = "team.brabham") => new()
+    {
+        Manifest = new PackManifest
+        {
+            PackId = "test-pack",
+            Name = "Test Pack",
+            Version = "1.0.0",
+            FormatVersion = 1,
+        },
+        Season = new SeasonDefinition
+        {
+            Year = 1967,
+            SeriesName = "Test Championship",
+            Ams2Class = VintageClass,
+            PointsSystem = new CatalogSeason
+            {
+                RacePoints = [new(9), new(6), new(4), new(3), new(2), new(1)],
+                Constructors = new CatalogConstructors { BestCarOnly = true, BestN = "sameAsDrivers" },
+                DriversBestN = new CatalogBestN { WholeSeason = 2 },
+            },
+            Rounds = [Round(1, "1967-01-02"), Round(2, "1967-05-07")],
+        },
+        Teams =
+        [
+            new PackTeam
+            {
+                Id = "team.brabham",
+                Name = "Brabham-Repco",
+                CarVehicleIds = [VintageCar],
+                Reliability = 0.93,
+                Prestige = 4,
+                BudgetTier = 5,
+            },
+        ],
+        Drivers = [Driver("driver.brabham"), Driver("driver.hulme")],
+        Entries =
+        [
+            Entry("team.brabham", "driver.brabham", "1", StockLivery1),
+            Entry(secondTeamId, "driver.hulme", "2", secondLivery),
+        ],
+    };
+
+    public static PackRound Round(int number, string date, int opponents = 1) => new()
+    {
+        Round = number,
+        Name = $"Round {number}",
+        Date = date,
+        Track = new PackTrackRef { Id = Track },
+        Laps = 40,
+        SetupGuide = new PackSetupGuide { Session = new PackSessionSettings { Opponents = opponents } },
+    };
+
+    public static PackDriver Driver(string id) => new()
+    {
+        Id = id,
+        Name = id,
+        Ratings = new PackDriverRatings
+        {
+            RaceSkill = 0.8,
+            QualifyingSkill = 0.85,
+            Aggression = 0.5,
+            Defending = 0.5,
+            Stamina = 0.8,
+            Consistency = 0.8,
+            StartReactions = 0.8,
+            WetSkill = 0.8,
+            TyreManagement = 0.8,
+            AvoidanceOfMistakes = 0.8,
+        },
+    };
+
+    public static PackEntry Entry(string teamId, string driverId, string number, string livery) => new()
+    {
+        TeamId = teamId,
+        DriverId = driverId,
+        Number = number,
+        Rounds = "1-2",
+        Ams2LiveryName = livery,
+    };
+
+    /// <summary>Writes the pack as its five-file on-disk form (round-trips through the same
+    /// CoreJson options the loader parses with).</summary>
+    public static void Write(SeasonPack pack, string directory)
+    {
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(Path.Combine(directory, "pack.json"),
+            JsonSerializer.Serialize(pack.Manifest, CoreJson.Options));
+        File.WriteAllText(Path.Combine(directory, "season.json"),
+            JsonSerializer.Serialize(pack.Season, CoreJson.Options));
+        File.WriteAllText(Path.Combine(directory, "teams.json"),
+            JsonSerializer.Serialize(new PackTeamsFile { Teams = pack.Teams }, CoreJson.Options));
+        File.WriteAllText(Path.Combine(directory, "drivers.json"),
+            JsonSerializer.Serialize(new PackDriversFile { Drivers = pack.Drivers }, CoreJson.Options));
+        File.WriteAllText(Path.Combine(directory, "entries.json"),
+            JsonSerializer.Serialize(new PackEntriesFile { Entries = pack.Entries }, CoreJson.Options));
+    }
+}
+
+internal sealed class FakeCareerSession : ICareerSession
+{
+    public CareerSummary Summary { get; set; } = new()
+    {
+        CareerName = "Fake Career",
+        SeasonYear = 1967,
+        SeriesName = "Test Championship",
+        CurrentRound = 1,
+        RoundCount = 11,
+        PlayerDriverId = "driver.hulme",
+        PlayerLiveryName = TestPackBuilder.StockLivery2,
+    };
+
+    public SeasonPack Pack { get; set; } = TestPackBuilder.TwoRoundPack();
+
+    public BriefingModel? Briefing { get; set; }
+
+    public Queue<StageOutcome> StageOutcomes { get; } = new();
+
+    public List<ResultDraft> Applied { get; } = [];
+
+    public BriefingModel? CurrentBriefing() => Briefing;
+
+    public StageOutcome StageCurrentGrid() =>
+        StageOutcomes.Count > 0
+            ? StageOutcomes.Dequeue()
+            : new StageOutcome { Success = false, Messages = ["no staged outcome queued"] };
+
+    public IReadOnlyList<GridSeat> CurrentGrid() => [];
+
+    public ConfirmModel Preview(ResultDraft draft) => new()
+    {
+        RoundPoints = [],
+        Movements = [],
+        Headline = "fake headline",
+    };
+
+    public void Apply(ResultDraft draft) => Applied.Add(draft);
+
+    public StandingsSnapshot? CurrentStandings() => null;
+
+    public IReadOnlyList<StandingsSnapshot> AllSnapshots() => [];
+}
+
+internal sealed class FakeCareerFactory : ICareerFactory
+{
+    public CareerCreationRequest? LastRequest { get; private set; }
+
+    public string? LastOpenedPath { get; private set; }
+
+    public FakeCareerSession Session { get; } = new();
+
+    public ICareerSession Create(CareerCreationRequest request)
+    {
+        LastRequest = request;
+        return Session;
+    }
+
+    public ICareerSession Open(string careerFilePath)
+    {
+        LastOpenedPath = careerFilePath;
+        return Session;
+    }
+}
+
+internal sealed class FakeFileWatcher : IFileWatcher
+{
+    public string? Watching { get; private set; }
+
+    public event EventHandler<string>? Changed;
+
+    public void Watch(string filePath) => Watching = filePath;
+
+    public void Stop() => Watching = null;
+
+    public void RaiseChanged(string path) => Changed?.Invoke(this, path);
+}

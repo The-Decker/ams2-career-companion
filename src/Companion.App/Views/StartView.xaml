@@ -1,0 +1,74 @@
+<UserControl x:Class="Companion.App.Views.StartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Focusable="False">
+            <StackPanel MaxWidth="680" Margin="48,56" HorizontalAlignment="Center">
+                <TextBlock Text="AMS2 Career Companion" Style="{StaticResource H1}" />
+                <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,28" TextWrapping="Wrap"
+                           Text="Historical career seasons around Automobilista 2 single-player custom races — offline, one file per career." />
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="_New career" Style="{StaticResource AccentButton}"
+                            MinWidth="160" Command="{Binding NewCareerCommand}" />
+                    <Button Content="Open pack folder" Margin="12,0,0,0"
+                            Click="OnOpenPackFolder"
+                            ToolTip="Opens Documents\AMS2CareerCompanion\Packs — drop season packs here" />
+                </StackPanel>
+
+                <TextBlock Text="Recent careers" Style="{StaticResource H2}" Margin="0,36,0,8" />
+
+                <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
+                           Text="No careers yet — start a new one. Careers live in Documents\AMS2CareerCompanion\Careers as single *.ams2career files."
+                           Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}" />
+
+                <Border Style="{StaticResource Panel}" Padding="8"
+                        Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolVisible}}">
+                    <StackPanel>
+                        <ListBox ItemsSource="{Binding RecentCareers}"
+                                 SelectedItem="{Binding SelectedCareer}"
+                                 MaxHeight="320">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <EventSetter Event="MouseDoubleClick" Handler="OnRecentDoubleClick" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Content="✕"
+                                                Style="{StaticResource SubtleButton}"
+                                                ToolTip="Remove from this list (the career file stays)"
+                                                Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                CommandParameter="{Binding}" />
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding CareerName}" FontWeight="SemiBold" FontSize="15" />
+                                            <TextBlock Text="{Binding Path}" Style="{StaticResource Faint}" Margin="0,2,0,0" />
+                                            <TextBlock Style="{StaticResource Faint}" Margin="0,1,0,0"
+                                                       Text="{Binding LastOpenedUtc.LocalDateTime, StringFormat='last opened {0:g}'}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <Button Content="_Continue selected career" Margin="10,8,10,6" HorizontalAlignment="Left"
+                                Command="{Binding ContinueCommand}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- install detection status from the shell -->
+        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,1,0,0">
+            <TextBlock Margin="16,8" Style="{StaticResource Faint}" TextWrapping="Wrap"
+                       Text="{Binding DataContext.InstallStatus, RelativeSource={RelativeSource AncestorType=Window}}" />
+        </Border>
+    </Grid>
+</UserControl>

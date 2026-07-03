@@ -1,0 +1,123 @@
+<UserControl x:Class="Companion.App.Views.StandingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <UserControl.Resources>
+        <!-- one drivers/constructors table row -->
+        <DataTemplate x:Key="StandingsRowTemplate">
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="44" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="76" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
+                           Foreground="{StaticResource TextMutedBrush}" />
+                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" />
+                <TextBlock Grid.Column="2" Style="{StaticResource Faint}" Margin="0,0,14,0" VerticalAlignment="Center"
+                           Text="{Binding DroppedRoundsText, StringFormat='drops {0}'}"
+                           Visibility="{Binding HasDroppedRounds, Converter={StaticResource BoolVisible}}" />
+                <TextBlock Grid.Column="3" Style="{StaticResource Faint}" Margin="0,0,14,0" VerticalAlignment="Center"
+                           Text="{Binding GrossText, StringFormat='gross {0}'}"
+                           Visibility="{Binding ShowGross, Converter={StaticResource BoolVisible}}" />
+                <TextBlock Grid.Column="4" Text="{Binding CountedText}" FontWeight="SemiBold"
+                           FontFamily="Consolas" HorizontalAlignment="Right" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <!-- rules-explainer chip -->
+        <Border DockPanel.Dock="Top" Style="{StaticResource Chip}" Margin="0,0,0,10">
+            <TextBlock Text="{Binding RulesChipText}" Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" />
+        </Border>
+
+        <!-- no rounds yet -->
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,8,0,0"
+                   Text="No rounds applied yet — standings appear after the first result."
+                   Visibility="{Binding DriverRows.Count, Converter={StaticResource CountCollapsed}}" />
+
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}"
+                    Visibility="{Binding DriverRows.Count, Converter={StaticResource CountVisible}}">
+            <TabItem Header="Drivers">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ItemsControl ItemsSource="{Binding DriverRows}" ItemTemplate="{StaticResource StandingsRowTemplate}"
+                                  MaxWidth="720" HorizontalAlignment="Left" />
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Constructors"
+                     Visibility="{Binding HasConstructors, Converter={StaticResource BoolVisible}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ItemsControl ItemsSource="{Binding ConstructorRows}" ItemTemplate="{StaticResource StandingsRowTemplate}"
+                                  MaxWidth="720" HorizontalAlignment="Left" />
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Round matrix">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Faint}" Margin="4,8,0,0"
+                               Text="Struck-through cells are dropped results (best-N rule); points per round as scored." />
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Focusable="False">
+                        <StackPanel>
+                            <!-- header row -->
+                            <StackPanel Orientation="Horizontal" Margin="4,0,4,4">
+                                <TextBlock Width="190" Text="Driver" Style="{StaticResource Muted}" FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding RoundHeaders}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Width="48" Text="{Binding}" Style="{StaticResource Muted}"
+                                                       FontWeight="SemiBold" TextAlignment="Center" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                            <!-- driver × round cells -->
+                            <ItemsControl ItemsSource="{Binding MatrixRows}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="4,2">
+                                            <TextBlock Width="190" Text="{Binding DisplayName}" />
+                                            <ItemsControl ItemsSource="{Binding Cells}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Width="48" Text="{Binding Text}" TextAlignment="Center"
+                                                                   FontFamily="Consolas">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsDropped}" Value="True">
+                                                                            <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+                                                                            <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>

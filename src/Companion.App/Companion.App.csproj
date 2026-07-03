@@ -11,6 +11,15 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 
+  <!-- Refreshable data beside the exe (never compiled in): the extracted AMS2 content
+       library, the rules data, and the bundled season packs. Copied to build output AND
+       carried into publish, so the published single exe is self-sufficient. -->
+  <ItemGroup>
+    <None Include="..\..\data\ams2\*.json" Link="data\ams2\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\data\rules\*.json" Link="data\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\packs\**\*.*" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>

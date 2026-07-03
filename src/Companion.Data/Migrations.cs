@@ -67,12 +67,68 @@ public static class Migrations
             cause      TEXT NOT NULL
         );
         """,
+
+        // v2 — career sim state (docs/dev/career-sim.md, Persistence): season-keyed
+        // driver/team/player snapshots plus season-end offer letters. driver_id/team ids are
+        // lineage ids ("driver.j_clark", "team.lotus"); state blobs are single-line CoreJson
+        // (simple, forward-migratable). stage 'start' rows are sim INPUTS (season 1's come
+        // from the new-career wizard; later seasons' bake in the player's accepted offer);
+        // stage 'end' rows and offers are DERIVED season-end pipeline output — re-simulation
+        // wipes and rebuilds exactly those. ord preserves the caller's ordering verbatim
+        // because journal event order follows it (the byte-identical replay contract).
+        """
+        CREATE TABLE driver_state (
+            season_id  INTEGER NOT NULL REFERENCES season (id),
+            stage      TEXT NOT NULL CHECK (stage IN ('start', 'end')),
+            driver_id  TEXT NOT NULL,
+            ord        INTEGER NOT NULL,
+            state_json TEXT NOT NULL,
+            PRIMARY KEY (season_id, stage, driver_id)
+        );
+
+        CREATE TABLE team_state (
+            season_id  INTEGER NOT NULL REFERENCES season (id),
+            stage      TEXT NOT NULL CHECK (stage IN ('start', 'end')),
+            team_id    TEXT NOT NULL,
+            lineage_id TEXT NOT NULL,
+            ord        INTEGER NOT NULL,
+            state_json TEXT NOT NULL,
+            PRIMARY KEY (season_id, stage, team_id)
+        );
+
+        CREATE TABLE player_state (
+            season_id  INTEGER NOT NULL REFERENCES season (id),
+            stage      TEXT NOT NULL CHECK (stage IN ('start', 'end')),
+            state_json TEXT NOT NULL,
+            PRIMARY KEY (season_id, stage)
+        );
+
+        CREATE TABLE offer (
+            season_id  INTEGER NOT NULL REFERENCES season (id),
+            team_id    TEXT NOT NULL,
+            ord        INTEGER NOT NULL,
+            terms_json TEXT NOT NULL,
+            accepted   INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (season_id, team_id)
+        );
+
+        CREATE INDEX journal_season_seq ON journal (season_id, seq);
+        """,
     ];
 
     public static int CurrentVersion => Scripts.Length;
 
-    public static void Apply(SqliteConnection connection)
+    public static void Apply(SqliteConnection connection) => Apply(connection, CurrentVersion);
+
+    /// <summary>Applies migrations up to <paramref name="targetVersion"/>. The parameterless
+    /// overload (full version) is the normal path; earlier targets exist so tests and tooling
+    /// can create genuine old-format files and prove they upgrade in place.</summary>
+    public static void Apply(SqliteConnection connection, int targetVersion)
     {
+        if (targetVersion < 0 || targetVersion > CurrentVersion)
+            throw new ArgumentOutOfRangeException(nameof(targetVersion), targetVersion,
+                $"Target schema version must be 0..{CurrentVersion}.");
+
         int version = GetUserVersion(connection);
 
         if (version > CurrentVersion)
@@ -80,7 +136,7 @@ public static class Migrations
                 $"Career file schema v{version} is newer than this app understands (v{CurrentVersion}) — " +
                 "update the app instead of opening the file.");
 
-        for (int next = version; next < CurrentVersion; next++)
+        for (int next = version; next < targetVersion; next++)
         {
             using var transaction = connection.BeginTransaction();
             using (var command = connection.CreateCommand())

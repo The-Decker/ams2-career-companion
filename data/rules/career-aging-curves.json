@@ -1,0 +1,119 @@
+{
+  "$comment": "Era-shifted driver aging curves for the career sim (docs/dev/career-sim.md, season-end step 3/4). Peak ages sit ~28-32 in the 1960s and drift later in modern eras (professionalized fitness, safer cars, longer careers). Rates are annual raceSkill/qualifyingSkill drift on the 0..1 custom-AI scale; noiseAmplitude is the +/- bound of the per-driver deterministic noise (stream 'aging'). Retirement blocks parameterize the age+performance hazard for non-canon drivers (stream 'retirement'): probability = clamp(perYearOverBase * (age - baseAge), 0, maxAgeHazard) + skillHazardPerPoint * max(0, skillFloor - effectiveRaceSkill), capped at cap. Parsed by Companion.Core.Career.AgingCurveSet.",
+  "eras": [
+    {
+      "key": "golden-age",
+      "fromYear": 1946,
+      "toYear": 1969,
+      "peakAgeStart": 28,
+      "peakAgeEnd": 32,
+      "risePerYear": 0.004,
+      "declinePerYear": 0.006,
+      "declineAccelPerYear": 0.0015,
+      "noiseAmplitude": 0.004,
+      "retirement": {
+        "baseAge": 33,
+        "perYearOverBase": 0.12,
+        "maxAgeHazard": 0.85,
+        "skillFloor": 0.6,
+        "skillHazardPerPoint": 0.8,
+        "cap": 0.95
+      }
+    },
+    {
+      "key": "seventies",
+      "fromYear": 1970,
+      "toYear": 1979,
+      "peakAgeStart": 28,
+      "peakAgeEnd": 33,
+      "risePerYear": 0.004,
+      "declinePerYear": 0.006,
+      "declineAccelPerYear": 0.0015,
+      "noiseAmplitude": 0.004,
+      "retirement": {
+        "baseAge": 34,
+        "perYearOverBase": 0.11,
+        "maxAgeHazard": 0.85,
+        "skillFloor": 0.6,
+        "skillHazardPerPoint": 0.8,
+        "cap": 0.95
+      }
+    },
+    {
+      "key": "eighties",
+      "fromYear": 1980,
+      "toYear": 1989,
+      "peakAgeStart": 27,
+      "peakAgeEnd": 33,
+      "risePerYear": 0.0045,
+      "declinePerYear": 0.0055,
+      "declineAccelPerYear": 0.0015,
+      "noiseAmplitude": 0.004,
+      "retirement": {
+        "baseAge": 35,
+        "perYearOverBase": 0.11,
+        "maxAgeHazard": 0.85,
+        "skillFloor": 0.58,
+        "skillHazardPerPoint": 0.8,
+        "cap": 0.95
+      }
+    },
+    {
+      "key": "nineties",
+      "fromYear": 1990,
+      "toYear": 1999,
+      "peakAgeStart": 27,
+      "peakAgeEnd": 33,
+      "risePerYear": 0.0045,
+      "declinePerYear": 0.005,
+      "declineAccelPerYear": 0.0015,
+      "noiseAmplitude": 0.0035,
+      "retirement": {
+        "baseAge": 36,
+        "perYearOverBase": 0.1,
+        "maxAgeHazard": 0.85,
+        "skillFloor": 0.58,
+        "skillHazardPerPoint": 0.8,
+        "cap": 0.95
+      }
+    },
+    {
+      "key": "two-thousands",
+      "fromYear": 2000,
+      "toYear": 2013,
+      "peakAgeStart": 26,
+      "peakAgeEnd": 34,
+      "risePerYear": 0.005,
+      "declinePerYear": 0.005,
+      "declineAccelPerYear": 0.0012,
+      "noiseAmplitude": 0.0035,
+      "retirement": {
+        "baseAge": 36,
+        "perYearOverBase": 0.1,
+        "maxAgeHazard": 0.85,
+        "skillFloor": 0.56,
+        "skillHazardPerPoint": 0.8,
+        "cap": 0.95
+      }
+    },
+    {
+      "key": "hybrid",
+      "fromYear": 2014,
+      "toYear": 2039,
+      "peakAgeStart": 26,
+      "peakAgeEnd": 35,
+      "risePerYear": 0.005,
+      "declinePerYear": 0.0045,
+      "declineAccelPerYear": 0.0012,
+      "noiseAmplitude": 0.003,
+      "retirement": {
+        "baseAge": 38,
+        "perYearOverBase": 0.1,
+        "maxAgeHazard": 0.85,
+        "skillFloor": 0.56,
+        "skillHazardPerPoint": 0.8,
+        "cap": 0.95
+      }
+    }
+  ]
+}

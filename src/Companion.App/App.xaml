@@ -1,9 +1,43 @@
-﻿<Application x:Class="Companion.App.App"
+<Application x:Class="Companion.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Companion.App"
-             StartupUri="MainWindow.xaml">
+             xmlns:start="clr-namespace:Companion.ViewModels.Start;assembly=Companion.ViewModels"
+             xmlns:wizard="clr-namespace:Companion.ViewModels.Wizard;assembly=Companion.ViewModels"
+             xmlns:briefing="clr-namespace:Companion.ViewModels.Briefing;assembly=Companion.ViewModels"
+             xmlns:resultEntry="clr-namespace:Companion.ViewModels.ResultEntry;assembly=Companion.ViewModels"
+             xmlns:confirm="clr-namespace:Companion.ViewModels.Confirm;assembly=Companion.ViewModels"
+             xmlns:standings="clr-namespace:Companion.ViewModels.Standings;assembly=Companion.ViewModels"
+             xmlns:shell="clr-namespace:Companion.ViewModels.Shell;assembly=Companion.ViewModels"
+             xmlns:views="clr-namespace:Companion.App.Views"
+             ShutdownMode="OnMainWindowClose">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- viewmodel type → screen (the shell's ContentControls resolve through these) -->
+            <DataTemplate DataType="{x:Type start:StartViewModel}">
+                <views:StartView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type wizard:NewCareerWizardViewModel}">
+                <views:WizardView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type shell:HomeViewModel}">
+                <views:HomeView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type briefing:BriefingViewModel}">
+                <views:BriefingView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type resultEntry:ResultEntryViewModel}">
+                <views:ResultEntryView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type confirm:ConfirmViewModel}">
+                <views:ConfirmView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type standings:StandingsViewModel}">
+                <views:StandingsView />
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

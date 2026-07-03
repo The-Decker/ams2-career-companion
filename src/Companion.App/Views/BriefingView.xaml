@@ -1,0 +1,136 @@
+<UserControl x:Class="Companion.App.Views.BriefingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel MaxWidth="820" HorizontalAlignment="Left">
+
+            <!-- title (placeholder rounds carry the "— placeholder: <track>" label) -->
+            <TextBlock Text="{Binding Title}" Style="{StaticResource H2}" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <TextBlock Style="{StaticResource Muted}" Text="{Binding VenueDisplayName, StringFormat='Venue: {0}'}" />
+                <Border Style="{StaticResource Chip}" Background="{StaticResource WarningDimBrush}" Margin="10,0,0,0"
+                        Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolVisible}}">
+                    <TextBlock Text="placeholder round" Foreground="{StaticResource WarningBrush}" FontSize="12" />
+                </Border>
+            </StackPanel>
+
+            <!-- season-complete state (Home normally swaps away before this shows) -->
+            <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
+                       Text="Season complete — there is no round left to brief."
+                       Visibility="{Binding SeasonComplete, Converter={StaticResource BoolVisible}}" />
+
+            <!-- the check-once settings panel: exact in-game strings, one copy button per row -->
+            <Border Style="{StaticResource Panel}" Margin="0,16,0,0"
+                    Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
+                <StackPanel>
+                    <TextBlock Text="In-game race setup — set each line exactly" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding Settings}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="170" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Label}"
+                                               Style="{StaticResource Muted}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="Consolas"
+                                               FontSize="15" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                    <Button Grid.Column="2" Content="Copy" FontSize="12" Padding="10,3" Margin="10,0,0,0"
+                                            Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- setup notes (placeholder distance note etc.) -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">
+                <StackPanel>
+                    <TextBlock Text="Notes" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding SetupNotes}" Style="{StaticResource Body}" />
+                </StackPanel>
+            </Border>
+
+            <!-- staging -->
+            <StackPanel Orientation="Horizontal" Margin="0,18,0,0"
+                        Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
+                <Button Content="Stage grid into AMS2" Style="{StaticResource AccentButton}"
+                        MinWidth="200" Command="{Binding StageGridCommand}"
+                        ToolTip="Writes the generated custom-AI grid into UserData\CustomAIDrivers — backup-first, always" />
+                <Button Content="Stage anyway (backup first)" Margin="10,0,0,0"
+                        Command="{Binding ForceStageGridCommand}"
+                        ToolTip="Overrides the not-ours-file guard; a timestamped backup is still taken first">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding CanForceStage}" Value="True" />
+                                        <Condition Binding="{Binding StageSucceeded}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.Setters>
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </MultiDataTrigger.Setters>
+                                </MultiDataTrigger>
+                                <!-- last trigger wins: never show before a staging attempt -->
+                                <DataTrigger Binding="{Binding LastStageOutcome}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+
+            <!-- staging outcome banner -->
+            <Border CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
+                    Visibility="{Binding LastStageOutcome, Converter={StaticResource NullCollapsed}}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding StageBanner}" TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+
+            <!-- ⚠ staged file changed outside the app -->
+            <Border Background="{StaticResource WarningDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,8,0,0"
+                    Visibility="{Binding StagedFileTouchedExternally, Converter={StaticResource BoolVisible}}">
+                <TextBlock Foreground="{StaticResource WarningBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
+                           Text="⚠ The staged file was modified outside the app — re-stage before racing." />
+            </Border>
+
+            <!-- preflight / staging detail messages -->
+            <ItemsControl ItemsSource="{Binding StageMessages}" Margin="0,8,0,24">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
