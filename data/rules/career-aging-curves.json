@@ -12,8 +12,9 @@
       "declineAccelPerYear": 0.0015,
       "noiseAmplitude": 0.004,
       "retirement": {
-        "baseAge": 33,
-        "perYearOverBase": 0.12,
+        "$comment": "Softened per the M5 audit: front-line drivers plausibly raced deep into their 40s in this era (Fangio champion at 46, Brabham won at 44) - hazard starts at 35 and accrues gently.",
+        "baseAge": 35,
+        "perYearOverBase": 0.07,
         "maxAgeHazard": 0.85,
         "skillFloor": 0.6,
         "skillHazardPerPoint": 0.8,

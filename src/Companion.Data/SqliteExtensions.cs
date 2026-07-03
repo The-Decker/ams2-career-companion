@@ -30,3 +30,32 @@ internal static class SqliteExtensions
         command.ExecuteNonQuery();
     }
 }
+
+/// <summary>Owned-or-ambient transaction scope for multi-statement store methods: with an
+/// ambient (caller) transaction the scope is a pass-through — the caller owns commit and
+/// rollback; without one the scope owns a fresh transaction, <see cref="Complete"/> commits
+/// it, and disposing without completing rolls it back.</summary>
+internal readonly struct TransactionScope : IDisposable
+{
+    private readonly SqliteTransaction? _owned;
+
+    public SqliteTransaction Transaction { get; }
+
+    private TransactionScope(SqliteTransaction transaction, SqliteTransaction? owned)
+    {
+        Transaction = transaction;
+        _owned = owned;
+    }
+
+    public static TransactionScope Enter(CareerDatabase db, SqliteTransaction? ambient)
+    {
+        if (ambient is not null)
+            return new TransactionScope(ambient, owned: null);
+        var owned = db.Connection.BeginTransaction();
+        return new TransactionScope(owned, owned);
+    }
+
+    public void Complete() => _owned?.Commit();
+
+    public void Dispose() => _owned?.Dispose();
+}

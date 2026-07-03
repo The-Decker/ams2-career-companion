@@ -77,6 +77,29 @@ public sealed partial class ResultEntryViewModel : ObservableObject
 
     // ---------- observable state ----------
 
+    /// <summary>Slider value assumed before any recommendation exists (neutral 100%).</summary>
+    public const double NeutralSlider = 100.0;
+
+    /// <summary>Lowest/highest in-game Opponent Skill values (contract: editable 70–120).</summary>
+    public const double MinSlider = 70.0;
+    public const double MaxSlider = 120.0;
+
+    /// <summary>The in-game Opponent Skill the round was actually driven at. Prefilled by the
+    /// shell with the pace-anchor recommendation; the player edits it when they raced at
+    /// something else. Stored in the round's raw-result envelope on Apply.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SliderUsedText))]
+    private double sliderUsed = NeutralSlider;
+
+    public string SliderUsedText => $"{SliderUsed:0}%";
+
+    partial void OnSliderUsedChanged(double value)
+    {
+        double clamped = Math.Clamp(value, MinSlider, MaxSlider);
+        if (clamped != value)
+            SliderUsed = clamped;
+    }
+
     [ObservableProperty]
     private string input = "";
 
@@ -144,12 +167,15 @@ public sealed partial class ResultEntryViewModel : ObservableObject
 
     // ---------- draft ----------
 
-    /// <summary>The screen's product: classified order, DNF reasons, disqualifications.</summary>
+    /// <summary>The screen's product: classified order, DNF reasons, disqualifications, and
+    /// the Opponent Skill slider the round was driven at (whole percent, clamped 70–120).</summary>
     public ResultDraft BuildDraft() => new()
     {
         Classified = _classified.Select(s => s.DriverId).ToArray(),
         DidNotFinish = _dnfs.ToDictionary(d => d.Seat.DriverId, d => d.Reason, StringComparer.Ordinal),
         Disqualified = _disqualified.Select(s => s.DriverId).ToArray(),
+        SliderUsed = Math.Clamp(
+            Math.Round(SliderUsed, MidpointRounding.AwayFromZero), MinSlider, MaxSlider),
     };
 
     // ---------- commands (view maps Enter/Tab/Esc/F8/Ctrl+Z to these) ----------

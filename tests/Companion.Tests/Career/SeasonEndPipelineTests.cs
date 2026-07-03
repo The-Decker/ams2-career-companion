@@ -1,4 +1,5 @@
 using Companion.Core.Career;
+using Companion.Core.Determinism;
 
 namespace Companion.Tests.Career;
 
@@ -99,6 +100,19 @@ public class SeasonEndPipelineTests
         var repRow = result.Events.Single(e =>
             e.Phase == JournalPhases.PlayerReputation && e.Cause == "season-final");
         Assert.Contains("\"championshipPosition\":3", repRow.DeltaJson);
+    }
+
+    [Fact]
+    public void SeasonsCompletedIncrementIsJournaled()
+    {
+        // Journal/state parity: the experience bump is a state change like any other.
+        var result = SeasonEndPipeline.Run(CareerTestData.Context());
+
+        var row = result.Events.Single(e => e.Phase == JournalPhases.PlayerExperience);
+        Assert.Equal("player", row.Entity);
+        Assert.Equal("season-final", row.Cause);
+        Assert.Contains("\"from\":1", row.DeltaJson);
+        Assert.Contains("\"to\":2", row.DeltaJson);
     }
 
     // ---------- step 3: aging ----------
@@ -208,6 +222,92 @@ public class SeasonEndPipelineTests
     }
 
     [Fact]
+    public void HiredFreeAgentEntersTheReturnedDriverStates()
+    {
+        // Journal/state parity: the fa2 hire above is a state change, so the hired driver
+        // must be a returned driver state (age as authored, skills anchored via deltas
+        // against the 0.5 pool-outsider baseline).
+        var result = SeasonEndPipeline.Run(CareerTestData.Context());
+
+        var hired = result.Drivers.Single(d => d.DriverId == "driver.fa2");
+        Assert.Equal(30, hired.Age);
+        Assert.Equal(0.60 - 0.5, hired.RaceSkillDelta, 12);
+        Assert.False(hired.Retired);
+    }
+
+    [Fact]
+    public void SeatMarketValuesCandidateReputation()
+    {
+        // Two otherwise-identical candidates: the reputed one must win the seat, because
+        // scoring carries the contract's archetype-weighted rep term.
+        var result = SeasonEndPipeline.Run(CareerTestData.Context(freeAgents:
+        [
+            new SeatCandidate { DriverId = "driver.nobody", RaceSkill = 0.66, Age = 28 },
+            new SeatCandidate
+            {
+                DriverId = "driver.famous",
+                RaceSkill = 0.66,
+                Age = 28,
+                Reputation = SeatCandidate.DefaultReputation(5),
+            },
+        ]));
+
+        var filled = result.Events
+            .First(e => e.Phase == JournalPhases.SeatMarket && e.Cause == "vacancy-filled");
+        Assert.Contains("\"hired\":\"driver.famous\"", filled.DeltaJson);
+        Assert.Contains("\"rep\":75", filled.DeltaJson);
+    }
+
+    [Fact]
+    public void SeatMarketNoiseStreamIsKeyedByTeamAndVacatedDriver()
+    {
+        // Reproduce every journaled hire from first principles with the documented stream
+        // key `offers|year|0|{teamId}->{vacatedBy}` — proving each vacancy rolls its own
+        // noise sequence even when one team vacates two seats in a winter (the fixture's
+        // vacancies are all team.min: canon_now guaranteed, driver.old hazard-dependent).
+        var context = CareerTestData.Context();
+        var result = SeasonEndPipeline.Run(context);
+
+        var catalog = CareerTestData.LoadArchetypes();
+        var archetype = catalog.ForTeam(1, null); // team.min is tier 1 → minnow
+        var curve = CareerTestData.LoadAgingCurves().ForYear(1967);
+
+        var filled = result.Events
+            .Where(e => e.Phase == JournalPhases.SeatMarket && e.Cause == "vacancy-filled")
+            .ToList();
+        Assert.NotEmpty(filled);
+
+        var pool = context.FreeAgents.ToList();
+        foreach (var journalEvent in filled)
+        {
+            using var delta = System.Text.Json.JsonDocument.Parse(journalEvent.DeltaJson);
+            string vacatedBy = delta.RootElement.GetProperty("vacatedBy").GetString()!;
+            var stream = new StreamFactory(42).CreateStream(
+                CareerStreams.Offers, 1967, 0, journalEvent.Entity + "->" + vacatedBy);
+
+            SeatCandidate? best = null;
+            double bestScore = double.NegativeInfinity;
+            foreach (var candidate in pool)
+            {
+                double score = candidate.RaceSkill
+                               + archetype.Weights.Rep * candidate.Reputation / 100.0
+                               - 0.02 * Math.Max(0, candidate.Age - curve.PeakAgeEnd)
+                               + archetype.PayDriverWeight * candidate.PayBudgetBu / 100.0
+                               + 0.01 * (2.0 * stream.NextDouble() - 1.0);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    best = candidate;
+                }
+            }
+
+            Assert.Equal(best!.DriverId, delta.RootElement.GetProperty("hired").GetString());
+            Assert.Equal(Math.Round(bestScore, 4), delta.RootElement.GetProperty("score").GetDouble(), 12);
+            pool.Remove(best);
+        }
+    }
+
+    [Fact]
     public void EmptyPoolLeavesTheVacancyJournaledButUnfilled()
     {
         var result = SeasonEndPipeline.Run(CareerTestData.Context(freeAgents: []));
@@ -280,8 +380,14 @@ public class SeasonEndPipelineTests
 
             foreach (var row in result.Events.Where(e => e.Phase == JournalPhases.TeamTier))
             {
-                Assert.True(row.Cause is "overperformed" or "underperformed");
+                // Causes match the authored headline template keys (team.tier|promoted /
+                // team.tier|relegated) — and with a bank present, the headline itself fires.
+                Assert.True(row.Cause is "promoted" or "relegated");
                 Assert.Contains("\"roll\":", row.DeltaJson);
+                Assert.Contains(result.Events, e =>
+                    e.Phase == JournalPhases.Headline &&
+                    e.Entity == row.Entity &&
+                    e.Cause == row.Cause);
             }
         }
         Assert.True(anyDrift, "Twenty maximally-provoked seasons must produce at least one drift.");

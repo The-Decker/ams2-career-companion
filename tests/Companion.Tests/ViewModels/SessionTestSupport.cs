@@ -22,6 +22,10 @@ internal static class ViewModelTestData
 
     public static SeasonPack RealPack() => SeasonPackFiles.Read(RealPackDirectory).Parse();
 
+    /// <summary>The real career rules data (aging curves, archetypes, headlines) copied into
+    /// the test output — the same files the published exe ships beside itself.</summary>
+    public static string RulesDirectory => Path.Combine(AppContext.BaseDirectory, "Fixtures", "rules");
+
     public static CareerEnvironment Environment(
         string documentsDirectory,
         string? installDirectory = null,
@@ -32,6 +36,7 @@ internal static class ViewModelTestData
             ? null
             : new Ams2Installation { InstallDirectory = installDirectory },
         DocumentsDirectory = documentsDirectory,
+        RulesDirectory = RulesDirectory,
     };
 
     /// <summary>A library that knows nothing — every class/track/vehicle check fails.</summary>
@@ -218,6 +223,18 @@ internal sealed class FakeCareerSession : ICareerSession
     public StandingsSnapshot? CurrentStandings() => null;
 
     public IReadOnlyList<StandingsSnapshot> AllSnapshots() => [];
+
+    public int? SliderRecommendation { get; set; }
+
+    public int? CurrentSliderRecommendation() => SliderRecommendation;
+
+    public SeasonReviewModel? Review { get; set; }
+
+    public SeasonReviewModel? SeasonReview() => Review;
+
+    public List<string> AcceptedOffers { get; } = [];
+
+    public void AcceptOffer(string teamId) => AcceptedOffers.Add(teamId);
 }
 
 internal sealed class FakeCareerFactory : ICareerFactory

@@ -1,6 +1,4 @@
-using System.Text.Json;
 using Companion.Core.Career;
-using Companion.Core.Json;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.Data;
@@ -208,19 +206,25 @@ internal static class DataCareerFixture
         return (seasonId, pack);
     }
 
-    /// <summary>Plays the season the way the live app path does: import each raw result,
-    /// journal the refolded standings rows, then run season end through the shared fold.</summary>
-    public static void PlaySeason(CareerDatabase db, long seasonId, SeasonPack pack)
+    /// <summary>Wraps a synthesized round result in the versioned envelope the result screen
+    /// produces: an explicit slider (varied per round) and no player DNF (everyone finishes
+    /// in the fixture rounds).</summary>
+    public static RoundResultEnvelope Envelope(RoundResult round) => new()
     {
-        var soFar = new List<RoundResult>();
+        Result = round,
+        SliderUsed = 90.0 + round.Round,
+    };
+
+    /// <summary>Plays the season the way the live app path does: every round through the
+    /// unified fold (raw import + standings + player round update, atomically), then season
+    /// end through the shared pipeline consuming the final round's folded player state.</summary>
+    public static SeasonEndResult PlaySeason(CareerDatabase db, long seasonId, SeasonPack pack)
+    {
         foreach (var round in Rounds())
         {
-            soFar.Add(round);
-            string payload = JsonSerializer.Serialize(round, CoreJson.Options);
-            ResultStore.Append(db, seasonId, round.Round, payload, Utc);
-            JournalStore.AppendMany(
-                db, seasonId, round.Round, ReplayService.RoundStandingsEvents(pack, soFar), Utc);
+            ReplayService.ImportAndFoldRound(
+                db, seasonId, pack, MasterSeed, Inputs(), round.Round, Envelope(round), Utc);
         }
-        ReplayService.RunSeasonEnd(db, seasonId, pack, MasterSeed, Inputs(), Utc);
+        return ReplayService.RunSeasonEnd(db, seasonId, pack, MasterSeed, Inputs(), Utc);
     }
 }

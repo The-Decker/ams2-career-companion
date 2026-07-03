@@ -82,6 +82,44 @@ public class StreamFactoryTests
         Assert.Equal(once, again);
     }
 
+    /// <summary>Key hygiene (docs/dev/m5-fix-integration.md): '|' and '\' inside entityIds
+    /// are escaped before key composition, so entity ids that embed the key separator can
+    /// never collide with each other or with a differently-segmented key — and ids without
+    /// those characters derive exactly the streams they always did.</summary>
+    [Fact]
+    public void PipesInEntityIdsAreEscapedIntoDistinctReproducibleStreams()
+    {
+        var factory = new StreamFactory(Seed);
+
+        // Unescaped, "a|b" would compose the same key text as an entity that pre-escapes
+        // itself; escaped, every distinct entity id is a distinct stream.
+        string[] trickyIds = ["team.a|team.b", "team.a\\|team.b", "team.a\\\\|team.b", "team.a", "team.b"];
+        var sequences = trickyIds
+            .Select(id => Take(factory.CreateStream("offers", 1967, 0, id), 8))
+            .ToList();
+        for (int i = 0; i < sequences.Count; i++)
+        {
+            for (int j = i + 1; j < sequences.Count; j++)
+                Assert.NotEqual(sequences[i], sequences[j]);
+        }
+
+        // And escaping is deterministic: the same tricky id replays the same stream.
+        Assert.Equal(
+            Take(factory.CreateStream("offers", 1967, 0, "team.a|team.b"), 8),
+            Take(factory.CreateStream("offers", 1967, 0, "team.a|team.b"), 8));
+    }
+
+    /// <summary>The composite vacancy discriminator ("team-&gt;driver") used by the seat
+    /// market is a distinct stream from the plain team id stream.</summary>
+    [Fact]
+    public void VacancyDiscriminatorSelectsADistinctStream()
+    {
+        var factory = new StreamFactory(Seed);
+        Assert.NotEqual(
+            Take(factory.CreateStream("offers", 1967, 0, "team.min"), 8),
+            Take(factory.CreateStream("offers", 1967, 0, "team.min->driver.old"), 8));
+    }
+
     /// <summary>Byte-stability regression pin: these constants are part of the save format
     /// (streams seed careers). If this test ever fails, the key derivation / hash / mixer /
     /// generator changed and existing careers break — that is a breaking save-format change,

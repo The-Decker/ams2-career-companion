@@ -23,6 +23,9 @@ public sealed class CustomAiBackup
     /// Snapshots the current <c>&lt;vehicleClass&gt;.xml</c> (if present) before the app
     /// writes its own. Returns the backup path, or null when there was nothing to back up.
     /// Backup names embed a sortable UTC timestamp: <c>F-Vintage_Gen1.20260702T153000Z.xml</c>.
+    /// Two snapshots within the same second (a force-stage immediately followed by a restore)
+    /// get a <c>-2</c>/<c>-3</c>… suffix instead of colliding — a backup must never fail
+    /// because the previous one was recent.
     /// </summary>
     public string? BackupIfPresent(string vehicleClass, DateTimeOffset now)
     {
@@ -31,21 +34,54 @@ public sealed class CustomAiBackup
             return null;
 
         Directory.CreateDirectory(BackupDirectory);
-        string backupPath = Path.Combine(
+        string stem = Path.Combine(
             BackupDirectory,
-            $"{vehicleClass}.{now.UtcDateTime:yyyyMMdd'T'HHmmss'Z'}.xml");
+            $"{vehicleClass}.{now.UtcDateTime:yyyyMMdd'T'HHmmss'Z'}");
+        string backupPath = stem + ".xml";
+        for (int n = 2; File.Exists(backupPath); n++)
+            backupPath = $"{stem}-{n}.xml";
         File.Copy(source, backupPath, overwrite: false);
         return backupPath;
     }
 
-    /// <summary>All backups for a class, newest first.</summary>
+    /// <summary>All backups for a class, newest first — by when the backup was TAKEN, read
+    /// from the name's embedded timestamp plus the same-second <c>-n</c> suffix (plain
+    /// string order would put <c>…Z-2.xml</c> BEFORE <c>…Z.xml</c>, inverting a same-second
+    /// pair; file times are no better — the copy preserves the source's write time).</summary>
     public IReadOnlyList<string> ListBackups(string vehicleClass)
     {
         if (!Directory.Exists(BackupDirectory))
             return [];
         return Directory.GetFiles(BackupDirectory, vehicleClass + ".*.xml")
-            .OrderByDescending(path => path, StringComparer.OrdinalIgnoreCase)
+            .OrderByDescending(path => TakenKey(vehicleClass, path).Stamp, StringComparer.OrdinalIgnoreCase)
+            .ThenByDescending(path => TakenKey(vehicleClass, path).Sequence)
             .ToList();
+    }
+
+    /// <summary>Splits a backup file name into its taken-time key: the timestamp text and
+    /// the same-second sequence (no suffix = 1). Unparseable names sort by their whole
+    /// middle part, sequence 1 — degraded but stable.</summary>
+    private static (string Stamp, int Sequence) TakenKey(string vehicleClass, string path)
+    {
+        string middle = Path.GetFileNameWithoutExtension(path);
+        if (middle.Length > vehicleClass.Length + 1 &&
+            middle.StartsWith(vehicleClass + ".", StringComparison.OrdinalIgnoreCase))
+            middle = middle[(vehicleClass.Length + 1)..];
+
+        int dash = middle.IndexOf('-');
+        if (dash > 0 && int.TryParse(middle[(dash + 1)..], out int sequence))
+            return (middle[..dash], sequence);
+        return (middle, 1);
+    }
+
+    /// <summary>Restores one specific backup over the live class file (callers that snapshot
+    /// the current file first use this to restore a backup OLDER than that snapshot).
+    /// Returns the live target path.</summary>
+    public string Restore(string backupPath, string vehicleClass)
+    {
+        string target = Path.Combine(_customAiDriversDirectory, vehicleClass + ".xml");
+        File.Copy(backupPath, target, overwrite: true);
+        return target;
     }
 
     /// <summary>Restores the newest backup over the live class file. Returns false when no

@@ -6,6 +6,7 @@
              xmlns:briefing="clr-namespace:Companion.ViewModels.Briefing;assembly=Companion.ViewModels"
              xmlns:resultEntry="clr-namespace:Companion.ViewModels.ResultEntry;assembly=Companion.ViewModels"
              xmlns:confirm="clr-namespace:Companion.ViewModels.Confirm;assembly=Companion.ViewModels"
+             xmlns:review="clr-namespace:Companion.ViewModels.Review;assembly=Companion.ViewModels"
              xmlns:standings="clr-namespace:Companion.ViewModels.Standings;assembly=Companion.ViewModels"
              xmlns:shell="clr-namespace:Companion.ViewModels.Shell;assembly=Companion.ViewModels"
              xmlns:views="clr-namespace:Companion.App.Views"
@@ -34,6 +35,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type confirm:ConfirmViewModel}">
                 <views:ConfirmView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type review:SeasonReviewViewModel}">
+                <views:SeasonReviewView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type standings:StandingsViewModel}">
                 <views:StandingsView />

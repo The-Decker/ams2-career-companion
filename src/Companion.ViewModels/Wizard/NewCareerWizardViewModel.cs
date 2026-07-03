@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Ams2.CustomAi;
 using Companion.Ams2.Packs;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
@@ -267,11 +268,89 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             MasterSeedText = _seedSource.NextInt64().ToString();
         RulesSummary = RulesSummaryComposer.Compose(pack.Season.PointsSystem, pack.Season.Rounds.Count);
         OnPropertyChanged(nameof(RulesSummary));
+        DetectInstalledBaseline();
+    }
+
+    // ---------- step d: NAMeS-first baseline import (locked decision #7a) ----------
+
+    /// <summary>"Use your installed AI file as the season baseline" — defaults ON whenever
+    /// the install has a parseable class XML for the pack's ams2Class.</summary>
+    [ObservableProperty]
+    private bool _useInstalledAiBaseline;
+
+    /// <summary>True when the install has a class XML the lenient reader can parse.</summary>
+    public bool BaselineImportAvailable { get; private set; }
+
+    /// <summary>Set when a class XML exists but could not be parsed even leniently.</summary>
+    public string? BaselineImportError { get; private set; }
+
+    public string? InstalledAiFilePath { get; private set; }
+
+    /// <summary>Summary diff: drivers whose values the installed file would provide.</summary>
+    public int BaselineImportedCount { get; private set; }
+
+    /// <summary>Summary diff: drivers keeping pack-authored values (no livery match).</summary>
+    public int BaselinePackOnlyCount { get; private set; }
+
+    public string? BaselineImportSummary { get; private set; }
+
+    /// <summary>The exact bytes previewed at the confirm step — the same text is handed to
+    /// career creation so what was previewed is what gets pinned.</summary>
+    private string? _installedAiFileXml;
+
+    private void DetectInstalledBaseline()
+    {
+        BaselineImportAvailable = false;
+        BaselineImportError = null;
+        InstalledAiFilePath = null;
+        BaselineImportedCount = 0;
+        BaselinePackOnlyCount = 0;
+        BaselineImportSummary = null;
+        _installedAiFileXml = null;
+
+        var pack = Pack!;
+        var installation = _environment.LocateInstall();
+        if (installation is not null)
+        {
+            string path = Path.Combine(
+                installation.CustomAiDriversDirectory, pack.Season.Ams2Class + ".xml");
+            if (File.Exists(path))
+            {
+                InstalledAiFilePath = path;
+                try
+                {
+                    string xml = File.ReadAllText(path);
+                    var installed = CommunityAiReader.Parse(xml);
+                    var preview = CommunityBaselineImport.Apply(pack, installed);
+
+                    _installedAiFileXml = xml;
+                    BaselineImportAvailable = true;
+                    BaselineImportedCount = preview.ImportedDriverCount;
+                    BaselinePackOnlyCount = preview.PackOnlyDriverCount;
+                    BaselineImportSummary = preview.Summary;
+                }
+                catch (Exception ex) when (
+                    ex is InvalidOperationException or IOException or UnauthorizedAccessException)
+                {
+                    BaselineImportError = ex.Message;
+                }
+            }
+        }
+
+        UseInstalledAiBaseline = BaselineImportAvailable; // default ON when parseable
+
+        OnPropertyChanged(nameof(BaselineImportAvailable));
+        OnPropertyChanged(nameof(BaselineImportError));
+        OnPropertyChanged(nameof(InstalledAiFilePath));
+        OnPropertyChanged(nameof(BaselineImportedCount));
+        OnPropertyChanged(nameof(BaselinePackOnlyCount));
+        OnPropertyChanged(nameof(BaselineImportSummary));
     }
 
     private void Create()
     {
         CreateError = null;
+        bool importBaseline = UseInstalledAiBaseline && _installedAiFileXml is not null;
         var request = new CareerCreationRequest
         {
             PackDirectory = _packDirectory!,
@@ -279,6 +358,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CareerName = CareerName.Trim(),
             MasterSeed = long.Parse(MasterSeedText),
             PlayerLiveryName = SelectedSeat!.LiveryName,
+            CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
+            CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
         };
 
         ICareerSession session;

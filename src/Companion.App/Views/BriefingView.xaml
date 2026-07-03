@@ -48,6 +48,13 @@
                 </StackPanel>
             </Border>
 
+            <!-- difficulty recommendation from the folded pace anchor (never auto-applied) -->
+            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
+                    Visibility="{Binding DifficultyRecommendation, Converter={StaticResource NullCollapsed}}">
+                <TextBlock Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
+                           Text="{Binding DifficultyRecommendation}" />
+            </Border>
+
             <!-- setup notes (placeholder distance note etc.) -->
             <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
                     Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">

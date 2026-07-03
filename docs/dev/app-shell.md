@@ -21,7 +21,10 @@ offline-first; one-screen interstitials (no scope creep).
    either **Race Day briefing** or **Enter result** for the current round.
 4. **Race Day briefing** — the setup guide as a check-once panel: every in-game setting as
    an exact string with a per-line copy button (track name, laps, date, start time, weather
-   slots, opponents count, class); placeholder rounds labeled "<GP name> — placeholder:
+   slots, opponents count, class);
+   **[SUPERSEDED 2026-07-02 — see docs/dev/ux-round.md]: AMS2 settings are arrow-steppers,
+   not paste targets; the briefing is a manual check-off checklist ordered like the in-game
+   screen, with an optional always-on-top compact mode. Copy buttons are dropped.** placeholder rounds labeled "<GP name> — placeholder:
    <track>" with the real venue + distance note; **Stage grid** button (backup-first staging
    via GridStager into the detected install; result banner shows backup path);
    FileSystemWatcher on the staged XML shows ⚠ "modified outside the app" if it changes

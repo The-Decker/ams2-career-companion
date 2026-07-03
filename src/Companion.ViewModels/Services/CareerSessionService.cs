@@ -1,7 +1,8 @@
-using System.Text;
 using System.Text.Json;
 using Companion.Ams2;
+using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
+using Companion.Core.Career;
 using Companion.Core.Grid;
 using Companion.Core.Json;
 using Companion.Core.Numerics;
@@ -26,8 +27,15 @@ namespace Companion.ViewModels.Services;
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
 /// </summary>
-public sealed class CareerSessionService : ICareerSession, IForceStaging, IDisposable
+public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFileRestore, IDisposable
 {
+    /// <summary><see cref="BaselineSource"/> value: the pinned baseline is pack-authored.</summary>
+    public const string BaselineSourcePack = "pack";
+
+    /// <summary><see cref="BaselineSource"/> value: the pinned baseline imported the user's
+    /// installed AI file at creation (NAMeS-first, locked decision #7).</summary>
+    public const string BaselineSourceInstalledAiFile = "installedAiFile";
+
     private readonly CareerDatabase _database;
     private readonly CareerEnvironment _environment;
     private readonly long _seasonId;
@@ -42,6 +50,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
 
     public long MasterSeed { get; }
 
+    /// <summary>Which baseline the pinned pack's drivers.json reflects:
+    /// <see cref="BaselineSourcePack"/> or <see cref="BaselineSourceInstalledAiFile"/>.</summary>
+    public string BaselineSource { get; }
+
     private CareerSessionService(
         CareerDatabase database,
         CareerEnvironment environment,
@@ -51,8 +63,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         string careerName,
         long masterSeed,
         string playerLiveryName,
-        string playerDriverId)
+        string playerDriverId,
+        string baselineSource)
     {
+        BaselineSource = baselineSource;
         _database = database;
         _environment = environment;
         Pack = pack;
@@ -81,6 +95,23 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
     {
         var files = SeasonPackFiles.Read(request.PackDirectory);
         var pack = files.Parse();
+
+        // NAMeS-first baseline import (locked decision #7a): fold the user's installed AI
+        // file into drivers.json BEFORE pinning, so the pinned pack IS the imported baseline
+        // and the career never depends on the mutable installed file again.
+        BaselineImportResult? import = null;
+        if (request.CommunityBaselineXml is { Length: > 0 } baselineXml)
+        {
+            var installed = CommunityAiReader.Parse(baselineXml);
+            import = CommunityBaselineImport.Apply(pack, installed);
+            files = files with
+            {
+                DriversJson = JsonSerializer.Serialize(
+                    new PackDriversFile { Drivers = import.Drivers }, CoreJson.Options),
+            };
+            pack = files.Parse();
+        }
+
         string playerDriverId = ResolvePlayerDriverId(pack, request.PlayerLiveryName);
 
         if (File.Exists(request.CareerFilePath))
@@ -131,6 +162,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
                     PlayerLiveryName = request.PlayerLiveryName,
                     PlayerDriverId = playerDriverId,
                     MasterSeed = request.MasterSeed,
+                    BaselineSource = import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile,
+                    BaselineSourcePath = import is null ? null : request.CommunityBaselineSourcePath,
+                    BaselineImportedDrivers = import?.ImportedDriverCount ?? 0,
+                    BaselinePackOnlyDrivers = import?.PackOnlyDriverCount ?? 0,
                 };
                 Execute(database.Connection, transaction,
                     "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
@@ -138,12 +173,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
                     ("@utc", nowUtc), ("@season", seasonId),
                     ("@delta", JsonSerializer.Serialize(delta, CoreJson.Options)));
 
+                SeedStartStates(database, seasonId, pack, playerDriverId, request.PlayerLiveryName, transaction);
+
                 transaction.Commit();
             }
 
             return new CareerSessionService(
                 database, environment, pack, request.CareerFilePath, seasonId,
-                request.CareerName, request.MasterSeed, request.PlayerLiveryName, playerDriverId);
+                request.CareerName, request.MasterSeed, request.PlayerLiveryName, playerDriverId,
+                import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile);
         }
         catch
         {
@@ -203,7 +241,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
 
             return new CareerSessionService(
                 database, environment, pack, careerFilePath, seasonId,
-                careerName, masterSeed, delta.PlayerLiveryName, delta.PlayerDriverId);
+                careerName, masterSeed, delta.PlayerLiveryName, delta.PlayerDriverId,
+                delta.BaselineSource);
         }
         catch
         {
@@ -211,6 +250,59 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
             throw;
         }
     }
+
+    /// <summary>Seeds the season's stage-'start' sim-input states — the wizard facts the fold
+    /// and season end consume (docs/dev/career-sim.md): AI driver ages from the pack's Born
+    /// years, team tiers from the pack's budget tiers, and the player state (tier-derived
+    /// starting reputation, uncalibrated OPI/anchor, the chosen seat).</summary>
+    private static void SeedStartStates(
+        CareerDatabase database,
+        long seasonId,
+        SeasonPack pack,
+        string playerDriverId,
+        string playerLiveryName,
+        SqliteTransaction transaction)
+    {
+        int year = pack.Season.Year;
+        var aiDrivers = pack.Drivers
+            .Where(d => !string.Equals(d.Id, playerDriverId, StringComparison.Ordinal))
+            .Select(d => new DriverCareerState
+            {
+                DriverId = d.Id,
+                Age = year - (d.Born ?? year - 30),
+            })
+            .ToList();
+        var teams = pack.Teams
+            .Select(t => new TeamCareerState { TeamId = t.Id, LineageId = t.Id, Tier = t.BudgetTier })
+            .ToList();
+
+        string? playerTeamId = PlayerTeamId(pack, playerLiveryName);
+        int playerTier = pack.Teams
+            .FirstOrDefault(t => string.Equals(t.Id, playerTeamId, StringComparison.Ordinal))
+            ?.BudgetTier ?? 3;
+        var player = new PlayerCareerState
+        {
+            Reputation = SeatCandidate.DefaultReputation(playerTier),
+            Opi = 0.0,
+            PaceAnchor = 0.0,
+            SeasonsCompleted = 0,
+            CurrentTeamId = playerTeamId,
+            LiveryName = playerLiveryName,
+        };
+
+        StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
+        StateStore.UpsertTeamStates(database, seasonId, StateStore.StageStart, teams, transaction);
+        StateStore.UpsertPlayerState(database, seasonId, StateStore.StageStart, player, transaction);
+    }
+
+    private static string? PlayerTeamId(SeasonPack pack, string playerLiveryName) =>
+        pack.Entries
+            .FirstOrDefault(e => string.Equals(e.Ams2LiveryName, playerLiveryName, StringComparison.Ordinal))
+            ?.TeamId
+        ?? pack.Season.Rounds
+            .SelectMany(r => r.GuestEntries)
+            .FirstOrDefault(g => string.Equals(g.Ams2LiveryName, playerLiveryName, StringComparison.Ordinal))
+            ?.TeamId;
 
     private static string ResolvePlayerDriverId(SeasonPack pack, string playerLiveryName)
     {
@@ -238,6 +330,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         {
             bool complete = SeasonComplete;
             var standings = CurrentStandings();
+            var (reputation, opi, repDelta, opiDelta) = PlayerTrend();
             return new CareerSummary
             {
                 CareerName = _careerName,
@@ -250,8 +343,31 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
                 PlayerPosition = standings?.Drivers
                     .FirstOrDefault(d => d.DriverId == _playerDriverId)?.Position,
                 SeasonComplete = complete,
+                Reputation = reputation,
+                Opi = opi,
+                ReputationDelta = repDelta,
+                OpiDelta = opiDelta,
             };
         }
+    }
+
+    /// <summary>The home header's reputation + OPI trend, read from the FOLDED per-round
+    /// player states (never recomputed here — the fold is the one source of truth).</summary>
+    private (double? Reputation, double? Opi, double? RepDelta, double? OpiDelta) PlayerTrend()
+    {
+        var states = StateStore.ReadRoundPlayerStates(_database, _seasonId);
+        if (states.Count == 0)
+            return (null, null, null, null);
+
+        var last = states[^1].State.Player;
+        var previous = states.Count > 1
+            ? states[^2].State.Player
+            : StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart);
+        return (
+            last.Reputation,
+            last.Opi,
+            previous is null ? null : last.Reputation - previous.Reputation,
+            previous is null ? null : last.Opi - previous.Opi);
     }
 
     private int RoundCount => Pack.Season.Rounds.Count;
@@ -283,7 +399,32 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
     {
         if (SeasonComplete)
             return null;
-        return BriefingComposer.Compose(Pack, RoundByNumber(CurrentRoundNumber), _environment.ContentLibrary);
+        var briefing = BriefingComposer.Compose(Pack, RoundByNumber(CurrentRoundNumber), _environment.ContentLibrary);
+        return briefing with { RecommendedSlider = CurrentSliderRecommendation() };
+    }
+
+    /// <summary>The difficulty recommendation for the current round: the last folded round's
+    /// recommendation; when that round predates calibration, the anchor re-projected onto the
+    /// current grid. Null before any round folds or before the anchor calibrates.</summary>
+    public int? CurrentSliderRecommendation()
+    {
+        int lastRound = MaxAppliedRound;
+        if (lastRound == 0)
+            return null;
+
+        // Legacy careers may have applied rounds without folds; degrade to no recommendation.
+        var state = StateStore.ReadRoundPlayerState(_database, _seasonId, lastRound);
+        if (state is null)
+            return null;
+        if (state.RecommendedSlider > 0)
+            return state.RecommendedSlider;
+        if (state.Player.PaceAnchor > 0.0 && !SeasonComplete)
+        {
+            var grid = ResolveGrid(CurrentRoundNumber);
+            return DifficultyModel.RecommendSlider(
+                state.Player.PaceAnchor, PaceAnchorMath.MedianAiRaceSkill(grid));
+        }
+        return null;
     }
 
     public IReadOnlyList<GridSeat> CurrentGrid() =>
@@ -355,6 +496,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
                 Success = true,
                 WrittenPath = result.WrittenPath,
                 BackupPath = result.BackupPath,
+                NoOpAlreadyMatches = result.NoOpAlreadyMatches,
                 Messages = messages,
             };
         }
@@ -370,6 +512,60 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         return new StageOutcome { Success = false, Messages = messages };
     }
 
+    // ---------- season-end restore (IAiFileRestore) ----------
+
+    /// <summary>Re-backup the current class XML first, then restore the pre-season original:
+    /// the newest backup NOT generated by this app (the user's own file, snapshotted before
+    /// the first divergent write). When every backup is app-generated, the newest backup is
+    /// used. Restore never destroys state — the pre-restore file is always in the backups.</summary>
+    public RestoreOutcome RestoreOriginalAiFile()
+    {
+        var messages = new List<string>();
+
+        var installation = _environment.LocateInstall();
+        if (installation is null)
+        {
+            messages.Add("No AMS2 installation was found — there is nothing to restore.");
+            return new RestoreOutcome { Success = false, Messages = messages };
+        }
+
+        string vehicleClass = Pack.Season.Ams2Class;
+        var backup = new CustomAiBackup(installation.CustomAiDriversDirectory);
+        var backups = backup.ListBackups(vehicleClass);
+        if (backups.Count == 0)
+        {
+            messages.Add(
+                $"No backup of {vehicleClass}.xml exists — the app never overwrote it, " +
+                "so your installed file is already the original.");
+            return new RestoreOutcome { Success = false, Messages = messages };
+        }
+
+        string original = backups.FirstOrDefault(path => !GridStager.LooksGenerated(path)) ?? backups[0];
+
+        try
+        {
+            string? currentBackup = backup.BackupIfPresent(vehicleClass, _environment.Clock.GetUtcNow());
+            string target = backup.Restore(original, vehicleClass);
+
+            if (currentBackup is not null)
+                messages.Add($"Current {vehicleClass}.xml re-backed up to '{currentBackup}'.");
+            messages.Add($"Restored '{original}' over '{target}'.");
+
+            return new RestoreOutcome
+            {
+                Success = true,
+                RestoredFromBackupPath = original,
+                CurrentFileBackupPath = currentBackup,
+                Messages = messages,
+            };
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            messages.Add(ex.Message);
+            return new RestoreOutcome { Success = false, Messages = messages };
+        }
+    }
+
     // ---------- results ----------
 
     public ConfirmModel Preview(ResultDraft draft)
@@ -380,6 +576,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
         ValidateDraft(draft, roundNumber);
+
+        // The confirm headline comes from the SAME fold Apply will run: the envelope is
+        // staged and folded inside a rolled-back transaction, so the preview is byte-exact
+        // against the eventual journal without committing anything.
+        var envelope = BuildEnvelope(draft, roundNumber, packRound);
+        var fold = PreviewFold(envelope, roundNumber);
+        string headline = fold.Headline
+            ?? $"The {packRound.Name} is in the books";
 
         var storedResults = StoredRoundResults();
         var before = storedResults.Count == 0
@@ -394,11 +598,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
                 RoundPoints = DraftParticipants(draft)
                     .Select(driverId => (driverId, Rational.Zero)).ToList(),
                 Movements = [],
-                Headline = Headline(draft, packRound),
+                Headline = headline,
             };
         }
 
-        var scored = new List<RoundResult>(storedResults) { ToRoundResult(draft, roundNumber, packRound) };
+        var scored = new List<RoundResult>(storedResults) { envelope.Result };
         var after = StandingsEngine.ComputeSeason(_scoringDefinition, scored).Snapshots[^1];
 
         int scoredRound = ChampionshipOrdinal(roundNumber);
@@ -424,10 +628,30 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         {
             RoundPoints = roundPoints,
             Movements = movements,
-            Headline = Headline(draft, packRound),
+            Headline = headline,
         };
     }
 
+    /// <summary>Runs the round's raw-store append + unified fold inside one transaction and
+    /// ROLLS IT BACK: the returned fold (headline, events, state) is exactly what Apply will
+    /// commit, computed by the same code path, with zero persistence.</summary>
+    private RoundFoldResult PreviewFold(RoundResultEnvelope envelope, int roundNumber)
+    {
+        string nowUtc = NowUtc();
+        using var transaction = _database.Connection.BeginTransaction();
+        ResultStore.Append(
+            _database, _seasonId, roundNumber,
+            JsonSerializer.Serialize(envelope, CoreJson.Options), nowUtc, "manual", transaction);
+        var fold = ReplayService.FoldRound(
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, nowUtc, transaction);
+        transaction.Rollback();
+        return fold;
+    }
+
+    /// <summary>The live path: store the round's raw-result ENVELOPE and run the unified fold
+    /// — one atomic unit via <see cref="ReplayService.ImportAndFoldRound"/>, so a stored raw
+    /// result can never exist without its fold (docs/dev/m5-fix-integration.md step 3). When
+    /// the final round lands, the season-end pipeline runs off the folded player state.</summary>
     public void Apply(ResultDraft draft)
     {
         if (SeasonComplete)
@@ -437,9 +661,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         var packRound = RoundByNumber(roundNumber);
         ValidateDraft(draft, roundNumber);
 
-        string payload = JsonSerializer.Serialize(draft, CoreJson.Options);
-        string nowUtc = _environment.Clock.GetUtcNow().UtcDateTime.ToString("O");
+        var envelope = BuildEnvelope(draft, roundNumber, packRound);
+        string nowUtc = NowUtc();
 
+        ReplayService.ImportAndFoldRound(
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc);
+
+        // App-level provenance row about the entry EVENT (excluded from the replay
+        // byte-compare like every provenance row) — the sim rows come from the fold.
         var journalDelta = new ResultAppliedDelta
         {
             Round = roundNumber,
@@ -449,19 +678,156 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
             DnfCount = draft.DidNotFinish.Count,
             DsqCount = draft.Disqualified.Count,
         };
+        JournalStore.Append(_database, _seasonId, roundNumber,
+            new JournalEvent
+            {
+                Phase = DataJournalPhases.ResultProvenance,
+                Entity = "round",
+                DeltaJson = JsonSerializer.Serialize(journalDelta, CoreJson.Options),
+                Cause = "result-entered",
+            },
+            nowUtc);
 
-        using var transaction = _database.Connection.BeginTransaction();
-        Execute(_database.Connection, transaction,
-            "INSERT INTO round_result_raw (season_id, round, entered_utc, source, payload_json) " +
-            "VALUES (@season, @round, @utc, 'manual', @payload);",
-            ("@season", _seasonId), ("@round", roundNumber), ("@utc", nowUtc),
-            ("@payload", Encoding.UTF8.GetBytes(payload)));
-        Execute(_database.Connection, transaction,
-            "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
-            "VALUES (@utc, @season, @round, 'result', 'round', @delta, 'result-entered');",
-            ("@utc", nowUtc), ("@season", _seasonId), ("@round", roundNumber),
-            ("@delta", JsonSerializer.Serialize(journalDelta, CoreJson.Options)));
-        transaction.Commit();
+        if (SeasonComplete)
+            EnsureSeasonEnd();
+    }
+
+    /// <summary>The envelope stored as the round's raw payload: the mapped classification
+    /// plus the unre-derivable round context — the slider actually driven (the draft's value,
+    /// else the current recommendation, else neutral) and the player's DNF cause.</summary>
+    private RoundResultEnvelope BuildEnvelope(ResultDraft draft, int roundNumber, PackRound packRound)
+    {
+        double slider = draft.SliderUsed
+            ?? CurrentSliderRecommendation()
+            ?? ReplayService.NeutralSlider;
+        return new RoundResultEnvelope
+        {
+            Result = ToRoundResult(draft, roundNumber, packRound),
+            SliderUsed = Math.Clamp(slider, DifficultyModel.MinSlider, DifficultyModel.MaxSlider),
+            PlayerDnfCause = PlayerDnfCauseFrom(draft),
+        };
+    }
+
+    /// <summary>Maps the result screen's one-letter reason for the PLAYER onto the sim's
+    /// blame model: m(echanical) = no blame, a(ccident) = driver error, o(ther)/absent = null
+    /// (the fold applies its no-blame default).</summary>
+    private DnfCause? PlayerDnfCauseFrom(ResultDraft draft) =>
+        draft.DidNotFinish.TryGetValue(_playerDriverId, out string? reason)
+            ? reason switch
+            {
+                "m" => DnfCause.Mechanical,
+                "a" => DnfCause.DriverError,
+                _ => null,
+            }
+            : null;
+
+    /// <summary>The rules data + wizard-fixed facts every fold and season end consumes.
+    /// Deterministically re-derived from the pinned pack and the app-shipped rules files, so
+    /// every session (and replay) constructs the identical inputs.</summary>
+    private ReplaySimInputs SimInputs()
+    {
+        var rules = _environment.Rules;
+        return new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = _playerDriverId,
+            PlayerAge = Pack.Season.Year - (
+                Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, _playerDriverId, StringComparison.Ordinal))
+                    ?.Born ?? Pack.Season.Year - 30),
+        };
+    }
+
+    private ulong MasterSeedU => unchecked((ulong)MasterSeed);
+
+    private string NowUtc() => _environment.Clock.GetUtcNow().UtcDateTime.ToString("O");
+
+    // ---------- season end / review ----------
+
+    /// <summary>Runs the season-end pipeline once per season (idempotent): offers scored from
+    /// the final round's FOLDED player state, events journaled, derived states persisted, the
+    /// season marked complete. Self-heals a career closed between the final Apply and here.</summary>
+    private void EnsureSeasonEnd()
+    {
+        var season = CareerStore.ReadSeasons(_database).FirstOrDefault(s => s.Id == _seasonId)
+            ?? throw new InvalidOperationException($"Season {_seasonId} vanished from the career file.");
+        if (string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal))
+            return;
+        ReplayService.RunSeasonEnd(_database, _seasonId, Pack, MasterSeedU, SimInputs(), NowUtc());
+    }
+
+    public SeasonReviewModel? SeasonReview()
+    {
+        if (!SeasonComplete)
+            return null;
+        EnsureSeasonEnd();
+
+        var teamsById = Pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
+        var offers = StateStore.ReadOffers(_database, _seasonId);
+        var headlines = JournalStore.ReadSeason(_database, _seasonId)
+            .Where(r => string.Equals(r.Phase, JournalPhases.Headline, StringComparison.Ordinal))
+            .Select(r => HeadlineText(r.DeltaJson))
+            .OfType<string>()
+            .ToList();
+        var finalPlayer = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageEnd);
+        var standings = CurrentStandings();
+
+        return new SeasonReviewModel
+        {
+            SeasonYear = Pack.Season.Year,
+            PlayerPosition = standings?.Drivers
+                .FirstOrDefault(d => d.DriverId == _playerDriverId)?.Position,
+            FinalReputation = finalPlayer?.Reputation ?? 0.0,
+            FinalOpi = finalPlayer?.Opi ?? 0.0,
+            Headlines = headlines,
+            Offers = offers
+                .Select(o => new SeasonOfferModel
+                {
+                    TeamId = o.Terms.TeamId,
+                    TeamName = teamsById.TryGetValue(o.Terms.TeamId, out var team) ? team.Name : o.Terms.TeamId,
+                    Tier = o.Terms.Tier,
+                    SalaryBu = o.Terms.SalaryBu,
+                    Score = o.Terms.Score,
+                    Accepted = o.Accepted,
+                })
+                .ToList(),
+            AcceptedTeamId = offers.FirstOrDefault(o => o.Accepted)?.Terms.TeamId,
+        };
+    }
+
+    /// <summary>Accepts one offer (a player CHOICE — replay re-applies it, never derives it)
+    /// and journals it as a provenance row so the replay byte-compare is unaffected.</summary>
+    public void AcceptOffer(string teamId)
+    {
+        var offers = StateStore.ReadOffers(_database, _seasonId);
+        if (!offers.Any(o => string.Equals(o.Terms.TeamId, teamId, StringComparison.Ordinal)))
+            throw new InvalidOperationException(
+                $"Team '{teamId}' made no offer this season — only extended offers can be accepted.");
+
+        StateStore.SetOfferAccepted(_database, _seasonId, teamId);
+        JournalStore.Append(_database, _seasonId, round: null,
+            new JournalEvent
+            {
+                Phase = DataJournalPhases.CareerProvenance,
+                Entity = "offer",
+                DeltaJson = JsonSerializer.Serialize(new { teamId }, CoreJson.Options),
+                Cause = "offer-accepted",
+            },
+            NowUtc());
+    }
+
+    private static string? HeadlineText(string deltaJson)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(deltaJson);
+            return document.RootElement.TryGetProperty("text", out var text) ? text.GetString() : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     // ---------- standings ----------
@@ -480,28 +846,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         return StandingsEngine.ComputeSeason(_scoringDefinition, results).Snapshots;
     }
 
-    /// <summary>Every stored championship-round result, recomputed from the raw payloads
-    /// (results are the source of truth; there is no cached standings state).</summary>
-    private List<RoundResult> StoredRoundResults()
-    {
-        var rows = Query(_database.Connection,
-            "SELECT round, payload_json FROM round_result_raw WHERE season_id = @season ORDER BY round;",
-            r => (Round: r.GetInt32(0), Payload: r.GetFieldValue<byte[]>(1)),
-            ("@season", _seasonId));
-
-        var results = new List<RoundResult>(rows.Count);
-        foreach (var (roundNumber, payload) in rows)
-        {
-            var packRound = RoundByNumber(roundNumber);
-            if (!packRound.Championship)
-                continue;
-
-            var draft = JsonSerializer.Deserialize<ResultDraft>(payload, CoreJson.Options)
-                ?? throw new InvalidOperationException($"Round {roundNumber} raw payload deserialized to null.");
-            results.Add(ToRoundResult(draft, roundNumber, packRound));
-        }
-        return results;
-    }
+    /// <summary>Every stored championship-round result, re-read from the raw envelopes
+    /// (results are the source of truth; there is no cached standings state). The SAME
+    /// envelope payload feeds the unified fold, so screen standings and journal standings
+    /// can never disagree.</summary>
+    private List<RoundResult> StoredRoundResults() =>
+        ResultStore.ReadSeasonResults(_database, _seasonId)
+            .Where(r => RoundByNumber(r.Round).Championship)
+            .Select(r => r.ToRoundResult())
+            .ToList();
 
     /// <summary>Maps a result draft onto the engine's round-result shape: classified drivers
     /// in list order (index 0 = P1), DNF → Retired, DSQ → Disqualified, constructors from the
@@ -575,17 +928,6 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
     private static IEnumerable<string> DraftParticipants(ResultDraft draft) =>
         draft.Classified.Concat(draft.DidNotFinish.Keys).Concat(draft.Disqualified);
 
-    /// <summary>Static headline template — M5's news engine replaces this.</summary>
-    private string Headline(ResultDraft draft, PackRound packRound)
-    {
-        if (draft.Classified.Count == 0)
-            return $"The {packRound.Name} ends without a classified winner";
-
-        string winnerId = draft.Classified[0];
-        string winnerName = Pack.Drivers.FirstOrDefault(d => d.Id == winnerId)?.Name ?? winnerId;
-        return $"{winnerName} wins the {packRound.Name}";
-    }
-
     // ---------- plumbing ----------
 
     private static string AppVersion =>
@@ -648,6 +990,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IDispo
         public required string PlayerLiveryName { get; init; }
         public required string PlayerDriverId { get; init; }
         public required long MasterSeed { get; init; }
+
+        // Baseline provenance (NAMeS-first). Non-required with defaults so careers created
+        // before the feature still deserialize (they are pack-baseline by definition).
+        public string BaselineSource { get; init; } = BaselineSourcePack;
+        public string? BaselineSourcePath { get; init; }
+        public int BaselineImportedDrivers { get; init; }
+        public int BaselinePackOnlyDrivers { get; init; }
     }
 
     private sealed record ResultAppliedDelta

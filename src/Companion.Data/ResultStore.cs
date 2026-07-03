@@ -1,6 +1,8 @@
 using System.Text;
+using System.Text.Json;
 using Companion.Core.Career;
 using Companion.Core.Scoring;
+using Microsoft.Data.Sqlite;
 
 namespace Companion.Data;
 
@@ -13,6 +15,52 @@ public sealed record ResultImport
     public required bool PayloadChanged { get; init; }
 }
 
+/// <summary>
+/// The versioned round_result_raw payload (docs/dev/m5-fix-integration.md, "unified fold"
+/// step 1): the ResultDraft-mapped raw classification plus the round context that is
+/// otherwise unre-derivable — the Opponent Skill slider the player actually raced at and the
+/// player's DNF cause. Grid, teammate finish, and expected finish are re-derived from
+/// pack + seed + round, never stored. Version-1 payloads (a bare RoundResult) read with
+/// defaults: slider unknown (fold substitutes the last recommendation), DNF cause unknown
+/// (fold substitutes the no-blame default).
+/// </summary>
+public sealed record RoundResultEnvelope
+{
+    public const int CurrentVersion = 2;
+
+    public int Version { get; init; } = CurrentVersion;
+
+    /// <summary>The raw classification as imported (the engine's round-result shape).</summary>
+    public required RoundResult Result { get; init; }
+
+    /// <summary>The in-game Opponent Skill slider the round was driven at (asked on the
+    /// result screen, prefilled with the last recommendation). Null = unknown (legacy).</summary>
+    public double? SliderUsed { get; init; }
+
+    /// <summary>Why the player's race ended early, when it did. Null = unknown or n/a;
+    /// the fold defaults a retired player to <see cref="DnfCause.Mechanical"/> (no blame)
+    /// and a disqualified player to <see cref="DnfCause.DriverError"/>.</summary>
+    public DnfCause? PlayerDnfCause { get; init; }
+
+    /// <summary>Parses a stored payload, accepting both the current envelope shape and the
+    /// version-1 bare-RoundResult shape (read with defaults).</summary>
+    public static RoundResultEnvelope Parse(string payloadJson)
+    {
+        using (var probe = JsonDocument.Parse(payloadJson))
+        {
+            if (probe.RootElement.ValueKind == JsonValueKind.Object &&
+                probe.RootElement.TryGetProperty("result", out _))
+                return DataJson.Deserialize<RoundResultEnvelope>(payloadJson);
+        }
+
+        return new RoundResultEnvelope
+        {
+            Version = 1,
+            Result = DataJson.Deserialize<RoundResult>(payloadJson),
+        };
+    }
+}
+
 public sealed record StoredRoundResult
 {
     public required int Round { get; init; }
@@ -23,7 +71,9 @@ public sealed record StoredRoundResult
 
     public required string Source { get; init; }
 
-    public RoundResult ToRoundResult() => DataJson.Deserialize<RoundResult>(PayloadJson);
+    public RoundResultEnvelope ToEnvelope() => RoundResultEnvelope.Parse(PayloadJson);
+
+    public RoundResult ToRoundResult() => ToEnvelope().Result;
 }
 
 /// <summary>
@@ -31,6 +81,10 @@ public sealed record StoredRoundResult
 /// on (season, round): a re-import replaces the stored payload (same bytes or corrected ones)
 /// and appends an audit journal row (<see cref="DataJournalPhases.ImportResult"/>) recording
 /// that it happened. Raw results are never touched by re-simulation.
+///
+/// NEW rounds on the live path go through <see cref="ReplayService.ImportAndFoldRound"/> so
+/// the raw store and the fold are one atomic unit; calling <see cref="Append"/> directly is
+/// for corrected re-imports (followed by <see cref="ReplayService.Resimulate"/>) and tooling.
 /// </summary>
 public static class ResultStore
 {
@@ -40,17 +94,18 @@ public static class ResultStore
         int round,
         string payloadJson,
         string enteredUtc,
-        string source = "manual")
+        string source = "manual",
+        SqliteTransaction? transaction = null)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(round, 1);
         byte[] payload = Encoding.UTF8.GetBytes(payloadJson);
 
-        using var transaction = db.Connection.BeginTransaction();
+        using var scope = TransactionScope.Enter(db, transaction);
 
         byte[]? existing;
         using (var select = db.Command(
                    "SELECT payload_json FROM round_result_raw WHERE season_id = @season AND round = @round;",
-                   transaction,
+                   scope.Transaction,
                    ("@season", seasonId),
                    ("@round", round)))
         {
@@ -64,13 +119,13 @@ public static class ResultStore
                 INSERT INTO round_result_raw (season_id, round, entered_utc, source, payload_json)
                 VALUES (@season, @round, @utc, @source, @payload);
                 """,
-                transaction,
+                scope.Transaction,
                 ("@season", seasonId),
                 ("@round", round),
                 ("@utc", enteredUtc),
                 ("@source", source),
                 ("@payload", payload));
-            transaction.Commit();
+            scope.Complete();
             return new ResultImport { ReImported = false, PayloadChanged = false };
         }
 
@@ -81,7 +136,7 @@ public static class ResultStore
             SET payload_json = @payload, entered_utc = @utc, source = @source
             WHERE season_id = @season AND round = @round;
             """,
-            transaction,
+            scope.Transaction,
             ("@season", seasonId),
             ("@round", round),
             ("@utc", enteredUtc),
@@ -97,21 +152,22 @@ public static class ResultStore
                 DeltaJson = DataJson.Serialize(new { round, source, changed }),
                 Cause = "re-import",
             },
-            enteredUtc, transaction);
+            enteredUtc, scope.Transaction);
 
-        transaction.Commit();
+        scope.Complete();
         return new ResultImport { ReImported = true, PayloadChanged = changed };
     }
 
     /// <summary>The season's stored raw results in round order.</summary>
-    public static IReadOnlyList<StoredRoundResult> ReadSeasonResults(CareerDatabase db, long seasonId)
+    public static IReadOnlyList<StoredRoundResult> ReadSeasonResults(
+        CareerDatabase db, long seasonId, SqliteTransaction? transaction = null)
     {
         using var command = db.Command(
             """
             SELECT round, payload_json, entered_utc, source
             FROM round_result_raw WHERE season_id = @season ORDER BY round;
             """,
-            null,
+            transaction,
             ("@season", seasonId));
         using var reader = command.ExecuteReader();
         var results = new List<StoredRoundResult>();

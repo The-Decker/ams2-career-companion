@@ -18,6 +18,21 @@ public static class DataJournalPhases
 
     /// <summary>A raw result re-import for an already-imported round.</summary>
     public const string ImportResult = "import.result";
+
+    /// <summary>App-level career-creation provenance row: wizard facts about the OUTSIDE
+    /// world (pack directory, seat pick, seed), not derived sim state — replay excludes it.</summary>
+    public const string CareerProvenance = "career";
+
+    /// <summary>App-level "a result was entered" provenance row — bookkeeping about the
+    /// import event itself (like the import.* rows), not derived sim state.</summary>
+    public const string ResultProvenance = "result";
+
+    /// <summary>True for journal rows that record provenance about the outside world rather
+    /// than derived sim state — exactly the rows the replay byte-compare excludes.</summary>
+    public static bool IsProvenance(string phase) =>
+        phase.StartsWith(AuditPrefix, StringComparison.Ordinal)
+        || string.Equals(phase, CareerProvenance, StringComparison.Ordinal)
+        || string.Equals(phase, ResultProvenance, StringComparison.Ordinal);
 }
 
 /// <summary>One persisted journal row: a <see cref="JournalEvent"/> plus the storage-assigned
@@ -79,14 +94,20 @@ public static class JournalStore
         return (long)command.ExecuteScalar()!;
     }
 
-    /// <summary>Appends a batch atomically, in enumeration order (contiguous seq range).</summary>
+    /// <summary>Appends a batch atomically, in enumeration order (contiguous seq range).
+    /// With an ambient transaction the batch joins it; the caller owns commit/rollback.</summary>
     public static void AppendMany(
-        CareerDatabase db, long? seasonId, int? round, IEnumerable<JournalEvent> events, string utc)
+        CareerDatabase db,
+        long? seasonId,
+        int? round,
+        IEnumerable<JournalEvent> events,
+        string utc,
+        SqliteTransaction? transaction = null)
     {
-        using var transaction = db.Connection.BeginTransaction();
+        using var scope = TransactionScope.Enter(db, transaction);
         foreach (var journalEvent in events)
-            Append(db, seasonId, round, journalEvent, utc, transaction);
-        transaction.Commit();
+            Append(db, seasonId, round, journalEvent, utc, scope.Transaction);
+        scope.Complete();
     }
 
     public static IReadOnlyList<JournalRow> ReadSeason(CareerDatabase db, long seasonId)

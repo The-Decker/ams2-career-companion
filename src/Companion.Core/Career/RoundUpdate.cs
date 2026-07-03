@@ -28,6 +28,11 @@ public sealed record RoundUpdateContext
     /// <summary>The Opponent Skill slider the round was actually driven at, in percent.</summary>
     public required double SliderUsed { get; init; }
 
+    /// <summary>How many positions score points this round, from the round's RESOLVED scoring
+    /// definition (alternate shortened-race tables included) — drives the "points" race cause.
+    /// Never a hard-coded top-6.</summary>
+    public required int PointsPositions { get; init; }
+
     public required StreamFactory Streams { get; init; }
 
     /// <summary>When present, one race headline is selected and journaled.</summary>
@@ -205,7 +210,7 @@ public static class RoundUpdate
             return "overperformed";
         if (effective - expected >= 3.0)
             return "underperformed";
-        if (finish <= 6)
+        if (finish <= context.PointsPositions)
             return "points";
         return "midfield";
     }

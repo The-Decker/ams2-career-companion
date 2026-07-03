@@ -82,6 +82,16 @@ public sealed record SeatCandidate
 
     /// <summary>Sponsorship money the driver brings, in BU/season (0 = pure merit hire).</summary>
     public double PayBudgetBu { get; init; }
+
+    /// <summary>Reputation 0–100 in the seat market's eyes. Pack drivers entering the pool
+    /// (season carryover, wizard-authored journeymen) default via
+    /// <see cref="DefaultReputation"/> from the budget tier of the team they last drove for;
+    /// unknown outsiders start at 0.</summary>
+    public double Reputation { get; init; }
+
+    /// <summary>Tier-derived default reputation: 15 per budget tier (tier 1 minnow driver
+    /// ⇒ 15, tier 5 works driver ⇒ 75) — consistent with the offer rep floors (30/50/70).</summary>
+    public static double DefaultReputation(int budgetTier) => 15.0 * Math.Clamp(budgetTier, 1, 5);
 }
 
 /// <summary>A season-end offer letter to the player.</summary>

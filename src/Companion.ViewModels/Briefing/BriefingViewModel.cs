@@ -47,6 +47,12 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string? _setupNotes;
 
+    /// <summary>The difficulty recommendation line (m5-fix-integration "App wiring"): the
+    /// Opponent Skill the pace anchor suggests for this round. Null before calibration —
+    /// the view falls back to the generic fixed-difficulty note.</summary>
+    [ObservableProperty]
+    private string? _difficultyRecommendation;
+
     /// <summary>True once every round has an applied result — there is nothing to brief.</summary>
     public bool SeasonComplete => Briefing is null;
 
@@ -66,6 +72,9 @@ public sealed partial class BriefingViewModel : ObservableObject
             VenueDisplayName = briefing.VenueDisplayName;
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
+            DifficultyRecommendation = briefing.RecommendedSlider is { } slider
+                ? $"Recommended Opponent Skill: {slider}% — calibrated from your pace so far (never auto-applied)."
+                : null;
         }
         else
         {
@@ -73,6 +82,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             VenueDisplayName = "";
             IsPlaceholder = false;
             SetupNotes = null;
+            DifficultyRecommendation = null;
         }
         OnPropertyChanged(nameof(SeasonComplete));
     }
@@ -140,6 +150,8 @@ public sealed partial class BriefingViewModel : ObservableObject
             _watcher?.Stop();
     }
 
+    /// <summary>Always states which of the three staging outcomes happened:
+    /// no-op (installed file already matches) / staged (with backup path) / aborted.</summary>
     private static string ComposeBanner(StageOutcome outcome)
     {
         if (!outcome.Success)
@@ -148,6 +160,10 @@ public sealed partial class BriefingViewModel : ObservableObject
                 : "Staging failed.";
 
         string written = Path.GetFileName(outcome.WrittenPath) ?? outcome.WrittenPath ?? "";
+
+        if (outcome.NoOpAlreadyMatches)
+            return $"✔ Installed {written} already matches — nothing written (using your installed AI file)";
+
         return outcome.BackupPath is { Length: > 0 } backup
             ? $"Staged {written} — previous file backed up to {backup}"
             : $"Staged {written} — no previous file, nothing to back up";

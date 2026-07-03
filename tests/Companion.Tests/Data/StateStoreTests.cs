@@ -113,6 +113,37 @@ public class StateStoreTests
     }
 
     [Fact]
+    public void RoundPlayerStatesRoundTripInRoundOrderAndDoubleInsertThrows()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        var afterRound1 = new RoundPlayerState
+        {
+            Player = DataCareerFixture.PlayerStart() with { Reputation = 42.5, Opi = 0.8 },
+            RecommendedSlider = 93,
+        };
+        var afterRound2 = new RoundPlayerState
+        {
+            Player = DataCareerFixture.PlayerStart() with { Reputation = 44.0 },
+            RecommendedSlider = 94,
+        };
+        StateStore.InsertRoundPlayerState(db, seasonId, 2, afterRound2);
+        StateStore.InsertRoundPlayerState(db, seasonId, 1, afterRound1);
+
+        Assert.Equal(afterRound1, StateStore.ReadRoundPlayerState(db, seasonId, 1));
+        Assert.Null(StateStore.ReadRoundPlayerState(db, seasonId, 3));
+        Assert.Equal(
+            [(1, afterRound1), (2, afterRound2)],
+            StateStore.ReadRoundPlayerStates(db, seasonId));
+
+        // Folding a round twice is a bug — the strict insert must throw, never replace.
+        Assert.ThrowsAny<Microsoft.Data.Sqlite.SqliteException>(() =>
+            StateStore.InsertRoundPlayerState(db, seasonId, 1, afterRound1));
+    }
+
+    [Fact]
     public void WipeDerivedKeepsStartStatesAndDropsEndStatesAndOffers()
     {
         using var tmp = new TempDb();
@@ -126,6 +157,11 @@ public class StateStoreTests
         StateStore.UpsertPlayerState(db, seasonId, StateStore.StageEnd, DataCareerFixture.PlayerStart());
         StateStore.UpsertOffers(db, seasonId,
             [new PlayerOffer { TeamId = "team.mid", Tier = 3, SalaryBu = 1.0, Score = 1.0 }]);
+        StateStore.InsertRoundPlayerState(db, seasonId, 1, new RoundPlayerState
+        {
+            Player = DataCareerFixture.PlayerStart(),
+            RecommendedSlider = 92,
+        });
 
         StateStore.WipeDerived(db);
 
@@ -133,6 +169,7 @@ public class StateStoreTests
         Assert.Empty(StateStore.ReadTeamStates(db, seasonId, StateStore.StageEnd));
         Assert.Null(StateStore.ReadPlayerState(db, seasonId, StateStore.StageEnd));
         Assert.Empty(StateStore.ReadOffers(db, seasonId));
+        Assert.Empty(StateStore.ReadRoundPlayerStates(db, seasonId));
 
         // The inputs survive.
         Assert.Equal(5, StateStore.ReadDriverStates(db, seasonId, StateStore.StageStart).Count);

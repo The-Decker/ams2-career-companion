@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Briefing;
 using Companion.ViewModels.Confirm;
 using Companion.ViewModels.ResultEntry;
+using Companion.ViewModels.Review;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Standings;
 
@@ -48,7 +49,9 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     // ---------- header ----------
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HeaderTitle), nameof(RoundText), nameof(StandingText), nameof(IsSeasonReview))]
+    [NotifyPropertyChangedFor(
+        nameof(HeaderTitle), nameof(RoundText), nameof(StandingText), nameof(IsSeasonReview),
+        nameof(FormText), nameof(HasForm))]
     private CareerSummary _summary;
 
     public string HeaderTitle
@@ -71,6 +74,24 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         ? $"P{position} in the championship"
         : "No standings yet";
 
+    /// <summary>True once at least one round has folded — the header shows the form line.</summary>
+    public bool HasForm => Summary.Reputation is not null;
+
+    /// <summary>Reputation + OPI with trend glyphs, from the FOLDED player state
+    /// (m5-fix-integration "App wiring": the home header reads the fold, never recomputes).</summary>
+    public string FormText => Summary is { Reputation: { } reputation, Opi: { } opi }
+        ? $"Rep {reputation:0.#}{TrendGlyph(Summary.ReputationDelta)}   ·   " +
+          $"OPI {opi:+0.00;-0.00;0.00}{TrendGlyph(Summary.OpiDelta)}"
+        : "";
+
+    /// <summary>▲ improving / ▼ falling / flat within ±0.05 (or no trend yet).</summary>
+    public static string TrendGlyph(double? delta) => delta switch
+    {
+        > 0.05 => " ▲",
+        < -0.05 => " ▼",
+        _ => "",
+    };
+
     /// <summary>True once every round has an applied result — the content area pins to the
     /// season review (final standings).</summary>
     public bool IsSeasonReview => Summary.SeasonComplete;
@@ -80,7 +101,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(
         nameof(IsBriefingState), nameof(IsResultEntryState),
-        nameof(IsConfirmState), nameof(IsStandingsState))]
+        nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -90,6 +111,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     public bool IsResultEntryState => CurrentContent is ResultEntryViewModel;
     public bool IsConfirmState => CurrentContent is ConfirmViewModel;
     public bool IsStandingsState => CurrentContent is StandingsViewModel;
+    public bool IsSeasonReviewState => CurrentContent is SeasonReviewViewModel;
 
     private bool RoundInProgress => !Summary.SeasonComplete;
 
@@ -113,7 +135,13 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 ContentError = "This round has no grid to score.";
                 return;
             }
-            _resultEntry = new ResultEntryViewModel(grid, Summary.PlayerDriverId, _clock);
+            _resultEntry = new ResultEntryViewModel(grid, Summary.PlayerDriverId, _clock)
+            {
+                // Prefill the slider prompt with the pace-anchor recommendation (the same
+                // value the briefing showed); neutral before the anchor calibrates.
+                SliderUsed = _session.CurrentSliderRecommendation()
+                    ?? ResultEntryViewModel.NeutralSlider,
+            };
             _resultEntry.PropertyChanged += OnResultEntryPropertyChanged;
             ConfirmResultCommand.NotifyCanExecuteChanged();
         }
@@ -208,8 +236,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>Season completion navigates HERE: the review + offers screen (final
+    /// standings, journal digest, offer letters, NAMeS restore, era-transition note).</summary>
     private void ShowSeasonReview() =>
-        CurrentContent = new StandingsViewModel(_session.AllSnapshots(), _session.Pack);
+        CurrentContent = new SeasonReviewViewModel(_session);
 
     private void OnResultEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

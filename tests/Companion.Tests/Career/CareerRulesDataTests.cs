@@ -73,6 +73,25 @@ public class CareerRulesDataTests
         Assert.InRange(hazard.Probability(70, 0.0), 0.0, 0.95);
     }
 
+    [Fact]
+    public void GoldenAgeHazardLetsFrontLinersRacePastForty()
+    {
+        // M5 audit fix: Fangio was champion at 46, Brabham won at 44 — the 60s hazard starts
+        // at 35 and accrues ~0.07/year, so a front-line 40-year-old more often stays than goes.
+        var hazard = CareerTestData.LoadAgingCurves().ForYear(1967).Retirement;
+        Assert.Equal(35, hazard.BaseAge);
+        Assert.Equal(0.07, hazard.PerYearOverBase, 12);
+        Assert.True(hazard.Probability(40, 0.75) < 0.5,
+            $"A sharp 40-year-old must be more likely to stay than retire ({hazard.Probability(40, 0.75)}).");
+
+        // Surviving 40 through 44 (a Brabham arc) must be plausible, not a statistical freak.
+        double survival = 1.0;
+        for (int age = 40; age <= 44; age++)
+            survival *= 1.0 - hazard.Probability(age, 0.75);
+        Assert.True(survival > 0.02,
+            $"Racing from 40 through 44 at the front must be plausible (survival {survival:0.###}).");
+    }
+
     // ---------- career-team-archetypes.json ----------
 
     [Fact]

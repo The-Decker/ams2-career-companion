@@ -84,6 +84,22 @@
                 <Button DockPanel.Dock="Right" Content="Confirm result  ⏎" Style="{StaticResource AccentButton}"
                         Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
                         ToolTip="Score the round and review points + standings movement before applying" />
+
+                <!-- the slider prompt: the in-game Opponent Skill this round was DRIVEN at
+                     (prefilled with the pace-anchor recommendation, stored in the envelope) -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center"
+                            Margin="0,0,18,0"
+                            ToolTip="The in-game Opponent Skill you actually raced at — prefilled with the recommendation, saved with the result (it calibrates your pace anchor)">
+                    <TextBlock Text="Opponent Skill raced at" Style="{StaticResource Muted}"
+                               VerticalAlignment="Center" />
+                    <Slider Width="130" Margin="10,0,8,0" VerticalAlignment="Center" Focusable="False"
+                            Minimum="70" Maximum="120" SmallChange="1" LargeChange="5"
+                            TickFrequency="1" IsSnapToTickEnabled="True"
+                            Value="{Binding SliderUsed}" />
+                    <TextBlock Text="{Binding SliderUsedText}" FontWeight="SemiBold" FontFamily="Consolas"
+                               FontSize="15" VerticalAlignment="Center" MinWidth="44" />
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold" FontSize="16" />
                     <TextBlock Text="{Binding ElapsedText}" Style="{StaticResource Mono}" FontSize="16"

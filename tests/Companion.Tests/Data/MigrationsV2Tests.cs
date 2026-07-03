@@ -38,15 +38,15 @@ public class MigrationsV2Tests
     }
 
     [Fact]
-    public void V1CareerFileUpgradesInPlaceToV2()
+    public void V1CareerFileUpgradesInPlaceToCurrent()
     {
         using var tmp = new TempDb();
         CreateV1File(tmp.Path);
 
         using var db = CareerDatabase.Open(tmp.Path);
 
-        Assert.Equal(2, Migrations.CurrentVersion);
-        Assert.Equal(2, db.SchemaVersion);
+        Assert.Equal(3, Migrations.CurrentVersion);
+        Assert.Equal(3, db.SchemaVersion);
 
         // Every v1 row survived the upgrade untouched.
         var career = CareerStore.ReadCareer(db);
@@ -66,15 +66,60 @@ public class MigrationsV2Tests
     }
 
     [Fact]
+    public void V2CareerFileGainsTheRoundPlayerStateTable()
+    {
+        // A genuine v2-era file (the pre-fold format): v3 is a purely additive migration —
+        // old rows intact, the round_player_state table live against the existing season.
+        using var tmp = new TempDb();
+        using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+               {
+                   DataSource = tmp.Path,
+                   Mode = SqliteOpenMode.ReadWriteCreate,
+                   Pooling = false,
+               }.ToString()))
+        {
+            connection.Open();
+            Migrations.Apply(connection, targetVersion: 2);
+            using var seed = connection.CreateCommand();
+            seed.CommandText =
+                """
+                INSERT INTO career (id, name, created_utc, master_seed, app_version)
+                VALUES (1, 'Mike', '2026-01-01T00:00:00Z', 42, '0.5.0');
+                INSERT INTO pinned_pack (pack_id, version, sha256, pack_json, pinned_utc)
+                VALUES ('f1-1967', '1.0.0', 'cafe', x'7B7D', '2026-01-01T00:00:00Z');
+                INSERT INTO season (year, pack_id, pack_version, status)
+                VALUES (1967, 'f1-1967', '1.0.0', 'active');
+                INSERT INTO player_state (season_id, stage, state_json)
+                VALUES (1, 'start', '{"reputation":35}');
+                """;
+            seed.ExecuteNonQuery();
+        }
+
+        using var db = CareerDatabase.Open(tmp.Path);
+        Assert.Equal(3, db.SchemaVersion);
+        Assert.Equal(35.0, StateStore.ReadPlayerState(db, 1, StateStore.StageStart)!.Reputation);
+
+        StateStore.InsertRoundPlayerState(db, 1, 1, new RoundPlayerState
+        {
+            Player = new PlayerCareerState { Reputation = 36.0 },
+            RecommendedSlider = 95,
+        });
+        var read = StateStore.ReadRoundPlayerState(db, 1, 1);
+        Assert.NotNull(read);
+        Assert.Equal(36.0, read.Player.Reputation);
+        Assert.Equal(95, read.RecommendedSlider);
+    }
+
+    [Fact]
     public void ReopeningAnUpgradedFileIsANoOp()
     {
         using var tmp = new TempDb();
         CreateV1File(tmp.Path);
 
         using (var first = CareerDatabase.Open(tmp.Path))
-            Assert.Equal(2, first.SchemaVersion);
+            Assert.Equal(3, first.SchemaVersion);
         using var second = CareerDatabase.Open(tmp.Path);
-        Assert.Equal(2, second.SchemaVersion);
+        Assert.Equal(3, second.SchemaVersion);
         Assert.Equal("Mike", CareerStore.ReadCareer(second).Name);
     }
 

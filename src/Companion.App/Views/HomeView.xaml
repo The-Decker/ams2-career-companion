@@ -67,6 +67,12 @@
                     <TextBlock Style="{StaticResource Muted}" FontSize="13" Margin="0,2,0,0">
                         <Run Text="{Binding RoundText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding StandingText, Mode=OneWay}" />
                     </TextBlock>
+                    <!-- reputation + OPI trend from the FOLDED player state (M5 wiring) -->
+                    <TextBlock FontSize="13" Margin="0,2,0,0"
+                               Foreground="{StaticResource AccentBrush}"
+                               Text="{Binding FormText}"
+                               ToolTip="Reputation and overperformance index after the last folded round — ▲/▼ show the round-over-round trend"
+                               Visibility="{Binding HasForm, Converter={StaticResource BoolVisible}}" />
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -82,7 +88,7 @@
         <Border DockPanel.Dock="Top" Background="{StaticResource SuccessDimBrush}"
                 Visibility="{Binding IsSeasonReview, Converter={StaticResource BoolVisible}}">
             <TextBlock Foreground="{StaticResource SuccessBrush}" Margin="20,8" FontWeight="SemiBold"
-                       Text="🏁 Season complete — final standings below. The journal holds the full season story." />
+                       Text="🏁 Season complete — review the season, read your offer letters, and restore your AI file below." />
         </Border>
 
         <!-- two-state content: Briefing ⇄ Enter result (plus Confirm and Standings) -->

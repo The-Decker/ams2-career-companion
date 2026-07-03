@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Companion.Core.Determinism;
 using Companion.Core.Json;
 
@@ -85,11 +86,18 @@ public sealed record HeadlineEra
 }
 
 /// <summary>Deterministic headline selection: one variant picked with the `headlines`
-/// stream, then {token} substitution.</summary>
+/// stream, then a SINGLE-PASS {token} substitution — the template is scanned once with a
+/// regex, each token resolves by ordinal lookup, and substituted values are never re-scanned
+/// (a player named "{team} Kid" stays "{team} Kid" in print). Unknown tokens throw at
+/// selection time so template bugs surface in tests, not journals.</summary>
 public static class HeadlineSelector
 {
+    private static readonly Regex TokenPattern = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
+
     /// <summary>Selects a headline, or null when the bank has no variants for the key
     /// (missing keys must not break the sim — the journal row still stands on its own).</summary>
+    /// <exception cref="InvalidOperationException">A selected template uses a token the
+    /// caller did not supply.</exception>
     public static string? Select(
         HeadlineBank bank,
         string phase,
@@ -102,10 +110,16 @@ public static class HeadlineSelector
         if (variants.Count == 0)
             return null;
 
+        // Ordinal lookup regardless of the caller dictionary's comparer.
+        var lookup = new Dictionary<string, string>(tokens, StringComparer.Ordinal);
+
         string template = variants[headlineStream.NextInt(0, variants.Count)];
-        foreach (var (token, value) in tokens)
-            template = template.Replace("{" + token + "}", value, StringComparison.Ordinal);
-        return template;
+        return TokenPattern.Replace(template, match =>
+            lookup.TryGetValue(match.Groups[1].Value, out string? value)
+                ? value
+                : throw new InvalidOperationException(
+                    $"Headline template for '{phase}|{cause}' uses unknown token " +
+                    $"'{{{match.Groups[1].Value}}}': {template}"));
     }
 
     /// <summary>English ordinal ("1st", "2nd", "3rd", "11th", …) for {position} tokens.</summary>

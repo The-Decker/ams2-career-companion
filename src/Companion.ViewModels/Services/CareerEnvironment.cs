@@ -22,11 +22,28 @@ public sealed class CareerEnvironment
 
     public TimeProvider Clock { get; init; } = TimeProvider.System;
 
+    /// <summary>Directory of the app-shipped career rules JSON (aging curves, archetypes,
+    /// headline bank). Optional for flows that never fold a round; applying a result
+    /// requires it (<see cref="Rules"/> throws a clear error when it is missing).</summary>
+    public string? RulesDirectory { get; init; }
+
+    private CareerRulesData? _rules;
+
+    /// <summary>The parsed career rules data, loaded once and cached — every fold and season
+    /// end consumes the same instances, so live and replay inputs are identical.</summary>
+    public CareerRulesData Rules => _rules ??= CareerRulesData.Load(
+        RulesDirectory ?? throw new InvalidOperationException(
+            "This environment has no rules directory — the data\\rules folder (aging curves, " +
+            "archetypes, headlines) is required to apply results."));
+
     public static CareerEnvironment CreateDefault(string ams2DataDirectory) => new()
     {
         ContentLibrary = Ams2ContentLibrary.Load(ams2DataDirectory),
         LocateInstall = static () => OperatingSystem.IsWindows() ? SteamLocator.FindAms2() : null,
         DocumentsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        RulesDirectory = Path.Combine(
+            Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(ams2DataDirectory)) ?? ams2DataDirectory,
+            "rules"),
     };
 
     /// <summary>Scans installed skin-pack livery overrides for this machine (install-side and

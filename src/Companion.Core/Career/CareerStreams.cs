@@ -21,6 +21,10 @@ public static class JournalPhases
     public const string Championship = "season.championship";
     public const string PlayerOpi = "player.opi";
     public const string PlayerReputation = "player.reputation";
+
+    /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
+    /// every state change is a journal row).</summary>
+    public const string PlayerExperience = "player.experience";
     public const string PlayerPaceAnchor = "player.paceAnchor";
     public const string RaceResult = "race.result";
     public const string DriverAging = "driver.aging";

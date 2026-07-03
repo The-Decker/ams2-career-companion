@@ -1,0 +1,133 @@
+<UserControl x:Class="Companion.App.Views.SeasonReviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel MaxWidth="1000" HorizontalAlignment="Left">
+
+            <!-- title + player summary -->
+            <TextBlock Text="{Binding Title}" Style="{StaticResource H2}" />
+            <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" TextWrapping="Wrap"
+                       Text="{Binding PlayerSummaryText}" />
+
+            <!-- offer letters: accept ONE (journaled) -->
+            <Border Style="{StaticResource Panel}" Margin="0,16,0,0"
+                    Visibility="{Binding HasOffers, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <TextBlock Text="Offer letters" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap"
+                               Text="Scored from your season-long folded reputation and overperformance. Accepting is journaled; a new acceptance replaces the previous one." />
+                    <ItemsControl ItemsSource="{Binding Offers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="6" Padding="12,8" Margin="0,3">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAccepted}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" MinWidth="110" VerticalAlignment="Center"
+                                                Command="{Binding DataContext.AcceptOfferCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
+                                                    <Setter Property="Content" Value="Accept" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsAccepted}" Value="True">
+                                                            <Setter Property="Content" Value="✔ Accepted" />
+                                                            <Setter Property="IsEnabled" Value="False" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock FontSize="15">
+                                                <Run Text="{Binding TeamName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding TierText, Mode=OneWay}" Foreground="{StaticResource TextMutedBrush}" />
+                                            </TextBlock>
+                                            <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0">
+                                                <Run Text="{Binding SalaryText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding ScoreText, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Text="{Binding OfferError}"
+                               Visibility="{Binding OfferError, Converter={StaticResource NullCollapsed}}" />
+                </StackPanel>
+            </Border>
+
+            <!-- era transition placeholder (M6) -->
+            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,12,0,0">
+                <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                           Text="{Binding EraTransitionText}" />
+            </Border>
+
+            <!-- NAMeS restore (locked decision #7c) -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding CanRestoreAiFile, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <TextBlock Text="Your AI file" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,10"
+                               Text="Put your own community NAMeS file back exactly as it was before the season — the current file is re-backed-up first, so nothing is ever lost." />
+                    <Button Content="Restore my original AI file" HorizontalAlignment="Left" MinWidth="230"
+                            Command="{Binding RestoreAiFileCommand}" />
+                    <Border CornerRadius="6" Padding="12,8" Margin="0,10,0,0"
+                            Visibility="{Binding RestoreBanner, Converter={StaticResource NullCollapsed}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RestoreSucceeded}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding RestoreBanner}" TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RestoreSucceeded}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- journal digest: the season's headlines -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding HasHeadlines, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <TextBlock Text="The season story" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <ItemsControl ItemsSource="{Binding Headlines}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,2"
+                                           Text="{Binding StringFormat='– {0}'}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- final standings: reuses the standings screen via its DataTemplate -->
+            <TextBlock Text="Final standings" Style="{StaticResource H2}" Margin="0,20,0,8" />
+            <ContentControl Content="{Binding FinalStandings}" Focusable="False" Margin="0,0,0,24" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

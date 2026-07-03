@@ -166,6 +166,19 @@ public static class SeasonEndPipeline
             DeltaJson = CareerJson.Serialize(new { value = Round4(player.Opi) }),
             Cause = "season-final",
         });
+        // Journal/state parity: the SeasonsCompleted increment is a state change, so it is
+        // a journal row like every other.
+        events.Add(new JournalEvent
+        {
+            Phase = JournalPhases.PlayerExperience,
+            Entity = "player",
+            DeltaJson = CareerJson.Serialize(new
+            {
+                from = player.SeasonsCompleted,
+                to = player.SeasonsCompleted + 1,
+            }),
+            Cause = "season-final",
+        });
 
         player = player with
         {
@@ -200,6 +213,10 @@ public static class SeasonEndPipeline
         }
 
         // ---- step 4: retirements (canon + hazard) with seeded foreshadowing -----------
+        // Retirement NEWS stays unwired in v1: the bank's authored driver.retirement|canon and
+        // driver.retirement|age-performance template keys already match these journal causes,
+        // so wiring headlines for them later is purely additive (foreshadow headlines below
+        // are wired today).
         var retiredNow = new HashSet<string>(StringComparer.Ordinal);
         var finalDrivers = new List<DriverCareerState>(agedDrivers.Count);
         foreach (var driver in agedDrivers)
@@ -295,13 +312,20 @@ public static class SeasonEndPipeline
 
             var archetype = context.Archetypes.ForTeam(
                 tier, ArchetypeOverride(context, vacancy.TeamId));
-            var offerStream = context.Streams.CreateStream(CareerStreams.Offers, year, 0, vacancy.TeamId);
+            // The stream key carries the vacatedBy discriminator: a team with TWO vacancies
+            // in one winter rolls independent noise per seat instead of replaying the same
+            // sequence twice (docs/dev/m5-fix-integration.md, "Offers stream key").
+            var offerStream = context.Streams.CreateStream(
+                CareerStreams.Offers, year, 0, vacancy.TeamId + "->" + vacancy.DriverId);
 
             SeatCandidate? best = null;
             double bestScore = double.NegativeInfinity;
             foreach (var candidate in pool)
             {
+                // Rating, rep (the contract's rep term, archetype-weighted like the player
+                // offer formula, normalized to the 0..1 rating scale), age, pay-driver money.
                 double score = candidate.RaceSkill
+                               + archetype.Weights.Rep * candidate.Reputation / 100.0
                                - 0.02 * Math.Max(0, candidate.Age - curve.PeakAgeEnd)
                                + archetype.PayDriverWeight * candidate.PayBudgetBu / 100.0
                                + 0.01 * (2.0 * offerStream.NextDouble() - 1.0);
@@ -321,10 +345,28 @@ public static class SeasonEndPipeline
                 {
                     vacatedBy = vacancy.DriverId,
                     hired = best!.DriverId,
+                    rep = Round4(best.Reputation),
                     score = Round4(bestScore),
                 }),
                 Cause = "vacancy-filled",
             });
+
+            // Journal/state parity: the hire is a state change, so the hired driver enters
+            // the returned driver states (age as-is; deltas anchor their skills against the
+            // pack baseline — 0.5 for pool outsiders, matching AgeOneSeason's default).
+            if (!finalDrivers.Any(d => string.Equals(d.DriverId, best.DriverId, StringComparison.Ordinal)))
+            {
+                packDriversById.TryGetValue(best.DriverId, out var hiredPackDriver);
+                double baseRace = hiredPackDriver?.Ratings.RaceSkill ?? 0.5;
+                double baseQuali = hiredPackDriver?.Ratings.QualifyingSkill ?? 0.5;
+                finalDrivers.Add(new DriverCareerState
+                {
+                    DriverId = best.DriverId,
+                    Age = best.Age,
+                    RaceSkillDelta = best.RaceSkill - baseRace,
+                    QualifyingSkillDelta = best.RaceSkill - baseQuali,
+                });
+            }
         }
 
         // ---- step 6: player offers ------------------------------------------------------
@@ -405,6 +447,9 @@ public static class SeasonEndPipeline
                     continue;
 
                 driftedTiers[team.TeamId] = target;
+                // Cause names match the authored headline template keys
+                // (team.tier|promoted / team.tier|relegated).
+                string driftCause = direction > 0 ? "promoted" : "relegated";
                 events.Add(new JournalEvent
                 {
                     Phase = JournalPhases.TeamTier,
@@ -418,8 +463,30 @@ public static class SeasonEndPipeline
                         probability = Round4(probability),
                         roll = Round4(roll),
                     }),
-                    Cause = direction > 0 ? "overperformed" : "underperformed",
+                    Cause = driftCause,
                 });
+
+                if (context.Headlines is { } tierBank)
+                {
+                    string? text = HeadlineSelector.Select(
+                        tierBank, JournalPhases.TeamTier, driftCause, year,
+                        new Dictionary<string, string>(StringComparer.Ordinal)
+                        {
+                            ["team"] = TeamName(pack, team.TeamId),
+                            ["year"] = year.ToString(CultureInfo.InvariantCulture),
+                        },
+                        context.Streams.CreateStream(CareerStreams.Headlines, year, 0, team.TeamId));
+                    if (text is not null)
+                    {
+                        events.Add(new JournalEvent
+                        {
+                            Phase = JournalPhases.Headline,
+                            Entity = team.TeamId,
+                            DeltaJson = CareerJson.Serialize(new { text }),
+                            Cause = driftCause,
+                        });
+                    }
+                }
             }
         }
 
@@ -569,6 +636,9 @@ public static class SeasonEndPipeline
 
     private static string DriverName(IReadOnlyDictionary<string, PackDriver> drivers, string driverId) =>
         drivers.TryGetValue(driverId, out var driver) ? driver.Name : driverId;
+
+    private static string TeamName(SeasonPack pack, string teamId) =>
+        pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? teamId;
 
     private static double Round4(double value) => Math.Round(value, 4);
 }

@@ -15,6 +15,16 @@ public sealed record CareerCreationRequest
     /// <summary>EXACT livery display name of the entry the player takes over (v1 locked
     /// decision: the player replaces that historical driver).</summary>
     public required string PlayerLiveryName { get; init; }
+
+    /// <summary>Raw XML text of the user's installed class file, to import as the season's
+    /// ratings/name/country baseline (NAMeS-first, locked decision #7). Null = pack baseline.
+    /// The IMPORTED result is pinned into the career DB — the career never re-reads the
+    /// mutable installed file afterwards.</summary>
+    public string? CommunityBaselineXml { get; init; }
+
+    /// <summary>Where <see cref="CommunityBaselineXml"/> was read from — journaled provenance
+    /// only, never re-read.</summary>
+    public string? CommunityBaselineSourcePath { get; init; }
 }
 
 /// <summary>

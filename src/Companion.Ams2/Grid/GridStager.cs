@@ -14,6 +14,12 @@ public sealed record StageResult
 
     public required string WrittenPath { get; init; }
 
+    /// <summary>True when NOTHING was written because the installed file already matches the
+    /// generated grid (NAMeS-first diff-aware staging): every seat's livery has a base entry
+    /// with equivalent effective fields, so the user's file stays untouched — no backup either.
+    /// <see cref="WrittenPath"/> then points at the installed file that satisfies the round.</summary>
+    public bool NoOpAlreadyMatches { get; init; }
+
     /// <summary>Human-readable summary (what was written, how many drivers, backup taken).</summary>
     public required string Report { get; init; }
 }
@@ -87,11 +93,16 @@ public static class GridStager
     // ---------- stage ----------
 
     /// <summary>
-    /// Writes <c>&lt;VehicleClass&gt;.xml</c> into a CustomAIDrivers directory, ALWAYS
-    /// snapshotting any existing file first via <see cref="CustomAiBackup.BackupIfPresent"/>
-    /// (never overwrite without backup). When the existing file does not carry
-    /// <see cref="GeneratedMarker"/> — i.e. it is the user's own file, not one we generated —
-    /// the stage refuses unless <paramref name="force"/> is set.
+    /// Diff-aware staging (NAMeS-first, locked decision #7). BEFORE any write the currently
+    /// installed class XML is lenient-parsed; when every generated seat already has an
+    /// equivalent base entry (<see cref="CustomAiEquivalence"/>: ordinal names, floats within
+    /// 1e-4, omitted scalar == 1.0) the stage is a NO-OP — nothing written, nothing backed up,
+    /// the user's installed file stays exactly as curated. Otherwise writes
+    /// <c>&lt;VehicleClass&gt;.xml</c>, ALWAYS snapshotting any existing file first via
+    /// <see cref="CustomAiBackup.BackupIfPresent"/> (never overwrite without backup). When the
+    /// existing, genuinely-divergent file does not carry <see cref="GeneratedMarker"/> — i.e.
+    /// it is the user's own file, not one we generated — the stage refuses unless
+    /// <paramref name="force"/> is set.
     /// </summary>
     public static StageResult Stage(
         CustomAiFile file,
@@ -100,6 +111,23 @@ public static class GridStager
         bool force = false)
     {
         string target = Path.Combine(customAiDriversDirectory, file.VehicleClass + ".xml");
+
+        // Diff-aware no-op: an unreadable installed file simply means "no match" and falls
+        // through to the normal (force-gated, backup-first) staging path.
+        if (File.Exists(target) &&
+            CommunityAiReader.TryReadFile(target) is { } installed &&
+            CustomAiEquivalence.Compare(file, installed).Matches)
+        {
+            return new StageResult
+            {
+                BackupPath = null,
+                WrittenPath = target,
+                NoOpAlreadyMatches = true,
+                Report =
+                    $"Installed {file.VehicleClass}.xml already matches this round's grid " +
+                    $"({file.Drivers.Count} drivers) — nothing written, your file stays in place.",
+            };
+        }
 
         if (!force && File.Exists(target) && !LooksGenerated(target))
         {
@@ -136,7 +164,10 @@ public static class GridStager
         return Path.Combine(targetDirectory, file.VehicleClass + ".xml");
     }
 
-    private static bool LooksGenerated(string path)
+    /// <summary>True when the file at <paramref name="path"/> carries the app's
+    /// <see cref="GeneratedMarker"/> header — i.e. this app wrote it and it is regenerable,
+    /// as opposed to the user's own curated community file.</summary>
+    public static bool LooksGenerated(string path)
     {
         try
         {

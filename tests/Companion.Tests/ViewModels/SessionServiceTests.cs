@@ -112,16 +112,19 @@ public sealed class SessionServiceTests : IDisposable
             Assert.Equal(Rational.Zero, confirm.RoundPoints.Single(p => p.DriverId == gridOrder[6]).Points);
             Assert.Equal(Rational.Zero, confirm.RoundPoints.Single(p => p.DriverId == gridOrder[^1]).Points);
 
-            string winnerName = session.Pack.Drivers.Single(d => d.Id == gridOrder[0]).Name;
-            Assert.Equal($"{winnerName} wins the South African Grand Prix", confirm.Headline);
+            // The confirm headline comes from the unified fold's RoundUpdate (the M5 news
+            // engine replaced the static template) and previews deterministically.
+            Assert.False(string.IsNullOrWhiteSpace(confirm.Headline));
+            Assert.Equal(confirm.Headline, session.Preview(draft).Headline);
 
             var winnerMove = confirm.Movements.Single(m => m.DriverId == gridOrder[0]);
             Assert.Null(winnerMove.From); // no standings before round 1
             Assert.Equal(1, winnerMove.To);
 
-            // Preview must not commit anything.
+            // Preview must not commit anything — not even through its fold preview.
             Assert.Null(session.CurrentStandings());
             Assert.Equal(1, session.Summary.CurrentRound);
+            Assert.Null(session.CurrentSliderRecommendation());
 
             session.Apply(draft);
 
@@ -129,6 +132,15 @@ public sealed class SessionServiceTests : IDisposable
             Assert.Equal(2, summary.CurrentRound);
             Assert.Equal(2, summary.PlayerPosition); // Hulme P2 on 6 points
             Assert.False(summary.SeasonComplete);
+
+            // Apply went through the fold: the home header reads the folded player state
+            // and the next round has a difficulty recommendation.
+            Assert.NotNull(summary.Reputation);
+            Assert.NotNull(summary.Opi);
+            int? recommendation = session.CurrentSliderRecommendation();
+            Assert.NotNull(recommendation);
+            Assert.InRange(recommendation.Value, 70, 120);
+            Assert.Equal(recommendation, session.CurrentBriefing()!.RecommendedSlider);
 
             var standings = session.CurrentStandings();
             Assert.NotNull(standings);
@@ -152,6 +164,10 @@ public sealed class SessionServiceTests : IDisposable
         Assert.Equal(PlayerLivery, reopenedSummary.PlayerLiveryName);
         Assert.Equal(2, reopenedSummary.PlayerPosition);
         Assert.Equal(42, reopened.MasterSeed);
+
+        // The folded player state persisted with the career: trend + recommendation survive.
+        Assert.NotNull(reopenedSummary.Reputation);
+        Assert.NotNull(reopened.CurrentSliderRecommendation());
 
         var nextBriefing = reopened.CurrentBriefing();
         Assert.NotNull(nextBriefing);
@@ -253,11 +269,14 @@ public sealed class SessionServiceTests : IDisposable
         Assert.Equal(StagedFilePath, first.WrittenPath);
         Assert.True(File.Exists(StagedFilePath));
         Assert.Null(first.BackupPath); // nothing existed before the first stage
+        Assert.False(first.NoOpAlreadyMatches);
 
+        // Re-staging the identical round is a diff-aware NO-OP (NAMeS-first, locked decision
+        // #7b): the installed file already matches, so nothing is written or backed up.
         var second = session.StageCurrentGrid();
         Assert.True(second.Success);
-        Assert.NotNull(second.BackupPath);
-        Assert.True(File.Exists(second.BackupPath));
+        Assert.True(second.NoOpAlreadyMatches);
+        Assert.Null(second.BackupPath);
     }
 
     [Fact]

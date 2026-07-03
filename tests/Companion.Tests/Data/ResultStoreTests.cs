@@ -1,3 +1,6 @@
+using System.Text.Json;
+using Companion.Core.Career;
+using Companion.Core.Json;
 using Companion.Data;
 
 namespace Companion.Tests.Data;
@@ -87,5 +90,59 @@ public class ResultStoreTests
         ResultStore.Append(db, seasonId, 2, """{"round":2}""", DataCareerFixture.Utc);
 
         Assert.Equal(new[] { 1, 2, 3 }, ResultStore.ReadSeasonResults(db, seasonId).Select(r => r.Round));
+    }
+
+    // ---------- versioned envelope ----------
+
+    [Fact]
+    public void EnvelopePayloadRoundTripsSliderAndDnfContext()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        var envelope = new RoundResultEnvelope
+        {
+            Result = DataCareerFixture.Rounds()[0],
+            SliderUsed = 96.0,
+            PlayerDnfCause = DnfCause.DriverError,
+        };
+        ResultStore.Append(
+            db, seasonId, 1,
+            JsonSerializer.Serialize(envelope, CoreJson.Options),
+            DataCareerFixture.Utc);
+
+        var stored = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
+        Assert.Equal(RoundResultEnvelope.CurrentVersion, stored.Version);
+        Assert.Equal(96.0, stored.SliderUsed);
+        Assert.Equal(DnfCause.DriverError, stored.PlayerDnfCause);
+        Assert.Equal(
+            JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options),
+            JsonSerializer.Serialize(stored.Result, CoreJson.Options));
+    }
+
+    [Fact]
+    public void LegacyBareRoundResultPayloadReadsWithDefaults()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        // A pre-envelope career stored the RoundResult directly — it must read as a
+        // version-1 envelope with unknown slider and DNF cause.
+        var round = DataCareerFixture.Rounds()[0];
+        ResultStore.Append(
+            db, seasonId, 1,
+            JsonSerializer.Serialize(round, CoreJson.Options),
+            DataCareerFixture.Utc);
+
+        var stored = ResultStore.ReadSeasonResults(db, seasonId)[0];
+        var envelope = stored.ToEnvelope();
+        Assert.Equal(1, envelope.Version);
+        Assert.Null(envelope.SliderUsed);
+        Assert.Null(envelope.PlayerDnfCause);
+        string original = JsonSerializer.Serialize(round, CoreJson.Options);
+        Assert.Equal(original, JsonSerializer.Serialize(envelope.Result, CoreJson.Options));
+        Assert.Equal(original, JsonSerializer.Serialize(stored.ToRoundResult(), CoreJson.Options));
     }
 }

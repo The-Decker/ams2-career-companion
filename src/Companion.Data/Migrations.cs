@@ -114,6 +114,20 @@ public static class Migrations
 
         CREATE INDEX journal_season_seq ON journal (season_id, seq);
         """,
+
+        // v3 — unified replay fold (docs/dev/m5-fix-integration.md): the post-round player
+        // state persisted by ReplayService.FoldRound after every imported round. DERIVED
+        // data folded round-over-round from raw results — re-simulation wipes and rebuilds
+        // these rows exactly like stage-'end' states and offers. state_json is a
+        // RoundPlayerState cell (player snapshot + next-round slider recommendation).
+        """
+        CREATE TABLE round_player_state (
+            season_id  INTEGER NOT NULL REFERENCES season (id),
+            round      INTEGER NOT NULL,
+            state_json TEXT NOT NULL,
+            PRIMARY KEY (season_id, round)
+        );
+        """,
     ];
 
     public static int CurrentVersion => Scripts.Length;

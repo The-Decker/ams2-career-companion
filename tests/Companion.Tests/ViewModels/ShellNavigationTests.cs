@@ -4,6 +4,7 @@ using Companion.Core.Scoring;
 using Companion.ViewModels.Briefing;
 using Companion.ViewModels.Confirm;
 using Companion.ViewModels.ResultEntry;
+using Companion.ViewModels.Review;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Shell;
 using Companion.ViewModels.Standings;
@@ -174,10 +175,39 @@ public sealed class ShellNavigationTests
         }
 
         Assert.True(home.IsSeasonReview);
-        Assert.IsType<StandingsViewModel>(home.CurrentContent);
+        var review = Assert.IsType<SeasonReviewViewModel>(home.CurrentContent);
+        Assert.True(home.IsSeasonReviewState);
         Assert.Equal("Season complete", home.RoundText);
         Assert.False(home.EnterResultCommand.CanExecute(null));
         Assert.False(home.ShowBriefingCommand.CanExecute(null));
+
+        // The review carries the session's offers; accepting one goes through the seam.
+        var offer = Assert.Single(review.Offers);
+        review.AcceptOfferCommand.Execute(offer);
+        Assert.Equal(new[] { "team.brabham" }, session.AcceptedOffers);
+        Assert.True(offer.IsAccepted);
+        Assert.True(review.OfferAccepted);
+    }
+
+    [Fact]
+    public void Entering_a_result_prefills_the_slider_with_the_recommendation()
+    {
+        var session = new FakeSession();
+        using var home = new HomeViewModel(session);
+
+        // Round 1: no recommendation yet — the neutral default.
+        home.EnterResultCommand.Execute(null);
+        var entry = (ResultEntryViewModel)home.CurrentContent!;
+        Assert.Equal(ResultEntryViewModel.NeutralSlider, entry.SliderUsed);
+
+        CompleteRound(entry);
+        home.ConfirmResultCommand.Execute(null);
+        ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
+
+        // Round 2: the fake session now recommends 97 — the prompt is prefilled with it.
+        home.EnterResultCommand.Execute(null);
+        var second = (ResultEntryViewModel)home.CurrentContent!;
+        Assert.Equal(97.0, second.SliderUsed);
     }
 
     [Fact]
@@ -283,6 +313,35 @@ public sealed class ShellNavigationTests
         public StandingsSnapshot? CurrentStandings() => null;
 
         public IReadOnlyList<StandingsSnapshot> AllSnapshots() => [];
+
+        public int? CurrentSliderRecommendation() => AppliedRounds > 0 ? 97 : null;
+
+        public SeasonReviewModel? SeasonReview() => !Summary.SeasonComplete
+            ? null
+            : new SeasonReviewModel
+            {
+                SeasonYear = 1967,
+                PlayerPosition = 2,
+                FinalReputation = 41.5,
+                FinalOpi = 0.4,
+                Headlines = ["A fake season to remember"],
+                Offers =
+                [
+                    new SeasonOfferModel
+                    {
+                        TeamId = "team.brabham",
+                        TeamName = "Brabham-Repco",
+                        Tier = 5,
+                        SalaryBu = 6.5,
+                        Score = 1.23,
+                        Accepted = false,
+                    },
+                ],
+            };
+
+        public List<string> AcceptedOffers { get; } = [];
+
+        public void AcceptOffer(string teamId) => AcceptedOffers.Add(teamId);
 
         public void Dispose() => Disposed = true;
 

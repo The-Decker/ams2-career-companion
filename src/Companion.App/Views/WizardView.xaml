@@ -250,6 +250,30 @@
                                      FontFamily="Consolas" FontSize="15" />
                         </DockPanel>
 
+                        <!-- NAMeS-first baseline import (locked decision #7a): DEFAULT ON when
+                             the installed class XML parses; shows the import diff summary -->
+                        <Border Style="{StaticResource Panel}" Margin="0,18,0,0"
+                                Visibility="{Binding BaselineImportAvailable, Converter={StaticResource BoolVisible}}">
+                            <StackPanel>
+                                <TextBlock Text="Season baseline" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <CheckBox IsChecked="{Binding UseInstalledAiBaseline}"
+                                          Content="Use your installed AI file as the season baseline (recommended)" />
+                                <TextBlock Style="{StaticResource Muted}" Margin="24,4,0,0" TextWrapping="Wrap"
+                                           Text="{Binding BaselineImportSummary}" />
+                                <TextBlock Style="{StaticResource Faint}" Margin="24,2,0,0" TextWrapping="Wrap"
+                                           Text="{Binding InstalledAiFilePath}" />
+                                <TextBlock Style="{StaticResource Faint}" Margin="24,4,0,0" TextWrapping="Wrap"
+                                           Text="Per-livery ratings, names and countries come from your file; the pack keeps the calendar, entries, teams and scoring. The imported baseline is pinned into the career — it never drifts if the file changes later." />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- the installed file exists but could not be parsed -->
+                        <Border Background="{StaticResource WarningDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,18,0,0"
+                                Visibility="{Binding BaselineImportError, Converter={StaticResource NullCollapsed}}">
+                            <TextBlock Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap"
+                                       Text="{Binding BaselineImportError, StringFormat='Your installed AI file could not be read — the pack baseline will be used instead. ({0})'}" />
+                        </Border>
+
                         <Border Style="{StaticResource Panel}" Margin="0,18,0,0">
                             <StackPanel>
                                 <TextBlock Text="Season rules" FontWeight="SemiBold" Margin="0,0,0,6" />

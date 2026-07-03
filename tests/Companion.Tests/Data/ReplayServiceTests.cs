@@ -23,15 +23,18 @@ public class ReplayServiceTests
         var report = ReplayService.Resimulate(
             db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
 
-        Assert.True(report.Identical);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
         Assert.Null(report.FirstDivergence);
 
-        // 3 rounds x (6 drivers + 3 constructors) standings rows + the season-end pipeline
-        // rows must all have been compared.
+        // 3 rounds × (9 standings + race.result + opi + reputation + paceAnchor + headline)
+        // = 42 per-round rows, plus the season-end pipeline rows.
         int storedSimRows = JournalStore.ReadSeason(db, seasonId)
-            .Count(r => !r.Phase.StartsWith("import.", StringComparison.Ordinal));
+            .Count(r => !DataJournalPhases.IsProvenance(r.Phase));
         Assert.Equal(storedSimRows, report.ComparedRows);
-        Assert.True(report.ComparedRows > 27, $"Expected season-end rows beyond the 27 standings rows, got {report.ComparedRows}.");
+        Assert.True(report.ComparedRows > 42,
+            $"Expected season-end rows beyond the 42 per-round rows, got {report.ComparedRows}.");
     }
 
     [Fact]
@@ -45,8 +48,10 @@ public class ReplayServiceTests
         var teamsBefore = StateStore.ReadTeamStates(db, seasonId, StateStore.StageEnd);
         var playerBefore = StateStore.ReadPlayerState(db, seasonId, StateStore.StageEnd);
         var offersBefore = StateStore.ReadOffers(db, seasonId);
+        var roundStatesBefore = StateStore.ReadRoundPlayerStates(db, seasonId);
         Assert.NotEmpty(driversBefore);
         Assert.NotEmpty(offersBefore);
+        Assert.Equal(3, roundStatesBefore.Count);
 
         var report = ReplayService.Resimulate(
             db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
@@ -56,6 +61,70 @@ public class ReplayServiceTests
         Assert.Equal(teamsBefore, StateStore.ReadTeamStates(db, seasonId, StateStore.StageEnd));
         Assert.Equal(playerBefore, StateStore.ReadPlayerState(db, seasonId, StateStore.StageEnd));
         Assert.Equal(offersBefore, StateStore.ReadOffers(db, seasonId));
+        Assert.Equal(roundStatesBefore, StateStore.ReadRoundPlayerStates(db, seasonId));
+    }
+
+    [Fact]
+    public void SeasonEndConsumesTheFoldedFinalPlayerState()
+    {
+        using var tmp = new TempDb();
+        using var db = CareerDatabase.Open(tmp.Path);
+        var (seasonId, pack) = DataCareerFixture.SetupCareer(db);
+        var seasonEnd = DataCareerFixture.PlaySeason(db, seasonId, pack);
+
+        // Per-round accrual moved the player (P3, P2, P1 across the three rounds)...
+        var folded = StateStore.ReadRoundPlayerState(db, seasonId, 3);
+        Assert.NotNull(folded);
+        Assert.True(folded.Player.Reputation > DataCareerFixture.PlayerStart().Reputation);
+
+        // ...and the season-final reputation row folds FROM that state, not from the start.
+        var repRow = JournalStore.ReadSeason(db, seasonId).Single(r =>
+            r.Phase == JournalPhases.PlayerReputation && r.Cause == "season-final");
+        string expectedFrom = Math.Round(folded.Player.Reputation, 4)
+            .ToString(System.Globalization.CultureInfo.InvariantCulture);
+        Assert.Contains($"\"from\":{expectedFrom}", repRow.DeltaJson);
+        Assert.True(seasonEnd.Player.Reputation >= folded.Player.Reputation);
+    }
+
+    [Fact]
+    public void FoldRoundRefusesToFoldARoundTwice()
+    {
+        using var tmp = new TempDb();
+        using var db = CareerDatabase.Open(tmp.Path);
+        var (seasonId, pack) = DataCareerFixture.SetupCareer(db);
+
+        var round = DataCareerFixture.Rounds()[0];
+        ReplayService.ImportAndFoldRound(
+            db, seasonId, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+            1, DataCareerFixture.Envelope(round), DataCareerFixture.Utc);
+
+        var ex = Assert.Throws<InvalidOperationException>(() => ReplayService.FoldRound(
+            db, seasonId, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+            1, DataCareerFixture.Utc));
+        Assert.Contains("already folded", ex.Message);
+    }
+
+    [Fact]
+    public void ImportAndFoldOfAFoldedRoundRollsTheImportBack()
+    {
+        using var tmp = new TempDb();
+        using var db = CareerDatabase.Open(tmp.Path);
+        var (seasonId, pack) = DataCareerFixture.SetupCareer(db);
+
+        var rounds = DataCareerFixture.Rounds();
+        ReplayService.ImportAndFoldRound(
+            db, seasonId, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+            1, DataCareerFixture.Envelope(rounds[0]), DataCareerFixture.Utc);
+        string storedPayload = ResultStore.ReadSeasonResults(db, seasonId)[0].PayloadJson;
+
+        // A second ImportAndFold for the same round must throw AND leave the stored raw
+        // payload untouched — the import and the fold are one atomic unit.
+        Assert.Throws<InvalidOperationException>(() => ReplayService.ImportAndFoldRound(
+            db, seasonId, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+            1, DataCareerFixture.Envelope(rounds[1] with { Round = 1 }), DataCareerFixture.Utc));
+
+        Assert.Equal(storedPayload, ResultStore.ReadSeasonResults(db, seasonId)[0].PayloadJson);
+        Assert.Single(StateStore.ReadRoundPlayerStates(db, seasonId));
     }
 
     [Fact]
@@ -78,7 +147,38 @@ public class ReplayServiceTests
     }
 
     [Fact]
-    public void TamperedJournalRowIsCaughtAsTheFirstDivergence()
+    public void AcceptedOfferMissingFromTheRegeneratedSetIsADivergenceNotASilentDrop()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId, pack) = PlayedCareer(tmp);
+        using var _ = db;
+
+        // Tamper: the accepted offer names a team the sim never offered.
+        StateStore.SetOfferAccepted(db, seasonId, StateStore.ReadOffers(db, seasonId)[0].Terms.TeamId);
+        using (var tamper = db.Connection.CreateCommand())
+        {
+            tamper.CommandText = "UPDATE offer SET team_id = 'team.ghost' WHERE season_id = @season AND accepted = 1;";
+            tamper.Parameters.AddWithValue("@season", seasonId);
+            tamper.ExecuteNonQuery();
+        }
+        var offersBefore = StateStore.ReadOffers(db, seasonId);
+
+        var report = ReplayService.Resimulate(
+            db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
+
+        Assert.False(report.Identical);
+        Assert.NotNull(report.FirstDivergence);
+        Assert.Equal("accepted-offer", report.FirstDivergence.Reason);
+        Assert.Equal("team.ghost", report.FirstDivergence.StoredDeltaJson);
+
+        // Report-only: the transaction rolled back — the stored rows (ghost included)
+        // survived byte-for-byte. Zero data loss on divergence.
+        Assert.Equal(offersBefore, StateStore.ReadOffers(db, seasonId));
+        Assert.Equal(3, StateStore.ReadRoundPlayerStates(db, seasonId).Count);
+    }
+
+    [Fact]
+    public void TamperedJournalRowIsCaughtAsTheFirstDivergenceAndRollsBack()
     {
         using var tmp = new TempDb();
         var (db, seasonId, pack) = PlayedCareer(tmp);
@@ -95,6 +195,11 @@ public class ReplayServiceTests
             tamper.ExecuteNonQuery();
         }
 
+        var journalBefore = JournalStore.ReadSeason(db, seasonId);
+        var offersBefore = StateStore.ReadOffers(db, seasonId);
+        var endStatesBefore = StateStore.ReadDriverStates(db, seasonId, StateStore.StageEnd);
+        var roundStatesBefore = StateStore.ReadRoundPlayerStates(db, seasonId);
+
         var report = ReplayService.Resimulate(
             db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
 
@@ -107,6 +212,13 @@ public class ReplayServiceTests
         Assert.Equal("""{"position":99,"points":"999"}""", divergence.StoredDeltaJson);
         // The regenerated side carries the truth the raw results refold to.
         Assert.Equal(victim.DeltaJson, divergence.RegeneratedDeltaJson);
+
+        // Divergence is report-only: everything stored — journal, offers, end states,
+        // per-round folds — survived the rolled-back transaction untouched.
+        Assert.Equal(journalBefore, JournalStore.ReadSeason(db, seasonId));
+        Assert.Equal(offersBefore, StateStore.ReadOffers(db, seasonId));
+        Assert.Equal(endStatesBefore, StateStore.ReadDriverStates(db, seasonId, StateStore.StageEnd));
+        Assert.Equal(roundStatesBefore, StateStore.ReadRoundPlayerStates(db, seasonId));
     }
 
     [Fact]
@@ -146,7 +258,7 @@ public class ReplayServiceTests
         corrected = corrected with { Sessions = [session with { Entries = swapped }] };
 
         string payload = System.Text.Json.JsonSerializer.Serialize(
-            corrected, Companion.Core.Json.CoreJson.Options);
+            DataCareerFixture.Envelope(corrected), Companion.Core.Json.CoreJson.Options);
         var reimport = ResultStore.Append(db, seasonId, 3, payload, "2026-07-04T00:00:00Z");
         Assert.True(reimport.PayloadChanged);
 
@@ -167,8 +279,8 @@ public class ReplayServiceTests
         var report = ReplayService.Resimulate(
             db, pack, DataCareerFixture.MasterSeed + 1, DataCareerFixture.Inputs());
 
-        // Standings rows are seed-independent, but season-end rolls are not: the wrong
-        // seed must be detected as a divergence.
+        // Standings rows are seed-independent, but headline selections and season-end rolls
+        // are not: the wrong seed must be detected as a divergence.
         Assert.False(report.Identical);
         Assert.NotNull(report.FirstDivergence);
     }
@@ -205,22 +317,119 @@ public class ReplayServiceTests
         var (seasonId, pack) = DataCareerFixture.SetupCareer(db);
 
         // Import two of three rounds, no season end yet — mid-season replay must hold.
-        var soFar = new List<Companion.Core.Scoring.RoundResult>();
         foreach (var round in DataCareerFixture.Rounds().Take(2))
         {
-            soFar.Add(round);
-            string payload = System.Text.Json.JsonSerializer.Serialize(
-                round, Companion.Core.Json.CoreJson.Options);
-            ResultStore.Append(db, seasonId, round.Round, payload, DataCareerFixture.Utc);
-            JournalStore.AppendMany(
-                db, seasonId, round.Round, ReplayService.RoundStandingsEvents(pack, soFar), DataCareerFixture.Utc);
+            ReplayService.ImportAndFoldRound(
+                db, seasonId, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+                round.Round, DataCareerFixture.Envelope(round), DataCareerFixture.Utc);
         }
 
         var report = ReplayService.Resimulate(
             db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
 
         Assert.True(report.Identical);
-        Assert.Equal(18, report.ComparedRows); // 2 rounds x (6 drivers + 3 constructors)
+        // 2 rounds × (9 standings + 5 player-fold rows incl. the headline).
+        Assert.Equal(28, report.ComparedRows);
         Assert.Empty(StateStore.ReadOffers(db, seasonId));
+        Assert.Equal(2, StateStore.ReadRoundPlayerStates(db, seasonId).Count);
+    }
+
+    // ---------- multi-season: rollover re-derivation ----------
+
+    /// <summary>Plays season 1, accepts the team.mid offer, rolls season 2's start states
+    /// through <see cref="SeasonRollover"/> exactly like the live path, and folds one
+    /// season-2 round.</summary>
+    private static (CareerDatabase Db, long Season1, long Season2, Companion.Core.Packs.SeasonPack Pack)
+        TwoSeasonCareer(TempDb tmp)
+    {
+        var db = CareerDatabase.Open(tmp.Path);
+        var (season1, pack) = DataCareerFixture.SetupCareer(db);
+        DataCareerFixture.PlaySeason(db, season1, pack);
+
+        Assert.Contains(StateStore.ReadOffers(db, season1), o => o.Terms.TeamId == "team.mid");
+        StateStore.SetOfferAccepted(db, season1, "team.mid");
+
+        var derived = SeasonRollover.Derive(
+            StateStore.ReadPlayerState(db, season1, StateStore.StageEnd)!,
+            StateStore.ReadDriverStates(db, season1, StateStore.StageEnd),
+            StateStore.ReadTeamStates(db, season1, StateStore.StageEnd),
+            acceptedTeamId: "team.mid",
+            playerLiveryName: DataCareerFixture.PlayerLivery);
+
+        long season2 = CareerStore.StartSeason(db, 1968, pack.Manifest.PackId, pack.Manifest.Version);
+        StateStore.UpsertPlayerState(db, season2, StateStore.StageStart, derived.Player);
+        StateStore.UpsertDriverStates(db, season2, StateStore.StageStart, derived.Drivers);
+        StateStore.UpsertTeamStates(db, season2, StateStore.StageStart, derived.Teams);
+
+        var round = DataCareerFixture.Rounds()[0];
+        ReplayService.ImportAndFoldRound(
+            db, season2, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+            1, DataCareerFixture.Envelope(round), DataCareerFixture.Utc);
+
+        return (db, season1, season2, pack);
+    }
+
+    [Fact]
+    public void FollowOnSeasonStartStatesReDeriveThroughTheRollover()
+    {
+        using var tmp = new TempDb();
+        var (db, _, season2, pack) = TwoSeasonCareer(tmp);
+        using var _1 = db;
+
+        var report = ReplayService.Resimulate(
+            db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
+
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.Single(StateStore.ReadRoundPlayerStates(db, season2));
+    }
+
+    [Fact]
+    public void TamperedFollowOnStartStateIsAStartStateDivergenceWithZeroDataLoss()
+    {
+        using var tmp = new TempDb();
+        var (db, season1, season2, pack) = TwoSeasonCareer(tmp);
+        using var _1 = db;
+
+        // Tamper the season-2 start player row (a rep the rollover never produced).
+        var stored = StateStore.ReadPlayerState(db, season2, StateStore.StageStart)!;
+        StateStore.UpsertPlayerState(db, season2, StateStore.StageStart, stored with { Reputation = 99.0 });
+        var roundStatesBefore = StateStore.ReadRoundPlayerStates(db, season1);
+
+        var report = ReplayService.Resimulate(
+            db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
+
+        Assert.False(report.Identical);
+        Assert.NotNull(report.FirstDivergence);
+        Assert.Equal("start-state", report.FirstDivergence.Reason);
+        Assert.Equal(season2, report.FirstDivergence.SeasonId);
+
+        // Rollback: the tampered row still reads back tampered; season-1 folds untouched.
+        Assert.Equal(99.0, StateStore.ReadPlayerState(db, season2, StateStore.StageStart)!.Reputation);
+        Assert.Equal(roundStatesBefore, StateStore.ReadRoundPlayerStates(db, season1));
+    }
+
+    [Fact]
+    public void FollowOnSeasonWithoutAnAcceptedOfferIsADivergence()
+    {
+        using var tmp = new TempDb();
+        var (db, season1, _, pack) = TwoSeasonCareer(tmp);
+        using var _1 = db;
+
+        // Clear the acceptance: season 2 now exists with no accepted season-1 offer.
+        using (var clear = db.Connection.CreateCommand())
+        {
+            clear.CommandText = "UPDATE offer SET accepted = 0 WHERE season_id = @season;";
+            clear.Parameters.AddWithValue("@season", season1);
+            clear.ExecuteNonQuery();
+        }
+
+        var report = ReplayService.Resimulate(
+            db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
+
+        Assert.False(report.Identical);
+        Assert.NotNull(report.FirstDivergence);
+        Assert.Equal("accepted-offer", report.FirstDivergence.Reason);
     }
 }

@@ -194,10 +194,11 @@ public static class CareerStore
         return (long)command.ExecuteScalar()!;
     }
 
-    public static void CompleteSeason(CareerDatabase db, long seasonId) =>
+    public static void CompleteSeason(
+        CareerDatabase db, long seasonId, Microsoft.Data.Sqlite.SqliteTransaction? transaction = null) =>
         db.Execute(
             "UPDATE season SET status = @status WHERE id = @id;",
-            null,
+            transaction,
             ("@status", SeasonStatus.Complete),
             ("@id", seasonId));
 

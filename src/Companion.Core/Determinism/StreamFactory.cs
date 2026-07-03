@@ -19,6 +19,13 @@ namespace Companion.Core.Determinism;
 ///
 /// Conventions: season-level streams (not tied to a round or entity) use round 0 and
 /// entityId "" — <see cref="CreateSeasonStream"/> encodes that convention.
+///
+/// Key hygiene: entityIds are caller data (pack team/driver ids, composite discriminators),
+/// so '|' and '\' inside them are backslash-escaped before key composition. Subsystems are
+/// fixed sim constants and year/round are numeric, so escaping the entity alone makes the
+/// four-part key composition injective — no two distinct (subsystem, year, round, entityId)
+/// tuples can ever share a stream. Ids without '|' or '\' derive exactly the seeds they
+/// always did (byte-stability preserved).
 /// </summary>
 public sealed class StreamFactory(ulong masterSeed)
 {
@@ -29,8 +36,12 @@ public sealed class StreamFactory(ulong masterSeed)
         ArgumentNullException.ThrowIfNull(subsystem);
         ArgumentNullException.ThrowIfNull(entityId);
 
+        string safeEntity = entityId.AsSpan().IndexOfAny('|', '\\') < 0
+            ? entityId
+            : entityId.Replace("\\", "\\\\", StringComparison.Ordinal)
+                .Replace("|", "\\|", StringComparison.Ordinal);
         string key = string.Create(CultureInfo.InvariantCulture,
-            $"{subsystem}|{year}|{round}|{entityId}");
+            $"{subsystem}|{year}|{round}|{safeEntity}");
         var mix = new SplitMix64(StableHash.Fnv1a64(key) ^ MasterSeed);
         ulong initState = mix.Next();
         ulong initSeq = mix.Next();

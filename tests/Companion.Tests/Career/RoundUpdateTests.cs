@@ -12,6 +12,7 @@ public class RoundUpdateTests
         double reputation = 40.0,
         double opi = 0.0,
         double anchor = 0.0,
+        int pointsPositions = 6,
         ulong seed = 42) => new()
     {
         Grid = CareerTestData.PlayerGrid(),
@@ -30,6 +31,7 @@ public class RoundUpdateTests
         HasTeammate = true,
         TeammateFinish = teammateFinish,
         SliderUsed = 90.0,
+        PointsPositions = pointsPositions,
         Streams = new StreamFactory(seed),
         Headlines = CareerTestData.LoadHeadlines(),
         PlayerName = "Pat Player",
@@ -120,5 +122,18 @@ public class RoundUpdateTests
     {
         var result = RoundUpdate.Apply(Context(finish: null, dnf: DnfCause.Mechanical, anchor: 0.0));
         Assert.Equal(90, result.RecommendedSlider);
+    }
+
+    [Fact]
+    public void PointsCauseFollowsTheRoundsResolvedScoringNotATopSix()
+    {
+        // Expected finish on this grid is 2; P4 is within |delta| < 3 of it, so the cause
+        // falls through to the points cutoff — which comes from the round's resolved scoring
+        // definition, not a hard-coded top-6.
+        var sixScorers = RoundUpdate.Apply(Context(finish: 4, teammateFinish: null, pointsPositions: 6));
+        Assert.Equal("points", sixScorers.Events[0].Cause);
+
+        var threeScorers = RoundUpdate.Apply(Context(finish: 4, teammateFinish: null, pointsPositions: 3));
+        Assert.Equal("midfield", threeScorers.Events[0].Cause);
     }
 }
