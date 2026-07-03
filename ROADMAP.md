@@ -37,17 +37,28 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
 - Season review "Sign & start 1969" flow with the bridge note; reopen lands in the latest
   season. **→ Gate 2 is ready to test.**
 
-## ▶ In progress
+## ✅ v0.3.0 — UX fixes + F1 pack fleet (2026-07-03, 895/895)
 
-## ⏭ Next (Phase 1 wrap)
+- **Fixes from your manual test:** lenient livery scan (the warning flood → one summary
+  line; 84 quirky community files now recover), staging force-gate is an amber choice not a
+  red failure, historical constructor names everywhere.
+- **Pack fleet — 8 seasons now bundled:** 1967, 1969, **1986, 1990, 1992, 1993, 1997**, 1988.
+  Each verified: liveries 100% verbatim in your installed sets, era-transition-ready lineage
+  ids. (1974/1978/1991/1995/2000 attempts hit a usage limit mid-run — no partial garbage
+  written; they regenerate cleanly next round.)
+- **Schema correctness:** only raceSkill + qualifyingSkill are required now; the other stats
+  are optional, matching the game format (jusk's 1986 set omits start_reactions) — which
+  keeps NAMeS-first no-op staging honest.
+- Directory-driven pack tests: every future pack is auto-held to the exemplar bar.
 
-- **F1 pack fleet:** mass-generate packs for every season your installed AI/skin sets
-  already cover — 1974, 1978, 1985, 1986, 1990, 1991, 1992, 1993, 1995, 1997, 2000, 2012,
-  2020, 2024 (the generator is proven; each pack is mostly data verification work). Seasons
-  without installed sets fall back to pack-authored data — the format supports every era
-  regardless of what's installed.
-- Season-readiness score in the wizard (which seasons are fully playable with your content).
-- Distribution: GitHub releases + OverTake.gg page.
+## ▶ In progress / next
+
+- **Career hub design round** — immersive management hub (tabs, minigames, era presentation)
+  per docs/dev/career-hub-vision.md; produces a spec for Mike to steer ("create together").
+- **Remaining fleet:** 1974, 1978, 1991, 1995, 2000 (installed sets exist; just needs a
+  re-run). 1985-on-F-Retro_Gen3 and 1975 are `skip` (off the class's realSeasons / wrong
+  season set). 2001/2012/2024 are ai-only (safety-car-only skins — would warn on liveries).
+- Season-readiness score in the wizard; distribution (GitHub releases + OverTake.gg).
 
 ## 🔭 Later (per PLAN.md phases)
 
