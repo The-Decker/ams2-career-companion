@@ -98,7 +98,13 @@ public static class SeasonEndPipeline
         var curve = context.AgingCurves.ForYear(year);
 
         // ---- step 1: final standings -------------------------------------------------
-        var scoring = pack.Season.PointsSystem.ResolveScoringDefinition(pack.Season.Rounds.Count);
+        // Scoring resolves over CHAMPIONSHIP rounds only — context.Rounds already carries
+        // championship ordinals (Data's ChampionshipCalendar rule), so best-N segments must
+        // span the same domain. Resolving over the full calendar would corrupt best-N on
+        // mixed calendars (a non-championship event between rounds). Identical for
+        // all-championship packs, so journal byte-compatibility is preserved.
+        int championshipRounds = pack.Season.Rounds.Count(r => r.Championship);
+        var scoring = pack.Season.PointsSystem.ResolveScoringDefinition(championshipRounds);
         var standings = StandingsEngine.ComputeSeason(scoring, context.Rounds);
         var final = standings.Final;
 
