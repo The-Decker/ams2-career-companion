@@ -51,13 +51,25 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
   keeps NAMeS-first no-op staging honest.
 - Directory-driven pack tests: every future pack is auto-held to the exemplar bar.
 
-## ▶ In progress / next
+## ⏸ Awaiting Mike — career hub direction
 
-- **Career hub design round** — immersive management hub (tabs, minigames, era presentation)
-  per docs/dev/career-hub-vision.md; produces a spec for Mike to steer ("create together").
-- **Remaining fleet:** 1974, 1978, 1991, 1995, 2000 (installed sets exist; just needs a
-  re-run). 1985-on-F-Retro_Gen3 and 1975 are `skip` (off the class's realSeasons / wrong
-  season set). 2001/2012/2024 are ai-only (safety-car-only skins — would warn on liveries).
+- **Career hub design spec is written** (docs/dev/career-hub-design.md) — a 3-design judge
+  panel, synthesized. All three converged: **hub shell first** (re-home the loop verbatim,
+  zero sim risk) → **read-only lens tabs** over data that already exists → **Setup Gamble**
+  as the pattern-setting first minigame, with a shared **"Why?" journal inspector** as the
+  depth hook and an **EraTheme** swap (telegram/fax/email) for immersion.
+- **5 open questions need Mike's call** before building Increment 1 (top of the spec):
+  Q1 tab reveal (progressive unlock vs always-present), Q2 "Why?" inspector scope (first-class
+  vs contained — the biggest fork), Q3 era-skin depth for v1, Q4 tear-off "own windows",
+  Q5 first minigame (Setup Gamble vs Media Moment).
+
+## ▶ Next (ready to run on Mike's word)
+
+- **Career hub Increment 1** — the hub shell + News feed, once Q1–Q5 are answered.
+- **Remaining fleet:** 1974, 1978, 1991, 1995, 2000 (installed sets exist; proven pipeline,
+  just needs a re-run in a smaller batch). 1975 + 1985-on-F-Retro_Gen3 are `skip`;
+  2001/2012/2024 are ai-only (safety-car-only skins).
+- **Phase 2 auto-capture** (docs/dev/auto-capture.md is specced) — independent of the hub.
 - Season-readiness score in the wizard; distribution (GitHub releases + OverTake.gg).
 
 ## 🔭 Later (per PLAN.md phases)
