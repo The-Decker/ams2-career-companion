@@ -86,16 +86,41 @@ public sealed class AlternationPositionConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>One-letter DNF reason → display text (m/a/o per the result-entry grammar).</summary>
+/// <summary>DNF reason → display text. Accepts either a one-letter code (m/a/o) or a whole
+/// DnfEntry, in which case a custom "Other" detail is shown verbatim (e.g. "Engine fire").</summary>
 public sealed class DnfReasonConverter : IValueConverter
 {
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        (value as string) switch
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        // Whole entry: prefer the custom cause text when the reason is a customised "other".
+        if (value is Companion.ViewModels.ResultEntry.DnfEntry entry)
         {
-            "m" => "mechanical",
-            "a" => "accident",
-            _ => "retired",
-        };
+            if (entry.Reason == "o" && !string.IsNullOrWhiteSpace(entry.Detail))
+                return entry.DriverAttributed ? $"{entry.Detail!.Trim()} (driver)" : entry.Detail!.Trim();
+            return Word(entry.Reason);
+        }
+        return Word(value as string);
+    }
+
+    private static string Word(string? reason) => reason switch
+    {
+        "m" => "mechanical",
+        "a" => "accident",
+        _ => "retired",
+    };
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>value.ToString() == parameter → Visible (Ordinal); drives the "custom Other" box,
+/// shown only when a DNF row's reason is "o".</summary>
+public sealed class StringEqualsToVisibilityConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        string.Equals(value as string, parameter as string, StringComparison.Ordinal)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();

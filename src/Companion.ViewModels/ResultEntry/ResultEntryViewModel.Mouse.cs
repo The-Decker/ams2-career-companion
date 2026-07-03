@@ -80,6 +80,7 @@ public sealed partial class ResultEntryViewModel
         BeginMouseMutation();
         _dnfs.RemoveAll(d => d.Seat.DriverId == driverId);
         _disqualified.RemoveAll(s => s.DriverId == driverId);
+        _dsqReasons.Remove(driverId);
         _classified.Insert(Math.Clamp(index, 0, _classified.Count), seat);
         CompleteMouseMutation(driverId);
         return true;
@@ -121,6 +122,7 @@ public sealed partial class ResultEntryViewModel
         BeginMouseMutation();
         _classified.RemoveAll(s => s.DriverId == driverId);
         _disqualified.RemoveAll(s => s.DriverId == driverId);
+        _dsqReasons.Remove(driverId);
         _dnfs.Add(new DnfEntry(seat, reason));
         CompleteMouseMutation(driverId);
         return true;
@@ -128,7 +130,9 @@ public sealed partial class ResultEntryViewModel
 
     /// <summary>Change an existing DNF's reason ("m"/"a"/"o") — the inline picker and the
     /// context menu's reason submenu. Undoable; picking the current reason is a no-op that
-    /// still dismisses the picker.</summary>
+    /// still dismisses the picker. Switching AWAY from "o" drops any custom detail (mechanical
+    /// and accident have fixed meanings); the picker stays open on "o" so the user can type a
+    /// custom cause, and closes on m/a.</summary>
     public bool SetDnfReason(string driverId, string reason)
     {
         if (!ValidDnfReasons.Contains(reason))
@@ -139,14 +143,53 @@ public sealed partial class ResultEntryViewModel
 
         if (_dnfs[i].Reason == reason)
         {
-            if (ReasonPickerDriverId == driverId)
+            // Same reason: no state change, but m/a dismiss the picker (nothing more to say);
+            // "o" keeps it open for the custom-text box.
+            if (ReasonPickerDriverId == driverId && reason != "o")
                 ReasonPickerDriverId = null;
             return true;
         }
 
         BeginMouseMutation();
-        _dnfs[i] = _dnfs[i] with { Reason = reason };
-        CompleteMouseMutation(driverId);
+        _dnfs[i] = reason == "o"
+            ? _dnfs[i] with { Reason = "o" }
+            : _dnfs[i] with { Reason = reason, Detail = null, DriverAttributed = false };
+        // Selecting a concrete cause (mechanical/accident) closes the picker; "o" leaves it
+        // open so free text can follow — never blocking either way.
+        if (reason != "o")
+            ReasonPickerDriverId = null;
+        CompleteMouseMutation(clearPickerFor: null);
+        return true;
+    }
+
+    /// <summary>Set (or clear) the free-text detail on an "other" DNF and whether the cause is
+    /// the driver's fault — the inline "Other" text box + a "driver's fault" toggle. Forces the
+    /// reason to "o" (custom text only ever qualifies Other). Undoable and fully independent of
+    /// marking the DNF, so a mistaken DNF is always removable whether or not a detail was ever
+    /// typed. False when the driver is not currently DNF'd.</summary>
+    public bool SetDnfDetail(string driverId, string? text, bool driverAttributed = false)
+    {
+        int i = _dnfs.FindIndex(d => d.Seat.DriverId == driverId);
+        if (i < 0)
+            return false;
+
+        string normalized = text?.Trim() ?? "";
+        string detail = normalized.Length == 0 ? "" : normalized;
+        var current = _dnfs[i];
+        bool unchanged = current.Reason == "o" &&
+            string.Equals(current.Detail ?? "", detail, StringComparison.Ordinal) &&
+            current.DriverAttributed == driverAttributed;
+        if (unchanged)
+            return true;
+
+        BeginMouseMutation();
+        _dnfs[i] = current with
+        {
+            Reason = "o",
+            Detail = detail.Length == 0 ? null : detail,
+            DriverAttributed = driverAttributed,
+        };
+        CompleteMouseMutation(clearPickerFor: null);
         return true;
     }
 
@@ -161,8 +204,31 @@ public sealed partial class ResultEntryViewModel
         BeginMouseMutation();
         _classified.RemoveAll(s => s.DriverId == driverId);
         _dnfs.RemoveAll(d => d.Seat.DriverId == driverId);
+        _dsqReasons.Remove(driverId); // fresh DSQ starts with no stated reason
         _disqualified.Add(seat);
         CompleteMouseMutation(driverId);
+        return true;
+    }
+
+    /// <summary>Set (or clear) the free-text DSQ reason (e.g. "Underweight", "Illegal wing")
+    /// for a disqualified driver. Undoable and independent of the DSQ mark itself. False when
+    /// the driver is not currently DSQ'd.</summary>
+    public bool SetDsqReason(string driverId, string? reason)
+    {
+        if (!_disqualified.Any(s => s.DriverId == driverId))
+            return false;
+
+        string detail = reason?.Trim() ?? "";
+        string current = _dsqReasons.TryGetValue(driverId, out string? r) ? r : "";
+        if (string.Equals(current, detail, StringComparison.Ordinal))
+            return true;
+
+        BeginMouseMutation();
+        if (detail.Length == 0)
+            _dsqReasons.Remove(driverId);
+        else
+            _dsqReasons[driverId] = detail;
+        CompleteMouseMutation(clearPickerFor: null);
         return true;
     }
 
@@ -177,6 +243,7 @@ public sealed partial class ResultEntryViewModel
         _classified.RemoveAll(s => s.DriverId == driverId);
         _dnfs.RemoveAll(d => d.Seat.DriverId == driverId);
         _disqualified.RemoveAll(s => s.DriverId == driverId);
+        _dsqReasons.Remove(driverId);
         CompleteMouseMutation(driverId);
         return true;
     }
@@ -205,6 +272,7 @@ public sealed partial class ResultEntryViewModel
         {
             _classified.RemoveAll(s => s.DriverId == seat.DriverId);
             _disqualified.RemoveAll(s => s.DriverId == seat.DriverId);
+            _dsqReasons.Remove(seat.DriverId);
             _dnfs.Add(new DnfEntry(seat, reason));
         }
         ClearSelection();

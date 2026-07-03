@@ -55,7 +55,7 @@ public class BriefingChecklistTests
 
         // The values ride along unchanged from the composer.
         Assert.Equal("Spielberg_Vintage", vm.Settings[0].Value);
-        Assert.Equal("14", vm.Settings[2].Value); // Opponents
+        Assert.Equal("13", vm.Settings[2].Value); // Opponents = grid.size 14 - 1 (player seat)
         Assert.Equal("64", vm.Settings[3].Value); // Laps
     }
 
@@ -152,7 +152,7 @@ public class BriefingChecklistTests
         Assert.StartsWith("Dutch Grand Prix — placeholder: Spielberg_Vintage", text);
         Assert.Contains("Track: Spielberg_Vintage", text);
         Assert.Contains("Class: F-Vintage_Gen1", text);
-        Assert.Contains("Opponents: 14", text);
+        Assert.Contains("Opponents: 13", text);
         Assert.Contains("Laps: 64", text);
         Assert.Contains("Mandatory pit stop: No", text);
         Assert.Contains("377.4 km", text); // setup notes ride along

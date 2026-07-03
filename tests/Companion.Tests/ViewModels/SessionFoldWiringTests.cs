@@ -177,4 +177,49 @@ public sealed class SessionFoldWiringTests : IDisposable
         Assert.Equal(acceptedTeam, reopenedReview.AcceptedTeamId);
         Assert.NotEmpty(reopenedReview.Headlines);
     }
+
+    /// <summary>The M5 blame mapping for a customised player DNF: a custom "other" cause
+    /// flagged as the driver's fault stores <see cref="DnfCause.DriverError"/>, while an
+    /// un-flagged custom "other" keeps the no-blame default (null). The one-letter seam and
+    /// the detail map are read together by the session.</summary>
+    [Theory]
+    [InlineData(true, DnfCause.DriverError)]
+    [InlineData(false, null)]
+    public void PlayerCustomOtherDnf_AttributionDrivesTheStoredBlame(bool driverAttributed, DnfCause? expected)
+    {
+        const string playerId = "driver.denny_hulme";
+        var request = new CareerCreationRequest
+        {
+            PackDirectory = ViewModelTestData.RealPackDirectory,
+            CareerFilePath = CareerPath,
+            CareerName = "Custom DNF 1967",
+            MasterSeed = 7,
+            PlayerLiveryName = PlayerLivery,
+        };
+
+        long seasonId;
+        using (var session = CareerSessionService.CreateCareer(request, Environment()))
+        {
+            var grid = session.CurrentGrid();
+            Assert.Contains(grid, s => s.DriverId == playerId);
+
+            var draft = new ResultDraft
+            {
+                Classified = grid.Where(s => s.DriverId != playerId).Select(s => s.DriverId).ToList(),
+                DidNotFinish = new Dictionary<string, string> { [playerId] = "o" },
+                DidNotFinishDetail = new Dictionary<string, DnfDetail>
+                {
+                    [playerId] = new() { Text = "Engine fire", DriverAttributed = driverAttributed },
+                },
+                Disqualified = [],
+            };
+
+            session.Apply(draft);
+
+            using var db = CareerDatabase.Open(CareerPath);
+            seasonId = CareerStore.ReadSeasons(db).Single().Id;
+            var envelope = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
+            Assert.Equal(expected, envelope.PlayerDnfCause);
+        }
+    }
 }

@@ -134,7 +134,9 @@ public partial class ResultEntryView : UserControl
         }
     }
 
-    /// <summary>The inline M/A/O picker on a freshly dropped DNF row.</summary>
+    /// <summary>The inline M/A/O picker on a freshly dropped DNF row. Picking m/a closes the
+    /// picker; "o" keeps it open so a custom cause can be typed. Never blocks — the DNF is
+    /// already committed and removable whether or not this is touched.</summary>
     private void OnReasonPickClick(object sender, RoutedEventArgs e)
     {
         if (ViewModel is { } vm &&
@@ -143,9 +145,96 @@ public partial class ResultEntryView : UserControl
         {
             vm.SetDnfReason(id, reason);
             e.Handled = true;
+            // "Other" keeps the row's picker open (custom box); m/a return focus to typing.
+            if (reason != "o")
+                FocusInput();
+        }
+    }
+
+    /// <summary>The custom-cause text box on an "Other" DNF row — commits on Enter / lost
+    /// focus. Independent of the DNF mark, so leaving it blank never traps the driver.</summary>
+    private void OnDnfDetailChanged(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is { } vm && sender is TextBox box && DriverIdOf(box.DataContext) is { } id)
+            vm.SetDnfDetail(id, box.Text, DriverAttributedOf(box.DataContext));
+    }
+
+    private void OnDnfDetailKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && sender is TextBox box)
+        {
+            OnDnfDetailChanged(box, e);
+            e.Handled = true;
+            FocusInput();
+        }
+        else if (e.Key == Key.Escape)
+        {
+            e.Handled = true;
             FocusInput();
         }
     }
+
+    /// <summary>The "driver's fault" toggle on an "Other" DNF row — flips the attribution the
+    /// OPI blame model reads, keeping any custom text.</summary>
+    private void OnDnfFaultToggle(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is { } vm && sender is System.Windows.Controls.Primitives.ToggleButton toggle &&
+            DriverIdOf(toggle.DataContext) is { } id)
+        {
+            vm.SetDnfDetail(id, DnfDetailTextOf(toggle.DataContext), toggle.IsChecked == true);
+            FocusInput();
+        }
+    }
+
+    /// <summary>The picker's own "Remove" affordance: the mistaken DNF goes straight back to
+    /// Remaining — the fix for the "can't re-select until a reason is picked" trap. Available
+    /// whether or not a reason was ever chosen.</summary>
+    private void OnReasonPickRemove(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is { } vm && DriverIdOf((sender as FrameworkElement)?.DataContext) is { } id)
+        {
+            vm.Unmark(id);
+            e.Handled = true;
+            FocusInput();
+        }
+    }
+
+    /// <summary>Seed the DSQ reason box with the driver's stored reason when the row realises
+    /// (so an undo/redo or a reopened row shows the right text).</summary>
+    private void OnDsqReasonLoaded(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is { } vm && sender is TextBox box && DriverIdOf(box.DataContext) is { } id)
+            box.Text = vm.DsqReasonOf(id);
+    }
+
+    /// <summary>The per-row DSQ reason box (free text, e.g. "Underweight") — commit on Enter /
+    /// lost focus. Independent of the DSQ mark; blank leaves no stated reason.</summary>
+    private void OnDsqReasonChanged(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is { } vm && sender is TextBox box && DriverIdOf(box.DataContext) is { } id)
+            vm.SetDsqReason(id, box.Text);
+    }
+
+    private void OnDsqReasonKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && sender is TextBox box)
+        {
+            OnDsqReasonChanged(box, e);
+            e.Handled = true;
+            FocusInput();
+        }
+        else if (e.Key == Key.Escape)
+        {
+            e.Handled = true;
+            FocusInput();
+        }
+    }
+
+    private static string? DnfDetailTextOf(object? item) =>
+        item is DnfEntry entry ? entry.Detail : null;
+
+    private static bool DriverAttributedOf(object? item) =>
+        item is DnfEntry { DriverAttributed: true };
 
     // ---------- the per-driver context menu (same menu on every row) ----------
 

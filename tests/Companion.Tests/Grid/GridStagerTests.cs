@@ -304,7 +304,27 @@ public class GridStagerTests
         Assert.DoesNotContain("1988 Williams #5 - N. Mansell", liveries);
         // Every livery is unique — the duplicate-livery gate held.
         Assert.Equal(liveries.Count, liveries.Distinct(StringComparer.Ordinal).Count());
-        // The non-ASCII livery (Pérez-Sala) survived UTF-8 round-tripping.
+        // The grid-cap fix: Pérez-Sala DNQ'd the 1988 Belgian GP, so he is NOT on round 11's grid
+        // even though his entry covers the round — only historical starters seat.
+        Assert.DoesNotContain("1988 Minardi #24 - L. Pérez-Sala", liveries);
+    }
+
+    [Fact]
+    public void DryRun_Resolved1988Round1_NonAsciiLiverySurvivesUtf8RoundTrip()
+    {
+        using var dir = new TempDir();
+        var pack = GridTestData.LoadReferencePack("f1-1988");
+        // Round 1 (Brazil): Pérez-Sala started (DNF), so his accented livery is on the grid and
+        // must survive UTF-8 round-tripping through the written custom-AI file.
+        var plan = RoundGridResolver.Resolve(pack, 1);
+        var file = GridStager.Build(plan, "1988 round 1");
+
+        string written = GridStager.DryRun(file, dir.Path);
+
+        var liveries = XDocument.Load(written).Root!.Elements("driver")
+            .Select(d => d.Attribute("livery_name")!.Value)
+            .ToList();
+
         Assert.Contains("1988 Minardi #24 - L. Pérez-Sala", liveries);
     }
 

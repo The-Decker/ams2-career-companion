@@ -166,15 +166,50 @@ public sealed record ResultDraft
     /// <summary>Driver ids in finishing order (index 0 = P1).</summary>
     public required IReadOnlyList<string> Classified { get; init; }
 
-    /// <summary>Driver id → one-letter DNF reason ("m" mechanical, "a" accident, "o" other).</summary>
+    /// <summary>Driver id → one-letter DNF reason ("m" mechanical, "a" accident, "o" other).
+    /// The stable machine seam: the letter alone is enough for the fold's blame model and for
+    /// every existing consumer. Free-text customisation of "o" (and driver-error attribution)
+    /// rides alongside in <see cref="DidNotFinishDetail"/> — this map never carries anything
+    /// but m/a/o.</summary>
     public required IReadOnlyDictionary<string, string> DidNotFinish { get; init; }
 
     public required IReadOnlyList<string> Disqualified { get; init; }
+
+    /// <summary>Optional per-DNF custom detail, additive over <see cref="DidNotFinish"/> — the
+    /// keys are a subset of that map's keys. Present for a customised "Other" (e.g.
+    /// "Engine fire", "Spun off"); absent drivers keep the plain letter meaning. The
+    /// <see cref="DnfDetail.DriverAttributed"/> flag lets a custom "other" opt IN to
+    /// driver-error blame (default: no blame, matching bare "o"). Older producers omit this
+    /// map entirely; consumers must treat a missing key as "no detail".</summary>
+    public IReadOnlyDictionary<string, DnfDetail> DidNotFinishDetail { get; init; } =
+        new Dictionary<string, DnfDetail>(StringComparer.Ordinal);
+
+    /// <summary>Optional free-text DSQ reason per disqualified driver (e.g. "Underweight",
+    /// "Illegal wing"). Keys are a subset of <see cref="Disqualified"/>; absence means no
+    /// stated reason. Additive — older producers omit it.</summary>
+    public IReadOnlyDictionary<string, string> DisqualifiedDetail { get; init; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
 
     /// <summary>The in-game Opponent Skill slider the round was actually driven at (asked on
     /// the result screen, prefilled with the last recommendation, editable 70–120). Stored in
     /// the round's raw-result envelope. Null falls back to the current recommendation.</summary>
     public double? SliderUsed { get; init; }
+}
+
+/// <summary>A customised DNF cause carried beside the one-letter code in
+/// <see cref="ResultDraft.DidNotFinishDetail"/>: free text plus whether the cause is the
+/// driver's fault. <see cref="DriverAttributed"/> only re-colours the sim's blame model for a
+/// custom "other" — 'm'/'a' keep their fixed meaning (mechanical = no blame, accident =
+/// driver error) whatever this flag says.</summary>
+public sealed record DnfDetail
+{
+    /// <summary>Free-text cause shown in the UI and journalled (e.g. "Engine fire"). May be
+    /// empty when only the attribution matters.</summary>
+    public string Text { get; init; } = "";
+
+    /// <summary>True when the user marked this custom "other" cause as the driver's fault, so
+    /// the OPI DNF-cause rule treats it as driver-error rather than the no-blame default.</summary>
+    public bool DriverAttributed { get; init; }
 }
 
 public sealed record ConfirmModel

@@ -367,6 +367,174 @@ public class RoundGridResolverTests
         Assert.Contains("Team A #1", ex.Message);
     }
 
+    // ---------- historical grid: starterDriverIds gate the round's seats ----------
+
+    /// <summary>Six entries cover the round; the grid lists only three as historical starters.
+    /// The resolved grid seats exactly those three (in entries.json order), and the other three —
+    /// pre-qualifiers / non-starters — stay OUT of the grid though they remain in the pack.</summary>
+    [Fact]
+    public void Resolve_GridStarters_SeatOnlyTheStartersAmongCoveringEntries()
+    {
+        var pack = SixEntryPack(GridTestData.Grid(3,
+            "driver.two", "driver.four", "driver.six"));
+
+        var plan = RoundGridResolver.Resolve(pack, 1);
+
+        Assert.Equal(["driver.two", "driver.four", "driver.six"], plan.Seats.Select(s => s.DriverId));
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.one");
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.three");
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.five");
+    }
+
+    [Fact]
+    public void Resolve_GridStarters_PlusPlayer_ThreeSeatsWithThePlayerMarked()
+    {
+        var pack = SixEntryPack(GridTestData.Grid(3,
+            "driver.two", "driver.four", "driver.six"));
+
+        var plan = RoundGridResolver.Resolve(pack, 1,
+            new PlayerSeat { Ams2LiveryName = "Team A #4" });
+
+        Assert.Equal(3, plan.Seats.Count);
+        var player = Assert.Single(plan.Seats, s => s.IsPlayer);
+        Assert.Equal("driver.four", player.DriverId);
+    }
+
+    /// <summary>The player always takes a real seat, even if the driver they replace did NOT start
+    /// that round: the player's livery is added to the starter set so it survives the intersection.
+    /// Here driver.one is a non-starter, but the player drives Team A #1 and must be on the grid.</summary>
+    [Fact]
+    public void Resolve_GridStarters_PlayerReplacingANonStarter_IsStillOnTheGrid()
+    {
+        var pack = SixEntryPack(GridTestData.Grid(3,
+            "driver.two", "driver.four", "driver.six"));
+
+        var plan = RoundGridResolver.Resolve(pack, 1,
+            new PlayerSeat { Ams2LiveryName = "Team A #1" });
+
+        var player = Assert.Single(plan.Seats, s => s.IsPlayer);
+        Assert.Equal("driver.one", player.DriverId);
+        // Total cars stay at grid.size: the player replaces the lowest-priority AI to stay within
+        // the cap (three starters + the player is four; grid.size is three).
+        Assert.Equal(3, plan.Seats.Count);
+    }
+
+    /// <summary>Absent grid block -> the pre-grid behaviour is unchanged: every covering entry
+    /// fills the grid, nothing is trimmed.</summary>
+    [Fact]
+    public void Resolve_NoGridBlock_SeatsEveryCoveringEntry()
+    {
+        var pack = SixEntryPack(grid: null);
+
+        var plan = RoundGridResolver.Resolve(pack, 1);
+
+        Assert.Equal(6, plan.Seats.Count);
+        Assert.Equal(
+            ["driver.one", "driver.two", "driver.three", "driver.four", "driver.five", "driver.six"],
+            plan.Seats.Select(s => s.DriverId));
+    }
+
+    /// <summary>Empty starterDriverIds behaves like an absent list for seating (every covering
+    /// entry seats), but grid.size still caps the field — the trim keeps the highest raceSkill.</summary>
+    [Fact]
+    public void Resolve_GridSizeSmallerThanField_CapsKeepingHighestRaceSkill()
+    {
+        // Six entries, no starter list, grid.size 4 -> trim to the four fastest.
+        var drivers = new[]
+        {
+            GridTestData.Driver("driver.one", "One", GridTestData.Ratings(raceSkill: 0.10)),
+            GridTestData.Driver("driver.two", "Two", GridTestData.Ratings(raceSkill: 0.95)),
+            GridTestData.Driver("driver.three", "Three", GridTestData.Ratings(raceSkill: 0.20)),
+            GridTestData.Driver("driver.four", "Four", GridTestData.Ratings(raceSkill: 0.90)),
+            GridTestData.Driver("driver.five", "Five", GridTestData.Ratings(raceSkill: 0.80)),
+            GridTestData.Driver("driver.six", "Six", GridTestData.Ratings(raceSkill: 0.05)),
+        };
+        var pack = GridTestData.Pack(
+            teams: [GridTestData.Team("team.a", "Team A")],
+            drivers: drivers,
+            entries:
+            [
+                GridTestData.Entry("team.a", "driver.one", "1", "1", "Team A #1"),
+                GridTestData.Entry("team.a", "driver.two", "2", "1", "Team A #2"),
+                GridTestData.Entry("team.a", "driver.three", "3", "1", "Team A #3"),
+                GridTestData.Entry("team.a", "driver.four", "4", "1", "Team A #4"),
+                GridTestData.Entry("team.a", "driver.five", "5", "1", "Team A #5"),
+                GridTestData.Entry("team.a", "driver.six", "6", "1", "Team A #6"),
+            ],
+            rounds: [GridTestData.Round(1, grid: GridTestData.Grid(4))]);
+
+        var plan = RoundGridResolver.Resolve(pack, 1);
+
+        Assert.Equal(4, plan.Seats.Count);
+        // Kept: the four highest raceSkill (0.95, 0.90, 0.80, 0.20) -> two, four, five, three,
+        // restored to entries.json order.
+        Assert.Equal(["driver.two", "driver.three", "driver.four", "driver.five"],
+            plan.Seats.Select(s => s.DriverId));
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.one"); // 0.10, dropped
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.six"); // 0.05, dropped
+    }
+
+    /// <summary>Safety cap with a starter list AND the venue trimming below the starter count:
+    /// five started, grid.size is 4 (the track capped it). The player is kept unconditionally; the
+    /// slowest non-player starter is dropped.</summary>
+    [Fact]
+    public void Resolve_GridSizeBelowStarterCount_KeepsPlayerAndDropsSlowestStarter()
+    {
+        var drivers = new[]
+        {
+            GridTestData.Driver("driver.one", "One", GridTestData.Ratings(raceSkill: 0.30)),
+            GridTestData.Driver("driver.two", "Two", GridTestData.Ratings(raceSkill: 0.95)),
+            GridTestData.Driver("driver.three", "Three", GridTestData.Ratings(raceSkill: 0.90)),
+            GridTestData.Driver("driver.four", "Four", GridTestData.Ratings(raceSkill: 0.85)),
+            GridTestData.Driver("driver.five", "Five", GridTestData.Ratings(raceSkill: 0.80)),
+            GridTestData.Driver("driver.six", "Six", GridTestData.Ratings(raceSkill: 0.05)),
+        };
+        var pack = GridTestData.Pack(
+            teams: [GridTestData.Team("team.a", "Team A")],
+            drivers: drivers,
+            entries:
+            [
+                GridTestData.Entry("team.a", "driver.one", "1", "1", "Team A #1"),
+                GridTestData.Entry("team.a", "driver.two", "2", "1", "Team A #2"),
+                GridTestData.Entry("team.a", "driver.three", "3", "1", "Team A #3"),
+                GridTestData.Entry("team.a", "driver.four", "4", "1", "Team A #4"),
+                GridTestData.Entry("team.a", "driver.five", "5", "1", "Team A #5"),
+                GridTestData.Entry("team.a", "driver.six", "6", "1", "Team A #6"),
+            ],
+            // driver.six (0.05) is a starter but the slowest; grid.size 4 must drop it.
+            rounds:
+            [
+                GridTestData.Round(1, grid: GridTestData.Grid(4,
+                    "driver.one", "driver.two", "driver.three", "driver.five", "driver.six")),
+            ]);
+
+        // Player drives the slow #1 (0.30) — kept regardless of rating.
+        var plan = RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "Team A #1" });
+
+        Assert.Equal(4, plan.Seats.Count);
+        Assert.Contains(plan.Seats, s => s.DriverId == "driver.one" && s.IsPlayer);
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.six"); // slowest, dropped
+        // Kept the player plus the three fastest remaining starters (two, three, five).
+        Assert.Equal(["driver.one", "driver.two", "driver.three", "driver.five"],
+            plan.Seats.Select(s => s.DriverId));
+    }
+
+    /// <summary>The real 1988 pack now carries a per-round grid: round 1 seats exactly the 26
+    /// historical starters, not the 30 season entrants the entry list covers.</summary>
+    [Fact]
+    public void Resolve_1988Round1_SeatsTheHistoricalStartersNotEverySeasonEntrant()
+    {
+        var pack = GridTestData.LoadReferencePack("f1-1988");
+
+        var round1 = RoundGridResolver.Resolve(pack, 1);
+        int covering = pack.Entries.Count(e =>
+            RoundsRange.TryParse(e.Rounds, out var r, out _) && r.Contains(1));
+
+        Assert.True(covering > round1.Seats.Count,
+            "the entry list should cover more drivers than actually started round 1");
+        Assert.Equal(pack.Season.Rounds[0].Grid!.Size, round1.Seats.Count);
+    }
+
     // ---------- seats carry the team's physics ----------
 
     [Fact]
@@ -391,4 +559,28 @@ public class RoundGridResolverTests
         Assert.Equal("TST", seat.Country);
         Assert.Equal("Driver One", seat.DriverName);
     }
+
+    // ---------- shared fixture: one team, six drivers, all covering round 1 ----------
+
+    private static SeasonPack SixEntryPack(PackRoundGrid? grid) => GridTestData.Pack(
+        teams: [GridTestData.Team("team.a", "Team A")],
+        drivers:
+        [
+            GridTestData.Driver("driver.one", "One"),
+            GridTestData.Driver("driver.two", "Two"),
+            GridTestData.Driver("driver.three", "Three"),
+            GridTestData.Driver("driver.four", "Four"),
+            GridTestData.Driver("driver.five", "Five"),
+            GridTestData.Driver("driver.six", "Six"),
+        ],
+        entries:
+        [
+            GridTestData.Entry("team.a", "driver.one", "1", "1", "Team A #1"),
+            GridTestData.Entry("team.a", "driver.two", "2", "1", "Team A #2"),
+            GridTestData.Entry("team.a", "driver.three", "3", "1", "Team A #3"),
+            GridTestData.Entry("team.a", "driver.four", "4", "1", "Team A #4"),
+            GridTestData.Entry("team.a", "driver.five", "5", "1", "Team A #5"),
+            GridTestData.Entry("team.a", "driver.six", "6", "1", "Team A #6"),
+        ],
+        rounds: [GridTestData.Round(1, grid: grid)]);
 }

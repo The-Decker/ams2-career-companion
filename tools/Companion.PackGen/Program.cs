@@ -673,6 +673,33 @@ internal static class F1Db
         return list;
     }
 
+    /// <summary>The drivers who ACTUALLY started each race that season: race_data RACE_RESULT rows
+    /// whose position_text is not a did-not-qualify/start marker. Returns f1db round -> ordered
+    /// f1db driver ids (finishing/classification order). This is the historical grid for the round.
+    /// </summary>
+    public static Dictionary<int, List<string>> Starters(SqliteConnection con, int year)
+    {
+        var byRound = new Dictionary<int, List<string>>();
+        using var cmd = con.CreateCommand();
+        cmd.CommandText = """
+            SELECT r.round, rd.driver_id
+            FROM race_data rd
+            JOIN race r ON r.id = rd.race_id
+            WHERE r.year = $y AND rd.type = 'RACE_RESULT'
+              AND rd.position_text NOT IN ('DNQ','DNPQ','DNS','DNP','EX')
+            ORDER BY r.round, rd.position_display_order
+            """;
+        cmd.Parameters.AddWithValue("$y", year);
+        using var rd = cmd.ExecuteReader();
+        while (rd.Read())
+        {
+            int round = rd.GetInt32(0);
+            if (!byRound.TryGetValue(round, out var list)) byRound[round] = list = [];
+            list.Add(rd.GetString(1));
+        }
+        return byRound;
+    }
+
     public static List<EntrantRow> Entrants(SqliteConnection con, int year)
     {
         var list = new List<EntrantRow>();
@@ -760,6 +787,7 @@ internal static class PackBuilder
         con.Open();
         var races = F1Db.Races(con, cfg.Year);
         var entrants = F1Db.Entrants(con, cfg.Year);
+        var startersByRound = F1Db.Starters(con, cfg.Year);
 
         if (!library.ClassVehicles.ContainsKey(cfg.Ams2Class))
             throw new InvalidOperationException($"class '{cfg.Ams2Class}' not found in classes.json");
@@ -917,7 +945,7 @@ internal static class PackBuilder
 
         WriteJson(Path.Combine(packDir, "pack.json"), BuildPackJson(cfg, manifestNotes));
         WriteJson(Path.Combine(packDir, "season.json"),
-            BuildSeasonJson(cfg, resolvedRounds, pointsSystem, entriesOut, library, aiOverridesByRound));
+            BuildSeasonJson(cfg, resolvedRounds, pointsSystem, entriesOut, library, aiOverridesByRound, startersByRound));
         WriteJson(Path.Combine(packDir, "teams.json"), BuildTeamsJson(cfg, teams));
         WriteJson(Path.Combine(packDir, "drivers.json"), BuildDriversJson(driversOut));
         WriteJson(Path.Combine(packDir, "entries.json"), BuildEntriesJson(entriesOut));
@@ -1197,15 +1225,41 @@ internal static class PackBuilder
         SeasonConfig cfg, List<ResolvedRound> rounds, JsonNode pointsSystem,
         List<(string TeamId, string DriverId, string Number, SortedSet<int> Rounds, string Livery)> entries,
         ContentLibrary library,
-        Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>> aiOverridesByRound)
+        Dictionary<int, SortedDictionary<string, List<KeyValuePair<string, double>>>> aiOverridesByRound,
+        Dictionary<int, List<string>> startersByRound)
     {
         var roundsArr = new JsonArray();
         foreach (var round in rounds)
         {
             var race = round.Race;
-            int entryCount = entries.Count(e => e.Rounds.Contains(race.Round));
-            // Contract: setupGuide.session.opponents + 1 (player) must fit the venue AI cap.
-            int opponents = Math.Min(entryCount, library.TrackMaxAi[round.TrackId] - 1);
+            int maxAi = library.TrackMaxAi[round.TrackId];
+
+            // Historical grid: the covering entries whose driver actually started this round
+            // (f1db RACE_RESULT minus DNQ/DNPQ/DNS/DNP/EX), in entries.json order. size clamps the
+            // starter count to the venue's Max AI participants (the game caps the grid too), and
+            // opponents = size - 1 (the player replaces one historical starter). The extra season
+            // entrants stay in the pack (available for one-off drives) but do not fill the grid.
+            var starterPackIds = startersByRound.TryGetValue(race.Round, out var s)
+                ? s.Select(id => "driver." + id.Replace('-', '_')).ToHashSet(StringComparer.Ordinal)
+                : new HashSet<string>(StringComparer.Ordinal);
+            var gridStarters = entries
+                .Where(e => e.Rounds.Contains(race.Round) && starterPackIds.Contains(e.DriverId))
+                .Select(e => e.DriverId)
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+
+            int coveringCount = entries.Count(e => e.Rounds.Contains(race.Round));
+            // If f1db gave us no starter mapping for a round (should not happen for these seasons),
+            // fall back to the covering-entry count so the grid still fits the cap.
+            int starterCount = gridStarters.Count > 0 ? gridStarters.Count : coveringCount;
+            int gridSize = Math.Max(1, Math.Min(starterCount, maxAi));
+            int opponents = gridSize - 1;
+
+            var gridObj = new JsonObject
+            {
+                ["size"] = gridSize,
+                ["starterDriverIds"] = new JsonArray(gridStarters.Select(id => (JsonNode)id).ToArray()),
+            };
 
             var aiOverrides = new JsonObject();
             if (aiOverridesByRound.TryGetValue(race.Round, out var byDriver))
@@ -1232,6 +1286,7 @@ internal static class PackBuilder
                     ["fallbacks"] = new JsonArray(round.Fallbacks.Select(f => (JsonNode)f).ToArray()),
                 },
                 ["laps"] = round.Laps,
+                ["grid"] = gridObj,
                 ["setupGuide"] = new JsonObject
                 {
                     ["session"] = new JsonObject

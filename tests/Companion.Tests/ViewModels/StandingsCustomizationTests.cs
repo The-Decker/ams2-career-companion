@@ -292,5 +292,41 @@ public sealed class StandingsCustomizationTests
 
         Assert.False(vm.HasConstructors);
         Assert.Equal(0, vm.SelectedTabIndex);
+        // The degraded index must land on a tab this season actually shows (never a hidden one)
+        // so the TabControl never opens on an invisible tab and blanks the screen.
+        Assert.Contains(vm.Tabs, t => t.Index == vm.SelectedTabIndex);
+    }
+
+    [Fact]
+    public void RememberedRoundMatrixTab_SurvivesInAConstructorsSeason()
+    {
+        // Index 2 (round matrix) is a real tab here — it must be restored, not clamped away.
+        var settings = new SettingsService(new InMemorySettingsStore(
+            new AppSettings { StandingsTabIndex = 2 }));
+
+        var vm = new StandingsViewModel(Snapshots(), Pack(), settings);
+
+        Assert.Equal(2, vm.SelectedTabIndex);
+        Assert.Contains(vm.Tabs, t => t.Kind == StandingsTabKind.Matrix && t.Index == 2);
+    }
+
+    [Fact]
+    public void OutOfRangeSavedTab_SnapsToAShownTab()
+    {
+        // A hand-edited settings file (Normalized clamps 0..2, but be defensive at the VM too)
+        // must never leave SelectedTabIndex pointing at a tab that is not shown.
+        var settings = new SettingsService(new InMemorySettingsStore(
+            new AppSettings { StandingsTabIndex = 2 }));
+        var rules = Rules() with { Constructors = null }; // no constructors → index 1 absent
+        var snapshots = StandingsEngine.ComputeSeason(
+            rules.ResolveScoringDefinition(2),
+            [Round(1, "d.alpha", "d.bravo", "d.zulu")]).Snapshots;
+        var pack = Pack() with { Season = Pack().Season with { PointsSystem = rules } };
+
+        var vm = new StandingsViewModel(snapshots, pack, settings);
+
+        // Index 2 (matrix) IS shown even without constructors, so it is honored.
+        Assert.Equal(2, vm.SelectedTabIndex);
+        Assert.Contains(vm.Tabs, t => t.Index == vm.SelectedTabIndex);
     }
 }

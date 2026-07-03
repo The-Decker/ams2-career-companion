@@ -9,6 +9,14 @@ namespace Companion.Core.Grid;
 /// merge in fixed precedence: pack driver baseline -> trackForm nudge for the round's track
 /// (additive, clamped 0..1) -> the round's aiOverrides patch (absolute per-field values,
 /// applied last so an authored override always beats the nudge).
+///
+/// When the round carries a <see cref="PackRoundGrid"/>, the regular (non-guest) seats are the
+/// covering entries INTERSECTED with grid.starterDriverIds — the drivers who actually started
+/// that round historically — so a pack that lists every season entrant no longer overfills the
+/// grid with pre-qualifiers who mostly DNQ'd. Guests still append, the player's seat is always
+/// present (they take a real seat even if the driver they replaced was a non-starter that round),
+/// and a final safety cap trims to grid.size keeping the player and the highest-rated AI. A round
+/// with no grid block keeps the pre-grid behaviour: every covering entry fills the grid.
 /// </summary>
 public static class RoundGridResolver
 {
@@ -22,11 +30,36 @@ public static class RoundGridResolver
         var teamsById = IndexById(pack.Teams, t => t.Id, pack, "teams.json");
         var driversById = IndexById(pack.Drivers, d => d.Id, pack, "drivers.json");
 
+        // When the round has a historical grid, only its listed starters seat from entries.json;
+        // covering entries whose driver did not start that round stay out of the grid (they remain
+        // in the pack — available for one-off drives / divergence — but do not fill every round).
+        HashSet<string>? starters = packRound.Grid is { StarterDriverIds.Count: > 0 } grid
+            ? new HashSet<string>(grid.StarterDriverIds, StringComparer.Ordinal)
+            : null;
+
+        // The player always takes a REAL seat: if they drive a covering entry that did not start
+        // this round, add that driver to the starter set so the intersection keeps it. (An unknown
+        // player livery is diagnosed later by ApplyPlayerSeat, which lists the round's grid.)
+        if (starters is not null && playerSeat is not null)
+        {
+            foreach (var entry in pack.Entries)
+            {
+                if (string.Equals(entry.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal)
+                    && ParseRounds(entry).Contains(round))
+                {
+                    starters.Add(entry.DriverId);
+                    break;
+                }
+            }
+        }
+
         var seats = new List<GridSeat>();
 
         foreach (var entry in pack.Entries)
         {
             if (!ParseRounds(entry).Contains(round))
+                continue;
+            if (starters is not null && !starters.Contains(entry.DriverId))
                 continue;
 
             seats.Add(BuildSeat(
@@ -50,6 +83,9 @@ public static class RoundGridResolver
         if (playerSeat is not null)
             seats = ApplyPlayerSeat(pack, packRound, seats, playerSeat);
 
+        if (packRound.Grid is { } capGrid)
+            seats = CapToGridSize(seats, capGrid.Size);
+
         return new GridPlan
         {
             PackId = pack.Manifest.PackId,
@@ -61,6 +97,29 @@ public static class RoundGridResolver
             TrackId = packRound.Track.Id,
             Seats = seats,
         };
+    }
+
+    /// <summary>Safety cap: the intersection can still exceed grid.size when the historical grid
+    /// itself was capped below the starter count by the track's Max AI participants (e.g. 1988
+    /// Australia: 26 starters, Adelaide caps at 25). Trim to <paramref name="size"/> keeping the
+    /// player seat unconditionally and, among the rest, the highest raceSkill (stable by original
+    /// order on ties) — the field's slowest tail is what the game would drop anyway.</summary>
+    private static List<GridSeat> CapToGridSize(List<GridSeat> seats, int size)
+    {
+        if (size < 1 || seats.Count <= size)
+            return seats;
+
+        var kept = seats
+            .Select((seat, index) => (seat, index))
+            .OrderByDescending(x => x.seat.IsPlayer)
+            .ThenByDescending(x => x.seat.Ratings.RaceSkill)
+            .ThenBy(x => x.index)
+            .Take(size)
+            .OrderBy(x => x.index)               // restore stable entries.json / guest order
+            .Select(x => x.seat)
+            .ToList();
+
+        return kept;
     }
 
     // ---------- seat construction ----------

@@ -323,29 +323,52 @@
                                           b:ListDragDropBehavior.IsDragSource="True">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="4,3" Background="Transparent"
+                                        <StackPanel Margin="4,3" Background="Transparent"
                                                     ContextMenu="{StaticResource DriverRowMenu}"
                                                     ToolTip="Drag back to Remaining to unmark; right-click for more">
-                                            <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
-                                                       FontWeight="SemiBold" />
-                                            <TextBlock Text="{Binding Seat.DriverName}" />
-                                            <TextBlock Foreground="{StaticResource TextMutedBrush}">
-                                                <Run Text=" — " /><Run Text="{Binding Reason, Mode=OneWay, Converter={StaticResource DnfReason}}" />
-                                            </TextBlock>
-                                            <!-- inline reason picker: appears on the freshly dropped row -->
-                                            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                           FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Seat.DriverName}" />
+                                                <!-- reason label: custom text when present, else the m/a/o word -->
+                                                <TextBlock Foreground="{StaticResource TextMutedBrush}">
+                                                    <Run Text=" — " /><Run Text="{Binding Mode=OneWay, Converter={StaticResource DnfReason}}" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <!-- inline reason picker: appears on the freshly dropped row. NON-BLOCKING —
+                                                 the DNF is already recorded; Remove takes it straight back to Remaining
+                                                 whether or not a reason was chosen (the mistaken-DNF fix) -->
+                                            <StackPanel Margin="46,3,0,0">
                                                 <StackPanel.Visibility>
                                                     <MultiBinding Converter="{StaticResource StringsEqualVisible}">
                                                         <Binding Path="DataContext.ReasonPickerDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                                         <Binding Path="Seat.DriverId" />
                                                     </MultiBinding>
                                                 </StackPanel.Visibility>
-                                                <Button Style="{StaticResource ReasonButton}" Content="Mech" Tag="m"
-                                                        Click="OnReasonPickClick" ToolTip="Mechanical failure" />
-                                                <Button Style="{StaticResource ReasonButton}" Content="Acc" Tag="a"
-                                                        Click="OnReasonPickClick" ToolTip="Accident" />
-                                                <Button Style="{StaticResource ReasonButton}" Content="Other" Tag="o"
-                                                        Click="OnReasonPickClick" ToolTip="Other / unspecified" />
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Mech" Tag="m"
+                                                            Click="OnReasonPickClick" ToolTip="Mechanical failure (no blame)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Acc" Tag="a"
+                                                            Click="OnReasonPickClick" ToolTip="Accident (driver error)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Other" Tag="o"
+                                                            Click="OnReasonPickClick" ToolTip="Other — name a custom cause" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Remove"
+                                                            Foreground="{StaticResource WarningBrush}"
+                                                            Click="OnReasonPickRemove"
+                                                            ToolTip="Mistake? Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
+                                                </StackPanel>
+                                                <!-- custom cause: only when the reason is "Other" -->
+                                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0"
+                                                            Visibility="{Binding Reason, Converter={StaticResource StringEqualsVisible}, ConverterParameter=o}">
+                                                    <TextBox Width="150" FontSize="12" Padding="5,1"
+                                                             Text="{Binding Detail, Mode=OneWay}"
+                                                             LostFocus="OnDnfDetailChanged" KeyDown="OnDnfDetailKeyDown"
+                                                             ToolTip="Name the cause, e.g. &quot;Engine fire&quot;, &quot;Spun off&quot; (Enter to confirm)" />
+                                                    <CheckBox Content="driver's fault" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                              FontSize="11" IsChecked="{Binding DriverAttributed, Mode=OneWay}"
+                                                              Click="OnDnfFaultToggle"
+                                                              ToolTip="Tick if this was the driver's error (affects your overperformance rating)" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
@@ -384,8 +407,14 @@
                                                     ContextMenu="{StaticResource DriverRowMenu}"
                                                     ToolTip="Drag back to Remaining to unmark; right-click for more">
                                             <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
-                                                       FontWeight="SemiBold" />
-                                            <TextBlock Text="{Binding DriverName}" />
+                                                       FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding DriverName}" VerticalAlignment="Center" MinWidth="90" />
+                                            <!-- free-text DSQ reason, e.g. "Underweight", "Illegal wing" -->
+                                            <TextBox Width="150" FontSize="12" Padding="5,1" Margin="8,0,0,0"
+                                                     VerticalAlignment="Center"
+                                                     Loaded="OnDsqReasonLoaded"
+                                                     LostFocus="OnDsqReasonChanged" KeyDown="OnDsqReasonKeyDown"
+                                                     ToolTip="Reason for disqualification (Enter to confirm) — optional" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

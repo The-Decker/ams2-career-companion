@@ -774,16 +774,21 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         };
     }
 
-    /// <summary>Maps the result screen's one-letter reason for the PLAYER onto the sim's
-    /// blame model: m(echanical) = no blame, a(ccident) = driver error, o(ther)/absent = null
-    /// (the fold applies its no-blame default).</summary>
+    /// <summary>Maps the result screen's reason for the PLAYER onto the sim's blame model:
+    /// m(echanical) = no blame, a(ccident) = driver error, o(ther) = the fold's no-blame
+    /// default UNLESS the custom detail was flagged as the driver's fault, in which case it is
+    /// driver error. The custom free text does not change blame on its own — only the explicit
+    /// attribution flag does — so "default custom-other = no-blame" holds (mandate M5 rule).</summary>
     private DnfCause? PlayerDnfCauseFrom(ResultDraft draft) =>
         draft.DidNotFinish.TryGetValue(_playerDriverId, out string? reason)
             ? reason switch
             {
                 "m" => DnfCause.Mechanical,
                 "a" => DnfCause.DriverError,
-                _ => null,
+                _ => draft.DidNotFinishDetail.TryGetValue(_playerDriverId, out var detail)
+                    && detail.DriverAttributed
+                        ? DnfCause.DriverError
+                        : null,
             }
             : null;
 

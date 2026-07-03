@@ -40,6 +40,13 @@ public sealed record PackRound
     /// <summary>100% historical race distance — the whole app assumes full-length races.</summary>
     public required int Laps { get; init; }
 
+    /// <summary>Optional historical grid for this round (the drivers who ACTUALLY started, mapped
+    /// from f1db to pack driver ids, plus the resolved grid size). When present, the resolver
+    /// seats only the covering entries whose driver id is in <see cref="PackRoundGrid.StarterDriverIds"/>
+    /// (plus guests and the player). When absent, every covering entry fills the grid — the pre-grid
+    /// behaviour — so a partial regen that omits it on some rounds cannot regress.</summary>
+    public PackRoundGrid? Grid { get; init; }
+
     /// <summary>Rendered on the Race Day briefing screen. The contract requires one on every
     /// round; the structural validator errors on championship rounds without one.</summary>
     public PackSetupGuide? SetupGuide { get; init; }
@@ -50,6 +57,22 @@ public sealed record PackRound
     /// <summary>Per-round rating tweaks: driver id -> partial ratings patch.</summary>
     public IReadOnlyDictionary<string, PackRatingsPatch> AiOverrides { get; init; } =
         new Dictionary<string, PackRatingsPatch>();
+}
+
+/// <summary>The drivers who actually started one round historically, mapped from f1db to this
+/// pack's driver ids, plus the resolved grid size. Additive/optional on <see cref="PackRound"/>:
+/// a round without it keeps the pre-grid behaviour (every covering entry fills the grid).</summary>
+public sealed record PackRoundGrid
+{
+    /// <summary>Number of cars on the grid for this round = min(historical starter count, the
+    /// track's Max AI participants). The resolver never seats more than this; the setup guide's
+    /// opponents is <c>size - 1</c> (the player replaces one historical driver).</summary>
+    public required int Size { get; init; }
+
+    /// <summary>Pack driver ids (drivers.json ids) of the historical starters. A driver id here
+    /// that no entry covers this round is simply ignored — the intersection with covering entries
+    /// is what seats the grid, so the block never fabricates a seat.</summary>
+    public IReadOnlyList<string> StarterDriverIds { get; init; } = [];
 }
 
 public sealed record PackTrackRef

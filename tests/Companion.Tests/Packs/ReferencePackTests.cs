@@ -165,6 +165,79 @@ public class ReferencePackTests
         }
     }
 
+    // ---------- historical per-round grid (the grid-cap fix) ----------
+
+    /// <summary>Every round carries a grid block, and its size never exceeds the track's Max AI
+    /// participants (the game's own cap) — the core promise of the grid-cap fix.</summary>
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_EveryRoundGridSizeFitsTheTrackAiCap(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        foreach (var round in pack.Season.Rounds)
+        {
+            Assert.True(round.Grid is not null,
+                $"{packId} round {round.Round} ({round.Name}) has no grid block — the grid-cap fix " +
+                "adds one to every round.");
+
+            var grid = round.Grid!;
+            Assert.True(grid.Size >= 1,
+                $"{packId} round {round.Round}: grid.size {grid.Size} must be at least 1.");
+
+            var track = Library.Value.Tracks[round.Track.Id];
+            Assert.True(grid.Size <= track.MaxAiParticipants,
+                $"{packId} round {round.Round}: grid.size {grid.Size} exceeds {round.Track.Id}'s " +
+                $"Max AI cap of {track.MaxAiParticipants}.");
+        }
+    }
+
+    /// <summary>grid.size never exceeds the number of entries covering the round: a grid cannot
+    /// seat more historical starters than the pack actually provides for that round.</summary>
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_EveryRoundGridSizeFitsItsCoveringEntryCount(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        foreach (var round in pack.Season.Rounds)
+        {
+            int covering = pack.Entries.Count(e =>
+                RoundsRange.TryParse(e.Rounds, out var r) && r!.Contains(round.Round))
+                + round.GuestEntries.Count;
+
+            Assert.True(round.Grid!.Size <= covering,
+                $"{packId} round {round.Round}: grid.size {round.Grid.Size} exceeds the {covering} " +
+                "covering entr(y/ies).");
+
+            // Every listed starter must be a covering entry's driver (else it would not seat).
+            var coveringDrivers = pack.Entries
+                .Where(e => RoundsRange.TryParse(e.Rounds, out var r) && r!.Contains(round.Round))
+                .Select(e => e.DriverId)
+                .Concat(round.GuestEntries.Select(g => g.DriverId))
+                .ToHashSet(StringComparer.Ordinal);
+            foreach (var starterId in round.Grid.StarterDriverIds)
+            {
+                Assert.Contains(starterId, coveringDrivers);
+            }
+        }
+    }
+
+    /// <summary>The setup guide's opponent count is grid.size - 1 on every round (the player
+    /// replaces one historical starter, so total cars == grid.size).</summary>
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_SetupGuideOpponentsIsGridSizeMinusOne(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        foreach (var round in pack.Season.Rounds)
+        {
+            Assert.NotNull(round.SetupGuide);
+            Assert.Equal(round.Grid!.Size - 1, round.SetupGuide!.Session.Opponents);
+        }
+    }
+
     // ---------- v1.1: real venues + placeholder distance preservation ----------
 
     [Theory]

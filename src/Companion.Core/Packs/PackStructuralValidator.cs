@@ -29,6 +29,7 @@ public static class PackStructuralValidator
         var entryRanges = ResolveEntryRanges(pack.Entries, rounds.Count, issues);
         CheckRoundCoverage(rounds, entryRanges, issues);
         CheckLiveryBindings(rounds, pack.Entries, entryRanges, issues);
+        CheckGrids(rounds, pack.Entries, entryRanges, driverIds, issues);
 
         return new PackValidationReport { Issues = issues };
     }
@@ -288,6 +289,60 @@ public static class PackStructuralValidator
             issues.Add(Error(
                 $"Livery '{livery}' is bound by more than one entry in round(s) " +
                 $"{string.Join(", ", dupRounds)} — only one driver can bind to a livery per race."));
+        }
+    }
+
+    // ---------- optional historical grid ----------
+
+    /// <summary>Grid block sanity (structural half — the venue AI-cap ceiling is a content check
+    /// that lives in Companion.Ams2's preflight). grid.size must be at least 1 and must not exceed
+    /// the number of entries whose rounds range covers the round (you cannot seat more historical
+    /// starters than the pack has entries for that round); every starterDriverIds id must be a
+    /// known pack driver. Grid is optional, so a round without one is not flagged.</summary>
+    private static void CheckGrids(
+        IReadOnlyList<PackRound> rounds,
+        IReadOnlyList<PackEntry> entries,
+        RoundsRange?[] entryRanges,
+        HashSet<string> driverIds,
+        List<PackIssue> issues)
+    {
+        foreach (var round in rounds)
+        {
+            if (round.Grid is not { } grid)
+                continue;
+
+            if (grid.Size < 1)
+            {
+                issues.Add(Error(
+                    $"Round {round.Round} ({round.Name}) grid.size is {grid.Size}; a grid needs at least 1 car."));
+            }
+
+            foreach (var driverId in grid.StarterDriverIds)
+            {
+                if (!driverIds.Contains(driverId))
+                    issues.Add(Error(
+                        $"Round {round.Round} ({round.Name}) grid.starterDriverIds references unknown driver '{driverId}'."));
+            }
+
+            int covering = 0;
+            for (int i = 0; i < entries.Count; i++)
+            {
+                if (entryRanges[i]?.Contains(round.Round) == true)
+                    covering++;
+            }
+            covering += round.GuestEntries.Count;
+
+            if (grid.Size > covering)
+                issues.Add(Error(
+                    $"Round {round.Round} ({round.Name}) grid.size {grid.Size} exceeds the {covering} " +
+                    "entr(y/ies) covering the round — the grid cannot seat more cars than the pack provides."));
+
+            // The setup guide is authored so the total grid is grid.size (player replaces one
+            // historical starter): opponents should be exactly grid.size - 1.
+            if (round.SetupGuide is { } guide && grid.Size >= 1 && guide.Session.Opponents != grid.Size - 1)
+                issues.Add(Warning(
+                    $"Round {round.Round} ({round.Name}) setupGuide opponents={guide.Session.Opponents} " +
+                    $"but grid.size={grid.Size}; expected opponents = grid.size - 1 = {grid.Size - 1}."));
         }
     }
 

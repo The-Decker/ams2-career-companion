@@ -40,9 +40,28 @@
         ]
       },
       "laps": 80,
+      "grid": {
+        "size": 14,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.chris_amon",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.peter_de_klerk"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 14,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-03-01",
           "weatherSlots": [
@@ -70,9 +89,27 @@
         ]
       },
       "laps": 87,
+      "grid": {
+        "size": 13,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.chris_amon",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 12,
           "startTime": "14:00",
           "date": "1969-05-04",
           "weatherSlots": [
@@ -100,9 +137,27 @@
         ]
       },
       "laps": 80,
+      "grid": {
+        "size": 13,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.chris_amon",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.silvio_moser"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 12,
           "startTime": "14:00",
           "date": "1969-05-18",
           "weatherSlots": [
@@ -141,9 +196,29 @@
         ]
       },
       "laps": 64,
+      "grid": {
+        "size": 15,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.chris_amon",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.vic_elford",
+          "driver.silvio_moser"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 15,
+          "opponents": 14,
           "startTime": "14:00",
           "date": "1969-06-21",
           "weatherSlots": [
@@ -172,9 +247,26 @@
         ]
       },
       "laps": 47,
+      "grid": {
+        "size": 12,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.chris_amon",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.vic_elford",
+          "driver.silvio_moser"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 12,
+          "opponents": 11,
           "startTime": "14:00",
           "date": "1969-07-06",
           "weatherSlots": [
@@ -202,9 +294,30 @@
         ]
       },
       "laps": 84,
+      "grid": {
+        "size": 16,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.vic_elford",
+          "driver.jo_bonnier",
+          "driver.derek_bell"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 16,
+          "opponents": 15,
           "startTime": "14:00",
           "date": "1969-07-19",
           "weatherSlots": [
@@ -235,9 +348,30 @@
         "fallbacks": []
       },
       "laps": 14,
+      "grid": {
+        "size": 16,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.jackie_oliver",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.vic_elford",
+          "driver.jo_bonnier",
+          "driver.richard_attwood",
+          "driver.henri_pescarolo",
+          "driver.francois_cevert"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 18,
+          "opponents": 15,
           "startTime": "14:00",
           "date": "1969-08-03",
           "weatherSlots": [
@@ -263,9 +397,28 @@
         "fallbacks": []
       },
       "laps": 68,
+      "grid": {
+        "size": 14,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.silvio_moser"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 14,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-09-07",
           "weatherSlots": [
@@ -304,9 +457,29 @@
         "fallbacks": []
       },
       "laps": 90,
+      "grid": {
+        "size": 15,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.silvio_moser",
+          "driver.pete_lovely"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 15,
+          "opponents": 14,
           "startTime": "14:00",
           "date": "1969-09-20",
           "weatherSlots": [
@@ -332,9 +505,30 @@
         "fallbacks": []
       },
       "laps": 108,
+      "grid": {
+        "size": 16,
+        "starterDriverIds": [
+          "driver.graham_hill",
+          "driver.jochen_rindt",
+          "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.silvio_moser",
+          "driver.pete_lovely",
+          "driver.george_eaton"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 15,
           "startTime": "14:00",
           "date": "1969-10-05",
           "weatherSlots": [
@@ -362,9 +556,28 @@
         ]
       },
       "laps": 41,
+      "grid": {
+        "size": 14,
+        "starterDriverIds": [
+          "driver.jochen_rindt",
+          "driver.jo_siffert",
+          "driver.denny_hulme",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
+          "driver.jackie_oliver",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.piers_courage",
+          "driver.silvio_moser",
+          "driver.pete_lovely",
+          "driver.george_eaton"
+        ]
+      },
       "setupGuide": {
         "session": {
-          "opponents": 15,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-10-19",
           "weatherSlots": [

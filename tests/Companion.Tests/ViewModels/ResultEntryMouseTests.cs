@@ -243,6 +243,179 @@ public class ResultEntryMouseTests
         Assert.Null(vm.ReasonPickerDriverId);
     }
 
+    // ---------- the mistaken-DNF fix: removable BEFORE and AFTER a reason is set ----------
+
+    [Fact]
+    public void MistakenDnf_IsRemovable_BeforeAnyReasonIsChosen()
+    {
+        // Mike's report: dropping a driver to DNF must never trap them, even with no reason.
+        var vm = Vm();
+        Assert.True(vm.MarkDnf("d.stewart")); // defaults to "o", no reason picked yet
+
+        // drag back to Remaining
+        Assert.True(vm.Unmark("d.stewart"));
+        Assert.Empty(vm.Dnfs);
+        Assert.Contains("d.stewart", Ids(vm.Remaining));
+
+        // and the same via Ctrl+Z on a fresh mistake
+        Assert.True(vm.MarkDnf("d.gurney"));
+        vm.UndoCommand.Execute(null);
+        Assert.Empty(vm.Dnfs);
+        Assert.Contains("d.gurney", Ids(vm.Remaining));
+    }
+
+    [Fact]
+    public void MistakenDnf_IsRemovable_AfterAReasonIsSet()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart");
+        Assert.True(vm.SetDnfReason("d.stewart", "m")); // a reason was chosen
+
+        // still fully removable — no blocking state
+        Assert.True(vm.Unmark("d.stewart"));
+        Assert.Empty(vm.Dnfs);
+        Assert.Contains("d.stewart", Ids(vm.Remaining));
+    }
+
+    [Fact]
+    public void MarkDnfAndSetReason_AreIndependent_EachSeparatelyUndoable()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart");           // step 1: mark (reason "o")
+        vm.SetDnfReason("d.stewart", "a"); // step 2: reason edit
+
+        vm.UndoCommand.Execute(null);      // undo only the reason edit
+        Assert.Equal("o", vm.Dnfs.Single().Reason);
+        Assert.Single(vm.Dnfs);            // still DNF
+
+        vm.UndoCommand.Execute(null);      // undo the mark itself
+        Assert.Empty(vm.Dnfs);
+        Assert.Contains("d.stewart", Ids(vm.Remaining));
+    }
+
+    // ---------- custom "Other" free text ----------
+
+    [Fact]
+    public void SetDnfDetail_RoundTripsCustomOtherTextIntoTheDraft()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart"); // "o"
+        Assert.True(vm.SetDnfDetail("d.stewart", "Engine fire"));
+
+        var entry = vm.Dnfs.Single();
+        Assert.Equal("o", entry.Reason);
+        Assert.Equal("Engine fire", entry.Detail);
+        Assert.False(entry.DriverAttributed);
+
+        var draft = vm.BuildDraft();
+        Assert.Equal("o", draft.DidNotFinish["d.stewart"]);           // letter seam intact
+        Assert.Equal("Engine fire", draft.DidNotFinishDetail["d.stewart"].Text);
+        Assert.False(draft.DidNotFinishDetail["d.stewart"].DriverAttributed);
+    }
+
+    [Fact]
+    public void SetDnfDetail_DriverAttributedFlag_RoundTrips()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart");
+        Assert.True(vm.SetDnfDetail("d.stewart", "Spun off", driverAttributed: true));
+
+        var draft = vm.BuildDraft();
+        Assert.True(draft.DidNotFinishDetail["d.stewart"].DriverAttributed);
+        Assert.Equal("Spun off", draft.DidNotFinishDetail["d.stewart"].Text);
+    }
+
+    [Fact]
+    public void SetDnfDetail_IsUndoable_AndClearedWhenReasonLeavesOther()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart");
+        vm.SetDnfDetail("d.stewart", "Engine fire");
+
+        // switching to mechanical drops the custom detail (m has a fixed meaning)
+        Assert.True(vm.SetDnfReason("d.stewart", "m"));
+        Assert.Null(vm.Dnfs.Single().Detail);
+        var draft = vm.BuildDraft();
+        Assert.False(draft.DidNotFinishDetail.ContainsKey("d.stewart"));
+
+        // undo restores the "o" + custom text as one step
+        vm.UndoCommand.Execute(null);
+        Assert.Equal("o", vm.Dnfs.Single().Reason);
+        Assert.Equal("Engine fire", vm.Dnfs.Single().Detail);
+    }
+
+    [Fact]
+    public void SetDnfDetail_OnANonDnfDriver_ReturnsFalse()
+    {
+        var vm = Vm();
+        vm.InsertAt("d.clark", 0);
+        Assert.False(vm.SetDnfDetail("d.clark", "whatever")); // classified, not DNF
+        Assert.False(vm.SetDnfDetail("d.stewart", "whatever")); // unresolved
+    }
+
+    [Fact]
+    public void CustomOtherText_DoesNotLeakIntoUntouchedDnfs()
+    {
+        var vm = Vm();
+        vm.MarkDnf("d.stewart", "m"); // mechanical, no detail
+        vm.MarkDnf("d.gurney");       // plain "o", no detail
+
+        var draft = vm.BuildDraft();
+        Assert.Empty(draft.DidNotFinishDetail); // nothing customised → empty map
+    }
+
+    // ---------- custom DSQ reason ----------
+
+    [Fact]
+    public void SetDsqReason_RoundTripsCustomTextIntoTheDraft()
+    {
+        var vm = Vm();
+        vm.MarkDsq("d.stewart");
+        Assert.True(vm.SetDsqReason("d.stewart", "Underweight"));
+        Assert.Equal("Underweight", vm.DsqReasonOf("d.stewart"));
+
+        var draft = vm.BuildDraft();
+        Assert.Contains("d.stewart", draft.Disqualified);          // list seam intact
+        Assert.Equal("Underweight", draft.DisqualifiedDetail["d.stewart"]);
+    }
+
+    [Fact]
+    public void SetDsqReason_IsUndoable_AndDroppedWhenTheDriverIsUnmarked()
+    {
+        var vm = Vm();
+        vm.MarkDsq("d.stewart");
+        vm.SetDsqReason("d.stewart", "Illegal wing");
+
+        vm.UndoCommand.Execute(null); // undo the reason only
+        Assert.Equal("", vm.DsqReasonOf("d.stewart"));
+        Assert.Single(vm.Disqualified); // still DSQ
+
+        // set it again, then unmark: the reason must not survive back to Remaining
+        vm.SetDsqReason("d.stewart", "Illegal wing");
+        vm.Unmark("d.stewart");
+        Assert.Equal("", vm.DsqReasonOf("d.stewart"));
+        vm.MarkDsq("d.stewart");
+        Assert.Equal("", vm.DsqReasonOf("d.stewart")); // fresh DSQ, no stale reason
+    }
+
+    [Fact]
+    public void SetDsqReason_OnANonDsqDriver_ReturnsFalse()
+    {
+        var vm = Vm();
+        vm.InsertAt("d.clark", 0);
+        Assert.False(vm.SetDsqReason("d.clark", "x")); // classified, not DSQ
+        Assert.False(vm.SetDsqReason("d.stewart", "x")); // unresolved
+    }
+
+    [Fact]
+    public void CustomDsqReason_DoesNotLeakIntoUntouchedDsqs()
+    {
+        var vm = Vm();
+        vm.MarkDsq("d.stewart"); // no reason
+        var draft = vm.BuildDraft();
+        Assert.Empty(draft.DisqualifiedDetail);
+    }
+
     // ---------- MarkDsq / Unmark ----------
 
     [Fact]

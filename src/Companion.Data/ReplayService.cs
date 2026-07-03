@@ -595,10 +595,19 @@ public static class ReplayService
     {
         if (liveryName is null)
             return null;
-        var plan = RoundGridResolver.Resolve(pack, round);
-        if (!plan.Seats.Any(s => string.Equals(s.Ams2LiveryName, liveryName, StringComparison.Ordinal)))
+
+        // The player takes a REAL seat even when the driver they replace did not start this round
+        // historically (a per-round grid excludes non-starters). Resolve directly with the player
+        // seat — the resolver adds the player's covering entry back to the grid — and treat an
+        // absent seat (the player's team is simply not entered this round) as "did not race".
+        try
+        {
+            return RoundGridResolver.Resolve(pack, round, new PlayerSeat { Ams2LiveryName = liveryName });
+        }
+        catch (InvalidOperationException)
+        {
             return null;
-        return RoundGridResolver.Resolve(pack, round, new PlayerSeat { Ams2LiveryName = liveryName });
+        }
     }
 
     /// <summary>The player's outcome in the round's race classification, or null when the

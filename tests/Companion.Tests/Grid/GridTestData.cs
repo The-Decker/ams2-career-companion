@@ -98,15 +98,23 @@ internal static class GridTestData
         int round,
         string trackId = "kyalami_historic",
         IReadOnlyList<PackGuestEntry>? guestEntries = null,
-        IReadOnlyDictionary<string, PackRatingsPatch>? aiOverrides = null) => new()
+        IReadOnlyDictionary<string, PackRatingsPatch>? aiOverrides = null,
+        PackRoundGrid? grid = null) => new()
     {
         Round = round,
         Name = $"Test Grand Prix {round}",
         Date = "1967-01-02",
         Track = new PackTrackRef { Id = trackId, RealVenue = "Test Venue" },
         Laps = 10,
+        Grid = grid,
         GuestEntries = guestEntries ?? [],
         AiOverrides = aiOverrides ?? new Dictionary<string, PackRatingsPatch>(),
+    };
+
+    public static PackRoundGrid Grid(int size, params string[] starterDriverIds) => new()
+    {
+        Size = size,
+        StarterDriverIds = starterDriverIds,
     };
 
     public static SeasonPack Pack(

@@ -39,6 +39,7 @@
     <conv:EnumEqualsToVisibilityConverter x:Key="EnumVisible" />
     <conv:AlternationPositionConverter x:Key="AltPosition" />
     <conv:DnfReasonConverter x:Key="DnfReason" />
+    <conv:StringEqualsToVisibilityConverter x:Key="StringEqualsVisible" />
     <conv:GlyphBrushConverter x:Key="GlyphBrush" />
     <conv:CandidatesVisibilityConverter x:Key="CandidatesVisible" />
 
@@ -302,9 +303,16 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- Tab headers are keyboard peers of the mouse (locked decision 8): a TabItem is
+         Focusable/IsTabStop so Tab, the arrow keys and Ctrl+Tab reach and switch tabs, with a
+         keyboard-focus highlight drawn on the header itself. (A prior build set
+         Focusable=False, which silently killed keyboard tab switching on the standings screen —
+         the Drivers, Constructors and Round-matrix tabs could only be reached with the mouse.) -->
     <Style TargetType="TabItem">
         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
@@ -321,6 +329,12 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                        </Trigger>
+                        <!-- keyboard focus highlight: only paints for Tab/arrow focus, never for
+                             the mouse, so keyboard users can always see which tab is active -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentDimBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -115,9 +115,16 @@
                    Text="No rounds applied yet — standings appear after the first result."
                    Visibility="{Binding DriverRows.Count, Converter={StaticResource CountCollapsed}}" />
 
+        <!-- The VM owns the tab set (StandingsViewModel.Tabs): each TabItem's visibility binds
+             to a Show*Tab flag so no tab is ever hard-hidden in XAML. Drivers + Round matrix
+             appear once a round is applied; Constructors appears only for a season with a
+             constructors championship. SelectedTabIndex is guarded by the VM to never start on
+             a hidden tab, so every shown tab is switchable by mouse (click) and keyboard
+             (Tab/arrows — the TabItem style is keyboard-focusable, locked decision 8). -->
         <TabControl SelectedIndex="{Binding SelectedTabIndex}"
                     Visibility="{Binding DriverRows.Count, Converter={StaticResource CountVisible}}">
-            <TabItem Header="Drivers">
+            <TabItem Header="Drivers"
+                     Visibility="{Binding ShowDriversTab, Converter={StaticResource BoolVisible}}">
                 <DockPanel MaxWidth="760" HorizontalAlignment="Left">
                     <ContentPresenter DockPanel.Dock="Top" ContentTemplate="{StaticResource TableHeader}"
                                       Content="{Binding}" />
@@ -129,7 +136,7 @@
             </TabItem>
 
             <TabItem Header="Constructors"
-                     Visibility="{Binding HasConstructors, Converter={StaticResource BoolVisible}}">
+                     Visibility="{Binding ShowConstructorsTab, Converter={StaticResource BoolVisible}}">
                 <DockPanel MaxWidth="760" HorizontalAlignment="Left">
                     <ContentPresenter DockPanel.Dock="Top" ContentTemplate="{StaticResource TableHeader}"
                                       Content="{Binding}" />
@@ -139,7 +146,8 @@
                 </DockPanel>
             </TabItem>
 
-            <TabItem Header="Round matrix">
+            <TabItem Header="Round matrix"
+                     Visibility="{Binding ShowMatrixTab, Converter={StaticResource BoolVisible}}">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Faint}" Margin="4,8,0,0"
                                Text="Struck-through cells are dropped results (best-N rule); points per round as scored." />

@@ -201,6 +201,67 @@ public class StandingsViewModelTests
         Assert.Equal("Ferrari", vm.ConstructorRows.Single(r => r.CompetitorId == "t.ferrari").DisplayName);
     }
 
+    // ---------- tab model (all applicable tabs present + selectable) ----------
+
+    [Fact]
+    public void AfterARound_AConstructorsSeason_ShowsAllThreeTabs_EachSelectable()
+    {
+        // A round has been applied to a season WITH a constructors championship (1967-style):
+        // Drivers, Constructors and Round matrix must all be present and reachable — the exact
+        // regression Mike hit where only Drivers showed after entering a round.
+        var vm = Vm();
+
+        Assert.True(vm.HasConstructors);
+        Assert.Equal(
+            new[] { StandingsTabKind.Drivers, StandingsTabKind.Constructors, StandingsTabKind.Matrix },
+            vm.Tabs.Select(t => t.Kind));
+        Assert.Equal(new[] { "Drivers", "Constructors", "Round matrix" }, vm.Tabs.Select(t => t.Header));
+        Assert.True(vm.ShowDriversTab);
+        Assert.True(vm.ShowConstructorsTab);
+        Assert.True(vm.ShowMatrixTab);
+
+        // Every shown tab is selectable by index (the same SelectedTabIndex that both the
+        // mouse click and the keyboard drive), and lands on the tab it names.
+        foreach (var tab in vm.Tabs)
+        {
+            vm.SelectedTabIndex = tab.Index;
+            Assert.Equal(tab.Index, vm.SelectedTabIndex);
+        }
+    }
+
+    [Fact]
+    public void ConstructorsTab_HiddenOnlyWhenTheSeasonHasNoConstructorsChampionship()
+    {
+        // With a constructors championship the tab is present...
+        Assert.Contains(Vm().Tabs, t => t.Kind == StandingsTabKind.Constructors);
+
+        // ...and only a season that genuinely has none (pre-1958) hides it, while Drivers and
+        // Round matrix stay present and selectable.
+        var rules = Rules() with { Constructors = null };
+        var result = StandingsEngine.ComputeSeason(
+            rules.ResolveScoringDefinition(3),
+            [Round(1, "d1", "d2", "d3", "d4")]);
+        var vm = new StandingsViewModel(result.Snapshots, Pack(rules));
+
+        Assert.False(vm.ShowConstructorsTab);
+        Assert.DoesNotContain(vm.Tabs, t => t.Kind == StandingsTabKind.Constructors);
+        Assert.Equal(
+            new[] { StandingsTabKind.Drivers, StandingsTabKind.Matrix },
+            vm.Tabs.Select(t => t.Kind));
+    }
+
+    [Fact]
+    public void BeforeAnyRound_NoTabsAreShown()
+    {
+        // The whole table area is hidden until the first result; no tab claims to be present.
+        var vm = new StandingsViewModel([], Pack());
+
+        Assert.Empty(vm.Tabs);
+        Assert.False(vm.ShowDriversTab);
+        Assert.False(vm.ShowConstructorsTab);
+        Assert.False(vm.ShowMatrixTab);
+    }
+
     // ---------- round matrix ----------
 
     [Fact]

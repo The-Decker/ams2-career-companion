@@ -37,6 +37,23 @@ public sealed record RoundMatrixRow(
     string DisplayName,
     IReadOnlyList<RoundMatrixCell> Cells);
 
+/// <summary>Which standings table a tab shows. The int values are the persisted
+/// <c>StandingsTabIndex</c> slots — Drivers 0, Constructors 1, Round matrix 2 — so a saved
+/// index maps straight onto a tab kind even when a hidden tab shifts the visible order.</summary>
+public enum StandingsTabKind
+{
+    Drivers = 0,
+    Constructors = 1,
+    Matrix = 2,
+}
+
+/// <summary>One tab of the standings screen: its kind, header text, and the fixed selection
+/// index the view's TabControl uses. Only the tabs that actually apply to this season appear
+/// in <see cref="StandingsViewModel.Tabs"/> — the Constructors tab is present only when the
+/// season runs a constructors championship (pre-1958 seasons legitimately omit it), and every
+/// tab is present only once at least one round has been applied.</summary>
+public sealed record StandingsTab(StandingsTabKind Kind, string Header, int Index);
+
 /// <summary>
 /// The standings screen: drivers + constructors tabs built from the latest snapshot (gross vs
 /// counted points with dropped-round markers), the round matrix (driver × round → that round's
@@ -114,13 +131,59 @@ public sealed partial class StandingsViewModel : ObservableObject
         _showDroppedColumn = columns.ShowDropped;
         _showPerRoundColumn = columns.ShowPerRound;
 
-        // Tab memory: reopen on the tab last used (0 drivers, 1 constructors, 2 matrix);
-        // a remembered constructors tab degrades to drivers when this season has none.
+        // The tab set for this season: Drivers + Round matrix once a round is applied, plus
+        // Constructors only when the season runs a constructors championship. The view binds
+        // each TabItem's visibility to Show*Tab (all derived from this list) so a tab is never
+        // hard-hidden in XAML — the VM alone decides which tabs exist, and the host tests can
+        // read exactly what the user can reach. Indexes stay the fixed persistence slots
+        // (Drivers 0 / Constructors 1 / Matrix 2) so a hidden Constructors tab leaves gaps
+        // rather than renumbering the others.
+        bool hasRounds = _driverRowsBase.Count > 0;
+        var tabs = new List<StandingsTab>();
+        if (hasRounds)
+        {
+            tabs.Add(new StandingsTab(StandingsTabKind.Drivers, "Drivers", (int)StandingsTabKind.Drivers));
+            if (HasConstructors)
+                tabs.Add(new StandingsTab(StandingsTabKind.Constructors, "Constructors", (int)StandingsTabKind.Constructors));
+            tabs.Add(new StandingsTab(StandingsTabKind.Matrix, "Round matrix", (int)StandingsTabKind.Matrix));
+        }
+        Tabs = tabs;
+
+        // Tab memory: reopen on the tab last used (0 drivers, 1 constructors, 2 matrix), but
+        // never land on a tab this season does not show — a remembered Constructors tab (or a
+        // hand-edited out-of-range index) degrades to Drivers, and the round matrix stays
+        // reachable. Both mouse and keyboard drive SelectedTabIndex, so this one guard keeps
+        // every applicable tab switchable by either input (locked decision 8).
         int savedTab = settings?.Current.StandingsTabIndex ?? 0;
-        selectedTabIndex = savedTab == 1 && !HasConstructors ? 0 : Math.Clamp(savedTab, 0, 2);
+        selectedTabIndex = ResolveInitialTab(savedTab);
     }
 
     // ---------- tabs (persisted) ----------
+
+    /// <summary>The tabs this season actually shows, in display order: Drivers, then
+    /// Constructors (only with a constructors championship), then Round matrix — and only once
+    /// a round has been applied. The view renders exactly these; host tests assert against
+    /// them.</summary>
+    public IReadOnlyList<StandingsTab> Tabs { get; }
+
+    /// <summary>The Drivers tab shows once a round has been applied.</summary>
+    public bool ShowDriversTab => Tabs.Any(t => t.Kind == StandingsTabKind.Drivers);
+
+    /// <summary>The Constructors tab shows only for a season with a constructors championship
+    /// (and once a round has been applied). Pre-1958 seasons legitimately omit it.</summary>
+    public bool ShowConstructorsTab => Tabs.Any(t => t.Kind == StandingsTabKind.Constructors);
+
+    /// <summary>The Round-matrix tab shows once a round has been applied.</summary>
+    public bool ShowMatrixTab => Tabs.Any(t => t.Kind == StandingsTabKind.Matrix);
+
+    /// <summary>Snaps a candidate persistence index onto a tab this season shows: the exact
+    /// tab when it is present, otherwise the first shown tab (Drivers), otherwise 0.</summary>
+    private int ResolveInitialTab(int candidate)
+    {
+        if (Tabs.Any(t => t.Index == candidate))
+            return candidate;
+        return Tabs.Count > 0 ? Tabs[0].Index : 0;
+    }
 
     [ObservableProperty]
     private int selectedTabIndex;

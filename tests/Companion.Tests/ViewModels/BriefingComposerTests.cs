@@ -36,7 +36,8 @@ public class BriefingComposerTests
             ("Date", "1967-06-04"),
             ("Start time", "14:00"),
             ("Weather slot 1", "Clear"),
-            ("Opponents", "14"),
+            // grid.size 14 (14 historical starters) - 1 for the player's seat.
+            ("Opponents", "13"),
             ("Time progression", "1x"),
             ("Mandatory pit stop", "No"),
         ], briefing.Settings.Select(s => (s.Label, s.Value)));
@@ -67,7 +68,8 @@ public class BriefingComposerTests
             ("Date", "1967-01-02"),
             ("Start time", "14:00"),
             ("Weather slot 1", "Clear"),
-            ("Opponents", "11"),
+            // grid.size 11 (11 historical starters) - 1 for the player's seat.
+            ("Opponents", "10"),
             ("Time progression", "1x"),
             ("Mandatory pit stop", "No"),
         ], briefing.Settings.Select(s => (s.Label, s.Value)));

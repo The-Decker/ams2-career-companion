@@ -56,17 +56,32 @@ public static class PackContentValidator
             string where = $"Round {round.Round} ({round.Name})";
             int? grid = round.SetupGuide is { } guide ? guide.Session.Opponents + 1 : null;
 
+            // The historical grid (when present) is the authoritative total-cars figure; it must
+            // also fit the venue AI cap. size = min(historical starters, cap) at authoring time,
+            // so a size above the cap is an authoring/data bug.
+            int? gridSize = round.Grid?.Size;
+
             // Primary venue: existence is an error, cap violation is an error.
             if (!library.Tracks.TryGetValue(round.Track.Id, out var track))
             {
                 issues.Add(Error(MissingTrackMessage($"{where} track id", round.Track.Id, library)));
             }
-            else if (grid > track.MaxAiParticipants)
+            else
             {
-                issues.Add(Error(
-                    $"{where}: setupGuide grid of {grid} (opponents + player) exceeds " +
-                    $"{track.TrackName ?? track.Id}'s AI cap of {track.MaxAiParticipants} — " +
-                    "the game will fill fewer cars than the entry list."));
+                if (grid > track.MaxAiParticipants)
+                {
+                    issues.Add(Error(
+                        $"{where}: setupGuide grid of {grid} (opponents + player) exceeds " +
+                        $"{track.TrackName ?? track.Id}'s AI cap of {track.MaxAiParticipants} — " +
+                        "the game will fill fewer cars than the entry list."));
+                }
+
+                if (gridSize > track.MaxAiParticipants)
+                {
+                    issues.Add(Error(
+                        $"{where}: grid.size {gridSize} exceeds {track.TrackName ?? track.Id}'s AI cap of " +
+                        $"{track.MaxAiParticipants} — size must be min(historical starters, the venue's Max AI)."));
+                }
             }
 
             // Fallback venues: existence is still an error (a dangling fallback id is an

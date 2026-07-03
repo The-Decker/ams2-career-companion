@@ -15,8 +15,11 @@ public enum ResultEntryPhase
     Dnf,
 }
 
-/// <summary>A retired seat with its one-letter reason ("m" mechanical, "a" accident, "o" other).</summary>
-public sealed record DnfEntry(GridSeat Seat, string Reason);
+/// <summary>A retired seat with its one-letter reason ("m" mechanical, "a" accident, "o" other)
+/// and, for a customised "other", optional free text plus whether the cause is the driver's
+/// fault. <see cref="Detail"/> is only ever set alongside reason "o"; marking DNF and editing
+/// the reason/detail are independent, separately-undoable steps.</summary>
+public sealed record DnfEntry(GridSeat Seat, string Reason, string? Detail = null, bool DriverAttributed = false);
 
 /// <summary>
 /// The result-entry keyboard grammar as a pure, WPF-free state machine
@@ -51,6 +54,11 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     private readonly List<GridSeat> _classified = [];
     private readonly List<DnfEntry> _dnfs = [];
     private readonly List<GridSeat> _disqualified = [];
+
+    // Optional free-text DSQ reason per disqualified driver (e.g. "Underweight"). Parallel to
+    // _disqualified so the Disqualified list itself stays a plain GridSeat list; snapshotted
+    // with it so custom reasons undo/redo in lockstep.
+    private readonly Dictionary<string, string> _dsqReasons = new(StringComparer.Ordinal);
 
     private readonly Stack<Snapshot> _undoStack = new();
 
@@ -140,6 +148,11 @@ public sealed partial class ResultEntryViewModel : ObservableObject
 
     public IReadOnlyList<GridSeat> Disqualified => _disqualified.ToArray();
 
+    /// <summary>The free-text DSQ reason for a disqualified driver, or "" when none is set /
+    /// the driver is not DSQ'd. Bound by the DSQ row's reason box.</summary>
+    public string DsqReasonOf(string driverId) =>
+        _dsqReasons.TryGetValue(driverId, out string? reason) ? reason : "";
+
     public int ResolvedCount => _classified.Count + _dnfs.Count + _disqualified.Count;
 
     /// <summary>Footer progress, e.g. "14/26 placed".</summary>
@@ -172,8 +185,20 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     public ResultDraft BuildDraft() => new()
     {
         Classified = _classified.Select(s => s.DriverId).ToArray(),
+        // The letter map stays pure m/a/o — the stable seam every existing consumer reads.
         DidNotFinish = _dnfs.ToDictionary(d => d.Seat.DriverId, d => d.Reason, StringComparer.Ordinal),
+        // Custom text / driver-error attribution rides alongside, only for the "o" rows that
+        // actually carry it — untouched DNFs never appear here.
+        DidNotFinishDetail = _dnfs
+            .Where(d => !string.IsNullOrEmpty(d.Detail) || d.DriverAttributed)
+            .ToDictionary(
+                d => d.Seat.DriverId,
+                d => new DnfDetail { Text = d.Detail ?? "", DriverAttributed = d.DriverAttributed },
+                StringComparer.Ordinal),
         Disqualified = _disqualified.Select(s => s.DriverId).ToArray(),
+        DisqualifiedDetail = _disqualified
+            .Where(s => _dsqReasons.TryGetValue(s.DriverId, out string? r) && !string.IsNullOrEmpty(r))
+            .ToDictionary(s => s.DriverId, s => _dsqReasons[s.DriverId], StringComparer.Ordinal),
         SliderUsed = Math.Clamp(
             Math.Round(SliderUsed, MidpointRounding.AwayFromZero), MinSlider, MaxSlider),
     };
@@ -206,6 +231,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
 
             case PendingKind.Disqualify:
                 _classified.Remove(seat); // no-op when the driver was unplaced
+                _dsqReasons.Remove(seat.DriverId); // fresh DSQ carries no stated reason
                 _disqualified.Add(seat);
                 break;
 
@@ -263,6 +289,9 @@ public sealed partial class ResultEntryViewModel : ObservableObject
         _dnfs.AddRange(snapshot.Dnfs);
         _disqualified.Clear();
         _disqualified.AddRange(snapshot.Disqualified);
+        _dsqReasons.Clear();
+        foreach (var pair in snapshot.DsqReasons)
+            _dsqReasons[pair.Key] = pair.Value;
 
         RaiseStateChanged();
     }
@@ -467,10 +496,15 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     private sealed record Snapshot(
         GridSeat[] Classified,
         DnfEntry[] Dnfs,
-        GridSeat[] Disqualified);
+        GridSeat[] Disqualified,
+        KeyValuePair<string, string>[] DsqReasons);
 
     private void PushUndo() =>
-        _undoStack.Push(new Snapshot(_classified.ToArray(), _dnfs.ToArray(), _disqualified.ToArray()));
+        _undoStack.Push(new Snapshot(
+            _classified.ToArray(),
+            _dnfs.ToArray(),
+            _disqualified.ToArray(),
+            _dsqReasons.ToArray()));
 
     private bool IsResolved(string driverId) =>
         _classified.Any(s => s.DriverId == driverId) ||
