@@ -51,6 +51,17 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
   keeps NAMeS-first no-op staging honest.
 - Directory-driven pack tests: every future pack is auto-held to the exemplar bar.
 
+## ✅ v0.3.1 — manual-test fixes (2026-07-03, 946/946)
+
+- **Per-round grid caps:** each round now grids only the drivers who actually started it
+  (f1db), capped at the track's AI limit — not every season entrant. 1988/1992 → 26,
+  1967 → ~11–15. Extra entrants stay in the pack for one-off drives. *(Open: if AMS2 caps
+  a class's grid below the track number, Mike's in-game figure folds in as a further min().)*
+- **DNF fix:** a mistaken DNF is always removable/undoable (not locked behind the reason
+  picker); "Other" and DSQ now take free-text reasons.
+- **Standings tabs:** Drivers / Constructors / Round-matrix all visible and keyboard-operable
+  after a round (the tab style was `Focusable=False` — a decision-8 violation).
+
 ## ⏸ Awaiting Mike — career hub direction
 
 - **Career hub design spec is written** (docs/dev/career-hub-design.md) — a 3-design judge
