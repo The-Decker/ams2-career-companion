@@ -62,6 +62,14 @@ this file tracks where we are against it. Test suite at last checkpoint: **785/7
 - **Standings tabs:** Drivers / Constructors / Round-matrix all visible and keyboard-operable
   after a round (the tab style was `Focusable=False` — a decision-8 violation).
 
+## ✅ v0.3.2 — NAMeS-primary + DNF view fixes (2026-07-03, 964/964)
+
+- **NAMeS-primary:** your installed CustomAIDrivers AI file is now the authority for valid
+  livery names — the false "won't bind" warnings for names your file defines (the 1990
+  Dallara case) are gone; staging defers to your installed names/ratings when found.
+- **DNF textbox focus** (caret vanished) and **mech/acc undo** fixed — verified with a new
+  off-screen WPF **render harness** (now a permanent repo project for catching view regressions).
+
 ## ⏸ Awaiting Mike — career hub direction
 
 - **Career hub design spec is written** (docs/dev/career-hub-design.md) — a 3-design judge
