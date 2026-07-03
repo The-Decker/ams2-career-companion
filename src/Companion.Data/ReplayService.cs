@@ -121,11 +121,15 @@ public static class ReplayService
     /// <summary>The derived journal rows for the latest of <paramref name="roundsSoFar"/>:
     /// the championship standings as they stand after that round (drivers, then constructors
     /// when the season has that championship) — same delta shape as the season-end
-    /// championship rows.</summary>
+    /// championship rows. <paramref name="roundsSoFar"/> must contain CHAMPIONSHIP-round
+    /// results only (engine round numbers = championship ordinals), and scoring resolves
+    /// over the championship round count via <see cref="ChampionshipCalendar"/> — exactly
+    /// the resolution the app's session service scores the standings screen with, so the
+    /// journal and the screen can never disagree.</summary>
     public static IReadOnlyList<JournalEvent> RoundStandingsEvents(
         SeasonPack pack, IReadOnlyList<RoundResult> roundsSoFar)
     {
-        var scoring = pack.Season.PointsSystem.ResolveScoringDefinition(pack.Season.Rounds.Count);
+        var scoring = ChampionshipCalendar.ResolveScoring(pack);
         var snapshot = StandingsEngine.ComputeSeason(scoring, roundsSoFar).Final;
 
         var events = new List<JournalEvent>();
@@ -202,7 +206,7 @@ public static class ReplayService
         var startTeams = StateStore.ReadTeamStates(db, seasonId, StateStore.StageStart, tx);
         var outcome = ComputeRoundFold(
             pack, masterSeed, inputs, startTeams,
-            upTo.Select(r => r.ToRoundResult()).ToList(),
+            ChampionshipResults(pack, upTo),
             upTo[^1].ToEnvelope(), round, previous);
 
         JournalStore.AppendMany(db, seasonId, round, outcome.Events, utc, tx);
@@ -268,7 +272,7 @@ public static class ReplayService
                 $"Season {seasonId} is already complete — re-simulate instead of re-running season end.");
 
         var stored = ResultStore.ReadSeasonResults(db, seasonId);
-        var rounds = stored.Select(r => r.ToRoundResult()).ToList();
+        var rounds = ChampionshipResults(pack, stored);
 
         var player = StartPlayerState(db, seasonId, transaction: null);
         if (stored.Count > 0)
@@ -364,10 +368,14 @@ public static class ReplayService
                     : current.StartPlayer ?? new PlayerCareerState(),
                 RecommendedSlider = 0,
             };
+            // The fold and season end score CHAMPIONSHIP results only, exactly like the
+            // live path (non-championship rounds are folded — player update, carried state —
+            // but their classifications never enter the standings engine).
             var soFar = new List<RoundResult>();
             foreach (var stored in current.Results)
             {
-                soFar.Add(stored.ToRoundResult());
+                if (ChampionshipCalendar.IsChampionshipRound(pack, stored.Round))
+                    soFar.Add(stored.ToRoundResult());
                 var outcome = ComputeRoundFold(
                     pack, masterSeed, inputs, current.StartTeams, soFar,
                     stored.ToEnvelope(), stored.Round, previousState);
@@ -585,6 +593,16 @@ public static class ReplayService
         return system.RacePoints.Count;
     }
 
+    /// <summary>The engine-facing results among the stored rounds: CHAMPIONSHIP rounds only,
+    /// in round order — the same filter the app session applies before computing the
+    /// standings screen, so journaled and displayed standings share one input.</summary>
+    private static List<RoundResult> ChampionshipResults(
+        SeasonPack pack, IEnumerable<StoredRoundResult> stored) =>
+        stored
+            .Where(r => ChampionshipCalendar.IsChampionshipRound(pack, r.Round))
+            .Select(r => r.ToRoundResult())
+            .ToList();
+
     private static RoundPlayerState PreviousRoundState(
         CareerDatabase db, long seasonId, IReadOnlyList<StoredRoundResult> upTo, SqliteTransaction tx)
     {
@@ -743,11 +761,30 @@ public static class ReplayService
                     $"{pack.Manifest.PackId} {pack.Manifest.Version}.");
 
             var pinned = CareerStore.ReadPinnedPack(db, packId, version); // sha256-verified read
+
+            // The pinned blob is either the app's five-file PinnedPackEnvelope or the legacy
+            // canonical SeasonPack serialization (CareerStore.PinPack). Both parse to a
+            // SeasonPack; the supplied pack must match the pinned one on the CANONICAL form,
+            // so a career created by the app wizard verifies exactly like a tool-pinned one.
+            SeasonPack pinnedPack;
+            try
+            {
+                pinnedPack = PinnedPackEnvelope.LoadSeasonPack(pinned.PackJson);
+            }
+            catch (Exception ex) when (ex is JsonException or InvalidDataException)
+            {
+                throw new InvalidDataException(
+                    $"The pinned copy of {packId} {version} could not be parsed — " +
+                    $"the career file is damaged. ({ex.Message})", ex);
+            }
+
             byte[] supplied = JsonSerializer.SerializeToUtf8Bytes(pack, CoreJson.Options);
-            if (!supplied.AsSpan().SequenceEqual(pinned.PackJson))
+            byte[] pinnedCanonical = JsonSerializer.SerializeToUtf8Bytes(pinnedPack, CoreJson.Options);
+            if (!supplied.AsSpan().SequenceEqual(pinnedCanonical))
                 throw new InvalidOperationException(
                     $"The supplied pack differs from the pinned copy of {packId} {version} — " +
-                    "replay must run against the exact pinned bytes (load it via ReadPinnedPack).");
+                    "replay must run against the exact pinned pack (load it via " +
+                    "PinnedPackEnvelope.LoadSeasonPack / ReadPinnedPack).");
         }
     }
 

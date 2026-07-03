@@ -1,10 +1,14 @@
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
+using Companion.ViewModels.Settings;
 
 namespace Companion.ViewModels.Standings;
 
-/// <summary>One drivers- or constructors-table row: gross vs counted plus dropped markers.</summary>
+/// <summary>One drivers- or constructors-table row: gross vs counted plus dropped markers,
+/// with the raw sortable values behind the display strings.</summary>
 public sealed record StandingsRow(
     string PositionText,
     string CompetitorId,
@@ -12,7 +16,13 @@ public sealed record StandingsRow(
     string CountedText,
     string GrossText,
     bool HasDroppedRounds,
-    string DroppedRoundsText)
+    string DroppedRoundsText,
+    int? Position,
+    double CountedValue,
+    double GrossValue,
+    int DroppedCount,
+    string PerRoundText,
+    double PerRoundValue)
 {
     /// <summary>True when gross differs from counted (drops or adjustments applied).</summary>
     public bool ShowGross => GrossText != CountedText;
@@ -32,39 +42,63 @@ public sealed record RoundMatrixRow(
 /// counted points with dropped-round markers), the round matrix (driver × round → that round's
 /// points, sourced per snapshot from the RoundScores the snapshot introduced), and the
 /// rules-explainer chip derived from the pack's CatalogSeason.
+///
+/// UX-round additions (contract section 2): click a column header to sort (click again to
+/// flip), right-click the header for the column chooser (counted/gross/dropped/points-per-
+/// round), both tables share the sort, and the column visibility + selected tab persist
+/// through the settings seam.
 /// </summary>
 public sealed partial class StandingsViewModel : ObservableObject
 {
-    [ObservableProperty]
-    private int selectedTabIndex;
+    /// <summary>Column keys for <see cref="SortByCommand"/> and the header glyphs.</summary>
+    public const string ColumnPosition = "position";
+    public const string ColumnName = "name";
+    public const string ColumnCounted = "counted";
+    public const string ColumnGross = "gross";
+    public const string ColumnDropped = "dropped";
+    public const string ColumnPerRound = "perRound";
 
-    public StandingsViewModel(IReadOnlyList<StandingsSnapshot> snapshots, SeasonPack pack)
+    private readonly ISettingsService? _settings;
+    private readonly IReadOnlyList<StandingsRow> _driverRowsBase;
+    private readonly IReadOnlyList<StandingsRow> _constructorRowsBase;
+
+    private bool _showCountedColumn;
+    private bool _showGrossColumn;
+    private bool _showDroppedColumn;
+    private bool _showPerRoundColumn;
+
+    public StandingsViewModel(
+        IReadOnlyList<StandingsSnapshot> snapshots,
+        SeasonPack pack,
+        ISettingsService? settings = null)
     {
         ArgumentNullException.ThrowIfNull(snapshots);
         ArgumentNullException.ThrowIfNull(pack);
+        _settings = settings;
 
         var driverNames = pack.Drivers.ToDictionary(d => d.Id, d => d.Name, StringComparer.Ordinal);
         var teamNames = pack.Teams.ToDictionary(t => t.Id, t => t.Name, StringComparer.Ordinal);
 
         var ordered = snapshots.OrderBy(s => s.AfterRound).ToArray();
         var latest = ordered.Length > 0 ? ordered[^1] : null;
+        int appliedRounds = ordered.Length;
 
         HasConstructors = pack.Season.PointsSystem.Constructors is not null;
 
-        DriverRows = latest is null
+        _driverRowsBase = latest is null
             ? []
             : latest.Drivers
                 .Select(d => Row(
                     d.Position, d.DriverId, driverNames.GetValueOrDefault(d.DriverId, d.DriverId),
-                    d.CountedPoints, d.GrossPoints, d.Dropped))
+                    d.CountedPoints, d.GrossPoints, d.Dropped, appliedRounds))
                 .ToArray();
 
-        ConstructorRows = latest?.Constructors is not { } constructors
+        _constructorRowsBase = latest?.Constructors is not { } constructors
             ? []
             : constructors
                 .Select(c => Row(
                     c.Position, c.ConstructorId, teamNames.GetValueOrDefault(c.ConstructorId, c.ConstructorId),
-                    c.CountedPoints, c.GrossPoints, c.Dropped))
+                    c.CountedPoints, c.GrossPoints, c.Dropped, appliedRounds))
                 .ToArray();
 
         RoundHeaders = ordered.Select(s => $"R{s.AfterRound}").ToArray();
@@ -73,13 +107,34 @@ public sealed partial class StandingsViewModel : ObservableObject
         int championshipRounds = pack.Season.Rounds.Count(r => r.Championship);
         RulesParts = BuildRulesParts(pack.Season.PointsSystem, championshipRounds);
         RulesChipText = string.Join(" · ", RulesParts);
+
+        var columns = settings?.Current.StandingsColumns ?? new StandingsColumnSettings();
+        _showCountedColumn = columns.ShowCounted;
+        _showGrossColumn = columns.ShowGross;
+        _showDroppedColumn = columns.ShowDropped;
+        _showPerRoundColumn = columns.ShowPerRound;
+
+        // Tab memory: reopen on the tab last used (0 drivers, 1 constructors, 2 matrix);
+        // a remembered constructors tab degrades to drivers when this season has none.
+        int savedTab = settings?.Current.StandingsTabIndex ?? 0;
+        selectedTabIndex = savedTab == 1 && !HasConstructors ? 0 : Math.Clamp(savedTab, 0, 2);
     }
 
-    /// <summary>Drivers-tab rows in championship order (excluded competitors last).</summary>
-    public IReadOnlyList<StandingsRow> DriverRows { get; }
+    // ---------- tabs (persisted) ----------
+
+    [ObservableProperty]
+    private int selectedTabIndex;
+
+    partial void OnSelectedTabIndexChanged(int value) =>
+        _settings?.Update(s => s with { StandingsTabIndex = value });
+
+    // ---------- rows (sorted views over the engine order) ----------
+
+    /// <summary>Drivers-tab rows in the current sort order (default: championship order).</summary>
+    public IReadOnlyList<StandingsRow> DriverRows => Sorted(_driverRowsBase);
 
     /// <summary>Constructors-tab rows; empty when the season has no constructors championship.</summary>
-    public IReadOnlyList<StandingsRow> ConstructorRows { get; }
+    public IReadOnlyList<StandingsRow> ConstructorRows => Sorted(_constructorRowsBase);
 
     /// <summary>True when the pack's season runs a constructors championship (shows the tab).</summary>
     public bool HasConstructors { get; }
@@ -87,7 +142,7 @@ public sealed partial class StandingsViewModel : ObservableObject
     /// <summary>Column headers of the round matrix: one per applied round ("R1", "R2", ...).</summary>
     public IReadOnlyList<string> RoundHeaders { get; }
 
-    /// <summary>Driver × round matrix; rows ordered like <see cref="DriverRows"/>.</summary>
+    /// <summary>Driver × round matrix; rows ordered like the unsorted championship order.</summary>
     public IReadOnlyList<RoundMatrixRow> MatrixRows { get; }
 
     /// <summary>The rules-explainer chip: points table, best-N, shared-drive policy, fastest lap.</summary>
@@ -96,21 +151,134 @@ public sealed partial class StandingsViewModel : ObservableObject
     /// <summary>The chip's individual sentences, for views that render them as separate lines.</summary>
     public IReadOnlyList<string> RulesParts { get; }
 
+    // ---------- sorting (click a header; click again to flip) ----------
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(
+        nameof(DriverRows), nameof(ConstructorRows),
+        nameof(PositionHeader), nameof(NameHeader), nameof(CountedHeader),
+        nameof(GrossHeader), nameof(DroppedHeader), nameof(PerRoundHeader))]
+    private string sortColumn = ColumnPosition;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(
+        nameof(DriverRows), nameof(ConstructorRows),
+        nameof(PositionHeader), nameof(NameHeader), nameof(CountedHeader),
+        nameof(GrossHeader), nameof(DroppedHeader), nameof(PerRoundHeader))]
+    private bool sortDescending;
+
+    /// <summary>Header click: sort by the column, or flip the direction when it is already
+    /// the sort column. Numeric columns start descending (biggest first), text ascending.</summary>
+    [RelayCommand]
+    private void SortBy(string? column)
+    {
+        if (column is not (ColumnPosition or ColumnName or ColumnCounted
+            or ColumnGross or ColumnDropped or ColumnPerRound))
+            return;
+
+        if (string.Equals(SortColumn, column, StringComparison.Ordinal))
+        {
+            SortDescending = !SortDescending;
+            return;
+        }
+
+        // Setting both properties raises the row-refresh notifications via the attributes.
+        SortColumn = column;
+        SortDescending = column is ColumnCounted or ColumnGross or ColumnDropped or ColumnPerRound;
+    }
+
+    public string PositionHeader => Header("Pos", ColumnPosition);
+    public string NameHeader => Header("Name", ColumnName);
+    public string CountedHeader => Header("Points", ColumnCounted);
+    public string GrossHeader => Header("Gross", ColumnGross);
+    public string DroppedHeader => Header("Drops", ColumnDropped);
+    public string PerRoundHeader => Header("Pts/round", ColumnPerRound);
+
+    private string Header(string label, string column) =>
+        string.Equals(SortColumn, column, StringComparison.Ordinal)
+            ? $"{label} {(SortDescending ? "▼" : "▲")}"
+            : label;
+
+    private IReadOnlyList<StandingsRow> Sorted(IReadOnlyList<StandingsRow> rows)
+    {
+        IOrderedEnumerable<StandingsRow> sorted = SortColumn switch
+        {
+            ColumnName => rows.OrderBy(r => r.DisplayName, StringComparer.OrdinalIgnoreCase),
+            ColumnCounted => rows.OrderBy(r => r.CountedValue),
+            ColumnGross => rows.OrderBy(r => r.GrossValue),
+            ColumnDropped => rows.OrderBy(r => r.DroppedCount),
+            ColumnPerRound => rows.OrderBy(r => r.PerRoundValue),
+            _ => rows.OrderBy(r => r.Position ?? int.MaxValue),
+        };
+        return (SortDescending ? sorted.Reverse() : sorted).ToArray();
+    }
+
+    // ---------- column chooser (right-click the header; persisted in settings) ----------
+
+    public bool ShowCountedColumn
+    {
+        get => _showCountedColumn;
+        set => SetColumn(ref _showCountedColumn, value, c => c with { ShowCounted = value });
+    }
+
+    public bool ShowGrossColumn
+    {
+        get => _showGrossColumn;
+        set => SetColumn(ref _showGrossColumn, value, c => c with { ShowGross = value });
+    }
+
+    public bool ShowDroppedColumn
+    {
+        get => _showDroppedColumn;
+        set => SetColumn(ref _showDroppedColumn, value, c => c with { ShowDropped = value });
+    }
+
+    public bool ShowPerRoundColumn
+    {
+        get => _showPerRoundColumn;
+        set => SetColumn(ref _showPerRoundColumn, value, c => c with { ShowPerRound = value });
+    }
+
+    private void SetColumn(
+        ref bool field, bool value,
+        Func<StandingsColumnSettings, StandingsColumnSettings> mutate,
+        [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    {
+        if (field == value)
+            return;
+        field = value;
+        OnPropertyChanged(propertyName);
+        _settings?.Update(s => s with { StandingsColumns = mutate(s.StandingsColumns) });
+    }
+
+    // ---------- row construction ----------
+
     private static StandingsRow Row(
         int? position,
         string id,
         string name,
         Companion.Core.Numerics.Rational counted,
         Companion.Core.Numerics.Rational gross,
-        IReadOnlyList<DroppedResult> dropped)
-        => new(
+        IReadOnlyList<DroppedResult> dropped,
+        int appliedRounds)
+    {
+        double countedValue = counted.ToDouble();
+        double perRound = appliedRounds > 0 ? countedValue / appliedRounds : 0.0;
+        return new StandingsRow(
             position?.ToString() ?? "–",
             id,
             name,
             counted.ToString(),
             gross.ToString(),
             dropped.Count > 0,
-            string.Join(", ", dropped.Select(d => $"R{d.Round}")));
+            string.Join(", ", dropped.Select(d => $"R{d.Round}")),
+            position,
+            countedValue,
+            gross.ToDouble(),
+            dropped.Count,
+            perRound.ToString("0.##", CultureInfo.InvariantCulture),
+            perRound);
+    }
 
     /// <summary>Cell (driver, round k) comes from snapshot k — the RoundScore that snapshot
     /// introduced for its own round. Dropped flags come from the LATEST snapshot, so the

@@ -6,6 +6,7 @@ using Companion.ViewModels.Confirm;
 using Companion.ViewModels.ResultEntry;
 using Companion.ViewModels.Review;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Settings;
 using Companion.ViewModels.Standings;
 
 namespace Companion.ViewModels.Shell;
@@ -22,29 +23,43 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private readonly ICareerSession _session;
     private readonly IFileWatcher? _watcher;
     private readonly TimeProvider _clock;
+    private readonly ISettingsService? _settings;
 
     private ResultEntryViewModel? _resultEntry;
 
-    public HomeViewModel(ICareerSession session, IFileWatcher? stagedFileWatcher = null, TimeProvider? clock = null)
+    public HomeViewModel(
+        ICareerSession session,
+        IFileWatcher? stagedFileWatcher = null,
+        TimeProvider? clock = null,
+        ISettingsService? settings = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
         _watcher = stagedFileWatcher;
         _clock = clock ?? TimeProvider.System;
+        _settings = settings;
 
         Briefing = new BriefingViewModel(session, stagedFileWatcher);
+        CoachMarks = new CoachMarksViewModel(settings);
         _summary = session.Summary;
 
         if (_summary.SeasonComplete)
             ShowSeasonReview();
-        else
+        else if (_settings?.Current.AutoOpenBriefing ?? true)
             _currentContent = Briefing;
+        else
+            _currentContent = NewStandings(); // auto-open briefing turned off in settings
     }
 
     public ICareerSession Session => _session;
 
     /// <summary>The single briefing instance for the career; refreshed after every Apply.</summary>
     public BriefingViewModel Briefing { get; }
+
+    /// <summary>First-run coach marks for the three career screens (ux-round section 4);
+    /// the briefing/result-entry/standings views bind through Home so one dismissal state
+    /// serves them all.</summary>
+    public CoachMarksViewModel CoachMarks { get; }
 
     // ---------- header ----------
 
@@ -138,8 +153,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _resultEntry = new ResultEntryViewModel(grid, Summary.PlayerDriverId, _clock)
             {
                 // Prefill the slider prompt with the pace-anchor recommendation (the same
-                // value the briefing showed); neutral before the anchor calibrates.
+                // value the briefing showed); before the anchor calibrates, the settings
+                // screen's default difficulty (neutral 100 out of the box).
                 SliderUsed = _session.CurrentSliderRecommendation()
+                    ?? _settings?.Current.DefaultDifficulty
                     ?? ResultEntryViewModel.NeutralSlider,
             };
             _resultEntry.PropertyChanged += OnResultEntryPropertyChanged;
@@ -174,7 +191,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             model,
             onApply: () => ApplyDraft(draft),
             onBack: () => CurrentContent = _resultEntry,
-            displayName: DriverDisplayName);
+            displayName: DriverDisplayName,
+            minimalNarrative: _settings?.Current.MinimalNarrative ?? false);
     }
 
     private void ApplyDraft(ResultDraft draft)
@@ -212,8 +230,13 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private void ShowStandings()
     {
         ContentError = null;
-        CurrentContent = new StandingsViewModel(_session.AllSnapshots(), _session.Pack);
+        CurrentContent = NewStandings();
     }
+
+    /// <summary>Standings with the settings seam attached: column visibility and the
+    /// selected tab persist across openings (and across sessions).</summary>
+    private StandingsViewModel NewStandings() =>
+        new(_session.AllSnapshots(), _session.Pack, _settings);
 
     /// <summary>Standings → back to whatever the round was doing (briefing, or the
     /// in-progress result entry); season review stays on the final standings.</summary>
@@ -240,6 +263,27 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// standings, journal digest, offer letters, NAMeS restore, era-transition note).</summary>
     private void ShowSeasonReview() =>
         CurrentContent = new SeasonReviewViewModel(_session);
+
+    /// <summary>Home's share of the shell-level Esc (non-destructive back only): standings →
+    /// back to the round in progress; confirm → back to the result entry (the draft
+    /// survives). Briefing, result entry (the grammar owns the keyboard there) and the
+    /// season review have no "back" — Esc does nothing.</summary>
+    public bool TryEscapeBack()
+    {
+        switch (CurrentContent)
+        {
+            case StandingsViewModel when !Summary.SeasonComplete:
+                BackToRound();
+                return true;
+
+            case ConfirmViewModel confirm:
+                confirm.BackCommand.Execute(null);
+                return true;
+
+            default:
+                return false;
+        }
+    }
 
     private void OnResultEntryPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

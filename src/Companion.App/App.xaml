@@ -8,6 +8,7 @@
              xmlns:confirm="clr-namespace:Companion.ViewModels.Confirm;assembly=Companion.ViewModels"
              xmlns:review="clr-namespace:Companion.ViewModels.Review;assembly=Companion.ViewModels"
              xmlns:standings="clr-namespace:Companion.ViewModels.Standings;assembly=Companion.ViewModels"
+             xmlns:settings="clr-namespace:Companion.ViewModels.Settings;assembly=Companion.ViewModels"
              xmlns:shell="clr-namespace:Companion.ViewModels.Shell;assembly=Companion.ViewModels"
              xmlns:views="clr-namespace:Companion.App.Views"
              ShutdownMode="OnMainWindowClose">
@@ -41,6 +42,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type standings:StandingsViewModel}">
                 <views:StandingsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
+                <views:SettingsView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

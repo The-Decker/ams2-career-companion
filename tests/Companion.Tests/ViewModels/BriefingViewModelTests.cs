@@ -58,19 +58,20 @@ public class BriefingViewModelTests
         Assert.Equal("", vm.Title);
     }
 
-    // ---------- copy ----------
+    // ---------- copy (ux-round correction: per-row copy is gone; one summary copy remains) ----------
 
     [Fact]
-    public void Copy_RaisesCopyRequestedWithTheExactValue()
+    public void CopySummary_RaisesCopyRequestedWithTheComposedChecklist()
     {
         var vm = new BriefingViewModel(SessionWithRealRound3());
         var copied = new List<string>();
         vm.CopyRequested += (_, text) => copied.Add(text);
 
-        vm.CopyCommand.Execute(vm.Settings[0]); // Track
-        vm.CopyCommand.Execute(vm.Settings[2]); // Laps
+        vm.CopySummaryCommand.Execute(null);
 
-        Assert.Equal(["Spielberg_Vintage", "64"], copied);
+        string text = Assert.Single(copied);
+        Assert.Contains("Track: Spielberg_Vintage", text);
+        Assert.Contains("Laps: 64", text);
     }
 
     // ---------- staging banner ----------

@@ -1,7 +1,5 @@
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using Companion.Core.Packs;
+using Companion.Data;
 
 namespace Companion.ViewModels.Services;
 
@@ -32,6 +30,11 @@ public sealed record SeasonPackFiles
     public SeasonPack Parse() =>
         PackLoader.Parse(ManifestJson, SeasonJson, TeamsJson, DriversJson, EntriesJson);
 
+    /// <summary>The five verbatim parts as the app's pinned form (the Data layer's
+    /// <see cref="PinnedPackEnvelope"/> — one pinning format for the whole app).</summary>
+    public PinnedPackEnvelope ToPinnedEnvelope() =>
+        PinnedPackEnvelope.From(ManifestJson, SeasonJson, TeamsJson, DriversJson, EntriesJson);
+
     private static string ReadPart(string packDirectory, string fileName)
     {
         string path = Path.Combine(packDirectory, fileName);
@@ -43,43 +46,5 @@ public sealed record SeasonPackFiles
     }
 }
 
-/// <summary>
-/// The immutable pinned form of a season pack: all five JSON parts wrapped in one JSON
-/// envelope, stored as a blob in the career's pinned_pack table with its SHA-256. Careers
-/// rehydrate from this — never from the mutable pack folder.
-/// </summary>
-public sealed record PinnedPackEnvelope
-{
-    public required string PackJson { get; init; }
-    public required string SeasonJson { get; init; }
-    public required string TeamsJson { get; init; }
-    public required string DriversJson { get; init; }
-    public required string EntriesJson { get; init; }
-
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true,
-    };
-
-    public static PinnedPackEnvelope From(SeasonPackFiles files) => new()
-    {
-        PackJson = files.ManifestJson,
-        SeasonJson = files.SeasonJson,
-        TeamsJson = files.TeamsJson,
-        DriversJson = files.DriversJson,
-        EntriesJson = files.EntriesJson,
-    };
-
-    public byte[] ToBytes() => JsonSerializer.SerializeToUtf8Bytes(this, JsonOptions);
-
-    public static PinnedPackEnvelope FromBytes(byte[] bytes) =>
-        JsonSerializer.Deserialize<PinnedPackEnvelope>(bytes, JsonOptions)
-        ?? throw new JsonException("Pinned pack envelope deserialized to null.");
-
-    public SeasonPack Parse() =>
-        PackLoader.Parse(PackJson, SeasonJson, TeamsJson, DriversJson, EntriesJson);
-
-    public static string Sha256Of(byte[] envelopeBytes) =>
-        Convert.ToHexString(SHA256.HashData(envelopeBytes)).ToLowerInvariant();
-}
+// The pinned five-file envelope moved to the Data layer (Companion.Data.PinnedPackEnvelope)
+// so replay verification and the app share ONE pinning format definition.

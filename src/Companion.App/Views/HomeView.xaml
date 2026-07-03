@@ -58,9 +58,16 @@
                         </Button.Style>
                     </Button>
                     <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="10,4" />
-                    <Button Content="⌂ Start" Style="{StaticResource NavButton}"
+                    <Button Style="{StaticResource NavButton}"
                             ToolTip="Close this career and return to the start screen"
-                            Command="{Binding DataContext.GoToStartCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                            AutomationProperties.Name="Back to start screen"
+                            Command="{Binding DataContext.GoToStartCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE80F;" FontSize="13"
+                                       VerticalAlignment="Center" Margin="0,1,7,0" />
+                            <TextBlock Text="Start" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding HeaderTitle}" FontSize="17" FontWeight="SemiBold" />

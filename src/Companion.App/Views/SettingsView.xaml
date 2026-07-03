@@ -1,0 +1,220 @@
+<UserControl x:Class="Companion.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <UserControl.Resources>
+        <Style x:Key="SectionTitle" TargetType="TextBlock" BasedOn="{StaticResource H2}">
+            <Setter Property="Margin" Value="0,0,0,2" />
+        </Style>
+        <Style x:Key="SectionHint" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="RowLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel Margin="40,24">
+        <!-- header: title + reset + done -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="Reset to defaults" Command="{Binding ResetCommand}"
+                        ToolTip="Every setting back to its out-of-the-box value (applies immediately)" />
+                <Button Content="Done" Style="{StaticResource AccentButton}" MinWidth="96" Margin="10,0,0,0"
+                        Command="{Binding CloseCommand}"
+                        ToolTip="Close settings (Esc works too) — changes are already applied and saved" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Settings" Style="{StaticResource H1}" />
+                <TextBlock Style="{StaticResource Muted}"
+                           Text="Everything applies live and saves as you change it — there is no OK button." />
+            </StackPanel>
+        </DockPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+            <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+
+                <!-- ===== appearance ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Appearance" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource SectionHint}"
+                                   Text="Dark theme today; the settings file already carries a theme key so a light theme can arrive later." />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Accent color" />
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                <ItemsControl ItemsSource="{Binding AccentPresets}" VerticalAlignment="Center">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Width="26" Height="26" Margin="0,0,8,0" Padding="0"
+                                                    Background="{Binding Hex}" BorderBrush="{StaticResource EdgeBrush}"
+                                                    ToolTip="{Binding Name}"
+                                                    AutomationProperties.Name="{Binding Name}"
+                                                    Command="{Binding DataContext.SelectAccentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Custom hex" Margin="0,10,0,0" />
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBox Width="110" FontFamily="Consolas"
+                                         Text="{Binding AccentHex, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Any #RRGGBB color — applies as you type" />
+                                <TextBlock Style="{StaticResource RowLabel}" Margin="10,0,0,0"
+                                           Foreground="{StaticResource WarningBrush}" Text="not a valid #RRGGBB color"
+                                           Visibility="{Binding AccentHexInvalid, Converter={StaticResource BoolVisible}}" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Font scale" Margin="0,14,0,0" />
+                            <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,14,0,0">
+                                <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right" FontFamily="Consolas"
+                                           Style="{StaticResource RowLabel}"
+                                           Text="{Binding FontScalePercent, StringFormat={}{0}%}" />
+                                <Slider Minimum="{Binding MinFontScalePercent}" Maximum="{Binding MaxFontScalePercent}"
+                                        Value="{Binding FontScalePercent}" TickFrequency="5" IsSnapToTickEnabled="True"
+                                        Margin="0,0,10,0"
+                                        ToolTip="UI text size, 90–130% (applies live to every screen)" />
+                            </DockPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== racing ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Racing" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource SectionHint}"
+                                   Text="How race weekends behave: the difficulty prompt's starting value and how chatty the news engine is." />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Default difficulty" />
+                            <DockPanel Grid.Row="0" Grid.Column="1">
+                                <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right" FontFamily="Consolas"
+                                           Style="{StaticResource RowLabel}"
+                                           Text="{Binding DefaultDifficulty, StringFormat={}{0:0}%}" />
+                                <Slider Minimum="{Binding MinDifficulty}" Maximum="{Binding MaxDifficulty}"
+                                        Value="{Binding DefaultDifficulty}" TickFrequency="1" IsSnapToTickEnabled="True"
+                                        Margin="0,0,10,0"
+                                        ToolTip="The Opponent Skill slider the result screen assumes before the pace anchor calibrates (rounds with a recommendation always prefill the recommendation)" />
+                            </DockPanel>
+
+                            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,12,0,0"
+                                      IsChecked="{Binding MinimalNarrative}"
+                                      Content="Minimal narrative — suppress headlines except championship-critical ones"
+                                      ToolTip="The confirm screen skips flavor headlines; title deciders still show" />
+                            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
+                                      IsChecked="{Binding AutoOpenBriefing}"
+                                      Content="Open the Race Day briefing automatically when a career loads"
+                                      ToolTip="Off = land on the standings instead; the briefing stays one click away" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== staging (NAMeS-first) ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Staging" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource SectionHint}"
+                                   Text="NAMeS-first: your installed community AI files are the preferred baseline — the app only writes when a round genuinely diverges, always backup-first." />
+
+                        <CheckBox IsChecked="{Binding PreferInstalledBaseline}"
+                                  Content="New careers default to importing the installed AI file as the season baseline"
+                                  ToolTip="The wizard's 'use your installed AI file' checkbox starts ticked whenever the file parses (you can still untick it per career)" />
+                        <CheckBox Margin="0,8,0,0" IsChecked="{Binding DiffAwareStaging}"
+                                  Content="Diff-aware staging — write nothing when the installed file already matches"
+                                  ToolTip="Recommended. Off = every staging writes a fresh file (still backup-first)" />
+                        <CheckBox Margin="0,8,0,0" IsChecked="{Binding RestorePromptOnSeasonEnd}"
+                                  Content="Offer to restore the original AI file when a season ends"
+                                  ToolTip="The season review shows a one-click restore of the pre-season backup" />
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== data ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Data" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource SectionHint}"
+                                   Text="Season packs are plain JSON folders. The bundled packs folder and the Documents folder below are always searched; add any extra folders you keep packs in." />
+
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="Open" VerticalAlignment="Center"
+                                    Click="OnOpenDefaultPacksFolder"
+                                    ToolTip="Open this folder in Explorer" />
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Style="{StaticResource RowLabel}" Text="Default pack folder (always searched)" />
+                                <TextBlock Style="{StaticResource Faint}" Text="{Binding DefaultPacksFolder}" />
+                            </StackPanel>
+                        </DockPanel>
+
+                        <TextBlock Style="{StaticResource RowLabel}" Margin="0,12,0,4" Text="Extra pack folders" />
+                        <TextBlock Style="{StaticResource Faint}" Margin="0,0,0,6"
+                                   Text="None added — the wizard searches the default locations only."
+                                   Visibility="{Binding PackFolders.Count, Converter={StaticResource CountCollapsed}}" />
+                        <ItemsControl ItemsSource="{Binding PackFolders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,2">
+                                        <Button DockPanel.Dock="Right" Content="&#xE711;" Style="{StaticResource IconButton}"
+                                                ToolTip="Remove this folder from the search list (the folder itself is untouched)"
+                                                AutomationProperties.Name="Remove this pack folder"
+                                                Command="{Binding DataContext.RemovePackFolderCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button DockPanel.Dock="Right" Content="Open" Style="{StaticResource SubtleButton}"
+                                                ToolTip="Open this folder in Explorer"
+                                                Click="OnOpenListedFolder" />
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"
+                                                   Foreground="{StaticResource TextSecondaryBrush}" />
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Content="Add folder…" HorizontalAlignment="Left" Margin="0,8,0,0"
+                                Click="OnAddPackFolder"
+                                ToolTip="Pick a folder that contains season-pack subfolders" />
+
+                        <Border Height="1" Background="{StaticResource EdgeBrush}" Margin="0,14,0,12" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Open careers folder" Click="OnOpenCareersFolder"
+                                    ToolTip="{Binding CareersFolder}" />
+                            <Button Content="Open settings folder" Margin="10,0,0,0" Click="OnOpenSettingsFolder"
+                                    ToolTip="{Binding SettingsFolder}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

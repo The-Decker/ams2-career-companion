@@ -6,6 +6,7 @@ using Companion.Ams2.CustomAi;
 using Companion.Ams2.Packs;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Settings;
 
 namespace Companion.ViewModels.Wizard;
 
@@ -31,6 +32,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     private readonly IReadOnlyList<string> _packSearchRoots;
     private readonly string _careersDirectory;
     private readonly Random _seedSource;
+    private readonly ISettingsService? _settings;
 
     private string? _packDirectory;
 
@@ -39,11 +41,17 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         ICareerFactory factory,
         IReadOnlyList<string>? packSearchRoots = null,
         string? careersDirectory = null,
-        Random? seedSource = null)
+        Random? seedSource = null,
+        ISettingsService? settings = null)
     {
         _environment = environment;
         _factory = factory;
-        _packSearchRoots = packSearchRoots ?? PackDiscovery.DefaultSearchRoots(environment.DocumentsDirectory);
+        _settings = settings;
+        // Explicit roots win (tests); otherwise the defaults plus the settings screen's
+        // custom pack folders (missing folders are skipped by discovery).
+        _packSearchRoots = packSearchRoots
+            ?? [.. PackDiscovery.DefaultSearchRoots(environment.DocumentsDirectory),
+                .. settings?.Current.PackFolders ?? []];
         _careersDirectory = careersDirectory
             ?? Path.Combine(environment.DocumentsDirectory, "AMS2CareerCompanion", "Careers");
         _seedSource = seedSource ?? Random.Shared;
@@ -337,7 +345,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             }
         }
 
-        UseInstalledAiBaseline = BaselineImportAvailable; // default ON when parseable
+        // Default ON when parseable — unless the settings screen turned the NAMeS-first
+        // default off (the checkbox stays available either way).
+        UseInstalledAiBaseline = BaselineImportAvailable
+            && (_settings?.Current.PreferInstalledBaseline ?? true);
 
         OnPropertyChanged(nameof(BaselineImportAvailable));
         OnPropertyChanged(nameof(BaselineImportError));

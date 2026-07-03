@@ -6,9 +6,24 @@
         MinWidth="920" MinHeight="620"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
-        FontFamily="Segoe UI" FontSize="14"
-        TextOptions.TextFormattingMode="Display">
+        FontFamily="Segoe UI" FontSize="{DynamicResource AppFontSize}"
+        TextOptions.TextFormattingMode="Display"
+        PreviewKeyDown="OnPreviewKeyDown">
     <DockPanel>
+        <!-- shell header: app identity + the settings gear (ux-round contract section 3) -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1">
+            <DockPanel Margin="12,3">
+                <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButton}"
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE713;" FontSize="15" Padding="8,5"
+                        AutomationProperties.Name="Settings"
+                        ToolTip="Settings — appearance, racing defaults, staging behavior, data folders (click again or press Esc to close)"
+                        Command="{Binding ToggleSettingsCommand}" />
+                <TextBlock Text="AMS2 CAREER COMPANION" Style="{StaticResource Faint}"
+                           VerticalAlignment="Center" Margin="4,0,0,0" FontSize="11" />
+            </DockPanel>
+        </Border>
+
         <!-- shell-level failure banner (e.g. a career file that would not open) -->
         <Border DockPanel.Dock="Bottom"
                 Background="{StaticResource ErrorDimBrush}"
@@ -17,7 +32,7 @@
                        Margin="16,8" TextWrapping="Wrap" />
         </Border>
 
-        <!-- the conductor: Start / wizard / Home resolve through App.xaml's DataTemplates -->
+        <!-- the conductor: Start / wizard / Home / Settings resolve through App.xaml's DataTemplates -->
         <ContentControl Content="{Binding Current}" Focusable="False" />
     </DockPanel>
 </Window>

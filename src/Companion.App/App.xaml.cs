@@ -1,8 +1,10 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Companion.App.Services;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Settings;
 using Companion.ViewModels.Shell;
 
 namespace Companion.App;
@@ -12,6 +14,10 @@ namespace Companion.App;
 /// content library from the exe-adjacent data\ams2 folder, construct the services and the
 /// WPF-free ShellViewModel, and show MainWindow over it. The published exe is self-sufficient:
 /// data\ams2, data\rules and packs\ are copied beside it at build/publish time.
+///
+/// Settings live-apply (ux-round contract section 3): the accent color mutates the shared
+/// AccentBrush/AccentDimBrush instances in place and the font scale replaces the AppFontSize
+/// resource, so every open screen restyles immediately — no restart, no view reload.
 /// </summary>
 public partial class App : Application
 {
@@ -29,11 +35,16 @@ public partial class App : Application
             var factory = new CareerSessionFactory(environment);
             var recentCareers = RecentCareersStore.CreateDefault();
 
+            var settings = new SettingsService(JsonSettingsStore.CreateDefault());
+            ApplyAppearance(settings.Current);
+            settings.Changed += (_, current) => Dispatcher.Invoke(() => ApplyAppearance(current));
+
             _shell = new ShellViewModel(
                 environment,
                 factory,
                 recentCareers,
-                stagedFileWatcherFactory: static () => new FileSystemFileWatcher());
+                stagedFileWatcherFactory: static () => new FileSystemFileWatcher(),
+                settings: settings);
 
             var window = new MainWindow { DataContext = _shell };
             MainWindow = window;
@@ -51,20 +62,94 @@ public partial class App : Application
         }
     }
 
+    /// <summary>Pushes the appearance settings into the theme resources: accent + derived
+    /// dim accent (a 24% blend toward the window background) and the root font size
+    /// (14 × scale). Mutating the brush instances updates every StaticResource reference.</summary>
+    private void ApplyAppearance(AppSettings settings)
+    {
+        var accent = ParseColor(settings.AccentColor) ?? ParseColor(AppSettings.DefaultAccentColor)!.Value;
+        SetBrushColor("AccentBrush", accent);
+        SetBrushColor("AccentDimBrush", Blend(accent, (Color)ColorConverter.ConvertFromString("#1B1B1F"), 0.24));
+        Resources["AppFontSize"] = 14.0 * settings.FontScalePercent / 100.0;
+    }
+
+    private void SetBrushColor(string key, Color color)
+    {
+        if (Resources[key] is SolidColorBrush { IsFrozen: false } brush)
+            brush.Color = color;
+        else
+            Resources[key] = new SolidColorBrush(color);
+    }
+
+    private static Color? ParseColor(string hex)
+    {
+        try
+        {
+            return (Color)ColorConverter.ConvertFromString(
+                hex.StartsWith('#') ? hex : "#" + hex);
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>fraction of <paramref name="accent"/> over <paramref name="background"/>.</summary>
+    private static Color Blend(Color accent, Color background, double fraction) => Color.FromRgb(
+        (byte)(background.R + (accent.R - background.R) * fraction),
+        (byte)(background.G + (accent.G - background.G) * fraction),
+        (byte)(background.B + (accent.B - background.B) * fraction));
+
     protected override void OnExit(ExitEventArgs e)
     {
         _shell?.Dispose();
         base.OnExit(e);
     }
 
+    private bool _reportingCrash;
+
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         // Last-resort guard: report instead of tearing the process down mid-career.
-        MessageBox.Show(
-            "Unexpected error:\n\n" + e.Exception.Message,
-            "AMS2 Career Companion",
-            MessageBoxButton.OK,
-            MessageBoxImage.Error);
         e.Handled = true;
+
+        // Re-entrancy guard: MessageBox pumps messages, so a layout/render exception that
+        // fires every frame would re-enter here from inside the box and recurse until the
+        // stack overflows. One report at a time; repeats while the box is open are dropped.
+        if (_reportingCrash)
+            return;
+        _reportingCrash = true;
+        try
+        {
+            TryWriteCrashLog(e.Exception);
+            MessageBox.Show(
+                "Unexpected error:\n\n" + e.Exception.Message,
+                "AMS2 Career Companion",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+        finally
+        {
+            _reportingCrash = false;
+        }
+    }
+
+    /// <summary>Full exception detail lands in %APPDATA%\AMS2CareerCompanion\last-crash.txt
+    /// (the message box only shows the message) — best-effort, never throws.</summary>
+    private static void TryWriteCrashLog(Exception exception)
+    {
+        try
+        {
+            string directory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "AMS2CareerCompanion");
+            Directory.CreateDirectory(directory);
+            File.WriteAllText(
+                Path.Combine(directory, "last-crash.txt"),
+                $"{DateTimeOffset.Now:O}{Environment.NewLine}{exception}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        {
+        }
     }
 }

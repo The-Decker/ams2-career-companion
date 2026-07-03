@@ -108,20 +108,49 @@
                             Click="OnRefreshPacks" />
                 </StackPanel>
                 <Border Style="{StaticResource Panel}" Padding="8">
-                    <ListBox ItemsSource="{Binding Packs}" SelectedItem="{Binding SelectedPack}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="15" />
-                                    <TextBlock Text="{Binding Directory}" Style="{StaticResource Faint}" Margin="0,2,0,0" />
-                                    <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12" Margin="0,2,0,0"
-                                               TextWrapping="Wrap"
-                                               Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
-                                               Visibility="{Binding LoadError, Converter={StaticResource NullCollapsed}}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Grid>
+                        <ListBox ItemsSource="{Binding Packs}" SelectedItem="{Binding SelectedPack}"
+                                 Visibility="{Binding Packs.Count, Converter={StaticResource CountVisible}}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="15" />
+                                        <TextBlock Text="{Binding Directory}" Style="{StaticResource Faint}" Margin="0,2,0,0" />
+                                        <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12" Margin="0,2,0,0"
+                                                   TextWrapping="Wrap"
+                                                   Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
+                                                   Visibility="{Binding LoadError, Converter={StaticResource NullCollapsed}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!-- empty state (ux-round §4): no packs found → explain the folders + open -->
+                        <StackPanel Margin="12,10" MaxWidth="560" HorizontalAlignment="Left"
+                                    Visibility="{Binding Packs.Count, Converter={StaticResource CountCollapsed}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE838;" FontSize="20"
+                                           Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
+                                           Margin="0,0,12,0" />
+                                <TextBlock Text="No season packs found" FontWeight="SemiBold" FontSize="15"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource Body}" Margin="0,8,0,0" TextWrapping="Wrap"
+                                       Text="A season pack is a plain folder with a pack.json inside. These places are searched:" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="16,6,0,0" TextWrapping="Wrap"
+                                       Text="• the bundled packs folder beside the exe" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="16,2,0,0" TextWrapping="Wrap"
+                                       Text="• Documents\AMS2CareerCompanion\Packs (yours — drop packs here)" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="16,2,0,0" TextWrapping="Wrap"
+                                       Text="• any extra folders you add under Settings → Data" />
+                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                <Button Content="Open pack folder" Click="OnOpenPackFolder"
+                                        ToolTip="Opens Documents\AMS2CareerCompanion\Packs in Explorer (created if missing)" />
+                                <TextBlock Style="{StaticResource Faint}" VerticalAlignment="Center" Margin="10,0,0,0"
+                                           Text="then drop a pack in and hit Rescan below" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </DockPanel>
 
@@ -155,8 +184,9 @@
                 <Border Style="{StaticResource Panel}">
                     <Grid>
                         <TextBlock Foreground="{StaticResource SuccessBrush}" FontSize="15"
-                                   Text="✔ All clear — the pack verifies clean against this install."
-                                   Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}" />
+                                   Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}">
+                            <Run FontFamily="Segoe MDL2 Assets" Text="&#xE73E;" /><Run Text="  All clear — the pack verifies clean against this install." />
+                        </TextBlock>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False"
                                       Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountVisible}}">
                             <ItemsControl ItemsSource="{Binding VerificationItems}">
@@ -206,17 +236,38 @@
                            Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
                 <Border Style="{StaticResource Panel}" Padding="8">
                     <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                <!-- mouse parity: double-click a seat = select it AND advance -->
+                                <EventSetter Event="MouseDoubleClick" Handler="OnSeatDoubleClick" />
+                                <Setter Property="ToolTip" Value="Double-click to pick this seat and continue" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel>
                                     <TextBlock DockPanel.Dock="Left" Width="44" FontWeight="SemiBold"
                                                Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
                                                Text="{Binding Number, StringFormat='#{0}'}" />
-                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
-                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource Muted}" FontSize="13">
-                                            <Run Text="Race " /><Run Text="{Binding RaceSkill, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text="  ·  Quali " /><Run Text="{Binding QualifyingSkill, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" />
-                                        </TextBlock>
-                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource Faint}" Margin="0,2,0,0">
+                                    <!-- ratings as bars; raw numbers on hover (ux-round §2) -->
+                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Width="190">
+                                        <DockPanel ToolTip="{Binding RaceSkill, StringFormat='Race skill (raw): {0:0.000}'}"
+                                                   Background="Transparent">
+                                            <TextBlock DockPanel.Dock="Left" Width="42" Text="Race"
+                                                       Style="{StaticResource Faint}" VerticalAlignment="Center" />
+                                            <ProgressBar Style="{StaticResource RatingBar}"
+                                                         Value="{Binding RaceSkill, Mode=OneWay}" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,4,0,0"
+                                                   ToolTip="{Binding QualifyingSkill, StringFormat='Qualifying skill (raw): {0:0.000}'}"
+                                                   Background="Transparent">
+                                            <TextBlock DockPanel.Dock="Left" Width="42" Text="Quali"
+                                                       Style="{StaticResource Faint}" VerticalAlignment="Center" />
+                                            <ProgressBar Style="{StaticResource RatingBar}"
+                                                         Value="{Binding QualifyingSkill, Mode=OneWay}" />
+                                        </DockPanel>
+                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource Faint}" Margin="0,4,0,0"
+                                                   ToolTip="{Binding Reliability, StringFormat='Car reliability (raw): {0:0.000}'}">
                                             <Run Text="Team tier " /><Run Text="{Binding TeamTier, Mode=OneWay}" /><Run Text="  ·  Reliability " /><Run Text="{Binding Reliability, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text="  ·  Rounds " /><Run Text="{Binding Rounds, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>

@@ -79,15 +79,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         // The scoring definition's round domain is CHAMPIONSHIP rounds (same resolution the
         // structural validator checks): best-N segments and engine round numbers use the
         // championship ordinal, not the calendar position, when the calendar mixes in
-        // non-championship events.
-        _scoringDefinition = pack.Season.PointsSystem.ResolveScoringDefinition(
-            pack.Season.Rounds.Count(r => r.Championship));
+        // non-championship events. ChampionshipCalendar is the ONE shared mapping — the
+        // unified fold (ReplayService) resolves through the same code.
+        _scoringDefinition = ChampionshipCalendar.ResolveScoring(pack);
     }
 
     /// <summary>1-based position of a championship calendar round among championship rounds
     /// only — the round number the scoring engine and best-N segments operate on.</summary>
     private int ChampionshipOrdinal(int calendarRound) =>
-        Pack.Season.Rounds.Count(r => r.Championship && r.Round <= calendarRound);
+        ChampionshipCalendar.Ordinal(Pack, calendarRound);
 
     // ---------- create / open ----------
 
@@ -122,7 +122,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         if (directory is { Length: > 0 })
             Directory.CreateDirectory(directory);
 
-        var envelope = PinnedPackEnvelope.From(files);
+        var envelope = files.ToPinnedEnvelope();
         byte[] envelopeBytes = envelope.ToBytes();
         string sha256 = PinnedPackEnvelope.Sha256Of(envelopeBytes);
 

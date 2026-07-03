@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
@@ -6,17 +8,30 @@ using Companion.ViewModels.Services;
 namespace Companion.ViewModels.Briefing;
 
 /// <summary>
-/// The Race Day briefing screen (app-shell contract): the setup guide as a check-once panel
-/// — every in-game setting as an exact string with a per-line copy action, the Stage-grid
-/// button with a backup-first outcome banner, and a "modified outside the app" flag driven
-/// by an injected <see cref="IFileWatcher"/> on the staged XML. No WPF types: copy raises
-/// <see cref="CopyRequested"/> for the view to put on the clipboard, and the watcher's real
-/// FileSystemWatcher implementation lives in the App layer.
+/// The Race Day briefing screen (ux-round contract, corrected briefing section): the setup
+/// guide as a manual CHECK-OFF CHECKLIST — AMS2's custom-race settings are arrow-steppers,
+/// nothing can be pasted, so every setting is one tickable row with a big glanceable value,
+/// ordered to match the in-game custom-race screen flow (track → class → opponents → laps →
+/// date → start time → weather slots → time progression → pit rules), with an "N of M set"
+/// progress line. Tick state is keyed to the ROUND NUMBER and session-scoped: it survives
+/// navigation within the career session and resets when the round advances (not persisted
+/// across app restarts — v1). Per-row copy buttons are gone; one Copy summary action shares
+/// the whole checklist outside the game via <see cref="CopyRequested"/> (the viewmodel stays
+/// WPF-free — the view owns the real clipboard). <see cref="CompactChecklistOpen"/> drives
+/// the App-layer always-on-top mini checklist window bound to this same instance.
+/// Staging (backup-first outcome banner, force escape hatch, external-modification watcher)
+/// is unchanged.
 /// </summary>
 public sealed partial class BriefingViewModel : ObservableObject
 {
     private readonly ICareerSession _session;
     private readonly IFileWatcher? _watcher;
+
+    /// <summary>Ticked labels per round number — the per-round reset rule falls out of the
+    /// keying: a new round has no entry, so its checklist starts blank.</summary>
+    private readonly Dictionary<int, HashSet<string>> _ticksByRound = [];
+
+    private int _currentRoundNumber;
 
     public BriefingViewModel(ICareerSession session, IFileWatcher? stagedFileWatcher = null)
     {
@@ -27,7 +42,8 @@ public sealed partial class BriefingViewModel : ObservableObject
         Refresh();
     }
 
-    /// <summary>Raised with the exact text the view should copy to the clipboard.</summary>
+    /// <summary>Raised with the exact text the view should copy to the clipboard
+    /// (the composed checklist summary).</summary>
     public event EventHandler<string>? CopyRequested;
 
     // ---------- briefing content ----------
@@ -56,18 +72,33 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// <summary>True once every round has an applied result — there is nothing to brief.</summary>
     public bool SeasonComplete => Briefing is null;
 
-    public ObservableCollection<CopyableSetting> Settings { get; } = [];
+    /// <summary>The check-off rows, in in-game custom-race screen order.</summary>
+    public ObservableCollection<BriefingChecklistItem> Settings { get; } = [];
 
-    /// <summary>Re-reads the current round's briefing from the session (call after Apply).</summary>
+    /// <summary>Re-reads the current round's briefing from the session (call after Apply).
+    /// Rebuilds the checklist and restores this round's ticks, if any.</summary>
     public void Refresh()
     {
         Briefing = _session.CurrentBriefing();
 
+        foreach (var old in Settings)
+            old.PropertyChanged -= OnChecklistItemChanged;
         Settings.Clear();
+
         if (Briefing is { } briefing)
         {
-            foreach (var setting in briefing.Settings)
-                Settings.Add(setting);
+            _currentRoundNumber = briefing.Round.Round;
+            var ticked = _ticksByRound.GetValueOrDefault(_currentRoundNumber);
+            foreach (var setting in briefing.Settings.OrderBy(s => InGameOrderRank(s.Label)))
+            {
+                var item = new BriefingChecklistItem(setting.Label, setting.Value)
+                {
+                    IsChecked = ticked?.Contains(setting.Label) == true,
+                };
+                item.PropertyChanged += OnChecklistItemChanged;
+                Settings.Add(item);
+            }
+
             Title = BriefingComposer.ComposeTitle(briefing);
             VenueDisplayName = briefing.VenueDisplayName;
             IsPlaceholder = briefing.IsPlaceholder;
@@ -78,23 +109,103 @@ public sealed partial class BriefingViewModel : ObservableObject
         }
         else
         {
+            _currentRoundNumber = 0;
             Title = "";
             VenueDisplayName = "";
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
+            CompactChecklistOpen = false; // nothing left to tick — close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));
+        RaiseProgressChanged();
     }
 
-    // ---------- copy ----------
+    /// <summary>The in-game custom-race screen flow (ux-round contract): track → class →
+    /// opponents → laps → date → start time → weather slots → time progression → pit rules.
+    /// The sort is stable, so "Weather slot 1..n" keep their relative order.</summary>
+    internal static int InGameOrderRank(string label) => label switch
+    {
+        "Track" => 0,
+        "Class" => 1,
+        "Opponents" => 2,
+        "Laps" => 3,
+        "Date" => 4,
+        "Start time" => 5,
+        _ when label.StartsWith("Weather slot", StringComparison.Ordinal) => 6,
+        "Time progression" => 7,
+        "Mandatory pit stop" => 8,
+        _ => 9,
+    };
+
+    // ---------- checklist ticks & progress ----------
+
+    /// <summary>The "N of M set" progress line.</summary>
+    public string ChecklistProgressText =>
+        $"{Settings.Count(i => i.IsChecked)} of {Settings.Count} set";
+
+    /// <summary>True when every row is ticked — the view flips the progress chip green.</summary>
+    public bool AllSet => Settings.Count > 0 && Settings.All(i => i.IsChecked);
+
+    /// <summary>Row-click toggle (the whole row is the hit target, not just the checkbox).</summary>
+    [RelayCommand]
+    private void ToggleItem(BriefingChecklistItem? item) => item?.Toggle();
+
+    private void OnChecklistItemChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(BriefingChecklistItem.IsChecked) ||
+            sender is not BriefingChecklistItem item)
+        {
+            return;
+        }
+
+        if (!_ticksByRound.TryGetValue(_currentRoundNumber, out var ticked))
+            _ticksByRound[_currentRoundNumber] = ticked = new HashSet<string>(StringComparer.Ordinal);
+        if (item.IsChecked)
+            ticked.Add(item.Label);
+        else
+            ticked.Remove(item.Label);
+
+        RaiseProgressChanged();
+    }
+
+    private void RaiseProgressChanged()
+    {
+        OnPropertyChanged(nameof(ChecklistProgressText));
+        OnPropertyChanged(nameof(AllSet));
+    }
+
+    // ---------- copy summary (the one remaining copy action — for sharing, not pasting) ----------
 
     [RelayCommand]
-    private void Copy(CopyableSetting? setting)
+    private void CopySummary() => CopyRequested?.Invoke(this, ComposeSummary());
+
+    /// <summary>Title + every "Label: Value" line in checklist order (+ setup notes).</summary>
+    public string ComposeSummary()
     {
-        if (setting is not null)
-            CopyRequested?.Invoke(this, setting.Value);
+        var text = new StringBuilder();
+        if (Title.Length > 0)
+            text.AppendLine(Title);
+        foreach (var item in Settings)
+            text.AppendLine($"{item.Label}: {item.Value}");
+        if (SetupNotes is { Length: > 0 } notes)
+        {
+            text.AppendLine();
+            text.AppendLine(notes);
+        }
+        return text.ToString().TrimEnd();
     }
+
+    // ---------- compact always-on-top mode ----------
+
+    /// <summary>True while the small floating checklist window is open. The App layer
+    /// observes this and opens/closes a Topmost window bound to this same viewmodel, so the
+    /// user can tick settings off while clicking through AMS2 in windowed/borderless mode.</summary>
+    [ObservableProperty]
+    private bool _compactChecklistOpen;
+
+    [RelayCommand]
+    private void ToggleCompactChecklist() => CompactChecklistOpen = !CompactChecklistOpen;
 
     // ---------- staging ----------
 

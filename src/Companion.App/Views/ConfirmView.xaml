@@ -4,15 +4,27 @@
              Focusable="False">
     <DockPanel MaxWidth="960" HorizontalAlignment="Left">
 
-        <!-- headline (M5 news engine replaces the static template) -->
+        <!-- headline (M5 news engine; hidden by the minimal-narrative setting unless
+             championship-critical) -->
         <TextBlock DockPanel.Dock="Top" Text="{Binding Headline}" Style="{StaticResource H2}"
-                   TextWrapping="Wrap" Margin="0,0,0,4" />
+                   TextWrapping="Wrap" Margin="0,0,0,4"
+                   Visibility="{Binding ShowHeadline, Converter={StaticResource BoolVisible}}" />
+        <TextBlock DockPanel.Dock="Top" Text="Round complete" Style="{StaticResource H2}"
+                   TextWrapping="Wrap" Margin="0,0,0,4"
+                   Visibility="{Binding ShowHeadline, Converter={StaticResource BoolCollapsed}}" />
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,14"
                    Text="Review the round before it becomes history — Apply writes the result and advances the season." />
 
         <!-- actions -->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,16,0,0">
-            <Button Content="◀ Back to result entry" MinWidth="170" Command="{Binding BackCommand}" />
+            <Button MinWidth="170" Command="{Binding BackCommand}"
+                    ToolTip="Back to the entered order — the draft is kept (Esc works too)">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72B;" FontSize="13"
+                               VerticalAlignment="Center" Margin="0,1,8,0" />
+                    <TextBlock Text="Back to result entry" />
+                </StackPanel>
+            </Button>
             <Button Content="Apply result" Style="{StaticResource AccentButton}" MinWidth="170"
                     Margin="12,0,0,0" Command="{Binding ApplyCommand}" />
         </StackPanel>
@@ -27,19 +39,18 @@
             <Border Grid.Column="0" Style="{StaticResource Panel}" Margin="0,0,7,0" Padding="12">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="Points this round" FontWeight="SemiBold" Margin="2,0,0,8" />
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-                        <ItemsControl ItemsSource="{Binding RoundPoints}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <DockPanel Margin="2,3">
-                                        <TextBlock DockPanel.Dock="Right" Text="{Binding PointsText}"
-                                                   FontWeight="SemiBold" FontFamily="Consolas" />
-                                        <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextSecondaryBrush}" />
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <!-- virtualized (ux-round §4): every classified driver scores a row -->
+                    <ItemsControl Style="{StaticResource VirtualizedList}" ItemsSource="{Binding RoundPoints}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="2,3">
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding PointsText}"
+                                               FontWeight="SemiBold" FontFamily="Consolas" />
+                                    <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextSecondaryBrush}" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </DockPanel>
             </Border>
 
@@ -47,24 +58,24 @@
             <Border Grid.Column="1" Style="{StaticResource Panel}" Margin="7,0,0,0" Padding="12">
                 <DockPanel>
                     <TextBlock DockPanel.Dock="Top" Text="Championship movement" FontWeight="SemiBold" Margin="2,0,0,8" />
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-                        <ItemsControl ItemsSource="{Binding Movements}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <DockPanel Margin="2,3">
-                                        <TextBlock DockPanel.Dock="Left" Width="52" Text="{Binding Glyph}"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{Binding Glyph, Converter={StaticResource GlyphBrush}}" />
-                                        <TextBlock DockPanel.Dock="Right" FontFamily="Consolas"
-                                                   Foreground="{StaticResource TextMutedBrush}">
-                                            <Run Text="{Binding FromText, Mode=OneWay}" /><Run Text=" → " /><Run Text="{Binding ToText, Mode=OneWay}" />
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextSecondaryBrush}" />
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <ItemsControl Style="{StaticResource VirtualizedList}" ItemsSource="{Binding Movements}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <!-- movement tooltip (ux-round §2): "P5 → P2: gained 3 places" -->
+                                <DockPanel Margin="2,3" Background="Transparent"
+                                           ToolTip="{Binding Tooltip}">
+                                    <TextBlock DockPanel.Dock="Left" Width="52" Text="{Binding Glyph}"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding Glyph, Converter={StaticResource GlyphBrush}}" />
+                                    <TextBlock DockPanel.Dock="Right" FontFamily="Consolas"
+                                               Foreground="{StaticResource TextMutedBrush}">
+                                        <Run Text="{Binding FromText, Mode=OneWay}" /><Run Text=" → " /><Run Text="{Binding ToText, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextSecondaryBrush}" />
+                                </DockPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </DockPanel>
             </Border>
         </Grid>

@@ -2,6 +2,21 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Focusable="False">
+    <UserControl.Resources>
+        <!-- right-click parity (ux-round contract section 2). A PAGE resource on purpose:
+             event handlers on menu items nested inside a Style's Setter.Value hit WPF's
+             connection-id mismatch ("Set connectionId threw an exception", MenuItem cast to
+             Button) the first time a row renders — same pattern as ResultEntryView's
+             DriverRowMenu. DataContext flows in from the row under the cursor. -->
+        <ContextMenu x:Key="RecentCareerMenu">
+            <MenuItem Header="Continue this career" Click="OnRecentContinue" />
+            <Separator />
+            <MenuItem Header="Open containing folder" Click="OnRecentOpenFolder"
+                      ToolTip="Show the .ams2career file in Explorer" />
+            <MenuItem Header="Remove from this list" Click="OnRecentRemove"
+                      ToolTip="Only removes the shortcut — the career file stays on disk" />
+        </ContextMenu>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -24,9 +39,31 @@
 
                 <TextBlock Text="Recent careers" Style="{StaticResource H2}" Margin="0,36,0,8" />
 
-                <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
-                           Text="No careers yet — start a new one. Careers live in Documents\AMS2CareerCompanion\Careers as single *.ams2career files."
-                           Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}" />
+                <!-- empty state (ux-round §4): no careers yet → arrow to New career + open button -->
+                <Border Style="{StaticResource Panel}" Padding="20"
+                        Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C1;" FontSize="20"
+                                       Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
+                                       Margin="0,0,12,0" />
+                            <TextBlock Text="No careers yet" FontWeight="SemiBold" FontSize="15"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Body}" Margin="0,8,0,0">
+                            <Run FontFamily="Segoe MDL2 Assets" Text="&#xE74A;"
+                                 Foreground="{StaticResource AccentBrush}" /><Run
+                                 Text="  Start with " /><Run Text="New career" FontWeight="SemiBold"
+                                 Foreground="{StaticResource AccentBrush}" /><Run
+                                 Text=" above — pick a season pack, verify it against your install, pick your seat, race." />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
+                                   Text="Each career is a single *.ams2career file in Documents\AMS2CareerCompanion\Careers — copy it to back up or share a season." />
+                        <Button Content="Open careers folder" HorizontalAlignment="Left" Margin="0,12,0,0"
+                                Click="OnOpenCareersFolder"
+                                ToolTip="Opens Documents\AMS2CareerCompanion\Careers in Explorer (created if missing)" />
+                    </StackPanel>
+                </Border>
 
                 <Border Style="{StaticResource Panel}" Padding="8"
                         Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolVisible}}">
@@ -37,14 +74,16 @@
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                                     <EventSetter Event="MouseDoubleClick" Handler="OnRecentDoubleClick" />
+                                    <Setter Property="ContextMenu" Value="{StaticResource RecentCareerMenu}" />
                                 </Style>
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel>
-                                        <Button DockPanel.Dock="Right" Content="✕"
-                                                Style="{StaticResource SubtleButton}"
+                                        <Button DockPanel.Dock="Right" Content="&#xE711;"
+                                                Style="{StaticResource IconButton}"
                                                 ToolTip="Remove from this list (the career file stays)"
+                                                AutomationProperties.Name="Remove from recent careers"
                                                 Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                                 CommandParameter="{Binding}" />
                                         <StackPanel>
