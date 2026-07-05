@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Companion.ViewModels.Hub;
 using Companion.ViewModels.Settings;
 using Companion.ViewModels.Shell;
 
@@ -24,14 +26,35 @@ public partial class MainWindow : Window
         Closing += OnClosing;
     }
 
-    /// <summary>Esc = one non-destructive step back, everywhere (ux-round contract). The
-    /// viewmodel decides whether Esc means anything right now (it never cancels destructively
-    /// and never steals Esc from the result-entry grammar); unhandled Esc falls through.</summary>
+    /// <summary>Window-level key routing (the reliable top of the tunnel, so it fires whatever
+    /// child has focus): number keys 1–9 select hub tabs, and Esc = one non-destructive step
+    /// back (ux-round contract). Both yield to the result-entry grammar — a focused editable box
+    /// keeps its own digits/Esc — and to any modifier chord. Unhandled keys fall through.</summary>
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key != Key.Escape || e.Handled)
+        if (e.Handled || DataContext is not ShellViewModel shell)
             return;
-        if (DataContext is ShellViewModel shell && shell.TryEscapeBack())
+
+        // Tab accelerators: only when a hub is open, no modifier, and focus is not in an
+        // editable box (the result-entry InputBox owns bare digits).
+        if (shell.Current is HubViewModel hub &&
+            Keyboard.Modifiers == ModifierKeys.None &&
+            Keyboard.FocusedElement is not TextBox { IsReadOnly: false })
+        {
+            int tab = e.Key switch
+            {
+                >= Key.D1 and <= Key.D9 => e.Key - Key.D1 + 1,
+                >= Key.NumPad1 and <= Key.NumPad9 => e.Key - Key.NumPad1 + 1,
+                _ => 0,
+            };
+            if (tab > 0 && hub.SelectTabByNumber(tab))
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        if (e.Key == Key.Escape && shell.TryEscapeBack())
             e.Handled = true;
     }
 
