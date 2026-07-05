@@ -113,4 +113,80 @@ public sealed class WeekendFoldDeterminismTests : IDisposable
             $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
         Assert.True(report.ComparedRows > 0);
     }
+
+    [Fact]
+    public void TwoRaceWeekend_FoldsEachRaceIndependently_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRaceWeekendPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "two-race-fold.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 314159;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Two-Race Fold",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+
+            // Round 1: qualify, then the two-race weekend (feature + sprint).
+            session.Apply(new ResultDraft
+            {
+                Classified = ["driver.hulme", "driver.brabham"],
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+                QualifyingOrder = ["driver.brabham", "driver.hulme"],
+                AdditionalRaces =
+                [
+                    new ExtraRaceResult { Classified = ["driver.brabham", "driver.hulme"] },
+                ],
+            });
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var journal = JournalStore.ReadSeason(db, seasonId);
+
+        // Each race folded its own player round-update: TWO race.result + OPI + reputation rows.
+        Assert.Equal(2, journal.Count(r => r.Round == 1
+            && r.Phase == JournalPhases.RaceResult && r.Entity == "player"));
+        Assert.Equal(2, journal.Count(r => r.Round == 1 && r.Phase == JournalPhases.PlayerOpi));
+        Assert.Equal(2, journal.Count(r => r.Round == 1 && r.Phase == JournalPhases.PlayerReputation));
+        // Qualifying calibrates ONCE per weekend (it sets the grid), not per race.
+        Assert.Equal(1, journal.Count(r => r.Round == 1 && r.Phase == JournalPhases.PlayerQualiAnchor));
+
+        // The two-race career — two per-race folds included — re-simulates byte-identically.
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), Inputs(playerId));
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.True(report.ComparedRows > 0);
+    }
+
+    private static ReplaySimInputs Inputs(string playerId)
+    {
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        return new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30, // TestPackBuilder drivers carry no Born year → season.Year − (Year − 30)
+        };
+    }
 }
