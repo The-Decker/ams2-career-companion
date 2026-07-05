@@ -577,6 +577,7 @@ public static class ReplayService
             Streams = new StreamFactory(masterSeed),
             Headlines = inputs.Headlines,
             PlayerName = inputs.PlayerName,
+            PlayerQualifyingPosition = PlayerQualifyingPosition(envelope, inputs.PlayerDriverId),
         });
         events.AddRange(update.Events);
 
@@ -586,6 +587,19 @@ public static class ReplayService
             PlayerRaced: true,
             update.Headline,
             update.ExpectedFinish);
+    }
+
+    /// <summary>The player's 1-based qualifying position from the round's stored qualifying order
+    /// (Increment 2), or null when the round ran no qualifying (single-race) or the player is not
+    /// listed in it — either way no qualifying anchor is calibrated and no event is emitted.</summary>
+    private static int? PlayerQualifyingPosition(RoundResultEnvelope envelope, string playerDriverId)
+    {
+        if (envelope.QualifyingOrder is not { } order)
+            return null;
+        for (int i = 0; i < order.Count; i++)
+            if (string.Equals(order[i], playerDriverId, StringComparison.Ordinal))
+                return i + 1;
+        return null;
     }
 
     /// <summary>The round's grid with the player's seat marked, or null when the player has

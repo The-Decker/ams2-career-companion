@@ -60,6 +60,11 @@ public sealed record PlayerCareerState
     /// slider percent. 0 means "not yet calibrated" — the first round seeds it directly.</summary>
     public double PaceAnchor { get; init; }
 
+    /// <summary>Qualifying (one-lap) pace anchor: EWMA (α=0.3) of the player's implied one-lap
+    /// pace, calibrated from the qualifying order on weekend rounds. 0 = not yet calibrated;
+    /// single-race careers never set it. (Increment 2.)</summary>
+    public double QualifyingAnchor { get; init; }
+
     public int SeasonsCompleted { get; init; }
 
     public string? CurrentTeamId { get; init; }
