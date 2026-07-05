@@ -411,6 +411,30 @@ public sealed record ResultDraft
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in
     /// the raw envelope; never scored. Older producers omit it.</summary>
     public IReadOnlyList<string>? QualifyingOrder { get; init; }
+
+    /// <summary>Additional race classifications for an authored TWO-race weekend (Increment 2): the
+    /// PRIMARY race is this draft's own <see cref="Classified"/>/<see cref="DidNotFinish"/>/
+    /// <see cref="Disqualified"/> (race index 0); each entry here is a further race (index 1…),
+    /// scored on its own points table per the pack's <c>weekend.races</c>. Null/empty = today's
+    /// single race, so the round scores + folds exactly as before. Older producers omit it.</summary>
+    public IReadOnlyList<ExtraRaceResult>? AdditionalRaces { get; init; }
+}
+
+/// <summary>One additional race's classification in a two-race weekend (<see cref="ResultDraft.AdditionalRaces"/>),
+/// beyond the primary race the draft itself carries. Positions are implied by <see cref="Classified"/>
+/// order (index 0 = P1), exactly like the primary race. Scoring inputs only — its points come from the
+/// race's own table (per the pack weekend); the per-race DNF blame + per-session fold land in a later
+/// Increment-2 slice.</summary>
+public sealed record ExtraRaceResult
+{
+    /// <summary>Driver ids in finishing order (index 0 = P1).</summary>
+    public required IReadOnlyList<string> Classified { get; init; }
+
+    /// <summary>Driver id → one-letter DNF reason ("m"/"a"/"o"), same stable seam as the primary race.</summary>
+    public IReadOnlyDictionary<string, string> DidNotFinish { get; init; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
+
+    public IReadOnlyList<string> Disqualified { get; init; } = [];
 }
 
 /// <summary>A customised DNF cause carried beside the one-letter code in

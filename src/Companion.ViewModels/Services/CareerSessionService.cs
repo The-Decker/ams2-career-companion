@@ -741,8 +741,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         foreach (string driverId in DraftParticipants(draft))
         {
             var standing = after.Drivers.FirstOrDefault(d => d.DriverId == driverId);
-            var score = standing?.RoundScores.FirstOrDefault(s => s.Round == scoredRound);
-            roundPoints.Add((driverId, score?.Points ?? Rational.Zero));
+            // Sum every score this round: one for a single race, one per race for a two-race
+            // weekend scored per session (Increment 2). A single-race round is unchanged.
+            var points = standing?.RoundScores
+                .Where(s => s.Round == scoredRound)
+                .Aggregate(Rational.Zero, (acc, s) => acc + s.Points) ?? Rational.Zero;
+            roundPoints.Add((driverId, points));
         }
 
         var movements = after.Drivers
@@ -1842,18 +1846,65 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         var teamByDriver = RoundGridResolver.Resolve(Pack, roundNumber).Seats
             .ToDictionary(s => s.DriverId, s => s.TeamId, StringComparer.Ordinal);
 
+        // Race 0 is the draft's own classification; a two-race weekend adds the rest (Increment 2).
+        int raceCount = 1 + (draft.AdditionalRaces?.Count ?? 0);
+        bool perSession = raceCount > 1;
+        var weekendRaces = packRound.Weekend?.Races;
+
+        var sessions = new List<SessionResult>(raceCount)
+        {
+            // Bind a per-session table ONLY when the round actually scores per session — a
+            // single race keeps the null table so its per-round selection (incl. the 1961
+            // constructors override) is byte-identical to the shipped path.
+            RaceSession(draft.Classified, draft.DidNotFinish, draft.Disqualified, teamByDriver,
+                perSession ? PerSessionTable(weekendRaces, 0) : null),
+        };
+        if (draft.AdditionalRaces is { Count: > 0 } extras)
+        {
+            for (int i = 0; i < extras.Count; i++)
+                sessions.Add(RaceSession(extras[i].Classified, extras[i].DidNotFinish, extras[i].Disqualified,
+                    teamByDriver, PerSessionTable(weekendRaces, i + 1)));
+        }
+
+        return new RoundResult
+        {
+            Round = ChampionshipOrdinal(roundNumber),
+            CountsForConstructors = rules.CountsForConstructors,
+            PointsFactor = rules.PointsFactor,
+            AlternateRaceTableId = rules.AlternateRaceTableId,
+            PerSessionScoring = perSession,
+            Sessions = sessions,
+        };
+    }
+
+    /// <summary>The authored points table for race index <paramref name="index"/> from the round's
+    /// weekend (<c>null</c> when the round runs no weekend or leaves the race's table unset — then
+    /// the engine's per-round selection applies).</summary>
+    private static string? PerSessionTable(IReadOnlyList<PackWeekendRace>? races, int index) =>
+        races is not null && index < races.Count ? races[index].PointsTable : null;
+
+    /// <summary>Maps one race's classification onto the engine's session shape: classified drivers
+    /// in list order (index 0 = P1), DNF → Retired, DSQ → Disqualified, constructors from the round
+    /// grid's seats, plus the authored per-session points table (null = the engine's default).</summary>
+    private static SessionResult RaceSession(
+        IReadOnlyList<string> classified,
+        IReadOnlyDictionary<string, string> didNotFinish,
+        IReadOnlyList<string> disqualified,
+        IReadOnlyDictionary<string, string> teamByDriver,
+        string? pointsTableId)
+    {
         var entries = new List<ClassifiedEntry>();
-        for (int i = 0; i < draft.Classified.Count; i++)
+        for (int i = 0; i < classified.Count; i++)
         {
             entries.Add(new ClassifiedEntry
             {
-                DriverId = draft.Classified[i],
-                ConstructorId = teamByDriver.GetValueOrDefault(draft.Classified[i]),
+                DriverId = classified[i],
+                ConstructorId = teamByDriver.GetValueOrDefault(classified[i]),
                 Position = i + 1,
                 Status = FinishStatus.Classified,
             });
         }
-        foreach (string driverId in draft.DidNotFinish.Keys)
+        foreach (string driverId in didNotFinish.Keys)
         {
             entries.Add(new ClassifiedEntry
             {
@@ -1862,7 +1913,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 Status = FinishStatus.Retired,
             });
         }
-        foreach (string driverId in draft.Disqualified)
+        foreach (string driverId in disqualified)
         {
             entries.Add(new ClassifiedEntry
             {
@@ -1872,14 +1923,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             });
         }
 
-        return new RoundResult
-        {
-            Round = ChampionshipOrdinal(roundNumber),
-            CountsForConstructors = rules.CountsForConstructors,
-            PointsFactor = rules.PointsFactor,
-            AlternateRaceTableId = rules.AlternateRaceTableId,
-            Sessions = [new SessionResult { Kind = SessionKind.Race, Entries = entries }],
-        };
+        return new SessionResult { Kind = SessionKind.Race, Entries = entries, PointsTableId = pointsTableId };
     }
 
     private void ValidateDraft(ResultDraft draft, int roundNumber)
@@ -1888,21 +1932,46 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
 
+        // Each race is validated on its own: a driver legitimately appears in EVERY race of a
+        // two-race weekend, so duplicate detection is per race, not across the round.
+        ValidateRace(draft.Classified, draft.DidNotFinish.Keys, draft.Disqualified, gridDrivers, roundNumber);
+        if (draft.AdditionalRaces is { } extras)
+        {
+            foreach (var race in extras)
+                ValidateRace(race.Classified, race.DidNotFinish.Keys, race.Disqualified, gridDrivers, roundNumber);
+        }
+    }
+
+    private static void ValidateRace(
+        IReadOnlyList<string> classified,
+        IEnumerable<string> didNotFinish,
+        IReadOnlyList<string> disqualified,
+        HashSet<string> gridDrivers,
+        int roundNumber)
+    {
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        foreach (string driverId in DraftParticipants(draft))
+        foreach (string driverId in classified.Concat(didNotFinish).Concat(disqualified))
         {
             if (!seen.Add(driverId))
                 throw new ArgumentException(
                     $"Driver '{driverId}' appears more than once in the round-{roundNumber} result draft.",
-                    nameof(draft));
+                    nameof(classified));
             if (!gridDrivers.Contains(driverId))
                 throw new ArgumentException(
-                    $"Driver '{driverId}' is not in the round-{roundNumber} grid.", nameof(draft));
+                    $"Driver '{driverId}' is not in the round-{roundNumber} grid.", nameof(classified));
         }
     }
 
+    /// <summary>Every distinct driver named across all of the round's races — one entry per driver
+    /// for the confirm screen's round-points list, even when they appear in both races.</summary>
     private static IEnumerable<string> DraftParticipants(ResultDraft draft) =>
-        draft.Classified.Concat(draft.DidNotFinish.Keys).Concat(draft.Disqualified);
+        draft.Classified
+            .Concat(draft.DidNotFinish.Keys)
+            .Concat(draft.Disqualified)
+            .Concat(draft.AdditionalRaces?
+                .SelectMany(r => r.Classified.Concat(r.DidNotFinish.Keys).Concat(r.Disqualified))
+                ?? [])
+            .Distinct(StringComparer.Ordinal);
 
     // ---------- plumbing ----------
 

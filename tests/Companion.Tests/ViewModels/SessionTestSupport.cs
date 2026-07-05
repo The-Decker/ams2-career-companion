@@ -125,6 +125,37 @@ internal static class TestPackBuilder
         ],
     };
 
+    /// <summary>The two-round pack with round 1 authored as a TWO-race weekend (qualifying + a
+    /// feature on the primary table + a sprint on the sprint table), plus a sprint points table so
+    /// the per-session "sprint" table resolves. Round 2 stays single-race (Increment 2 mixed shape).</summary>
+    public static SeasonPack TwoRaceWeekendPack()
+    {
+        var basePack = TwoRoundPack();
+        var round1 = basePack.Season.Rounds[0] with
+        {
+            Weekend = new PackWeekend
+            {
+                Qualifying = new PackWeekendSession { Label = "Qualifying" },
+                Races =
+                [
+                    new PackWeekendRace { Id = "race", Label = "Feature" },              // primary table
+                    new PackWeekendRace { Id = "race2", Label = "Sprint", PointsTable = "sprint" },
+                ],
+            },
+        };
+        return basePack with
+        {
+            Season = basePack.Season with
+            {
+                PointsSystem = basePack.Season.PointsSystem with
+                {
+                    SprintPoints = [new(8), new(6), new(4), new(3), new(2), new(1)],
+                },
+                Rounds = [round1, basePack.Season.Rounds[1]],
+            },
+        };
+    }
+
     public static PackRound Round(int number, string date, int opponents = 1) => new()
     {
         Round = number,
