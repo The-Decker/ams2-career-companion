@@ -97,5 +97,12 @@ public sealed record RoundResult
     /// (2022+ shortened-race sliding scale). Null uses the season's standard race table.</summary>
     public string? AlternateRaceTableId { get; init; }
 
+    /// <summary>When true (Increment 2c.2), each scoring session becomes its own
+    /// <see cref="RoundScore"/> (sub-keyed by session index) so an authored two-race weekend's
+    /// races are kept/dropped independently by best-N. Default false = the shipped behaviour:
+    /// every session merges into one round score. NEVER set on a historical fixture or a
+    /// single-race round, so scoring stays byte-identical until a pack authors it.</summary>
+    public bool PerSessionScoring { get; init; }
+
     public required IReadOnlyList<SessionResult> Sessions { get; init; }
 }

@@ -137,10 +137,57 @@ public static class StandingsEngine
         Dictionary<string, List<RoundScore>> driverScores,
         Dictionary<string, List<RoundScore>> constructorScores)
     {
+        if (round.PerSessionScoring)
+        {
+            // Independent per-race scoring (Increment 2c.2) — an authored two-race weekend:
+            // each scoring session becomes its OWN RoundScore, sub-keyed by session index, so
+            // best-N can keep/drop the two races independently. NEVER set on a historical
+            // fixture, so the merged path below is what every oracle season and the 13 packs run.
+            for (int index = 0; index < round.Sessions.Count; index++)
+            {
+                var (dp, cp) = ScoreSession(system, round, round.Sessions[index]);
+                foreach (var (driverId, points) in dp)
+                    Scores(driverScores, driverId).Add(
+                        new RoundScore { Round = round.Round, Points = points, SessionIndex = index });
+                foreach (var (constructorId, points) in cp)
+                    Scores(constructorScores, constructorId).Add(
+                        new RoundScore { Round = round.Round, Points = points, SessionIndex = index });
+            }
+            return;
+        }
+
+        // Shipped behaviour: every session of the round merges into ONE RoundScore per
+        // competitor (SessionIndex null). Byte-identical for single-race and historical
+        // sprint+race rounds.
         var driverPoints = new Dictionary<string, Rational>(StringComparer.Ordinal);
         var constructorPoints = new Dictionary<string, Rational>(StringComparer.Ordinal);
 
         foreach (var session in round.Sessions)
+        {
+            var (dp, cp) = ScoreSession(system, round, session);
+            foreach (var (driverId, points) in dp)
+                driverPoints[driverId] = driverPoints.GetValueOrDefault(driverId, Rational.Zero) + points;
+            foreach (var (constructorId, points) in cp)
+                constructorPoints[constructorId] = constructorPoints.GetValueOrDefault(constructorId, Rational.Zero) + points;
+        }
+
+        foreach (var (driverId, points) in driverPoints)
+            Scores(driverScores, driverId).Add(new RoundScore { Round = round.Round, Points = points });
+
+        foreach (var (constructorId, points) in constructorPoints)
+            Scores(constructorScores, constructorId).Add(new RoundScore { Round = round.Round, Points = points });
+    }
+
+    /// <summary>Scores ONE session of a round: the per-driver and per-constructor points it
+    /// awards (best-car-only applied within the session), plus a zero entry for every participant
+    /// so nobody is dropped from the standings. The round's merge/split policy is applied by the
+    /// caller.</summary>
+    private static (Dictionary<string, Rational> DriverPoints, Dictionary<string, Rational> ConstructorPoints)
+        ScoreSession(PointsSystem system, RoundResult round, SessionResult session)
+    {
+        var driverPoints = new Dictionary<string, Rational>(StringComparer.Ordinal);
+        var constructorPoints = new Dictionary<string, Rational>(StringComparer.Ordinal);
+
         {
             IReadOnlyList<Rational> driversTable;
             IReadOnlyList<Rational> constructorsTable;
@@ -266,11 +313,7 @@ public static class StandingsEngine
             }
         }
 
-        foreach (var (driverId, points) in driverPoints)
-            Scores(driverScores, driverId).Add(new RoundScore { Round = round.Round, Points = points });
-
-        foreach (var (constructorId, points) in constructorPoints)
-            Scores(constructorScores, constructorId).Add(new RoundScore { Round = round.Round, Points = points });
+        return (driverPoints, constructorPoints);
     }
 
     private static Rational TableValue(IReadOnlyList<Rational> table, int position) =>
@@ -358,6 +401,7 @@ public static class StandingsEngine
                 .Where(s => s.Round >= segment.FromRound && s.Round <= segment.ToRound)
                 .OrderByDescending(s => s.Points)
                 .ThenBy(s => s.Round)
+                .ThenBy(s => s.SessionIndex ?? 0) // stable when a per-session weekend puts two scores in one round
                 .ToList();
 
             foreach (var score in inSegment)
