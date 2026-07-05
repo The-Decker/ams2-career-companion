@@ -108,6 +108,36 @@ Evolve the loop from one race to the real AMS2 weekend, once the shell is proven
 - **Why second:** it's the loop change Mike explicitly asked for; doing it right after the verbatim
   re-home keeps the re-home clean and evolves from a proven shell.
 
+#### Slice plan + the scoring-engine risk (code mapped 2026-07-05)
+
+Four green, byte-identical-for-existing-packs slices:
+
+- **2a — Pack model** ✅ *(done)*: optional `PackWeekend` on `PackRound` (practice/qualifying + 1–2
+  races, each with a label + points table), defaulting to `null` = single race. Pure additive; the
+  pinned-pack load stays byte-identical (1046/1046 green).
+- **2b — Per-session capture + save-format**: bump `RoundResultEnvelope` **v2→v3** (read-with-defaults);
+  add `SessionKind.Qualifying` so an entered qualifying order is a raw INPUT session; make
+  `Apply`/`Preview` session-aware via an optional `SessionId` (default = the sole race — the one
+  sanctioned existing-member contract change); add `CurrentWeekend()`; result entry reuses the grammar
+  per session.
+- **2c — Per-session scoring + fold (the risky core, oracle-gated)**:
+  - `SessionResult` gains a per-session `PointsTableId` — today `AlternateRaceTableId` is **per-round**
+    (`RoundResult.cs:88`), so two races can't pick different tables; `StandingsEngine.ScoreRound`
+    (`:139-144`) must select the table from the session, not just `SessionKind`.
+  - **Load-bearing change + its risk:** `ScoreRound` today merges ALL sessions into **one** `RoundScore`
+    per round (`:249-253`); `RoundScore` (`Standings.cs:42`) has only `{Round, Points}`. Independent
+    per-race scoring means emitting a `RoundScore` **per scoring session** with a sub-key
+    `(Round, SessionIndex)`. That **changes behaviour** for existing sprint-era rounds (2021+ merge
+    sprint+race today), and best-N (`ApplyBestN`), strict-ordering (`Validate :53`), countback
+    (`AccumulateFinishCounts :273`) and fastest-lap (`:214`) all assume one score per round number.
+    **Preserve today's merged result for existing round shapes; only diverge for authored 2-race
+    weekends; re-run the f1db oracle across 2021–2025 sprint fixtures before shipping.**
+  - Fold: `ImportAndFoldRound` → a per-session `ImportAndFoldSession` so each race emits its own
+    OPI/rep/XP set; guard the emitted-row order/count for default careers (design §13.2).
+- **2d — Qualifying pace anchor (new math)**: `PaceAnchorMath` is race-finish + `raceSkill` only today;
+  add a second EWMA + `ImpliedPlayerQualiPace` over the grid's `qualifyingSkill` + a `player.qualiAnchor`
+  phase, identity-default (no qualifying → no new events). Ships after 2c or as its own slice.
+
 ### Increment 3 — Total-recall History + clickable-everywhere Why? inspector  *(read-only over state)*
 
 Prove the "legible sim + total recall" thesis with tabs that need no new sim math.
