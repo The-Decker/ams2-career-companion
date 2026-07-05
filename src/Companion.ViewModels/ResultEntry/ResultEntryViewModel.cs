@@ -83,6 +83,12 @@ public sealed partial class ResultEntryViewModel : ObservableObject
         _clock = clock ?? TimeProvider.System;
     }
 
+    /// <summary>Optional per-session heading shown above the grammar (Increment 2b.3): set to
+    /// "Qualifying" when this entry captures the weekend's qualifying grid order rather than a race
+    /// result. Null on a plain race entry — the screen then renders exactly as the shipped
+    /// single-race loop. Display only; the grammar itself is identical for every session.</summary>
+    public string? SessionLabel { get; init; }
+
     // ---------- observable state ----------
 
     /// <summary>Slider value assumed before any recommendation exists (neutral 100%).</summary>

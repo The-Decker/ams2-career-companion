@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Grid;
+using Companion.Core.Packs;
 using Companion.ViewModels.Briefing;
 using Companion.ViewModels.Confirm;
 using Companion.ViewModels.ResultEntry;
@@ -26,6 +28,16 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private readonly ISettingsService? _settings;
 
     private ResultEntryViewModel? _resultEntry;
+
+    /// <summary>The weekend qualifying-order entry (Increment 2b.3): shown before the race result
+    /// when the round's weekend declares a qualifying session. Reuses the result-entry grammar to
+    /// capture the grid order pole-first. Null on single-race rounds — the loop stays byte-identical.</summary>
+    private ResultEntryViewModel? _qualifyingEntry;
+
+    /// <summary>The captured qualifying order (pole first) for the current round, held in memory
+    /// until the race result is applied — then written verbatim into the round's raw envelope via
+    /// <see cref="ResultDraft.QualifyingOrder"/>. Null when the round ran no qualifying session.</summary>
+    private IReadOnlyList<string>? _capturedQualifyingOrder;
 
     public HomeViewModel(
         ICareerSession session,
@@ -120,7 +132,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(
         nameof(IsBriefingState), nameof(IsResultEntryState),
-        nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState))]
+        nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
+        nameof(IsQualifyingStep), nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -131,6 +144,19 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     public bool IsConfirmState => CurrentContent is ConfirmViewModel;
     public bool IsStandingsState => CurrentContent is StandingsViewModel;
     public bool IsSeasonReviewState => CurrentContent is SeasonReviewViewModel;
+
+    /// <summary>True while the CURRENT content is the weekend qualifying-order step (not the race
+    /// result) — both reuse the result-entry grammar, so this drives the primary action's label
+    /// and the "which step am I on" cues. Always false on single-race rounds.</summary>
+    public bool IsQualifyingStep => _qualifyingEntry is not null
+        && ReferenceEquals(CurrentContent, _qualifyingEntry);
+
+    /// <summary>The primary confirm button's label: on the qualifying step it locks the entered
+    /// grid and advances to the race; on the race step it opens the confirm/score screen.</summary>
+    public string ConfirmButtonText => IsQualifyingStep ? "Set the grid  ⏎" : "Confirm result  ⏎";
+
+    partial void OnCurrentContentChanged(ObservableObject? value) =>
+        ConfirmResultCommand.NotifyCanExecuteChanged();
 
     private bool RoundInProgress => !Summary.SeasonComplete;
 
@@ -146,6 +172,51 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private void EnterResult()
     {
         ContentError = null;
+
+        // Weekend qualifying step (Increment 2b.3): on a round whose weekend declares a qualifying
+        // session, capture the grid order (pole first) BEFORE the race — once per round. A round
+        // with no weekend / no qualifying skips straight to the race, so the shipped single-race
+        // loop is byte-identical.
+        if (QualifyingSession is not null && _capturedQualifyingOrder is null)
+        {
+            ShowQualifyingEntry();
+            return;
+        }
+
+        ShowRaceEntry();
+    }
+
+    /// <summary>The current round's qualifying session when its weekend declares one present; null
+    /// on a single-race round (the byte-identical default — every bundled pack).</summary>
+    private PackWeekendSession? QualifyingSession =>
+        _session.CurrentWeekend()?.Qualifying is { Present: true } qualifying ? qualifying : null;
+
+    /// <summary>Show the qualifying-order entry — the same result-entry grammar, reused to capture
+    /// the grid pole-first. Built lazily so a half-entered order survives a toggle to the briefing.</summary>
+    private void ShowQualifyingEntry()
+    {
+        if (_qualifyingEntry is null)
+        {
+            var grid = _session.CurrentGrid();
+            if (grid.Count == 0)
+            {
+                ContentError = "This round has no grid to qualify.";
+                return;
+            }
+            _qualifyingEntry = new ResultEntryViewModel(grid, Summary.PlayerDriverId, _clock)
+            {
+                SessionLabel = QualifyingSession?.Label ?? "Qualifying",
+            };
+            _qualifyingEntry.PropertyChanged += OnResultEntryPropertyChanged;
+            ConfirmResultCommand.NotifyCanExecuteChanged();
+        }
+        CurrentContent = _qualifyingEntry;
+    }
+
+    /// <summary>Show the race result entry — the shipped flow, now seeded pole-first from any
+    /// captured qualifying order (a single-race round leaves the grid untouched).</summary>
+    private void ShowRaceEntry()
+    {
         if (_resultEntry is null)
         {
             var grid = _session.CurrentGrid();
@@ -154,7 +225,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 ContentError = "This round has no grid to score.";
                 return;
             }
-            _resultEntry = new ResultEntryViewModel(grid, Summary.PlayerDriverId, _clock)
+            _resultEntry = new ResultEntryViewModel(
+                OrderByQualifying(grid, _capturedQualifyingOrder), Summary.PlayerDriverId, _clock)
             {
                 // Prefill the slider prompt with the pace-anchor recommendation (the same
                 // value the briefing showed); before the anchor calibrates, the settings
@@ -169,16 +241,51 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         CurrentContent = _resultEntry;
     }
 
-    private bool CanConfirmResult => _resultEntry is { IsComplete: true };
+    /// <summary>Orders the race grid pole-first by a captured qualifying order (Increment 2b.3):
+    /// seats named in the qualifying order lead in that order; any seat the order omits keeps grid
+    /// order behind them. A null/empty order (single-race round) returns the grid unchanged, so the
+    /// result screen is byte-identical to the shipped loop.</summary>
+    private static IReadOnlyList<GridSeat> OrderByQualifying(
+        IReadOnlyList<GridSeat> grid, IReadOnlyList<string>? qualifyingOrder)
+    {
+        if (qualifyingOrder is null || qualifyingOrder.Count == 0)
+            return grid;
 
-    /// <summary>Result entry → Confirm interstitial: score the draft without committing.</summary>
+        var rank = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int i = 0; i < qualifyingOrder.Count; i++)
+            rank.TryAdd(qualifyingOrder[i], i);
+
+        return grid
+            .Select((seat, index) => (seat, index))
+            .OrderBy(t => rank.TryGetValue(t.seat.DriverId, out int r) ? r : int.MaxValue)
+            .ThenBy(t => t.index)
+            .Select(t => t.seat)
+            .ToArray();
+    }
+
+    private bool CanConfirmResult => CurrentContent is ResultEntryViewModel { IsComplete: true };
+
+    /// <summary>The result-entry primary action. On the qualifying step it locks the entered grid
+    /// (no scoring) and advances to the race; on the race step it scores the draft into the Confirm
+    /// interstitial without committing. The captured qualifying order rides on the race draft.</summary>
     [RelayCommand(CanExecute = nameof(CanConfirmResult))]
     private void ConfirmResult()
     {
+        // Qualifying step: lock the grid, hold the order, advance to the race (no confirm screen).
+        if (IsQualifyingStep && _qualifyingEntry is { IsComplete: true } qualifying)
+        {
+            _capturedQualifyingOrder = qualifying.BuildDraft().Classified;
+            _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
+            _qualifyingEntry = null;
+            ContentError = null;
+            ShowRaceEntry();
+            return;
+        }
+
         if (_resultEntry is not { IsComplete: true } entry)
             return;
 
-        var draft = entry.BuildDraft();
+        var draft = entry.BuildDraft() with { QualifyingOrder = _capturedQualifyingOrder };
         ConfirmModel model;
         try
         {
@@ -216,6 +323,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _resultEntry.PropertyChanged -= OnResultEntryPropertyChanged;
             _resultEntry = null;
         }
+
+        // The weekend's qualifying order was consumed by this Apply — clear it for the next round.
+        if (_qualifyingEntry is not null)
+        {
+            _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
+            _qualifyingEntry = null;
+        }
+        _capturedQualifyingOrder = null;
 
         Summary = _session.Summary;
         Briefing.Refresh();
@@ -255,6 +370,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         else if (_resultEntry is not null)
         {
             CurrentContent = _resultEntry;
+        }
+        else if (_qualifyingEntry is not null)
+        {
+            CurrentContent = _qualifyingEntry; // mid-qualifying: back to the grid entry, not the briefing
         }
         else
         {
@@ -311,6 +430,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     {
         if (_resultEntry is not null)
             _resultEntry.PropertyChanged -= OnResultEntryPropertyChanged;
+        if (_qualifyingEntry is not null)
+            _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
         (_watcher as IDisposable)?.Dispose();
         (_session as IDisposable)?.Dispose();
     }
