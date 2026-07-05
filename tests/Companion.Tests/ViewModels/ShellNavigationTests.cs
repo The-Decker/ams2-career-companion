@@ -72,6 +72,72 @@ public sealed class ShellNavigationTests
     }
 
     [Fact]
+    public void Continue_records_the_stored_season_year_from_the_summary()
+    {
+        var shell = CreateShell(out _, out var store);
+        var entry = store.Seed("Z:\\careers\\one.ams2career", "Career One");
+        shell.Start.Refresh();
+
+        shell.Start.ContinueCommand.Execute(entry);
+
+        // Continue touches twice: the VM front-inserts the entry (preserving its stored year), then
+        // the shell re-records it AUTHORITATIVELY from the opened session's summary. The FakeSession's
+        // summary year is 1967, so the last (winning) touch carries it — the gallery card then
+        // resolves its era by the STORED year, not by parsing the name.
+        var touched = store.Touched.Last(t => t.Path == "Z:\\careers\\one.ams2career");
+        Assert.Equal(1967, touched.SeasonYear);
+    }
+
+    [Fact]
+    public void Open_career_by_path_opens_lands_home_and_records_the_mru_with_the_year()
+    {
+        var shell = CreateShell(out var factory, out var store);
+        // "Open career…" pre-flights File.Exists (the shell builds the Start VM with the default),
+        // so the target must be a real file on disk. Its contents are irrelevant — the fake factory
+        // ignores them; only the existence check and the open routing are under test.
+        string path = Path.Combine(Path.GetTempPath(), $"open-by-path-{Guid.NewGuid():N}.ams2career");
+        File.WriteAllText(path, "not a real career db");
+        try
+        {
+            // A file NOT in the MRU routes through the very same continue/open flow the cards use.
+            shell.Start.OpenCareerCommand.Execute(path);
+
+            Assert.Equal(path, factory.LastOpenedPath);
+            Assert.IsType<HubViewModel>(shell.Current);
+            var touched = Assert.Single(store.Touched, t => t.Path == path);
+            Assert.Equal(1967, touched.SeasonYear); // the summary's year, not a name-parse
+            Assert.Null(shell.StatusError);
+            Assert.Null(shell.Start.OpenError);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void Open_career_by_path_open_failure_reports_and_stays_on_start()
+    {
+        var shell = CreateShell(out var factory, out _);
+        factory.OpenThrows = new IOException("not a database");
+        string path = Path.Combine(Path.GetTempPath(), $"open-bad-{Guid.NewGuid():N}.ams2career");
+        File.WriteAllText(path, "x");
+        try
+        {
+            shell.Start.OpenCareerCommand.Execute(path);
+
+            // The file exists (pre-flight passes) but the factory rejects it: the shell's own
+            // open-failure banner reports and the app stays on Start — never crashes.
+            Assert.Same(shell.Start, shell.Current);
+            Assert.Contains("not a database", shell.StatusError);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
     public void Go_to_start_disposes_the_open_session()
     {
         var shell = CreateShell(out var factory, out var store);
@@ -597,7 +663,7 @@ public sealed class ShellNavigationTests
     {
         private readonly List<RecentCareer> _entries = [];
 
-        public List<(string Path, string Name)> Touched { get; } = [];
+        public List<(string Path, string Name, int SeasonYear)> Touched { get; } = [];
 
         public RecentCareer Seed(string path, string name)
         {
@@ -613,7 +679,8 @@ public sealed class ShellNavigationTests
 
         public IReadOnlyList<RecentCareer> Load() => _entries.ToList();
 
-        public void Touch(string path, string careerName) => Touched.Add((path, careerName));
+        public void Touch(string path, string careerName, int seasonYear = 0) =>
+            Touched.Add((path, careerName, seasonYear));
 
         public void Remove(string path) => _entries.RemoveAll(e => e.Path == path);
     }

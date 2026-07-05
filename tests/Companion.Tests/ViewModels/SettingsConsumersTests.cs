@@ -521,7 +521,7 @@ public sealed class SettingsConsumersTests : IDisposable
     {
         public IReadOnlyList<RecentCareer> Load() => [];
 
-        public void Touch(string path, string careerName)
+        public void Touch(string path, string careerName, int seasonYear = 0)
         {
         }
 

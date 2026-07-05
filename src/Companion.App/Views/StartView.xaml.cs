@@ -5,14 +5,47 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Start;
+using Microsoft.Win32;
 
 namespace Companion.App.Views;
 
 public partial class StartView : UserControl
 {
+    /// <summary>The Ctrl+O accelerator target (bound in XAML) for the "Open career…" picker, so the
+    /// keybind and the button run the exact same code path (career-hub-design.md decision 8).</summary>
+    public static readonly RoutedUICommand OpenCareerFileCommand =
+        new("Open career file", nameof(OpenCareerFileCommand), typeof(StartView));
+
     public StartView()
     {
         InitializeComponent();
+        CommandBindings.Add(new CommandBinding(OpenCareerFileCommand, (_, _) => OpenCareerFilePicker()));
+    }
+
+    /// <summary>"Open career…" button: mirror of the Ctrl+O keybind.</summary>
+    private void OnOpenCareerFile(object sender, RoutedEventArgs e) => OpenCareerFilePicker();
+
+    /// <summary>Shows the .ams2career file dialog and hands the chosen path to the VM command. The
+    /// dialog (view-layer only, per the shell contract) never blocks the VM — the command takes the
+    /// path so it stays unit-testable; opening routes through the same continue flow as the gallery.</summary>
+    private void OpenCareerFilePicker()
+    {
+        if (DataContext is not StartViewModel vm)
+            return;
+
+        string careersFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "AMS2CareerCompanion", "Careers");
+        var dialog = new OpenFileDialog
+        {
+            Title = "Open career",
+            Filter = "AMS2 career files (*.ams2career)|*.ams2career|All files (*.*)|*.*",
+            CheckFileExists = true,
+            InitialDirectory = Directory.Exists(careersFolder) ? careersFolder : string.Empty,
+        };
+
+        if (dialog.ShowDialog(Window.GetWindow(this)) == true)
+            vm.OpenCareerCommand.Execute(dialog.FileName);
     }
 
     /// <summary>Double-click a recent career = continue it.</summary>

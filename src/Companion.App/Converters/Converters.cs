@@ -128,19 +128,38 @@ public sealed class StringEqualsToVisibilityConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>A career name → its era accent brush, parsed from a 4-digit year in the name
-/// (career gallery). Neutral slate when the name carries no year.</summary>
+/// <summary>Shared era-year resolution for the gallery converters. A <see cref="RecentCareer"/>
+/// resolves to its STORED season year (falling back to a year parsed from the name for legacy
+/// entries — <see cref="Companion.ViewModels.Services.EraArtResolver.YearForEntry"/>); a bare int is
+/// itself; a bare string is parsed for a year. Null when nothing yields a plausible year, so the
+/// card shows its neutral placeholder.</summary>
+internal static class EraCardYear
+{
+    public static int? From(object? value) => value switch
+    {
+        Companion.ViewModels.Services.RecentCareer entry =>
+            Companion.ViewModels.Services.EraArtResolver.YearForEntry(entry),
+        int y => y,
+        string name => Companion.ViewModels.Services.EraArtResolver.YearFromText(name),
+        _ => null,
+    };
+}
+
+/// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era accent brush,
+/// keyed off the stored season year for MRU entries (career gallery). Neutral slate when no era
+/// resolves.</summary>
 public sealed class EraAccentBrushConverter : IValueConverter
 {
     private static readonly SolidColorBrush Neutral = new(Color.FromRgb(0x6A, 0x6A, 0x74));
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (Companion.Core.Career.EraThemes.FromText(value as string) is not { } theme)
+        if (EraCardYear.From(value) is not int year)
             return Neutral;
         try
         {
-            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(theme.AccentHex));
+            return new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString(Companion.Core.Career.EraThemes.ForYear(year).AccentHex));
         }
         catch (FormatException)
         {
@@ -152,12 +171,13 @@ public sealed class EraAccentBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>A career name → its era medium label ("TELEGRAM"/"FAX"/"EMAIL"), or "" when the
-/// name carries no 4-digit year.</summary>
+/// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era medium label
+/// ("TELEGRAM"/"FAX"/"EMAIL"), keyed off the stored season year for MRU entries; "" when no era
+/// resolves.</summary>
 public sealed class EraLabelConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        Companion.Core.Career.EraThemes.FromText(value as string)?.Label ?? "";
+        EraCardYear.From(value) is int year ? Companion.Core.Career.EraThemes.ForYear(year).Label : "";
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
@@ -178,13 +198,9 @@ public sealed class EraImageConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        int? year = value switch
-        {
-            int y => y,
-            string name => Companion.ViewModels.Services.EraArtResolver.YearFromText(name),
-            _ => null,
-        };
-        if (year is not int resolvedYear)
+        // A RecentCareer resolves by its STORED season year (name-parse fallback for legacy entries);
+        // a bare int/name keep the old contract so non-gallery callers are unaffected.
+        if (EraCardYear.From(value) is not int resolvedYear)
             return null;
 
         string? path = Companion.ViewModels.Services.EraArtResolver.Resolve(EraArtDirectory, resolvedYear);

@@ -104,6 +104,44 @@ public sealed class EraArtResolverTests
     public void YearFromText_returns_null_when_there_is_no_year(string? name) =>
         Assert.Null(EraArtResolver.YearFromText(name));
 
+    // ---------- YearForEntry: the robust stored-year path + legacy fallback ----------
+
+    [Fact]
+    public void YearForEntry_uses_the_stored_season_year_even_when_the_name_disagrees()
+    {
+        // The stored year is authoritative — a name with a DIFFERENT (or no) year never overrides it.
+        var entry = Entry(name: "My 1972 rebuild", seasonYear: 1967);
+
+        Assert.Equal(1967, EraArtResolver.YearForEntry(entry));
+    }
+
+    [Fact]
+    public void YearForEntry_falls_back_to_the_name_year_for_a_legacy_entry_with_no_stored_year()
+    {
+        // seasonYear == 0 is the JSON read-with-default for an entry persisted before the field
+        // existed: resolve the era the old, fragile way (parse the name) rather than lose it.
+        var entry = Entry(name: "Formula One 1988", seasonYear: 0);
+
+        Assert.Equal(1988, EraArtResolver.YearForEntry(entry));
+    }
+
+    [Fact]
+    public void YearForEntry_is_null_for_a_legacy_entry_whose_name_carries_no_year()
+    {
+        // No stored year AND no parseable name year → null → the card shows its neutral placeholder.
+        var entry = Entry(name: "My Career", seasonYear: 0);
+
+        Assert.Null(EraArtResolver.YearForEntry(entry));
+    }
+
+    private static RecentCareer Entry(string name, int seasonYear) => new()
+    {
+        Path = @"C:\careers\x.ams2career",
+        CareerName = name,
+        LastOpenedUtc = DateTimeOffset.UnixEpoch,
+        SeasonYear = seasonYear,
+    };
+
     [Fact]
     public void ResolveForText_resolves_by_the_year_in_the_name()
     {
