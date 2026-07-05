@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Companion.Ams2;
 using Companion.Ams2.CustomAi;
@@ -1245,6 +1246,348 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         {
             return "";
         }
+    }
+
+    // ---------- "Why?" inspector (Increment 3, decisions 4 + 5) ----------
+
+    /// <summary>The clickable-everywhere "Why?" inspector's causal chain (career-hub-design.md §5):
+    /// walks this season's journal rows for <paramref name="entity"/> (narrowed to
+    /// <paramref name="round"/> when given) and projects each relevant row's <c>deltaJson</c> into a
+    /// labelled contribution row. Pure read-only projection over <see cref="JournalStore.ReadSeason"/>
+    /// — no new persistence — and DETERMINISTIC: rows are read in journal <c>seq</c> order and every
+    /// comparison is <see cref="StringComparer.Ordinal"/>, so the chain is byte-stable and identical
+    /// on replay. The ordered-row shape is the format designed to accept perk/stat rows later
+    /// (decision 5); it generalises the thin <see cref="WhyFromResult"/> chip into a full breakdown.</summary>
+    public JournalChain JournalFor(string entity, int? round = null)
+    {
+        if (string.IsNullOrEmpty(entity))
+            return JournalChain.Empty;
+
+        // Ordered by seq already (ReadSeason's ORDER BY seq) — the deterministic walk order.
+        var rows = JournalStore.ReadSeason(_database, _seasonId)
+            .Where(r => string.Equals(r.Entity, entity, StringComparison.Ordinal)
+                        && !DataJournalPhases.IsProvenance(r.Phase)
+                        && (round is null || r.Round == round))
+            .ToList();
+
+        var contributions = new List<JournalContribution>(rows.Count);
+        foreach (var row in rows)
+        {
+            if (ContributionFor(row) is { } contribution)
+                contributions.Add(contribution);
+        }
+
+        if (contributions.Count == 0)
+            return JournalChain.Empty;
+
+        return new JournalChain
+        {
+            Entity = entity,
+            Round = round,
+            Title = InspectorTitle(entity, round, rows),
+            Contributions = contributions,
+            Summary = InspectorSummary(entity, rows),
+        };
+    }
+
+    /// <summary>Projects one journal row into a labelled contribution row, or null when the row's
+    /// phase carries no inspector-relevant number. Every branch reads a known sim delta shape
+    /// (see <c>RoundUpdate</c>/<c>SeasonEndPipeline</c>); an unreadable delta degrades to a bare
+    /// labelled row rather than throwing, so a future phase never breaks the walk.</summary>
+    private static JournalContribution? ContributionFor(JournalRow row)
+    {
+        JsonElement root;
+        JsonDocument? document = null;
+        try
+        {
+            document = JsonDocument.Parse(row.DeltaJson);
+            root = document.RootElement;
+        }
+        catch (JsonException)
+        {
+            document?.Dispose();
+            return null;
+        }
+
+        using (document)
+        {
+            switch (row.Phase)
+            {
+                case JournalPhases.RaceResult:
+                {
+                    int? expected = IntOrNull(root, "expectedFinish");
+                    int? actual = IntOrNull(root, "actualFinish");
+                    // A DNF serialises its cause as a camelCase enum STRING (e.g. "mechanical"),
+                    // or true on legacy rows; a completed race carries null. Either non-null form
+                    // is a retirement.
+                    bool dnf = root.TryGetProperty("dnf", out var d)
+                               && d.ValueKind is JsonValueKind.True or JsonValueKind.String;
+                    string detail = dnf
+                        ? (expected is { } ex ? $"Retired — the car was expected to finish P{ex}." : "Retired.")
+                        : (actual is { } a && expected is { } e
+                            ? $"Finished P{a} against an expected P{e}."
+                            : "Race result recorded.");
+                    return new JournalContribution
+                    {
+                        Label = "Expected finish",
+                        Detail = detail,
+                        Value = dnf ? "DNF" : (actual is { } av ? $"P{av}" : null),
+                        SourceSeq = row.Seq,
+                    };
+                }
+
+                case JournalPhases.PlayerOpi:
+                    // Per-round OPI rows carry {from,to}; the season-final row carries {value}.
+                    if (FromTo(root) is { } opi)
+                        return NumericRow("OPI", opi.From, opi.To, row.Seq, "0.00", signed: true);
+                    return DoubleOrNull(root, "value") is { } opiValue
+                        ? new JournalContribution
+                        {
+                            Label = "OPI",
+                            Detail = "Season-final overperformance index.",
+                            Value = Signed(opiValue, "0.00"),
+                            SourceSeq = row.Seq,
+                        }
+                        : null;
+
+                case JournalPhases.PlayerReputation:
+                {
+                    var ft = FromTo(root);
+                    if (ft is not { } rep)
+                        return null;
+                    bool beatTeammate = root.TryGetProperty("beatTeammate", out var bt)
+                                        && bt.ValueKind == JsonValueKind.True;
+                    int? champPos = IntOrNull(root, "championshipPosition");
+                    string detail = champPos is { } cp
+                        ? $"Season-final reputation (championship P{cp})."
+                        : beatTeammate
+                            ? "Reputation moved this round — you beat your teammate."
+                            : "Reputation moved this round.";
+                    return NumericRow("Reputation", rep.From, rep.To, row.Seq, "0.#", signed: false, detail);
+                }
+
+                case JournalPhases.PlayerPaceAnchor:
+                {
+                    var ft = FromTo(root);
+                    if (ft is not { } anchor)
+                        return null;
+                    int? slider = IntOrNull(root, "recommendedSlider");
+                    string detail = slider is { } s
+                        ? $"Pace anchor recalibrated — next round's suggested Opponent Skill {s}%."
+                        : "Pace anchor recalibrated from your race pace.";
+                    return NumericRow("Pace anchor", anchor.From, anchor.To, row.Seq, "0.###", signed: false, detail);
+                }
+
+                case JournalPhases.PlayerQualiAnchor:
+                {
+                    var ft = FromTo(root);
+                    if (ft is not { } quali)
+                        return null;
+                    int? qualiPos = IntOrNull(root, "qualiPosition");
+                    string detail = qualiPos is { } p
+                        ? $"Qualifying anchor recalibrated from a P{p} grid slot."
+                        : "Qualifying anchor recalibrated.";
+                    return NumericRow("Qualifying anchor", quali.From, quali.To, row.Seq, "0.###", signed: false, detail);
+                }
+
+                case JournalPhases.PlayerExperience:
+                    return new JournalContribution
+                    {
+                        Label = "Seasons completed",
+                        Detail = "A season was added to your record.",
+                        Value = IntOrNull(root, "to")?.ToString(CultureInfo.InvariantCulture),
+                        SourceSeq = row.Seq,
+                    };
+
+                case JournalPhases.Championship:
+                    return new JournalContribution
+                    {
+                        Label = "Championship",
+                        Detail = StringOrNull(root, "points") is { } pts
+                            ? $"Final championship standing on {pts} points."
+                            : "Final championship standing.",
+                        Value = IntOrNull(root, "position") is { } pos ? $"P{pos}" : null,
+                        SourceSeq = row.Seq,
+                    };
+
+                case JournalPhases.OfferExtended:
+                    return new JournalContribution
+                    {
+                        Label = "Contract offer",
+                        Detail = $"A tier-{IntOrNull(root, "tier")?.ToString(CultureInfo.InvariantCulture) ?? "?"} " +
+                                 "seat was offered for next season.",
+                        Value = DoubleOrNull(root, "score") is { } sc ? sc.ToString("0.##", CultureInfo.InvariantCulture) : null,
+                        SourceSeq = row.Seq,
+                    };
+
+                case JournalPhases.TeamTier:
+                {
+                    int? from = IntOrNull(root, "from");
+                    int? to = IntOrNull(root, "to");
+                    return new JournalContribution
+                    {
+                        Label = "Budget tier",
+                        Detail = from is { } f && to is { } t
+                            ? $"Team budget tier moved {f} → {t} on the season's results."
+                            : "Team budget tier reassessed.",
+                        Value = to is { } tv ? tv.ToString(CultureInfo.InvariantCulture) : null,
+                        SourceSeq = row.Seq,
+                    };
+                }
+
+                case JournalPhases.DriverAging:
+                    return new JournalContribution
+                    {
+                        Label = "Aging",
+                        Detail = "Skills drifted with age between seasons.",
+                        Value = IntOrNull(root, "age") is { } age ? $"age {age}" : null,
+                        SourceSeq = row.Seq,
+                    };
+
+                case JournalPhases.Retirement:
+                    return new JournalContribution
+                    {
+                        Label = "Retirement",
+                        Detail = $"Retired from the grid ({row.Cause}).",
+                        Value = null,
+                        SourceSeq = row.Seq,
+                    };
+
+                case JournalPhases.Headline:
+                    return StringOrNull(root, "text") is { } text
+                        ? new JournalContribution
+                        {
+                            Label = "Headline",
+                            Detail = text,
+                            Value = null,
+                            SourceSeq = row.Seq,
+                        }
+                        : null;
+
+                default:
+                    return null;
+            }
+        }
+    }
+
+    /// <summary>A {from,to} numeric contribution row: the value is the new state ("to"), the detail
+    /// carries the movement. <paramref name="signed"/> renders the value with an explicit sign
+    /// (OPI); otherwise absolute (reputation/anchors).</summary>
+    private static JournalContribution NumericRow(
+        string label, double from, double to, long seq, string format, bool signed, string? detail = null)
+    {
+        double delta = Math.Round(to - from, 4);
+        string movement = delta > 0 ? $"+{delta.ToString(format, CultureInfo.InvariantCulture)}"
+            : delta < 0 ? delta.ToString(format, CultureInfo.InvariantCulture)
+            : "no change";
+        return new JournalContribution
+        {
+            Label = label,
+            Detail = detail ?? $"{label} moved {from.ToString(format, CultureInfo.InvariantCulture)} → " +
+                     $"{to.ToString(format, CultureInfo.InvariantCulture)} ({movement}).",
+            Value = signed ? Signed(to, format) : to.ToString(format, CultureInfo.InvariantCulture),
+            SourceSeq = seq,
+        };
+    }
+
+    private static string Signed(double value, string format) =>
+        value > 0 ? $"+{value.ToString(format, CultureInfo.InvariantCulture)}"
+            : value.ToString(format, CultureInfo.InvariantCulture);
+
+    private static (double From, double To)? FromTo(JsonElement root) =>
+        DoubleOrNull(root, "from") is { } from && DoubleOrNull(root, "to") is { } to
+            ? (from, to)
+            : null;
+
+    private static int? IntOrNull(JsonElement root, string name) =>
+        root.TryGetProperty(name, out var el) && el.ValueKind == JsonValueKind.Number ? el.GetInt32() : null;
+
+    private static double? DoubleOrNull(JsonElement root, string name) =>
+        root.TryGetProperty(name, out var el) && el.ValueKind == JsonValueKind.Number ? el.GetDouble() : null;
+
+    private static string? StringOrNull(JsonElement root, string name) =>
+        root.TryGetProperty(name, out var el) && el.ValueKind == JsonValueKind.String ? el.GetString() : null;
+
+    /// <summary>The inspector panel header: names the entity and, when the walk is a single round,
+    /// the player's finish that round (the headline number the click walked back from).</summary>
+    private string InspectorTitle(string entity, int? round, IReadOnlyList<JournalRow> rows)
+    {
+        string who = InspectorEntityName(entity);
+        if (round is not { } r)
+            return $"Why — {who}, {Pack.Season.Year}";
+
+        // For a single-round player walk, lead with the finishing position if the race.result row
+        // carries one — the number the user most likely clicked.
+        var resultRow = rows.FirstOrDefault(x =>
+            string.Equals(x.Phase, JournalPhases.RaceResult, StringComparison.Ordinal));
+        if (resultRow is not null)
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(resultRow.DeltaJson);
+                var el = doc.RootElement;
+                if (el.TryGetProperty("dnf", out var d) && d.ValueKind == JsonValueKind.True)
+                    return $"Why DNF — {who}, Round {r}";
+                if (IntOrNull(el, "actualFinish") is { } actual)
+                    return $"Why P{actual} — {who}, Round {r}";
+            }
+            catch (JsonException)
+            {
+                // Fall through to the plain round title.
+            }
+        }
+        return $"Why — {who}, Round {r}";
+    }
+
+    /// <summary>Resolves a journal entity id to a display name: the player's own seat, else the
+    /// pack's driver or team table, else the raw id — so the inspector never shows a bare id.</summary>
+    private string InspectorEntityName(string entity)
+    {
+        if (string.Equals(entity, "player", StringComparison.Ordinal)
+            || string.Equals(entity, _playerDriverId, StringComparison.Ordinal))
+            return "You";
+        var driver = Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, entity, StringComparison.Ordinal));
+        if (driver is not null)
+            return driver.Name;
+        var team = Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, entity, StringComparison.Ordinal));
+        return team?.Name ?? entity;
+    }
+
+    /// <summary>The chain's plain-language summary: the player's race.result sentence when the walk
+    /// covers a player round, else empty — the rows carry the rest. Reuses the shipped
+    /// <see cref="WhyFromResult"/> chip for a classified finish, and adds the retirement sentence the
+    /// chip omits (the chip predates the enum-string DNF cause), so a DNF walk still reads plainly
+    /// without changing the existing News chip's output.</summary>
+    private static string InspectorSummary(string entity, IReadOnlyList<JournalRow> rows)
+    {
+        if (!string.Equals(entity, "player", StringComparison.Ordinal))
+            return "";
+        var resultRow = rows.LastOrDefault(x =>
+            string.Equals(x.Phase, JournalPhases.RaceResult, StringComparison.Ordinal));
+        if (resultRow is null)
+            return "";
+
+        string why = WhyFromResult(resultRow.DeltaJson);
+        if (why.Length > 0)
+            return why;
+
+        // WhyFromResult returns "" for a DNF whose cause is an enum string; render it here.
+        try
+        {
+            using var document = JsonDocument.Parse(resultRow.DeltaJson);
+            var root = document.RootElement;
+            bool dnf = root.TryGetProperty("dnf", out var d)
+                       && d.ValueKind is JsonValueKind.True or JsonValueKind.String;
+            if (dnf)
+                return IntOrNull(root, "expectedFinish") is { } expected
+                    ? $"You retired — the car was expected to finish P{expected}."
+                    : "You retired.";
+        }
+        catch (JsonException)
+        {
+            // Fall through to the empty summary.
+        }
+        return "";
     }
 
     // ---------- history / scrapbook (Increment 3) ----------

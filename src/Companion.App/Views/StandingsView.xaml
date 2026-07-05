@@ -82,11 +82,31 @@
                            Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
                 <TextBlock DockPanel.Dock="Left" Width="44" Text="{Binding PositionText}" FontWeight="SemiBold"
                            Foreground="{StaticResource TextMutedBrush}" />
-                <TextBlock Text="{Binding DisplayName}" />
+                <!-- The name is a "Why?" walk-back target (decisions 4 + 5): click (or focus +
+                     Enter/Space — a Button is keyboard-invokable, locked decision 8) opens the
+                     shared inspector for this competitor's journal. When no session is wired
+                     (CanInspect false) the command no-ops and the row reads as plain text. -->
+                <Button Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
+                        HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
+                        Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding CompetitorId}"
+                        ToolTip="Why? — walk back the journal rows behind this number" />
+            </DockPanel>
+        </DataTemplate>
+        <!-- one inspector contribution row: label · detail · value -->
+        <DataTemplate x:Key="InspectorRowTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="Consolas"
+                           FontWeight="SemiBold" TextAlignment="Right" MinWidth="56" Margin="8,0,0,0"
+                           Visibility="{Binding HasValue, Converter={StaticResource BoolVisible}}" />
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" FontWeight="SemiBold" MinWidth="120" />
+                <TextBlock Text="{Binding Detail}" Style="{StaticResource Muted}" TextWrapping="Wrap"
+                           Visibility="{Binding HasDetail, Converter={StaticResource BoolVisible}}" />
             </DockPanel>
         </DataTemplate>
     </UserControl.Resources>
 
+    <Grid>
     <DockPanel>
         <!-- first-run coach mark: the rules chip (ux-round §4) -->
         <Border DockPanel.Dock="Top" Style="{StaticResource CoachMark}" Margin="0,0,0,10"
@@ -184,20 +204,30 @@
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock Width="48" Text="{Binding Text}" TextAlignment="Center"
-                                                                   FontFamily="Consolas">
-                                                            <TextBlock.Style>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsDropped}" Value="True">
-                                                                            <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
-                                                                            <Setter Property="TextDecorations" Value="Strikethrough" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </TextBlock.Style>
-                                                        </TextBlock>
+                                                        <!-- Each cell is a per-round "Why?" target: click (or focus +
+                                                             Enter/Space) walks that driver's journal narrowed to the
+                                                             round. A blank cell (InspectorRef null) still renders its
+                                                             number; the command no-ops on null. -->
+                                                        <Button Style="{StaticResource SubtleButton}" Padding="0" Width="48"
+                                                                Command="{Binding DataContext.OpenCellInspectorCommand,
+                                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding InspectorRef}"
+                                                                ToolTip="Why? — walk back this round for this driver">
+                                                            <TextBlock Text="{Binding Text}" TextAlignment="Center"
+                                                                       FontFamily="Consolas">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsDropped}" Value="True">
+                                                                                <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+                                                                                <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Button>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
@@ -211,4 +241,38 @@
             </TabItem>
         </TabControl>
     </DockPanel>
+
+        <!-- The shared "Why?" inspector overlay (career-hub-design.md §5). Shown while an
+             inspector is open; the scrim + Close button (mouse) and the ESC key binding
+             (keyboard) both dismiss it — locked decision 8's parity. -->
+        <Border Background="#99000000"
+                Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
+            <Border.InputBindings>
+                <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
+            </Border.InputBindings>
+            <Border MaxWidth="520" MaxHeight="440" Margin="24" Padding="18"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{StaticResource SurfaceBrush}" CornerRadius="6"
+                    BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    DataContext="{Binding SelectedInspector}">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                        <Button DockPanel.Dock="Right" Content="Close" VerticalAlignment="Top"
+                                Style="{StaticResource SubtleButton}"
+                                Command="{Binding DataContext.CloseInspectorCommand,
+                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                ToolTip="Close (Esc)" />
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
+                    </DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" TextWrapping="Wrap"
+                               Style="{StaticResource Muted}" Margin="0,0,0,10"
+                               Visibility="{Binding HasSummary, Converter={StaticResource BoolVisible}}" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                        <ItemsControl ItemsSource="{Binding Rows}"
+                                      ItemTemplate="{StaticResource InspectorRowTemplate}" />
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Border>
+    </Grid>
 </UserControl>

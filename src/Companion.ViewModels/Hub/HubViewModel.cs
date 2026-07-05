@@ -169,7 +169,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(EraThemingEnabled));
 
     private StandingsViewModel NewStandings() =>
-        new(_session.AllSnapshots(), _session.Pack, _settings);
+        new(_session.AllSnapshots(), _session.Pack, _settings, _session);
 
     // ---------- Esc = back (ux-round contract) ----------
 

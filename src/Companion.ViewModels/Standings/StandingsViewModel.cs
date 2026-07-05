@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
+using Companion.ViewModels.Hub;
+using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
 
 namespace Companion.ViewModels.Standings;
@@ -28,8 +30,24 @@ public sealed record StandingsRow(
     public bool ShowGross => GrossText != CountedText;
 }
 
-/// <summary>One cell of the Wikipedia-style round matrix: the points that round, dropped-marked.</summary>
-public sealed record RoundMatrixCell(string Text, bool IsDropped);
+/// <summary>One cell of the Wikipedia-style round matrix: the points that round, dropped-marked,
+/// plus the (driver, round) coordinates that make the cell a clickable "Why?" walk-back target.
+/// <see cref="DriverId"/>/<see cref="Round"/> are additive with defaults so the existing positional
+/// construction (text + dropped) still compiles; an empty driver id marks a cell with no journal
+/// behind it (a blank / not-yet-raised cell).</summary>
+public sealed record RoundMatrixCell(
+    string Text, bool IsDropped, string DriverId = "", int Round = 0)
+{
+    /// <summary>The click target for this cell's "Why?" inspector — the driver + round it belongs
+    /// to. Null when the cell has no driver/round (a blank cell), so the number renders plain.</summary>
+    public RoundMatrixCellRef? InspectorRef =>
+        DriverId.Length > 0 && Round > 0 ? new RoundMatrixCellRef(DriverId, Round) : null;
+}
+
+/// <summary>The coordinates a round-matrix cell click passes to
+/// <see cref="StandingsViewModel.OpenCellInspectorCommand"/>: which driver's journal to walk and
+/// which round to narrow it to.</summary>
+public sealed record RoundMatrixCellRef(string DriverId, int Round);
 
 /// <summary>One driver row of the round matrix; cells align with <see cref="StandingsViewModel.RoundHeaders"/>.</summary>
 public sealed record RoundMatrixRow(
@@ -65,7 +83,7 @@ public sealed record StandingsTab(StandingsTabKind Kind, string Header, int Inde
 /// round), both tables share the sort, and the column visibility + selected tab persist
 /// through the settings seam.
 /// </summary>
-public sealed partial class StandingsViewModel : ObservableObject
+public sealed partial class StandingsViewModel : InspectorHostViewModel
 {
     /// <summary>Column keys for <see cref="SortByCommand"/> and the header glyphs.</summary>
     public const string ColumnPosition = "position";
@@ -76,6 +94,7 @@ public sealed partial class StandingsViewModel : ObservableObject
     public const string ColumnPerRound = "perRound";
 
     private readonly ISettingsService? _settings;
+    private readonly ICareerSession? _session;
     private readonly IReadOnlyList<StandingsRow> _driverRowsBase;
     private readonly IReadOnlyList<StandingsRow> _constructorRowsBase;
 
@@ -87,11 +106,13 @@ public sealed partial class StandingsViewModel : ObservableObject
     public StandingsViewModel(
         IReadOnlyList<StandingsSnapshot> snapshots,
         SeasonPack pack,
-        ISettingsService? settings = null)
+        ISettingsService? settings = null,
+        ICareerSession? session = null)
     {
         ArgumentNullException.ThrowIfNull(snapshots);
         ArgumentNullException.ThrowIfNull(pack);
         _settings = settings;
+        _session = session;
 
         var driverNames = pack.Drivers.ToDictionary(d => d.Id, d => d.Name, StringComparer.Ordinal);
         var teamNames = pack.Teams.ToDictionary(t => t.Id, t => t.Name, StringComparer.Ordinal);
@@ -250,6 +271,38 @@ public sealed partial class StandingsViewModel : ObservableObject
         SortDescending = column is ColumnCounted or ColumnGross or ColumnDropped or ColumnPerRound;
     }
 
+    // ---------- clickable numbers → the "Why?" inspector (decisions 4 + 5) ----------
+
+    /// <summary>True when a career session is wired, so the standings numbers are clickable
+    /// walk-back targets (the view enables the number hyperlinks / accelerators on this). Without a
+    /// session — the season-review's final-standings snapshot, or a test built from raw snapshots —
+    /// the numbers render plain and the command no-ops, so nothing depends on the session.</summary>
+    public bool CanInspect => _session is not null;
+
+    /// <summary>Open the inspector for a driver's championship number (points/position cell): walks
+    /// the whole season's journal for that driver. The parameter is the row's competitor id — the
+    /// DRIVER id for a drivers-table row. A constructor row (or a null/unknown id, or no session)
+    /// simply does not open a panel. Mouse (click the number) and keyboard (a bound accelerator on
+    /// the focused row) both invoke this — locked decision 8's parity.</summary>
+    [RelayCommand]
+    private void OpenInspector(string? driverId)
+    {
+        if (_session is null || string.IsNullOrEmpty(driverId))
+            return;
+        ShowInspector(_session.JournalFor(driverId));
+    }
+
+    /// <summary>Open the inspector for one round-matrix cell (driver × round): walks that driver's
+    /// journal narrowed to the round. The parameter pairs the row's driver id with the applied
+    /// round number the cell belongs to. No session (or a null id) no-ops.</summary>
+    [RelayCommand]
+    private void OpenCellInspector(RoundMatrixCellRef? cell)
+    {
+        if (_session is null || cell is null || string.IsNullOrEmpty(cell.DriverId))
+            return;
+        ShowInspector(_session.JournalFor(cell.DriverId, cell.Round));
+    }
+
     public string PositionHeader => Header("Pos", ColumnPosition);
     public string NameHeader => Header("Name", ColumnName);
     public string CountedHeader => Header("Points", ColumnCounted);
@@ -368,10 +421,12 @@ public sealed partial class StandingsViewModel : ObservableObject
                 var inSnapshot = snapshot.Drivers.FirstOrDefault(d => d.DriverId == standing.DriverId);
                 var score = inSnapshot?.RoundScores.FirstOrDefault(rs => rs.Round == snapshot.AfterRound);
                 cells.Add(score is null
-                    ? new RoundMatrixCell("", IsDropped: false)
+                    ? new RoundMatrixCell("", IsDropped: false, standing.DriverId, snapshot.AfterRound)
                     : new RoundMatrixCell(
                         score.Points.ToString(),
-                        droppedByDriver[standing.DriverId].Contains(snapshot.AfterRound)));
+                        droppedByDriver[standing.DriverId].Contains(snapshot.AfterRound),
+                        standing.DriverId,
+                        snapshot.AfterRound));
             }
 
             rows.Add(new RoundMatrixRow(

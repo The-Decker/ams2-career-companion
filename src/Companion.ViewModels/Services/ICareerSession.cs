@@ -58,6 +58,18 @@ public interface ICareerSession
     /// timeline, so existing fakes compile. (Increment 3.)</summary>
     CareerTimeline CareerTimeline() => Services.CareerTimeline.Empty;
 
+    /// <summary>The clickable-everywhere "Why?" inspector (career-hub-design.md §5, decisions 4 +
+    /// 5): walks the append-only journal rows that produced a number the hub shows and returns them
+    /// as an ordered plain-language contribution breakdown. <paramref name="entity"/> is the journal
+    /// <c>entity</c> to walk (e.g. <c>"player"</c>, a driver id, a constructor id, a team id);
+    /// <paramref name="round"/> narrows to a single round when given, else the whole season's rows
+    /// for that entity are chained (oldest first). Pure read-only projection over the SAME journal
+    /// the news feed and replay byte-check read — no new persistence, and deterministic (ordered by
+    /// journal <c>seq</c>). The breakdown is an ORDERED LIST of labelled rows, not a single string,
+    /// so it accepts perk/stat contribution rows later (decision 5) with no format change. Additive
+    /// default: sessions without the projection report an empty chain, so existing fakes compile.</summary>
+    JournalChain JournalFor(string entity, int? round = null) => JournalChain.Empty;
+
     /// <summary>Recommended Opponent Skill slider (70–120) for the CURRENT round, from the
     /// last folded round's pace anchor. Null before the anchor calibrates (fresh careers).
     /// Shown in the briefing and prefilled on the result screen — never auto-applied.</summary>
@@ -266,6 +278,60 @@ public sealed record CareerRecordsBook
 
     /// <summary>The longest streak of consecutive podium finishes across the career.</summary>
     public int LongestPodiumStreak { get; init; }
+}
+
+/// <summary>The "Why?" inspector's causal chain for one entity (career-hub-design.md §5): the
+/// title of the thing being explained, the entity + optional round it was walked for, an ORDERED
+/// list of labelled contribution rows (the journal rows that produced the number, oldest first),
+/// and a plain-language summary sentence. A pure read model — no session coupling — so the
+/// inspector view-model is built and tested from a plain value. The ordered-row shape is the
+/// format designed to accept perk/stat rows later (decision 5) without changing the seam.</summary>
+public sealed record JournalChain
+{
+    /// <summary>The empty chain (the seam default, and any entity with no journal rows).</summary>
+    public static readonly JournalChain Empty = new();
+
+    /// <summary>The journal entity these contributions were walked for (e.g. <c>"player"</c>, a
+    /// driver id, a constructor/team id). Empty on <see cref="Empty"/>.</summary>
+    public string Entity { get; init; } = "";
+
+    /// <summary>The round the chain was narrowed to, or null for a whole-season chain.</summary>
+    public int? Round { get; init; }
+
+    /// <summary>A human-readable title for the inspector panel header (e.g. "Why P2 — Round 3").</summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>The contribution rows that produced the number, in journal <c>seq</c> order
+    /// (oldest first) — the walk-back the inspector renders top to bottom.</summary>
+    public IReadOnlyList<JournalContribution> Contributions { get; init; } = [];
+
+    /// <summary>A one-line plain-language summary of the chain (the Why? chip's sentence for the
+    /// most telling row), empty when nothing explanatory was found.</summary>
+    public string Summary { get; init; } = "";
+
+    public bool IsEmpty => Contributions.Count == 0;
+}
+
+/// <summary>One labelled row of a <see cref="JournalChain"/>: a short <see cref="Label"/> naming the
+/// contribution (e.g. "Expected finish", "Reputation", "Pace anchor", or — when the character layer
+/// ships — "tier-4 car", "Pace", "Rain Man"), an optional longer <see cref="Detail"/> sentence, an
+/// optional signed/absolute <see cref="Value"/> string for the number itself (e.g. "P8", "−3",
+/// "+2 (wet)"), and the source journal <see cref="SourceSeq"/> for provenance. The nullable Value
+/// keeps a purely narrative row (a headline, a note) valid alongside a numeric contribution.</summary>
+public sealed record JournalContribution
+{
+    public required string Label { get; init; }
+
+    /// <summary>A longer plain-language detail for the row; empty when the label + value say it all.</summary>
+    public string Detail { get; init; } = "";
+
+    /// <summary>The contribution's number as display text (e.g. "P8", "−3", "42.5", "+2 (wet)"),
+    /// or null for a narrative row that carries no number.</summary>
+    public string? Value { get; init; }
+
+    /// <summary>The journal <c>seq</c> this row was projected from — the provenance anchor and the
+    /// deterministic sort key. 0 for a synthesised row that has no single source.</summary>
+    public long SourceSeq { get; init; }
 }
 
 public sealed record StageOutcome
