@@ -103,6 +103,25 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             SelectTab(race);
     }
 
+    /// <summary>Header "Race day" button: select the Race tab AND show the briefing (one click
+    /// back to the loop from any tab). No-ops the loop step when the season is complete.</summary>
+    [RelayCommand]
+    private void GoToBriefing()
+    {
+        GoToRace();
+        if (Home.ShowBriefingCommand.CanExecute(null))
+            Home.ShowBriefingCommand.Execute(null);
+    }
+
+    /// <summary>Header "Enter result" button: select the Race tab AND open result entry.</summary>
+    [RelayCommand]
+    private void GoToResult()
+    {
+        GoToRace();
+        if (Home.EnterResultCommand.CanExecute(null))
+            Home.EnterResultCommand.Execute(null);
+    }
+
     private HubTabViewModel? RaceTab => Tabs.FirstOrDefault(t => t.Key == RaceTabKey);
 
     private HubTabViewModel? StandingsTab => Tabs.FirstOrDefault(t => t.Key == StandingsTabKey);

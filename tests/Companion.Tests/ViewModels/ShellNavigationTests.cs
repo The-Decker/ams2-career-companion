@@ -369,6 +369,22 @@ public sealed class ShellNavigationTests
         Assert.Equal(EraThemes.ForYear(session.Pack.Season.Year), hub.Era);
     }
 
+    [Fact]
+    public void Header_loop_buttons_select_race_and_drive_the_loop_from_any_tab()
+    {
+        using var hub = new HubViewModel(new FakeSession());
+
+        hub.SelectTabByNumber(3); // wander to News
+        hub.GoToResultCommand.Execute(null);
+        Assert.Equal(HubViewModel.RaceTabKey, hub.SelectedTab?.Key); // snapped back to Race
+        Assert.True(hub.Home.IsResultEntryState);                    // and opened result entry
+
+        hub.SelectTabByNumber(2); // wander to Standings
+        hub.GoToBriefingCommand.Execute(null);
+        Assert.Equal(HubViewModel.RaceTabKey, hub.SelectedTab?.Key);
+        Assert.True(hub.Home.IsBriefingState);
+    }
+
     // ---------- helpers / fakes ----------
 
     private static ShellViewModel CreateShell(out FakeFactory factory, out FakeStore store)
