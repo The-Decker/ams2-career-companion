@@ -41,11 +41,39 @@ public static class PaceAnchorMath
 
     /// <summary>Median merged raceSkill of the AI grid — the reference rating the difficulty
     /// recommendation aims the player at (mid-grid at the recommended slider).</summary>
-    public static double MedianAiRaceSkill(GridPlan grid)
+    public static double MedianAiRaceSkill(GridPlan grid) => MedianAiSkill(grid, race: true);
+
+    /// <summary>The player's implied ONE-LAP pace this round: the AI ranked at the player's
+    /// QUALIFYING position by <c>qualifyingSkill</c> is the nearest known yardstick; their pace
+    /// at the slider used is the sample. The qualifying-axis mirror of <see cref="ImpliedPlayerPace"/>
+    /// (Increment 2), feeding a separate one-lap anchor. Positions beyond the AI count clamp to
+    /// the slowest AI qualifier.</summary>
+    public static double ImpliedPlayerQualiPace(GridPlan grid, int playerQualiPosition, double sliderPercent)
+    {
+        if (playerQualiPosition < 1)
+            throw new ArgumentOutOfRangeException(nameof(playerQualiPosition), "Positions are 1-based.");
+
+        var aiSkills = grid.Seats
+            .Where(s => !s.IsPlayer)
+            .Select(s => s.Ratings.QualifyingSkill)
+            .OrderByDescending(x => x)
+            .ToList();
+        if (aiSkills.Count == 0)
+            throw new InvalidOperationException("The grid has no AI seats to calibrate against.");
+
+        int index = Math.Clamp(playerQualiPosition - 1, 0, aiSkills.Count - 1);
+        return DifficultyModel.AiPacePercent(aiSkills[index], sliderPercent);
+    }
+
+    /// <summary>Median merged qualifyingSkill of the AI grid — the reference the qualifying anchor
+    /// aims the player at (mid-grid on one-lap pace).</summary>
+    public static double MedianAiQualifyingSkill(GridPlan grid) => MedianAiSkill(grid, race: false);
+
+    private static double MedianAiSkill(GridPlan grid, bool race)
     {
         var skills = grid.Seats
             .Where(s => !s.IsPlayer)
-            .Select(s => s.Ratings.RaceSkill)
+            .Select(s => race ? s.Ratings.RaceSkill : s.Ratings.QualifyingSkill)
             .OrderBy(x => x)
             .ToList();
         if (skills.Count == 0)

@@ -1,4 +1,5 @@
 using Companion.Core.Career;
+using Companion.Core.Grid;
 
 namespace Companion.Tests.Career;
 
@@ -85,4 +86,47 @@ public class PaceAnchorTests
         // AI skills: 0.85, 0.70, 0.55 ⇒ median 0.70 (the player's 0.70 seat is excluded by flag).
         Assert.Equal(0.70, PaceAnchorMath.MedianAiRaceSkill(grid), 12);
     }
+
+    // ---------- qualifying (one-lap) anchor — Increment 2 ----------
+
+    [Fact]
+    public void QualifyingAnchorReadsTheOneLapAxis_NotRaceSkill()
+    {
+        // Skills chosen so the qualifying order differs from the race order:
+        //   qualifyingSkill desc: 0.90, 0.50, 0.30   ·   raceSkill: 0.40, 0.60, 0.85
+        var grid = CareerTestData.Grid(
+            QSeat("driver.pole", race: 0.40, quali: 0.90),
+            QSeat("driver.mid", race: 0.60, quali: 0.50),
+            QSeat("driver.back", race: 0.85, quali: 0.30),
+            QSeat(CareerTestData.PlayerDriverId, race: 0.70, quali: 0.70, player: true));
+
+        // Player qualified P1 ⇒ yardstick is the fastest QUALIFIER (0.90), not the fastest racer.
+        Assert.Equal(DifficultyModel.AiPacePercent(0.90, 95.0),
+            PaceAnchorMath.ImpliedPlayerQualiPace(grid, 1, 95.0), 12);
+        // P3 ⇒ slowest qualifier (0.30); positions beyond the AI count clamp to it.
+        Assert.Equal(DifficultyModel.AiPacePercent(0.30, 95.0),
+            PaceAnchorMath.ImpliedPlayerQualiPace(grid, 3, 95.0), 12);
+        Assert.Equal(DifficultyModel.AiPacePercent(0.30, 95.0),
+            PaceAnchorMath.ImpliedPlayerQualiPace(grid, 9, 95.0), 12);
+
+        // The qualifying median (0.50) is distinct from the race median (0.60) — proof of axis.
+        Assert.Equal(0.50, PaceAnchorMath.MedianAiQualifyingSkill(grid), 12);
+        Assert.Equal(0.60, PaceAnchorMath.MedianAiRaceSkill(grid), 12);
+    }
+
+    private static GridSeat QSeat(string id, double race, double quali, bool player = false) => new()
+    {
+        DriverId = id,
+        DriverName = id,
+        TeamId = "team",
+        TeamName = "team",
+        Number = "0",
+        Ams2LiveryName = id,
+        Ratings = CareerTestData.Ratings(race, quali),
+        Reliability = 0.9,
+        PowerScalar = 1.0,
+        WeightScalar = 1.0,
+        DragScalar = 1.0,
+        IsPlayer = player,
+    };
 }
