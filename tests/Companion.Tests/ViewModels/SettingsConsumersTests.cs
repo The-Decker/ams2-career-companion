@@ -2,6 +2,7 @@ using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.ViewModels.Confirm;
+using Companion.ViewModels.Hub;
 using Companion.ViewModels.ResultEntry;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
@@ -310,7 +311,136 @@ public sealed class SettingsConsumersTests : IDisposable
         Assert.False(home.TryEscapeBack()); // the shell must not steal Esc mid-entry
     }
 
+    // ---------- immersion: era theming flows to the hub, news detail gates the body ----------
+
+    [Fact]
+    public void EraThemingEnabled_FlowsFromSettings_ToTheHub()
+    {
+        var on = Service(new AppSettings { EraThemingEnabled = true });
+        using var hubOn = new HubViewModel(new NewsSession(), settings: on);
+        Assert.True(hubOn.EraThemingEnabled);
+
+        var off = Service(new AppSettings { EraThemingEnabled = false });
+        using var hubOff = new HubViewModel(new NewsSession(), settings: off);
+        Assert.False(hubOff.EraThemingEnabled);
+    }
+
+    [Fact]
+    public void EraThemingEnabled_UpdatesLive_WhenTheSettingChanges()
+    {
+        var settings = Service(new AppSettings { EraThemingEnabled = true });
+        using var hub = new HubViewModel(new NewsSession(), settings: settings);
+
+        bool raised = false;
+        hub.PropertyChanged += (_, e) =>
+            raised |= e.PropertyName == nameof(HubViewModel.EraThemingEnabled);
+
+        settings.Update(s => s with { EraThemingEnabled = false });
+
+        Assert.False(hub.EraThemingEnabled); // reads live off the service...
+        Assert.True(raised);                 // ...and notified so the era badge re-binds
+    }
+
+    [Fact]
+    public void NewsDetail_Articles_ShowsTheExpandedBody()
+    {
+        var settings = Service(new AppSettings { NewsDetail = NewsDetailLevel.Articles });
+        using var hub = new HubViewModel(new NewsSession(), settings: settings);
+
+        var item = Assert.Single(hub.News.Items);
+        Assert.True(item.HasBody);
+        Assert.Equal("The full period article body.", item.Body);
+
+        item.ToggleExpandedCommand.Execute(null);
+        Assert.True(item.IsExpanded);
+    }
+
+    [Theory]
+    [InlineData(NewsDetailLevel.HeadlinesOnly)]
+    [InlineData(NewsDetailLevel.Minimal)]
+    public void NewsDetail_HeadlineModes_HideTheBody(NewsDetailLevel level)
+    {
+        var settings = Service(new AppSettings { NewsDetail = level });
+        using var hub = new HubViewModel(new NewsSession(), settings: settings);
+
+        Assert.True(hub.News.HeadlinesOnly);
+        var item = Assert.Single(hub.News.Items);
+
+        Assert.False(item.HasBody);
+        Assert.Equal("", item.Body);            // no expanded article body...
+        Assert.Equal("Big race result", item.Headline); // ...just the headline
+
+        item.ToggleExpandedCommand.Execute(null);
+        Assert.False(item.IsExpanded);          // and the item cannot be expanded
+    }
+
     // ---------- fakes ----------
+
+    /// <summary>A session that emits one news dispatch with a body — for the NewsDetail gating.</summary>
+    private sealed class NewsSession : ICareerSession, IDisposable
+    {
+        public SeasonPack Pack { get; } = TestPackBuilder.TwoRoundPack();
+
+        public CareerSummary Summary => new()
+        {
+            CareerName = "News Career",
+            SeasonYear = 1967,
+            SeriesName = "Test Championship",
+            CurrentRound = 1,
+            RoundCount = Pack.Season.Rounds.Count,
+            PlayerDriverId = "driver.hulme",
+            PlayerLiveryName = TestPackBuilder.StockLivery2,
+            SeasonComplete = false,
+        };
+
+        public BriefingModel? CurrentBriefing() => new()
+        {
+            Round = Pack.Season.Rounds[0],
+            VenueDisplayName = "Kyalami",
+            IsPlaceholder = false,
+            Settings = [new CopyableSetting("Track", "Kyalami Historic")],
+        };
+
+        public StageOutcome StageCurrentGrid() =>
+            new() { Success = true, WrittenPath = "X.xml", Messages = [] };
+
+        public IReadOnlyList<GridSeat> CurrentGrid() => [];
+
+        public ConfirmModel Preview(ResultDraft draft) =>
+            new() { RoundPoints = [], Movements = [], Headline = "h" };
+
+        public void Apply(ResultDraft draft)
+        {
+        }
+
+        public StandingsSnapshot? CurrentStandings() => null;
+
+        public IReadOnlyList<StandingsSnapshot> AllSnapshots() => [];
+
+        public IReadOnlyList<NewsDispatch> ReadFeed() =>
+        [
+            new NewsDispatch
+            {
+                Headline = "Big race result",
+                SeasonYear = 1967,
+                Round = 1,
+                Kind = "race",
+                Body = "The full period article body.",
+            },
+        ];
+
+        public int? CurrentSliderRecommendation() => null;
+
+        public SeasonReviewModel? SeasonReview() => null;
+
+        public void AcceptOffer(string teamId)
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+    }
 
     private sealed class GridSession : ICareerSession
     {

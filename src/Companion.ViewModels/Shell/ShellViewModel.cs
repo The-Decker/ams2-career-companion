@@ -42,7 +42,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         _watcherFactory = stagedFileWatcherFactory ?? (static () => null);
         _settings = settings ?? new SettingsService(new InMemorySettingsStore());
 
-        Start = new StartViewModel(recentCareers);
+        Start = new StartViewModel(recentCareers, _settings);
         Start.ContinueRequested += (_, path) => OpenCareer(path);
         Start.NewCareerRequested += (_, _) => BeginWizard();
 

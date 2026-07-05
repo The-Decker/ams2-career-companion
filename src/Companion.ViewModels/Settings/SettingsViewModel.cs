@@ -8,6 +8,9 @@ namespace Companion.ViewModels.Settings;
 /// <summary>One accent-color preset chip on the settings screen.</summary>
 public sealed record AccentPreset(string Name, string Hex);
 
+/// <summary>One selectable news-verbosity option in the Immersion section's picker.</summary>
+public sealed record NewsDetailOption(NewsDetailLevel Level, string Label, string Description);
+
 /// <summary>
 /// The settings screen (ux-round contract section 3): four sections — Appearance, Racing,
 /// Staging (NAMeS-first), Data — every control applying LIVE through
@@ -107,6 +110,29 @@ public sealed partial class SettingsViewModel : ObservableObject
     partial void OnAutoOpenBriefingChanged(bool value) =>
         Apply(s => s with { AutoOpenBriefing = value });
 
+    // ---------- immersion (career-hub-design.md §2.1: "settings to modify what you see") ----------
+
+    /// <summary>Master switch for the era skin (hub era badge + gallery era labels).</summary>
+    [ObservableProperty]
+    private bool _eraThemingEnabled = true;
+
+    partial void OnEraThemingEnabledChanged(bool value) =>
+        Apply(s => s with { EraThemingEnabled = value });
+
+    /// <summary>The selectable news-verbosity levels, in display order (combo/radio source).</summary>
+    public IReadOnlyList<NewsDetailOption> NewsDetailOptions { get; } =
+    [
+        new(NewsDetailLevel.Articles, "Full articles", "Headlines expand into the full period article"),
+        new(NewsDetailLevel.HeadlinesOnly, "Headlines only", "Show just the headline — no expanded article body"),
+        new(NewsDetailLevel.Minimal, "Minimal", "The most stripped-back reading — headlines only"),
+    ];
+
+    [ObservableProperty]
+    private NewsDetailLevel _newsDetail = NewsDetailLevel.Articles;
+
+    partial void OnNewsDetailChanged(NewsDetailLevel value) =>
+        Apply(s => s with { NewsDetail = value });
+
     // ---------- staging (NAMeS-first) ----------
 
     [ObservableProperty]
@@ -196,6 +222,8 @@ public sealed partial class SettingsViewModel : ObservableObject
             DefaultDifficulty = settings.DefaultDifficulty;
             MinimalNarrative = settings.MinimalNarrative;
             AutoOpenBriefing = settings.AutoOpenBriefing;
+            EraThemingEnabled = settings.EraThemingEnabled;
+            NewsDetail = settings.NewsDetail;
             PreferInstalledBaseline = settings.PreferInstalledBaseline;
             DiffAwareStaging = settings.DiffAwareStaging;
             RestorePromptOnSeasonEnd = settings.RestorePromptOnSeasonEnd;

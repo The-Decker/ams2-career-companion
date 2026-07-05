@@ -37,12 +37,23 @@
                                 Padding="2,10">
                             <StackPanel>
                                 <TextBlock Text="{Binding Meta}" Style="{StaticResource Faint}" FontSize="11" />
-                                <!-- ticker headline → click expands to the full period article (decision 17) -->
+                                <!-- ticker headline → click expands to the full period article (decision 17).
+                                     Under a headlines-only immersion level there is no body: the row stays a
+                                     plain headline (no Hand cursor, no expand tooltip). -->
                                 <Button HorizontalContentAlignment="Left" Padding="0,3"
                                         Background="Transparent" BorderBrush="Transparent"
-                                        Cursor="Hand"
-                                        Command="{Binding ToggleExpandedCommand}"
-                                        ToolTip="Read the full dispatch">
+                                        Command="{Binding ToggleExpandedCommand}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Cursor" Value="Arrow" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasBody}" Value="True">
+                                                    <Setter Property="Cursor" Value="Hand" />
+                                                    <Setter Property="ToolTip" Value="Read the full dispatch" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
                                     <TextBlock Text="{Binding Headline}" FontSize="15" FontWeight="SemiBold"
                                                TextWrapping="Wrap" />
                                 </Button>

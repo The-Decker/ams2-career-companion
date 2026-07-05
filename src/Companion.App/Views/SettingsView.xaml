@@ -141,6 +141,36 @@
                     </StackPanel>
                 </Border>
 
+                <!-- ===== immersion (what you see) ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Immersion" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource SectionHint}"
+                                   Text="Settings to modify what you see: how far the era skin (telegram → fax → email) reaches, and how much of each news dispatch the News tab shows." />
+
+                        <CheckBox IsChecked="{Binding EraThemingEnabled}"
+                                  Content="Era theming — skin the app to each career's period (telegram / fax / email)"
+                                  ToolTip="Off = neutral chrome: the hub's era badge and the career gallery's era labels are hidden" />
+
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="170" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Style="{StaticResource RowLabel}" Text="News detail" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ComboBox Width="180" DisplayMemberPath="Label"
+                                          SelectedValuePath="Level"
+                                          ItemsSource="{Binding NewsDetailOptions}"
+                                          SelectedValue="{Binding NewsDetail}"
+                                          ToolTip="Full articles = headlines expand into the period story; headline modes hide the expanded body"
+                                          AutomationProperties.Name="News detail level" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
                 <!-- ===== staging (NAMeS-first) ===== -->
                 <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
                     <StackPanel>

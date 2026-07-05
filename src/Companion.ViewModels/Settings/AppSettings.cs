@@ -3,6 +3,22 @@ using Companion.Core.Career;
 
 namespace Companion.ViewModels.Settings;
 
+/// <summary>How much of the immersive news article the News tab shows (career-hub-design.md
+/// decision 17 — "immersion is user-configurable", the spectrum replacing the binary toggle):
+/// full <see cref="Articles"/> bodies, <see cref="HeadlinesOnly"/> (the ticker headline with no
+/// expanded body), or <see cref="Minimal"/> (headlines only, the most stripped-back reading).</summary>
+public enum NewsDetailLevel
+{
+    /// <summary>Full period articles — the headline expands into the immersive body (default).</summary>
+    Articles = 0,
+
+    /// <summary>Headlines only — the ticker headline, no expanded article body.</summary>
+    HeadlinesOnly = 1,
+
+    /// <summary>The most stripped-back reading — headlines only, no body.</summary>
+    Minimal = 2,
+}
+
 /// <summary>Which standings-table columns are visible (right-click a column header on the
 /// standings screen to toggle). Persisted inside <see cref="AppSettings"/>.</summary>
 public sealed record StandingsColumnSettings
@@ -85,6 +101,18 @@ public sealed record AppSettings
     /// <summary>Open the Race Day briefing automatically when a career loads.</summary>
     public bool AutoOpenBriefing { get; init; } = true;
 
+    // ---------- immersion (career-hub-design.md §2.1 + decisions 7 & 17: "settings to
+    //            modify what you see" — the era skin and the news verbosity) ----------
+
+    /// <summary>Master switch for the era skin: when off, era-medium chrome (the hub's
+    /// telegram/fax/email badge, the gallery's era labels) falls back to neutral. Default on
+    /// (fully immersive); additive so existing settings files load unchanged.</summary>
+    public bool EraThemingEnabled { get; init; } = true;
+
+    /// <summary>How chatty the News tab is: full <see cref="NewsDetailLevel.Articles"/> by
+    /// default, or headline-only readings that hide the expanded article body.</summary>
+    public NewsDetailLevel NewsDetail { get; init; } = NewsDetailLevel.Articles;
+
     // ---------- staging (NAMeS-first, locked decision #7) ----------
 
     /// <summary>Default state of the wizard's "use your installed AI file as the season
@@ -154,6 +182,7 @@ public sealed record AppSettings
             .Select(f => f.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList(),
+        NewsDetail = Enum.IsDefined(NewsDetail) ? NewsDetail : NewsDetailLevel.Articles,
         StandingsColumns = StandingsColumns ?? new StandingsColumnSettings(),
         StandingsTabIndex = Math.Clamp(StandingsTabIndex, 0, 2),
         DismissedCoachMarks = (DismissedCoachMarks ?? [])
