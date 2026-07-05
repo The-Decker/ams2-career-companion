@@ -1,296 +1,525 @@
-# Career hub design — synthesized spec (design round, 2026-07-03)
+# Career hub design — LOCKED spec (design round + 23-question elicitation, 2026-07-05)
 
-**Status:** review artifact. Prose only, no code committed. Grounded in PLAN.md (8 locked
-decisions), career-sim.md (the built deterministic sim), app-shell.md (the `ICareerSession`
-seam), ROADMAP.md (v0.3.0 — working loop + journal + offers + era transition), and Mike's
-career-hub-vision.md. Three independent designs were scored and grafted into one direction.
+**Status:** decisions locked with Mike via a 23-question elicitation on 2026-07-05. This
+supersedes the "Open Questions" version (2026-07-03) — every taste/scope fork below is now
+decided. Prose only; no code committed. The companion build plan is `docs/dev/career-hub-build.md`.
+Grounded in PLAN.md (8 locked decisions), `career-sim.md` (the shipped deterministic sim),
+`app-shell.md` (the `ICareerSession` seam), `character-system.md` + `data/rules/perks.json` (the
+driver-character layer), and `career-hub-vision.md` (Mike's "fully immersive" direction).
 
-> **This is a "design together" artifact.** The open questions below are the taste/scope calls
-> only Mike can make. Everything under them is a proposal, steerable.
-
----
-
-## OPEN QUESTIONS — decide these first (each is a crisp either/or)
-
-| # | Question | Option A | Option B | Why it matters |
-|---|---|---|---|---|
-| **Q1** | **Tab reveal model.** How does the hub grow from a clean first career? | **Progressive unlock** — a fresh 1967 career shows only HQ + Race + Standings; a tab appears the moment its data first exists (first offer → Contracts; first season done → History). No empty/greyed tabs, ever. | **Always-present, lens-empty** — all v1 tabs are visible from day one; ones with no data yet show a friendly empty state ("no offers yet — win some races"). | A is maximally approachable and matches "depth is opt-in"; B is more discoverable (the player sees the roadmap of their career) but risks a wall of empty tabs on turn one. |
-| **Q2** | **The "Why?" inspector — how central?** Every number in the hub can be clickable to walk back through the journal rows that produced it. | **First-class spine** — clickable numbers everywhere (OPI, tier, salary, rival delta); a shared inspector panel is the obsession loop and ships in v1. | **Contained feature** — a "Why?" chip lives only on the News feed and History, expanding one headline's journal row into a plain sentence; not every number is a hyperlink. | A is the strongest hardcore-retention hook and it's pure UI over data that already replays byte-identical — but it's a real v1 build cost. B is far cheaper and still legible. This is the single biggest scope fork. |
-| **Q3** | **Era immersion depth for v1.** How much period skin ships in the first hub increment? | **One EraTheme swap now** — a single resource-dictionary swap keyed off the pack's decade (telegram 60s / fax 80s / email 90s+) drives typography + news chrome + accent across the whole hub from day one. | **Tokens later** — v1 hub is plain/fast; era skinning is a Phase-2 polish pass once the tab set is proven. | A is what makes "1967 FEEL unlike 1988" land immediately (the headline copy is already era-voiced), and it's the presentation primitive Contracts/Scrapbook reuse. B de-risks v1 velocity. The headline bank only has 1960s copy today (see Risk 5), so A's payoff is partial until later eras get copy. |
-| **Q4** | **"Own windows" (Mike's vision literally said windows).** | **Tear-off panels** — News feed and Scrapbook can pop out into a borderless always-on-top companion window, reusing the briefing checklist's existing always-on-top mechanism. Read-only mirrors, so zero parity/state cost. | **Single window only** — everything stays inside the one shell; "own windows" is honored as tabs, not real OS windows. | A satisfies the literal vision cheaply (two read-only panels) and is genuinely nice for a second monitor while racing in AMS2; B keeps the surface smallest. |
-| **Q5** | **First minigame to ship (the pattern-setter).** All agree the loop→journal→skippable pattern should be proven by one small minigame first. | **Setup Gamble** — pre-race Safe/Balanced/Aggressive choice that nudges the player's own car scalars for that round; writes straight into the grid-gen scalar path that already exists. | **Media Moment** — post-race quote choice (humble/bold/deflect) writing a bounded reputation delta on the confirm screen. | Both are v1-viable, deterministic, skippable, journaled. Setup Gamble proves the INPUT-shaping path (touches the XML the game races); Media Moment proves the OUTPUT-flavor path (touches only rep). Which pattern do you want validated first? |
+> **Design-together artifact, now resolved.** Everything here reflects Mike's answers. Where a
+> decision opens new build scope (the race weekend model, the procedural news engine, the
+> Normal/Hardcore modes, the dynamic life-sim layer), that scope is called out and sequenced in
+> the build plan.
 
 ---
 
-## 1. Scoring the three designs
+## 0. The vision in one paragraph
 
-Scored against: **fidelity** to Mike's "fully immersive" direction · **respect** for the hard
-constraints (sim never races, deterministic+journaled, depth opt-in, full parity, additive
-seam) · **buildability** on v0.3.0 · **opt-in depth**.
-
-| Design | Fidelity | Constraints | Buildability | Opt-in depth | Verdict |
-|---|---|---|---|---|---|
-| **A — Simulation Depth First** (legible causal machine; every number links into a "Why?" journal inspector; economy as a third fold-stage from day one) | High | **Excellent** — treats the ledger as another `FoldRound`/`WipeDerived` stage, guards "money only changes INPUTS" explicitly | Medium — the "Why?" inspector + universal hyperlinking is real work | High (every tab is a lens; minimal toggle collapses to HQ+Race+Standings) | The strongest **depth** thesis and the most constraint-aware. Slightly heavier v1. |
-| **B — Approachability + Flow First** (hub is a frame around the shipped loop; progressive tab unlock; giant always-visible "get me back to the race" button) | Medium-High | **Excellent** — moves `HomeViewModel`'s body into tab 0 verbatim, all new seam members default-implemented | **Highest** — lowest-risk re-home, existing tests are the acceptance gate | **Highest** — hard progressive unlock + minimal toggle | The safest, most shippable framing. Best "never bury the loop" discipline. |
-| **C — Era Immersion + Narrative First** (journal becomes the player-facing spine; News feed of period dispatches; Scrapbook; one EraTheme swap) | **Highest** — most directly delivers "fully immersive, feels like the decade" | Strong — read-only `INarrativeFeed` beside `ICareerSession`; choices-not-outcomes journaled | High — the News feed is pure read-only render over data that already exists | High (all gated behind the minimal-narrative toggle) | Best answer to the actual **vision word ("immersive")**. The News feed is the highest visible-value / lowest-risk single increment on the table. |
-
-### Single best idea from each
-
-- **From A — the "Why?" inspector as the obsession loop.** Click any number, walk back through
-  the exact append-only journal rows that produced it — the same rows `Resimulate` byte-checks.
-  It turns the invisible deterministic sim into a legible, browsable causal machine, and it's
-  almost pure UI over data that already exists and already replays byte-identical. *(Also from A:
-  designing the Phase-2/3 economy as a third fold-stage with identical `FoldRound`/`WipeDerived`
-  discipline — the correct way to keep the ledger deterministic.)*
-- **From B — the loop is a frame, never a destination.** Re-home `HomeViewModel`'s body into
-  tab 0 **verbatim** (code, tests, keyboard grammar, drag-and-drop, Esc behavior all move
-  wholesale), keep an always-visible primary "Next Briefing / Enter Result" button on every tab,
-  and hard-unlock tabs by data. This retires the "depth buries the loop" risk by construction.
-- **From C — the journal as the player-facing narrative spine, era-skinned.** The News feed:
-  every headline the sim already generates, rendered as period dispatches (telegram/fax/email),
-  newest-first, with a "Why?" chip per item. Plus the single `EraTheme` resource-dictionary swap
-  that makes the whole hub visibly age across a 1967→1997 career.
+**A Super Monaco GP–style climb-the-grid career, told with real names, real teams, and real
+historical eras.** You start in a backmarker seat; results and rivalries promote you up the budget
+tiers toward the front of the grid (realistically paced — no arcade jumps). Underneath sits a deep
+**character-RPG + dynamic life-sim**: a driver with stats, perks, levels, morale/form and life
+events that — safely and reversibly — shape your *real AMS2 car* and the sim's expectations of you.
+The whole thing is presented in **era-authentic skin** (telegram → fax → email), narrated by a
+**procedural news engine** capable of thousands of generated dispatches, and preserved forever in a
+**total-recall career scrapbook**. Two modes: a protected **Normal** and a full-stakes **Hardcore**.
+Every hard constraint from PLAN.md holds unchanged: **the sim never decides an on-track finishing
+position; everything is deterministic, journaled and byte-replayable; everything is data-driven;
+every action has mouse + keyboard parity (decision 8); every increment is additive to the shipped
+loop and the `ICareerSession` seam.**
 
 ---
 
-## 2. Unified hub design
+## 1. The 23 locked decisions
 
-### 2.1 Navigation shape (one shape)
+| # | Axis | **Decision** | Notes |
+|---|---|---|---|
+| 1 | Hub navigation shape | **Persistent left tab rail + pinned header + collapsible right News dock; News/Scrapbook can tear off into always-on-top companion windows** (read-only mirrors, zero state cost) | Honors the literal "own windows" vision; great on a 2nd monitor while racing in AMS2 |
+| 2 | Tab reveal | **Progressive unlock** — core tabs from day one; each other tab appears when its data first exists. No empty/greyed tabs ever | Drives a `TabAvailability()` projection |
+| 3 | Race-day loop home | **Dedicated Race tab (flow verbatim) + always-visible header button** ("Next: <round> — <session>" / "Enter Result"); Race auto-selects on open and after every Apply | The anti-burial mechanism |
+| 3b | **Race weekend model** (Mike-raised) | **Data-driven weekend: Practice → Qualifying → Race 1 → optional Race 2**, 1 or 2 races per round, era-correct session names | See §3 — new scope |
+| 4 | "Why?" inspector centrality | **First-class, phased in** — Why? chip in Increment 1, clickable-numbers-everywhere walk-back inspector in the History increment | Pure UI over byte-identical replay data |
+| 5 | Why? explains perks too | **Yes — design the contribution-breakdown format now**, wire live when the character layer ships | e.g. "expected P8 = tier-4 car −3, Pace +1, Rain Man +2 (wet)" |
+| 6 | Era depth for v1 | **One `EraTheme` swap now** (telegram/fax/email) in Increment 1 | Presentation primitive Contracts/Scrapbook reuse |
+| 7 | Whole-UI re-skin vs partial | **Immersive docs, legible tools** — era typography/accent/chrome everywhere, but dense data surfaces (standings, result entry) keep a legible base face with era accent only; **plus user immersion settings** | Protects the <90s entry + glanceability |
+| 8 | Character-creation CP budget | **10 CP** (the audited default; +6 refund headroom → net spend [0,16]) | JSON knob; 12 would need a re-audit |
+| 9 | Injury system | **Opt-in: global default OFF, auto-enabled for any character taking an injury perk, ON in Hardcore** | The audit depends on it being live for the 7 injury perks |
+| 10 | Talent-stat honesty | **Pure-expectation by default + a Hardcore honest-nudge** that also applies a tiny bounded car scalar so talent bites your real car | The car-scalar mechanism is real, bounded and reversible — see §8.4 |
+| 11 | Archetype presets | **13 presets** (expand the audited 7 with 6 more), all balance-audited ("nothing overpowered"), editable + data-extensible | 6 new templates must pass the same audit |
+| 12 | Respec strictness | **Mode-scaled with a real penalty:** Normal = milestone token + hefty CP penalty, equal-or-lower-cost swaps only; Hardcore = least forgiving (perks locked / stat-only or extreme cost) | Keeps the creation audit valid career-long |
+| 13 | Character dossier | **Dedicated Driver/Character hub tab, full 3-tier depth** (archetype → free customize → advanced); the between-seasons CP-spend home | Distinct from the read-only Career/History lens |
+| 14 | First minigame | **Setup Gamble** (pre-race Safe/Balanced/Aggressive → your own car scalars for that round) | Proves the load-bearing INPUT-shaping path; slots before qualifying |
+| 15 | Minigame agency / randomness / skip | **Seeded randomness (a "D100 modified by your skills"), always replayable; minor input-minigames skippable (skip = default), story events mandatory; no roll ever sets a finishing position** | See §9 — the reconciliation with determinism |
+| 16 | Contracts depth v1 | **Offers as era-correct documents + one-click Accept** (the skip path); negotiation minigame is Phase 2 | Same `PlayerOffer` data, era `DataTemplate` |
+| 17 | News prominence + tone | **Ticker by default; clicking a ticker headline expands into a full immersive period article**; immersion is user-configurable | See §7 |
+| 18 | Scrapbook / history depth | **Total recall in v1**: season cards + lineage timeline + Why? home **+ records book + every race's archived news article, viewable forever** | Why meticulous manual entry matters |
+| 19 | Team / finances surfacing | **Deferred to Phase 2** (the Team lens *and* the ledger economy) | v1 keeps only the minimal tier/car context already in the briefing/HQ |
+| 20 | Multi-career / saves | **Picture-rich career gallery** on Start — one DB per career, effectively unlimited saves, per-era historical imagery | Beats AMS2's 4-save cap; user supplies era images |
+| 21 | Art direction | **Period-authentic minimalism** — each era's real medium rendered clean/vector, muted period palette, one accent per era | Keeps the single exe lean |
+| 22 | Game mode (Mike-raised) | **Normal (protected) + Hardcore (full stakes)** as a first-class, data-driven pillar | See §8.5 table |
+| 23 | Career fantasy framing (Mike-raised) | **Super Monaco GP ladder** — rivalry- and results-driven promotion/relegation up the tiers, real names/teams, realistically paced | The organizing metaphor for offers + tiers + reputation + (Phase-3) rivalries |
+
+**Everything below elaborates these decisions.** Nothing new is introduced that isn't traceable to
+a row above.
+
+---
+
+## 2. Navigation shape (locked)
 
 A **single WPF window: persistent left tab rail + central content region + a collapsible
-era-styled News dock on the right.** Not MDI, not a dashboard that replaces the loop — a shell
-*around* the shipped Home. (Reconciles B's rail, A's pinned-loop rail, C's single-window
-+ news feed.)
+era-styled News dock on the right** — a shell *around* the shipped Home, not an MDI or a dashboard
+that replaces the loop.
 
-- **`HubViewModel`** owns the `ICareerSession` and an `ObservableCollection<HubTabViewModel>`
-  with a `SelectedTab`. Today's `Home/Briefing/ResultEntry/Confirm/Standings/SeasonReview`
-  content moves into the **Race** tab **unchanged**. `ShellViewModel`'s Start→Wizard→Home→
-  Settings conducting is preserved; Home becomes the Hub.
-- **Persistent header** (above rail + content, glanceable from every tab): season year, round,
-  player standing, rep/OPI trend — lifted from the fields already on `HomeViewModel`.
-- **Always-visible primary action button** in the header: **"Next: <round> Briefing" / "Enter
-  Result"** — one click back to the loop from anywhere. *This is the anti-burial mechanism the
-  constraints demand.* On career open and after every Apply, the Race tab is auto-selected — you
-  are never stranded in a management screen.
-- **Right-side News dock** (era-skinned, collapsible to a one-line ticker): live journal
-  headlines. Tear-off to an always-on-top companion window is the optional "own windows" answer
-  (**Q4**).
-- **Full parity (decision 8):** number keys **1–9** jump to tab N; arrow keys navigate the rail;
-  `Ctrl+Home` always snaps to the briefing/result card; `Esc` backs out of any minigame to the
-  Race tab writing no state. Every rail entry is a mouse click target with a tooltip. Bake the
-  accelerators + Why?-link focus order into `HubViewModel` from the first tab.
-- **Minimal-narrative toggle** (already in settings) collapses the hub to exactly **HQ + Race +
-  Standings** and strips the News dock/era chrome — depth is opt-in at the chrome level too.
+- **`HubViewModel`** owns the `ICareerSession` and an `ObservableCollection<HubTabViewModel>` with a
+  `SelectedTab`. Today's `Home/Briefing/ResultEntry/Confirm/Standings/SeasonReview` content moves
+  into the **Race** and **Standings** tabs **unchanged** (Increment 1). `ShellViewModel`'s
+  Start→Wizard→Home→Settings conducting is preserved; Home becomes the Hub.
+- **Persistent header** (glanceable from every tab): season year, round, **current weekend session**,
+  player standing, rep/OPI trend — lifted from fields already on `HomeViewModel`.
+- **Always-visible primary action button** in the header: **"Next: <round> — <session>" / "Enter
+  Result"** — one click back to the loop from anywhere. On career open and after every Apply, the
+  Race tab is auto-selected. *This is the anti-burial mechanism the constraints demand.*
+- **Progressive tab unlock (decision 2):** the core set (**HQ, Race, Standings, News**) is present
+  from day one; **Driver, Contracts, History** appear the moment their data first exists, driven by a
+  `TabAvailability()` projection. No empty/greyed tabs, ever.
+- **Right-side News dock (decision 17):** a **one-line era-skinned ticker by default**; clicking a
+  headline expands it into a full immersive period **article** (telegram/fax/email). Tear-off to an
+  always-on-top companion window is the "own windows" answer.
+- **Tear-off windows (decision 1):** News and Scrapbook can pop out into borderless always-on-top
+  companion windows, reusing the briefing checklist's existing always-on-top mechanism. Read-only
+  mirrors → zero parity/state cost.
+- **Full parity (decision 8):** number keys **1–9** jump to tab N; arrows navigate the rail;
+  `Ctrl+Home` snaps to the current session card; `Esc` backs out of any minigame to the Race tab
+  writing no state. Every rail entry is a mouse target with a tooltip. Accelerators + Why?-link focus
+  order are baked into `HubViewModel` from the first tab.
+- **Immersion settings (decision 7):** a settings surface controls immersion intensity — era-theme
+  on/off/per-surface, news verbosity, ticker density, animation gates — replacing the old binary
+  minimal-narrative toggle with a spectrum. The extreme "minimal" preset still collapses the hub to
+  **HQ + Race + Standings** with plain chrome.
 
-### 2.2 Tab set (phased)
+---
 
-Two v1 posture choices are open: **Q1** (progressive unlock vs always-present) and the reveal is
-noted per tab below assuming progressive unlock.
+## 3. The race weekend model (NEW — decision 3b, 22-sim)
 
-| Tab | v1 | Phase 2 | Phase 3 | Reveal trigger (if Q1=A) |
-|---|---|---|---|---|
-| **HQ / Home** | Permanent spine: season header, current-round card (briefing OR enter-result, unchanged), rep/OPI sparkline, top-3 news, slider recommendation chip | — | — | Always present |
-| **Race** | The existing briefing→result→confirm flow, re-homed verbatim | — | — | Always present |
-| **Standings** | Existing drivers/constructors/round-matrix VM, re-homed; rules-explainer chip; cells link into Why? (Q2) | — | — | Always present |
-| **News** | Era-skinned dispatch feed over the journal; per-item Why? chip; filter by kind | Rivalry/market/retirement filters populate as phases ship | — | Always present (or first race, Q1) |
-| **Career (driver dossier)** | Read-only lens: age curve, rep/OPI history, seasons completed, team lineage — pure render of `round_player_state`/`player_state` | — | — | First season complete |
-| **Team** | Read-only causal board: historical name, tier 1–5 + plain label, car scalars as "~X% off the fastest", reliability trend, teammate head-to-head, the INPUT→grid causal arrows | — | Owner-Driver write controls (dev allocation surface) | Round 1 (you have a seat) |
-| **Contracts** | Offer letters rendered as era-correct documents; AcceptOffer is the skip path | Negotiation minigame (counter-offer loop) | — | First offer exists (season end) |
-| **History / Scrapbook** | Per-season review cards + the full Why? inspector home; era-correct paper per spread | — | Title-permutation math | First season complete |
-| **Paddock** | (lite) retirement-watch + who-signed-where from season-end rows | Mid-season driver market, rumor mill, living-world dial | — | Phase 2 data |
-| **Finances (ledger)** | — | Driver-side ledger: salary, prize fund, personal sponsors, crash-repair bills from typed DNF causes; crisis-ladder gauge | Full team ledger + bankruptcy (Owner-Driver) | Phase 2 data |
-| **Rivals** | (optional lite H2H inside Team) | — | Full rivalry board + needle headlines | Phase 3 |
+Today a "round" records **one race**. Mike's requirement: model AMS2's real weekend — **one
+practice, one qualifying, up to two races** — and *consider* qualifying/practice in the sim.
+
+### 3.1 Structure (data-driven, per round)
+
+The pack's `season.json` round gains a **`weekend` block** declaring the sessions:
+
+```jsonc
+"weekend": {
+  "practice":   { "present": true, "label": "Practice" },
+  "qualifying": { "present": true, "label": "Qualifying", "format": "single" },
+  "races": [
+    { "id": "race", "label": "Grand Prix", "pointsTable": "primary" }
+    // optional 2nd entry for sprint/doubleheader eras:
+    // { "id": "race2", "label": "Sprint", "pointsTable": "sprint", "gridFrom": "race1Reverse" }
+  ]
+}
+```
+
+- **1 or 2 races**, declared per round. A single-race weekend simply labels its race with the
+  **era-correct name** ("Grand Prix", "Feature", etc.) — no "Race 1/2" chrome when there's one race.
+- **Session labels are era-correct data** — packs name their own sessions.
+- Defaults: absent `weekend` block → today's single-race round (**back-compatible**; all 13 bundled
+  packs load unchanged).
+- **This is a real engine + save-format change, not a free ride** (verified against source, 2026-07-05):
+  - **Per-session points table is new.** Today `AlternateRaceTableId` is a single *per-round* field
+    (the 2022+ shortened-race sliding scale) applied to every session, so it cannot give Race 1 the
+    primary table and Race 2 a different table. A genuine **sprint** 2nd race routes through the
+    existing `SessionKind.Sprint → SprintPoints` path; a 2nd *full* race on its own table needs a
+    per-session points-table binding on `SessionResult` — an engine change, scheduled in Increment 2.
+  - **Independent per-race scoring/OPI/rep/XP is new.** The shipped fold unit is one round = one race
+    (`ImportAndFoldRound`, one `RoundUpdate` per round; `ScoreRound` accumulates all sessions into one
+    `RoundScore`). Two independently-scoring races need the fold restructured into a **per-session
+    fold** (`ImportAndFoldSession`). Also an Increment-2 engine change.
+  - **The qualifying order is raw INPUT** the sim can't derive, so it is a **raw-payload addition**
+    (a new `SessionKind.Qualifying` or an envelope `QualifyingOrder` field) with a
+    `RoundResultEnvelope` version bump (v2→v3, read-with-defaults — the established mechanism). See §12.
+
+### 3.2 What each session feeds the sim (decision: weekend-sim option 1 + tycoon hook)
+
+| Session | Sets | Feeds |
+|---|---|---|
+| **Practice** | Informational only | Setup/reliability flavor in the briefing; no standings effect. (Later: a Setup-Gamble preview surface.) |
+| **Qualifying** | **The race grid** | **The OneLap / `qualifyingSkill` side of the pace anchor** (your one-lap pace vs the field — the richest new signal), a rep/OPI qualifying signal, **and Phase-2 tycoon inputs** (qualifying performance → sponsor health, appearance/prize money, grid bonuses, team satisfaction) |
+| **Race 1 / Race 2** | Championship points (per its `pointsTable`) | Each race independently computes OPI, reputation, XP and standings — *which requires the per-session fold (`ImportAndFoldSession`) + per-session points table above; not free* |
+
+- **Pace anchor — qualifying is NET-NEW math** (not a recalibration): today `PaceAnchorMath` is
+  single-sided (race-finish + `raceSkill` only). Increment 2 ADDS a qualifying calibration branch — a
+  second EWMA + an `ImpliedPlayerQualiPace` over the grid's `qualifyingSkill` + a `player.qualiAnchor`
+  journal phase. The character `oneLap` stat maps onto it once the character layer ships; it is not a
+  pre-existing hook. *The weekend STRUCTURE (sessions, grid-from-qualy, 2nd-race scoring) can ship
+  without this, so the qualifying-as-pace-signal can be a later slice if Increment 2 gets heavy.*
+- **Result entry** captures the qualifying order + up to two race results, **reusing the existing
+  keyboard/drag grammar per session** (one session at a time; the grammar, undo, DNF/DSQ, parity all
+  transfer wholesale).
+- **All pack-overridable** — a pack can declare a scored qualy, a reverse-grid sprint, or a plain
+  single race.
+
+### 3.3 Sequencing note
+
+The weekend model **changes the loop**, so it is *not* bundled into the verbatim re-home. Increment 1
+re-homes today's single-race loop unchanged (existing tests = the gate); the weekend model lands as
+**Increment 2** (see the build plan), evolving the loop once the shell is proven.
+
+---
+
+## 4. Tab set (locked, revised)
+
+| Tab | v1 (Increments 1–3) | Later | Unlock trigger |
+|---|---|---|---|
+| **HQ / Home** | Season header, current weekend/session card, rep/OPI sparkline, top-3 news ticker, slider recommendation chip | — | Always present |
+| **Race** | The briefing → **weekend sessions** → result → confirm flow (verbatim in Inc 1, weekend-aware in Inc 2) | — | Always present |
+| **Standings** | Drivers/constructors/round-matrix VM, re-homed; rules-explainer chip; cells link into Why? | — | Always present |
+| **News** | Era-skinned **procedural** dispatch ticker → click-to-expand full article; per-item Why? chip; filter by kind | Rivalry/market/retirement filters as phases ship | Always present |
+| **Driver (dossier)** | **Dedicated character tab** — stats, perks, level/XP, CP-to-spend, respec; 3-tier creation flow; between-season growth | Dynamic life-sim state surfaced (morale/form/rivalries) | First character exists |
+| **History / Scrapbook** | **Total recall** — per-season cards, lineage timeline, **records book**, **every race's archived news article**, the clickable-everywhere Why? inspector home; era-correct paper | Title-permutation math (Phase 3) | First season complete |
+| **Contracts** | Offer letters as era-correct documents; one-click Accept (skip path) | Negotiation minigame (Phase 2) | First offer exists |
+| **Team** | *(deferred)* | Read-only tier lens **+ ledger economy** (Phase 2) | Phase 2 |
+| **Paddock / Rivals** | *(deferred)* | Driver market, rumor mill, **Super-Monaco rivalry→promotion** board | Phase 2–3 |
+| **Finances** | *(deferred)* | Driver-side then full team ledger, crisis ladder | Phase 2–3 |
 
 **Design rule enforced everywhere:** a first-timer using only the mouse finishes a full season
-without opening a second tab. Every management tab and minigame only shapes **INPUTS** (car
-scalars, difficulty anchor, morale, contract terms) or renders **OUTPUTS** (journal/OPI/rep/
-offers). **No tab and no minigame ever touches an on-track finishing position.**
-
-### 2.3 Minigames (prioritized; each deterministic + journaled + skippable)
-
-The invariant, from all three designs: **journal the CHOICE, not the outcome.** Given
-`(masterSeed, named stream, stored choice)`, the fold reproduces the delta — so replay stays
-byte-identical. Every minigame is written into the **same fold transaction** as the round/season
-it belongs to, and its derived rows are wiped by `WipeDerived` alongside offers/`round_player_state`.
-Every one has a **Skip (use default)** that yields the exact result the career would have had with
-no hub, and the skip is itself journaled as the default choice.
-
-| Priority | Minigame | Loop | Sim inputs shaped | Skip = | Phase |
-|---|---|---|---|---|---|
-| **1** | **Setup Gamble** (pre-race) | On the briefing: one pick — Safe / Balanced / Aggressive (era-flavored). Deterministic pick, no timing/dexterity. Honest tradeoff shown up front (aggressive = more one-lap pace, higher reliability penalty). | The player's **own** car power/reliability scalars for **that round only**, merged into the existing grid-gen chain (pack → track form → round overrides → career form → **+minigame delta**) before normalization; optionally the OPI expectation baseline. Never another car, never a position. | Balanced = the exact scalars used today (no-op) | **v1** (smallest new surface; pattern-setter — see Q5) |
-| **2** | **Media Moment** (post-race) | On the Confirm screen, a dismissible card: pick one of 2–3 era-voiced quotes reacting to the just-entered result (win / DNF / beat-rival). Deterministic pick. | A bounded **reputation** delta (+ rivalry heat / sponsor health later). Rep already feeds offer scoring. Points/positions are locked by the result already entered. | "No comment" = zero-delta | **v1-light** (rep only) → deepens with rivals/ledger |
-| **3** | **Contract Negotiation** | Turn-based counter-offer volley from an offer letter: Accept / Counter (salary↑, +year, release clause) / Hold, against archetype-weighted patience (works = impatient/rich, minnow = patient/poor). A visible patience meter means no surprise walk-offs. Each team response draws a `negotiate` stream keyed `(year, team, counterIndex)`; re-scores via the **existing** OfferScore formula with a raised `salaryAsk`. | The accepted **contract terms** (salary band, years, release) = next season's INPUT to the season-end offer pipeline and the Finances salary line. | "Accept as offered" = today's one-click `AcceptOffer(teamId)` | **Phase 2** |
-| **4** | **Sponsor Pitch** | Between seasons: match a pitch angle (results / glamour / heritage) to a seeded sponsor personality; `sponsor` stream resolves acceptance + term + payout band. One screen, keyboard-navigable. | Sponsor **income + health-decay** inputs to the Finances ledger fold → money that later buys car scalars / second-seat quality. | "Take the standard deal" = neutral default backer | **Phase 2** (personal) → **Phase 3** (team) |
-| **5** | **Development Allocation** (Owner-Driver) | Winter budget split across weight/power/drag/reliability with diminishing-returns curves shown; confirm commits. `development` stream adds bounded, replayable noise. | Next season's **team car scalars + reliability** — the strongest tycoon INPUT lever, feeding the grid the game races. | "Let the chief decide" = balanced default drift | **Phase 3** |
-
-### 2.4 Era immersion approach
-
-One **`EraTheme`** enum (Telegram / Fax / Email) selected from the active pack's decade, wired as
-a **single app-wide `ResourceDictionary` swap** driving typography, news-item chrome, accent
-color, and paper/transition texture — one switch, everything downstream reads it. Depth of the v1
-commitment is **Q3**.
-
-- **1960s = TELEGRAM** (uppercase monospace, "STOP"-punctuated, ochre paper) — the 1960s headline
-  bank is *already* written in wire-report voice, so copy and skin match on day one.
-- **1980s = FAX** (sender/date header band, thermal-paper grain, roll-in transition).
-- **1990s+ = EMAIL** (inbox rows, subject/sender, monospace→sans shift, clean accent).
-- **Contracts/offers render as period correspondence** (typed 1967 telegram vs 1993 fax vs email)
-  via a `DataTemplate` selected by era — same `PlayerOffer` data, different template.
-- **Pacing:** the winter is deliberately slowed into beats already in the pipeline — final
-  standings → press digest → retirements/foreshadow → seat-market shuffle → offer letters →
-  negotiation → sign — each a news-wire beat, each skippable via the minimal-narrative toggle
-  (which collapses the winter to "here are your offers, pick one"). The per-round loop stays
-  instant (startup <1s, no animation gates).
-- **Determinism preserved:** every era-flavored string is still selected via a named PCG32 stream
-  (`headlines`/`media`/…); presentation introduces no un-seeded randomness. Skins are
-  vector/CSS-like styles + a few tokens, **not** bitmap-heavy themes (keeps the single exe lean).
-- **Data-driven:** a `data/rules/era-themes.json` maps decade → `{medium, accent, fontStack,
-  paperTexture, datelineFormat}` so community packs can declare their own era feel.
-
-### 2.5 Additive data-model deltas
-
-Everything is additive. The discipline (from career-sim.md and confirmed in `ICareerSession.cs` /
-`JournalStore.cs`): player **DECISIONS** become inputs that survive `WipeDerived` and replay
-byte-identically; sim **RESULTS** become derived rows wiped + rebuilt by `Resimulate`. New seam
-members follow the **exact** pattern already in the file — `NextSeason() => null`,
-`StartNextSeason() => throw` — so existing sessions and the ViewModels test suite compile
-untouched. *A non-default seam addition is the design's red line.*
-
-**Seam (`ICareerSession`) — new default-implemented, read-only members:**
-
-- `INarrativeFeed`-style `ReadFeed(seasonId)` → `Dispatch { resolvedHeadline, era, kind,
-  sourceJournalSeqs, whyText }`, built by resolving existing journal rows through the existing
-  `HeadlineBank`. (Powers News + the Why? chip.)
-- `JournalFor(entity, round?)` → the causal chain for the Why? inspector (Q2).
-- `TeamView()` → read model over `team_state` + tier + scalar summary + teammate stats from
-  `AllSnapshots()`.
-- `CareerTimeline()` → lineage-aware per-season cards for Career/History.
-- `TabAvailability()` → which tabs have payload yet (drives progressive unlock, Q1).
-
-All are **projections over data `StateStore`/`JournalStore` already hold** — v1 tabs need **no new
-persistence** and **no migration**.
-
-**Journal — new phases only** (strings are save-format-stable; follow the
-`DataJournalPhases`/`JournalPhases` convention; all are **derived** sim state so the byte-compare
-covers them):
-
-- `setup.choice` (round, chosen card id, applied scalar delta)
-- `media.moment` (round, question phase|cause, chosen response id, rep/rivalry delta)
-- `contract.negotiation` (team, exchange log, final terms) — Phase 2
-- reserved for Phase 3: `sponsor.pitch`, `dev.alloc`
-
-**RNG streams — reserve now so keys stay stable** (same `SplitMix64(Fnv1a64(subsystem|year|round|
-entity) XOR masterSeed)` formula, one stream per `(subsystem,year,round,entity)`, so a new
-subsystem never perturbs an existing sequence): `setup`, `media`, `negotiate`, `sponsor`,
-`development`, `rivalry`.
-
-**`teams.json` (additive, defaulted so all 8 bundled packs load unchanged):**
-
-- optional `sponsorSlots` (list of sponsor personalities/brands per team) — Phase 2 ledger
-- optional `engineSupplier` — Phase 2/3 cost line
-- optional pack-level `economy` block: prize-fund-by-position, repair-cost bands, sponsor
-  personalities, development diminishing-returns curve (sits alongside the existing `pointsSystem`)
-- `name` stays the historical display key everywhere; lineage ids stay the cross-era key
-
-**`drivers.json` (additive, defaulted):**
-
-- optional `voice` tag (e.g. gracious / combative / neutral) — lets media/rivalry copy pick
-  needling vs gracious variants; engine ignores if absent (matches the existing "only
-  raceSkill/qualifyingSkill required" leniency)
-
-**Career DB (migrations, Phase 2+; nothing for v1):**
-
-- `minigame_choice` row keyed `(season_id, round, stream_name, choice_json)` — written in the
-  fold transaction, **deleted by `WipeDerived`** with offers/`round_player_state`. Replay needs
-  only the recorded CHOICE (outcome is a pure function of seed+choice).
-- an optional per-round **scalar-delta channel** in grid-gen inputs (from Setup Gamble), merged in
-  the existing chain, defaults to zero (== skip).
-- Phase-2 economy migration (v4): a `ledger` analogue to the state tables —
-  `season_ledger (season_id, stage start/end, state_json)` for opening balance + sponsor/contract
-  inputs, and `round_ledger_state (season_id, round, state_json)` **folded by `FoldRound` exactly
-  like `round_player_state`**, with `WipeDerived` extended to delete the derived ledger rows.
-  **Every ledger line item is ALSO a journal row** (cause = salary/prize/repair/sponsor/development)
-  so the News feed and Why? inspector get it free and `Resimulate` byte-checks it.
-- Phase-3: `rivalry` rows; `scrapbook_pin (career_id, season_id, journal_seq)` — a user
-  annotation over existing rows, excluded from the replay byte-compare like provenance.
-
-No change to raw result payloads, the points engine, or the f1db oracle suite.
+without opening a second tab. Every management tab and minigame only shapes **INPUTS** (car scalars,
+difficulty anchor, morale, contract terms) or renders **OUTPUTS** (journal/OPI/rep/offers). **No tab
+and no minigame ever touches an on-track finishing position.**
 
 ---
 
-## 3. Build order — first 3 increments (each a shippable slice, additive to `ICareerSession`)
+## 5. The "Why?" inspector (decisions 4 + 5)
 
-Starting from v0.3.0 (working loop + journal + offers + era transition, 895/895 tests).
+**First-class, phased in.** Every number the hub shows can walk back through the exact append-only
+journal rows that produced it — the same rows `Resimulate` byte-checks.
 
-### Increment 1 — **The Hub Shell + News feed** *(zero sim, zero migration)*
-Re-home the loop and ship the first visible immersion payoff.
-- Introduce `HubViewModel` owning the existing `ICareerSession`; move today's
-  `Home/Briefing/ResultEntry/Confirm/Standings/SeasonReview` into the **Race** and **Standings**
-  tabs **verbatim** (existing tests are the acceptance gate — the loop cannot regress).
-- Lift the persistent header + always-visible primary loop button above the rail.
-- Add the **News** tab: a read-only `ReadFeed(seasonId)` projection resolving existing journal
-  rows through the existing `HeadlineBank` into era-skinned dispatches, newest-first, with a per-
-  item **Why?** chip (`deltaJson` → plain sentence).
-- Add the **`EraTheme`** resource-dictionary swap (telegram/fax/email) keyed off the pack decade.
-- **Why first:** highest visible value for the least new surface, zero sim risk — the story is
-  already generated and journaled every race; today it flashes by on the confirm screen and is
-  lost. Surfacing it is provably safe (read-only over folded state), needs no schema change, and
-  lays the two load-bearing foundations (era skin + narrative read-seam) the whole hub reuses.
-  Gives Mike a tangible, steerable artifact on day one. *(Scope here flexes on Q2/Q3.)*
-
-### Increment 2 — **The read-only management lenses: Team + Career/History + Why? inspector**
-Prove the "glanceable management + legible sim" thesis with tabs that need no new sim math.
-- Add `TeamView()`, `CareerTimeline()`, `TabAvailability()` as default-implemented read-only seam
-  members (projections over `team_state`/`player_state`/`round_player_state`/`AllSnapshots()`).
-- **Team** tab: historical name, tier + plain label, car scalars as "~X% off the fastest",
-  reliability trend, teammate head-to-head, the INPUT→grid causal arrows.
-- **Career/History** tab: age/rep/OPI history, per-season review cards, lineage timeline; make it
-  the full-screen home of the **Why?** inspector (scope per Q2).
-- Wire **progressive tab unlock** via `TabAvailability()` (or always-present, per Q1).
-- **Why second:** all data already exists fully in v1 — pure OUTPUT rendering, no sim additions,
-  no migration — so it ships immediately and demonstrates the depth-is-a-lens promise, while
-  building the unlock scaffolding every later tab plugs into.
-
-### Increment 3 — **The first minigame + Contracts-as-documents**
-Prove the deterministic/journaled/skippable minigame pattern end to end, in a real tab.
-- Ship **Setup Gamble** (or Media Moment, per Q5): new `setup.choice` journal phase + `setup`
-  stream + the optional per-round scalar-delta channel merged into the existing grid-gen chain
-  (defaults to zero = skip). Journal the choice; the fold reproduces the delta.
-- Extend the **byte-identical replay CI test** to cover a career that used the minigame AND its
-  skip-everything equivalent — *before shipping.*
-- Render existing offer letters in the **Contracts** tab as era-correct documents (same
-  `PlayerOffer` data via era `DataTemplate`); `AcceptOffer` stays the skip path.
-- **Why third:** it's the smallest INPUT-shaper and the pattern-setter for every later minigame,
-  and it drops into the proven shell from Increments 1–2 instead of forcing a rewrite. Establishes
-  the determinism guard (choice-not-outcome, wiped-by-`WipeDerived`, new independent stream) that
-  the whole economy later depends on.
-
-**Deferred to Phase 2/3 (data model reserved from day one):** Finances ledger (as a third
-fold-stage), Contract Negotiation, Sponsor Pitch, Paddock mid-season market, Rivals, Development
-Allocation, Owner-Driver write controls.
+- **Increment 1:** a per-item **Why? chip** on News (and, as they arrive, other surfaces) — expands
+  one headline's journal row into a plain sentence (`deltaJson` → prose).
+- **History increment:** the **clickable-everywhere** walk-back inspector — click OPI, tier, salary,
+  a qualifying delta, a rival gap — a shared inspector panel opens the causal chain. This is the
+  hardcore obsession loop, and it's pure UI over data that already exists and already replays
+  byte-identical (seam member `JournalFor(entity, round?)`).
+- **Explains character/perks too (decision 5):** the inspector's **contribution-breakdown format is
+  designed now** to accept perk/stat rows, e.g.
+  `expected finish P8 = tier-4 car −3 · Pace +1 · Rain Man +2 (wet round)`.
+  `PlayerPerkModifiers` is a **planned** identity-defaulting struct (character-system.md §6.1) — *not
+  yet in code* — that threads into `OpiMath`/`ReputationMath`/`PaceAnchorMath`/`SeatStrengthModel`/
+  `AgeOneSeason` when the character layer ships. Once built it is a pure function of the journaled
+  creation row, so the breakdown is the same read-only-over-folded-state pattern with no new
+  persistence; the inspector's format ships ready ahead of it.
 
 ---
 
-## 4. Cross-cutting risks (and mitigations)
+## 6. Era immersion + art (decisions 6, 7, 21)
 
-1. **Scope creep vs "lightweight single exe / loop never buried."** Every v1 tab is a pure lens
-   (no new sim); economy is gated behind the phase line and the minimal toggle. HQ+Race+Standings
-   is always the whole app if you want it to be.
-2. **Determinism erosion via minigames.** Enforce choice-not-outcome + same fold transaction +
-   new independent stream + `WipeDerived` cleanup; the byte-identical replay CI test must cover a
-   minigame career and its skip equivalent before any minigame ships.
-3. **New streams perturbing existing journals.** Avoided by construction (independently keyed) but
-   must be covered by a replay regression test that the 8 existing packs still reproduce
-   byte-identical after the streams are reserved.
-4. **"Sim never decides races" blurring once money exists.** Guard explicitly: money only changes
-   generated-XML INPUTS (scalars, teammate quality) and consumes typed results — there is no code
-   path where the ledger reads a result the player didn't enter.
-5. **Headline bank is 1960s-only today.** The News feed will look thin in 1988 until 1970s/80s/90s
-   copy lands — a *content* task (pure JSON, no code), but it gates the "feels like 1988" promise,
-   so it should land with each era pack.
-6. **Multi-era Scrapbook depends on M6 carryover across many transitions** — byte-identical-tested
-   for one transition today; 30-year careers need a stress test.
-7. **Full parity across a growing tab set (decision 8).** Bake number-key/arrow accelerators and
-   Why?-link focus order into `HubViewModel` from the first tab; the existing parity ViewModel
-   tests stay the gate. Every rail entry and minigame choice needs both a click target with
-   tooltip AND a keybind.
+One **`EraTheme`** enum (Telegram / Fax / Email) selected from the active pack's decade, wired as a
+**single app-wide `ResourceDictionary` swap** driving typography, news-item chrome, accent color, and
+paper/transition texture. Ships in **Increment 1**.
+
+- **Immersive docs, legible tools (decision 7):** the swap fully skins **documents** (news articles,
+  offer letters, scrapbook spreads) and the **chrome + accent** everywhere; **dense functional
+  surfaces (standings tables, result entry) keep a legible base face with era accent only** — so 1967
+  feels unlike 1988 without slowing the <90s entry or hurting glanceability. **User immersion
+  settings** let the player push the skin further or pull it back per-surface.
+- **1960s = TELEGRAM** (uppercase mono, "STOP"-punctuated, ochre paper — the existing 1960s headline
+  bank already matches). **1980s = FAX** (sender/date band, thermal grain). **1990s+ = EMAIL** (inbox
+  rows, subject/sender, mono→sans shift).
+- **Art direction (decision 21):** **period-authentic minimalism** — each era's real medium rendered
+  clean and vector, muted period palette, one signature accent per era. Styles + tokens, **not**
+  bitmap-heavy themes (keeps the single exe lean).
+- **Data-driven:** `data/rules/era-themes.json` maps decade → `{medium, accent, fontStack,
+  paperTexture, datelineFormat}` so community packs declare their own era feel.
+- **Determinism preserved:** every era-flavored string is still selected via a named PCG32 stream;
+  presentation introduces no un-seeded randomness.
+
+---
+
+## 7. The procedural news engine (NEW — decision 17)
+
+Mike's ask: **"thousands or more procedurally generated news articles… make more and add more easily
+later."** This replaces the current one-headline-per-race `HeadlineBank` with a **data-driven
+generative article system**.
+
+- **Grammar, not a fixed bank.** An article = a **template body with typed slots** filled from race
+  facts, selected and varied via the seeded **`headlines`** stream (the shipped one — `media` is a
+  reserved *future* stream for the Media-Moment minigame, not consumed here). Many interchangeable
+  fragments per slot → combinatorially thousands of distinct articles from a compact corpus.
+- **Where the facts come from — mind the thin `race.result` row.** Today's `race.result` journal row
+  carries only `{round, expectedFinish, actualFinish, dnf}` for the player, and the shipped
+  `HeadlineBank` emits **one** `news.headline` row per race. So Increment 1 ships **only** (a)
+  re-rendering the existing `news.headline` rows through `EraTheme` into the ticker/article, and (b)
+  the `deltaJson`→sentence Why? chip. The **rich generative grammar** (winner/podium/gaps/rival/team
+  facts) is a **later slice**; those facts are a read-projection over `AllSnapshots()` (free) — or, if
+  a fact isn't in the snapshots, a new journaled field (a migration). "Thousands of dispatches" is a
+  later-increment promise, not a zero-migration Increment-1 claim.
+- **Ticker → full article (decision 17):** the dock shows a one-line era-styled **ticker**; clicking a
+  headline expands the **full immersive period article** (still minimal text — no bloat).
+- **Era-voiced + community-extensible:** corpora live in JSON (`data/rules/news/*.json`), keyed by
+  journal phase + cause + era, so new eras/tones/events are pure content adds — **"add more content
+  easily later"** by construction. Ships thin (1960s corpus first, per the existing bank) and grows
+  per era pack.
+- **Deterministic:** selection is seeded; the *choice of fragments* is a pure function of
+  `(masterSeed, headlines-stream, journal row)`, so the same career renders the same articles on
+  replay. Article text is **derived** (rebuilt by `Resimulate`), never a stored INPUT.
+- **Archived forever (decision 18):** every generated article is re-derivable from the journal, so the
+  Scrapbook can show any past race's article years later at zero storage cost.
+
+The seam member: `ReadFeed(seasonId)` → `Dispatch { resolvedArticle, era, kind, sourceJournalSeqs,
+whyText }`, built by resolving existing journal rows through the news grammar.
+
+---
+
+## 8. Character system integration
+
+The full model lives in `character-system.md` + `data/rules/perks.json`; the hub surfaces it. Locked
+answers:
+
+### 8.1 The Driver dossier tab (decision 13)
+A dedicated tab (not folded into History): **stats (7), perks, level + XP bar, CP-to-spend, respec**,
+and the **between-seasons CP-spend home**. Creation keeps the **3-tier flow**: one-click **archetype**
+→ **free customize** (drag 7 sliders, swap perks, live remaining-CP meter) → **advanced** (raw
+stat→rating numbers + exact lever deltas). Fits the shipped wizard as one `WizardStep.Character`
+between SeatPick and RulesPreset.
+
+### 8.2 Budget, archetypes, respec (decisions 8, 11, 12)
+- **CP budget 10** (audited default; +6 refund headroom → net spend [0,16]).
+- **13 archetypes** — the audited 7 (Prodigy, Late Bloomer, All-Rounder, Pay Driver, Rain Master,
+  Journeyman, Hard Charger) **+ 6 new** balance-audited, non-overpowered templates. All editable
+  starting cards, all pure data → community can add more with zero code. *The 6 new presets must pass
+  the same CI audit (`|Σ cpEquivalent − cost| ≤ 0.5`, in-budget net spend, no dominant/trap) before
+  they ship.*
+- **Respec — mode-scaled with a real penalty:** **Normal** = milestone respec token (every 5 levels) +
+  a **hefty CP penalty**, equal-or-lower-cost swaps only (blocks laundering into a stronger build).
+  **Hardcore** = least forgiving (perks locked at creation; stat-only respec or extreme cost). All
+  strictness is JSON-authored.
+
+### 8.3 Injury (decision 9)
+**Opt-in:** global default OFF (default careers add zero new draws, stay replay-compatible with
+pre-character saves); **auto-enabled** for any character taking an injury perk (the balance audit
+depends on it being live for those 7 perks); **ON in Hardcore**. A season-end hazard on the registered
+`injury` stream → a **mechanical-classed, OPI-neutral missed round**: it removes your *availability*,
+never sets a finishing order.
+
+### 8.4 The honest car-scalar mechanism + safety (decision 10)
+**Yes, the app can and does affect your real AMS2 car — safely and reversibly.** This is the shipped
+"killer feature" (decision 3), not new risk:
+
+- Since **AMS2 v1.6.9.8**, Custom AI XML accepts `weight_scalar`/`power_scalar`/`drag_scalar`
+  (~0.900–1.100) and **these apply to the player's own car** (PLAN.md). The app already writes this
+  file every round; character/perk `carScalar` levers merge a small **bounded** delta into the
+  existing grid-gen chain (pack → track form → round overrides → career form → **+character/minigame
+  delta**) before normalization.
+- **Reversible by construction (decision 7 / staging contract):** it's a UserData data file, never
+  game physics; **timestamped backup before every write**; **diff-aware** (writes nothing when
+  unneeded); **one-click season-end restore**; deleting the file reverts to stock instantly. The
+  audit caps `carScalar` at ±0.015 (±0.040 weather-conditional) → a ~1.5–4% nudge, never a wrecked
+  car.
+- **Honesty policy:** talent stats are **pure-expectation by default** (they set `expectedFinish`, the
+  difficulty recommendation, and the fiction — the sim's built-in self-balancer: more talent → a
+  harder OPI/rep/XP bar). The **Hardcore honest-nudge** additionally routes talent through a tiny
+  bounded car scalar so it bites the real car. Perks that carry `carScalar` levers apply in both modes
+  (they're explicit, audited choices).
+
+### 8.5 Normal vs Hardcore (decision 22) + the dynamic life-sim (decision 23/15)
+
+Game mode is a **first-class, data-driven pillar**:
+
+| Lever | **Normal** (default) | **Hardcore** (full stakes) |
+|---|---|---|
+| Talent → your car | Pure-expectation; only chosen perks nudge the car | **Honest nudge** — talent also feeds a bounded car scalar |
+| Difficulty recommendation | Suggested | Stricter / enforced |
+| Respec | Milestone token + hefty CP penalty | Least forgiving (perks locked; stat-only/extreme) |
+| Injury | Off unless a perk enables it | On |
+| Aging | Standard era curve | Harsher |
+| **Career stakes** | **Floored — you can't be fired into a demotion spiral** | **Full — firing, relegation, career death** |
+
+**The dynamic life-sim layer.** The character is *not* static: **morale, form, rivalries and life
+events** evolve over the career (seeded events, exactly like the existing `events` stream) and
+dynamically modulate **inputs** — your car scalars (bounded, reversible) and the sim's expectations —
+never an on-track result. Hardcore surfaces the most of these effects; Normal keeps a protective
+floor. This is the "you're the racing driver in a life sim" ambition, and it plugs into the
+**Super Monaco GP ladder** (decision 23): rivalry + results drive **promotion/relegation** up the
+budget tiers toward the front of the grid, realistically paced. Offers, tiers and reputation — all
+already in the sim — are the ladder; rivalries and the living paddock (Phase 2–3) make the climb feel
+alive.
+
+---
+
+## 9. Minigames + events (decisions 14, 15)
+
+**First minigame: Setup Gamble** (pre-race Safe/Balanced/Aggressive → your own car scalars for that
+round only, merged into the existing grid-gen scalar path). Balanced = today's exact scalars (a true
+no-op skip). Honest tradeoff shown up front. Slots before qualifying.
+
+**The agency/randomness/skip model (decision 15) — reconciled with determinism:**
+
+- **Seeded randomness is embraced.** Outcomes can be a **"D100 modified by your skills/character"** —
+  but the roll is drawn from a **named PCG32 stream** keyed `(subsystem, year, round, entity)` like
+  every existing stream. So outcomes **vary between careers/seeds yet replay byte-identical** for a
+  given seed. Randomness ≠ non-determinism.
+- **The one hard line:** **no roll ever sets an on-track finishing position.** Rolls decide life /
+  narrative / input outcomes (morale, offers, injuries, rivalries, setup deltas). The race result is
+  always the one you entered.
+- **Skippability:** **minor input-minigames are skippable** (skip = the default result the career
+  would have had, itself journaled as the default choice); **story events are mandatory** narrative
+  beats. Mandatory ≠ random-uncontrolled — story events are still deterministic and journaled.
+- **Journaling — follow the shipped `AcceptOffer` precedent** (verified against `ReplayService` /
+  `StateStore` / `JournalStore`, 2026-07-05). Replay regenerates the event sequence in memory and
+  byte-compares it **positionally** against the stored journal, excluding only *provenance* phases
+  (`import.*`, `career`, `result`). So a player CHOICE — which replay cannot re-derive — must be
+  **stored in a dedicated INPUT table** (a `minigame_choice` table, pulled forward to the character
+  increment, exactly like `SetOfferAccepted`), **re-applied during `Resimulate`**, and its journal row
+  written under a **provenance phase** (or `IsProvenance` extended to cover the choice phases) so it is
+  **excluded** from the positional compare. The **resolved outcome** is then a normal **derived** row,
+  regenerated in fixed order from (seed + re-applied choice + folded state) and included in the
+  compare. *(Don't describe a choice as merely "surviving `WipeDerived`" — that's true of every
+  journal row and isn't the safety property; `WipeDerived` clears derived state tables, never journal
+  rows.)* The replay CI must cover a minigame/event career **and** its skip-everything equivalent
+  before any of this ships.
+
+Priority order after Setup Gamble is unchanged (Media Moment → Contract Negotiation → Sponsor Pitch →
+Development Allocation), now framed as the growing life-sim event deck.
+
+---
+
+## 10. Contracts (decision 16)
+
+**v1:** offer letters render as **era-correct documents** (typed 1967 telegram / 1993 fax / email) —
+same `PlayerOffer` data, different `DataTemplate` per era. **Accept = today's one-click
+`AcceptOffer(teamId)`** (the skip path). The **negotiation minigame** (counter-offer volley vs
+archetype-weighted patience, visible patience meter) is **Phase 2**. On the Super-Monaco ladder, the
+offer you accept is your rung on the climb.
+
+---
+
+## 11. Career gallery + saves (decision 20)
+
+**One SQLite file per career** is already the architecture → effectively unlimited saves. The Start
+screen becomes a **picture-rich career gallery**: recent careers as cards showing **era, driver,
+current season/standing**, with rename / duplicate / delete. Explicitly beats AMS2's 4-save cap (a
+genuine selling point vs the built-in mode).
+
+- **Per-era imagery (Mike supplies):** a data-driven asset slot maps **era key → image path**, with a
+  recommended card size (proposed **≈ 640×360, 16:9**, PNG/JPG, with a 2× variant for crisp
+  rendering); packs/users drop historical era photos into `data/ams2/era-art/` (or a pack's own
+  folder). Absent an image → a clean generated era-accent placeholder. Final dimensions to confirm
+  once Mike picks the card layout.
+
+---
+
+## 12. Additive data-model deltas (carry-over + new)
+
+Everything additive; the discipline from `career-sim.md` / `ICareerSession.cs` / `JournalStore.cs`
+holds: player **DECISIONS** are inputs that survive `WipeDerived` and replay byte-identically; sim
+**RESULTS** are derived rows wiped + rebuilt by `Resimulate`.
+
+**Seam (`ICareerSession`) — new default-implemented, read-only members** (all projections over data
+`StateStore`/`JournalStore` already hold; no new persistence for the read tabs):
+- `ReadFeed(seasonId)` → procedural `Dispatch` articles (§7).
+- `JournalFor(entity, round?)` → the Why? causal chain (§5).
+- `CareerTimeline()` → lineage-aware per-season cards for History.
+- `TabAvailability()` → which tabs have payload yet (progressive unlock).
+- *(Phase 2)* `TeamView()` → the deferred Team lens.
+- **Weekend model (touches EXISTING members — confront it, don't hide it).** The shipped seam is
+  single-race-shaped (`CurrentGrid()` → one grid; `Preview`/`Apply(ResultDraft)` → one draft, no
+  session discriminator). A weekend needs qualifying-order entry *then* race entry (the grid is derived
+  from the entered qualy order) — multiple drafts per round. Increment 2 gives `Apply`/`Preview` an
+  **optional `SessionId`** (back-compatible default = the sole race session, so legacy single-race
+  packs drive byte-identically) and adds `CurrentWeekend()`; a **seam-fidelity test** asserts a
+  no-`weekend`-block pack replays byte-identically through the session-aware path. *This is a contract
+  change to existing members — the honest, single exception to "default-add only," scoped to Increment
+  2 and gated by the replay test.*
+
+**Journal — new phases only** (save-format-stable; all derived except creation/choice INPUTs):
+- `setup.choice`, `media.moment` (Increment 3); `qualifying.result`, `race.result` per session (Inc 2
+  — the raw entered results are INPUTs); `player.character` (INPUT), `player.xp`, `player.level`,
+  `player.statSpend`, `player.respec`, `player.injury`, `player.formSwing`, `player.event` (life-sim);
+  reserved: `contract.negotiation`, `sponsor.pitch`, `dev.alloc`, `rivalry`.
+  **Two invariants (see §13.2):** (1) the *choice* phases (`setup.choice`, `media.moment`,
+  `player.character`) must be **provenance-excluded** from the positional replay compare and re-applied
+  from their INPUT tables; (2) every new *derived* phase (`player.xp` etc. — note `player.xp` is **not**
+  emitted today) must emit **zero** rows on the default-career path so the folded row sequence is
+  byte-identical for a no-character/no-minigame career.
+
+**RNG streams.** The life-sim event deck rides the **existing** `CareerStreams.Events` (`"events"`)
+stream — *not* a new one. **Newly reserved** (same `SplitMix64(Fnv1a64(subsystem|year|round|entity)
+XOR masterSeed)` formula, each independently keyed so reserving one perturbs nothing):
+`setup`, `media`, `injury`, `form-swing`, `character-gen`, `negotiate`, `sponsor`, `development`,
+`rivalry`. All gated/opt-in → a default career consumes zero new draws. **Reserving a stream is safe
+(fresh generator per key); the real hazard is emitted-row order — see §13.2.**
+
+**Data files (additive, defaulted):**
+- `data/rules/era-themes.json` (era skin tokens), `data/rules/news/*.json` (news grammar corpora),
+  `data/ams2/era-art/*` (gallery imagery).
+- `season.json` round `weekend` block (§3.1); optional 2nd-race `pointsTable` (engine already
+  supports `AlternateRaceTableId`).
+- `perks.json` gains 6 audited archetypes (13 total); `character-stats.json` (stat→rating mapping).
+- *(Phase 2+)* `teams.json` `sponsorSlots`/`economy`, Career DB `minigame_choice` + ledger migrations.
+
+**Save-format + engine changes the weekend model DOES require** (Increment 2; the rest of the hub
+stays additive): a qualifying representation in the raw envelope (`SessionKind.Qualifying` or an
+envelope `QualifyingOrder` field) with a `RoundResultEnvelope` version bump (**v2→v3**,
+read-with-defaults — the established mechanism); a **per-session** points-table binding on
+`SessionResult`; a **per-session fold** (`ImportAndFoldSession`) so each race scores independently; and
+the new qualifying pace-anchor branch (§3.2). The **f1db oracle suite is unaffected** — historical F1
+is single-race; the sprint/doubleheader paths are new and opt-in. For any pack *without* a `weekend`
+block, the single-race payload, points tables, fold and oracle are **unchanged**.
+
+---
+
+## 13. Determinism & the hard constraints (restated, with the seeded-randomness reconciliation)
+
+1. **Sim never decides races.** No tab, minigame, event, or roll sets an on-track finishing position;
+   management only shapes generated-XML INPUTS and consumes entered RESULTS. Guarded explicitly once
+   money/life-sim exist: no code path reads a result the player didn't enter.
+2. **Deterministic + journaled + byte-replayable — even with the new randomness.** Every random
+   outcome draws a **named seeded stream**; `state = fold(journal)`; `Resimulate` byte-checks. New
+   streams are independently keyed so reserving them perturbs nothing.
+   **The load-bearing invariant (beyond value-determinism):** replay is a strict **positional,
+   per-season sequence compare** — a row count/order mismatch is itself a divergence. So for a **default
+   career** (no character, no minigames, injury off) the fold must emit the **identical journal-row
+   sequence** (phase, entity, order, count) it emits today; every new derived phase emits **zero** rows
+   on that path, and player CHOICE rows are provenance-excluded + re-applied from INPUT tables (§9).
+   The **procedural news engine is the highest-risk change** — it must preserve exactly one
+   dispatch-row per existing `news.headline` position. The replay CI must assert **row-count equality**
+   (not just byte values) and cover: (a) a weekend career (qualy + 2 races, incl. a doubleheader/sprint
+   pack), (b) a character career + its skip-everything equivalent, (c) a life-sim/minigame career + its
+   skip equivalent — each byte-identical, and all 13 bundled packs still reproduce byte-identical.
+3. **Data-driven** — weekend structure, era themes, news grammar, perks, archetypes, era art, mode
+   knobs: all user-editable JSON, validated on load.
+4. **Mouse + keyboard parity (decision 8)** — every rail entry, session, minigame choice and dossier
+   control has both a click target with tooltip and a keybind; the parity ViewModel tests stay the
+   gate.
+5. **Additive to the shipped loop** — each increment ships behind the `ICareerSession` seam with
+   default-implemented members; the loop and the sacred keyboard-grammar/keystroke-budget tests stay
+   untouched.
+
+---
+
+## 14. Cross-cutting risks (updated)
+
+1. **Scope creep vs "lightweight single exe / loop never buried."** Every v1 tab is a pure lens or a
+   skippable minigame; the economy/Team/rivalries stay Phase 2+; the immersion settings collapse the
+   hub to HQ+Race+Standings on demand.
+2. **The weekend model touches the loop.** Mitigation: re-home verbatim first (Inc 1), evolve to the
+   weekend in Inc 2 with the existing grammar reused per session and a replay test for qualy+2-races
+   before ship.
+3. **Seeded randomness eroding determinism.** Enforced by construction (named streams, choice-as-INPUT
+   + outcome-as-derived, `WipeDerived` cleanup) and by the expanded replay CI matrix above.
+4. **News engine thin until per-era corpora land.** The grammar ships with the 1960s corpus; other
+   eras look sparse until their JSON lands — pure content, tracked per era pack.
+5. **13-archetype + life-sim balance.** Every new archetype and every event effect must pass the
+   arithmetic audit (`cpEquivalent`, per-lever caps, no dominant/trap) — "nothing overpowered" is a CI
+   gate, not a promise.
+6. **"Sim never decides races" blurring once money + life-sim exist.** Guarded explicitly (risk 1) and
+   re-asserted in the Phase-2 ledger design as a third fold-stage.
+7. **Multi-era total-recall Scrapbook** depends on M6 carryover across many transitions — 30-year
+   careers need a stress test; article re-derivation is free (pure function of the journal).
+8. **Full parity across a growing tab set + the weekend sessions.** Bake accelerators/focus order into
+   `HubViewModel` and the session grammar from the first tab; existing parity tests are the gate.
+
+---
+
+*Companion: `docs/dev/career-hub-build.md` — the incremental build plan (v0.4.0 = Increment 1).*

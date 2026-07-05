@@ -315,7 +315,7 @@ perturbs an existing sequence:
 
 | Stream | Const to add | Used by | What the draw decides (never a race outcome) |
 |---|---|---|---|
-| `injury` | `CareerStreams.Injury` | Glass Cannon, Ironman, Hot Head, Safe Hands, Iron Constitution, Injury-Prone, Glass Jaw | An **opt-in** season-end injury check vs the durability-scaled hazard (shaped like `RetirementHazard`). A hit forces a **mechanical-classed, OPI-neutral missed round** (journaled `player.injury`) — it removes your *availability*, never sets the finishing order. Keyed `(injury, year, 0, "player")`. |
+| `injury` | `CareerStreams.Injury` | Glass Cannon, Ironman, Hot Head, Safe Hands, Iron Constitution, Injury-Prone, Hard Charger | An **opt-in** season-end injury check vs the durability-scaled hazard (shaped like `RetirementHazard`). A hit forces a **mechanical-classed, OPI-neutral missed round** (journaled `player.injury`) — it removes your *availability*, never sets the finishing order. Keyed `(injury, year, 0, "player")`. |
 | `form-swing` | `CareerStreams.FormSwing` | Streaky, Superstition | A ±jitter that only decides **which side of a borderline form threshold** a round lands on (the form window itself is folded deterministically from journal results). Keyed `(form-swing, year, round, "player")`. |
 | `character-gen` | `CareerStreams.CharacterGen` | "Random balanced build" button | The randomized creation draw. Keyed `(character-gen, 0, 0, "player")`, seeded off `masterSeed`, journaled once. |
 
@@ -494,12 +494,34 @@ additive journal phase, or a new registered stream — nothing perturbs existing
 
 ---
 
-## 10. Open questions (taste/scope calls for Mike)
+## 10. Open questions — RESOLVED 2026-07-05 (hub-design elicitation)
 
-See the returned `openChoices`. In short: creation budget (10 vs 12); whether the injury system ships
-in v1 or is a later opt-in; whether talent stats also nudge the player's own car scalars a hair (the
-"honesty toggle") or stay pure-expectation; the CP-equivalent anchor values; and whether archetype
-cards are 5 or expand to ~9.
+All taste/scope calls were decided with Mike in the 23-question hub-design elicitation. See
+`docs/dev/career-hub-design.md` §1 and §8 for full context. In short:
+
+- **Creation budget:** **10 CP** (the audited default; +6 refund headroom → net spend [0,16]). Not 12.
+- **Injury system:** **opt-in** — global default OFF (zero new draws for default careers), **auto-
+  enabled** for any character taking an injury perk (the audit depends on it being live for those 7
+  perks), and **ON in Hardcore mode**.
+- **Talent-stat honesty:** **pure-expectation by default** (the self-balancer) **+ a Hardcore
+  honest-nudge** that additionally routes talent through a tiny bounded `carScalar` so it bites the
+  real AMS2 car. The car-scalar mechanism is real, bounded (±0.015 / ±0.040 conditional) and
+  reversible (timestamped backup, diff-aware staging, one-click restore).
+- **CP-equivalent anchors:** keep the **authored defaults** (§4.1) — the CI self-consistency audit +
+  the adversarial audit (§11) stand.
+- **Archetype presets:** **expand to 13** (the audited 7 + **6 new** balance-audited, non-overpowered
+  templates), all editable + data-extensible. The 6 new presets must pass the same CI audit before
+  they ship.
+- **Respec:** **mode-scaled with a real penalty** — Normal = milestone token + a **hefty CP penalty**,
+  equal-or-lower-cost swaps only; **Hardcore = least forgiving** (perks locked; stat-only/extreme).
+
+**New direction folded in from the same session** (see the hub-design spec): a **dynamic life-sim
+layer** (morale/form/rivalries/life events on a seeded `event` stream, modulating INPUTs only, never a
+finishing position); **seeded "D100 modified by your skills" outcomes** that stay byte-replayable;
+**Normal vs Hardcore** as a first-class mode pillar; and the **Super Monaco GP ladder** framing
+(rivalry/results-driven promotion up the tiers) as the career's organizing metaphor. These are design
+directions for the character/life-sim milestone (build-plan Increment 4 ≈ v0.5.0), not changes to the
+shipped-perk audit.
 
 ---
 

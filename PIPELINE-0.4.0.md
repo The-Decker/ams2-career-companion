@@ -1,5 +1,14 @@
 # Pipeline to v0.4.0
 
+> **SUPERSEDED (2026-07-05) — the increment order below is stale.** The authoritative build ladder is
+> now [`docs/dev/career-hub-build.md`](docs/dev/career-hub-build.md) (decisions locked in
+> [`docs/dev/career-hub-design.md`](docs/dev/career-hub-design.md) via a 23-question elicitation). In
+> short: **v0.4.0 = Increments 1–3** (hub shell + news/EraTheme + **race weekend model** + total-recall
+> History/Why?); minigames + Contracts + the character system moved to **≈ v0.5.0**; Team/finances →
+> Phase 2. The three side-items below are **resolved**: the 5 hub questions (+16 more) are answered;
+> **Ctrl+Z after mech/acc confirmed** (render-harness 15/15, live key path); **no per-class grid cap
+> exists** (the limit is a per-track `.trd` value, already extracted + enforced).
+
 Written 2026-07-03 for Mike's return. Current shipped state: **v0.3.3**, suite **977/977**,
 8 season packs bundled, the full career loop (wizard → briefing → stage grid → result entry →
 confirm → standings → season review → sign & continue) working and user-verified.
