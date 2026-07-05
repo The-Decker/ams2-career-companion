@@ -1,7 +1,9 @@
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Companion.App.Converters;
 
@@ -156,6 +158,56 @@ public sealed class EraLabelConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         Companion.Core.Career.EraThemes.FromText(value as string)?.Label ?? "";
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>A career name (or a year) → the drop-in era-art image for its gallery card, or null
+/// when none is present (the card then shows its coloured era placeholder). Real historical photos
+/// live in <c>{BaseDirectory}\data\ams2\era-art\</c>; the resolver picks the most specific one
+/// (a year file like <c>1967.jpg</c> over the era-medium file like <c>telegram.jpg</c>) — see
+/// career-hub-design.md §11. The bitmap is loaded with <see cref="BitmapCacheOption.OnLoad"/> and
+/// frozen so the file is read once and never left locked (images can be swapped while the app runs).
+/// </summary>
+public sealed class EraImageConverter : IValueConverter
+{
+    /// <summary>The era-art folder beside the exe (populated by the App csproj asset glob).</summary>
+    private static readonly string EraArtDirectory =
+        Path.Combine(AppContext.BaseDirectory, "data", "ams2", "era-art");
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        int? year = value switch
+        {
+            int y => y,
+            string name => Companion.ViewModels.Services.EraArtResolver.YearFromText(name),
+            _ => null,
+        };
+        if (year is not int resolvedYear)
+            return null;
+
+        string? path = Companion.ViewModels.Services.EraArtResolver.Resolve(EraArtDirectory, resolvedYear);
+        if (path is null)
+            return null;
+
+        try
+        {
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad; // read fully now → the file is never locked
+            image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            image.UriSource = new Uri(path, UriKind.Absolute);
+            image.EndInit();
+            image.Freeze(); // cross-thread safe + immutable
+            return image;
+        }
+        catch (Exception ex) when (ex is NotSupportedException or IOException or UriFormatException)
+        {
+            // A corrupt or unreadable image must never crash the gallery — fall back to the placeholder.
+            return null;
+        }
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
