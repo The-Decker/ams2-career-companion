@@ -160,7 +160,7 @@ public sealed class InspectorViewModelTests
     // ---------- History wiring: click a season number → open the inspector ----------
 
     [Fact]
-    public void History_opens_the_inspector_for_the_current_season_number()
+    public void History_opens_the_inspector_for_a_season_via_the_season_scoped_seam()
     {
         var session = new InspectorFakeSession
         {
@@ -172,9 +172,10 @@ public sealed class InspectorViewModelTests
         };
         var history = new HistoryViewModel(session);
 
-        // The current season's number is a live walk-back target.
+        // A season card's number walks the SEASON-SCOPED seam for that card's year — the current
+        // season is just the current-year case of the same call.
         history.OpenSeasonInspectorCommand.Execute(1967);
-        Assert.Equal(("player", (int?)null), session.LastRequest);
+        Assert.Equal(("player", 1967, (int?)null), session.LastSeasonRequest);
         Assert.True(history.IsInspectorOpen);
 
         history.CloseInspectorCommand.Execute(null);
@@ -182,21 +183,35 @@ public sealed class InspectorViewModelTests
     }
 
     [Fact]
-    public void History_prior_season_number_no_ops_pending_a_season_scoped_seam()
+    public void History_prior_season_number_now_walks_the_season_scoped_seam()
     {
         var session = new InspectorFakeSession
         {
             Chain = new JournalChain
             {
-                Entity = "player",
+                Entity = "player", Title = "Why — You, 1965",
                 Contributions = [new JournalContribution { Label = "Reputation", Value = "42" }],
             },
         };
         var history = new HistoryViewModel(session);
 
-        // A season other than the current one is not reachable from this session's journal walk.
+        // A finished earlier season is now reachable: the seam is asked for THAT year's journal,
+        // not silently ignored (the Increment-3 follow-up this feature delivers).
         history.OpenSeasonInspectorCommand.Execute(1965);
-        Assert.Null(session.LastRequest); // never even queried
+        Assert.Equal(("player", 1965, (int?)null), session.LastSeasonRequest);
+        Assert.True(history.IsInspectorOpen);
+    }
+
+    [Fact]
+    public void History_season_with_no_journal_does_not_open_a_blank_panel()
+    {
+        var session = new InspectorFakeSession { Chain = JournalChain.Empty };
+        var history = new HistoryViewModel(session);
+
+        // A year the season-scoped seam has no rows for returns the empty chain — the panel stays
+        // closed rather than opening blank.
+        history.OpenSeasonInspectorCommand.Execute(1965);
+        Assert.Equal(("player", 1965, (int?)null), session.LastSeasonRequest);
         Assert.False(history.IsInspectorOpen);
     }
 
@@ -209,9 +224,17 @@ public sealed class InspectorViewModelTests
 
         public (string Entity, int? Round)? LastRequest { get; private set; }
 
+        public (string Entity, int SeasonYear, int? Round)? LastSeasonRequest { get; private set; }
+
         public JournalChain JournalFor(string entity, int? round = null)
         {
             LastRequest = (entity, round);
+            return Chain;
+        }
+
+        public JournalChain JournalForSeason(string entity, int seasonYear, int? round = null)
+        {
+            LastSeasonRequest = (entity, seasonYear, round);
             return Chain;
         }
 

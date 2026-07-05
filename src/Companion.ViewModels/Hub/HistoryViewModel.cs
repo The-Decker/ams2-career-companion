@@ -29,19 +29,15 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     // ---------- clickable numbers → the "Why?" inspector (decisions 4 + 5) ----------
 
     /// <summary>Open the inspector for a season's player numbers (final finish / rep / OPI on a
-    /// scrapbook card): walks the player's whole-season journal. The parameter is the card's
-    /// <see cref="SeasonCardViewModel.SeasonYear"/>; only the CURRENT season's journal is reachable
-    /// from this session (the seam walks one season's rows), so a prior-season card no-ops rather
-    /// than opening a blank panel — the "everywhere" reach across finished seasons wants a
-    /// season-scoped seam that Increment 3 leaves for a follow-up. Mouse (click the number) and
-    /// keyboard (a bound accelerator) both invoke this — decision 8's parity.</summary>
+    /// scrapbook card): walks the player's whole-season journal for the card's
+    /// <see cref="SeasonCardViewModel.SeasonYear"/>. Uses the season-scoped seam
+    /// (<see cref="ICareerSession.JournalForSeason(string,int,int?)"/>) so ANY completed season on a
+    /// card — not just the current one — opens the inspector for that season's numbers; a year with no
+    /// matching season returns an empty chain and simply does not open a panel. Mouse (click the
+    /// number) and keyboard (a bound accelerator) both invoke this — decision 8's parity.</summary>
     [RelayCommand]
-    private void OpenSeasonInspector(int seasonYear)
-    {
-        if (seasonYear != _session.Summary.SeasonYear)
-            return;
-        ShowInspector(_session.JournalFor("player"));
-    }
+    private void OpenSeasonInspector(int seasonYear) =>
+        ShowInspector(_session.JournalForSeason("player", seasonYear));
 
     /// <summary>One scrapbook card per season (oldest first — the lineage order). Also the
     /// lineage timeline's row source: the view renders the same collection as a vertical
