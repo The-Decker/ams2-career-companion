@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
 
 namespace Companion.ViewModels.Hub;
@@ -14,7 +15,7 @@ namespace Companion.ViewModels.Hub;
 /// (and re-renders after every Apply) with zero new state cost. Refreshed in place off the new
 /// session state exactly like the Standings/News lenses.
 /// </summary>
-public sealed partial class HistoryViewModel : ObservableObject
+public sealed partial class HistoryViewModel : InspectorHostViewModel
 {
     private readonly ICareerSession _session;
 
@@ -23,6 +24,23 @@ public sealed partial class HistoryViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
         Refresh();
+    }
+
+    // ---------- clickable numbers → the "Why?" inspector (decisions 4 + 5) ----------
+
+    /// <summary>Open the inspector for a season's player numbers (final finish / rep / OPI on a
+    /// scrapbook card): walks the player's whole-season journal. The parameter is the card's
+    /// <see cref="SeasonCardViewModel.SeasonYear"/>; only the CURRENT season's journal is reachable
+    /// from this session (the seam walks one season's rows), so a prior-season card no-ops rather
+    /// than opening a blank panel — the "everywhere" reach across finished seasons wants a
+    /// season-scoped seam that Increment 3 leaves for a follow-up. Mouse (click the number) and
+    /// keyboard (a bound accelerator) both invoke this — decision 8's parity.</summary>
+    [RelayCommand]
+    private void OpenSeasonInspector(int seasonYear)
+    {
+        if (seasonYear != _session.Summary.SeasonYear)
+            return;
+        ShowInspector(_session.JournalFor("player"));
     }
 
     /// <summary>One scrapbook card per season (oldest first — the lineage order). Also the
