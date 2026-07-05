@@ -25,6 +25,11 @@ public interface ICareerSession
     /// <summary>The current round's seats, in grid order, for the result-entry screen.</summary>
     IReadOnlyList<GridSeat> CurrentGrid();
 
+    /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
+    /// or null when the round runs today's single race. Additive default — sessions without
+    /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
+    PackWeekend? CurrentWeekend() => null;
+
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
     ConfirmModel Preview(ResultDraft draft);
 
@@ -222,6 +227,11 @@ public sealed record ResultDraft
     /// the result screen, prefilled with the last recommendation, editable 70–120). Stored in
     /// the round's raw-result envelope. Null falls back to the current recommendation.</summary>
     public double? SliderUsed { get; init; }
+
+    /// <summary>The qualifying order for this round (driver ids, pole first), when the pack's
+    /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in
+    /// the raw envelope; never scored. Older producers omit it.</summary>
+    public IReadOnlyList<string>? QualifyingOrder { get; init; }
 }
 
 /// <summary>A customised DNF cause carried beside the one-letter code in

@@ -824,6 +824,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     /// <summary>The envelope stored as the round's raw payload: the mapped classification
     /// plus the unre-derivable round context — the slider actually driven (the draft's value,
     /// else the current recommendation, else neutral) and the player's DNF cause.</summary>
+    /// <summary>The current round's weekend structure (null = single race). Additive read over
+    /// the pinned pack round; every bundled pack reports null. (Increment 2.)</summary>
+    public PackWeekend? CurrentWeekend() =>
+        SeasonComplete ? null : RoundByNumber(CurrentRoundNumber).Weekend;
+
     private RoundResultEnvelope BuildEnvelope(ResultDraft draft, int roundNumber, PackRound packRound)
     {
         double slider = draft.SliderUsed
@@ -834,6 +839,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             Result = ToRoundResult(draft, roundNumber, packRound),
             SliderUsed = Math.Clamp(slider, DifficultyModel.MinSlider, DifficultyModel.MaxSlider),
             PlayerDnfCause = PlayerDnfCauseFrom(draft),
+            QualifyingOrder = draft.QualifyingOrder,
         };
     }
 

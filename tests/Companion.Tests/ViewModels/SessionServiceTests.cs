@@ -205,6 +205,32 @@ public sealed class SessionServiceTests : IDisposable
     }
 
     [Fact]
+    public void QualifyingOrder_IsInertToScoring_AndSingleRacePackHasNoWeekend()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        Assert.Null(session.CurrentWeekend()); // the 1967 pack runs a single race
+
+        var gridOrder = session.CurrentGrid().Select(s => s.DriverId).ToList();
+        var draft = new ResultDraft
+        {
+            Classified = gridOrder,
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+            QualifyingOrder = gridOrder.AsEnumerable().Reverse().ToList(), // any qualy order
+        };
+
+        // Qualifying rides in the envelope but never enters RoundResult, so the scored round is
+        // byte-identical with or without it — the standings engine (and the oracle) never see it.
+        var withQualy = session.Preview(draft);
+        var withoutQualy = session.Preview(draft with { QualifyingOrder = null });
+        Assert.Equal(
+            withoutQualy.RoundPoints.Select(p => (p.DriverId, p.Points)),
+            withQualy.RoundPoints.Select(p => (p.DriverId, p.Points)));
+    }
+
+    [Fact]
     public void Preview_RejectsDriversNotInTheRoundGrid()
     {
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
