@@ -204,6 +204,109 @@ public sealed class SessionServiceTests : IDisposable
         Assert.Contains("expected", latest.WhyText); // the Why? chip explains the number
     }
 
+    // ---------- history / scrapbook projection (Increment 3) ----------
+
+    [Fact]
+    public void CareerTimeline_IsEmptyBeforeAnyRound()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        // The season row exists but has no applied round yet — one in-progress card, empty book.
+        var timeline = session.CareerTimeline();
+        var card = Assert.Single(timeline.Seasons);
+        Assert.Equal(1967, card.SeasonYear);
+        Assert.False(card.IsComplete);
+        Assert.Equal(0, card.RoundsApplied);
+        Assert.Null(card.PlayerPosition);
+        Assert.Null(card.ChampionName);
+
+        // No race applied → the records book carries no bests and zeroed counts.
+        Assert.Null(timeline.Records.BestFinish);
+        Assert.Equal(0, timeline.Records.Wins);
+        Assert.Equal(0, timeline.Records.Podiums);
+        Assert.Equal(0, timeline.Records.SeasonsRaced);
+    }
+
+    [Fact]
+    public void CareerTimeline_ProjectsTheSeasonCardAndAggregatesRecords_WhenThePlayerWinsEveryRace()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        // Drive the whole 1967 season with the player (Hulme) winning every round — a clean,
+        // deterministic projection to assert bests/streaks/champion against.
+        int rounds = session.Summary.RoundCount;
+        for (int round = 0; round < rounds; round++)
+        {
+            var grid = session.CurrentGrid().Select(s => s.DriverId).ToList();
+            string player = session.Summary.PlayerDriverId;
+            // Player first, then the rest in grid order — a win every race.
+            var classified = new List<string> { player };
+            classified.AddRange(grid.Where(id => id != player));
+            session.Apply(new ResultDraft
+            {
+                Classified = classified,
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+            });
+        }
+
+        Assert.True(session.Summary.SeasonComplete);
+
+        var timeline = session.CareerTimeline();
+        var card = Assert.Single(timeline.Seasons);
+        Assert.Equal(1967, card.SeasonYear);
+        Assert.True(card.IsComplete);
+        Assert.Equal(rounds, card.RoundsApplied);
+        Assert.Equal(1, card.PlayerPosition);          // won the championship
+        Assert.True(card.PlayerIsChampion);
+        Assert.NotNull(card.ChampionName);
+        Assert.NotNull(card.FinalReputation);          // folded season-end state
+        Assert.NotNull(card.FinalOpi);
+        Assert.NotEmpty(card.Headlines);               // the season's archived clippings
+
+        var records = timeline.Records;
+        Assert.Equal(1, records.BestFinish);           // P1 is the best possible
+        Assert.Equal(rounds, records.Wins);            // won every race
+        Assert.Equal(rounds, records.Podiums);         // every win is a podium
+        Assert.Equal(rounds, records.LongestWinStreak);
+        Assert.Equal(rounds, records.LongestPodiumStreak);
+        Assert.Equal(1, records.Championships);
+        Assert.Equal(1, records.SeasonsRaced);
+        Assert.True(records.TotalPoints > 0);
+    }
+
+    [Fact]
+    public void CareerTimeline_ReDerivesIdentically_AcrossTwoIndependentReads()
+    {
+        // Projection stability (career-hub-build.md determinism matrix, Increment 3): the
+        // "relive it forever" promise is a pure read, so two reads of the same career must be
+        // value-identical (guards against dictionary/culture-sensitive ordering).
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        var grid = session.CurrentGrid().Select(s => s.DriverId).ToList();
+        string player = session.Summary.PlayerDriverId;
+        session.Apply(new ResultDraft
+        {
+            Classified = new List<string> { player }.Concat(grid.Where(id => id != player)).ToList(),
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+        });
+
+        var first = session.CareerTimeline();
+        var second = session.CareerTimeline();
+
+        Assert.Equal(first.Seasons.Count, second.Seasons.Count);
+        Assert.Equal(first.Seasons[0].PlayerPosition, second.Seasons[0].PlayerPosition);
+        Assert.Equal(first.Seasons[0].ChampionName, second.Seasons[0].ChampionName);
+        Assert.Equal(first.Seasons[0].Headlines, second.Seasons[0].Headlines);
+        Assert.Equal(first.Records.BestFinish, second.Records.BestFinish);
+        Assert.Equal(first.Records.Wins, second.Records.Wins);
+        Assert.Equal(first.Records.TotalPoints, second.Records.TotalPoints);
+    }
+
     [Fact]
     public void QualifyingOrder_IsInertToScoring_AndSingleRacePackHasNoWeekend()
     {

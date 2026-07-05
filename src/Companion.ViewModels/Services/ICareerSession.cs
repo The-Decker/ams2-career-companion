@@ -48,6 +48,16 @@ public interface ICareerSession
     /// sessions without a news projection report an empty feed, so existing fakes compile.</summary>
     IReadOnlyList<NewsDispatch> ReadFeed() => [];
 
+    /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
+    /// 18): one lineage-aware card per season in the career — its year, the player's final
+    /// championship position, final reputation/OPI, the drivers' champion, and the season's key
+    /// headlines — plus an aggregate records book (best finish, wins, podiums, points, seasons)
+    /// rolled up across every season. Pure read-only projection over the same stored results,
+    /// folded player states and journal the other lenses read — re-derivable byte-identically,
+    /// no new persistence. Additive default: sessions without the projection report an empty
+    /// timeline, so existing fakes compile. (Increment 3.)</summary>
+    CareerTimeline CareerTimeline() => Services.CareerTimeline.Empty;
+
     /// <summary>Recommended Opponent Skill slider (70–120) for the CURRENT round, from the
     /// last folded round's pace anchor. Null before the anchor calibrates (fresh careers).
     /// Shown in the briefing and prefilled on the result screen — never auto-applied.</summary>
@@ -166,6 +176,96 @@ public sealed record NewsDispatch
 
     /// <summary>The expanded period article; empty until the generative grammar slice lands.</summary>
     public string Body { get; init; } = "";
+}
+
+/// <summary>The History/Scrapbook projection: the per-season lineage of cards plus the aggregate
+/// records book (decision 18, "total recall"). A pure read model — no session coupling — so the
+/// History view-model can be built and tested from a plain value.</summary>
+public sealed record CareerTimeline
+{
+    /// <summary>Empty timeline (the seam default, and a fresh career before its first season
+    /// has any applied round).</summary>
+    public static readonly CareerTimeline Empty = new();
+
+    /// <summary>One card per season in the career, oldest season first (the lineage order).
+    /// A season with no applied round yet still appears — its result fields read "in progress".</summary>
+    public IReadOnlyList<CareerSeasonCard> Seasons { get; init; } = [];
+
+    /// <summary>Career-spanning bests/streaks/milestones aggregated across every season's
+    /// per-round snapshots.</summary>
+    public CareerRecordsBook Records { get; init; } = CareerRecordsBook.Empty;
+
+    public bool IsEmpty => Seasons.Count == 0;
+}
+
+/// <summary>One season's scrapbook card: the year, the player's final standing, final folded
+/// reputation/OPI, the drivers' champion, and the season's key headlines.</summary>
+public sealed record CareerSeasonCard
+{
+    public required int SeasonYear { get; init; }
+
+    /// <summary>The player's final championship position, or null when unclassified / the season
+    /// has no applied round yet.</summary>
+    public int? PlayerPosition { get; init; }
+
+    /// <summary>How many championship rounds have an applied result in this season.</summary>
+    public required int RoundsApplied { get; init; }
+
+    public required int RoundCount { get; init; }
+
+    /// <summary>True once every championship round of the season has a result — the season is in
+    /// the record books. False = still in progress (the current season, mid-run).</summary>
+    public bool IsComplete { get; init; }
+
+    /// <summary>Final reputation after the season-end pipeline (null before the season completes
+    /// or when no folded state exists).</summary>
+    public double? FinalReputation { get; init; }
+
+    /// <summary>Final overperformance index after the season-end pipeline; null as above.</summary>
+    public double? FinalOpi { get; init; }
+
+    /// <summary>The drivers' champion's display name (P1 in the final snapshot); null before any
+    /// round is applied.</summary>
+    public string? ChampionName { get; init; }
+
+    /// <summary>True when the player IS the drivers' champion — the card's crowning line.</summary>
+    public bool PlayerIsChampion { get; init; }
+
+    /// <summary>The season's journaled headlines in story order — the archived dispatches.</summary>
+    public IReadOnlyList<string> Headlines { get; init; } = [];
+}
+
+/// <summary>Career-spanning records: bests, counts and totals aggregated from every season's
+/// per-round standings snapshots (wins/podiums/points/best finish/seasons).</summary>
+public sealed record CareerRecordsBook
+{
+    public static readonly CareerRecordsBook Empty = new();
+
+    /// <summary>The player's best (numerically lowest) single-race finishing position across the
+    /// whole career; null before any round is applied.</summary>
+    public int? BestFinish { get; init; }
+
+    /// <summary>Race wins (finishes classified P1) across the career.</summary>
+    public int Wins { get; init; }
+
+    /// <summary>Podiums (finishes classified P1–P3) across the career.</summary>
+    public int Podiums { get; init; }
+
+    /// <summary>Total championship points the player has scored across every season (counted
+    /// points of the final snapshot of each season, summed).</summary>
+    public double TotalPoints { get; init; }
+
+    /// <summary>Drivers' championships won (seasons the player finished P1).</summary>
+    public int Championships { get; init; }
+
+    /// <summary>Seasons the player has started (has at least one applied round).</summary>
+    public int SeasonsRaced { get; init; }
+
+    /// <summary>The longest streak of consecutive race wins across the career.</summary>
+    public int LongestWinStreak { get; init; }
+
+    /// <summary>The longest streak of consecutive podium finishes across the career.</summary>
+    public int LongestPodiumStreak { get; init; }
 }
 
 public sealed record StageOutcome

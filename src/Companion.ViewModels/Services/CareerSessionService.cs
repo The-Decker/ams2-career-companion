@@ -1115,6 +1115,178 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         }
     }
 
+    // ---------- history / scrapbook (Increment 3) ----------
+
+    /// <summary>The total-recall History projection (career-hub-design.md §4 / decision 18): a
+    /// lineage-aware card per season plus a records book aggregated across every season's
+    /// per-race classification. Pure read-only projection over the SAME stored raw results,
+    /// folded player states and journal every other lens reads — no new persistence, and
+    /// re-derivable byte-identically. A multi-season career (M6 era transitions) walks every
+    /// <c>season</c> row in career order, resolving each season's pinned pack, player seat,
+    /// standings and headlines independently.</summary>
+    public CareerTimeline CareerTimeline()
+    {
+        var seasons = CareerStore.ReadSeasons(_database);
+        if (seasons.Count == 0)
+            return Companion.ViewModels.Services.CareerTimeline.Empty;
+
+        var cards = new List<CareerSeasonCard>(seasons.Count);
+        var races = new List<PlayerRace>(); // every applied race, oldest first, for the records book
+        double totalPoints = 0.0;           // player's counted points, summed over every season
+
+        foreach (var season in seasons)
+        {
+            var seasonPack = SeasonPackFor(season);
+            string playerDriverId = PlayerDriverIdFor(season, seasonPack);
+            var driverNames = seasonPack.Drivers.ToDictionary(d => d.Id, d => d.Name, StringComparer.Ordinal);
+            var scoring = ChampionshipCalendar.ResolveScoring(seasonPack);
+
+            var storedResults = ResultStore.ReadSeasonResults(_database, season.Id)
+                .Where(r => seasonPack.Season.Rounds
+                    .FirstOrDefault(round => round.Round == r.Round)?.Championship ?? false)
+                .ToList();
+            int roundsApplied = storedResults.Count;
+            int championshipRounds = seasonPack.Season.Rounds.Count(r => r.Championship);
+
+            // Per-race player classification (finishing position + status) — the records-book
+            // source. Ordered by round so streaks are chronological across seasons.
+            foreach (var stored in storedResults.OrderBy(r => r.Round))
+            {
+                var race = stored.ToRoundResult().Sessions
+                    .FirstOrDefault(s => s.Kind == SessionKind.Race);
+                var line = race?.Entries.FirstOrDefault(e => string.Equals(e.DriverId, playerDriverId, StringComparison.Ordinal));
+                races.Add(new PlayerRace(
+                    line is { Status: FinishStatus.Classified, Position: { } p } ? p : null));
+            }
+
+            // Final standings (from the stored results): the player's position + the champion.
+            StandingsSnapshot? finalSnapshot = storedResults.Count == 0
+                ? null
+                : StandingsEngine.ComputeSeason(scoring, storedResults.Select(r => r.ToRoundResult()).ToList()).Snapshots[^1];
+            var playerStanding = finalSnapshot?.Drivers
+                .FirstOrDefault(d => string.Equals(d.DriverId, playerDriverId, StringComparison.Ordinal));
+            int? playerPosition = playerStanding?.Position;
+            if (playerStanding is not null)
+                totalPoints += playerStanding.CountedPoints.ToDouble();
+            var champion = finalSnapshot?.Drivers.FirstOrDefault(d => d.Position == 1);
+            string? championName = champion is null
+                ? null
+                : driverNames.GetValueOrDefault(champion.DriverId, champion.DriverId);
+            bool playerIsChampion = champion is not null
+                && string.Equals(champion.DriverId, playerDriverId, StringComparison.Ordinal);
+
+            bool complete = string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
+            var endState = complete ? StateStore.ReadPlayerState(_database, season.Id, StateStore.StageEnd) : null;
+
+            var headlines = JournalStore.ReadSeason(_database, season.Id)
+                .Where(r => string.Equals(r.Phase, JournalPhases.Headline, StringComparison.Ordinal))
+                .Select(r => HeadlineText(r.DeltaJson))
+                .OfType<string>()
+                .ToList();
+
+            cards.Add(new CareerSeasonCard
+            {
+                SeasonYear = season.Year,
+                PlayerPosition = playerPosition,
+                RoundsApplied = roundsApplied,
+                RoundCount = championshipRounds,
+                IsComplete = complete,
+                FinalReputation = endState?.Reputation,
+                FinalOpi = endState?.Opi,
+                ChampionName = championName,
+                PlayerIsChampion = playerIsChampion,
+                Headlines = headlines,
+            });
+        }
+
+        return new CareerTimeline
+        {
+            Seasons = cards,
+            Records = AggregateRecords(cards, races, totalPoints),
+        };
+    }
+
+    /// <summary>One applied race from the player's viewpoint: the finishing position when the
+    /// player was classified, else null (retired / disqualified / not classified).</summary>
+    private readonly record struct PlayerRace(int? Position);
+
+    /// <summary>Rolls the per-race classification and per-season cards into the career records
+    /// book: best finish, win/podium counts + longest streaks, total points, championships and
+    /// seasons raced.</summary>
+    private static CareerRecordsBook AggregateRecords(
+        IReadOnlyList<CareerSeasonCard> cards, IReadOnlyList<PlayerRace> races, double totalPoints)
+    {
+        int? bestFinish = null;
+        int wins = 0, podiums = 0;
+        int winStreak = 0, podiumStreak = 0, longestWinStreak = 0, longestPodiumStreak = 0;
+
+        foreach (var race in races)
+        {
+            if (race.Position is { } pos)
+            {
+                if (bestFinish is null || pos < bestFinish)
+                    bestFinish = pos;
+                if (pos == 1)
+                    wins++;
+                if (pos <= 3)
+                    podiums++;
+            }
+
+            bool isWin = race.Position == 1;
+            bool isPodium = race.Position is { } p && p <= 3;
+            winStreak = isWin ? winStreak + 1 : 0;
+            podiumStreak = isPodium ? podiumStreak + 1 : 0;
+            longestWinStreak = Math.Max(longestWinStreak, winStreak);
+            longestPodiumStreak = Math.Max(longestPodiumStreak, podiumStreak);
+        }
+
+        int seasonsRaced = cards.Count(c => c.RoundsApplied > 0);
+        int championships = cards.Count(c => c.PlayerIsChampion);
+
+        return new CareerRecordsBook
+        {
+            BestFinish = bestFinish,
+            Wins = wins,
+            Podiums = podiums,
+            TotalPoints = totalPoints,
+            Championships = championships,
+            SeasonsRaced = seasonsRaced,
+            LongestWinStreak = longestWinStreak,
+            LongestPodiumStreak = longestPodiumStreak,
+        };
+    }
+
+    /// <summary>The pinned pack a career season simulates against: the CURRENT season reuses the
+    /// already-loaded <see cref="Pack"/>; older seasons rehydrate from their own pinned blob.</summary>
+    private SeasonPack SeasonPackFor(SeasonRecord season) =>
+        season.Id == _seasonId
+            ? Pack
+            : PinnedPackEnvelope.LoadSeasonPack(
+                CareerStore.ReadPinnedPack(_database, season.PackId, season.PackVersion).PackJson);
+
+    /// <summary>The player's driver id in a given season: the current session already knows its
+    /// own; an older season resolves the seat from that season's start-state livery (the seat the
+    /// player took), falling back to the current id when a legacy state omits it.</summary>
+    private string PlayerDriverIdFor(SeasonRecord season, SeasonPack seasonPack)
+    {
+        if (season.Id == _seasonId)
+            return _playerDriverId;
+
+        string? livery = StateStore.ReadPlayerState(_database, season.Id, StateStore.StageStart)?.LiveryName;
+        if (livery is { Length: > 0 })
+        {
+            try
+            {
+                return ResolvePlayerDriverId(seasonPack, livery);
+            }
+            catch (InvalidOperationException)
+            {
+                // A livery the season's pack no longer offers: fall through to the current id.
+            }
+        }
+        return _playerDriverId;
+    }
+
     // ---------- standings ----------
 
     public StandingsSnapshot? CurrentStandings()
