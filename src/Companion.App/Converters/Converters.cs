@@ -126,6 +126,41 @@ public sealed class StringEqualsToVisibilityConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>A career name → its era accent brush, parsed from a 4-digit year in the name
+/// (career gallery). Neutral slate when the name carries no year.</summary>
+public sealed class EraAccentBrushConverter : IValueConverter
+{
+    private static readonly SolidColorBrush Neutral = new(Color.FromRgb(0x6A, 0x6A, 0x74));
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (Companion.Core.Career.EraThemes.FromText(value as string) is not { } theme)
+            return Neutral;
+        try
+        {
+            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(theme.AccentHex));
+        }
+        catch (FormatException)
+        {
+            return Neutral;
+        }
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>A career name → its era medium label ("TELEGRAM"/"FAX"/"EMAIL"), or "" when the
+/// name carries no 4-digit year.</summary>
+public sealed class EraLabelConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        Companion.Core.Career.EraThemes.FromText(value as string)?.Label ?? "";
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {

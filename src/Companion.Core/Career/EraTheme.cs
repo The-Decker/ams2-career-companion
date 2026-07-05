@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace Companion.Core.Career;
 
 /// <summary>The period medium a career's news + documents are skinned as (career-hub-design.md
@@ -81,4 +83,16 @@ public static class EraThemes
         <= 1993 => Fax,
         _ => Email,
     };
+
+    /// <summary>The era skin implied by any text containing a 4-digit year (e.g. a career name
+    /// like "Formula One 1967" — the wizard defaults names to "&lt;series&gt; &lt;year&gt;"); null
+    /// when no plausible 19xx/20xx year is present. Lets the career gallery colour a card by era
+    /// without opening the career file.</summary>
+    public static EraTheme? FromText(string? text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return null;
+        var match = Regex.Match(text, @"\b(19|20)\d{2}\b");
+        return match.Success && int.TryParse(match.Value, out int year) ? ForYear(year) : null;
+    }
 }

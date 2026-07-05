@@ -68,35 +68,60 @@
                 <Border Style="{StaticResource Panel}" Padding="8"
                         Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolVisible}}">
                     <StackPanel>
+                        <!-- picture-rich career gallery: each card is coloured by its era (parsed
+                             from the career name); the top band is the era-art slot — drop real
+                             historical images in later and they replace the coloured placeholder. -->
                         <ListBox ItemsSource="{Binding RecentCareers}"
                                  SelectedItem="{Binding SelectedCareer}"
-                                 MaxHeight="320">
+                                 MaxHeight="420" Background="Transparent" BorderThickness="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
                             <ListBox.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                                     <EventSetter Event="MouseDoubleClick" Handler="OnRecentDoubleClick" />
                                     <Setter Property="ContextMenu" Value="{StaticResource RecentCareerMenu}" />
+                                    <Setter Property="Margin" Value="6" />
+                                    <Setter Property="Padding" Value="0" />
                                 </Style>
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <DockPanel>
-                                        <Button DockPanel.Dock="Right" Content="&#xE711;"
-                                                Style="{StaticResource IconButton}"
-                                                ToolTip="Remove from this list (the career file stays)"
-                                                AutomationProperties.Name="Remove from recent careers"
-                                                Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                CommandParameter="{Binding}" />
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding CareerName}" FontWeight="SemiBold" FontSize="15" />
-                                            <TextBlock Text="{Binding Path}" Style="{StaticResource Faint}" Margin="0,2,0,0" />
-                                            <TextBlock Style="{StaticResource Faint}" Margin="0,1,0,0"
-                                                       Text="{Binding LastOpenedUtc.LocalDateTime, StringFormat='last opened {0:g}'}" />
-                                        </StackPanel>
-                                    </DockPanel>
+                                    <Border Width="288" CornerRadius="7"
+                                            Background="{StaticResource SurfaceAltBrush}"
+                                            BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                                            ToolTip="{Binding Path}">
+                                        <DockPanel>
+                                            <!-- era-art band (coloured placeholder now, image later) -->
+                                            <Grid DockPanel.Dock="Top" Height="88">
+                                                <Border CornerRadius="6,6,0,0"
+                                                        Background="{Binding CareerName, Converter={StaticResource EraAccent}}" />
+                                                <TextBlock Text="{Binding CareerName, Converter={StaticResource EraLabel}}"
+                                                           Foreground="#F2FFFFFF" FontWeight="Bold" FontSize="12"
+                                                           VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                                           Margin="12,0,0,8" />
+                                                <Button Content="&#xE711;" Style="{StaticResource IconButton}"
+                                                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4"
+                                                        ToolTip="Remove from this list (the career file stays)"
+                                                        AutomationProperties.Name="Remove from recent careers"
+                                                        Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                        CommandParameter="{Binding}" />
+                                            </Grid>
+                                            <StackPanel Margin="12,9,12,12">
+                                                <TextBlock Text="{Binding CareerName}" FontWeight="SemiBold"
+                                                           FontSize="15" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Style="{StaticResource Faint}" Margin="0,3,0,0"
+                                                           Text="{Binding LastOpenedUtc.LocalDateTime, StringFormat='last opened {0:g}'}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <Button Content="_Continue selected career" Margin="10,8,10,6" HorizontalAlignment="Left"
+                        <Button Content="_Continue selected career" Margin="10,10,10,6" HorizontalAlignment="Left"
                                 Command="{Binding ContinueCommand}" />
                     </StackPanel>
                 </Border>

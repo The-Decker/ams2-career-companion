@@ -46,4 +46,18 @@ public sealed class EraThemesTests
         Assert.Equal("STOP", EraThemes.Telegram.DatelineFlourish);
         Assert.Equal("", EraThemes.Email.DatelineFlourish);
     }
+
+    [Theory]
+    [InlineData("Formula One World Championship 1967", EraMedium.Telegram)]
+    [InlineData("My 1988 season", EraMedium.Fax)]
+    [InlineData("Career 2019", EraMedium.Email)]
+    public void FromText_reads_the_year_out_of_a_career_name(string name, EraMedium expected) =>
+        Assert.Equal(expected, EraThemes.FromText(name)!.Medium);
+
+    [Theory]
+    [InlineData("My Career")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void FromText_returns_null_when_there_is_no_year(string? name) =>
+        Assert.Null(EraThemes.FromText(name));
 }
