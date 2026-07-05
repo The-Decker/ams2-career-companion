@@ -1,3 +1,4 @@
+using Companion.Core.Career;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
@@ -357,6 +358,15 @@ public sealed class ShellNavigationTests
         hub.Dispose();
 
         Assert.True(session.Disposed);
+    }
+
+    [Fact]
+    public void Hub_exposes_the_era_theme_for_the_pack_year()
+    {
+        var session = new FakeSession();
+        using var hub = new HubViewModel(session);
+
+        Assert.Equal(EraThemes.ForYear(session.Pack.Season.Year), hub.Era);
     }
 
     // ---------- helpers / fakes ----------

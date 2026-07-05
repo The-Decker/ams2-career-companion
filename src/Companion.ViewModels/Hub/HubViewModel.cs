@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
 using Companion.ViewModels.Shell;
@@ -35,6 +36,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
         _settings = settings;
+        Era = EraThemes.ForYear(session.Pack.Season.Year);
 
         Home = new HomeViewModel(session, stagedFileWatcher, clock, settings);
         Home.NextSeasonStarted += OnHomeNextSeasonStarted;
@@ -57,6 +59,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 
     /// <summary>The News feed (also the source for the future right-dock ticker).</summary>
     public NewsViewModel News { get; }
+
+    /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
+    /// the hub's era badge now, and the full resource-dictionary swap in a later slice.</summary>
+    public EraTheme Era { get; }
 
     public ObservableCollection<HubTabViewModel> Tabs { get; }
 
