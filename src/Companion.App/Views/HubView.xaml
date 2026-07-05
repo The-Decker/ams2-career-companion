@@ -57,6 +57,7 @@
                                ToolTip="The season your career is currently in" />
                     <TextBlock Text="{Binding Era.Label}" Style="{StaticResource Faint}" FontSize="10"
                                Margin="2,-3,0,0"
+                               Visibility="{Binding EraThemingEnabled, Converter={StaticResource BoolVisible}}"
                                ToolTip="The period your career is skinned as — it ages telegram → fax → email across the decades" />
                 </StackPanel>
 

@@ -47,6 +47,8 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.True(settings.DiffAwareStaging);
         Assert.True(settings.RestorePromptOnSeasonEnd);
         Assert.False(settings.MinimalNarrative);
+        Assert.True(settings.EraThemingEnabled);                       // immersion: era skin on by default
+        Assert.Equal(NewsDetailLevel.Articles, settings.NewsDetail);   // ...and full articles by default
         Assert.True(settings.StandingsColumns.ShowGross);
         Assert.False(settings.StandingsColumns.ShowPerRound);
     }
@@ -62,6 +64,8 @@ public sealed class SettingsStoreTests : IDisposable
             DefaultDifficulty = 104.0,
             MinimalNarrative = true,
             AutoOpenBriefing = false,
+            EraThemingEnabled = false,
+            NewsDetail = NewsDetailLevel.HeadlinesOnly,
             PreferInstalledBaseline = false,
             DiffAwareStaging = false,
             RestorePromptOnSeasonEnd = false,
@@ -83,6 +87,45 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal(settings.PackFolders, reloaded.PackFolders);
         Assert.Equal(settings.StandingsColumns, reloaded.StandingsColumns);
         Assert.Equal(2, reloaded.StandingsTabIndex);
+        Assert.False(reloaded.EraThemingEnabled);
+        Assert.Equal(NewsDetailLevel.HeadlinesOnly, reloaded.NewsDetail);
+    }
+
+    [Fact]
+    public void PreImmersionFile_LoadsTheNewFieldsAtTheirDefaults()
+    {
+        // A settings.json written before the immersion fields existed must load unchanged:
+        // the new keys default (era theming on, full articles), never wedging an old save.
+        Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+        File.WriteAllText(FilePath, """
+            {
+              "version": 1,
+              "theme": "dark",
+              "accentColor": "#4F8CFF",
+              "fontScalePercent": 110,
+              "minimalNarrative": true
+            }
+            """);
+
+        var settings = new JsonSettingsStore(FilePath).Load();
+
+        Assert.Equal(110, settings.FontScalePercent);          // the old fields still load...
+        Assert.True(settings.MinimalNarrative);                // ...MinimalNarrative preserved...
+        Assert.True(settings.EraThemingEnabled);               // ...and the new fields default in
+        Assert.Equal(NewsDetailLevel.Articles, settings.NewsDetail);
+    }
+
+    [Fact]
+    public void HandEditedNewsDetail_OutOfRange_ClampsToDefault()
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+        File.WriteAllText(FilePath, """
+            { "version": 1, "newsDetail": 99 }
+            """);
+
+        var settings = new JsonSettingsStore(FilePath).Load();
+
+        Assert.Equal(NewsDetailLevel.Articles, settings.NewsDetail); // unknown level → default
     }
 
     [Fact]

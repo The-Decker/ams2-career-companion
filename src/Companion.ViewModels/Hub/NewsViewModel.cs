@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Settings;
 
 namespace Companion.ViewModels.Hub;
 
@@ -10,17 +11,30 @@ namespace Companion.ViewModels.Hub;
 /// into an era-styled ticker, newest first. Increment 1 re-renders the existing journal headline
 /// rows (empty until the real projection lands in <c>CareerSessionService</c>); the generative
 /// article grammar is a later slice. Refreshed after every round applies.
+///
+/// <para>The <see cref="AppSettings.NewsDetail"/> immersion setting (career-hub-design.md decision
+/// 17) gates how much each dispatch shows: full <see cref="NewsDetailLevel.Articles"/> expand into
+/// the period body, while <see cref="NewsDetailLevel.HeadlinesOnly"/>/<see cref="NewsDetailLevel.Minimal"/>
+/// show headlines only (no expanded body).</para>
 /// </summary>
 public sealed partial class NewsViewModel : ObservableObject
 {
     private readonly ICareerSession _session;
 
-    public NewsViewModel(ICareerSession session)
+    public NewsViewModel(ICareerSession session, NewsDetailLevel newsDetail = NewsDetailLevel.Articles)
     {
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
+        NewsDetail = newsDetail;
         Refresh();
     }
+
+    /// <summary>The immersion verbosity these items were projected under.</summary>
+    public NewsDetailLevel NewsDetail { get; }
+
+    /// <summary>True when dispatches show only their headline (no expanded article body) —
+    /// any level other than <see cref="NewsDetailLevel.Articles"/>.</summary>
+    public bool HeadlinesOnly => NewsDetail != NewsDetailLevel.Articles;
 
     public ObservableCollection<NewsItemViewModel> Items { get; } = [];
 
@@ -33,7 +47,7 @@ public sealed partial class NewsViewModel : ObservableObject
     {
         Items.Clear();
         foreach (var dispatch in _session.ReadFeed())
-            Items.Add(new NewsItemViewModel(dispatch));
+            Items.Add(new NewsItemViewModel(dispatch, showBody: !HeadlinesOnly));
         OnPropertyChanged(nameof(IsEmpty));
     }
 }
@@ -43,11 +57,13 @@ public sealed partial class NewsViewModel : ObservableObject
 public sealed partial class NewsItemViewModel : ObservableObject
 {
     private readonly NewsDispatch _dispatch;
+    private readonly bool _showBody;
 
-    public NewsItemViewModel(NewsDispatch dispatch)
+    public NewsItemViewModel(NewsDispatch dispatch, bool showBody = true)
     {
         ArgumentNullException.ThrowIfNull(dispatch);
         _dispatch = dispatch;
+        _showBody = showBody;
     }
 
     public string Headline => _dispatch.Headline;
@@ -58,9 +74,16 @@ public sealed partial class NewsItemViewModel : ObservableObject
 
     public bool HasWhy => !string.IsNullOrEmpty(_dispatch.WhyText);
 
+    /// <summary>True when this item can expand into a body — off under a headlines-only
+    /// immersion level, which collapses the expander to a plain headline.</summary>
+    public bool HasBody => _showBody;
+
     /// <summary>The expanded article body; falls back to the headline when the generative
-    /// grammar has not produced a body yet.</summary>
-    public string Body => string.IsNullOrEmpty(_dispatch.Body) ? _dispatch.Headline : _dispatch.Body;
+    /// grammar has not produced a body yet. Empty under a headlines-only immersion level so the
+    /// view shows just the headline (career-hub-design.md decision 17).</summary>
+    public string Body => _showBody
+        ? (string.IsNullOrEmpty(_dispatch.Body) ? _dispatch.Headline : _dispatch.Body)
+        : "";
 
     /// <summary>Dateline: "1967 · Round 3" (or just the year for season-level items).</summary>
     public string Meta => _dispatch.Round is { } round
@@ -72,5 +95,10 @@ public sealed partial class NewsItemViewModel : ObservableObject
     private bool _isExpanded;
 
     [RelayCommand]
-    private void ToggleExpanded() => IsExpanded = !IsExpanded;
+    private void ToggleExpanded()
+    {
+        if (!_showBody)
+            return; // headlines-only immersion level: nothing to expand into
+        IsExpanded = !IsExpanded;
+    }
 }

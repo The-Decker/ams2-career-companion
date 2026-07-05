@@ -95,8 +95,14 @@ public sealed class SettingsServiceTests
         vm.RestorePromptOnSeasonEnd = false;
         Assert.False(service.Current.RestorePromptOnSeasonEnd);
 
-        Assert.Equal(7, changes);          // one Changed per control touch — live-apply
-        Assert.Equal(7, store.SaveCount);  // and every change hit the store immediately
+        vm.EraThemingEnabled = false;
+        Assert.False(service.Current.EraThemingEnabled);
+
+        vm.NewsDetail = NewsDetailLevel.HeadlinesOnly;
+        Assert.Equal(NewsDetailLevel.HeadlinesOnly, service.Current.NewsDetail);
+
+        Assert.Equal(9, changes);          // one Changed per control touch — live-apply
+        Assert.Equal(9, store.SaveCount);  // and every change hit the store immediately
     }
 
     [Fact]

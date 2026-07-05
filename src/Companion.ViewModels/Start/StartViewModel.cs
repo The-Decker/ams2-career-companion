@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Settings;
 
 namespace Companion.ViewModels.Start;
 
@@ -14,12 +15,24 @@ namespace Companion.ViewModels.Start;
 public sealed partial class StartViewModel : ObservableObject
 {
     private readonly IRecentCareersStore _store;
+    private readonly ISettingsService? _settings;
 
-    public StartViewModel(IRecentCareersStore store)
+    public StartViewModel(IRecentCareersStore store, ISettingsService? settings = null)
     {
         _store = store;
+        _settings = settings;
+        if (_settings is not null)
+            _settings.Changed += OnSettingsChanged;
         Refresh();
     }
+
+    /// <summary>The immersion master switch (career-hub-design.md decision 7): when off, the
+    /// career gallery hides its era-medium labels and falls back to neutral cards. Reads live
+    /// from settings; defaults on when no settings service is wired.</summary>
+    public bool EraThemingEnabled => _settings?.Current.EraThemingEnabled ?? true;
+
+    private void OnSettingsChanged(object? sender, AppSettings settings) =>
+        OnPropertyChanged(nameof(EraThemingEnabled));
 
     public ObservableCollection<RecentCareer> RecentCareers { get; } = [];
 

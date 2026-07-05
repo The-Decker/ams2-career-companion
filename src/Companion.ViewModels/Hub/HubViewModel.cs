@@ -43,7 +43,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         Home.NextSeasonStarted += OnHomeNextSeasonStarted;
         Home.PropertyChanged += OnHomePropertyChanged;
 
-        News = new NewsViewModel(session);
+        if (_settings is not null)
+            _settings.Changed += OnSettingsChanged;
+
+        News = new NewsViewModel(session, settings?.Current.NewsDetail ?? NewsDetailLevel.Articles);
         History = new HistoryViewModel(session);
 
         Tabs =
@@ -70,6 +73,11 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
     /// the hub's era badge now, and the full resource-dictionary swap in a later slice.</summary>
     public EraTheme Era { get; }
+
+    /// <summary>The immersion master switch (career-hub-design.md decision 7): when off, the hub
+    /// hides its era-medium badge and falls back to neutral chrome. Reads live from settings;
+    /// defaults on when no settings service is wired.</summary>
+    public bool EraThemingEnabled => _settings?.Current.EraThemingEnabled ?? true;
 
     public ObservableCollection<HubTabViewModel> Tabs { get; }
 
@@ -155,6 +163,11 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     private void OnHomeNextSeasonStarted(object? sender, EventArgs e) =>
         NextSeasonStarted?.Invoke(this, e);
 
+    /// <summary>Live-apply the immersion master switch: toggling era theming shows/hides the
+    /// hub's era badge without rebuilding the hub (career-hub-design.md decision 7).</summary>
+    private void OnSettingsChanged(object? sender, AppSettings settings) =>
+        OnPropertyChanged(nameof(EraThemingEnabled));
+
     private StandingsViewModel NewStandings() =>
         new(_session.AllSnapshots(), _session.Pack, _settings);
 
@@ -173,6 +186,8 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
+        if (_settings is not null)
+            _settings.Changed -= OnSettingsChanged;
         Home.NextSeasonStarted -= OnHomeNextSeasonStarted;
         Home.PropertyChanged -= OnHomePropertyChanged;
         Home.Dispose(); // disposes the session + staged-file watcher

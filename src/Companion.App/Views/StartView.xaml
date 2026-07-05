@@ -113,7 +113,8 @@
                                                 <TextBlock Text="{Binding CareerName, Converter={StaticResource EraLabel}}"
                                                            Foreground="#F2FFFFFF" FontWeight="Bold" FontSize="12"
                                                            VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                                                           Margin="12,0,0,8" />
+                                                           Margin="12,0,0,8"
+                                                           Visibility="{Binding DataContext.EraThemingEnabled, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource BoolVisible}}" />
                                                 <Button Content="&#xE711;" Style="{StaticResource IconButton}"
                                                         VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4"
                                                         ToolTip="Remove from this list (the career file stays)"
