@@ -1,0 +1,39 @@
+{
+  "$comment": "Team archetypes for season-end player offers and the AI seat market (docs/dev/career-sim.md, steps 5-6). Offer score = rep*repW + opi*opiW + experience*expW - salaryAsk*salaryW - ageRisk*ageRiskW (the contract's w1..w5), weights per archetype. Money is in Budget Units (BU): a tier-5 works team spends ~100 BU/season (RESEARCH.md section 6), so driver salaries are single-digit BU; era display skins and inflation rescale are presentation-layer concerns. payDriverWeight is how much a team values candidate sponsorship money when filling its own seats - pay seats are first-class and era-correct, and minnows live off them. repFloorByTier gates which teams consider the player at all; salary offers interpolate the tier band by reputation. Parsed by Companion.Core.Career.TeamArchetypeCatalog.",
+  "maxOffers": 3,
+  "archetypes": {
+    "works": {
+      "weights": { "rep": 0.6, "opi": 3.0, "experience": 1.2, "salary": 1.0, "ageRisk": 2.5 },
+      "payDriverWeight": 0.2
+    },
+    "privateer": {
+      "weights": { "rep": 0.45, "opi": 2.5, "experience": 1.5, "salary": 2.0, "ageRisk": 1.2 },
+      "payDriverWeight": 1.0
+    },
+    "minnow": {
+      "weights": { "rep": 0.3, "opi": 1.5, "experience": 0.8, "salary": 3.5, "ageRisk": 0.4 },
+      "payDriverWeight": 2.5
+    }
+  },
+  "defaultArchetypeByTier": {
+    "1": "minnow",
+    "2": "minnow",
+    "3": "privateer",
+    "4": "works",
+    "5": "works"
+  },
+  "repFloorByTier": {
+    "1": 0,
+    "2": 10,
+    "3": 30,
+    "4": 50,
+    "5": 70
+  },
+  "salaryBandsByTier": {
+    "1": { "minBu": 0.2, "maxBu": 1.0 },
+    "2": { "minBu": 0.5, "maxBu": 2.0 },
+    "3": { "minBu": 1.0, "maxBu": 4.0 },
+    "4": { "minBu": 2.0, "maxBu": 7.0 },
+    "5": { "minBu": 4.0, "maxBu": 12.0 }
+  }
+}

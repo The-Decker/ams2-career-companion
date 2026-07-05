@@ -1,0 +1,388 @@
+<UserControl x:Class="Companion.App.Views.WizardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:wizard="clr-namespace:Companion.ViewModels.Wizard;assembly=Companion.ViewModels"
+             Focusable="False">
+    <UserControl.Resources>
+        <!-- step-indicator segment: accent when it IS the current step -->
+        <Style x:Key="StepLabel" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+            <Setter Property="Margin" Value="0,0,22,0" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel Margin="40,32">
+        <!-- header + step indicator -->
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="New career" Style="{StaticResource H1}" />
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,20">
+                <TextBlock Text="1 · Season">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.SeasonPick}">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="2 · Verify content">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Verification}">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="3 · Seat">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.SeatPick}">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="4 · Confirm">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Confirm}">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- footer: cancel / back / next -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,20,0,0">
+            <Button DockPanel.Dock="Left" Content="Cancel"
+                    Style="{StaticResource SubtleButton}"
+                    Command="{Binding DataContext.GoToStartCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="_Back" MinWidth="96" Command="{Binding BackCommand}" />
+                <Button MinWidth="140" Margin="10,0,0,0" Command="{Binding NextCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
+                            <Setter Property="Content" Value="_Next" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}"
+                                             Value="{x:Static wizard:WizardStep.Confirm}">
+                                    <Setter Property="Content" Value="Create career" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+            <Border />
+        </DockPanel>
+
+        <!-- the four one-screen steps -->
+        <Grid>
+
+            <!-- a. season pick -->
+            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.SeasonPick}}">
+                <TextBlock DockPanel.Dock="Top" Text="Pick a season pack" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
+                           Text="Sources: the bundled packs folder beside the exe, plus Documents\AMS2CareerCompanion\Packs." />
+                <StackPanel DockPanel.Dock="Bottom">
+                    <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,8,0,0"
+                               Text="{Binding PackLoadError}"
+                               Visibility="{Binding PackLoadError, Converter={StaticResource NullCollapsed}}" />
+                    <Button Content="Rescan pack folders" HorizontalAlignment="Left" Margin="0,10,0,0"
+                            Click="OnRefreshPacks" />
+                </StackPanel>
+                <Border Style="{StaticResource Panel}" Padding="8">
+                    <Grid>
+                        <ListBox ItemsSource="{Binding Packs}" SelectedItem="{Binding SelectedPack}"
+                                 Visibility="{Binding Packs.Count, Converter={StaticResource CountVisible}}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="15" />
+                                        <TextBlock Text="{Binding Directory}" Style="{StaticResource Faint}" Margin="0,2,0,0" />
+                                        <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12" Margin="0,2,0,0"
+                                                   TextWrapping="Wrap"
+                                                   Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
+                                                   Visibility="{Binding LoadError, Converter={StaticResource NullCollapsed}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!-- empty state (ux-round §4): no packs found → explain the folders + open -->
+                        <StackPanel Margin="12,10" MaxWidth="560" HorizontalAlignment="Left"
+                                    Visibility="{Binding Packs.Count, Converter={StaticResource CountCollapsed}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE838;" FontSize="20"
+                                           Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
+                                           Margin="0,0,12,0" />
+                                <TextBlock Text="No season packs found" FontWeight="SemiBold" FontSize="15"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource Body}" Margin="0,8,0,0" TextWrapping="Wrap"
+                                       Text="A season pack is a plain folder with a pack.json inside. These places are searched:" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="16,6,0,0" TextWrapping="Wrap"
+                                       Text="• the bundled packs folder beside the exe" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="16,2,0,0" TextWrapping="Wrap"
+                                       Text="• Documents\AMS2CareerCompanion\Packs (yours — drop packs here)" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="16,2,0,0" TextWrapping="Wrap"
+                                       Text="• any extra folders you add under Settings → Data" />
+                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                <Button Content="Open pack folder" Click="OnOpenPackFolder"
+                                        ToolTip="Opens Documents\AMS2CareerCompanion\Packs in Explorer (created if missing)" />
+                                <TextBlock Style="{StaticResource Faint}" VerticalAlignment="Center" Margin="10,0,0,0"
+                                           Text="then drop a pack in and hit Rescan below" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </DockPanel>
+
+            <!-- b. content verification -->
+            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Verification}}">
+                <TextBlock DockPanel.Dock="Top" Text="Content verification" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
+                           Text="Structure, AMS2 content and installed liveries checked against the detected install. Errors block; warnings can be overridden." />
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+                    <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap"
+                               Text="Errors block career creation — fix the pack and rescan."
+                               Visibility="{Binding HasErrors, Converter={StaticResource BoolVisible}}" />
+                    <CheckBox Content="Proceed anyway — I accept the warnings above"
+                              IsChecked="{Binding ProceedAnyway}">
+                        <CheckBox.Style>
+                            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding HasWarnings}" Value="True" />
+                                            <Condition Binding="{Binding HasErrors}" Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </CheckBox.Style>
+                    </CheckBox>
+                </StackPanel>
+                <Border Style="{StaticResource Panel}">
+                    <DockPanel>
+                        <!-- per-file livery-scan details (unreadable files): collapsed by default -->
+                        <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0"
+                                    Visibility="{Binding HasLiveryScanDetails, Converter={StaticResource BoolVisible}}">
+                            <Button HorizontalAlignment="Left" Command="{Binding ToggleLiveryScanDetailsCommand}"
+                                    ToolTip="The files the livery scan could not read, one line each">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                                        <Setter Property="Content" Value="Show details ▸" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LiveryScanDetailsExpanded}" Value="True">
+                                                <Setter Property="Content" Value="Hide details ▾" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" Focusable="False"
+                                          Visibility="{Binding LiveryScanDetailsExpanded, Converter={StaticResource BoolVisible}}">
+                                <ItemsControl ItemsSource="{Binding LiveryScanDetails}" Margin="12,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" Style="{StaticResource Faint}"
+                                                       TextWrapping="Wrap" Margin="0,1" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                        <Grid>
+                        <TextBlock Foreground="{StaticResource SuccessBrush}" FontSize="15"
+                                   Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}">
+                            <Run FontFamily="Segoe MDL2 Assets" Text="&#xE73E;" /><Run Text="  All clear — the pack verifies clean against this install." />
+                        </TextBlock>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False"
+                                      Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountVisible}}">
+                            <ItemsControl ItemsSource="{Binding VerificationItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,3">
+                                            <Border DockPanel.Dock="Left" CornerRadius="4" Padding="8,2"
+                                                    VerticalAlignment="Top" Margin="0,0,10,0" Width="76">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsError}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsInfo}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Severity}" FontSize="12" HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsError}" Value="True">
+                                                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsInfo}" Value="True">
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                            <TextBlock Text="{Binding Message}" TextWrapping="Wrap"
+                                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+            </DockPanel>
+
+            <!-- c. seat pick -->
+            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.SeatPick}}">
+                <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
+                           Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
+                <Border Style="{StaticResource Panel}" Padding="8">
+                    <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                <!-- mouse parity: double-click a seat = select it AND advance -->
+                                <EventSetter Event="MouseDoubleClick" Handler="OnSeatDoubleClick" />
+                                <Setter Property="ToolTip" Value="Double-click to pick this seat and continue" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Width="44" FontWeight="SemiBold"
+                                               Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
+                                               Text="{Binding Number, StringFormat='#{0}'}" />
+                                    <!-- ratings as bars; raw numbers on hover (ux-round §2) -->
+                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Width="190">
+                                        <DockPanel ToolTip="{Binding RaceSkill, StringFormat='Race skill (raw): {0:0.000}'}"
+                                                   Background="Transparent">
+                                            <TextBlock DockPanel.Dock="Left" Width="42" Text="Race"
+                                                       Style="{StaticResource Faint}" VerticalAlignment="Center" />
+                                            <ProgressBar Style="{StaticResource RatingBar}"
+                                                         Value="{Binding RaceSkill, Mode=OneWay}" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,4,0,0"
+                                                   ToolTip="{Binding QualifyingSkill, StringFormat='Qualifying skill (raw): {0:0.000}'}"
+                                                   Background="Transparent">
+                                            <TextBlock DockPanel.Dock="Left" Width="42" Text="Quali"
+                                                       Style="{StaticResource Faint}" VerticalAlignment="Center" />
+                                            <ProgressBar Style="{StaticResource RatingBar}"
+                                                         Value="{Binding QualifyingSkill, Mode=OneWay}" />
+                                        </DockPanel>
+                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource Faint}" Margin="0,4,0,0"
+                                                   ToolTip="{Binding Reliability, StringFormat='Car reliability (raw): {0:0.000}'}">
+                                            <Run Text="Team tier " /><Run Text="{Binding TeamTier, Mode=OneWay}" /><Run Text="  ·  Reliability " /><Run Text="{Binding Reliability, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text="  ·  Rounds " /><Run Text="{Binding Rounds, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,0,16,0">
+                                        <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" FontSize="15" />
+                                        <TextBlock Text="{Binding TeamName}" Style="{StaticResource Muted}" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </DockPanel>
+
+            <!-- d. confirm -->
+            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Confirm}}">
+                <TextBlock DockPanel.Dock="Top" Text="Confirm" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,16" TextWrapping="Wrap"
+                           Text="Creating the career pins the pack into the career file — later pack edits never touch a running season." />
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left">
+                        <TextBlock Text="Career name" Style="{StaticResource Muted}" Margin="0,0,0,4" />
+                        <TextBox Text="{Binding CareerName, UpdateSourceTrigger=PropertyChanged}" FontSize="15" />
+
+                        <TextBlock Text="Master seed (drives every generated grid — same seed, same season)"
+                                   Style="{StaticResource Muted}" Margin="0,14,0,4" />
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="Randomize" Margin="10,0,0,0"
+                                    Command="{Binding RandomizeSeedCommand}" />
+                            <TextBox Text="{Binding MasterSeedText, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="Consolas" FontSize="15" />
+                        </DockPanel>
+
+                        <!-- NAMeS-first baseline import (locked decision #7a): DEFAULT ON when
+                             the installed class XML parses; shows the import diff summary -->
+                        <Border Style="{StaticResource Panel}" Margin="0,18,0,0"
+                                Visibility="{Binding BaselineImportAvailable, Converter={StaticResource BoolVisible}}">
+                            <StackPanel>
+                                <TextBlock Text="Season baseline" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <CheckBox IsChecked="{Binding UseInstalledAiBaseline}"
+                                          Content="Use your installed AI file as the season baseline (recommended)" />
+                                <TextBlock Style="{StaticResource Muted}" Margin="24,4,0,0" TextWrapping="Wrap"
+                                           Text="{Binding BaselineImportSummary}" />
+                                <TextBlock Style="{StaticResource Faint}" Margin="24,2,0,0" TextWrapping="Wrap"
+                                           Text="{Binding InstalledAiFilePath}" />
+                                <TextBlock Style="{StaticResource Faint}" Margin="24,4,0,0" TextWrapping="Wrap"
+                                           Text="Per-livery ratings, names and countries come from your file; the pack keeps the calendar, entries, teams and scoring. The imported baseline is pinned into the career — it never drifts if the file changes later." />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- the installed file exists but could not be parsed -->
+                        <Border Background="{StaticResource WarningDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,18,0,0"
+                                Visibility="{Binding BaselineImportError, Converter={StaticResource NullCollapsed}}">
+                            <TextBlock Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap"
+                                       Text="{Binding BaselineImportError, StringFormat='Your installed AI file could not be read — the pack baseline will be used instead. ({0})'}" />
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}" Margin="0,18,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Season rules" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <ItemsControl ItemsSource="{Binding RulesSummary}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" Style="{StaticResource Body}" Margin="0,2" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource Faint}" Margin="0,12,0,0" TextWrapping="Wrap"
+                                   Text="Difficulty note: the pack's AI ratings assume a fixed in-game AI strength — pick one and keep it for the whole season." />
+
+                        <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,12,0,0"
+                                   Text="{Binding CreateError}"
+                                   Visibility="{Binding CreateError, Converter={StaticResource NullCollapsed}}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>

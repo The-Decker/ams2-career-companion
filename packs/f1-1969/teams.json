@@ -1,0 +1,126 @@
+{
+  "teams": [
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Ford Cosworth",
+      "carVehicleIds": [
+        "formula_vintage_g2m2",
+        "lotus_49c"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.49,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Ford Cosworth",
+      "carVehicleIds": [
+        "formula_vintage_g2m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.63,
+      "prestige": 3,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.matra",
+      "name": "Matra-Ford Cosworth",
+      "carVehicleIds": [
+        "formula_vintage_g2m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.78,
+      "prestige": 4,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_vintage_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.35,
+      "prestige": 5,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.brm",
+      "name": "BRM",
+      "carVehicleIds": [
+        "formula_vintage_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.27,
+      "prestige": 4,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.brabham",
+      "name": "Brabham-Ford Cosworth",
+      "carVehicleIds": [
+        "brabham_bt26",
+        "formula_vintage_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.bmw",
+      "name": "BMW",
+      "carVehicleIds": [
+        "formula_vintage_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.41,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.tecno",
+      "name": "Tecno-Ford Cosworth",
+      "carVehicleIds": [
+        "formula_vintage_g2m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.26,
+      "prestige": 1,
+      "budgetTier": 2
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "teams": [
+    {
+      "id": "team.williams",
+      "name": "Williams-Renault",
+      "carVehicleIds": [
+        "formula_hitech_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.86,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Yamaha",
+      "carVehicleIds": [
+        "formula_hitech_g2m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.31,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.benetton",
+      "name": "Benetton-Ford",
+      "carVehicleIds": [
+        "formula_hitech_g2m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.54,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Ford",
+      "carVehicleIds": [
+        "mclaren_mp48"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.56,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.footwork",
+      "name": "Footwork-Mugen Honda",
+      "carVehicleIds": [
+        "formula_hitech_g2m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.56,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Ford",
+      "carVehicleIds": [
+        "formula_hitech_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.44,
+      "prestige": 4,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.jordan",
+      "name": "Jordan-Hart",
+      "carVehicleIds": [
+        "formula_hitech_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.33,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.larrousse",
+      "name": "Larrousse-Lamborghini",
+      "carVehicleIds": [
+        "formula_hitech_g2m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.48,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.lola",
+      "name": "Lola-Ferrari",
+      "carVehicleIds": [
+        "formula_hitech_g2m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.33,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.minardi",
+      "name": "Minardi-Ford",
+      "carVehicleIds": [
+        "formula_hitech_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.54,
+      "prestige": 2,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.ligier",
+      "name": "Ligier-Renault",
+      "carVehicleIds": [
+        "formula_hitech_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.88,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_hitech_g2m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.35,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.sauber",
+      "name": "Sauber",
+      "carVehicleIds": [
+        "formula_hitech_g2m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.36,
+      "prestige": 2,
+      "budgetTier": 3
+    }
+  ]
+}

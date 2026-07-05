@@ -1,0 +1,928 @@
+{
+  "year": 1974,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Retro_Gen1",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "split": {
+        "firstRounds": 8,
+        "firstCount": 7,
+        "secondRounds": 7,
+        "secondCount": 6
+      }
+    },
+    "constructors": {
+      "bestCarOnly": true,
+      "bestN": "sameAsDrivers"
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "Argentine Grand Prix",
+      "date": "1974-01-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Juan y Oscar Gálvez",
+        "id": "buenos_aires_15",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "buenos_aires_12"
+        ]
+      },
+      "laps": 53,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.denny_hulme",
+          "driver.niki_lauda",
+          "driver.clay_regazzoni",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.patrick_depailler",
+          "driver.carlos_reutemann",
+          "driver.howden_ganley",
+          "driver.henri_pescarolo",
+          "driver.emerson_fittipaldi",
+          "driver.guy_edwards",
+          "driver.john_watson",
+          "driver.ronnie_peterson",
+          "driver.graham_hill",
+          "driver.richard_robarts",
+          "driver.jacky_ickx",
+          "driver.hans_joachim_stuck",
+          "driver.francois_migault",
+          "driver.jody_scheckter",
+          "driver.carlos_pace",
+          "driver.arturo_merzario",
+          "driver.jochen_mass",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1974-01-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the Buenos Aires No.15 circuit the 1974 race ran; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Brazilian Grand Prix",
+      "date": "1974-01-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo José Carlos Pace",
+        "id": "interlagos_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 32,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.emerson_fittipaldi",
+          "driver.clay_regazzoni",
+          "driver.jacky_ickx",
+          "driver.carlos_pace",
+          "driver.mike_hailwood",
+          "driver.ronnie_peterson",
+          "driver.carlos_reutemann",
+          "driver.patrick_depailler",
+          "driver.jean_pierre_beltoise",
+          "driver.graham_hill",
+          "driver.denny_hulme",
+          "driver.jody_scheckter",
+          "driver.henri_pescarolo",
+          "driver.richard_robarts",
+          "driver.francois_migault",
+          "driver.jochen_mass",
+          "driver.john_watson",
+          "driver.hans_joachim_stuck",
+          "driver.jean_pierre_jarier",
+          "driver.arturo_merzario",
+          "driver.peter_revson",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.niki_lauda"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1974-01-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 7.9 km historic Interlagos the 1974 Brazilian GP ran; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "South African Grand Prix",
+      "date": "1974-03-30",
+      "championship": true,
+      "track": {
+        "realVenue": "Kyalami",
+        "id": "kyalami_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 78,
+      "grid": {
+        "size": 27,
+        "starterDriverIds": [
+          "driver.carlos_reutemann",
+          "driver.jean_pierre_beltoise",
+          "driver.mike_hailwood",
+          "driver.patrick_depailler",
+          "driver.hans_joachim_stuck",
+          "driver.arturo_merzario",
+          "driver.emerson_fittipaldi",
+          "driver.jody_scheckter",
+          "driver.denny_hulme",
+          "driver.vittorio_brambilla",
+          "driver.carlos_pace",
+          "driver.graham_hill",
+          "driver.ian_scheckter",
+          "driver.eddie_keizan",
+          "driver.francois_migault",
+          "driver.niki_lauda",
+          "driver.richard_robarts",
+          "driver.henri_pescarolo",
+          "driver.dave_charlton",
+          "driver.clay_regazzoni",
+          "driver.john_watson",
+          "driver.jacky_ickx",
+          "driver.james_hunt",
+          "driver.jochen_mass",
+          "driver.paddy_driver",
+          "driver.ronnie_peterson",
+          "driver.tom_belso"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 26,
+          "startTime": "14:00",
+          "date": "1974-03-30",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the historic Kyalami; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Spanish Grand Prix",
+      "date": "1974-04-28",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuito del Jarama",
+        "id": "jerez_1988",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "estoril_1988"
+        ]
+      },
+      "laps": 68,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
+          "driver.hans_joachim_stuck",
+          "driver.jody_scheckter",
+          "driver.denny_hulme",
+          "driver.brian_redman",
+          "driver.patrick_depailler",
+          "driver.mike_hailwood",
+          "driver.james_hunt",
+          "driver.john_watson",
+          "driver.henri_pescarolo",
+          "driver.carlos_pace",
+          "driver.tim_schenken",
+          "driver.jean_pierre_jarier",
+          "driver.graham_hill",
+          "driver.arturo_merzario",
+          "driver.jochen_mass",
+          "driver.francois_migault",
+          "driver.jacky_ickx",
+          "driver.ronnie_peterson",
+          "driver.chris_amon",
+          "driver.rikky_von_opel",
+          "driver.carlos_reutemann",
+          "driver.jean_pierre_beltoise"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1974-04-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuito del Jarama - 84 laps / 285.9 km reproduced as 68 laps of Jerez 1988. Jerez keeps the Spanish GP in Spain on a tight, technical parkland circuit of the era character; Jarama has no AMS2 counterpart."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "Belgian Grand Prix",
+      "date": "1974-05-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Nivelles-Baulers",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "brandshatch_gp"
+        ]
+      },
+      "laps": 46,
+      "grid": {
+        "size": 29,
+        "starterDriverIds": [
+          "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
+          "driver.jody_scheckter",
+          "driver.clay_regazzoni",
+          "driver.jean_pierre_beltoise",
+          "driver.denny_hulme",
+          "driver.mike_hailwood",
+          "driver.graham_hill",
+          "driver.vittorio_brambilla",
+          "driver.tim_schenken",
+          "driver.john_watson",
+          "driver.guy_edwards",
+          "driver.jean_pierre_jarier",
+          "driver.vern_schuppan",
+          "driver.francois_migault",
+          "driver.teddy_pilette",
+          "driver.brian_redman",
+          "driver.jacky_ickx",
+          "driver.tom_pryce",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.gerard_larrousse",
+          "driver.jochen_mass",
+          "driver.patrick_depailler",
+          "driver.carlos_pace",
+          "driver.rikky_von_opel",
+          "driver.james_hunt",
+          "driver.arturo_merzario",
+          "driver.henri_pescarolo",
+          "driver.hans_joachim_stuck"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 28,
+          "startTime": "14:00",
+          "date": "1974-05-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Nivelles-Baulers - 85 laps / 316.5 km reproduced as 46 laps of Spa-Francorchamps 1993. Spa keeps the Belgian GP in Belgium; Nivelles has no AMS2 counterpart."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "Monaco Grand Prix",
+      "date": "1974-05-26",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit_2021"
+        ]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.ronnie_peterson",
+          "driver.jody_scheckter",
+          "driver.jean_pierre_jarier",
+          "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
+          "driver.john_watson",
+          "driver.graham_hill",
+          "driver.guy_edwards",
+          "driver.patrick_depailler",
+          "driver.henri_pescarolo",
+          "driver.jacky_ickx",
+          "driver.niki_lauda",
+          "driver.james_hunt",
+          "driver.mike_hailwood",
+          "driver.carlos_reutemann",
+          "driver.francois_migault",
+          "driver.vern_schuppan",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jean_pierre_beltoise",
+          "driver.tim_schenken",
+          "driver.carlos_pace",
+          "driver.brian_redman",
+          "driver.arturo_merzario",
+          "driver.denny_hulme"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1974-05-26",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 Azure Circuit is Monaco; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "Swedish Grand Prix",
+      "date": "1974-06-09",
+      "championship": true,
+      "track": {
+        "realVenue": "Scandinavian Raceway, Anderstorp",
+        "id": "hockenheim_1977",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "silverstone_1975"
+        ]
+      },
+      "laps": 47,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.jody_scheckter",
+          "driver.patrick_depailler",
+          "driver.james_hunt",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jarier",
+          "driver.graham_hill",
+          "driver.guy_edwards",
+          "driver.tom_belso",
+          "driver.rikky_von_opel",
+          "driver.vittorio_brambilla",
+          "driver.john_watson",
+          "driver.niki_lauda",
+          "driver.reine_wisell",
+          "driver.denny_hulme",
+          "driver.jochen_mass",
+          "driver.carlos_reutemann",
+          "driver.jacky_ickx",
+          "driver.clay_regazzoni",
+          "driver.carlos_pace",
+          "driver.leo_kinnunen",
+          "driver.ronnie_peterson",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.bertil_roos",
+          "driver.henri_pescarolo",
+          "driver.vern_schuppan"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1974-06-09",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Scandinavian Raceway, Anderstorp - 80 laps / 321.4 km reproduced as 47 laps of Hockenheim 1977. Old Hockenheim flat, straight-dominated forest blasts match Anderstorp runway-straight character; the German GP runs at the Nurburgring this season, so Hockenheim is free."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "Dutch Grand Prix",
+      "date": "1974-06-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Park Zandvoort",
+        "id": "silverstone_1975",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "brandshatch_gp"
+        ]
+      },
+      "laps": 67,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
+          "driver.mike_hailwood",
+          "driver.jody_scheckter",
+          "driver.patrick_depailler",
+          "driver.john_watson",
+          "driver.ronnie_peterson",
+          "driver.rikky_von_opel",
+          "driver.vittorio_brambilla",
+          "driver.jacky_ickx",
+          "driver.carlos_reutemann",
+          "driver.denny_hulme",
+          "driver.francois_migault",
+          "driver.arturo_merzario",
+          "driver.guy_edwards",
+          "driver.jean_pierre_jarier",
+          "driver.jean_pierre_beltoise",
+          "driver.graham_hill",
+          "driver.henri_pescarolo",
+          "driver.jochen_mass",
+          "driver.james_hunt",
+          "driver.hans_joachim_stuck",
+          "driver.tom_pryce",
+          "driver.vern_schuppan"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1974-06-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Park Zandvoort - 75 laps / 317.0 km reproduced as 67 laps of Silverstone 1975. Silverstone 1975 flat, fast sweepers match Zandvoort rhythm; the British GP runs at Brands Hatch this season, so Silverstone is free."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "French Grand Prix",
+      "date": "1974-07-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Dijon-Prenois",
+        "id": "estoril_1988",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "brandshatch_gp"
+        ]
+      },
+      "laps": 60,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.ronnie_peterson",
+          "driver.niki_lauda",
+          "driver.clay_regazzoni",
+          "driver.jody_scheckter",
+          "driver.jacky_ickx",
+          "driver.denny_hulme",
+          "driver.mike_hailwood",
+          "driver.patrick_depailler",
+          "driver.arturo_merzario",
+          "driver.jean_pierre_beltoise",
+          "driver.vittorio_brambilla",
+          "driver.jean_pierre_jarier",
+          "driver.graham_hill",
+          "driver.francois_migault",
+          "driver.guy_edwards",
+          "driver.john_watson",
+          "driver.emerson_fittipaldi",
+          "driver.carlos_reutemann",
+          "driver.jochen_mass",
+          "driver.henri_pescarolo",
+          "driver.tom_pryce",
+          "driver.james_hunt"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1974-07-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Dijon-Prenois - 80 laps / 263.1 km reproduced as 60 laps of Estoril 1988. Estoril short, fast, elevation-swooping layout matches Dijon character; Brands Hatch (the base suggestion) already hosts this season British GP."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "British Grand Prix",
+      "date": "1974-07-20",
+      "championship": true,
+      "track": {
+        "realVenue": "Brands Hatch",
+        "id": "brandshatch_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.jody_scheckter",
+          "driver.emerson_fittipaldi",
+          "driver.jacky_ickx",
+          "driver.clay_regazzoni",
+          "driver.niki_lauda",
+          "driver.carlos_reutemann",
+          "driver.denny_hulme",
+          "driver.tom_pryce",
+          "driver.carlos_pace",
+          "driver.ronnie_peterson",
+          "driver.john_watson",
+          "driver.jean_pierre_beltoise",
+          "driver.graham_hill",
+          "driver.jochen_mass",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_jarier",
+          "driver.hans_joachim_stuck",
+          "driver.patrick_depailler",
+          "driver.arturo_merzario",
+          "driver.vittorio_brambilla",
+          "driver.tim_schenken",
+          "driver.james_hunt",
+          "driver.peter_gethin"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1974-07-20",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships Brands Hatch GP; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "German Grand Prix",
+      "date": "1974-08-04",
+      "championship": true,
+      "track": {
+        "realVenue": "Nürburgring Nordschleife",
+        "id": "nordschleife",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "nordschleife_2020"
+        ]
+      },
+      "laps": 14,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.clay_regazzoni",
+          "driver.jody_scheckter",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.jacky_ickx",
+          "driver.tom_pryce",
+          "driver.hans_joachim_stuck",
+          "driver.jean_pierre_jarier",
+          "driver.graham_hill",
+          "driver.henri_pescarolo",
+          "driver.derek_bell",
+          "driver.carlos_pace",
+          "driver.vittorio_brambilla",
+          "driver.ian_ashley",
+          "driver.mike_hailwood",
+          "driver.james_hunt",
+          "driver.jochen_mass",
+          "driver.patrick_depailler",
+          "driver.arturo_merzario",
+          "driver.jean_pierre_beltoise",
+          "driver.vern_schuppan",
+          "driver.emerson_fittipaldi",
+          "driver.jacques_laffite",
+          "driver.john_watson",
+          "driver.niki_lauda",
+          "driver.denny_hulme"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1974-08-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 Nordschleife is the Nurburgring; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "name": "Austrian Grand Prix",
+      "date": "1974-08-18",
+      "championship": true,
+      "track": {
+        "realVenue": "Österreichring",
+        "id": "spielberg_vintage",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "spielberg_historic"
+        ]
+      },
+      "laps": 54,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.carlos_reutemann",
+          "driver.denny_hulme",
+          "driver.james_hunt",
+          "driver.john_watson",
+          "driver.clay_regazzoni",
+          "driver.vittorio_brambilla",
+          "driver.david_hobbs",
+          "driver.jean_pierre_jarier",
+          "driver.dieter_quester",
+          "driver.tim_schenken",
+          "driver.hans_joachim_stuck",
+          "driver.graham_hill",
+          "driver.ian_ashley",
+          "driver.ronnie_peterson",
+          "driver.jacky_ickx",
+          "driver.patrick_depailler",
+          "driver.carlos_pace",
+          "driver.emerson_fittipaldi",
+          "driver.jacques_laffite",
+          "driver.arturo_merzario",
+          "driver.jean_pierre_beltoise",
+          "driver.tom_pryce",
+          "driver.niki_lauda",
+          "driver.rolf_stommelen",
+          "driver.jody_scheckter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1974-08-18",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 Spielberg Vintage is the 1974 pre-chicane Osterreichring; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "name": "Italian Grand Prix",
+      "date": "1974-09-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1971",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 52,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.ronnie_peterson",
+          "driver.emerson_fittipaldi",
+          "driver.jody_scheckter",
+          "driver.arturo_merzario",
+          "driver.carlos_pace",
+          "driver.denny_hulme",
+          "driver.john_watson",
+          "driver.graham_hill",
+          "driver.david_hobbs",
+          "driver.tom_pryce",
+          "driver.patrick_depailler",
+          "driver.clay_regazzoni",
+          "driver.niki_lauda",
+          "driver.jacky_ickx",
+          "driver.rolf_stommelen",
+          "driver.jacques_laffite",
+          "driver.jean_pierre_jarier",
+          "driver.vittorio_brambilla",
+          "driver.tim_schenken",
+          "driver.carlos_reutemann",
+          "driver.hans_joachim_stuck",
+          "driver.henri_pescarolo",
+          "driver.james_hunt",
+          "driver.francois_migault",
+          "driver.jean_pierre_beltoise"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1974-09-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1974 Monza layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1971 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "name": "Canadian Grand Prix",
+      "date": "1974-09-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Mosport Park",
+        "id": "mosport_1971",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "mosport"
+        ]
+      },
+      "laps": 80,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.emerson_fittipaldi",
+          "driver.clay_regazzoni",
+          "driver.ronnie_peterson",
+          "driver.james_hunt",
+          "driver.patrick_depailler",
+          "driver.denny_hulme",
+          "driver.mario_andretti",
+          "driver.carlos_pace",
+          "driver.carlos_reutemann",
+          "driver.helmuth_koinigg",
+          "driver.rolf_stommelen",
+          "driver.mark_donohue",
+          "driver.jacky_ickx",
+          "driver.graham_hill",
+          "driver.jacques_laffite",
+          "driver.jochen_mass",
+          "driver.chris_amon",
+          "driver.niki_lauda",
+          "driver.tom_pryce",
+          "driver.john_watson",
+          "driver.jean_pierre_beltoise",
+          "driver.jody_scheckter",
+          "driver.jean_pierre_jarier",
+          "driver.arturo_merzario",
+          "driver.eppie_wietzes",
+          "driver.hans_joachim_stuck"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1974-09-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 1971 Mosport; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "name": "United States Grand Prix",
+      "date": "1974-10-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Watkins Glen",
+        "id": "watkins_glen_1971_gp",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "watkins_glen"
+        ]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.carlos_reutemann",
+          "driver.carlos_pace",
+          "driver.james_hunt",
+          "driver.emerson_fittipaldi",
+          "driver.john_watson",
+          "driver.patrick_depailler",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.chris_amon",
+          "driver.jean_pierre_jarier",
+          "driver.clay_regazzoni",
+          "driver.rolf_stommelen",
+          "driver.ronnie_peterson",
+          "driver.mike_wilds",
+          "driver.tom_pryce",
+          "driver.jody_scheckter",
+          "driver.arturo_merzario",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.mark_donohue",
+          "driver.jose_dolhem",
+          "driver.vittorio_brambilla",
+          "driver.helmuth_koinigg",
+          "driver.jacky_ickx",
+          "driver.denny_hulme",
+          "driver.mario_andretti"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1974-10-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 1971 Watkins Glen GP layout the 1974 race ran; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

@@ -1,0 +1,1064 @@
+{
+    "year":  2000,
+    "seriesName":  "Formula One World Championship",
+    "ams2Class":  "F-V10_Gen2",
+    "pointsSystem":  {
+                         "racePoints":  [
+                                            10,
+                                            6,
+                                            4,
+                                            3,
+                                            2,
+                                            1
+                                        ],
+                         "sharedDrivePolicy":  "zero",
+                         "constructors":  {
+                                              "bestCarOnly":  false,
+                                              "bestN":  null
+                                          },
+                         "pointsAdjustments":  [
+                                                   {
+                                                       "constructor":  "mclaren+mercedes",
+                                                       "delta":  "-10",
+                                                       "reason":  "Austrian GP: missing ECU seal; Hakkinen kept the win, the team was stripped of the constructors points."
+                                                   }
+                                               ]
+                     },
+    "rounds":  [
+                   {
+                       "round":  1,
+                       "name":  "Australian Grand Prix",
+                       "date":  "2000-03-12",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Melbourne Grand Prix Circuit",
+                                     "id":  "adelaide_modern",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "montrealmodern"
+                                                   ]
+                                 },
+                       "laps":  96,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.alexander_wurz",
+                                                             "driver.marc_gene",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jenson_button",
+                                                             "driver.pedro_diniz",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.jean_alesi",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.jos_verstappen",
+                                                             "driver.david_coulthard",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.eddie_irvine",
+                                                             "driver.johnny_herbert",
+                                                             "driver.mika_salo"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-03-12",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Melbourne Grand Prix Circuit - 58 laps / 307.6 km reproduced as 96 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland-circuit character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  2,
+                       "name":  "Brazilian Grand Prix",
+                       "date":  "2000-03-26",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autódromo José Carlos Pace",
+                                     "id":  "interlagos_1991",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "interlagos_1993"
+                                                   ]
+                                 },
+                       "laps":  71,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jenson_button",
+                                                             "driver.jos_verstappen",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.johnny_herbert",
+                                                             "driver.marc_gene",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.eddie_irvine",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.jean_alesi",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.alexander_wurz",
+                                                             "driver.david_coulthard"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-03-26",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Interlagos layout in AMS2; the venue is real, so the historical lap count is kept on the era-close 1991 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  3,
+                       "name":  "San Marino Grand Prix",
+                       "date":  "2000-04-09",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autodromo Internazionale Enzo e Dino Ferrari",
+                                     "id":  "imola_01",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "imola_05"
+                                                   ]
+                                 },
+                       "laps":  62,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.mika_salo",
+                                                             "driver.eddie_irvine",
+                                                             "driver.pedro_diniz",
+                                                             "driver.alexander_wurz",
+                                                             "driver.johnny_herbert",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.jos_verstappen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jean_alesi",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jenson_button",
+                                                             "driver.marc_gene",
+                                                             "driver.heinz_harald_frentzen"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-04-09",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Imola in AMS2; the venue is real, so the historical lap count is kept on the era-close 2001 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  4,
+                       "name":  "British Grand Prix",
+                       "date":  "2000-04-23",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Silverstone Circuit",
+                                     "id":  "silverstone_2001",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "silverstone_1991"
+                                                   ]
+                                 },
+                       "laps":  60,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.david_coulthard",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.michael_schumacher",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jenson_button",
+                                                             "driver.jarno_trulli",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.mika_salo",
+                                                             "driver.alexander_wurz",
+                                                             "driver.jean_alesi",
+                                                             "driver.pedro_diniz",
+                                                             "driver.johnny_herbert",
+                                                             "driver.eddie_irvine",
+                                                             "driver.marc_gene",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.jos_verstappen"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-04-23",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Silverstone in AMS2; the venue is real, so the historical lap count is kept on the near-identical 2001 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  5,
+                       "name":  "Spanish Grand Prix",
+                       "date":  "2000-05-07",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Barcelona-Catalunya",
+                                     "id":  "barcelona_gp_1999",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "barcelona_gp_2001"
+                                                   ]
+                                 },
+                       "laps":  65,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.mika_hakkinen",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.michael_schumacher",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.mika_salo",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.alexander_wurz",
+                                                             "driver.eddie_irvine",
+                                                             "driver.jarno_trulli",
+                                                             "driver.johnny_herbert",
+                                                             "driver.marc_gene",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jenson_button",
+                                                             "driver.jos_verstappen",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.jean_alesi",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.pedro_diniz"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-05-07",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Barcelona layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1999 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  6,
+                       "name":  "European Grand Prix",
+                       "date":  "2000-05-21",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Nürburgring",
+                                     "id":  "nurb_gp_2020",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "nurb_gp_2025",
+                                                       "nurburgring_gp"
+                                                   ]
+                                 },
+                       "laps":  67,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.pedro_diniz",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.jean_alesi",
+                                                             "driver.jenson_button",
+                                                             "driver.johnny_herbert",
+                                                             "driver.alexander_wurz",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.marc_gene",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.eddie_irvine",
+                                                             "driver.jos_verstappen",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.mika_salo",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jarno_trulli"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-05-21",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "The 2000 European GP ran the Nürburgring GP-Strecke before the 2002 Mercedes-Arena extension; the venue is real, so the historical lap count is kept on the modern GP layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  7,
+                       "name":  "Monaco Grand Prix",
+                       "date":  "2000-06-04",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Monaco",
+                                     "id":  "azure_circuit_88",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "azure_circuit"
+                                                   ]
+                                 },
+                       "laps":  78,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.eddie_irvine",
+                                                             "driver.mika_salo",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.johnny_herbert",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jos_verstappen",
+                                                             "driver.michael_schumacher",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.pedro_diniz",
+                                                             "driver.jean_alesi",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.marc_gene",
+                                                             "driver.alexander_wurz",
+                                                             "driver.jenson_button"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-06-04",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "2000 Monaco predates the 2003-04 harbour-front reprofiles, so the 1988 layout is the era-closest; the venue is real and the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  8,
+                       "name":  "Canadian Grand Prix",
+                       "date":  "2000-06-18",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Gilles Villeneuve",
+                                     "id":  "montrealmodern",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "montrealhistoric_1991"
+                                                   ]
+                                 },
+                       "laps":  69,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.jos_verstappen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.david_coulthard",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.alexander_wurz",
+                                                             "driver.pedro_diniz",
+                                                             "driver.jenson_button",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.eddie_irvine",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.marc_gene",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.mika_salo",
+                                                             "driver.jean_alesi",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.johnny_herbert"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-06-18",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "2000 Montreal is the same venue as Montreal Modern, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  9,
+                       "name":  "French Grand Prix",
+                       "date":  "2000-07-02",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Nevers Magny-Cours",
+                                     "id":  "le_mans_bugatti",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "brandshatch_gp",
+                                                       "barcelona_gp_1999"
+                                                   ]
+                                 },
+                       "laps":  73,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.david_coulthard",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jenson_button",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.mika_salo",
+                                                             "driver.pedro_diniz",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.eddie_irvine",
+                                                             "driver.jean_alesi",
+                                                             "driver.marc_gene",
+                                                             "driver.michael_schumacher",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.alexander_wurz",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.jos_verstappen",
+                                                             "driver.johnny_herbert",
+                                                             "driver.ricardo_zonta"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-07-02",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuit de Nevers Magny-Cours - 72 laps / 306 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (the curated 1991+ era override avoids double-booking this season\u0027s Spanish GP at Barcelona)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  10,
+                       "name":  "Austrian Grand Prix",
+                       "date":  "2000-07-16",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Red Bull Ring",
+                                     "id":  "spielberg_2001",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "spielberg_gp"
+                                                   ]
+                                 },
+                       "laps":  71,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.mika_hakkinen",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.jenson_button",
+                                                             "driver.mika_salo",
+                                                             "driver.johnny_herbert",
+                                                             "driver.marc_gene",
+                                                             "driver.pedro_diniz",
+                                                             "driver.alexander_wurz",
+                                                             "driver.luciano_burti",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jean_alesi",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.jos_verstappen",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.michael_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.giancarlo_fisichella"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-07-16",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "The 2000 Austrian GP ran the A1-Ring; AMS2\u0027s Spielberg 2001 is that same layout (f1db lists the venue under its current Red Bull Ring name), so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  11,
+                       "name":  "German Grand Prix",
+                       "date":  "2000-07-30",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hockenheimring",
+                                     "id":  "hockenheim_2001",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "hockenheim_1988"
+                                                   ]
+                                 },
+                       "laps":  45,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.rubens_barrichello",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.david_coulthard",
+                                                             "driver.jenson_button",
+                                                             "driver.mika_salo",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.jarno_trulli",
+                                                             "driver.eddie_irvine",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jos_verstappen",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.marc_gene",
+                                                             "driver.alexander_wurz",
+                                                             "driver.pedro_diniz",
+                                                             "driver.jean_alesi",
+                                                             "driver.johnny_herbert",
+                                                             "driver.michael_schumacher",
+                                                             "driver.giancarlo_fisichella"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-07-30",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Hockenheim in AMS2; the venue is real, so the historical lap count is kept on the near-identical 2001 layout of the pre-2002 forest circuit."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  12,
+                       "name":  "Hungarian Grand Prix",
+                       "date":  "2000-08-13",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hungaroring",
+                                     "id":  "hungaroring_gp_2025",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  77,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.mika_hakkinen",
+                                                             "driver.michael_schumacher",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.eddie_irvine",
+                                                             "driver.jenson_button",
+                                                             "driver.mika_salo",
+                                                             "driver.alexander_wurz",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.jos_verstappen",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.marc_gene",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.johnny_herbert",
+                                                             "driver.pedro_diniz",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jean_alesi"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-08-13",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  13,
+                       "name":  "Belgian Grand Prix",
+                       "date":  "2000-08-27",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Spa-Francorchamps",
+                                     "id":  "spa-francorchamps_1993",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "spa-francorchamps_2005"
+                                                   ]
+                                 },
+                       "laps":  44,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.mika_hakkinen",
+                                                             "driver.michael_schumacher",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.david_coulthard",
+                                                             "driver.jenson_button",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.johnny_herbert",
+                                                             "driver.mika_salo",
+                                                             "driver.eddie_irvine",
+                                                             "driver.pedro_diniz",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.alexander_wurz",
+                                                             "driver.marc_gene",
+                                                             "driver.jos_verstappen",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.jean_alesi",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jarno_trulli"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-08-27",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the era-closest 1993 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  14,
+                       "name":  "Italian Grand Prix",
+                       "date":  "2000-09-10",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autodromo Nazionale Monza",
+                                     "id":  "monza_1991",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "monza_2005"
+                                                   ]
+                                 },
+                       "laps":  53,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jos_verstappen",
+                                                             "driver.alexander_wurz",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.mika_salo",
+                                                             "driver.pedro_diniz",
+                                                             "driver.marc_gene",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jean_alesi",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.jenson_button",
+                                                             "driver.johnny_herbert",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.david_coulthard",
+                                                             "driver.jarno_trulli",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.eddie_irvine"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-09-10",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2000 Monza in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1991 layout (pre-2000 first-chicane configuration)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  15,
+                       "name":  "United States Grand Prix",
+                       "date":  "2000-09-24",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Indianapolis Motor Speedway",
+                                     "id":  "indianapolis_2001_rc",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "indianapolis_2022_rc"
+                                                   ]
+                                 },
+                       "laps":  73,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.eddie_irvine",
+                                                             "driver.pedro_diniz",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.alexander_wurz",
+                                                             "driver.johnny_herbert",
+                                                             "driver.marc_gene",
+                                                             "driver.jean_alesi",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jos_verstappen",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.mika_salo",
+                                                             "driver.jenson_button",
+                                                             "driver.jarno_trulli"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-09-24",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "The inaugural 2000 US GP ran the Indianapolis road course; AMS2\u0027s Indianapolis 2001 road course is that same layout, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  16,
+                       "name":  "Japanese Grand Prix",
+                       "date":  "2000-10-08",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Suzuka Circuit",
+                                     "id":  "kansai_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  53,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.jenson_button",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.johnny_herbert",
+                                                             "driver.eddie_irvine",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.mika_salo",
+                                                             "driver.pedro_diniz",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.jarno_trulli",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.marc_gene",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.alexander_wurz",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.jean_alesi",
+                                                             "driver.jos_verstappen"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-10-08",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  17,
+                       "name":  "Malaysian Grand Prix",
+                       "date":  "2000-10-22",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Sepang International Circuit",
+                                     "id":  "hockenheim_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "circuit_of_the_americas_gp"
+                                                   ]
+                                 },
+                       "laps":  68,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.michael_schumacher",
+                                                             "driver.david_coulthard",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.mika_hakkinen",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.eddie_irvine",
+                                                             "driver.alexander_wurz",
+                                                             "driver.mika_salo",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jos_verstappen",
+                                                             "driver.jean_alesi",
+                                                             "driver.jarno_trulli",
+                                                             "driver.gaston_mazzacane",
+                                                             "driver.johnny_herbert",
+                                                             "driver.ricardo_zonta",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.marc_gene",
+                                                             "driver.jenson_button",
+                                                             "driver.heinz_harald_frentzen",
+                                                             "driver.pedro_de_la_rosa",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.pedro_diniz"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2000-10-22",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Sepang International Circuit - 56 laps / 310.4 km reproduced as 68 laps of the modern Hockenheim GP layout. Both are Hermann Tilke designs of the same era; the redesigned Hockenheim GP keeps Sepang\u0027s long-straight-into-tight-hairpin rhythm and wide modern-GP character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   }
+               ]
+}

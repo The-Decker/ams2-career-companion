@@ -1,0 +1,515 @@
+<UserControl x:Class="Companion.App.Views.ResultEntryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:Companion.App.Views"
+             xmlns:b="clr-namespace:Companion.App.Behaviors"
+             PreviewKeyDown="OnPreviewKeyDown"
+             PreviewMouseUp="OnPreviewMouseUp"
+             Focusable="False">
+    <UserControl.Resources>
+        <!-- Visible on the ONE row currently being edited (EditingReasonDriverId == row id) — the
+             EDIT state's editor. The inverted twin drives the compact DISPLAY state. -->
+        <b:StringsEqualToVisibilityConverter x:Key="StringsEqualVisible" />
+        <b:StringsEqualToVisibilityConverter x:Key="StringsEqualHidden" Invert="True" />
+
+        <!-- a seat line: number, name, team; players get a marker -->
+        <DataTemplate x:Key="SeatLine">
+            <StackPanel Orientation="Horizontal" Background="Transparent">
+                <TextBlock Width="40" Foreground="{StaticResource AccentBrush}" FontFamily="Consolas"
+                           Text="{Binding Number, StringFormat='#{0}'}" />
+                <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
+                <TextBlock Text=" (you)" Foreground="{StaticResource AccentBrush}"
+                           Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
+                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}" Foreground="{StaticResource TextMutedBrush}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- the same per-driver menu everywhere (contract §1): the handlers are one-line
+             translations into the tested viewmodel mouse primitives -->
+        <ContextMenu x:Key="DriverRowMenu"
+                     DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="Place next" Click="OnCtxPlaceNext"
+                      ToolTip="Append at the next open finishing position" />
+            <MenuItem Header="Insert at position…" Click="OnCtxInsertAtPosition"
+                      ToolTip="Insert before a specific position — followers shift down" />
+            <Separator />
+            <MenuItem Header="DNF">
+                <MenuItem Header="Mechanical" Tag="m" Click="OnCtxDnf" />
+                <MenuItem Header="Accident" Tag="a" Click="OnCtxDnf" />
+                <MenuItem Header="Other" Tag="o" Click="OnCtxDnf" />
+            </MenuItem>
+            <MenuItem Header="DSQ" Click="OnCtxDsq" />
+            <Separator />
+            <MenuItem Header="Remove (back to remaining)" Click="OnCtxRemove" />
+        </ContextMenu>
+
+        <Style x:Key="RowContainer" TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+            <Setter Property="ContextMenu" Value="{StaticResource DriverRowMenu}" />
+        </Style>
+
+        <!-- small M/A/O button for the inline DNF reason picker -->
+        <Style x:Key="ReasonButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Padding" Value="7,1" />
+            <Setter Property="Margin" Value="3,0,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <!-- the context menu's "Insert at position…" number popover -->
+        <Popup x:Name="InsertPositionPopup" DockPanel.Dock="Top" StaysOpen="False"
+               Placement="Mouse" AllowsTransparency="True">
+            <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource EdgeBrush}"
+                    BorderThickness="1" CornerRadius="6" Padding="12,10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Insert at position" Style="{StaticResource Muted}"
+                               VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <TextBox x:Name="InsertPositionBox" Width="52" FontFamily="Consolas" FontSize="15"
+                             VerticalAlignment="Center" KeyDown="OnInsertPositionKeyDown" />
+                    <Button Content="Insert" Style="{StaticResource AccentButton}" Margin="8,0,0,0"
+                            Click="OnInsertPositionConfirm" />
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- ===== top: phase + input + action buttons + candidates ===== -->
+        <StackPanel DockPanel.Dock="Top">
+            <!-- first-run coach mark: type OR drag (ux-round §4) -->
+            <Border Style="{StaticResource CoachMark}" Margin="0,0,0,10"
+                    Visibility="{Binding DataContext.CoachMarks.ShowResultEntryTypeOrDrag,
+                                 RelativeSource={RelativeSource AncestorType=views:HomeView},
+                                 Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left" Style="{StaticResource CoachMarkGlyph}" />
+                    <Button DockPanel.Dock="Right" Content="Got it" VerticalAlignment="Center"
+                            Margin="12,0,0,0"
+                            ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
+                            Command="{Binding DataContext.CoachMarks.DismissResultEntryTypeOrDragCommand,
+                                      RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
+                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"
+                               Text="Enter the result your way: TYPE in the box (car number or a few letters, Enter places the next finisher — fastest), or DRAG drivers from Remaining into the finishing order and the DNF/DSQ zones. Both feed the same result and the same undo (Ctrl+Z); right-click any driver for every action." />
+                </DockPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <Border Style="{StaticResource Chip}" Background="{StaticResource AccentDimBrush}"
+                        Visibility="{Binding IsDnfPhase, Converter={StaticResource BoolCollapsed}}">
+                    <TextBlock FontSize="12" Foreground="{StaticResource AccentBrush}"
+                               Text="Type OR drag — car number / 2–3 letters + Enter assigns the next position ('me' = you), or drag drivers into the finishing order" />
+                </Border>
+                <Border Style="{StaticResource Chip}" Background="{StaticResource WarningDimBrush}"
+                        Visibility="{Binding IsDnfPhase, Converter={StaticResource BoolVisible}}">
+                    <TextBlock FontSize="12" Foreground="{StaticResource WarningBrush}"
+                               Text="DNF phase — Enter marks the highlighted driver (↵↵↵ retires the rest in list order); add ' m' / ' a' / ' o' for the reason; F8 returns" />
+                </Border>
+            </StackPanel>
+
+            <DockPanel>
+                <!-- the mouse-parity buttons for the grammar's chords (contract §1) -->
+                <Button DockPanel.Dock="Right" Content="Clear" Margin="8,0,0,0" VerticalAlignment="Stretch"
+                        Command="{Binding ClearInputCommand}"
+                        ToolTip="Clear the input box (Esc)" />
+                <Button DockPanel.Dock="Right" Margin="8,0,0,0" VerticalAlignment="Stretch"
+                        Command="{Binding ToggleDnfPhaseCommand}"
+                        ToolTip="Toggle the DNF phase — Enter then retires drivers instead of placing them (F8)">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Content" Value="DNF phase" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDnfPhase}" Value="True">
+                                    <Setter Property="Content" Value="End DNF phase" />
+                                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button DockPanel.Dock="Right" Content="Undo" Margin="10,0,0,0" VerticalAlignment="Stretch"
+                        Command="{Binding UndoCommand}" IsEnabled="{Binding CanUndo}"
+                        ToolTip="Undo the last placement, DNF, DSQ, or reorder — keyboard or mouse (Ctrl+Z)" />
+
+                <!-- IsUndoEnabled=False ON PURPOSE (BUG B): the grammar owns Ctrl+Z (unlimited undo
+                     across every placement / DNF / DSQ / reorder, via OnPreviewKeyDown → vm.Undo).
+                     The TextBox's built-in per-keystroke undo would otherwise be a second Ctrl+Z
+                     owner that can swallow the chord depending on where focus landed after a mouse
+                     action (e.g. picking Mech/Acc), making that change look un-undoable. One owner. -->
+                <TextBox x:Name="InputBox" FontSize="20" FontFamily="Consolas" Padding="12,9"
+                         IsUndoEnabled="False"
+                         Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDnfPhase}" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+            </DockPanel>
+
+            <!-- candidates dropdown: what Enter will do; Tab cycles the highlight -->
+            <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource EdgeBrush}"
+                    BorderThickness="1" CornerRadius="0,0,6,6" Margin="6,0,6,0">
+                <Border.Visibility>
+                    <MultiBinding Converter="{StaticResource CandidatesVisible}">
+                        <Binding Path="Candidates.Count" />
+                        <Binding Path="Input" />
+                        <Binding Path="IsDnfPhase" />
+                    </MultiBinding>
+                </Border.Visibility>
+                <ListBox ItemsSource="{Binding Candidates}"
+                         SelectedIndex="{Binding SelectedCandidateIndex, Mode=TwoWay}"
+                         MaxHeight="230" ItemTemplate="{StaticResource SeatLine}"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="Focusable" Value="False" />
+                            <EventSetter Event="MouseDoubleClick" Handler="OnCandidateDoubleClick" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Border>
+
+            <TextBlock Foreground="{StaticResource ErrorBrush}" Margin="2,6,0,0"
+                       Text="{Binding ErrorText}"
+                       Visibility="{Binding ErrorText, Converter={StaticResource NullCollapsed}}" />
+        </StackPanel>
+
+        <!-- ===== footer: progress + live timer + hints + confirm ===== -->
+        <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,1,0,0"
+                Padding="14,10" Margin="0,12,0,0" CornerRadius="6">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Confirm result  ⏎" Style="{StaticResource AccentButton}"
+                        Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
+                        ToolTip="Score the round and review points + standings movement before applying" />
+
+                <!-- the slider prompt: the in-game Opponent Skill this round was DRIVEN at
+                     (prefilled with the pace-anchor recommendation, stored in the envelope) -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center"
+                            Margin="0,0,18,0"
+                            ToolTip="The in-game Opponent Skill you actually raced at — prefilled with the recommendation, saved with the result (it calibrates your pace anchor)">
+                    <TextBlock Text="Opponent Skill raced at" Style="{StaticResource Muted}"
+                               VerticalAlignment="Center" />
+                    <Slider Width="130" Margin="10,0,8,0" VerticalAlignment="Center" Focusable="False"
+                            Minimum="70" Maximum="120" SmallChange="1" LargeChange="5"
+                            TickFrequency="1" IsSnapToTickEnabled="True"
+                            Value="{Binding SliderUsed}" />
+                    <TextBlock Text="{Binding SliderUsedText}" FontWeight="SemiBold" FontFamily="Consolas"
+                               FontSize="15" VerticalAlignment="Center" MinWidth="44" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold" FontSize="16" />
+                    <TextBlock Text="{Binding ElapsedText}" Style="{StaticResource Mono}" FontSize="16"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="18,0,0,0" />
+                    <TextBlock Style="{StaticResource Faint}" Margin="24,0,12,0" VerticalAlignment="Center"
+                               TextWrapping="Wrap"
+                               Text="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo — or drag drivers; right-click any row for more" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ===== center: Remaining | Finishing order | Out (DNF + DSQ zones) ===== -->
+        <Grid Margin="0,14,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- remaining, grid order; drag source + unmark drop target -->
+            <Border Grid.Column="0" Margin="0,0,6,0" Padding="10"
+                    b:ListDragDropBehavior.Role="remaining"
+                    b:ListDragDropBehavior.IsDropTarget="True">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                        <Style.Triggers>
+                            <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
+                               Text="{Binding Remaining.Count, StringFormat='Remaining ({0}, grid order)'}" />
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
+                               Text="Drag into the order — Ctrl/Shift-click to select several, drop back here to unmark" />
+                    <ListBox x:Name="RemainingList" ItemsSource="{Binding Remaining}"
+                             ItemTemplate="{StaticResource SeatLine}" SelectionMode="Extended"
+                             Background="Transparent" BorderThickness="0"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             b:ListDragDropBehavior.Role="remaining"
+                             b:ListDragDropBehavior.IsDragSource="True"
+                             b:ListDragDropBehavior.SyncSelection="True">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource RowContainer}">
+                                <Setter Property="ToolTip" Value="Drag into the finishing order or a zone; double-click assigns the next open position (DNF in the DNF phase); right-click for more" />
+                                <EventSetter Event="MouseDoubleClick" Handler="OnRemainingDoubleClick" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- finishing order, P1 first; reorder within, insert from anywhere -->
+            <Border Grid.Column="1" Margin="6,0" Padding="10"
+                    b:ListDragDropBehavior.Role="order">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                        <Style.Triggers>
+                            <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Finishing order" FontWeight="SemiBold" Margin="4,0,0,2" />
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
+                               Text="Drop between rows to insert — dropping on a filled slot inserts before it; drag rows to reorder (a stewards' re-position)" />
+                    <!-- IsVirtualizing=False ON PURPOSE: P1..Pn comes from AlternationIndex,
+                         which renumbers realized containers under virtualization; the list is
+                         bounded by the grid size, so correctness wins (ux-round §4 caveat) -->
+                    <ListBox x:Name="OrderList" ItemsSource="{Binding Classified}" AlternationCount="200"
+                             VirtualizingPanel.IsVirtualizing="False"
+                             Background="Transparent" BorderThickness="0"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             b:ListDragDropBehavior.Role="order"
+                             b:ListDragDropBehavior.IsDragSource="True"
+                             b:ListDragDropBehavior.IsDropTarget="True">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Background="Transparent">
+                                    <TextBlock Width="42" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}"
+                                               Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource AltPosition}}" />
+                                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource SeatLine}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource RowContainer}">
+                                <Setter Property="ToolTip" Value="Drag to reorder (penalty re-position) or out to a zone; right-click for more" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- out: the DNF and DSQ drop zones -->
+            <Grid Grid.Column="2" Margin="6,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- DNF zone -->
+                <Border Grid.Row="0" Padding="10" Margin="0,0,0,6"
+                        b:ListDragDropBehavior.Role="dnf"
+                        b:ListDragDropBehavior.IsDropTarget="True">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                            <Style.Triggers>
+                                <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
+                                   Foreground="{StaticResource WarningBrush}" Text="DNF — drop drivers here" />
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
+                                   Text="Multi-select drops retire in bulk; pick the reason on the dropped row" />
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                            <ItemsControl ItemsSource="{Binding Dnfs}"
+                                          b:ListDragDropBehavior.Role="dnf"
+                                          b:ListDragDropBehavior.IsDragSource="True">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="4,3" Background="Transparent"
+                                                    ContextMenu="{StaticResource DriverRowMenu}">
+                                            <!-- ===== DISPLAY state (default, "done"): DNF + name + TEAM + reason label,
+                                                 no editor. Click anywhere on it to edit (the box comes back seeded). ===== -->
+                                            <StackPanel Orientation="Horizontal" Background="Transparent"
+                                                        MouseLeftButtonUp="OnResolvedRowClick" Cursor="Hand"
+                                                        ToolTip="Click to change the reason; drag back to Remaining to unmark; right-click for more">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualHidden}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="Seat.DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                           FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
+                                                           Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                <!-- reason label: custom text when present, else the m/a/o word -->
+                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center">
+                                                    <Run Text=" · " /><Run Text="{Binding Mode=OneWay, Converter={StaticResource DnfReason}}" />
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <!-- ===== EDIT state: shown on the ONE row being edited (fresh drop, or a
+                                                 click on a done row). M/A/O picker + (when Other) custom box + fault
+                                                 toggle + Remove. NON-BLOCKING — the DNF is already recorded; Remove takes
+                                                 it straight back to Remaining whether or not a reason was chosen. ===== -->
+                                            <StackPanel Background="Transparent">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualVisible}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="Seat.DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <!-- keep the driver + team in view while editing, for context -->
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                               FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
+                                                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Mech" Tag="m"
+                                                            Click="OnReasonPickClick" ToolTip="Mechanical failure (no blame)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Acc" Tag="a"
+                                                            Click="OnReasonPickClick" ToolTip="Accident (driver error)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Other" Tag="o"
+                                                            Click="OnReasonPickClick" ToolTip="Other — name a custom cause" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Done"
+                                                            Click="OnReasonPickDone"
+                                                            ToolTip="Finish — hide the editor (also: press Enter in the box)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Remove"
+                                                            Foreground="{StaticResource WarningBrush}"
+                                                            Click="OnReasonPickRemove"
+                                                            ToolTip="Mistake? Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
+                                                </StackPanel>
+                                                <!-- custom cause: only when the reason is "Other" -->
+                                                <StackPanel Orientation="Horizontal" Margin="46,4,0,0"
+                                                            Visibility="{Binding Reason, Converter={StaticResource StringEqualsVisible}, ConverterParameter=o}">
+                                                    <TextBox Width="150" FontSize="12" Padding="5,1"
+                                                             Text="{Binding Detail, Mode=OneWay}"
+                                                             LostFocus="OnDnfDetailChanged" KeyDown="OnDnfDetailKeyDown"
+                                                             ToolTip="Name the cause, e.g. &quot;Engine fire&quot;, &quot;Spun off&quot; (Enter to confirm)" />
+                                                    <CheckBox Content="driver's fault" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                              FontSize="11" IsChecked="{Binding DriverAttributed, Mode=OneWay}"
+                                                              Click="OnDnfFaultToggle"
+                                                              ToolTip="Tick if this was the driver's error (affects your overperformance rating)" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+                <!-- DSQ zone -->
+                <Border Grid.Row="1" Padding="10" Margin="0,6,0,0"
+                        b:ListDragDropBehavior.Role="dsq"
+                        b:ListDragDropBehavior.IsDropTarget="True">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                            <Style.Triggers>
+                                <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
+                                    <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}" />
+                                    <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
+                                   Foreground="{StaticResource ErrorBrush}" Text="DSQ — drop drivers here" />
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
+                                   Text="A placed driver is pulled out of the classification" />
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                            <ItemsControl ItemsSource="{Binding Disqualified}"
+                                          b:ListDragDropBehavior.Role="dsq"
+                                          b:ListDragDropBehavior.IsDragSource="True">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="4,3" Background="Transparent"
+                                                    ContextMenu="{StaticResource DriverRowMenu}">
+                                            <!-- ===== DISPLAY state (default, "done"): DSQ + name + TEAM + reason label
+                                                 (the custom reason, or "disqualified" when none). Click to edit. ===== -->
+                                            <StackPanel Orientation="Horizontal" Background="Transparent"
+                                                        MouseLeftButtonUp="OnResolvedRowClick" Cursor="Hand"
+                                                        ToolTip="Click to change the reason; drag back to Remaining to unmark; right-click for more">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualHidden}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
+                                                           FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
+                                                           Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center">
+                                                    <Run Text=" · " /><Run>
+                                                        <Run.Text>
+                                                            <MultiBinding Converter="{StaticResource DsqReasonLabel}">
+                                                                <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                                <Binding Path="DriverId" />
+                                                            </MultiBinding>
+                                                        </Run.Text>
+                                                    </Run>
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <!-- ===== EDIT state: the reason text box + Remove, on the ONE row being
+                                                 edited (click-to-edit). Enter in the box commits AND closes the editor. ===== -->
+                                            <StackPanel Background="Transparent">
+                                                <StackPanel.Visibility>
+                                                    <MultiBinding Converter="{StaticResource StringsEqualVisible}">
+                                                        <Binding Path="DataContext.EditingReasonDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        <Binding Path="DriverId" />
+                                                    </MultiBinding>
+                                                </StackPanel.Visibility>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
+                                                               FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
+                                                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
+                                                    <!-- free-text DSQ reason, e.g. "Underweight", "Illegal wing" -->
+                                                    <TextBox Width="150" FontSize="12" Padding="5,1"
+                                                             VerticalAlignment="Center"
+                                                             Loaded="OnDsqReasonLoaded"
+                                                             LostFocus="OnDsqReasonChanged" KeyDown="OnDsqReasonKeyDown"
+                                                             ToolTip="Reason for disqualification (Enter to confirm) — optional" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Done"
+                                                            Click="OnReasonPickDone"
+                                                            ToolTip="Finish — hide the editor (also: press Enter in the box)" />
+                                                    <Button Style="{StaticResource ReasonButton}" Content="Remove"
+                                                            Foreground="{StaticResource ErrorBrush}"
+                                                            Click="OnReasonPickRemove"
+                                                            ToolTip="Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>

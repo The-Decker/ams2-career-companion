@@ -1,0 +1,985 @@
+{
+  "year": 1991,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Classic_Gen4",
+  "pointsSystem": {
+    "racePoints": [
+      10,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    },
+    "roundOverrides": [
+      {
+        "grandPrix": "australia",
+        "pointsFactor": "1/2"
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "United States Grand Prix",
+      "date": "1991-03-10",
+      "championship": true,
+      "track": {
+        "realVenue": "Phoenix Street Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "adelaide_historic"
+        ]
+      },
+      "laps": 95,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.mika_hakkinen",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.gabriele_tarquini",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.nicola_larini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-03-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Phoenix Street Circuit — 81 laps / 301.4 km reproduced as 95 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 — the era's US street-race character; Adelaide already hosts this season's Australian GP."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "name": "Brazilian Grand Prix",
+      "date": "1991-03-24",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo José Carlos Pace",
+        "id": "interlagos_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 71,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.mika_hakkinen",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.gabriele_tarquini",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-03-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Interlagos 1991 is the same rebuilt layout the 1991 Brazilian GP ran (4.325 km); the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "name": "San Marino Grand Prix",
+      "date": "1991-04-28",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.mika_hakkinen",
+          "driver.julian_bailey",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris",
+          "driver.eric_van_de_poele"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1991-04-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Imola 1988 is the same Enzo e Dino Ferrari circuit the 1991 San Marino GP ran; the venue is real, so the historical lap count is kept on the era-matching layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "name": "Monaco Grand Prix",
+      "date": "1991-05-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.mika_hakkinen",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.gabriele_tarquini",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-05-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Azure Circuit is Monaco; the venue is real, so the historical lap count is kept on the period-correct 1988 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "name": "Canadian Grand Prix",
+      "date": "1991-06-02",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "montrealhistoric"
+        ]
+      },
+      "laps": 69,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.mika_hakkinen",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-06-02",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Montreal 1991 is the same Circuit Gilles Villeneuve the 1991 Canadian GP ran; the venue is real, so the historical lap count is kept on the period-correct layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "name": "Mexican Grand Prix",
+      "date": "1991-06-16",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Hermanos Rodríguez",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "interlagos_1991",
+          "interlagos_historic"
+        ]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.olivier_grouillard",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-06-16",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 67 laps / 296.2 km reproduced as 59 laps of Jacarepagua Historic. Jacarepaguá keeps the era's Latin-American GP venue character; from 1990 the Brazilian GP itself runs at Interlagos, so the Interlagos stand-ins would double-book the venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "name": "French Grand Prix",
+      "date": "1991-07-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Nevers Magny-Cours",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "brandshatch_gp",
+          "barcelona_gp_1999"
+        ]
+      },
+      "laps": 73,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.johnny_herbert",
+          "driver.olivier_grouillard",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-07-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit de Nevers Magny-Cours — 72 laps / 307.5 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue; the 1991 French GP was the first at Magny-Cours, which is not in AMS2."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "name": "British Grand Prix",
+      "date": "1991-07-14",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_1975"
+        ]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-07-14",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Silverstone 1991 is the exact layout the 1991 British GP ran; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "name": "German Grand Prix",
+      "date": "1991-07-28",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 45,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.mika_hakkinen",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris",
+          "driver.nicola_larini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-07-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1991 Hockenheim layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1988 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "name": "Hungarian Grand Prix",
+      "date": "1991-08-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 77,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.mika_hakkinen",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.andrea_de_cesaris",
+          "driver.nicola_larini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-08-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "name": "Belgian Grand Prix",
+      "date": "1991-08-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 44,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.olivier_grouillard",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.michael_schumacher",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-08-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1991 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the era-adjacent 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "name": "Italian Grand Prix",
+      "date": "1991-09-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.mika_hakkinen",
+          "driver.olivier_grouillard",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.michael_schumacher",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.roberto_moreno",
+          "driver.andrea_de_cesaris",
+          "driver.nicola_larini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-09-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Monza 1991 is the exact layout the 1991 Italian GP ran; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "name": "Portuguese Grand Prix",
+      "date": "1991-09-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 71,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.michael_schumacher",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.aguri_suzuki",
+          "driver.roberto_moreno",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-09-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Cascais 1988 is the Estoril circuit the 1991 Portuguese GP ran; the venue is real, so the historical lap count is kept on the era-matching layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "name": "Spanish Grand Prix",
+      "date": "1991-09-29",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Barcelona-Catalunya",
+        "id": "barcelona_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 65,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.mika_hakkinen",
+          "driver.gabriele_tarquini",
+          "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
+          "driver.michael_schumacher",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.eric_bernard",
+          "driver.alex_zanardi",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-09-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Barcelona 1991 is the exact layout the inaugural 1991 Spanish GP at Catalunya ran; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "name": "Japanese Grand Prix",
+      "date": "1991-10-20",
+      "championship": true,
+      "track": {
+        "realVenue": "Suzuka Circuit",
+        "id": "kansai_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.alex_caffi",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.gabriele_tarquini",
+          "driver.mauricio_gugelmin",
+          "driver.karl_wendlinger",
+          "driver.michael_schumacher",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.alain_prost",
+          "driver.jean_alesi",
+          "driver.aguri_suzuki",
+          "driver.alex_zanardi",
+          "driver.andrea_de_cesaris"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1991-10-20",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "name": "Australian Grand Prix",
+      "date": "1991-11-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 14,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.stefano_modena",
+          "driver.nigel_mansell",
+          "driver.riccardo_patrese",
+          "driver.mark_blundell",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
+          "driver.mika_hakkinen",
+          "driver.johnny_herbert",
+          "driver.mauricio_gugelmin",
+          "driver.karl_wendlinger",
+          "driver.michael_schumacher",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.jj_lehto",
+          "driver.pierluigi_martini",
+          "driver.roberto_moreno",
+          "driver.thierry_boutsen",
+          "driver.erik_comas",
+          "driver.gianni_morbidelli",
+          "driver.jean_alesi",
+          "driver.alex_zanardi",
+          "driver.andrea_de_cesaris",
+          "driver.nicola_larini"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1991-11-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2's Adelaide 1988 is the same street circuit the 1991 Australian GP ran; the venue is real, so the historical lap count is kept — the 1991 race was famously stopped after 14 laps in torrential rain."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "$comment": "Headline template bank for the career news feed (docs/dev/career-sim.md, News/headlines). Keys are 'journalPhase|cause'; each key holds era-flavored variant lists selected deterministically via the 'headlines' stream, with 'default' as the fallback era. Tokens: {player} {team} {race} {position} {year} for race results; {driver} {year} for retirement items; {champion} {year} for the season digest. 1960s copy is written in period wire-report/telegram voice. Parsed by Companion.Core.Career.HeadlineBank.",
+  "eras": [
+    { "key": "1960s", "fromYear": 1946, "toYear": 1969 }
+  ],
+  "templates": {
+    "race.result|win": {
+      "1960s": [
+        "{player} MASTERS {race} — {team} TOASTS FAMOUS VICTORY",
+        "VICTORY WIRE: {player} first past the flag at {race}",
+        "{player} takes {race} in commanding style for {team}",
+        "CHEQUERED FLAG — {player} wins {race}, crowds salute new hero",
+        "{race} falls to {player}; {team} garage in jubilation",
+        "TELEGRAM FROM THE CIRCUIT: {player} WINS. STOP. MAGNIFICENT DRIVE. STOP.",
+        "{player} conquers {race} — the {year} season has its talking point"
+      ],
+      "default": [
+        "{player} wins {race}",
+        "Victory for {player} at {race}",
+        "{player} delivers a flawless win for {team} at {race}"
+      ]
+    },
+    "race.result|podium": {
+      "1960s": [
+        "{player} on the rostrum at {race} — {position} for {team}",
+        "FINE DRIVE: {player} carries {team} to {position} at {race}",
+        "{player} splits the front-runners, {position} at {race}",
+        "Rostrum champagne for {player} after {position} at {race}",
+        "{team} celebrate as {player} claims {position} at {race}",
+        "PRESS ROOM NOTES: {player} quick all weekend, rewarded with {position}"
+      ],
+      "default": [
+        "{player} takes {position} at {race}",
+        "Podium for {player} at {race}",
+        "{player} brings {team} home {position} at {race}"
+      ]
+    },
+    "race.result|points": {
+      "1960s": [
+        "{player} in the points at {race} — {position} at the flag",
+        "Steady hand: {player} banks championship points at {race}",
+        "{team} timesheets show {player} {position} — points in the bag",
+        "USEFUL AFTERNOON: {player} scores at {race}",
+        "{player} brings the car home {position}; {team} ledger ticks over",
+        "Points finish for {player} keeps the {year} campaign moving"
+      ],
+      "default": [
+        "{player} scores points at {race}",
+        "{player} finishes {position} at {race}",
+        "Solid points haul for {player} at {race}"
+      ]
+    },
+    "race.result|overperformed": {
+      "1960s": [
+        "GIANT-KILLING: {player} drags the {team} machine to {position} at {race}",
+        "{player} defies the odds at {race} — {position} from nowhere",
+        "Paddock abuzz: {player} makes the {team} car sing at {race}",
+        "{player} punches above the car's weight — {position} at {race}",
+        "SCOUTS' NOTEBOOKS OUT: {player} stars at {race}",
+        "The drive of the day belongs to {player}, {position} at {race}"
+      ],
+      "default": [
+        "{player} overdelivers at {race} with {position}",
+        "{player} outruns the car's pace at {race}",
+        "Eye-catching {position} for {player} at {race}"
+      ]
+    },
+    "race.result|underperformed": {
+      "1960s": [
+        "OFF-SONG: {player} labours to {position} at {race}",
+        "{player} anonymous at {race}; {team} seek answers",
+        "A day to forget — {player} only {position} at {race}",
+        "{team} puzzled as {player} fades to {position} at {race}",
+        "PIT LANE WHISPERS: {player} short of pace at {race}",
+        "{player} misses the mark at {race}"
+      ],
+      "default": [
+        "{player} struggles to {position} at {race}",
+        "Flat afternoon for {player} at {race}",
+        "{player} below par at {race}"
+      ]
+    },
+    "race.result|dnf-mechanical": {
+      "1960s": [
+        "HEARTBREAK: {player}'s {team} machine expires at {race}",
+        "Mechanical woe ends {player}'s {race} — no fault of the driver",
+        "{player} out of {race}; the car cried enough",
+        "SMOKE AND SILENCE: {team} failure sidelines {player} at {race}",
+        "The machinery betrays {player} at {race}",
+        "{player} retires at {race} — {team} spanners out in vain"
+      ],
+      "default": [
+        "Mechanical failure ends {player}'s {race}",
+        "{player} retires from {race} with car trouble",
+        "The car lets {player} down at {race}"
+      ]
+    },
+    "race.result|dnf-driver-error": {
+      "1960s": [
+        "{player} OFF THE ROAD — {race} ends in the ditch",
+        "Moment of madness: {player} throws away {race}",
+        "{player} overcooks it at {race}; {team} count the cost",
+        "SPIN AND OUT: {player}'s {race} ends in error",
+        "{player} shoulders the blame for {race} retirement",
+        "Costly slip — {player} out of {race} by his own hand"
+      ],
+      "default": [
+        "{player} crashes out of {race}",
+        "Driver error ends {player}'s {race}",
+        "{player} throws away a finish at {race}"
+      ]
+    },
+    "race.result|midfield": {
+      "1960s": [
+        "{player} brings it home {position} at {race} — quiet afternoon",
+        "Midfield running for {player} at {race}",
+        "{player} completes {race} in {position}; little to report",
+        "WORKMANLIKE: {player} {position} at {race}",
+        "{player} logs the miles at {race}",
+        "No fireworks — {player} {position} at {race}"
+      ],
+      "default": [
+        "{player} finishes {position} at {race}",
+        "Quiet race for {player} at {race}",
+        "{player} runs to {position} at {race}"
+      ]
+    },
+    "driver.retirement|canon": {
+      "1960s": [
+        "{driver} HANGS UP THE GOGGLES — an era closes",
+        "{driver} announces retirement from grand prix racing",
+        "The paddock salutes {driver}, retiring as planned after {year}",
+        "{driver} steps down; the record book keeps the rest",
+        "FAREWELL TOUR COMPLETE: {driver} retires",
+        "{driver} calls time on a storied career"
+      ],
+      "default": [
+        "{driver} retires from racing",
+        "{driver} announces retirement after {year}",
+        "End of the road: {driver} steps away"
+      ]
+    },
+    "driver.retirement|age-performance": {
+      "1960s": [
+        "{driver} bows to the years and parks the car for good",
+        "TIME CATCHES ALL: {driver} retires after {year}",
+        "{driver} steps aside — the stopwatch was no longer kind",
+        "After a fading season, {driver} announces retirement",
+        "{driver} quits the cockpit; younger men circle the seat",
+        "The long goodbye ends — {driver} retires"
+      ],
+      "default": [
+        "{driver} retires after a fading season",
+        "{driver} calls it a career",
+        "Age wins: {driver} steps down after {year}"
+      ]
+    },
+    "driver.retirement.foreshadow|considering-future": {
+      "1960s": [
+        "{driver} said to be considering his future in the sport",
+        "PADDOCK TALK: {driver} weighs retirement",
+        "{driver} non-committal on {year} plans — friends sense a decision coming",
+        "Whispers at the back of the garage: {driver} may stop",
+        "{driver} spotted in long conversation with the team owner — future unclear",
+        "Insiders say {driver} is thinking hard about next season"
+      ],
+      "default": [
+        "{driver} is considering their future",
+        "Rumours swirl over {driver}'s plans",
+        "{driver} undecided about next season"
+      ]
+    },
+    "team.tier|promoted": {
+      "1960s": [
+        "{team} ON THE UP — new backers, new budget for {year}",
+        "Sponsors queue at {team}'s door after a fine season",
+        "{team} expand the works; the money follows the results",
+        "Fresh capital flows into {team}",
+        "{team} promoted in the paddock's unwritten order",
+        "The garages whisper: {team} are coming good"
+      ],
+      "default": [
+        "{team} budget grows after a strong season",
+        "{team} attract new backing",
+        "{team} climb the paddock order"
+      ]
+    },
+    "team.tier|relegated": {
+      "1960s": [
+        "LEAN TIMES AT {team} — purse strings tighten for {year}",
+        "{team} lose backers after a bruising season",
+        "Cutbacks at {team}; the transporter grows emptier",
+        "{team} slide down the paddock's pecking order",
+        "Creditors' letters pile up at {team}",
+        "The money men lose faith in {team}"
+      ],
+      "default": [
+        "{team} budget shrinks after a poor season",
+        "{team} lose sponsorship backing",
+        "{team} slip down the order"
+      ]
+    },
+    "season.digest|season-complete": {
+      "1960s": [
+        "{champion} IS CHAMPION OF THE WORLD — the {year} season enters the books",
+        "THE {year} CHAMPIONSHIP FALLS TO {champion}; season closed",
+        "{champion} crowned as {year} concludes — winter of rumours begins",
+        "Final flag of {year}: {champion} takes the laurels",
+        "SEASON REVIEW WIRE: {champion} champion; garages already building for next year",
+        "{year} belongs to {champion}. The rest is for the history men.",
+        "Champagne for {champion} — the {year} title is settled"
+      ],
+      "default": [
+        "{champion} is the {year} champion",
+        "The {year} season closes with {champion} on top",
+        "{champion} takes the {year} title"
+      ]
+    }
+  }
+}

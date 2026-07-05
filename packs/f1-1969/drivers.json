@@ -1,0 +1,550 @@
+{
+  "drivers": [
+    {
+      "id": "driver.graham_hill",
+      "name": "Graham Hill",
+      "country": "GBR",
+      "born": 1929,
+      "ratings": {
+        "raceSkill": 0.88,
+        "qualifyingSkill": 0.89,
+        "aggression": 0.54,
+        "defending": 0.4,
+        "stamina": 0.84,
+        "consistency": 0.86,
+        "startReactions": 0.9,
+        "wetSkill": 0.86,
+        "tyreManagement": 0.89,
+        "blueFlagConceding": 0.88,
+        "weatherTyreChanges": 0.77,
+        "avoidanceOfMistakes": 0.55,
+        "avoidanceOfForcedMistakes": 0.42
+      }
+    },
+    {
+      "id": "driver.jochen_rindt",
+      "name": "Jochen Rindt",
+      "country": "AUT",
+      "born": 1942,
+      "ratings": {
+        "raceSkill": 0.93,
+        "qualifyingSkill": 0.98,
+        "aggression": 0.54,
+        "defending": 0.43,
+        "stamina": 0.88,
+        "consistency": 0.74,
+        "startReactions": 0.9,
+        "wetSkill": 0.9,
+        "tyreManagement": 0.86,
+        "blueFlagConceding": 0.89,
+        "weatherTyreChanges": 0.68,
+        "avoidanceOfMistakes": 0.49,
+        "avoidanceOfForcedMistakes": 0.41
+      }
+    },
+    {
+      "id": "driver.mario_andretti",
+      "name": "Mario Andretti",
+      "country": "USA",
+      "born": 1940,
+      "ratings": {
+        "raceSkill": 0.79,
+        "qualifyingSkill": 0.81,
+        "aggression": 0.44,
+        "defending": 0.39,
+        "stamina": 0.91,
+        "consistency": 0.62,
+        "startReactions": 0.92,
+        "wetSkill": 0.88,
+        "tyreManagement": 0.83,
+        "blueFlagConceding": 0.97,
+        "weatherTyreChanges": 0.68,
+        "avoidanceOfMistakes": 0.46,
+        "avoidanceOfForcedMistakes": 0.29
+      }
+    },
+    {
+      "id": "driver.jo_siffert",
+      "name": "Jo Siffert",
+      "country": "CHE",
+      "born": 1936,
+      "ratings": {
+        "raceSkill": 0.87,
+        "qualifyingSkill": 0.88,
+        "aggression": 0.49,
+        "defending": 0.36,
+        "stamina": 0.81,
+        "consistency": 0.7,
+        "startReactions": 0.88,
+        "wetSkill": 0.8,
+        "tyreManagement": 0.87,
+        "blueFlagConceding": 0.92,
+        "weatherTyreChanges": 0.81,
+        "avoidanceOfMistakes": 0.48,
+        "avoidanceOfForcedMistakes": 0.36
+      }
+    },
+    {
+      "id": "driver.denny_hulme",
+      "name": "Denny Hulme",
+      "country": "NZL",
+      "born": 1936,
+      "ratings": {
+        "raceSkill": 0.9,
+        "qualifyingSkill": 0.93,
+        "aggression": 0.59,
+        "defending": 0.4,
+        "stamina": 0.88,
+        "consistency": 0.9,
+        "startReactions": 0.91,
+        "wetSkill": 0.81,
+        "tyreManagement": 0.88,
+        "blueFlagConceding": 0.9,
+        "weatherTyreChanges": 0.74,
+        "avoidanceOfMistakes": 0.75,
+        "avoidanceOfForcedMistakes": 0.66
+      }
+    },
+    {
+      "id": "driver.bruce_mclaren",
+      "name": "Bruce McLaren",
+      "country": "NZL",
+      "born": 1937,
+      "ratings": {
+        "raceSkill": 0.86,
+        "qualifyingSkill": 0.87,
+        "aggression": 0.51,
+        "defending": 0.37,
+        "stamina": 0.79,
+        "consistency": 0.85,
+        "startReactions": 0.89,
+        "wetSkill": 0.78,
+        "tyreManagement": 0.79,
+        "blueFlagConceding": 0.91,
+        "weatherTyreChanges": 0.86,
+        "avoidanceOfMistakes": 0.38,
+        "avoidanceOfForcedMistakes": 0.3
+      }
+    },
+    {
+      "id": "driver.jackie_stewart",
+      "name": "Jackie Stewart",
+      "country": "GBR",
+      "born": 1939,
+      "ratings": {
+        "raceSkill": 0.96,
+        "qualifyingSkill": 0.97,
+        "aggression": 0.56,
+        "defending": 0.41,
+        "stamina": 0.82,
+        "consistency": 0.92,
+        "startReactions": 0.89,
+        "wetSkill": 0.91,
+        "tyreManagement": 0.92,
+        "blueFlagConceding": 0.88,
+        "weatherTyreChanges": 0.66,
+        "avoidanceOfMistakes": 0.61,
+        "avoidanceOfForcedMistakes": 0.53
+      }
+    },
+    {
+      "id": "driver.jean_pierre_beltoise",
+      "name": "Jean-Pierre Beltoise",
+      "country": "FRA",
+      "born": 1937,
+      "ratings": {
+        "raceSkill": 0.84,
+        "qualifyingSkill": 0.85,
+        "aggression": 0.38,
+        "defending": 0.34,
+        "stamina": 0.79,
+        "consistency": 0.79,
+        "startReactions": 0.82,
+        "wetSkill": 0.71,
+        "tyreManagement": 0.73,
+        "blueFlagConceding": 0.94,
+        "weatherTyreChanges": 0.79,
+        "avoidanceOfMistakes": 0.4,
+        "avoidanceOfForcedMistakes": 0.26
+      }
+    },
+    {
+      "id": "driver.chris_amon",
+      "name": "Chris Amon",
+      "country": "NZL",
+      "born": 1943,
+      "ratings": {
+        "raceSkill": 0.87,
+        "qualifyingSkill": 0.94,
+        "aggression": 0.53,
+        "defending": 0.42,
+        "stamina": 0.83,
+        "consistency": 0.81,
+        "startReactions": 0.9,
+        "wetSkill": 0.89,
+        "tyreManagement": 0.93,
+        "blueFlagConceding": 0.9,
+        "weatherTyreChanges": 0.62,
+        "avoidanceOfMistakes": 0.67,
+        "avoidanceOfForcedMistakes": 0.6
+      }
+    },
+    {
+      "id": "driver.pedro_rodriguez",
+      "name": "Pedro Rodríguez",
+      "country": "MEX",
+      "born": 1940,
+      "ratings": {
+        "raceSkill": 0.73,
+        "qualifyingSkill": 0.75,
+        "aggression": 0.48,
+        "defending": 0.38,
+        "stamina": 0.79,
+        "consistency": 0.65,
+        "startReactions": 0.88,
+        "wetSkill": 0.79,
+        "tyreManagement": 0.79,
+        "blueFlagConceding": 0.93,
+        "weatherTyreChanges": 0.92,
+        "avoidanceOfMistakes": 0.59,
+        "avoidanceOfForcedMistakes": 0.45
+      }
+    },
+    {
+      "id": "driver.john_surtees",
+      "name": "John Surtees",
+      "country": "GBR",
+      "born": 1934,
+      "ratings": {
+        "raceSkill": 0.81,
+        "qualifyingSkill": 0.82,
+        "aggression": 0.65,
+        "defending": 0.43,
+        "stamina": 0.76,
+        "consistency": 0.79,
+        "startReactions": 0.91,
+        "wetSkill": 0.88,
+        "tyreManagement": 0.84,
+        "blueFlagConceding": 0.89,
+        "weatherTyreChanges": 0.88,
+        "avoidanceOfMistakes": 0.64,
+        "avoidanceOfForcedMistakes": 0.56
+      }
+    },
+    {
+      "id": "driver.jackie_oliver",
+      "name": "Jackie Oliver",
+      "country": "GBR",
+      "born": 1942,
+      "ratings": {
+        "raceSkill": 0.72,
+        "qualifyingSkill": 0.77,
+        "aggression": 0.32,
+        "defending": 0.36,
+        "stamina": 0.68,
+        "consistency": 0.59,
+        "startReactions": 0.79,
+        "wetSkill": 0.79,
+        "tyreManagement": 0.72,
+        "blueFlagConceding": 0.98,
+        "weatherTyreChanges": 0.81,
+        "avoidanceOfMistakes": 0.39,
+        "avoidanceOfForcedMistakes": 0.26
+      }
+    },
+    {
+      "id": "driver.jack_brabham",
+      "name": "Jack Brabham",
+      "country": "AUS",
+      "born": 1926,
+      "ratings": {
+        "raceSkill": 0.89,
+        "qualifyingSkill": 0.91,
+        "aggression": 0.55,
+        "defending": 0.42,
+        "stamina": 0.79,
+        "consistency": 0.8,
+        "startReactions": 0.89,
+        "wetSkill": 0.84,
+        "tyreManagement": 0.79,
+        "blueFlagConceding": 0.88,
+        "weatherTyreChanges": 0.64,
+        "avoidanceOfMistakes": 0.71,
+        "avoidanceOfForcedMistakes": 0.62
+      }
+    },
+    {
+      "id": "driver.jacky_ickx",
+      "name": "Jacky Ickx",
+      "country": "BEL",
+      "born": 1945,
+      "ratings": {
+        "raceSkill": 0.91,
+        "qualifyingSkill": 0.915,
+        "aggression": 0.48,
+        "defending": 0.4,
+        "stamina": 0.78,
+        "consistency": 0.88,
+        "startReactions": 0.85,
+        "wetSkill": 0.84,
+        "tyreManagement": 0.84,
+        "blueFlagConceding": 0.9,
+        "weatherTyreChanges": 0.88,
+        "avoidanceOfMistakes": 0.62,
+        "avoidanceOfForcedMistakes": 0.54
+      }
+    },
+    {
+      "id": "driver.piers_courage",
+      "name": "Piers Courage",
+      "country": "GBR",
+      "born": 1942,
+      "ratings": {
+        "raceSkill": 0.83,
+        "qualifyingSkill": 0.84,
+        "aggression": 0.41,
+        "defending": 0.36,
+        "stamina": 0.76,
+        "consistency": 0.76,
+        "startReactions": 0.87,
+        "wetSkill": 0.75,
+        "tyreManagement": 0.78,
+        "blueFlagConceding": 0.96,
+        "weatherTyreChanges": 0.86,
+        "avoidanceOfMistakes": 0.4,
+        "avoidanceOfForcedMistakes": 0.29
+      }
+    },
+    {
+      "id": "driver.vic_elford",
+      "name": "Vic Elford",
+      "country": "GBR",
+      "born": 1935,
+      "ratings": {
+        "raceSkill": 0.79,
+        "qualifyingSkill": 0.8,
+        "aggression": 0.4,
+        "defending": 0.41,
+        "stamina": 0.88,
+        "consistency": 0.81,
+        "startReactions": 0.86,
+        "wetSkill": 0.78,
+        "tyreManagement": 0.79,
+        "blueFlagConceding": 0.96,
+        "weatherTyreChanges": 0.79,
+        "avoidanceOfMistakes": 0.49,
+        "avoidanceOfForcedMistakes": 0.36
+      }
+    },
+    {
+      "id": "driver.silvio_moser",
+      "name": "Silvio Moser",
+      "country": "CHE",
+      "born": 1941,
+      "ratings": {
+        "raceSkill": 0.71,
+        "qualifyingSkill": 0.72,
+        "aggression": 0.32,
+        "defending": 0.31,
+        "stamina": 0.75,
+        "consistency": 0.62,
+        "startReactions": 0.78,
+        "wetSkill": 0.69,
+        "tyreManagement": 0.71,
+        "blueFlagConceding": 0.99,
+        "weatherTyreChanges": 0.94,
+        "avoidanceOfMistakes": 0.39,
+        "avoidanceOfForcedMistakes": 0.22
+      }
+    },
+    {
+      "id": "driver.jo_bonnier",
+      "name": "Jo Bonnier",
+      "country": "SWE",
+      "born": 1930,
+      "ratings": {
+        "raceSkill": 0.65,
+        "qualifyingSkill": 0.67,
+        "aggression": 0.35,
+        "defending": 0.4,
+        "stamina": 0.68,
+        "consistency": 0.59,
+        "startReactions": 0.86,
+        "wetSkill": 0.68,
+        "tyreManagement": 0.76,
+        "blueFlagConceding": 0.97,
+        "weatherTyreChanges": 0.66,
+        "avoidanceOfMistakes": 0.41,
+        "avoidanceOfForcedMistakes": 0.3
+      }
+    },
+    {
+      "id": "driver.peter_de_klerk",
+      "name": "Peter de Klerk",
+      "country": "ZAF",
+      "born": 1935,
+      "ratings": {
+        "raceSkill": 0.66,
+        "qualifyingSkill": 0.68,
+        "aggression": 0.3,
+        "defending": 0.41,
+        "stamina": 0.65,
+        "consistency": 0.55,
+        "startReactions": 0.81,
+        "wetSkill": 0.61,
+        "tyreManagement": 0.71,
+        "blueFlagConceding": 0.99,
+        "weatherTyreChanges": 0.86,
+        "avoidanceOfMistakes": 0.38,
+        "avoidanceOfForcedMistakes": 0.27
+      }
+    },
+    {
+      "id": "driver.derek_bell",
+      "name": "Derek Bell",
+      "country": "GBR",
+      "born": 1941,
+      "ratings": {
+        "raceSkill": 0.7,
+        "qualifyingSkill": 0.71,
+        "aggression": 0.41,
+        "defending": 0.53,
+        "stamina": 0.72,
+        "consistency": 0.61,
+        "startReactions": 0.78,
+        "wetSkill": 0.76,
+        "tyreManagement": 0.86,
+        "blueFlagConceding": 0.98,
+        "weatherTyreChanges": 0.85,
+        "avoidanceOfMistakes": 0.45,
+        "avoidanceOfForcedMistakes": 0.34
+      }
+    },
+    {
+      "id": "driver.pete_lovely",
+      "name": "Pete Lovely",
+      "country": "USA",
+      "born": 1926,
+      "ratings": {
+        "raceSkill": 0.69,
+        "qualifyingSkill": 0.7,
+        "aggression": 0.33,
+        "defending": 0.43,
+        "stamina": 0.69,
+        "consistency": 0.58,
+        "startReactions": 0.84,
+        "wetSkill": 0.66,
+        "tyreManagement": 0.76,
+        "blueFlagConceding": 0.97,
+        "weatherTyreChanges": 0.8,
+        "avoidanceOfMistakes": 0.4,
+        "avoidanceOfForcedMistakes": 0.29
+      }
+    },
+    {
+      "id": "driver.george_eaton",
+      "name": "George Eaton",
+      "country": "CAN",
+      "born": 1945,
+      "ratings": {
+        "raceSkill": 0.65,
+        "qualifyingSkill": 0.66,
+        "aggression": 0.31,
+        "defending": 0.36,
+        "stamina": 0.7,
+        "consistency": 0.59,
+        "startReactions": 0.8,
+        "wetSkill": 0.68,
+        "tyreManagement": 0.78,
+        "blueFlagConceding": 0.96,
+        "weatherTyreChanges": 0.88,
+        "avoidanceOfMistakes": 0.36,
+        "avoidanceOfForcedMistakes": 0.24
+      }
+    },
+    {
+      "id": "driver.richard_attwood",
+      "name": "Richard Attwood",
+      "country": "GBR",
+      "born": 1940,
+      "ratings": {
+        "raceSkill": 0.52,
+        "qualifyingSkill": 0.56,
+        "aggression": 0.44,
+        "defending": 0.39,
+        "stamina": 0.7,
+        "consistency": 0.62,
+        "startReactions": 0.89,
+        "wetSkill": 0.81,
+        "tyreManagement": 0.74,
+        "blueFlagConceding": 0.96,
+        "weatherTyreChanges": 0.82,
+        "avoidanceOfMistakes": 0.52,
+        "avoidanceOfForcedMistakes": 0.41
+      }
+    },
+    {
+      "id": "driver.gerhard_mitter",
+      "name": "Gerhard Mitter",
+      "country": "DEU",
+      "born": 1935,
+      "ratings": {
+        "raceSkill": 0.49,
+        "qualifyingSkill": 0.5,
+        "aggression": 0.25,
+        "defending": 0.44,
+        "stamina": 0.75,
+        "consistency": 0.65,
+        "startReactions": 0.79,
+        "wetSkill": 0.71,
+        "tyreManagement": 0.81,
+        "blueFlagConceding": 0.98,
+        "weatherTyreChanges": 0.76,
+        "avoidanceOfMistakes": 0.36,
+        "avoidanceOfForcedMistakes": 0.22
+      }
+    },
+    {
+      "id": "driver.henri_pescarolo",
+      "name": "Henri Pescarolo",
+      "country": "FRA",
+      "born": 1942,
+      "ratings": {
+        "raceSkill": 0.57,
+        "qualifyingSkill": 0.59,
+        "aggression": 0.32,
+        "defending": 0.48,
+        "stamina": 0.65,
+        "consistency": 0.66,
+        "startReactions": 0.73,
+        "wetSkill": 0.71,
+        "tyreManagement": 0.74,
+        "blueFlagConceding": 1,
+        "weatherTyreChanges": 0.91,
+        "avoidanceOfMistakes": 0.39,
+        "avoidanceOfForcedMistakes": 0.26
+      }
+    },
+    {
+      "id": "driver.francois_cevert",
+      "name": "François Cevert",
+      "country": "FRA",
+      "born": 1944,
+      "ratings": {
+        "raceSkill": 0.59,
+        "qualifyingSkill": 0.6,
+        "aggression": 0.38,
+        "defending": 0.44,
+        "stamina": 0.81,
+        "consistency": 0.78,
+        "startReactions": 0.88,
+        "wetSkill": 0.72,
+        "tyreManagement": 0.78,
+        "blueFlagConceding": 0.95,
+        "weatherTyreChanges": 0.74,
+        "avoidanceOfMistakes": 0.43,
+        "avoidanceOfForcedMistakes": 0.34
+      }
+    }
+  ]
+}

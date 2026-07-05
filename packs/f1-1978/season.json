@@ -1,0 +1,979 @@
+{
+    "year":  1978,
+    "seriesName":  "Formula One World Championship",
+    "ams2Class":  "F-Retro_Gen2",
+    "pointsSystem":  {
+                         "racePoints":  [
+                                            9,
+                                            6,
+                                            4,
+                                            3,
+                                            2,
+                                            1
+                                        ],
+                         "sharedDrivePolicy":  "zero",
+                         "driversBestN":  {
+                                              "split":  {
+                                                            "firstRounds":  8,
+                                                            "firstCount":  7,
+                                                            "secondRounds":  8,
+                                                            "secondCount":  7
+                                                        }
+                                          },
+                         "constructors":  {
+                                              "bestCarOnly":  true,
+                                              "bestN":  "sameAsDrivers"
+                                          }
+                     },
+    "rounds":  [
+                   {
+                       "round":  1,
+                       "name":  "Argentine Grand Prix",
+                       "date":  "1978-01-15",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autódromo Oscar y Juan Gálvez",
+                                     "id":  "buenos_aires_15",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  52,
+                       "grid":  {
+                                    "size":  18,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  17,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-01-15",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  2,
+                       "name":  "Brazilian Grand Prix",
+                       "date":  "1978-01-29",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autódromo Internacional Nelson Piquet (Jacarepaguá)",
+                                     "id":  "jacarepagua_historic",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  63,
+                       "grid":  {
+                                    "size":  19,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.ronnie_peterson"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  18,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-01-29",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  3,
+                       "name":  "South African Grand Prix",
+                       "date":  "1978-03-04",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Kyalami",
+                                     "id":  "kyalami_historic",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  78,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-03-04",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  4,
+                       "name":  "United States Grand Prix West",
+                       "date":  "1978-04-02",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Long Beach Street Circuit",
+                                     "id":  "long_beach",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  80,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-04-02",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  5,
+                       "name":  "Monaco Grand Prix",
+                       "date":  "1978-05-07",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Monaco",
+                                     "id":  "azure_circuit_88",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "azure_circuit"
+                                                   ]
+                                 },
+                       "laps":  75,
+                       "grid":  {
+                                    "size":  18,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  17,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-05-07",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 1978 Monaco layout in AMS2; the venue is real, so the historical lap count is kept on the era-closest 1988 layout (modern Azure is the alternative)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  6,
+                       "name":  "Belgian Grand Prix",
+                       "date":  "1978-05-21",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Zolder",
+                                     "id":  "spa-francorchamps_1993",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "brandshatch_gp"
+                                                   ]
+                                 },
+                       "laps":  43,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.rene_arnoux",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-05-21",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuit Zolder — 70 laps / 298.34 km reproduced as 43 laps of spa-francorchamps_1993. No AMS2 Zolder; Spa-Francorchamps 1993 keeps the Belgian GP in Belgium on an era-adjacent layout of the country\u0027s other grand prix venue."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  7,
+                       "name":  "Spanish Grand Prix",
+                       "date":  "1978-06-04",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuito del Jarama",
+                                     "id":  "jerez_1988",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "estoril_1988"
+                                                   ]
+                                 },
+                       "laps":  61,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-06-04",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuito del Jarama — 75 laps / 255.3 km reproduced as 61 laps of jerez_1988. No AMS2 Jarama; Jerez 1988 keeps the Spanish GP in Spain with the same tight, technical low-speed character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  8,
+                       "name":  "Swedish Grand Prix",
+                       "date":  "1978-06-17",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Scandinavian Raceway, Anderstorp",
+                                     "id":  "silverstone_1975",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "hockenheim_1977"
+                                                   ]
+                                 },
+                       "laps":  60,
+                       "grid":  {
+                                    "size":  23,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.keke_rosberg",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  22,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-06-17",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Scandinavian Raceway, Anderstorp — 70 laps / 282.17 km reproduced as 60 laps of silverstone_1975. No AMS2 Anderstorp; Silverstone 1975 matches its flat, aerodrome-straight-dominated character and is free in 1978 (the British GP runs at Brands Hatch this season)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  9,
+                       "name":  "French Grand Prix",
+                       "date":  "1978-07-02",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Paul Ricard",
+                                     "id":  "le_mans_bugatti",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "hockenheim_1988",
+                                                       "silverstone_1991"
+                                                   ]
+                                 },
+                       "laps":  75,
+                       "grid":  {
+                                    "size":  23,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.keke_rosberg",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.rene_arnoux",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  22,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-07-02",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuit Paul Ricard — 54 laps / 313.686 km reproduced as 75 laps of le_mans_bugatti. No AMS2 Paul Ricard; Le Mans Circuit Bugatti keeps the French GP at a French Grand Prix venue."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  10,
+                       "name":  "British Grand Prix",
+                       "date":  "1978-07-16",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Brands Hatch",
+                                     "id":  "brandshatch_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  76,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.keke_rosberg",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-07-16",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  11,
+                       "name":  "German Grand Prix",
+                       "date":  "1978-07-30",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hockenheimring",
+                                     "id":  "hockenheim_1977",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "hockenheim_1988"
+                                                   ]
+                                 },
+                       "laps":  45,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jochen_mass",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.rolf_stommelen",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-07-30",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  12,
+                       "name":  "Austrian Grand Prix",
+                       "date":  "1978-08-13",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Österreichring",
+                                     "id":  "spielberg_vintage",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "spielberg_historic"
+                                                   ]
+                                 },
+                       "laps":  54,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.rene_arnoux",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-08-13",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2 ships the Österreichring as Spielberg Vintage (1974, pre-Hella-Licht chicane); the venue is real, so the historical lap count is kept (the 1977 Historic layout is the era-closest alternative)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  13,
+                       "name":  "Dutch Grand Prix",
+                       "date":  "1978-08-27",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Park Zandvoort",
+                                     "id":  "spielberg_historic",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "silverstone_1975",
+                                                       "brandshatch_gp"
+                                                   ]
+                                 },
+                       "laps":  54,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.rene_arnoux",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-08-27",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuit Park Zandvoort — 75 laps / 316.95 km reproduced as 54 laps of spielberg_historic. No AMS2 Zandvoort; the venue\u0027s fast old-school sweepers map to the Österreichring — the base Spielberg Vintage stand-in already hosts this season\u0027s Austrian GP, so its 1977 Historic sibling takes this round."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  14,
+                       "name":  "Italian Grand Prix",
+                       "date":  "1978-09-10",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autodromo Nazionale Monza",
+                                     "id":  "monza_1971",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  40,
+                       "grid":  {
+                                    "size":  19,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese",
+                                                             "driver.ronnie_peterson",
+                                                             "driver.vittorio_brambilla"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  18,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-09-10",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 1978 Monza chicane layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1971 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  15,
+                       "name":  "United States Grand Prix",
+                       "date":  "1978-10-01",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Watkins Glen",
+                                     "id":  "watkins_glen_1971_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "watkins_glen"
+                                                   ]
+                                 },
+                       "laps":  59,
+                       "grid":  {
+                                    "size":  19,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.clay_regazzoni",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.hector_rebaque",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.keke_rosberg",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.rolf_stommelen"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  18,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-10-01",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2 ships the period Watkins Glen 1971 Grand Prix layout; the venue is real, so the historical lap count is kept (the modern Watkins Glen is the alternative)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  16,
+                       "name":  "Canadian Grand Prix",
+                       "date":  "1978-10-08",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Île Notre-Dame",
+                                     "id":  "montrealhistoric",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  70,
+                       "grid":  {
+                                    "size":  17,
+                                    "starterDriverIds":  [
+                                                             "driver.alan_jones",
+                                                             "driver.carlos_reutemann",
+                                                             "driver.didier_pironi",
+                                                             "driver.emerson_fittipaldi",
+                                                             "driver.gilles_villeneuve",
+                                                             "driver.hans_joachim_stuck",
+                                                             "driver.jacques_laffite",
+                                                             "driver.james_hunt",
+                                                             "driver.jean_pierre_jabouille",
+                                                             "driver.jody_scheckter",
+                                                             "driver.john_watson",
+                                                             "driver.keke_rosberg",
+                                                             "driver.mario_andretti",
+                                                             "driver.niki_lauda",
+                                                             "driver.patrick_depailler",
+                                                             "driver.patrick_tambay",
+                                                             "driver.riccardo_patrese"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  16,
+                                                          "startTime":  "14:00",
+                                                          "date":  "1978-10-08",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  ""
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   }
+               ]
+}

@@ -1,0 +1,3541 @@
+{
+  "year": 1975,
+  "roundCount": 14,
+  "rounds": [
+    {
+      "round": 1,
+      "grandPrixId": "argentina",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "james-hunt"
+          ],
+          "entries": [
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "lola+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rolf-stommelen",
+              "constructorId": "lola+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "arturo-merzario",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mike-wilds",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": null,
+              "status": "disqualified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "grandPrixId": "brazil",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jean-pierre-jarier"
+          ],
+          "entries": [
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "lola+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rolf-stommelen",
+              "constructorId": "lola+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "arturo-merzario",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mike-wilds",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "grandPrixId": "south-africa",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "carlos-pace"
+          ],
+          "entries": [
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rolf-stommelen",
+              "constructorId": "lola+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "guy-tunmer",
+              "constructorId": "lotus+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "eddie-keizan",
+              "constructorId": "lotus+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dave-charlton",
+              "constructorId": "mclaren+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": 17,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ian-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "arturo-merzario",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "grandPrixId": "spain",
+      "pointsFactor": "1/2",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "mario-andretti"
+          ],
+          "entries": [
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rolf-stommelen",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roelof-wunderink",
+              "constructorId": "ensign+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "francois-migault",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "arturo-merzario",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "grandPrixId": "monaco",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "patrick-depailler"
+          ],
+          "entries": [
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 6,
+      "grandPrixId": "belgium",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "clay-regazzoni"
+          ],
+          "entries": [
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "francois-migault",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "arturo-merzario",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 7,
+      "grandPrixId": "sweden",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "niki-lauda"
+          ],
+          "entries": [
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "torsten-palm",
+              "constructorId": "hesketh+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hesketh+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "damien-magee",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": 17,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ian-scheckter",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vern-schuppan",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 8,
+      "grandPrixId": "netherlands",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "niki-lauda"
+          ],
+          "entries": [
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "gijs-van-lennep",
+              "constructorId": "ensign+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ian-scheckter",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hill+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hiroshi-fushida",
+              "constructorId": "maki+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 9,
+      "grandPrixId": "france",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jochen-mass"
+          ],
+          "entries": [
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jabouille",
+              "constructorId": "tyrrell+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "gijs-van-lennep",
+              "constructorId": "ensign+ford",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hill+ford",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": 17,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": 18,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacky-ickx",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "penske+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "francois-migault",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 10,
+      "grandPrixId": "great-britain",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "clay-regazzoni"
+          ],
+          "entries": [
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "march+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hill+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "brian-henton",
+              "constructorId": "lotus+ford",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-nicholson",
+              "constructorId": "lyncar+ford",
+              "position": 17,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dave-morgan",
+              "constructorId": "surtees+ford",
+              "position": 18,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": 19,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hans-joachim-stuck",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-crawford",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 11,
+      "grandPrixId": "germany",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "clay-regazzoni"
+          ],
+          "entries": [
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "alan-jones",
+              "constructorId": "hill+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "gijs-van-lennep",
+              "constructorId": "ensign+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "harald-ertl",
+              "constructorId": "hesketh+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hans-joachim-stuck",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ian-ashley",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 12,
+      "grandPrixId": "austria",
+      "pointsFactor": "1/2",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "vittorio-brambilla"
+          ],
+          "entries": [
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "surtees+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "chris-amon",
+              "constructorId": "ensign+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "brett-lunger",
+              "constructorId": "hesketh+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rolf-stommelen",
+              "constructorId": "hill+ford",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": 17,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roelof-wunderink",
+              "constructorId": "ensign+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "harald-ertl",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-vonlanthen",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hans-joachim-stuck",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+matra",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mark-donohue",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "brian-henton",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 13,
+      "grandPrixId": "italy",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "clay-regazzoni"
+          ],
+          "entries": [
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "harald-ertl",
+              "constructorId": "hesketh+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "brett-lunger",
+              "constructorId": "hesketh+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "arturo-merzario",
+              "constructorId": "fittipaldi+ford",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "chris-amon",
+              "constructorId": "ensign+ford",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-crawford",
+              "constructorId": "lotus+ford",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "renzo-zorzi",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+matra",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hans-joachim-stuck",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rolf-stommelen",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bob-evans",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 14,
+      "grandPrixId": "united-states",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "emerson-fittipaldi"
+          ],
+          "entries": [
+            {
+              "driverId": "niki-lauda",
+              "constructorId": "ferrari+ferrari",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "emerson-fittipaldi",
+              "constructorId": "mclaren+ford",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jochen-mass",
+              "constructorId": "mclaren+ford",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "james-hunt",
+              "constructorId": "hesketh+ford",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ronnie-peterson",
+              "constructorId": "lotus+ford",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jody-scheckter",
+              "constructorId": "tyrrell+ford",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "vittorio-brambilla",
+              "constructorId": "march+ford",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hans-joachim-stuck",
+              "constructorId": "march+ford",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-watson",
+              "constructorId": "penske+ford",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wilson-fittipaldi",
+              "constructorId": "fittipaldi+ford",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tom-pryce",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "brian-henton",
+              "constructorId": "lotus+ford",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "brett-lunger",
+              "constructorId": "hesketh+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roelof-wunderink",
+              "constructorId": "ensign+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "clay-regazzoni",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jean-pierre-jarier",
+              "constructorId": "shadow+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-reutemann",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mario-andretti",
+              "constructorId": "parnelli+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-brise",
+              "constructorId": "hill+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "michel-leclere",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "patrick-depailler",
+              "constructorId": "tyrrell+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carlos-pace",
+              "constructorId": "brabham+ford",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jacques-laffite",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lella-lombardi",
+              "constructorId": "frank-williams-racing-cars+ford",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expectedDrivers": [
+    {
+      "id": "niki-lauda",
+      "position": 1,
+      "points": 64.5
+    },
+    {
+      "id": "emerson-fittipaldi",
+      "position": 2,
+      "points": 45
+    },
+    {
+      "id": "carlos-reutemann",
+      "position": 3,
+      "points": 37
+    },
+    {
+      "id": "james-hunt",
+      "position": 4,
+      "points": 33
+    },
+    {
+      "id": "clay-regazzoni",
+      "position": 5,
+      "points": 25
+    },
+    {
+      "id": "carlos-pace",
+      "position": 6,
+      "points": 24
+    },
+    {
+      "id": "jody-scheckter",
+      "position": 7,
+      "points": 20
+    },
+    {
+      "id": "jochen-mass",
+      "position": 8,
+      "points": 20
+    },
+    {
+      "id": "patrick-depailler",
+      "position": 9,
+      "points": 12
+    },
+    {
+      "id": "tom-pryce",
+      "position": 10,
+      "points": 8
+    },
+    {
+      "id": "vittorio-brambilla",
+      "position": 11,
+      "points": 6.5
+    },
+    {
+      "id": "jacques-laffite",
+      "position": 12,
+      "points": 6
+    },
+    {
+      "id": "ronnie-peterson",
+      "position": 13,
+      "points": 6
+    },
+    {
+      "id": "mario-andretti",
+      "position": 14,
+      "points": 5
+    },
+    {
+      "id": "mark-donohue",
+      "position": 15,
+      "points": 4
+    },
+    {
+      "id": "jacky-ickx",
+      "position": 16,
+      "points": 3
+    },
+    {
+      "id": "alan-jones",
+      "position": 17,
+      "points": 2
+    },
+    {
+      "id": "jean-pierre-jarier",
+      "position": 18,
+      "points": 1.5
+    },
+    {
+      "id": "tony-brise",
+      "position": 19,
+      "points": 1
+    },
+    {
+      "id": "gijs-van-lennep",
+      "position": 19,
+      "points": 1
+    },
+    {
+      "id": "lella-lombardi",
+      "position": 21,
+      "points": 0.5
+    }
+  ],
+  "expectedConstructors": [
+    {
+      "id": "ferrari+ferrari",
+      "position": 1,
+      "points": 72.5
+    },
+    {
+      "id": "brabham+ford",
+      "position": 2,
+      "points": 54
+    },
+    {
+      "id": "mclaren+ford",
+      "position": 3,
+      "points": 53
+    },
+    {
+      "id": "hesketh+ford",
+      "position": 4,
+      "points": 33
+    },
+    {
+      "id": "tyrrell+ford",
+      "position": 5,
+      "points": 25
+    },
+    {
+      "id": "shadow+ford",
+      "position": 6,
+      "points": 9.5
+    },
+    {
+      "id": "lotus+ford",
+      "position": 7,
+      "points": 9
+    },
+    {
+      "id": "march+ford",
+      "position": 8,
+      "points": 7.5
+    },
+    {
+      "id": "frank-williams-racing-cars+ford",
+      "position": 9,
+      "points": 6
+    },
+    {
+      "id": "parnelli+ford",
+      "position": 10,
+      "points": 5
+    },
+    {
+      "id": "hill+ford",
+      "position": 11,
+      "points": 3
+    },
+    {
+      "id": "penske+ford",
+      "position": 12,
+      "points": 2
+    },
+    {
+      "id": "ensign+ford",
+      "position": 13,
+      "points": 1
+    }
+  ]
+}

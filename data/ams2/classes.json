@@ -1,0 +1,2483 @@
+{
+  "extractedFrom": "AMS2 build 23820506, 2026-07-02 (all .crd files incl. engine/track-config variants)",
+  "classes": [
+    {
+      "xmlName": "ARC_Cam",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "arc_camaro"
+      ]
+    },
+    {
+      "xmlName": "Carrera Cup",
+      "vehicleCount": 2,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "porsche_991_gt3",
+        "porsche_991_gt3_2"
+      ]
+    },
+    {
+      "xmlName": "Cat620R",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "caterham_620r"
+      ]
+    },
+    {
+      "xmlName": "Cat_Academy",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "caterham_academy"
+      ]
+    },
+    {
+      "xmlName": "Cat_Superlight",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "caterham_superlight"
+      ]
+    },
+    {
+      "xmlName": "Cat_Supersport",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "caterham_supersport"
+      ]
+    },
+    {
+      "xmlName": "CopaClassicB",
+      "vehicleCount": 6,
+      "years": [
+        1965,
+        2019
+      ],
+      "vehicles": [
+        "chevette",
+        "gol_classicb",
+        "mini_coopers_1965_b",
+        "pas_classicb",
+        "puma_gte",
+        "uno_classicb"
+      ]
+    },
+    {
+      "xmlName": "CopaClassicFL",
+      "vehicleCount": 4,
+      "years": [
+        1981,
+        2019
+      ],
+      "vehicles": [
+        "fusca_classica",
+        "gol_classica",
+        "pas_classica",
+        "puma_gtb"
+      ]
+    },
+    {
+      "xmlName": "CopaFusca",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "fusca_copa"
+      ]
+    },
+    {
+      "xmlName": "CopaTruck",
+      "vehicleCount": 5,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "ftruck_iveco",
+        "ftruck_man",
+        "ftruck_merc",
+        "ftruck_vulkan",
+        "ftruck_vw"
+      ]
+    },
+    {
+      "xmlName": "CopaUno",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "uno"
+      ]
+    },
+    {
+      "xmlName": "DPI",
+      "vehicleCount": 1,
+      "years": [
+        2020,
+        2020
+      ],
+      "vehicles": [
+        "cadillac_dpi-vr"
+      ]
+    },
+    {
+      "xmlName": "F-3",
+      "vehicleCount": 2,
+      "years": [
+        2012,
+        2012
+      ],
+      "vehicles": [
+        "f301",
+        "f309"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen1",
+      "vehicleCount": 3,
+      "years": [
+        1986,
+        1986
+      ],
+      "vehicles": [
+        "formula_classic_g1m1",
+        "formula_classic_g1m2",
+        "lotus_98t"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen1_HD",
+      "vehicleCount": 3,
+      "years": [
+        1986,
+        1986
+      ],
+      "vehicles": [
+        "formula_classic_g1m1_hd",
+        "formula_classic_g1m2_hd",
+        "lotus_98t_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen2",
+      "vehicleCount": 4,
+      "years": [
+        1986,
+        1988
+      ],
+      "vehicles": [
+        "formula_classic_g2m1",
+        "formula_classic_g2m2",
+        "formula_classic_g2m3",
+        "mclaren_mp44"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen2_HD",
+      "vehicleCount": 4,
+      "years": [
+        1986,
+        1988
+      ],
+      "vehicles": [
+        "formula_classic_g2m1_hd",
+        "formula_classic_g2m2_hd",
+        "formula_classic_g2m3_hd",
+        "mclaren_mp44_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen2_LD",
+      "vehicleCount": 4,
+      "years": [
+        1986,
+        1988
+      ],
+      "vehicles": [
+        "formula_classic_g2m1_ld",
+        "formula_classic_g2m2_ld",
+        "formula_classic_g2m3_ld",
+        "mclaren_mp44_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen3",
+      "vehicleCount": 5,
+      "years": [
+        1986,
+        1990
+      ],
+      "vehicles": [
+        "formula_classic_g3m1",
+        "formula_classic_g3m2",
+        "formula_classic_g3m3",
+        "formula_classic_g3m4",
+        "mclaren_mp45b"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen3_HD",
+      "vehicleCount": 5,
+      "years": [
+        1986,
+        1990
+      ],
+      "vehicles": [
+        "formula_classic_g3m1_hd",
+        "formula_classic_g3m2_hd",
+        "formula_classic_g3m3_hd",
+        "formula_classic_g3m4_hd",
+        "mclaren_mp45b_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen3_LD",
+      "vehicleCount": 5,
+      "years": [
+        1986,
+        1990
+      ],
+      "vehicles": [
+        "formula_classic_g3m1_ld",
+        "formula_classic_g3m2_ld",
+        "formula_classic_g3m3_ld",
+        "formula_classic_g3m4_ld",
+        "mclaren_mp45b_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen4",
+      "vehicleCount": 4,
+      "years": [
+        1991,
+        1992
+      ],
+      "vehicles": [
+        "formula_classic_g4m1",
+        "formula_classic_g4m2",
+        "formula_classic_g4m3",
+        "mclaren_mp46"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen4_HD",
+      "vehicleCount": 4,
+      "years": [
+        1991,
+        1992
+      ],
+      "vehicles": [
+        "formula_classic_g4m1_hd",
+        "formula_classic_g4m2_hd",
+        "formula_classic_g4m3_hd",
+        "mclaren_mp46_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Classic_Gen4_LD",
+      "vehicleCount": 4,
+      "years": [
+        1991,
+        1992
+      ],
+      "vehicles": [
+        "formula_classic_g4m1_ld",
+        "formula_classic_g4m2_ld",
+        "formula_classic_g4m3_ld",
+        "mclaren_mp46_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Dirt",
+      "vehicleCount": 1,
+      "years": [
+        2023,
+        2023
+      ],
+      "vehicles": [
+        "formula_dirt"
+      ]
+    },
+    {
+      "xmlName": "F-Hitech_Gen1",
+      "vehicleCount": 5,
+      "years": [
+        1992,
+        1992
+      ],
+      "vehicles": [
+        "formula_hitech_g1m1",
+        "formula_hitech_g1m2",
+        "formula_hitech_g1m3",
+        "formula_hitech_g1m4",
+        "mclaren_mp47"
+      ]
+    },
+    {
+      "xmlName": "F-Hitech_Gen1_HD",
+      "vehicleCount": 5,
+      "years": [
+        1992,
+        1992
+      ],
+      "vehicles": [
+        "formula_hitech_g1m1_hd",
+        "formula_hitech_g1m2_hd",
+        "formula_hitech_g1m3_hd",
+        "formula_hitech_g1m4_hd",
+        "mclaren_mp47_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Hitech_Gen1_LD",
+      "vehicleCount": 5,
+      "years": [
+        1992,
+        1992
+      ],
+      "vehicles": [
+        "formula_hitech_g1m1_ld",
+        "formula_hitech_g1m2_ld",
+        "formula_hitech_g1m3_ld",
+        "formula_hitech_g1m4_ld",
+        "mclaren_mp47_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Hitech_Gen2",
+      "vehicleCount": 4,
+      "years": [
+        1993,
+        1993
+      ],
+      "vehicles": [
+        "formula_hitech_g2m1",
+        "formula_hitech_g2m2",
+        "formula_hitech_g2m3",
+        "mclaren_mp48"
+      ]
+    },
+    {
+      "xmlName": "F-Hitech_Gen2_HD",
+      "vehicleCount": 4,
+      "years": [
+        1993,
+        1993
+      ],
+      "vehicles": [
+        "formula_hitech_g2m1_hd",
+        "formula_hitech_g2m2_hd",
+        "formula_hitech_g2m3_hd",
+        "mclaren_mp48_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Hitech_Gen2_LD",
+      "vehicleCount": 4,
+      "years": [
+        1993,
+        1993
+      ],
+      "vehicles": [
+        "formula_hitech_g2m1_ld",
+        "formula_hitech_g2m2_ld",
+        "formula_hitech_g2m3_ld",
+        "mclaren_mp48_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Inter",
+      "vehicleCount": 1,
+      "years": [
+        2015,
+        2015
+      ],
+      "vehicles": [
+        "formula_inter"
+      ]
+    },
+    {
+      "xmlName": "F-Junior",
+      "vehicleCount": 1,
+      "years": [
+        1965,
+        1965
+      ],
+      "vehicles": [
+        "formula_junior"
+      ]
+    },
+    {
+      "xmlName": "F-Reiza",
+      "vehicleCount": 1,
+      "years": [
+        2010,
+        2010
+      ],
+      "vehicles": [
+        "formula_reiza"
+      ]
+    },
+    {
+      "xmlName": "F-Reiza_HD",
+      "vehicleCount": 1,
+      "years": [
+        2010,
+        2010
+      ],
+      "vehicles": [
+        "formula_reiza_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Reiza_LD",
+      "vehicleCount": 1,
+      "years": [
+        2010,
+        2010
+      ],
+      "vehicles": [
+        "formula_reiza_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Retro_Gen1",
+      "vehicleCount": 5,
+      "years": [
+        1972,
+        1974
+      ],
+      "vehicles": [
+        "formula_retro",
+        "formula_retro_v12",
+        "formula_retro_v8",
+        "lotus_72e",
+        "mclaren_m23"
+      ]
+    },
+    {
+      "xmlName": "F-Retro_Gen2",
+      "vehicleCount": 4,
+      "years": [
+        1979,
+        1979
+      ],
+      "vehicles": [
+        "brabham_bt46b",
+        "brabham_bt49",
+        "formula_retro_g2",
+        "lotus_79"
+      ]
+    },
+    {
+      "xmlName": "F-Retro_Gen3",
+      "vehicleCount": 4,
+      "years": [
+        1983,
+        1983
+      ],
+      "vehicles": [
+        "brabham_bt52",
+        "formula_retro_g3",
+        "formula_retro_g3_te",
+        "mclaren_mp4_1c"
+      ]
+    },
+    {
+      "xmlName": "F-Retro_Gen3_HD",
+      "vehicleCount": 4,
+      "years": [
+        1983,
+        1983
+      ],
+      "vehicles": [
+        "brabham_bt52_hd",
+        "formula_retro_g3_hd",
+        "formula_retro_g3_te_hd",
+        "mclaren_mp4_1c_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Trainer",
+      "vehicleCount": 1,
+      "years": [
+        2012,
+        2012
+      ],
+      "vehicles": [
+        "formula_trainer"
+      ]
+    },
+    {
+      "xmlName": "F-Trainer_A",
+      "vehicleCount": 1,
+      "years": [
+        2012,
+        2012
+      ],
+      "vehicles": [
+        "formula_trainer_d"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2022",
+      "vehicleCount": 1,
+      "years": [
+        2022,
+        2022
+      ],
+      "vehicles": [
+        "formula_usa_2022"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2022_SO",
+      "vehicleCount": 1,
+      "years": [
+        2022,
+        2022
+      ],
+      "vehicles": [
+        "formula_usa_2022_so"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2022_SW",
+      "vehicleCount": 1,
+      "years": [
+        2022,
+        2022
+      ],
+      "vehicles": [
+        "formula_usa_2022_sw"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2023",
+      "vehicleCount": 1,
+      "years": [
+        2023,
+        2023
+      ],
+      "vehicles": [
+        "formula_usa_2023"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2023_HD",
+      "vehicleCount": 1,
+      "years": [
+        2023,
+        2023
+      ],
+      "vehicles": [
+        "formula_usa_2023_hd"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2023_SO",
+      "vehicleCount": 1,
+      "years": [
+        2023,
+        2023
+      ],
+      "vehicles": [
+        "formula_usa_2023_so"
+      ]
+    },
+    {
+      "xmlName": "F-USA_2023_SW",
+      "vehicleCount": 1,
+      "years": [
+        2023,
+        2023
+      ],
+      "vehicles": [
+        "formula_usa_2023_sw"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen1",
+      "vehicleCount": 5,
+      "years": [
+        1995,
+        1995
+      ],
+      "vehicles": [
+        "cart_lola_t95_ford",
+        "cart_lola_t95_mercedes",
+        "cart_reynard_95i_ford",
+        "cart_reynard_95i_honda",
+        "cart_reynard_95i_mercedes"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen1_HD",
+      "vehicleCount": 5,
+      "years": [
+        1995,
+        1995
+      ],
+      "vehicles": [
+        "cart_lola_t95_ford_mag_hd",
+        "cart_lola_t95_mercedes_hd",
+        "cart_reynard_95i_ford_mag_hd",
+        "cart_reynard_95i_honda_hd",
+        "cart_reynard_95i_mercedes_hd"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen1_SO",
+      "vehicleCount": 5,
+      "years": [
+        1995,
+        1995
+      ],
+      "vehicles": [
+        "cart_lola_t95_ford_mag_so",
+        "cart_lola_t95_mercedes_so",
+        "cart_reynard_95i_ford_mag_so",
+        "cart_reynard_95i_honda_so",
+        "cart_reynard_95i_mercedes_so"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen1_SW",
+      "vehicleCount": 5,
+      "years": [
+        1995,
+        1995
+      ],
+      "vehicles": [
+        "cart_lola_t95_ford_mag_sw",
+        "cart_lola_t95_mercedes_sw",
+        "cart_reynard_95i_ford_mag_sw",
+        "cart_reynard_95i_honda_sw",
+        "cart_reynard_95i_mercedes_sw"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen2",
+      "vehicleCount": 6,
+      "years": [
+        1998,
+        1998
+      ],
+      "vehicles": [
+        "cart_lola_t98",
+        "cart_reynard_98i_ford",
+        "cart_reynard_98i_honda",
+        "cart_reynard_98i_mercedes",
+        "cart_reynard_98i_toyota",
+        "cart_swift_009c"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen2_HD",
+      "vehicleCount": 6,
+      "years": [
+        1998,
+        1998
+      ],
+      "vehicles": [
+        "cart_lola_t98_hd",
+        "cart_reynard_98i_ford_hd",
+        "cart_reynard_98i_honda_hd",
+        "cart_reynard_98i_mercedes_hd",
+        "cart_reynard_98i_toyota_hd",
+        "cart_swift_009c_hd"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen2_SO",
+      "vehicleCount": 6,
+      "years": [
+        1998,
+        1998
+      ],
+      "vehicles": [
+        "cart_lola_t98_so",
+        "cart_reynard_98i_ford_so",
+        "cart_reynard_98i_honda_so",
+        "cart_reynard_98i_mercedes_so",
+        "cart_reynard_98i_toyota_so",
+        "cart_swift_009c_so"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen2_SS",
+      "vehicleCount": 6,
+      "years": [
+        1998,
+        1998
+      ],
+      "vehicles": [
+        "cart_lola_t98_ss",
+        "cart_reynard_98i_ford_ss",
+        "cart_reynard_98i_honda_ss",
+        "cart_reynard_98i_mercedes_ss",
+        "cart_reynard_98i_toyota_ss",
+        "cart_swift_009c_ss"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen2_SW",
+      "vehicleCount": 6,
+      "years": [
+        1998,
+        1998
+      ],
+      "vehicles": [
+        "cart_lola_t98_sw",
+        "cart_reynard_98i_ford_sw",
+        "cart_reynard_98i_honda_sw",
+        "cart_reynard_98i_mercedes_sw",
+        "cart_reynard_98i_toyota_sw",
+        "cart_swift_009c_sw"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen3",
+      "vehicleCount": 7,
+      "years": [
+        2000,
+        2000
+      ],
+      "vehicles": [
+        "cart_lola_b2k00_ford",
+        "cart_lola_b2k00_mercedes",
+        "cart_lola_b2k00_toyota",
+        "cart_reynard_2ki_ford",
+        "cart_reynard_2ki_honda",
+        "cart_reynard_2ki_mercedes",
+        "cart_reynard_2ki_toyota"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen3_HD",
+      "vehicleCount": 7,
+      "years": [
+        2000,
+        2000
+      ],
+      "vehicles": [
+        "cart_lola_b2k00_ford_hd",
+        "cart_lola_b2k00_mercedes_hd",
+        "cart_lola_b2k00_toyota_hd",
+        "cart_reynard_2ki_ford_hd",
+        "cart_reynard_2ki_honda_hd",
+        "cart_reynard_2ki_mercedes_hd",
+        "cart_reynard_2ki_toyota_hd"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen3_SO",
+      "vehicleCount": 7,
+      "years": [
+        2000,
+        2000
+      ],
+      "vehicles": [
+        "cart_lola_b2k00_ford_so",
+        "cart_lola_b2k00_mercedes_so",
+        "cart_lola_b2k00_toyota_so",
+        "cart_reynard_2ki_ford_so",
+        "cart_reynard_2ki_honda_so",
+        "cart_reynard_2ki_mercedes_so",
+        "cart_reynard_2ki_toyota_so"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen3_SS",
+      "vehicleCount": 7,
+      "years": [
+        2000,
+        2000
+      ],
+      "vehicles": [
+        "cart_lola_b2k00_ford_ss",
+        "cart_lola_b2k00_mercedes_ss",
+        "cart_lola_b2k00_toyota_ss",
+        "cart_reynard_2ki_ford_ss",
+        "cart_reynard_2ki_honda_ss",
+        "cart_reynard_2ki_mercedes_ss",
+        "cart_reynard_2ki_toyota_ss"
+      ]
+    },
+    {
+      "xmlName": "F-USA_Gen3_SW",
+      "vehicleCount": 7,
+      "years": [
+        2000,
+        2000
+      ],
+      "vehicles": [
+        "cart_lola_b2k00_ford_sw",
+        "cart_lola_b2k00_mercedes_sw",
+        "cart_lola_b2k00_toyota_sw",
+        "cart_reynard_2ki_ford_sw",
+        "cart_reynard_2ki_honda_sw",
+        "cart_reynard_2ki_mercedes_sw",
+        "cart_reynard_2ki_toyota_sw"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_ultimate_2019"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen1",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_ultimate_2016"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen1_HD",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_ultimate_2016_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen1_LD",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_ultimate_2016_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen2",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "formula_ultimate_2024"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen2_HD",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "formula_ultimate_2024_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen2_LD",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "formula_ultimate_2024_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen2_LD_RET",
+      "vehicleCount": 1,
+      "years": [
+        2022,
+        2022
+      ],
+      "vehicles": [
+        "formula_ultimate_2022_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_Gen2_RET",
+      "vehicleCount": 1,
+      "years": [
+        2022,
+        2022
+      ],
+      "vehicles": [
+        "formula_ultimate_2022"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_HD",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_ultimate_2019_hd"
+      ]
+    },
+    {
+      "xmlName": "F-Ultimate_LD",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_ultimate_2019_ld"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen1",
+      "vehicleCount": 2,
+      "years": [
+        1997,
+        1997
+      ],
+      "vehicles": [
+        "formula_v10_g1",
+        "mclaren_mp4_12"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen1_HD",
+      "vehicleCount": 2,
+      "years": [
+        1996,
+        1996
+      ],
+      "vehicles": [
+        "formula_v10_g1_hd",
+        "mclaren_mp4_12_hd"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen1_LD",
+      "vehicleCount": 2,
+      "years": [
+        1996,
+        1996
+      ],
+      "vehicles": [
+        "formula_v10_g1_ld",
+        "mclaren_mp4_12_ld"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen2",
+      "vehicleCount": 3,
+      "years": [
+        2001,
+        2002
+      ],
+      "vehicles": [
+        "formula_v10",
+        "formula_v10_m",
+        "mclaren_mp416"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen2_HD",
+      "vehicleCount": 3,
+      "years": [
+        2001,
+        2002
+      ],
+      "vehicles": [
+        "formula_v10_hd",
+        "formula_v10_m_hd",
+        "mclaren_mp416_hd"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen2_LD",
+      "vehicleCount": 3,
+      "years": [
+        2001,
+        2002
+      ],
+      "vehicles": [
+        "formula_v10_ld",
+        "formula_v10_m_ld",
+        "mclaren_mp416_ld"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen3",
+      "vehicleCount": 4,
+      "years": [
+        2006,
+        2006
+      ],
+      "vehicles": [
+        "formula_v10_g3",
+        "formula_v10_g3_b",
+        "mclaren_mp420",
+        "renault_r25"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen3_HD",
+      "vehicleCount": 4,
+      "years": [
+        2006,
+        2006
+      ],
+      "vehicles": [
+        "formula_v10_g3_b_hd",
+        "formula_v10_g3_hd",
+        "mclaren_mp420_hd",
+        "renault_r25_hd"
+      ]
+    },
+    {
+      "xmlName": "F-V10_Gen3_LD",
+      "vehicleCount": 4,
+      "years": [
+        2006,
+        2006
+      ],
+      "vehicles": [
+        "formula_v10_g3_b_ld",
+        "formula_v10_g3_ld",
+        "mclaren_mp420_ld",
+        "renault_r25_ld"
+      ]
+    },
+    {
+      "xmlName": "F-V12",
+      "vehicleCount": 1,
+      "years": [
+        1995,
+        1995
+      ],
+      "vehicles": [
+        "formula_v12"
+      ]
+    },
+    {
+      "xmlName": "F-V12_LD",
+      "vehicleCount": 1,
+      "years": [
+        1994,
+        1994
+      ],
+      "vehicles": [
+        "formula_v12_ld"
+      ]
+    },
+    {
+      "xmlName": "F-V8_Gen1",
+      "vehicleCount": 3,
+      "years": [
+        2006,
+        2006
+      ],
+      "vehicles": [
+        "formula_v8_g1",
+        "formula_v8_g1_b",
+        "renault_r26"
+      ]
+    },
+    {
+      "xmlName": "F-V8_Gen1_HD",
+      "vehicleCount": 3,
+      "years": [
+        2006,
+        2006
+      ],
+      "vehicles": [
+        "formula_v8_g1_b_hd",
+        "formula_v8_g1_hd",
+        "renault_r26_hd"
+      ]
+    },
+    {
+      "xmlName": "F-V8_Gen1_LD",
+      "vehicleCount": 3,
+      "years": [
+        2006,
+        2006
+      ],
+      "vehicles": [
+        "formula_v8_g1_b_ld",
+        "formula_v8_g1_ld",
+        "renault_r26_ld"
+      ]
+    },
+    {
+      "xmlName": "F-V8_Gen2",
+      "vehicleCount": 3,
+      "years": [
+        2008,
+        2008
+      ],
+      "vehicles": [
+        "formula_v8_g2",
+        "mclaren_mp423",
+        "renault_r28"
+      ]
+    },
+    {
+      "xmlName": "F-V8_Gen2_HD",
+      "vehicleCount": 3,
+      "years": [
+        2008,
+        2008
+      ],
+      "vehicles": [
+        "formula_v8_g2_hd",
+        "mclaren_mp423_hd",
+        "renault_r28_hd"
+      ]
+    },
+    {
+      "xmlName": "F-V8_Gen2_LD",
+      "vehicleCount": 3,
+      "years": [
+        2008,
+        2008
+      ],
+      "vehicles": [
+        "formula_v8_g2_ld",
+        "mclaren_mp423_ld",
+        "renault_r28_ld"
+      ]
+    },
+    {
+      "xmlName": "F-Vee",
+      "vehicleCount": 2,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "formula_vee",
+        "formula_vee_fin"
+      ]
+    },
+    {
+      "xmlName": "F-Vee_Gen2",
+      "vehicleCount": 1,
+      "years": [
+        2025,
+        2025
+      ],
+      "vehicles": [
+        "formula_vee_gen2"
+      ]
+    },
+    {
+      "xmlName": "F-Vintage_Gen1",
+      "vehicleCount": 2,
+      "years": [
+        1964,
+        1967
+      ],
+      "vehicles": [
+        "formula_vintage_g1m1",
+        "formula_vintage_g1m2"
+      ]
+    },
+    {
+      "xmlName": "F-Vintage_Gen2",
+      "vehicleCount": 4,
+      "years": [
+        1964,
+        1970
+      ],
+      "vehicles": [
+        "brabham_bt26",
+        "formula_vintage_g2m1",
+        "formula_vintage_g2m2",
+        "lotus_49c"
+      ]
+    },
+    {
+      "xmlName": "F5",
+      "vehicleCount": 1,
+      "years": [
+        2012,
+        2012
+      ],
+      "vehicles": [
+        "formula_rookie"
+      ]
+    },
+    {
+      "xmlName": "FE-G1",
+      "vehicleCount": 3,
+      "years": [
+        1995,
+        1995
+      ],
+      "vehicles": [
+        "formula_edge_g1m1",
+        "formula_edge_g1m2",
+        "formula_edge_g1m3"
+      ]
+    },
+    {
+      "xmlName": "FE-G1_HD",
+      "vehicleCount": 3,
+      "years": [
+        1994,
+        1995
+      ],
+      "vehicles": [
+        "formula_edge_g1m1_hd",
+        "formula_edge_g1m2_hd",
+        "formula_edge_g1m3_hd"
+      ]
+    },
+    {
+      "xmlName": "FE-G1_LD",
+      "vehicleCount": 3,
+      "years": [
+        1994,
+        1995
+      ],
+      "vehicles": [
+        "formula_edge_g1m1_ld",
+        "formula_edge_g1m2_ld",
+        "formula_edge_g1m3_ld"
+      ]
+    },
+    {
+      "xmlName": "G40Cup",
+      "vehicleCount": 1,
+      "years": [
+        2017,
+        2017
+      ],
+      "vehicles": [
+        "ginetta_g40_cup"
+      ]
+    },
+    {
+      "xmlName": "G55Supercup",
+      "vehicleCount": 1,
+      "years": [
+        2017,
+        2017
+      ],
+      "vehicles": [
+        "ginetta_g55_gt4"
+      ]
+    },
+    {
+      "xmlName": "GT1",
+      "vehicleCount": 4,
+      "years": [
+        1998,
+        2019
+      ],
+      "vehicles": [
+        "mclaren_f1_gtr",
+        "mercedes_clk-lm",
+        "nissan_r390_gt1",
+        "porsche_911_gt1_98"
+      ]
+    },
+    {
+      "xmlName": "GT1_05",
+      "vehicleCount": 7,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "aston_martin_dbr9_gt1",
+        "chevrolet_corvette_c5r",
+        "dodge_viper_gts_r",
+        "lamborghini_murcielago_r_gt",
+        "lister_storm",
+        "maserati_mc12_gt1",
+        "milano_55gt"
+      ]
+    },
+    {
+      "xmlName": "GT1_05_LD",
+      "vehicleCount": 7,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "aston_martin_dbr9_gt1_ld",
+        "chevrolet_corvette_c5r_ld",
+        "dodge_viper_gts_r_ld",
+        "lamborghini_murcielago_r_gt_ld",
+        "lister_storm_ld",
+        "maserati_mc12_gt1_ld",
+        "milano_55gt_ld"
+      ]
+    },
+    {
+      "xmlName": "GT1_LD",
+      "vehicleCount": 4,
+      "years": [
+        1998,
+        2019
+      ],
+      "vehicles": [
+        "mclaren_f1_gtr_ld",
+        "mercedes_clk-lm_ld",
+        "nissan_r390_gt1_ld",
+        "porsche_911_gt1_98_ld"
+      ]
+    },
+    {
+      "xmlName": "GT2_05",
+      "vehicleCount": 2,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "milano_gt36",
+        "porsche_996_gt3rsr"
+      ]
+    },
+    {
+      "xmlName": "GT2_05_LD",
+      "vehicleCount": 2,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "milano_gt36_ld",
+        "porsche_996_gt3rsr_ld"
+      ]
+    },
+    {
+      "xmlName": "GT3",
+      "vehicleCount": 6,
+      "years": [
+        2015,
+        2017
+      ],
+      "vehicles": [
+        "audi_r8_lms_gt3",
+        "bmw_m6_gt3",
+        "mclaren_720s_gt3",
+        "mercedes_amg_gt3",
+        "nissan_gt-r_gt3",
+        "porsche_991_gt3r"
+      ]
+    },
+    {
+      "xmlName": "GT3N",
+      "vehicleCount": 2,
+      "years": [
+        2013,
+        2016
+      ],
+      "vehicles": [
+        "aston_martin_vantage_gt3",
+        "lamborghini_huracan_gt3"
+      ]
+    },
+    {
+      "xmlName": "GT3_Gen2",
+      "vehicleCount": 9,
+      "years": [
+        2015,
+        2025
+      ],
+      "vehicles": [
+        "aston_martin_vantage_gt3_evo",
+        "audi_r8_lms_gt3_evo2",
+        "bmw_m4_gt3",
+        "chevrolet_corvette_z06_gt3r",
+        "ford_mustang_gt3",
+        "lamborghini_huracan_gt3_evo2",
+        "mclaren_720s_gt3_evo",
+        "mercedes_amg_gt3_evo",
+        "porsche_992_gt3r"
+      ]
+    },
+    {
+      "xmlName": "GT3_Gen2_LD",
+      "vehicleCount": 9,
+      "years": [
+        2015,
+        2025
+      ],
+      "vehicles": [
+        "aston_martin_vantage_gt3_evo_ld",
+        "audi_r8_lms_gt3_evo2_ld",
+        "bmw_m4_gt3_ld",
+        "chevrolet_corvette_z06_gt3r_ld",
+        "ford_mustang_gt3_ld",
+        "lamborghini_huracan_gt3_evo2_ld",
+        "mclaren_720s_gt3_evo_ld",
+        "mercedes_amg_gt3_evo_ld",
+        "porsche_992_gt3r_ld"
+      ]
+    },
+    {
+      "xmlName": "GT4",
+      "vehicleCount": 9,
+      "years": [
+        2015,
+        2024
+      ],
+      "vehicles": [
+        "alpine_a110_gt4_evo",
+        "aston_martin_vantage_gt4_evo",
+        "audi_r8_lms_gt4",
+        "bmw_m4_gt4",
+        "camaro_gt4r",
+        "ginetta_g55_gt4_2",
+        "mclaren_570s_gt4",
+        "mercedes_amg_gt4",
+        "porsche_cayman_gt4cs"
+      ]
+    },
+    {
+      "xmlName": "GT4N",
+      "vehicleCount": 1,
+      "years": [
+        2013,
+        2013
+      ],
+      "vehicles": [
+        "aston_martin_vantage_gt4"
+      ]
+    },
+    {
+      "xmlName": "GT5",
+      "vehicleCount": 2,
+      "years": [
+        2012,
+        2017
+      ],
+      "vehicles": [
+        "ginetta_g40",
+        "puma_p052"
+      ]
+    },
+    {
+      "xmlName": "GTCupN",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "porsche_991_gt3r_24h"
+      ]
+    },
+    {
+      "xmlName": "GTE",
+      "vehicleCount": 4,
+      "years": [
+        2019,
+        2020
+      ],
+      "vehicles": [
+        "aston_martin_vantage_gte",
+        "bmw_m8_gte",
+        "chevrolet_corvette_c8r",
+        "porsche_911_gte"
+      ]
+    },
+    {
+      "xmlName": "GTE_LD",
+      "vehicleCount": 4,
+      "years": [
+        2019,
+        2020
+      ],
+      "vehicles": [
+        "aston_martin_vantage_gte_ld",
+        "bmw_m8_gte_ld",
+        "chevrolet_corvette_c8r_ld",
+        "porsche_911_gte_ld"
+      ]
+    },
+    {
+      "xmlName": "GTO",
+      "vehicleCount": 1,
+      "years": [
+        1999,
+        1999
+      ],
+      "vehicles": [
+        "lamborghini_diablo_gtr"
+      ]
+    },
+    {
+      "xmlName": "GTOpen",
+      "vehicleCount": 2,
+      "years": [
+        2012,
+        2017
+      ],
+      "vehicles": [
+        "ginetta_g55_gt3",
+        "ultima_race"
+      ]
+    },
+    {
+      "xmlName": "GTR_04",
+      "vehicleCount": 1,
+      "years": [
+        2001,
+        2001
+      ],
+      "vehicles": [
+        "bmw_m3_gtr"
+      ]
+    },
+    {
+      "xmlName": "GTR_04_LD",
+      "vehicleCount": 1,
+      "years": [
+        2001,
+        2001
+      ],
+      "vehicles": [
+        "bmw_m3_gtr_ld"
+      ]
+    },
+    {
+      "xmlName": "Group 5",
+      "vehicleCount": 3,
+      "years": [
+        1977,
+        1980
+      ],
+      "vehicles": [
+        "bmw_320_group5",
+        "ford_capri_group5",
+        "porsche_935_group5"
+      ]
+    },
+    {
+      "xmlName": "Group 7",
+      "vehicleCount": 2,
+      "years": [
+        1969,
+        1970
+      ],
+      "vehicles": [
+        "mclaren_m8b",
+        "porsche_917k"
+      ]
+    },
+    {
+      "xmlName": "Group A",
+      "vehicleCount": 6,
+      "years": [
+        1991,
+        2005
+      ],
+      "vehicles": [
+        "audi_a4_dtm",
+        "audi_a4_tc",
+        "audi_v8_dtm",
+        "bmw_318i_tc",
+        "bmw_m3_e30_groupa",
+        "mercedes_evo2_dtm"
+      ]
+    },
+    {
+      "xmlName": "Group C",
+      "vehicleCount": 4,
+      "years": [
+        1987,
+        1989
+      ],
+      "vehicles": [
+        "corvette_gtp",
+        "nissan_r89c",
+        "porsche_962c",
+        "sauber_c9"
+      ]
+    },
+    {
+      "xmlName": "Group C_LD",
+      "vehicleCount": 4,
+      "years": [
+        1987,
+        1989
+      ],
+      "vehicles": [
+        "corvette_gtp_ld",
+        "nissan_r89c_ld",
+        "porsche_962c_ld",
+        "sauber_c9_ld"
+      ]
+    },
+    {
+      "xmlName": "Hot Cars",
+      "vehicleCount": 4,
+      "years": [
+        1981,
+        2019
+      ],
+      "vehicles": [
+        "fusca_hotcars_m1",
+        "fusca_hotcars_m2",
+        "gol_hotcars",
+        "pas_hotcars"
+      ]
+    },
+    {
+      "xmlName": "Hypercars",
+      "vehicleCount": 5,
+      "years": [
+        2014,
+        2024
+      ],
+      "vehicles": [
+        "aston_martin_valkyrie",
+        "brabham_bt62",
+        "lamborghini_revuelto",
+        "lamborghini_veneno",
+        "mclaren_senna"
+      ]
+    },
+    {
+      "xmlName": "Kart1",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "kart_01_test"
+      ]
+    },
+    {
+      "xmlName": "Kart125cc",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "kart_01"
+      ]
+    },
+    {
+      "xmlName": "KartGX390",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "kart_gx390"
+      ]
+    },
+    {
+      "xmlName": "KartRental",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "kart_gx390_rental"
+      ]
+    },
+    {
+      "xmlName": "KartShifter",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "kart_shifter"
+      ]
+    },
+    {
+      "xmlName": "Kartcross",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "rally_kart"
+      ]
+    },
+    {
+      "xmlName": "LES_2025",
+      "vehicleCount": 2,
+      "years": [
+        2022,
+        2023
+      ],
+      "vehicles": [
+        "ligier_js2_r",
+        "ligier_js_p4"
+      ]
+    },
+    {
+      "xmlName": "LMDh",
+      "vehicleCount": 6,
+      "years": [
+        2023,
+        2025
+      ],
+      "vehicles": [
+        "alpine_a424",
+        "aston_martin_valkyrie_lmh",
+        "bmw_m_hybrid_v8",
+        "cadillac_v-series_r",
+        "lamborghini_sc63",
+        "porsche_963_gtp"
+      ]
+    },
+    {
+      "xmlName": "LMDh_LD",
+      "vehicleCount": 6,
+      "years": [
+        2023,
+        2025
+      ],
+      "vehicles": [
+        "alpine_a424_ld",
+        "aston_martin_valkyrie_lmh_ld",
+        "bmw_m_hybrid_v8_ld",
+        "cadillac_v-series_r_ld",
+        "lamborghini_sc63_ld",
+        "porsche_963_gtp_ld"
+      ]
+    },
+    {
+      "xmlName": "LMP1_05",
+      "vehicleCount": 3,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "audi_r8_lmp",
+        "courage_c60",
+        "dallara_sp1"
+      ]
+    },
+    {
+      "xmlName": "LMP1_05_LD",
+      "vehicleCount": 3,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "audi_r8_lmp_ld",
+        "courage_c60_ld",
+        "dallara_sp1_ld"
+      ]
+    },
+    {
+      "xmlName": "LMP2",
+      "vehicleCount": 2,
+      "years": [
+        2023,
+        2024
+      ],
+      "vehicles": [
+        "ligier_js_p217",
+        "oreca_07"
+      ]
+    },
+    {
+      "xmlName": "LMP2_05",
+      "vehicleCount": 2,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "lola_b0540_lmp2_turbo",
+        "lola_b0540_lmp2_v8"
+      ]
+    },
+    {
+      "xmlName": "LMP2_05_LD",
+      "vehicleCount": 2,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "lola_b0540_lmp2_turbo_ld",
+        "lola_b0540_lmp2_v8_ld"
+      ]
+    },
+    {
+      "xmlName": "LMP2_Gen1",
+      "vehicleCount": 2,
+      "years": [
+        2023,
+        2024
+      ],
+      "vehicles": [
+        "ligier_js_p217_g1",
+        "oreca_07_g1"
+      ]
+    },
+    {
+      "xmlName": "LMP2_Gen1_LD",
+      "vehicleCount": 2,
+      "years": [
+        2023,
+        2024
+      ],
+      "vehicles": [
+        "ligier_js_p217_g1_ld",
+        "oreca_07_g1_ld"
+      ]
+    },
+    {
+      "xmlName": "LMP2_LD",
+      "vehicleCount": 2,
+      "years": [
+        2023,
+        2024
+      ],
+      "vehicles": [
+        "ligier_js_p217_ld",
+        "oreca_07_ld"
+      ]
+    },
+    {
+      "xmlName": "LMP3",
+      "vehicleCount": 1,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "ginetta_g57_lmp3"
+      ]
+    },
+    {
+      "xmlName": "LancerCup",
+      "vehicleCount": 2,
+      "years": [
+        2017,
+        2017
+      ],
+      "vehicles": [
+        "mitsubishi_lancerr",
+        "mitsubishi_lancerrs"
+      ]
+    },
+    {
+      "xmlName": "Mclaren_MP46",
+      "vehicleCount": 1,
+      "years": [
+        1989,
+        1989
+      ],
+      "vehicles": [
+        "mclaren_mp45"
+      ]
+    },
+    {
+      "xmlName": "MiniChallenge",
+      "vehicleCount": 1,
+      "years": [
+        2020,
+        2020
+      ],
+      "vehicles": [
+        "mini_cooper"
+      ]
+    },
+    {
+      "xmlName": "Montana",
+      "vehicleCount": 1,
+      "years": [
+        2017,
+        2017
+      ],
+      "vehicles": [
+        "montana"
+      ]
+    },
+    {
+      "xmlName": "OldStock",
+      "vehicleCount": 1,
+      "years": [
+        1981,
+        1981
+      ],
+      "vehicles": [
+        "opala_oldstock"
+      ]
+    },
+    {
+      "xmlName": "Opala79",
+      "vehicleCount": 1,
+      "years": [
+        1979,
+        1979
+      ],
+      "vehicles": [
+        "opala_79"
+      ]
+    },
+    {
+      "xmlName": "Opala86",
+      "vehicleCount": 1,
+      "years": [
+        1981,
+        1981
+      ],
+      "vehicles": [
+        "opala_86"
+      ]
+    },
+    {
+      "xmlName": "P1",
+      "vehicleCount": 5,
+      "years": [
+        2016,
+        2016
+      ],
+      "vehicles": [
+        "ginetta_g57",
+        "metalmoro_ajr_chevy",
+        "metalmoro_ajr_honda",
+        "metalmoro_ajr_judd",
+        "metalmoro_ajr_powertec"
+      ]
+    },
+    {
+      "xmlName": "P1Gen2",
+      "vehicleCount": 6,
+      "years": [
+        2016,
+        2023
+      ],
+      "vehicles": [
+        "ginetta_g57_gen2",
+        "ligier_js_p320",
+        "metalmoro_ajr_gen2_chevy",
+        "metalmoro_ajr_gen2_honda",
+        "metalmoro_ajr_gen2_nissan",
+        "sigma_p1_g5"
+      ]
+    },
+    {
+      "xmlName": "P2",
+      "vehicleCount": 2,
+      "years": [
+        2019,
+        2020
+      ],
+      "vehicles": [
+        "metalmoro_mrx_sharkfin",
+        "sigma_p1"
+      ]
+    },
+    {
+      "xmlName": "P3",
+      "vehicleCount": 3,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "metalmoro_mrx_honda",
+        "metalmoro_mrx_p3",
+        "roco"
+      ]
+    },
+    {
+      "xmlName": "P4",
+      "vehicleCount": 2,
+      "years": [
+        2012,
+        2019
+      ],
+      "vehicles": [
+        "mcr2000",
+        "metalmoro_mrx"
+      ]
+    },
+    {
+      "xmlName": "Procar",
+      "vehicleCount": 1,
+      "years": [
+        1981,
+        1981
+      ],
+      "vehicles": [
+        "bmw_m1"
+      ]
+    },
+    {
+      "xmlName": "RX",
+      "vehicleCount": 4,
+      "years": [
+        2016,
+        2017
+      ],
+      "vehicles": [
+        "citroen_ds3_rx",
+        "mini_rx",
+        "mitsubishi_lancer_rc",
+        "vw_polo_rx"
+      ]
+    },
+    {
+      "xmlName": "SST",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "supertruck"
+      ]
+    },
+    {
+      "xmlName": "ST96",
+      "vehicleCount": 1,
+      "years": [
+        1996,
+        1996
+      ],
+      "vehicles": [
+        "lamborghini_diablo_svr"
+      ]
+    },
+    {
+      "xmlName": "STT",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "super_trophy_truck"
+      ]
+    },
+    {
+      "xmlName": "SafetyCar",
+      "vehicleCount": 14,
+      "years": [
+        1973,
+        2020
+      ],
+      "vehicles": [
+        "bmw_2002_turbo_sc",
+        "bmw_m3_e30_sc",
+        "bmw_m4_sc",
+        "camaro_ss_safetycar",
+        "chevrolet_corvette_c8_sc",
+        "formula_2k_sc",
+        "ftruck_pacecar",
+        "kart_sc",
+        "mercedes_amg_sc",
+        "porsche_911_rsr_sc",
+        "porsche_cayman_gt4cs_sc",
+        "puma_gtb_sc",
+        "super_trophy_truck_sc",
+        "uno_sc"
+      ]
+    },
+    {
+      "xmlName": "SprintRace",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "sprintrace"
+      ]
+    },
+    {
+      "xmlName": "StockCar99",
+      "vehicleCount": 1,
+      "years": [
+        2017,
+        2017
+      ],
+      "vehicles": [
+        "stock_omega"
+      ]
+    },
+    {
+      "xmlName": "StockCarV8",
+      "vehicleCount": 1,
+      "years": [
+        2017,
+        2017
+      ],
+      "vehicles": [
+        "stock_cruze"
+      ]
+    },
+    {
+      "xmlName": "StockCarV8_2020",
+      "vehicleCount": 2,
+      "years": [
+        2017,
+        2020
+      ],
+      "vehicles": [
+        "stock_corolla",
+        "stock_cruze_20"
+      ]
+    },
+    {
+      "xmlName": "StockCarV8_2021",
+      "vehicleCount": 2,
+      "years": [
+        2020,
+        2021
+      ],
+      "vehicles": [
+        "stock_corolla_21",
+        "stock_cruze_21"
+      ]
+    },
+    {
+      "xmlName": "StockCarV8_2022",
+      "vehicleCount": 2,
+      "years": [
+        2022,
+        2022
+      ],
+      "vehicles": [
+        "stock_corolla_22",
+        "stock_cruze_22"
+      ]
+    },
+    {
+      "xmlName": "StockCarV8_2023",
+      "vehicleCount": 2,
+      "years": [
+        2023,
+        2023
+      ],
+      "vehicles": [
+        "stock_corolla_23",
+        "stock_cruze_23"
+      ]
+    },
+    {
+      "xmlName": "StockCarV8_2024",
+      "vehicleCount": 2,
+      "years": [
+        2023,
+        2024
+      ],
+      "vehicles": [
+        "stock_corolla_24",
+        "stock_cruze_24"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen1",
+      "vehicleCount": 1,
+      "years": [
+        1984,
+        1984
+      ],
+      "vehicles": [
+        "stock_usa_g1"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen1_SO",
+      "vehicleCount": 1,
+      "years": [
+        1984,
+        1984
+      ],
+      "vehicles": [
+        "stock_usa_g1_so"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen1_SW",
+      "vehicleCount": 1,
+      "years": [
+        1984,
+        1984
+      ],
+      "vehicles": [
+        "stock_usa_g1_sw"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen2",
+      "vehicleCount": 1,
+      "years": [
+        1994,
+        1994
+      ],
+      "vehicles": [
+        "stock_usa_g2"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen2_SO",
+      "vehicleCount": 1,
+      "years": [
+        1994,
+        1994
+      ],
+      "vehicles": [
+        "stock_usa_g2_so"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen2_SS",
+      "vehicleCount": 1,
+      "years": [
+        1994,
+        1994
+      ],
+      "vehicles": [
+        "stock_usa_g2_ss"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen2_SW",
+      "vehicleCount": 1,
+      "years": [
+        1994,
+        1994
+      ],
+      "vehicles": [
+        "stock_usa_g2_sw"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen3",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "stock_usa_g3"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen3_LM",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "stock_usa_g3_lm"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen3_SO",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "stock_usa_g3_so"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen3_SS",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "stock_usa_g3_ss"
+      ]
+    },
+    {
+      "xmlName": "Stock_USA_Gen3_SW",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "stock_usa_g3_sw"
+      ]
+    },
+    {
+      "xmlName": "Street",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "camaro_ss"
+      ]
+    },
+    {
+      "xmlName": "Super Trofeo",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "lamborghini_huracan_supertrofeo_evo2"
+      ]
+    },
+    {
+      "xmlName": "Super Trofeo_LD",
+      "vehicleCount": 1,
+      "years": [
+        2024,
+        2024
+      ],
+      "vehicles": [
+        "lamborghini_huracan_supertrofeo_evo2_ld"
+      ]
+    },
+    {
+      "xmlName": "SuperKart",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "superkart"
+      ]
+    },
+    {
+      "xmlName": "SuperV8",
+      "vehicleCount": 1,
+      "years": [
+        2019,
+        2019
+      ],
+      "vehicles": [
+        "super_v8"
+      ]
+    },
+    {
+      "xmlName": "Supercars",
+      "vehicleCount": 7,
+      "years": [
+        2012,
+        2024
+      ],
+      "vehicles": [
+        "audi_r8_v10_gt",
+        "chevrolet_corvette_c8_z06",
+        "chevrolet_corvette_c8_z07",
+        "dodge_viper_acr",
+        "maserati_gt2_stradale",
+        "mclaren_f1_lm",
+        "ultima"
+      ]
+    },
+    {
+      "xmlName": "TC60S",
+      "vehicleCount": 3,
+      "years": [
+        1969,
+        1973
+      ],
+      "vehicles": [
+        "bmw_2002_turbo",
+        "chevrolet_corvette_73",
+        "lamborghini_miura_sv"
+      ]
+    },
+    {
+      "xmlName": "TC60S2",
+      "vehicleCount": 3,
+      "years": [
+        1960,
+        1965
+      ],
+      "vehicles": [
+        "lotus_23",
+        "maserati_tipo61",
+        "mini_coopers_1965"
+      ]
+    },
+    {
+      "xmlName": "TC70S",
+      "vehicleCount": 3,
+      "years": [
+        1968,
+        1974
+      ],
+      "vehicles": [
+        "chevrolet_corvette_c3_rc",
+        "chevrolet_corvette_c3_rcc",
+        "porsche_911_rsr_74"
+      ]
+    },
+    {
+      "xmlName": "TSICup",
+      "vehicleCount": 4,
+      "years": [
+        2021,
+        2021
+      ],
+      "vehicles": [
+        "vw_polo",
+        "vw_polo_gts",
+        "vw_virtus",
+        "vw_virtus_gts"
+      ]
+    }
+  ]
+}

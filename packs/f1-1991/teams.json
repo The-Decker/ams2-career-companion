@@ -1,0 +1,274 @@
+{
+  "teams": [
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Honda",
+      "carVehicleIds": [
+        "mclaren_mp46"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.94,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Honda",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.57,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams-Renault",
+      "carVehicleIds": [
+        "formula_classic_g4m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.68,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.brabham",
+      "name": "Brabham-Yamaha",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.52,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.footwork",
+      "name": "Footwork-Porsche",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.24,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Judd",
+      "carVehicleIds": [
+        "formula_classic_g4m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.47,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.fondmetal",
+      "name": "Fondmetal-Ford",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.41,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.leyton_house",
+      "name": "Leyton House-Ilmor",
+      "carVehicleIds": [
+        "formula_classic_g4m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.35,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ags",
+      "name": "AGS-Ford",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.26,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.benetton",
+      "name": "Benetton-Ford",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.63,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.dallara",
+      "name": "Dallara-Judd",
+      "carVehicleIds": [
+        "formula_classic_g4m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.48,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.minardi",
+      "name": "Minardi-Ferrari",
+      "carVehicleIds": [
+        "formula_classic_g4m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.ligier",
+      "name": "Ligier-Lamborghini",
+      "carVehicleIds": [
+        "formula_classic_g4m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.56,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_classic_g4m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.lola",
+      "name": "Lola-Ford",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.21,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.coloni",
+      "name": "Coloni-Ford",
+      "carVehicleIds": [
+        "formula_classic_g4m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.19,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.jordan",
+      "name": "Jordan-Ford",
+      "carVehicleIds": [
+        "formula_classic_g4m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.56,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.modena",
+      "name": "Lambo-Lamborghini",
+      "carVehicleIds": [
+        "formula_classic_g4m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.29,
+      "prestige": 1,
+      "budgetTier": 1
+    }
+  ]
+}

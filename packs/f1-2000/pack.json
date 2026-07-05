@@ -1,0 +1,32 @@
+{
+    "packId":  "f1-2000",
+    "name":  "Formula One 2000",
+    "version":  "1.1.0",
+    "formatVersion":  1,
+    "gameVersionTested":  "1.6.9.82",
+    "license":  "CC BY 4.0",
+    "attribution":  [
+                        "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+                        "AI ratings from the community F-V10_Gen2_2000.xml custom-AI set, matching the F1_Season_2000 skinpack (F1_2000 2.21)"
+                    ],
+    "requires":  {
+                     "dlc":  [
+
+                             ],
+                     "skinPacks":  [
+                                       {
+                                           "name":  "F1 2000 Season (F1_2000 2.21)",
+                                           "overridesFolder":  "F1_Season_2000"
+                                       }
+                                   ]
+                 },
+    "notes":  [
+                  "Full-grid coverage: all 23 seats of the 2000 F1 season (11 teams x 2 cars, plus the Jaguar #7 mid-season swap) are bound to liveries in the F-V10_Gen2_2000.xml set; there are no uncovered f1db entrants.",
+                  "The Jaguar #7 seat is shared: Eddie Irvine (rounds 1-9, 11-17) and Luciano Burti, who deputised for the injured Irvine at the Austrian GP (round 10). Both carry the source XML\u0027s #7 liveries.",
+                  "Class: F-V10_Gen2 (F-V10_Gen2_2000.xml). McLaren is bound to the mclaren_mp416 model; the other ten teams use the formula_v10 model. The installed AI file also carries season-specific F-V10_Gen2_2000_Audi.xml and a large per-track (tracks=\"...\") override set (263 patch entries scripting real-2000 retirements/pace); those patches are not carried into this pack\u0027s aiOverrides in this version.",
+                  "Authored team reliability is derived from f1db 2000 mechanical retirement rates (1 - mechanical DNFs / starts), excluding collisions, spins and accidents.",
+                  "pointsAdjustments: McLaren-Mercedes was docked its Austrian GP constructors points (missing ECU seal); Hakkinen kept the race win. Copied verbatim from the oracle points catalog (data/rules/f1-points-systems.json, 2000).",
+                  "Placeholder rounds (format v1.1): Australia/Melbourne -\u003e Adelaide Modern, France/Magny-Cours -\u003e Le Mans Circuit Bugatti, Malaysia/Sepang -\u003e modern Hockenheim GP. Each keeps its real venue identity with laps recomputed to preserve the historical race distance. Sepang has no period AMS2 counterpart; the Tilke-designed modern Hockenheim GP is used as a same-era, same-designer character stand-in.",
+                  "grid.size on every round is the smaller of that round\u0027s covered f1db starters and the mapped track\u0027s Max AI participants; setupGuide opponents = grid.size - 1. The 2000 field is 22 cars, within every mapped track\u0027s AI cap, so grids run 20-22 depending on that round\u0027s starters."
+              ]
+}

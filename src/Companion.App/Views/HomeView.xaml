@@ -1,0 +1,25 @@
+<UserControl x:Class="Companion.App.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- The career header + loop nav now live in the Hub's global header (HubView); this view is
+         just the Race tab's content: the loop's own banners + the two-state content area. -->
+    <DockPanel>
+        <!-- content error banner -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource ErrorDimBrush}"
+                Visibility="{Binding ContentError, Converter={StaticResource NullCollapsed}}">
+            <TextBlock Text="{Binding ContentError}" Foreground="{StaticResource ErrorBrush}"
+                       Margin="20,8" TextWrapping="Wrap" />
+        </Border>
+
+        <!-- season review banner -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource SuccessDimBrush}"
+                Visibility="{Binding IsSeasonReview, Converter={StaticResource BoolVisible}}">
+            <TextBlock Foreground="{StaticResource SuccessBrush}" Margin="20,8" FontWeight="SemiBold"
+                       Text="🏁 Season complete — review the season, read your offer letters, and restore your AI file below." />
+        </Border>
+
+        <!-- two-state content: Briefing ⇄ Enter result (plus Confirm and Standings) -->
+        <ContentControl Content="{Binding CurrentContent}" Focusable="False" Margin="20,16" />
+    </DockPanel>
+</UserControl>

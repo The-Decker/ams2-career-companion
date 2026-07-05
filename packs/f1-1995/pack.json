@@ -1,0 +1,31 @@
+{
+  "packId": "f1-1995",
+  "name": "Formula One 1995",
+  "version": "1.1.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from the 'F1 1995' custom-AI set (FE-G1.xml, jusk / Alain Fry style), matching the F1_Season_1995 skinpack v3.00"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1995 Season (jusk / Alain Fry style)",
+        "overridesFolder": "F1_Season_1995"
+      }
+    ]
+  },
+  "notes": [
+    "Coverage: f1db 1995 entrants Christophe Bouchut (larrousse) and Érik Comas (larrousse) are not included — Larrousse entered the 1995 championship but withdrew before the opening round and never started a race (f1db records no 1995 race_result rows for the constructor), and the referenced skinpack/AI set carries no Larrousse livery.",
+    "Class: FE-G1 (Reiza 'Formula Edge Gen1', the AMS2 stand-in for the 1995 F1 field). The installed authority is FE-G1.xml, which is byte-identical to FE-G1_1995_Simtek.xml and carries the full 35-livery grid; the sibling FE-G1_1995.xml is the same set minus the two Simtek liveries.",
+    "Model bindings are derived from the deployed F1_Season_1995 override DDS sets: formula_edge_g1m1 (M1, V12) carries Ferrari (#27/#28) and Simtek (#11/#12); formula_edge_g1m2 (M2, V10) carries Benetton, Williams, McLaren, Tyrrell, Jordan and Ligier; formula_edge_g1m3 (M3, V8) carries Footwork, Minardi, Sauber, Forti and Pacific.",
+    "Mapping: driver ids follow f1db name forms (e.g. driver.jean_denis_deletraz for Jean-Denis Délétraz, driver.jean_christophe_boullion for Jean-Christophe Boullion); team ids continue the shipped lineage scheme — Footwork stays team.footwork (as in f1-1992/1993; it becomes team.arrows only from 1997), Sauber/Ligier/Tyrrell/Williams/McLaren/Benetton/Jordan/Minardi/Ferrari carry over, and Simtek/Pacific/Forti are new for 1995.",
+    "The skinpack ships per-round / mid- and late-season livery texture variants (e.g. Jordan14_early.dds, Tyrrell3_Early/_Late.dds, Forti21_Early/_Late.dds, Footwork9_Mid/_Late.dds, Sauber29_Interlagos/_BuenosAires/_Imola/_Late.dds) beside each model's base DDS set; livery display names are identical across the variants (round-specific paint only), so this pack's bindings resolve whichever is active.",
+    "The source custom-AI XML carries per-track (tracks=\"...\") rating variants for every driver; those are the game's own per-circuit AI tuning and are not per-round livery swaps, so every round's aiOverrides is left empty and the season-base ratings are used.",
+    "Placeholder venues (v1.1 rules, distance-preserving laps): Round 7 French GP — Magny-Cours (not in AMS2) reproduced on Le Mans Circuit Bugatti (73 laps). Round 15 Pacific GP — the TI Circuit at Aida/Okayama (not in AMS2) reproduced on Jerez 1988 (73 laps). All other venues are real AMS2 tracks with their historical lap counts kept.",
+    "Round 3 (San Marino) has 26 f1db starters but the era-matching Imola 1988 layout's AMS2 AI cap is 25, so the grid is capped at 25 (24 opponents plus the player)."
+  ]
+}

@@ -1,0 +1,70 @@
+<UserControl x:Class="Companion.App.Views.NewsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <DockPanel>
+        <!-- header: pop-out to an always-on-top companion window (decision 1: "own windows") -->
+        <Border DockPanel.Dock="Top" Padding="20,10,16,8">
+            <DockPanel>
+                <Button x:Name="PopOutButton" DockPanel.Dock="Right" Style="{StaticResource SubtleButton}"
+                        Click="OnPopOut" Padding="8,4"
+                        ToolTip="Pop the news out into an always-on-top window — handy on a second monitor while you race"
+                        AutomationProperties.Name="Pop news out into its own window">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8A7;" FontSize="13"
+                                   VerticalAlignment="Center" Margin="0,0,7,0" />
+                        <TextBlock Text="Pop out" />
+                    </StackPanel>
+                </Button>
+                <TextBlock Text="Paddock news" Style="{StaticResource Faint}" FontSize="11"
+                           VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+
+        <Grid Margin="24,4,24,20">
+        <!-- empty state: no journal headlines to render yet -->
+        <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" MaxWidth="440"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Text="No dispatches yet — run a race and the paddock starts talking. Click any headline to read the full story."
+                   Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1"
+                                Padding="2,10">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Meta}" Style="{StaticResource Faint}" FontSize="11" />
+                                <!-- ticker headline → click expands to the full period article (decision 17) -->
+                                <Button HorizontalContentAlignment="Left" Padding="0,3"
+                                        Background="Transparent" BorderBrush="Transparent"
+                                        Cursor="Hand"
+                                        Command="{Binding ToggleExpandedCommand}"
+                                        ToolTip="Read the full dispatch">
+                                    <TextBlock Text="{Binding Headline}" FontSize="15" FontWeight="SemiBold"
+                                               TextWrapping="Wrap" />
+                                </Button>
+                                <StackPanel Margin="0,4,0,2"
+                                            Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                                    <TextBlock Text="{Binding Body}" TextWrapping="Wrap"
+                                               Style="{StaticResource Muted}" />
+                                    <!-- the Why? chip: the journal delta as a plain sentence -->
+                                    <Border Margin="0,8,0,0" Padding="9,4" CornerRadius="3"
+                                            HorizontalAlignment="Left"
+                                            Background="{StaticResource AccentDimBrush}"
+                                            Visibility="{Binding HasWhy, Converter={StaticResource BoolVisible}}">
+                                        <TextBlock Text="{Binding WhyText}" TextWrapping="Wrap"
+                                                   Foreground="{StaticResource AccentBrush}" FontSize="12" />
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</UserControl>

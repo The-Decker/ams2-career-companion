@@ -1,0 +1,224 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Companion.ViewModels.Services;
+using Companion.ViewModels.Standings;
+
+namespace Companion.ViewModels.Review;
+
+/// <summary>One offer letter row of the review screen.</summary>
+public sealed partial class OfferLetterViewModel(SeasonOfferModel offer) : ObservableObject
+{
+    public string TeamId { get; } = offer.TeamId;
+
+    public string TeamName { get; } = offer.TeamName;
+
+    public string TierText { get; } = $"Tier {offer.Tier}";
+
+    public string SalaryText { get; } = $"{offer.SalaryBu:0.##} BU / season";
+
+    public string ScoreText { get; } = $"score {offer.Score:0.####}";
+
+    [ObservableProperty]
+    private bool _isAccepted = offer.Accepted;
+}
+
+/// <summary>
+/// The season review + offers screen (docs/dev/m5-fix-integration.md, "App wiring"): final
+/// standings, the journal's headline digest, the offer letters with accept-one (journaled),
+/// the one-click NAMeS restore of the pre-season AI file (locked decision #7c), and the era
+/// transition sign-and-continue block (M6): after an offer is accepted and a next-era pack is
+/// discovered, "Sign &amp; start &lt;year&gt;" executes the transition and raises
+/// <see cref="SeasonSigned"/> so the shell reopens the career into the new season.
+/// Shown by Home once every round has an applied result.
+/// </summary>
+public sealed partial class SeasonReviewViewModel : ObservableObject
+{
+    private readonly ICareerSession _session;
+
+    public SeasonReviewViewModel(ICareerSession session)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        _session = session;
+
+        FinalStandings = new StandingsViewModel(session.AllSnapshots(), session.Pack);
+        Review = session.SeasonReview();
+        Headlines = Review?.Headlines ?? [];
+        Offers = new ObservableCollection<OfferLetterViewModel>(
+            (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(o)));
+        _acceptedTeamId = Review?.AcceptedTeamId;
+        CanRestoreAiFile = session is IAiFileRestore;
+        NextSeason = session.NextSeason();
+    }
+
+    /// <summary>The final-standings block (drivers/constructors tabs + round matrix).</summary>
+    public StandingsViewModel FinalStandings { get; }
+
+    /// <summary>Null when the season is somehow not complete (defensive; Home only builds
+    /// this screen after the final Apply).</summary>
+    public SeasonReviewModel? Review { get; }
+
+    public string Title => Review is null
+        ? "Season review"
+        : $"{Review.SeasonYear} season review";
+
+    public string PlayerSummaryText
+    {
+        get
+        {
+            if (Review is null)
+                return "";
+            string position = Review.PlayerPosition is { } p ? $"P{p} in the championship" : "unclassified";
+            return $"You finished {position} — reputation {Review.FinalReputation:0.#}, " +
+                   $"OPI {Review.FinalOpi:+0.00;-0.00;0.00}.";
+        }
+    }
+
+    // ---------- journal digest ----------
+
+    /// <summary>The season's journaled headlines, in story order.</summary>
+    public IReadOnlyList<string> Headlines { get; }
+
+    public bool HasHeadlines => Headlines.Count > 0;
+
+    // ---------- offers ----------
+
+    public ObservableCollection<OfferLetterViewModel> Offers { get; }
+
+    public bool HasOffers => Offers.Count > 0;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(OfferAccepted), nameof(CanSign))]
+    [NotifyCanExecuteChangedFor(nameof(SignAndContinueCommand))]
+    private string? _acceptedTeamId;
+
+    public bool OfferAccepted => AcceptedTeamId is not null;
+
+    [ObservableProperty]
+    private string? _offerError;
+
+    /// <summary>Accept-one: the choice is journaled by the session; re-accepting a different
+    /// letter replaces the previous acceptance (at most one per season).</summary>
+    [RelayCommand]
+    private void AcceptOffer(OfferLetterViewModel? offer)
+    {
+        if (offer is null)
+            return;
+        try
+        {
+            _session.AcceptOffer(offer.TeamId);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            OfferError = ex.Message;
+            return;
+        }
+
+        OfferError = null;
+        foreach (var letter in Offers)
+            letter.IsAccepted = string.Equals(letter.TeamId, offer.TeamId, StringComparison.Ordinal);
+        AcceptedTeamId = offer.TeamId;
+    }
+
+    // ---------- era transition: sign & continue (M6) ----------
+
+    /// <summary>The discovered next era pack (v1 rule: the smallest season year greater than
+    /// this season's). Null when nothing later is installed — the block then explains what
+    /// season packs are and where they go.</summary>
+    public NextSeasonInfo? NextSeason { get; }
+
+    public bool HasNextSeason => NextSeason is not null;
+
+    /// <summary>What the era-transition block says: sign-and-continue guidance when a next
+    /// pack exists, otherwise the no-next-pack explainer (what packs are, where they go).</summary>
+    public string EraTransitionText => NextSeason is { } next
+        ? $"Your career continues: {next.PackName} is installed. Accept an offer above, then " +
+          $"sign to carry your age, reputation, form and every team lineage into {next.SeasonYear}."
+        : "This season is complete and no later season pack is installed, so the career pauses " +
+          "here. Season packs are plain JSON folders (pack.json, season.json, teams.json, " +
+          "drivers.json, entries.json) holding a year's calendar, entry list and ratings. Drop " +
+          "a later-year pack into Documents\\AMS2CareerCompanion\\Packs or the packs folder " +
+          "beside the app, reopen this career, and the \"Sign & start\" button appears right here.";
+
+    /// <summary>The bridge note when the next pack skips years, e.g. "1968 has no pack — your
+    /// career bridges through it." Null for consecutive seasons (or no next pack).</summary>
+    public string? BridgeNote
+    {
+        get
+        {
+            if (NextSeason is not { BridgedYears.Count: > 0 } next)
+                return null;
+            var years = next.BridgedYears;
+            return years.Count == 1
+                ? $"{years[0]} has no pack — your career bridges through it."
+                : $"{years[0]}–{years[^1]} have no packs — your career bridges through them.";
+        }
+    }
+
+    public bool HasBridgeNote => BridgeNote is not null;
+
+    public string SignButtonText => NextSeason is { } next
+        ? $"Sign & start {next.SeasonYear}"
+        : "Sign & start";
+
+    /// <summary>Signing requires both player inputs: an accepted offer and a next pack.</summary>
+    public bool CanSign => OfferAccepted && HasNextSeason;
+
+    /// <summary>Transition problems the user must see (the plan's validation errors — e.g.
+    /// the accepted team does not exist in the next pack).</summary>
+    [ObservableProperty]
+    private string? _transitionError;
+
+    /// <summary>Raised after the next season has been started and persisted — the shell
+    /// reopens the career file, which now lands in the new season's round 1 briefing.</summary>
+    public event EventHandler? SeasonSigned;
+
+    /// <summary>Executes EraTransition + CareerStore.StartNextSeason through the session seam,
+    /// surfacing validation errors instead of navigating. Raising <see cref="SeasonSigned"/>
+    /// is the LAST thing this command does: the shell's handler disposes this screen's
+    /// session, so nothing may touch it afterwards.</summary>
+    [RelayCommand(CanExecute = nameof(CanSign))]
+    private void SignAndContinue()
+    {
+        if (AcceptedTeamId is not { } teamId)
+            return;
+        try
+        {
+            _session.StartNextSeason(teamId);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException or NotSupportedException)
+        {
+            TransitionError = ex.Message;
+            return;
+        }
+
+        TransitionError = null;
+        SeasonSigned?.Invoke(this, EventArgs.Empty);
+    }
+
+    // ---------- NAMeS restore (locked decision #7c) ----------
+
+    /// <summary>True when the session supports restoring the pre-season AI file.</summary>
+    public bool CanRestoreAiFile { get; }
+
+    [ObservableProperty]
+    private string? _restoreBanner;
+
+    [ObservableProperty]
+    private bool _restoreSucceeded;
+
+    /// <summary>One-click restore of the pre-season backup; the current file is re-backed-up
+    /// first, so restore never destroys state.</summary>
+    [RelayCommand]
+    private void RestoreAiFile()
+    {
+        if (_session is not IAiFileRestore restore)
+            return;
+
+        var outcome = restore.RestoreOriginalAiFile();
+        RestoreSucceeded = outcome.Success;
+        RestoreBanner = outcome.Messages.Count > 0
+            ? string.Join(" ", outcome.Messages)
+            : outcome.Success ? "Restored." : "Restore failed.";
+    }
+}

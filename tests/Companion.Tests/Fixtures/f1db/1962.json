@@ -1,0 +1,1918 @@
+{
+  "year": 1962,
+  "roundCount": 9,
+  "rounds": [
+    {
+      "round": 1,
+      "grandPrixId": "netherlands",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "bruce-mclaren"
+          ],
+          "entries": [
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "giancarlo-baghetti",
+              "constructorId": "ferrari+ferrari",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jackie-lewis",
+              "constructorId": "cooper+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ricardo-rodriguez",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "masten-gregory",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wolfgang-seidel",
+              "constructorId": "emeryson+climax",
+              "position": null,
+              "status": "notClassified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ben-pon",
+              "constructorId": "porsche+porsche",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "grandPrixId": "monaco",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jim-clark"
+          ],
+          "entries": [
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "ferrari+ferrari",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lorenzo-bandini",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "willy-mairesse",
+              "constructorId": "ferrari+ferrari",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "lotus+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "maurice-trintignant",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ricardo-rodriguez",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "grandPrixId": "belgium",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jim-clark"
+          ],
+          "entries": [
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "ferrari+ferrari",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ricardo-rodriguez",
+              "constructorId": "ferrari+ferrari",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "lotus+climax",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "maurice-trintignant",
+              "constructorId": "lotus+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lucien-bianchi",
+              "constructorId": "lotus+climax",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-siffert",
+              "constructorId": "lotus+climax",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-campbell-jones",
+              "constructorId": "lotus+climax",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "willy-mairesse",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "masten-gregory",
+              "constructorId": "lotus+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "giancarlo-baghetti",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "lotus+brm",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "grandPrixId": "france",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "graham-hill"
+          ],
+          "entries": [
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "maurice-trintignant",
+              "constructorId": "lotus+climax",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jackie-lewis",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "masten-gregory",
+              "constructorId": "lotus+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-siffert",
+              "constructorId": "lotus+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "grandPrixId": "great-britain",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jim-clark"
+          ],
+          "entries": [
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "lotus+climax",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "masten-gregory",
+              "constructorId": "lotus+climax",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jackie-lewis",
+              "constructorId": "cooper+climax",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-settember",
+              "constructorId": "emeryson+climax",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ian-burgess",
+              "constructorId": "cooper+climax",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jay-chamberlain",
+              "constructorId": "lotus+climax",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "wolfgang-seidel",
+              "constructorId": "lotus+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-shelly",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 6,
+      "grandPrixId": "germany",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "graham-hill"
+          ],
+          "entries": [
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ricardo-rodriguez",
+              "constructorId": "ferrari+ferrari",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "giancarlo-baghetti",
+              "constructorId": "ferrari+ferrari",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ian-burgess",
+              "constructorId": "cooper+climax",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-siffert",
+              "constructorId": "lotus+climax",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "heini-walter",
+              "constructorId": "porsche+porsche",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "nino-vaccarella",
+              "constructorId": "porsche+porsche",
+              "position": 15,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lucien-bianchi",
+              "constructorId": "enb+maserati",
+              "position": 16,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jackie-lewis",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "brabham+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "keith-greene",
+              "constructorId": "gilby+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "maurice-trintignant",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lorenzo-bandini",
+              "constructorId": "ferrari+ferrari",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "heinz-schiller",
+              "constructorId": "lotus+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bernard-collomb",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 7,
+      "grandPrixId": "italy",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "graham-hill"
+          ],
+          "entries": [
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "willy-mairesse",
+              "constructorId": "ferrari+ferrari",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "giancarlo-baghetti",
+              "constructorId": "ferrari+ferrari",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "lorenzo-bandini",
+              "constructorId": "ferrari+ferrari",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "nino-vaccarella",
+              "constructorId": "lotus+climax",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "ferrari+ferrari",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "masten-gregory",
+              "constructorId": "lotus+brm",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ricardo-rodriguez",
+              "constructorId": "ferrari+ferrari",
+              "position": 14,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-settember",
+              "constructorId": "emeryson+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "maurice-trintignant",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 8,
+      "grandPrixId": "united-states",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jim-clark"
+          ],
+          "entries": [
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "brabham+climax",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "dan-gurney",
+              "constructorId": "porsche+porsche",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "masten-gregory",
+              "constructorId": "lotus+brm",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roger-penske",
+              "constructorId": "lotus+climax",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "rob-schroeder",
+              "constructorId": "lotus+climax",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "hap-sharp",
+              "constructorId": "cooper+climax",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": 12,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jo-bonnier",
+              "constructorId": "porsche+porsche",
+              "position": 13,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "maurice-trintignant",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "timmy-mayer",
+              "constructorId": "cooper+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "phil-hill",
+              "constructorId": "porsche+porsche",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-hall",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "didNotStart",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "round": 9,
+      "grandPrixId": "south-africa",
+      "pointsFactor": "1",
+      "countsForConstructors": true,
+      "alternateRaceTableId": null,
+      "sessions": [
+        {
+          "kind": "race",
+          "fastestLapDriverIds": [
+            "jim-clark"
+          ],
+          "entries": [
+            {
+              "driverId": "graham-hill",
+              "constructorId": "brm+brm",
+              "position": 1,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-mclaren",
+              "constructorId": "cooper+climax",
+              "position": 2,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "tony-maggs",
+              "constructorId": "cooper+climax",
+              "position": 3,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jack-brabham",
+              "constructorId": "brabham+climax",
+              "position": 4,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "innes-ireland",
+              "constructorId": "lotus+climax",
+              "position": 5,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "neville-lederle",
+              "constructorId": "lotus+climax",
+              "position": 6,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "richie-ginther",
+              "constructorId": "brm+brm",
+              "position": 7,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-love",
+              "constructorId": "cooper+climax",
+              "position": 8,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "bruce-johnstone",
+              "constructorId": "brm+brm",
+              "position": 9,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "ernie-pieterse",
+              "constructorId": "lotus+climax",
+              "position": 10,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "carel-godin-de-beaufort",
+              "constructorId": "porsche+porsche",
+              "position": 11,
+              "status": "classified",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "jim-clark",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "doug-serrurier",
+              "constructorId": "lds+alfa-romeo",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "roy-salvadori",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "mike-harris",
+              "constructorId": "cooper+alfa-romeo",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "john-surtees",
+              "constructorId": "lola+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            },
+            {
+              "driverId": "trevor-taylor",
+              "constructorId": "lotus+climax",
+              "position": null,
+              "status": "retired",
+              "sharedDrive": false,
+              "pointsEligible": true,
+              "pointsPosition": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expectedDrivers": [
+    {
+      "id": "graham-hill",
+      "position": 1,
+      "points": 42
+    },
+    {
+      "id": "jim-clark",
+      "position": 2,
+      "points": 30
+    },
+    {
+      "id": "bruce-mclaren",
+      "position": 3,
+      "points": 27
+    },
+    {
+      "id": "john-surtees",
+      "position": 4,
+      "points": 19
+    },
+    {
+      "id": "dan-gurney",
+      "position": 5,
+      "points": 15
+    },
+    {
+      "id": "phil-hill",
+      "position": 6,
+      "points": 14
+    },
+    {
+      "id": "tony-maggs",
+      "position": 7,
+      "points": 13
+    },
+    {
+      "id": "richie-ginther",
+      "position": 8,
+      "points": 10
+    },
+    {
+      "id": "jack-brabham",
+      "position": 9,
+      "points": 9
+    },
+    {
+      "id": "trevor-taylor",
+      "position": 10,
+      "points": 6
+    },
+    {
+      "id": "giancarlo-baghetti",
+      "position": 11,
+      "points": 5
+    },
+    {
+      "id": "lorenzo-bandini",
+      "position": 12,
+      "points": 4
+    },
+    {
+      "id": "ricardo-rodriguez",
+      "position": 13,
+      "points": 4
+    },
+    {
+      "id": "willy-mairesse",
+      "position": 14,
+      "points": 3
+    },
+    {
+      "id": "jo-bonnier",
+      "position": 15,
+      "points": 3
+    },
+    {
+      "id": "innes-ireland",
+      "position": 16,
+      "points": 2
+    },
+    {
+      "id": "carel-godin-de-beaufort",
+      "position": 17,
+      "points": 2
+    },
+    {
+      "id": "masten-gregory",
+      "position": 18,
+      "points": 1
+    },
+    {
+      "id": "neville-lederle",
+      "position": 18,
+      "points": 1
+    }
+  ],
+  "expectedConstructors": [
+    {
+      "id": "brm+brm",
+      "position": 1,
+      "points": 42
+    },
+    {
+      "id": "lotus+climax",
+      "position": 2,
+      "points": 36
+    },
+    {
+      "id": "cooper+climax",
+      "position": 3,
+      "points": 29
+    },
+    {
+      "id": "lola+climax",
+      "position": 4,
+      "points": 19
+    },
+    {
+      "id": "porsche+porsche",
+      "position": 5,
+      "points": 18
+    },
+    {
+      "id": "ferrari+ferrari",
+      "position": 6,
+      "points": 18
+    },
+    {
+      "id": "brabham+climax",
+      "position": 7,
+      "points": 6
+    },
+    {
+      "id": "lotus+brm",
+      "position": 8,
+      "points": 1
+    }
+  ]
+}

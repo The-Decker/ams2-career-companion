@@ -1,0 +1,244 @@
+{
+  "teams": [
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Honda",
+      "carVehicleIds": [
+        "mclaren_mp47"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.54,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Ilmor",
+      "carVehicleIds": [
+        "formula_hitech_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.39,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams-Renault",
+      "carVehicleIds": [
+        "formula_hitech_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.88,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.brabham",
+      "name": "Brabham-Judd",
+      "carVehicleIds": [
+        "formula_hitech_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.44,
+      "prestige": 2,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.footwork",
+      "name": "Footwork-Mugen Honda",
+      "carVehicleIds": [
+        "formula_hitech_g1m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.91,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Ford",
+      "carVehicleIds": [
+        "formula_hitech_g1m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.46,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.fondmetal",
+      "name": "Fondmetal-Ford",
+      "carVehicleIds": [
+        "formula_hitech_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.27,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.march",
+      "name": "March-Ilmor",
+      "carVehicleIds": [
+        "formula_hitech_g1m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.47,
+      "prestige": 2,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.benetton",
+      "name": "Benetton-Ford",
+      "carVehicleIds": [
+        "formula_hitech_g1m3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.86,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.dallara",
+      "name": "Dallara-Ferrari",
+      "carVehicleIds": [
+        "formula_hitech_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.59,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.minardi",
+      "name": "Minardi-Lamborghini",
+      "carVehicleIds": [
+        "formula_hitech_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.51,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.ligier",
+      "name": "Ligier-Renault",
+      "carVehicleIds": [
+        "formula_hitech_g1m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.57,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_hitech_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.42,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.venturi",
+      "name": "Venturi-Lamborghini",
+      "carVehicleIds": [
+        "formula_hitech_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.41,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.jordan",
+      "name": "Jordan-Yamaha",
+      "carVehicleIds": [
+        "formula_hitech_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.36,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.andrea_moda",
+      "name": "Andrea Moda-Judd",
+      "carVehicleIds": [
+        "formula_hitech_g1m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.07,
+      "prestige": 1,
+      "budgetTier": 1
+    }
+  ]
+}

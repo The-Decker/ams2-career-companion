@@ -1,0 +1,154 @@
+{
+  "teams": [
+    {
+      "id": "team.brabham",
+      "name": "Brabham-Repco",
+      "carVehicleIds": [
+        "formula_vintage_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.86,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.lotus",
+      "name": "Lotus-Ford Cosworth",
+      "carVehicleIds": [
+        "formula_vintage_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.44,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.cooper",
+      "name": "Cooper-Maserati",
+      "carVehicleIds": [
+        "formula_vintage_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.49,
+      "prestige": 4,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-BRM",
+      "carVehicleIds": [
+        "formula_vintage_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.33,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.brm",
+      "name": "BRM",
+      "carVehicleIds": [
+        "formula_vintage_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.honda",
+      "name": "Honda",
+      "carVehicleIds": [
+        "formula_vintage_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.54,
+      "prestige": 3,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.lola",
+      "name": "Lola-BMW",
+      "carVehicleIds": [
+        "formula_vintage_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.19,
+      "prestige": 1,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.matra",
+      "name": "Matra-Ford Cosworth",
+      "carVehicleIds": [
+        "formula_vintage_g1m1"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.38,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_vintage_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.91,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.eagle",
+      "name": "Eagle-Climax",
+      "carVehicleIds": [
+        "formula_vintage_g1m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.22,
+      "prestige": 3,
+      "budgetTier": 3
+    }
+  ]
+}

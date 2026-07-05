@@ -1,0 +1,229 @@
+{
+    "teams":  [
+                  {
+                      "id":  "team.brabham",
+                      "name":  "Brabham-Alfa Romeo",
+                      "carVehicleIds":  [
+                                            "brabham_bt46b"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.4,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.tyrrell",
+                      "name":  "Tyrrell-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.38,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.lotus",
+                      "name":  "Lotus-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "lotus_79"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.37,
+                      "prestige":  5,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.mclaren",
+                      "name":  "McLaren-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.32,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.ats",
+                      "name":  "ATS-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.2,
+                      "prestige":  1,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.ferrari",
+                      "name":  "Ferrari",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.45,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.fittipaldi",
+                      "name":  "Copersucar-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.32,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.renault",
+                      "name":  "Renault",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.15,
+                      "prestige":  3,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.shadow",
+                      "name":  "Shadow-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.25,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.surtees",
+                      "name":  "Surtees-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.2,
+                      "prestige":  1,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.wolf",
+                      "name":  "Wolf-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.38,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.ligier",
+                      "name":  "Ligier-Matra",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.26,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.williams",
+                      "name":  "Williams-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.27,
+                      "prestige":  2,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.martini",
+                      "name":  "Martini-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.18,
+                      "prestige":  1,
+                      "budgetTier":  1
+                  },
+                  {
+                      "id":  "team.arrows",
+                      "name":  "Arrows-Ford Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_retro_g2"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.3,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  }
+              ]
+}
