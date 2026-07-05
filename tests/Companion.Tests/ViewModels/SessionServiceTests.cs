@@ -202,6 +202,76 @@ public sealed class SessionServiceTests : IDisposable
         Assert.Equal(1, latest.Round);
         Assert.Equal("race", latest.Kind);
         Assert.Contains("expected", latest.WhyText); // the Why? chip explains the number
+
+        // The generative grammar fills a full period-voiced article body from the round's
+        // facts — non-empty, with no unresolved slots, and mentioning the race by name.
+        Assert.False(string.IsNullOrWhiteSpace(latest.Body));
+        Assert.DoesNotContain("{", latest.Body);
+        Assert.DoesNotContain("}", latest.Body);
+        Assert.Contains("South African Grand Prix", latest.Body);
+    }
+
+    [Fact]
+    public void ReadFeed_ArticleBodies_AreByteIdenticalAcrossCalls()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        // Run three rounds with varied outcomes so several phase|cause corpora are exercised.
+        for (int round = 0; round < 3; round++)
+        {
+            var gridOrder = session.CurrentGrid().Select(s => s.DriverId).ToList();
+            var draft = round switch
+            {
+                // Round 1: a clean win from the front (winner facts flow through).
+                0 => new ResultDraft
+                {
+                    Classified = gridOrder,
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                },
+                // Round 2: the player retires (DNF body path).
+                1 => new ResultDraft
+                {
+                    Classified = gridOrder.Where(id => id != "driver.denny_hulme").ToList(),
+                    DidNotFinish = new Dictionary<string, string> { ["driver.denny_hulme"] = "m" },
+                    Disqualified = [],
+                },
+                // Round 3: mid-pack — reverse the order so the player runs down the field.
+                _ => new ResultDraft
+                {
+                    Classified = Enumerable.Reverse(gridOrder).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                },
+            };
+            session.Apply(draft);
+        }
+
+        // Projection stability: the same career/journal renders byte-identical articles on
+        // every read — the body is derived, seeded, never a stored input.
+        var first = session.ReadFeed();
+        var second = session.ReadFeed();
+
+        Assert.Equal(first.Count, second.Count);
+        Assert.True(first.Count >= 3);
+        for (int i = 0; i < first.Count; i++)
+        {
+            Assert.Equal(first[i].Headline, second[i].Headline);
+            Assert.Equal(first[i].Body, second[i].Body);
+            Assert.Equal(first[i].WhyText, second[i].WhyText);
+            Assert.False(string.IsNullOrWhiteSpace(first[i].Body));
+            Assert.DoesNotContain("{", first[i].Body);
+        }
+
+        // Reopening the career from its pinned bytes must reproduce identical bodies — the
+        // render is a pure function of the journal + master seed, independent of session state.
+        session.Dispose();
+        using var reopened = CareerSessionService.OpenCareer(CareerPath, ViewModelTestData.Environment(DocumentsDirectory));
+        var reread = reopened.ReadFeed();
+        Assert.Equal(first.Count, reread.Count);
+        for (int i = 0; i < first.Count; i++)
+            Assert.Equal(first[i].Body, reread[i].Body);
     }
 
     [Fact]
