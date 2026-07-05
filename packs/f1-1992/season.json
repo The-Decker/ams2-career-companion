@@ -20,6 +20,13 @@
   "rounds": [
     {
       "round": 1,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "South African Grand Prix",
       "date": "1992-03-01",
       "championship": true,
@@ -81,6 +88,13 @@
     },
     {
       "round": 2,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Mexican Grand Prix",
       "date": "1992-03-22",
       "championship": true,
@@ -143,6 +157,13 @@
     },
     {
       "round": 3,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Brazilian Grand Prix",
       "date": "1992-04-05",
       "championship": true,
@@ -202,6 +223,13 @@
     },
     {
       "round": 4,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Spanish Grand Prix",
       "date": "1992-05-03",
       "championship": true,
@@ -263,6 +291,13 @@
     },
     {
       "round": 5,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "San Marino Grand Prix",
       "date": "1992-05-17",
       "championship": true,
@@ -322,6 +357,13 @@
     },
     {
       "round": 6,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Monaco Grand Prix",
       "date": "1992-05-31",
       "championship": true,
@@ -383,6 +425,13 @@
     },
     {
       "round": 7,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Canadian Grand Prix",
       "date": "1992-06-14",
       "championship": true,
@@ -444,6 +493,13 @@
     },
     {
       "round": 8,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "French Grand Prix",
       "date": "1992-07-05",
       "championship": true,
@@ -506,6 +562,13 @@
     },
     {
       "round": 9,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "British Grand Prix",
       "date": "1992-07-12",
       "championship": true,
@@ -567,6 +630,13 @@
     },
     {
       "round": 10,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "German Grand Prix",
       "date": "1992-07-26",
       "championship": true,
@@ -626,6 +696,13 @@
     },
     {
       "round": 11,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Hungarian Grand Prix",
       "date": "1992-08-16",
       "championship": true,
@@ -685,6 +762,13 @@
     },
     {
       "round": 12,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Belgian Grand Prix",
       "date": "1992-08-30",
       "championship": true,
@@ -744,6 +828,13 @@
     },
     {
       "round": 13,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Italian Grand Prix",
       "date": "1992-09-13",
       "championship": true,
@@ -803,6 +894,13 @@
     },
     {
       "round": 14,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Portuguese Grand Prix",
       "date": "1992-09-27",
       "championship": true,
@@ -862,6 +960,13 @@
     },
     {
       "round": 15,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Japanese Grand Prix",
       "date": "1992-10-25",
       "championship": true,
@@ -923,6 +1028,13 @@
     },
     {
       "round": 16,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Australian Grand Prix",
       "date": "1992-11-08",
       "championship": true,

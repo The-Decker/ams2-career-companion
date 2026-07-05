@@ -23,6 +23,13 @@
   "rounds": [
     {
       "round": 1,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "United States Grand Prix",
       "date": "1990-03-11",
       "championship": true,
@@ -85,6 +92,13 @@
     },
     {
       "round": 2,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Brazilian Grand Prix",
       "date": "1990-03-25",
       "championship": true,
@@ -144,6 +158,13 @@
     },
     {
       "round": 3,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "San Marino Grand Prix",
       "date": "1990-05-13",
       "championship": true,
@@ -203,6 +224,13 @@
     },
     {
       "round": 4,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Monaco Grand Prix",
       "date": "1990-05-27",
       "championship": true,
@@ -264,6 +292,13 @@
     },
     {
       "round": 5,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Canadian Grand Prix",
       "date": "1990-06-10",
       "championship": true,
@@ -323,6 +358,13 @@
     },
     {
       "round": 6,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Mexican Grand Prix",
       "date": "1990-06-24",
       "championship": true,
@@ -386,6 +428,13 @@
     },
     {
       "round": 7,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "French Grand Prix",
       "date": "1990-07-08",
       "championship": true,
@@ -448,6 +497,13 @@
     },
     {
       "round": 8,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "British Grand Prix",
       "date": "1990-07-15",
       "championship": true,
@@ -508,6 +564,13 @@
     },
     {
       "round": 9,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "German Grand Prix",
       "date": "1990-07-29",
       "championship": true,
@@ -567,6 +630,13 @@
     },
     {
       "round": 10,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Hungarian Grand Prix",
       "date": "1990-08-12",
       "championship": true,
@@ -626,6 +696,13 @@
     },
     {
       "round": 11,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Belgian Grand Prix",
       "date": "1990-08-26",
       "championship": true,
@@ -685,6 +762,13 @@
     },
     {
       "round": 12,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Italian Grand Prix",
       "date": "1990-09-09",
       "championship": true,
@@ -744,6 +828,13 @@
     },
     {
       "round": 13,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Portuguese Grand Prix",
       "date": "1990-09-23",
       "championship": true,
@@ -802,6 +893,13 @@
     },
     {
       "round": 14,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Spanish Grand Prix",
       "date": "1990-09-30",
       "championship": true,
@@ -860,6 +958,13 @@
     },
     {
       "round": 15,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Japanese Grand Prix",
       "date": "1990-10-21",
       "championship": true,
@@ -918,6 +1023,13 @@
     },
     {
       "round": 16,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Australian Grand Prix",
       "date": "1990-11-04",
       "championship": true,

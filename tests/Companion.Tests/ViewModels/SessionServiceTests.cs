@@ -378,12 +378,18 @@ public sealed class SessionServiceTests : IDisposable
     }
 
     [Fact]
-    public void QualifyingOrder_IsInertToScoring_AndSingleRacePackHasNoWeekend()
+    public void QualifyingOrder_IsInertToScoring_AndThePackWeekendIsSingleRace()
     {
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
         using var session = CareerSessionService.CreateCareer(Request(), environment);
 
-        Assert.Null(session.CurrentWeekend()); // the 1967 pack runs a single race
+        // v0.4.0: the bundled packs author the real historical weekend — practice + qualifying +
+        // ONE Grand Prix (no sprints in these eras), so scoring stays single-race shaped.
+        var weekend = session.CurrentWeekend();
+        Assert.NotNull(weekend);
+        Assert.True(weekend.Qualifying is { Present: true });
+        Assert.Single(weekend.Races);
+        Assert.Equal("Grand Prix", weekend.Races[0].Label);
 
         var gridOrder = session.CurrentGrid().Select(s => s.DriverId).ToList();
         var draft = new ResultDraft
