@@ -73,6 +73,12 @@ public static class StandingsEngine
                         $"Round {round.Round} has a sprint session but the points system defines no sprint points.",
                         nameof(rounds));
 
+                // An authored per-session points table (Increment 2c) must resolve to a real table.
+                if (session.PointsTableId is { } sessionTableId && !SessionTableExists(definition.PointsSystem, sessionTableId))
+                    throw new ArgumentException(
+                        $"Round {round.Round} session references unknown points table '{sessionTableId}'.",
+                        nameof(rounds));
+
                 // A duplicated position that is not a flagged shared drive is a data error;
                 // silently splitting (or zeroing) the winner's points would be far worse.
                 foreach (var positionGroup in session.Entries
@@ -136,17 +142,31 @@ public static class StandingsEngine
 
         foreach (var session in round.Sessions)
         {
-            var driversTable = session.Kind switch
-            {
-                SessionKind.Sprint => system.SprintPoints!,
-                _ when round.AlternateRaceTableId is { } id => system.AlternateRaceTables![id],
-                _ => system.RacePoints,
-            };
+            IReadOnlyList<Rational> driversTable;
+            IReadOnlyList<Rational> constructorsTable;
 
-            // 1961: the constructors cup stayed on the old win-8 scale while drivers moved on.
-            var constructorsTable = session.Kind == SessionKind.Race && round.AlternateRaceTableId is null
-                ? system.Constructors?.RacePoints ?? driversTable
-                : driversTable;
+            if (session.PointsTableId is { } sessionTableId)
+            {
+                // Authored per-session table (Increment 2c): the named table drives both
+                // championships for this race. Historical fixtures never set this, so the
+                // 1961 constructors override below is untouched for every oracle season.
+                driversTable = NamedTable(system, sessionTableId);
+                constructorsTable = driversTable;
+            }
+            else
+            {
+                driversTable = session.Kind switch
+                {
+                    SessionKind.Sprint => system.SprintPoints!,
+                    _ when round.AlternateRaceTableId is { } id => system.AlternateRaceTables![id],
+                    _ => system.RacePoints,
+                };
+
+                // 1961: the constructors cup stayed on the old win-8 scale while drivers moved on.
+                constructorsTable = session.Kind == SessionKind.Race && round.AlternateRaceTableId is null
+                    ? system.Constructors?.RacePoints ?? driversTable
+                    : driversTable;
+            }
 
             // Half/double points scale the race classification only; sprint points were
             // always awarded in full.
@@ -255,6 +275,27 @@ public static class StandingsEngine
 
     private static Rational TableValue(IReadOnlyList<Rational> table, int position) =>
         position >= 1 && position <= table.Count ? table[position - 1] : Rational.Zero;
+
+    /// <summary>Whether a session's authored <see cref="SessionResult.PointsTableId"/> names a table
+    /// the points system actually defines (validated before scoring).</summary>
+    private static bool SessionTableExists(PointsSystem system, string tableId) =>
+        tableId switch
+        {
+            "primary" => true,
+            "sprint" => system.SprintPoints is not null,
+            _ => system.AlternateRaceTables?.ContainsKey(tableId) == true,
+        };
+
+    /// <summary>Resolves a session's authored <see cref="SessionResult.PointsTableId"/> to a table:
+    /// "primary" → the standard race table, "sprint" → the sprint table, any other key → a named
+    /// alternate table. <see cref="Validate"/> guarantees the referenced table exists.</summary>
+    private static IReadOnlyList<Rational> NamedTable(PointsSystem system, string tableId) =>
+        tableId switch
+        {
+            "primary" => system.RacePoints,
+            "sprint" => system.SprintPoints!,
+            _ => system.AlternateRaceTables![tableId],
+        };
 
     private static bool IsFastestLapEligible(FastestLapEligibility eligibility, SessionResult session, string driverId) =>
         eligibility switch

@@ -548,6 +548,89 @@ public class StandingsEngineTests
         Assert.Equal(new Rational(4), Driver(final, "b").CountedPoints);
     }
 
+    // ---------- per-session points tables (Increment 2c) ----------
+
+    [Fact]
+    public void PerSessionPointsTable_ScoresEachRaceOnItsOwnTable()
+    {
+        // An authored two-race weekend: the feature on the primary table, the second race on a
+        // named alternate table. Each race scores on its OWN table (summed into the round, until
+        // the per-session RoundScore split lands).
+        var system = new PointsSystem
+        {
+            RacePoints = Table(25, 18, 15, 12, 10, 8, 6, 4, 2, 1),
+            AlternateRaceTables = new Dictionary<string, IReadOnlyList<Rational>>
+            {
+                ["sprint-8"] = Table(8, 7, 6, 5, 4, 3, 2, 1),
+            },
+            Constructors = new ConstructorsRule { BestCarOnly = false },
+        };
+
+        var round = new RoundResult
+        {
+            Round = 1,
+            Sessions =
+            [
+                new SessionResult
+                {
+                    Kind = SessionKind.Race,
+                    PointsTableId = "primary",
+                    Entries = [Entry("max", 1, "red-bull"), Entry("lewis", 2, "mercedes")],
+                },
+                new SessionResult
+                {
+                    Kind = SessionKind.Race,
+                    PointsTableId = "sprint-8",
+                    Entries = [Entry("lewis", 1, "mercedes"), Entry("max", 2, "red-bull")],
+                },
+            ],
+        };
+
+        var final = Compute(system, 1, round).Final;
+
+        Assert.Equal(new Rational(32), Driver(final, "max").CountedPoints);   // 25 (P1 primary) + 7 (P2 sprint-8)
+        Assert.Equal(new Rational(26), Driver(final, "lewis").CountedPoints); // 18 (P2 primary) + 8 (P1 sprint-8)
+        Assert.Equal(new Rational(32), Constructor(final, "red-bull").CountedPoints);
+        Assert.Equal(new Rational(26), Constructor(final, "mercedes").CountedPoints);
+    }
+
+    [Fact]
+    public void PerSessionPointsTable_PrimaryKeyword_MatchesTheStandardRaceTable()
+    {
+        // "primary" on the only race must score identically to leaving the table unset — the
+        // byte-identical guarantee for a single-race weekend that names its table explicitly.
+        var system = ModernSystem();
+        var entries = new[] { Entry("a", 1, "ta"), Entry("b", 2, "tb") };
+
+        var withKeyword = Compute(system, 1, new RoundResult
+        {
+            Round = 1,
+            Sessions = [new SessionResult { Kind = SessionKind.Race, PointsTableId = "primary", Entries = entries }],
+        }).Final;
+        var unset = Compute(system, 1, Race(1, entries)).Final;
+
+        Assert.Equal(Driver(unset, "a").CountedPoints, Driver(withKeyword, "a").CountedPoints);
+        Assert.Equal(new Rational(25), Driver(withKeyword, "a").CountedPoints);
+    }
+
+    [Fact]
+    public void PerSessionPointsTable_UnknownId_Throws()
+    {
+        var system = new PointsSystem { RacePoints = Table(25, 18, 15) };
+
+        var round = new RoundResult
+        {
+            Round = 1,
+            Sessions =
+            [
+                new SessionResult { Kind = SessionKind.Race, PointsTableId = "no-such-session-table", Entries = [Entry("a", 1)] },
+            ],
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() => Compute(system, 1, round));
+        Assert.Contains("no-such-session-table", exception.Message);
+    }
+
     [Fact]
     public void AlternateRaceTable_UnknownId_Throws()
     {

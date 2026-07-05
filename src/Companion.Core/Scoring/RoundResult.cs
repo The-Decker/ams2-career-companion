@@ -67,6 +67,16 @@ public sealed record SessionResult
     /// <summary>Holder(s) of the session's fastest lap. More than one id means an exact tie
     /// on lap time (1954 British GP had seven).</summary>
     public IReadOnlyList<string> FastestLapDriverIds { get; init; } = [];
+
+    /// <summary>Selects the points table for THIS session (Increment 2c), for an authored
+    /// race-weekend with two independently-scoring races: <c>null</c> = the shipped per-round
+    /// logic (<see cref="SessionKind.Sprint"/> → SprintPoints, else the round's
+    /// <see cref="RoundResult.AlternateRaceTableId"/> or the standard race table); "primary" =
+    /// the season's <see cref="PointsSystem.RacePoints"/>; "sprint" = <see cref="PointsSystem.SprintPoints"/>;
+    /// any other value = a named <see cref="PointsSystem.AlternateRaceTables"/> key. Null on every
+    /// historical fixture and every single-race round, so scoring is byte-identical until a pack
+    /// opts in.</summary>
+    public string? PointsTableId { get; init; }
 }
 
 /// <summary>Everything the engine consumes for one championship round.</summary>
