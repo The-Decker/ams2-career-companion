@@ -57,6 +57,58 @@ public sealed record PackRound
     /// <summary>Per-round rating tweaks: driver id -> partial ratings patch.</summary>
     public IReadOnlyDictionary<string, PackRatingsPatch> AiOverrides { get; init; } =
         new Dictionary<string, PackRatingsPatch>();
+
+    /// <summary>Optional race-weekend structure (Increment 2): the sessions this round runs —
+    /// practice, qualifying, and 1 or 2 races, each with an era-correct label and points table.
+    /// ABSENT = today's single race (every bundled pack), so scoring and the fold are unchanged
+    /// until a pack opts in. This is the parsed data model; the engine + result-entry wiring land
+    /// in later Increment-2 slices.</summary>
+    public PackWeekend? Weekend { get; init; }
+}
+
+/// <summary>A round's weekend shape: an optional practice + qualifying session and 1–2 races.
+/// Additive/optional on <see cref="PackRound"/>; a round without it runs the single-race loop.</summary>
+public sealed record PackWeekend
+{
+    /// <summary>Practice session (optional, informational — no result captured).</summary>
+    public PackWeekendSession? Practice { get; init; }
+
+    /// <summary>Qualifying session (optional). When present, its order sets the race grid and
+    /// (later slice) calibrates the one-lap pace anchor.</summary>
+    public PackWeekendSession? Qualifying { get; init; }
+
+    /// <summary>The scoring races — 1 (a plain era-named Grand Prix) or 2 (e.g. sprint + feature).</summary>
+    public required IReadOnlyList<PackWeekendRace> Races { get; init; }
+}
+
+/// <summary>A non-scoring weekend session (practice/qualifying): whether it runs and its label.</summary>
+public sealed record PackWeekendSession
+{
+    public bool Present { get; init; } = true;
+
+    /// <summary>Era-correct display label ("Practice", "Qualifying", "Time Trial"). Null = the
+    /// session's default name.</summary>
+    public string? Label { get; init; }
+}
+
+/// <summary>One scoring race in a weekend.</summary>
+public sealed record PackWeekendRace
+{
+    /// <summary>Stable session id ("race", "race2") — the seam <c>SessionId</c> key and journal key.</summary>
+    public required string Id { get; init; }
+
+    /// <summary>Era-correct display label — a single-race weekend uses whatever that era called the
+    /// race ("Grand Prix", "Feature"); a two-race weekend labels each ("Sprint" / "Grand Prix").</summary>
+    public required string Label { get; init; }
+
+    /// <summary>Which points table scores this race: <c>null</c>/"primary" = the season RacePoints,
+    /// "sprint" = SprintPoints, or a named <c>alternateRaceTables</c> key. The per-session table
+    /// selector is wired into the engine in slice 2c.</summary>
+    public string? PointsTable { get; init; }
+
+    /// <summary>How this race's grid is formed: <c>null</c>/"qualifying" = the qualifying order,
+    /// "race1Reverse" = reversed race-1 finish, etc. Consumed by later slices; parsed now.</summary>
+    public string? GridFrom { get; init; }
 }
 
 /// <summary>The drivers who actually started one round historically, mapped from f1db to this
