@@ -18,15 +18,17 @@ public sealed record ResultImport
 /// <summary>
 /// The versioned round_result_raw payload (docs/dev/m5-fix-integration.md, "unified fold"
 /// step 1): the ResultDraft-mapped raw classification plus the round context that is
-/// otherwise unre-derivable — the Opponent Skill slider the player actually raced at and the
-/// player's DNF cause. Grid, teammate finish, and expected finish are re-derived from
-/// pack + seed + round, never stored. Version-1 payloads (a bare RoundResult) read with
-/// defaults: slider unknown (fold substitutes the last recommendation), DNF cause unknown
-/// (fold substitutes the no-blame default).
+/// otherwise unre-derivable — the Opponent Skill slider the player actually raced at, the
+/// player's DNF cause, and (v3, Increment 2) the round's qualifying order. Grid, teammate
+/// finish, and expected finish are re-derived from pack + seed + round, never stored.
+/// Version-1 payloads (a bare RoundResult) read with defaults: slider unknown (fold substitutes
+/// the last recommendation), DNF cause unknown (fold substitutes the no-blame default). Version-2
+/// payloads read with <see cref="QualifyingOrder"/> null (no qualifying) — so every pre-weekend
+/// save parses unchanged.
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     public int Version { get; init; } = CurrentVersion;
 
@@ -41,6 +43,14 @@ public sealed record RoundResultEnvelope
     /// the fold defaults a retired player to <see cref="DnfCause.Mechanical"/> (no blame)
     /// and a disqualified player to <see cref="DnfCause.DriverError"/>.</summary>
     public DnfCause? PlayerDnfCause { get; init; }
+
+    /// <summary>The round's qualifying order — pack driver ids, pole first — when the pack's
+    /// weekend ran a qualifying session (Increment 2). Null = no qualifying (every pre-weekend
+    /// save and every single-race pack). It is a raw INPUT the sim cannot re-derive, so it is
+    /// stored; later slices consume it for the grid (grid-from-qualy) and the qualifying pace
+    /// anchor. It is deliberately NOT part of <see cref="RoundResult"/>, so it never reaches the
+    /// standings engine — scoring and the f1db oracle are untouched.</summary>
+    public IReadOnlyList<string>? QualifyingOrder { get; init; }
 
     /// <summary>Parses a stored payload, accepting both the current envelope shape and the
     /// version-1 bare-RoundResult shape (read with defaults).</summary>
