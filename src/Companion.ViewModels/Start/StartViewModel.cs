@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
@@ -16,11 +17,16 @@ public sealed partial class StartViewModel : ObservableObject
 {
     private readonly IRecentCareersStore _store;
     private readonly ISettingsService? _settings;
+    private readonly Func<string, bool> _careerFileExists;
 
-    public StartViewModel(IRecentCareersStore store, ISettingsService? settings = null)
+    public StartViewModel(
+        IRecentCareersStore store,
+        ISettingsService? settings = null,
+        Func<string, bool>? careerFileExists = null)
     {
         _store = store;
         _settings = settings;
+        _careerFileExists = careerFileExists ?? File.Exists;
         if (_settings is not null)
             _settings.Changed += OnSettingsChanged;
         Refresh();
@@ -39,6 +45,13 @@ public sealed partial class StartViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ContinueCommand))]
     private RecentCareer? _selectedCareer;
+
+    /// <summary>Failure banner for the "Open career…" picker (a path that is empty, missing, or
+    /// would not open). Null when there is nothing to report. The shell surfaces its own
+    /// <c>StatusError</c> for open failures once the file reaches the open flow; this covers the
+    /// pre-flight cases the VM can answer itself (no dialog, testable).</summary>
+    [ObservableProperty]
+    private string? _openError;
 
     public bool HasRecentCareers => RecentCareers.Count > 0;
 
@@ -65,9 +78,35 @@ public sealed partial class StartViewModel : ObservableObject
         if (career is null)
             return;
 
-        _store.Touch(career.Path, career.CareerName);
+        OpenError = null;
+        // Preserve the stored year so an entry re-touched by "Continue" keeps its era art; the
+        // shell re-records it with the authoritative summary year once the session opens anyway.
+        _store.Touch(career.Path, career.CareerName, career.SeasonYear);
         Refresh();
         ContinueRequested?.Invoke(this, career.Path);
+    }
+
+    /// <summary>"Open career…": route an arbitrary <c>.ams2career</c> path (chosen in the view's
+    /// file dialog) through the same open-career flow the gallery cards use. The VM only validates
+    /// what it can without touching the career database — a blank or non-existent path — and reports
+    /// it in <see cref="OpenError"/>; a file that exists but will not open is handled downstream by
+    /// the shell's own open-failure banner. Takes the path (not a dialog) so it stays testable.</summary>
+    [RelayCommand]
+    private void OpenCareer(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            OpenError = "No career file was selected.";
+            return;
+        }
+        if (!_careerFileExists(path))
+        {
+            OpenError = $"That career file no longer exists:\n{path}";
+            return;
+        }
+
+        OpenError = null;
+        ContinueRequested?.Invoke(this, path);
     }
 
     [RelayCommand]
@@ -82,10 +121,13 @@ public sealed partial class StartViewModel : ObservableObject
         Refresh();
     }
 
-    /// <summary>Records a career in the MRU (called by the shell after a create or open).</summary>
-    public void RecordCareer(string path, string careerName)
+    /// <summary>Records a career in the MRU (called by the shell after a create or open).
+    /// <paramref name="seasonYear"/> is the career's stored season year
+    /// (<see cref="Services.CareerSummary.SeasonYear"/>) so the gallery card resolves its era art
+    /// from the authoritative year rather than the name.</summary>
+    public void RecordCareer(string path, string careerName, int seasonYear = 0)
     {
-        _store.Touch(path, careerName);
+        _store.Touch(path, careerName, seasonYear);
         Refresh();
     }
 }

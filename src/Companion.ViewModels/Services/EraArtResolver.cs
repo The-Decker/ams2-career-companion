@@ -71,4 +71,17 @@ public static class EraArtResolver
         var match = System.Text.RegularExpressions.Regex.Match(careerText, @"\b(19|20)\d{2}\b");
         return match.Success && int.TryParse(match.Value, out int year) ? year : null;
     }
+
+    /// <summary>The season year the gallery should skin an MRU entry by. The robust path is the
+    /// entry's STORED <see cref="RecentCareer.SeasonYear"/> (populated when the career is created or
+    /// opened). A legacy entry persisted before that field existed has a <c>0</c> stored year — for
+    /// those the resolver falls back to reading a 4-digit year out of the career NAME (the old, fragile
+    /// behaviour), and finally to <c>null</c> (a neutral placeholder card) when the name carries none.
+    /// <c>0</c> is treated as "missing" because it is the JSON read-with-default AND never a real
+    /// season year.</summary>
+    public static int? YearForEntry(RecentCareer entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        return entry.SeasonYear > 0 ? entry.SeasonYear : YearFromText(entry.CareerName);
+    }
 }
