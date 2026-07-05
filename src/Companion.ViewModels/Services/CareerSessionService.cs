@@ -1035,6 +1035,80 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         }
     }
 
+    /// <summary>The News feed (hub News tab): the season's <c>news.headline</c> journal rows,
+    /// newest first, each paired with its round's <c>race.result</c> row so the Why? chip can
+    /// state in plain language what produced it. Pure read-only projection over the journal —
+    /// re-derivable byte-identically, no new persistence. (Increment 1; the generative
+    /// multi-slot article grammar is a later slice.)</summary>
+    public IReadOnlyList<NewsDispatch> ReadFeed()
+    {
+        var rows = JournalStore.ReadSeason(_database, _seasonId);
+
+        // Index each round's player race.result delta so a headline can explain itself.
+        var resultByRound = rows
+            .Where(r => string.Equals(r.Phase, JournalPhases.RaceResult, StringComparison.Ordinal)
+                        && string.Equals(r.Entity, "player", StringComparison.Ordinal)
+                        && r.Round is not null)
+            .GroupBy(r => r.Round!.Value)
+            .ToDictionary(g => g.Key, g => g.Last().DeltaJson);
+
+        var dispatches = new List<NewsDispatch>();
+        foreach (var row in rows)
+        {
+            if (!string.Equals(row.Phase, JournalPhases.Headline, StringComparison.Ordinal))
+                continue;
+            if (HeadlineText(row.DeltaJson) is not { } text)
+                continue;
+
+            string why = row.Round is { } round && resultByRound.TryGetValue(round, out var resultDelta)
+                ? WhyFromResult(resultDelta)
+                : "";
+
+            dispatches.Add(new NewsDispatch
+            {
+                Headline = text,
+                SeasonYear = Pack.Season.Year,
+                Round = row.Round,
+                Kind = row.Round is null ? "season" : "race",
+                WhyText = why,
+            });
+        }
+
+        dispatches.Reverse(); // newest first
+        return dispatches;
+    }
+
+    /// <summary>Turn a <c>race.result</c> delta (expectedFinish / actualFinish / dnf) into the
+    /// Why? chip's plain sentence. Empty when the delta cannot be read.</summary>
+    private static string WhyFromResult(string deltaJson)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(deltaJson);
+            var root = document.RootElement;
+            int? expected = root.TryGetProperty("expectedFinish", out var e) && e.ValueKind == JsonValueKind.Number
+                ? e.GetInt32() : null;
+            bool dnf = root.TryGetProperty("dnf", out var d) && d.ValueKind == JsonValueKind.True;
+
+            if (dnf)
+                return expected is { } exd ? $"You retired — the car was expected to finish P{exd}." : "You retired.";
+
+            int? actual = root.TryGetProperty("actualFinish", out var a) && a.ValueKind == JsonValueKind.Number
+                ? a.GetInt32() : null;
+            if (actual is not { } ac || expected is not { } exp)
+                return "";
+
+            string vs = ac < exp ? $"beating your expected P{exp}"
+                : ac > exp ? $"below your expected P{exp}"
+                : $"matching your expected P{exp}";
+            return $"You finished P{ac}, {vs}.";
+        }
+        catch (JsonException)
+        {
+            return "";
+        }
+    }
+
     // ---------- standings ----------
 
     public StandingsSnapshot? CurrentStandings()

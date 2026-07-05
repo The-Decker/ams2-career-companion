@@ -179,6 +179,32 @@ public sealed class SessionServiceTests : IDisposable
     }
 
     [Fact]
+    public void ReadFeed_ProjectsTheRoundHeadline_WithAWhyChip()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        // No race run yet → the paddock is quiet.
+        Assert.Empty(session.ReadFeed());
+
+        var gridOrder = session.CurrentGrid().Select(s => s.DriverId).ToList();
+        session.Apply(new ResultDraft
+        {
+            Classified = gridOrder, // full classification, nobody retires
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+        });
+
+        // One race → one headline dispatch, projected read-only off the journal.
+        var latest = Assert.Single(session.ReadFeed());
+        Assert.False(string.IsNullOrWhiteSpace(latest.Headline));
+        Assert.Equal(1967, latest.SeasonYear);
+        Assert.Equal(1, latest.Round);
+        Assert.Equal("race", latest.Kind);
+        Assert.Contains("expected", latest.WhyText); // the Why? chip explains the number
+    }
+
+    [Fact]
     public void Preview_RejectsDriversNotInTheRoundGrid()
     {
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
