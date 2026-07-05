@@ -39,6 +39,11 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <see cref="ResultDraft.QualifyingOrder"/>. Null when the round ran no qualifying session.</summary>
     private IReadOnlyList<string>? _capturedQualifyingOrder;
 
+    /// <summary>Races already confirmed this round (Increment 2e.3): as the player advances "Next
+    /// race" each race is captured and LOCKED (exactly like the qualifying step); the final race
+    /// stays live so confirm → back can re-edit it. Empty on a single race. Cleared on Apply.</summary>
+    private readonly List<ResultDraft> _capturedRaces = [];
+
     public HomeViewModel(
         ICareerSession session,
         IFileWatcher? stagedFileWatcher = null,
@@ -151,9 +156,24 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     public bool IsQualifyingStep => _qualifyingEntry is not null
         && ReferenceEquals(CurrentContent, _qualifyingEntry);
 
-    /// <summary>The primary confirm button's label: on the qualifying step it locks the entered
-    /// grid and advances to the race; on the race step it opens the confirm/score screen.</summary>
-    public string ConfirmButtonText => IsQualifyingStep ? "Set the grid  ⏎" : "Confirm result  ⏎";
+    /// <summary>The primary confirm button's label: the qualifying step locks the grid; a race that
+    /// is not the round's last advances to the next race; the last (or only) race scores the round.</summary>
+    public string ConfirmButtonText =>
+        IsQualifyingStep ? "Set the grid  ⏎"
+        : IsResultEntryState && !IsLastRace ? "Next race  ⏎"
+        : "Confirm result  ⏎";
+
+    /// <summary>The scoring races the current round declares (Increment 2e.3); null on single-race.</summary>
+    private IReadOnlyList<PackWeekendRace>? WeekendRaces => _session.CurrentWeekend()?.Races;
+
+    /// <summary>How many races this round scores — 2 for an authored two-race weekend, else 1.</summary>
+    private int WeekendRaceCount => WeekendRaces?.Count ?? 1;
+
+    /// <summary>The 0-based index of the race being entered (confirmed races are captured + locked).</summary>
+    private int CurrentRaceIndex => _capturedRaces.Count;
+
+    /// <summary>True when the current race is the round's last — its confirm scores the whole round.</summary>
+    private bool IsLastRace => CurrentRaceIndex >= WeekendRaceCount - 1;
 
     partial void OnCurrentContentChanged(ObservableObject? value) =>
         ConfirmResultCommand.NotifyCanExecuteChanged();
@@ -228,6 +248,9 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _resultEntry = new ResultEntryViewModel(
                 OrderByQualifying(grid, _capturedQualifyingOrder), Summary.PlayerDriverId, _clock)
             {
+                // Name the race only on a two-race weekend (Feature/Sprint); a single race keeps
+                // the null label, so its screen is byte-identical to the shipped loop.
+                SessionLabel = WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null,
                 // Prefill the slider prompt with the pace-anchor recommendation (the same
                 // value the briefing showed); before the anchor calibrates, the settings
                 // screen's default difficulty (neutral 100 out of the box).
@@ -285,7 +308,19 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         if (_resultEntry is not { IsComplete: true } entry)
             return;
 
-        var draft = entry.BuildDraft() with { QualifyingOrder = _capturedQualifyingOrder };
+        // Two-race weekend (Increment 2e.3): a race that isn't the round's last locks its result
+        // and advances to the next race (no scoring yet). The last (or only) race scores the round.
+        if (!IsLastRace)
+        {
+            _capturedRaces.Add(entry.BuildDraft());
+            _resultEntry.PropertyChanged -= OnResultEntryPropertyChanged;
+            _resultEntry = null;
+            ContentError = null;
+            ShowRaceEntry();
+            return;
+        }
+
+        var draft = BuildWeekendDraft(entry);
         ConfirmModel model;
         try
         {
@@ -306,6 +341,27 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             minimalNarrative: _settings?.Current.MinimalNarrative ?? false);
     }
 
+    /// <summary>Assembles the round's draft from the captured races (locked) plus the final race
+    /// entry: race 0 is the primary classification, races 1… become <see cref="ResultDraft.AdditionalRaces"/>,
+    /// and the captured qualifying order rides along. A single race yields exactly today's draft
+    /// (no additional races), so the shipped loop is byte-identical.</summary>
+    private ResultDraft BuildWeekendDraft(ResultEntryViewModel lastRace)
+    {
+        var races = _capturedRaces.Append(lastRace.BuildDraft()).ToList();
+        return races[0] with
+        {
+            QualifyingOrder = _capturedQualifyingOrder,
+            AdditionalRaces = races.Count > 1
+                ? races.Skip(1).Select(r => new ExtraRaceResult
+                {
+                    Classified = r.Classified,
+                    DidNotFinish = r.DidNotFinish,
+                    Disqualified = r.Disqualified,
+                }).ToList()
+                : null,
+        };
+    }
+
     private void ApplyDraft(ResultDraft draft)
     {
         try
@@ -324,13 +380,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _resultEntry = null;
         }
 
-        // The weekend's qualifying order was consumed by this Apply — clear it for the next round.
+        // The weekend's qualifying order + captured races were consumed by this Apply — clear them.
         if (_qualifyingEntry is not null)
         {
             _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
             _qualifyingEntry = null;
         }
         _capturedQualifyingOrder = null;
+        _capturedRaces.Clear();
 
         Summary = _session.Summary;
         Briefing.Refresh();

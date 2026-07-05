@@ -74,13 +74,14 @@
 
         <!-- ===== top: phase + input + action buttons + candidates ===== -->
         <StackPanel DockPanel.Dock="Top">
-            <!-- weekend session heading (Increment 2b.3): only the qualifying-order step sets a
-                 SessionLabel, so a plain race entry (SessionLabel null) renders exactly as before -->
+            <!-- weekend session heading (Increment 2): names the current session — "Qualifying",
+                 "Feature", "Sprint". Only weekend sessions set a SessionLabel, so a plain single-race
+                 entry (SessionLabel null) renders exactly as the shipped loop. -->
             <Border Style="{StaticResource Chip}" Background="{StaticResource AccentDimBrush}"
                     HorizontalAlignment="Left" Margin="0,0,0,10"
                     Visibility="{Binding SessionLabel, Converter={StaticResource NullCollapsed}}">
                 <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"
-                           Text="{Binding SessionLabel, StringFormat='{}{0} — order the grid pole-first, then Set the grid to start the race'}" />
+                           Text="{Binding SessionLabel}" />
             </Border>
 
             <!-- first-run coach mark: type OR drag (ux-round §4) -->

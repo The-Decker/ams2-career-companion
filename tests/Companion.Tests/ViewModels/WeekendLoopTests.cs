@@ -124,6 +124,89 @@ public sealed class WeekendLoopTests
         Assert.Equal("Qualifying", ((ResultEntryViewModel)home.CurrentContent!).SessionLabel);
     }
 
+    // ---------- two-race weekend (Increment 2e.3) ----------
+
+    [Fact]
+    public void Two_race_weekend_captures_each_race_then_applies_a_draft_with_additional_races()
+    {
+        var session = new WeekendSession
+        {
+            Weekend = new PackWeekend
+            {
+                Qualifying = new PackWeekendSession { Label = "Qualifying" },
+                Races =
+                [
+                    new PackWeekendRace { Id = "race", Label = "Feature" },
+                    new PackWeekendRace { Id = "race2", Label = "Sprint" },
+                ],
+            },
+        };
+        using var home = new HomeViewModel(session);
+
+        // Qualifying → set the grid (pole: car #2 Hulme, then #1 Brabham).
+        home.EnterResultCommand.Execute(null);
+        Assert.True(home.IsQualifyingStep);
+        Order((ResultEntryViewModel)home.CurrentContent!, "2", "1");
+        home.ConfirmResultCommand.Execute(null);
+
+        // Race 1 (Feature) — NOT the round's last, so the primary action advances to the next race.
+        var feature = (ResultEntryViewModel)home.CurrentContent!;
+        Assert.Equal("Feature", feature.SessionLabel);
+        Assert.False(home.IsQualifyingStep);
+        Assert.Equal("Next race  ⏎", home.ConfirmButtonText);
+        Order(feature, "2", "1"); // Hulme P1, Brabham P2
+        home.ConfirmResultCommand.Execute(null);
+
+        // Race 2 (Sprint) — the last race, so the primary action scores the round.
+        var sprint = (ResultEntryViewModel)home.CurrentContent!;
+        Assert.NotSame(feature, sprint);
+        Assert.Equal("Sprint", sprint.SessionLabel);
+        Assert.Equal("Confirm result  ⏎", home.ConfirmButtonText);
+        Order(sprint, "1", "2"); // Brabham P1, Hulme P2
+        home.ConfirmResultCommand.Execute(null);
+
+        // Confirm → apply the whole two-race round.
+        var confirm = Assert.IsType<ConfirmViewModel>(home.CurrentContent);
+        confirm.ApplyCommand.Execute(null);
+
+        var draft = Assert.Single(session.Applied);
+        Assert.Equal(new[] { "driver.hulme", "driver.brabham" }, draft.Classified);       // race 1 (primary)
+        Assert.Equal(new[] { "driver.hulme", "driver.brabham" }, draft.QualifyingOrder);
+        var extra = Assert.Single(draft.AdditionalRaces!);
+        Assert.Equal(new[] { "driver.brabham", "driver.hulme" }, extra.Classified);        // race 2
+    }
+
+    [Fact]
+    public void Two_race_weekend_confirm_back_returns_to_the_last_race_entry()
+    {
+        var session = new WeekendSession
+        {
+            Weekend = new PackWeekend
+            {
+                Races =
+                [
+                    new PackWeekendRace { Id = "race", Label = "Feature" },
+                    new PackWeekendRace { Id = "race2", Label = "Sprint" },
+                ],
+            },
+        };
+        using var home = new HomeViewModel(session);
+
+        home.EnterResultCommand.Execute(null); // no qualifying → straight to race 1
+        Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
+        home.ConfirmResultCommand.Execute(null); // → race 2
+
+        var sprint = (ResultEntryViewModel)home.CurrentContent!;
+        Order(sprint, "1", "2");
+        home.ConfirmResultCommand.Execute(null); // → confirm
+
+        var confirm = Assert.IsType<ConfirmViewModel>(home.CurrentContent);
+        confirm.BackCommand.Execute(null);
+
+        Assert.Same(sprint, home.CurrentContent); // back re-opens the last race, its result intact
+        Assert.Empty(session.Applied);
+    }
+
     // ---------- navigation around the step ----------
 
     [Fact]
