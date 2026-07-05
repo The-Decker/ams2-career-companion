@@ -22,6 +22,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 {
     public const string RaceTabKey = "race";
     public const string StandingsTabKey = "standings";
+    public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
 
     private readonly ICareerSession _session;
@@ -43,11 +44,13 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         Home.PropertyChanged += OnHomePropertyChanged;
 
         News = new NewsViewModel(session);
+        History = new HistoryViewModel(session);
 
         Tabs =
         [
             new HubTabViewModel(RaceTabKey, "Race", "", Home),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
+            new HubTabViewModel(HistoryTabKey, "History", "", History),
             new HubTabViewModel(NewsTabKey, "News", "", News),
         ];
 
@@ -59,6 +62,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 
     /// <summary>The News feed (also the source for the future right-dock ticker).</summary>
     public NewsViewModel News { get; }
+
+    /// <summary>The History / Scrapbook lens (per-season cards, lineage timeline, records
+    /// book, archived articles) — refreshed in place after every Apply like the other lenses.</summary>
+    public HistoryViewModel History { get; }
 
     /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
     /// the hub's era badge now, and the full resource-dictionary swap in a later slice.</summary>
@@ -139,6 +146,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         if (StandingsTab is { } standings)
             standings.Content = NewStandings();
         News.Refresh();
+        History.Refresh();
 
         if (RaceTab is { } race)
             SelectTab(race);
