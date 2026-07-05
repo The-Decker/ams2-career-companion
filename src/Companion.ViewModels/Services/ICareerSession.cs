@@ -70,6 +70,19 @@ public interface ICareerSession
     /// default: sessions without the projection report an empty chain, so existing fakes compile.</summary>
     JournalChain JournalFor(string entity, int? round = null) => JournalChain.Empty;
 
+    /// <summary>The season-scoped "Why?" inspector: the same walk as
+    /// <see cref="JournalFor(string,int?)"/>, but over the season whose year is
+    /// <paramref name="seasonYear"/> rather than the CURRENT season — so a History card for ANY
+    /// completed season can open the inspector for that season's numbers (final standing, champion,
+    /// records), not just the current one (career-hub-design.md §4/§5, decision 18 "total recall").
+    /// Resolves the season row for the year in the same career file, then runs the identical read-only
+    /// projection over THAT season's journal — deterministic (journal <c>seq</c> order, ordinal
+    /// comparisons), pure, no new persistence. When no season matches the year the chain is empty
+    /// (a graceful no-op, never a throw). A DISTINCT name (not a <see cref="JournalFor(string,int?)"/>
+    /// overload) so an int-literal round can never bind here by mistake. Additive default: sessions
+    /// without the projection report an empty chain, so every existing fake compiles unchanged.</summary>
+    JournalChain JournalForSeason(string entity, int seasonYear, int? round = null) => JournalChain.Empty;
+
     /// <summary>Recommended Opponent Skill slider (70–120) for the CURRENT round, from the
     /// last folded round's pace anchor. Null before the anchor calibrates (fresh careers).
     /// Shown in the briefing and prefilled on the result screen — never auto-applied.</summary>

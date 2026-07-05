@@ -1258,13 +1258,52 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     /// comparison is <see cref="StringComparer.Ordinal"/>, so the chain is byte-stable and identical
     /// on replay. The ordered-row shape is the format designed to accept perk/stat rows later
     /// (decision 5); it generalises the thin <see cref="WhyFromResult"/> chip into a full breakdown.</summary>
-    public JournalChain JournalFor(string entity, int? round = null)
+    public JournalChain JournalFor(string entity, int? round = null) =>
+        BuildJournalChain(entity, round, _seasonId, Pack, _playerDriverId);
+
+    /// <summary>The season-scoped walk (career-hub-design.md §4/§5, decision 18): resolves the season
+    /// row whose year is <paramref name="seasonYear"/> and runs the SAME projection as the current-season
+    /// <see cref="JournalFor(string,int?)"/> over THAT season's journal — resolving the entity name and
+    /// player seat against that season's pinned pack, so a finished earlier season's numbers read
+    /// correctly. When the year is the current season this is byte-identical to the current-season walk.
+    /// No matching season year returns the empty chain (a graceful no-op, never a throw). A DISTINCT
+    /// name (not a <see cref="JournalFor(string,int?)"/> overload) keeps int-literal round callers on
+    /// the current-season walk.</summary>
+    public JournalChain JournalForSeason(string entity, int seasonYear, int? round = null)
+    {
+        if (string.IsNullOrEmpty(entity))
+            return JournalChain.Empty;
+
+        // First (oldest) season row matching the year — years are unique per career in v1, but
+        // guard deterministically anyway (ReadSeasons is ordered by id, oldest first).
+        var season = CareerStore.ReadSeasons(_database)
+            .FirstOrDefault(s => s.Year == seasonYear);
+        if (season is null)
+            return JournalChain.Empty;
+
+        var seasonPack = SeasonPackFor(season);
+        string playerDriverId = PlayerDriverIdFor(season, seasonPack);
+        return BuildJournalChain(entity, round, season.Id, seasonPack, playerDriverId);
+    }
+
+    /// <summary>The one shared "Why?" projection both the current-season and season-scoped paths run
+    /// (so they cannot drift): walks <paramref name="seasonId"/>'s journal rows for
+    /// <paramref name="entity"/> (narrowed to <paramref name="round"/> when given), projecting each into
+    /// a labelled contribution row. Pure read-only projection over <see cref="JournalStore.ReadSeason"/>
+    /// — no new persistence — and DETERMINISTIC: rows are read in journal <c>seq</c> order and every
+    /// comparison is <see cref="StringComparer.Ordinal"/>, so the chain is byte-stable and identical on
+    /// replay. <paramref name="seasonPack"/> + <paramref name="playerDriverId"/> resolve the panel title
+    /// and entity name against THAT season's pinned pack. The ordered-row shape is the format designed to
+    /// accept perk/stat rows later (decision 5); it generalises the thin <see cref="WhyFromResult"/> chip
+    /// into a full breakdown.</summary>
+    private JournalChain BuildJournalChain(
+        string entity, int? round, long seasonId, SeasonPack seasonPack, string playerDriverId)
     {
         if (string.IsNullOrEmpty(entity))
             return JournalChain.Empty;
 
         // Ordered by seq already (ReadSeason's ORDER BY seq) — the deterministic walk order.
-        var rows = JournalStore.ReadSeason(_database, _seasonId)
+        var rows = JournalStore.ReadSeason(_database, seasonId)
             .Where(r => string.Equals(r.Entity, entity, StringComparison.Ordinal)
                         && !DataJournalPhases.IsProvenance(r.Phase)
                         && (round is null || r.Round == round))
@@ -1284,7 +1323,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         {
             Entity = entity,
             Round = round,
-            Title = InspectorTitle(entity, round, rows),
+            Title = InspectorTitle(entity, round, rows, seasonPack, playerDriverId),
             Contributions = contributions,
             Summary = InspectorSummary(entity, rows),
         };
@@ -1509,12 +1548,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         root.TryGetProperty(name, out var el) && el.ValueKind == JsonValueKind.String ? el.GetString() : null;
 
     /// <summary>The inspector panel header: names the entity and, when the walk is a single round,
-    /// the player's finish that round (the headline number the click walked back from).</summary>
-    private string InspectorTitle(string entity, int? round, IReadOnlyList<JournalRow> rows)
+    /// the player's finish that round (the headline number the click walked back from). The season's
+    /// own pinned pack + player driver id resolve the name + year, so a finished season titles
+    /// correctly (not against the current season).</summary>
+    private string InspectorTitle(
+        string entity, int? round, IReadOnlyList<JournalRow> rows, SeasonPack seasonPack, string playerDriverId)
     {
-        string who = InspectorEntityName(entity);
+        string who = InspectorEntityName(entity, seasonPack, playerDriverId);
         if (round is not { } r)
-            return $"Why — {who}, {Pack.Season.Year}";
+            return $"Why — {who}, {seasonPack.Season.Year}";
 
         // For a single-round player walk, lead with the finishing position if the race.result row
         // carries one — the number the user most likely clicked.
@@ -1540,16 +1582,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     }
 
     /// <summary>Resolves a journal entity id to a display name: the player's own seat, else the
-    /// pack's driver or team table, else the raw id — so the inspector never shows a bare id.</summary>
-    private string InspectorEntityName(string entity)
+    /// season pack's driver or team table, else the raw id — so the inspector never shows a bare id.
+    /// The season's pinned pack + player driver id keep a finished season's names correct (that
+    /// season's seat, that season's roster).</summary>
+    private static string InspectorEntityName(string entity, SeasonPack seasonPack, string playerDriverId)
     {
         if (string.Equals(entity, "player", StringComparison.Ordinal)
-            || string.Equals(entity, _playerDriverId, StringComparison.Ordinal))
+            || string.Equals(entity, playerDriverId, StringComparison.Ordinal))
             return "You";
-        var driver = Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, entity, StringComparison.Ordinal));
+        var driver = seasonPack.Drivers.FirstOrDefault(d => string.Equals(d.Id, entity, StringComparison.Ordinal));
         if (driver is not null)
             return driver.Name;
-        var team = Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, entity, StringComparison.Ordinal));
+        var team = seasonPack.Teams.FirstOrDefault(t => string.Equals(t.Id, entity, StringComparison.Ordinal));
         return team?.Name ?? entity;
     }
 
