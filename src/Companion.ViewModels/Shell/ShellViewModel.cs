@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.ViewModels.Hub;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
 using Companion.ViewModels.Start;
@@ -21,7 +22,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     private readonly Func<IFileWatcher?> _watcherFactory;
     private readonly ISettingsService _settings;
 
-    private HomeViewModel? _home;
+    private HubViewModel? _hub;
     private ObservableObject? _beforeSettings;
     private string? _currentCareerPath;
 
@@ -116,9 +117,9 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         Wizard = null;
         _beforeSettings = null;
         OnPropertyChanged(nameof(Wizard));
-        _home = new HomeViewModel(session, _watcherFactory(), settings: _settings);
-        _home.NextSeasonStarted += OnNextSeasonStarted;
-        Current = _home;
+        _hub = new HubViewModel(session, _watcherFactory(), settings: _settings);
+        _hub.NextSeasonStarted += OnNextSeasonStarted;
+        Current = _hub;
     }
 
     /// <summary>Sign-and-continue (M6): the new season is persisted but the open session
@@ -135,7 +136,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         }
 
         OpenCareer(path);
-        if (Current is HomeViewModel)
+        if (Current is HubViewModel)
             return;
 
         // The reopen failed (StatusError explains) — never leave a disposed screen showing.
@@ -159,11 +160,11 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     private void CloseHome()
     {
-        if (_home is not null)
+        if (_hub is not null)
         {
-            _home.NextSeasonStarted -= OnNextSeasonStarted;
-            _home.Dispose();
-            _home = null;
+            _hub.NextSeasonStarted -= OnNextSeasonStarted;
+            _hub.Dispose();
+            _hub = null;
         }
     }
 
@@ -217,8 +218,8 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
                 GoToStart();
                 return true;
 
-            case HomeViewModel home:
-                return home.TryEscapeBack();
+            case HubViewModel hub:
+                return hub.TryEscapeBack();
 
             default:
                 return false;

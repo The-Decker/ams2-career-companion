@@ -10,6 +10,7 @@
              xmlns:standings="clr-namespace:Companion.ViewModels.Standings;assembly=Companion.ViewModels"
              xmlns:settings="clr-namespace:Companion.ViewModels.Settings;assembly=Companion.ViewModels"
              xmlns:shell="clr-namespace:Companion.ViewModels.Shell;assembly=Companion.ViewModels"
+             xmlns:hub="clr-namespace:Companion.ViewModels.Hub;assembly=Companion.ViewModels"
              xmlns:views="clr-namespace:Companion.App.Views"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
@@ -24,6 +25,13 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type wizard:NewCareerWizardViewModel}">
                 <views:WizardView />
+            </DataTemplate>
+            <!-- the Career Hub shell (career-open screen); its Race tab reuses HomeView below -->
+            <DataTemplate DataType="{x:Type hub:HubViewModel}">
+                <views:HubView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type hub:NewsViewModel}">
+                <views:NewsView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type shell:HomeViewModel}">
                 <views:HomeView />

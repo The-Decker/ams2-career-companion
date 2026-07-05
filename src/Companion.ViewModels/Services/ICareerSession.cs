@@ -37,6 +37,12 @@ public interface ICareerSession
     /// <summary>Every per-round snapshot so far, for the round matrix.</summary>
     IReadOnlyList<StandingsSnapshot> AllSnapshots();
 
+    /// <summary>Era-skinned news dispatches for the career so far, newest first — a read-only
+    /// projection over the journal. Increment 1 re-renders the existing <c>news.headline</c>
+    /// rows; the generative multi-slot article grammar is a later slice. Additive default:
+    /// sessions without a news projection report an empty feed, so existing fakes compile.</summary>
+    IReadOnlyList<NewsDispatch> ReadFeed() => [];
+
     /// <summary>Recommended Opponent Skill slider (70–120) for the CURRENT round, from the
     /// last folded round's pace anchor. Null before the anchor calibrates (fresh careers).
     /// Shown in the briefing and prefilled on the result screen — never auto-applied.</summary>
@@ -134,6 +140,28 @@ public sealed record BriefingModel
 }
 
 public sealed record CopyableSetting(string Label, string Value);
+
+/// <summary>One news-feed item (hub News tab / dock). A resolved period headline plus the
+/// plain-language "why" (the journal delta as a sentence, for the Why? chip) and the era it
+/// belongs to. <see cref="Body"/> is the expanded article shown when the ticker item is
+/// clicked; empty means "the headline is the whole story" for now.</summary>
+public sealed record NewsDispatch
+{
+    public required string Headline { get; init; }
+    public required int SeasonYear { get; init; }
+
+    /// <summary>The round this dispatch belongs to; null for season-level items.</summary>
+    public int? Round { get; init; }
+
+    /// <summary>Journal kind (e.g. "race", "season", "offer") — drives filtering + chrome.</summary>
+    public string Kind { get; init; } = "race";
+
+    /// <summary>The Why? chip's plain sentence, derived from the source journal row's delta.</summary>
+    public string WhyText { get; init; } = "";
+
+    /// <summary>The expanded period article; empty until the generative grammar slice lands.</summary>
+    public string Body { get; init; } = "";
+}
 
 public sealed record StageOutcome
 {

@@ -3,6 +3,7 @@ using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.ViewModels.Briefing;
 using Companion.ViewModels.Confirm;
+using Companion.ViewModels.Hub;
 using Companion.ViewModels.ResultEntry;
 using Companion.ViewModels.Review;
 using Companion.ViewModels.Services;
@@ -49,7 +50,8 @@ public sealed class ShellNavigationTests
         shell.Start.ContinueCommand.Execute(entry);
 
         Assert.Equal("Z:\\careers\\one.ams2career", factory.LastOpenedPath);
-        Assert.IsType<HomeViewModel>(shell.Current);
+        var hub = Assert.IsType<HubViewModel>(shell.Current);
+        Assert.IsType<HomeViewModel>(hub.Home); // the loop is re-homed verbatim as the Race tab
         Assert.Contains(store.Touched, t => t.Path == "Z:\\careers\\one.ams2career");
         Assert.Null(shell.StatusError);
     }
@@ -241,8 +243,8 @@ public sealed class ShellNavigationTests
         shell.Start.Refresh();
         shell.Start.ContinueCommand.Execute(entry);
 
-        var home = Assert.IsType<HomeViewModel>(shell.Current);
-        var review = Assert.IsType<SeasonReviewViewModel>(home.CurrentContent);
+        var hub = Assert.IsType<HubViewModel>(shell.Current);
+        var review = Assert.IsType<SeasonReviewViewModel>(hub.Home.CurrentContent);
         Assert.True(review.HasNextSeason);
         Assert.Equal("Sign & start 1969", review.SignButtonText);
 
@@ -250,12 +252,12 @@ public sealed class ShellNavigationTests
         review.SignAndContinueCommand.Execute(null);
 
         // The transition went through the seam, the stale session was disposed, and the
-        // career was REOPENED — a fresh Home over the reopened (latest-season) session.
+        // career was REOPENED — a fresh Hub (and Home) over the reopened (latest-season) session.
         Assert.Equal(new[] { "team.brabham" }, factory.Session.SignedTeams);
         Assert.True(factory.Session.Disposed);
         Assert.Equal(2, factory.OpenCount);
-        var reopened = Assert.IsType<HomeViewModel>(shell.Current);
-        Assert.NotSame(home, reopened);
+        var reopened = Assert.IsType<HubViewModel>(shell.Current);
+        Assert.NotSame(hub, reopened);
         Assert.Null(shell.StatusError);
     }
 
@@ -270,6 +272,91 @@ public sealed class ShellNavigationTests
 
         Assert.True(session.Disposed);
         Assert.True(watcher.Disposed);
+    }
+
+    // ---------- hub shell (Increment 1: the rail around the re-homed loop) ----------
+
+    [Fact]
+    public void Hub_opens_on_the_race_tab_with_the_loop_rehomed()
+    {
+        using var hub = new HubViewModel(new FakeSession());
+
+        Assert.Equal(HubViewModel.RaceTabKey, hub.SelectedTab?.Key);
+        Assert.Same(hub.Home, hub.SelectedTab?.Content);
+        Assert.True(hub.Home.IsBriefingState); // the loop is live and untouched
+        Assert.Collection(
+            hub.Tabs,
+            t => Assert.Equal(HubViewModel.RaceTabKey, t.Key),
+            t => Assert.Equal(HubViewModel.StandingsTabKey, t.Key),
+            t => Assert.Equal(HubViewModel.NewsTabKey, t.Key));
+    }
+
+    [Fact]
+    public void Selecting_a_tab_marks_it_selected_and_clears_the_others()
+    {
+        using var hub = new HubViewModel(new FakeSession());
+        var standings = hub.Tabs.Single(t => t.Key == HubViewModel.StandingsTabKey);
+
+        hub.SelectTabCommand.Execute(standings);
+
+        Assert.Same(standings, hub.SelectedTab);
+        Assert.True(standings.IsSelected);
+        Assert.All(
+            hub.Tabs.Where(t => !ReferenceEquals(t, standings)),
+            t => Assert.False(t.IsSelected));
+    }
+
+    [Fact]
+    public void Number_key_selects_the_nth_tab_and_ignores_out_of_range()
+    {
+        using var hub = new HubViewModel(new FakeSession());
+
+        Assert.True(hub.SelectTabByNumber(3));
+        Assert.Equal(HubViewModel.NewsTabKey, hub.SelectedTab?.Key);
+
+        Assert.False(hub.SelectTabByNumber(9)); // out of range → falls through, selection unchanged
+        Assert.Equal(HubViewModel.NewsTabKey, hub.SelectedTab?.Key);
+    }
+
+    [Fact]
+    public void Applying_a_round_snaps_back_to_race_and_reprojects_the_standings_lens()
+    {
+        using var hub = new HubViewModel(new FakeSession());
+        var standingsTab = hub.Tabs.Single(t => t.Key == HubViewModel.StandingsTabKey);
+        var before = standingsTab.Content;
+
+        hub.SelectTabByNumber(2); // wander off to the Standings lens
+        Assert.Equal(HubViewModel.StandingsTabKey, hub.SelectedTab?.Key);
+
+        hub.Home.EnterResultCommand.Execute(null);
+        CompleteRound((ResultEntryViewModel)hub.Home.CurrentContent!);
+        hub.Home.ConfirmResultCommand.Execute(null);
+        ((ConfirmViewModel)hub.Home.CurrentContent!).ApplyCommand.Execute(null);
+
+        // anti-burial: after Apply we snap back to Race, and the lens is re-projected off new state
+        Assert.Equal(HubViewModel.RaceTabKey, hub.SelectedTab?.Key);
+        Assert.NotSame(before, standingsTab.Content);
+    }
+
+    [Fact]
+    public void Escape_from_a_lens_tab_returns_to_the_race_tab()
+    {
+        using var hub = new HubViewModel(new FakeSession());
+        hub.SelectTabByNumber(2); // Standings
+
+        Assert.True(hub.TryEscapeBack());
+        Assert.Equal(HubViewModel.RaceTabKey, hub.SelectedTab?.Key);
+    }
+
+    [Fact]
+    public void Disposing_the_hub_disposes_the_session()
+    {
+        var session = new FakeSession();
+        var hub = new HubViewModel(session);
+
+        hub.Dispose();
+
+        Assert.True(session.Disposed);
     }
 
     // ---------- helpers / fakes ----------
