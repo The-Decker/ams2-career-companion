@@ -110,5 +110,10 @@ public sealed class PlayerCareerStateCharacterTests
         Assert.Equal(3, back.Character.CpUnspent);
         Assert.Equal(4, back.Level);
         Assert.Equal(512L, back.Xp);
+
+        // The exact replay scenario: a DESERIALIZED stored state must compare equal to the
+        // in-memory one (the start-state gate uses record ==). Without CharacterProfile's structural
+        // equality this fails on the freshly-deserialized Stats/PerkIds collections.
+        Assert.Equal(state, back);
     }
 }
