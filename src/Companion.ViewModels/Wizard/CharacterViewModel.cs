@@ -38,6 +38,14 @@ public sealed partial class CharacterViewModel : ObservableObject
         Perks = _rules.Perks
             .Select(p => new PerkOption(p.Id, p.Name, p.Category, p.Cost, p.Description))
             .ToList();
+        // A perk toggled directly (the shelf checkbox binds IsSelected) recomputes the CP meter,
+        // just like the command path.
+        foreach (var perk in Perks)
+            perk.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(PerkOption.IsSelected) && !_suppressRecompute)
+                    Recompute();
+            };
         PerkCategories = Perks
             .GroupBy(p => p.Category, StringComparer.Ordinal)
             .Select(g => new PerkCategory(g.Key, g.ToList()))
@@ -93,13 +101,14 @@ public sealed partial class CharacterViewModel : ObservableObject
             ? $"This build refunds more CP than allowed — spend at least {_rules.CharacterPoints.MinBudgetAfterSpend}."
             : $"This build costs {NetCpSpend} CP, over the {_rules.CharacterPoints.MaxNetSpend} maximum.";
 
+    private bool _suppressRecompute;
+
     [RelayCommand]
     private void TogglePerk(PerkOption? perk)
     {
         if (perk is null)
             return;
-        perk.IsSelected = !perk.IsSelected;
-        Recompute();
+        perk.IsSelected = !perk.IsSelected; // the perk's PropertyChanged recomputes the meter
     }
 
     /// <summary>Applies an archetype preset: its stat spread and its exact perk set. Selecting a
@@ -113,9 +122,12 @@ public sealed partial class CharacterViewModel : ObservableObject
             if (archetype.StartMeta.TryGetValue(slider.Id, out double value))
                 slider.SetSilently(value);
 
+        // Apply the whole perk set, then recompute once (each perk's PropertyChanged is suppressed).
+        _suppressRecompute = true;
         var chosen = new HashSet<string>(archetype.PerkIds, StringComparer.Ordinal);
         foreach (var perk in Perks)
             perk.IsSelected = chosen.Contains(perk.Id);
+        _suppressRecompute = false;
 
         Recompute();
     }
