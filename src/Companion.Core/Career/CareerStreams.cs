@@ -27,6 +27,11 @@ public static class JournalPhases
     /// while its data rides in the start player state. (Increment 4a.)</summary>
     public const string PlayerCharacter = "player.character";
 
+    /// <summary>The player's character XP update for the round — a DERIVED fold output (a pure
+    /// function of the result), emitted only for a character career after the reputation row, so a
+    /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>
+    public const string PlayerXp = "player.xp";
+
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>
     public const string PlayerExperience = "player.experience";

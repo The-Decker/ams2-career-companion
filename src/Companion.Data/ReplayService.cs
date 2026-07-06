@@ -616,6 +616,7 @@ public static class ReplayService
                 // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
                 Modifiers = mods,
+                CharacterRules = character is not null ? inputs.CharacterRules : null,
             });
 
             events.AddRange(update.Events);

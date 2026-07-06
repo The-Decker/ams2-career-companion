@@ -51,6 +51,11 @@ public sealed record RoundUpdateContext
     /// every OPI/reputation/pace-anchor call takes its exact shipped path and the round is
     /// byte-identical. Built once by the fold from the folded character. (Increment 4a.)</summary>
     public PlayerPerkModifiers? Modifiers { get; init; }
+
+    /// <summary>The character rules (perks.json) when this career carries a character — supplies the
+    /// XP curve + sources for the <c>player.xp</c> row. Null for a pre-character career (no XP row,
+    /// journal sequence unchanged). (Increment 4a.)</summary>
+    public CharacterRules? CharacterRules { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -118,6 +123,32 @@ public static class RoundUpdate
 
         string cause = RaceCause(context, expected, effective);
 
+        // Character XP (Increment 4a): a pure function of this round's result. Accrued and journaled
+        // only for a character career — a pre-character career emits no player.xp row, so its journal
+        // sequence is unchanged.
+        long newXp = player.Xp;
+        int newLevel = player.Level;
+        JournalEvent? xpEvent = null;
+        if (player.Character is not null && context.CharacterRules is { } charRules)
+        {
+            int xpRound = XpMath.PerRound(charRules.Levels.XpSources.PerRound, new XpMath.RoundInputs(
+                ExpectedFinish: expected,
+                EffectiveFinish: effective,
+                FinishPosition: context.PlayerFinish,
+                ScoredPoints: context.PlayerFinish is { } scored && scored <= context.PointsPositions,
+                BeatTeammate: beatTeammate,
+                Dnf: context.PlayerDnf));
+            newXp = Math.Max(0, player.Xp + xpRound);
+            newLevel = charRules.Levels.XpCurve.LevelForTotalXp(newXp);
+            xpEvent = new JournalEvent
+            {
+                Phase = JournalPhases.PlayerXp,
+                Entity = "player",
+                DeltaJson = CareerJson.Serialize(new { from = player.Xp, to = newXp, round = xpRound, level = newLevel }),
+                Cause = cause,
+            };
+        }
+
         var events = new List<JournalEvent>
         {
             new()
@@ -157,19 +188,25 @@ public static class RoundUpdate
                 }),
                 Cause = cause,
             },
-            new()
-            {
-                Phase = JournalPhases.PlayerPaceAnchor,
-                Entity = "player",
-                DeltaJson = CareerJson.Serialize(new
-                {
-                    from = Round4(player.PaceAnchor),
-                    to = Round4(newAnchor),
-                    recommendedSlider,
-                }),
-                Cause = cause,
-            },
         };
+
+        // player.xp rides between the reputation and pace-anchor rows (a fixed position, absent for
+        // a character-free career).
+        if (xpEvent is not null)
+            events.Add(xpEvent);
+
+        events.Add(new JournalEvent
+        {
+            Phase = JournalPhases.PlayerPaceAnchor,
+            Entity = "player",
+            DeltaJson = CareerJson.Serialize(new
+            {
+                from = Round4(player.PaceAnchor),
+                to = Round4(newAnchor),
+                recommendedSlider,
+            }),
+            Cause = cause,
+        });
 
         // Qualifying anchor row (weekend rounds only) — a fixed position after the pace anchor,
         // absent for single-race rounds so their journal sequence is unchanged.
@@ -224,6 +261,8 @@ public static class RoundUpdate
                 Reputation = newRep,
                 PaceAnchor = newAnchor,
                 QualifyingAnchor = newQualiAnchor,
+                Xp = newXp,
+                Level = newLevel,
             },
             Events = events,
             RecommendedSlider = recommendedSlider,

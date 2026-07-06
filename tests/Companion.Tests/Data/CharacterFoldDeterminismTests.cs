@@ -106,6 +106,12 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         Assert.Equal(1, start.Level);
         Assert.Equal(["engineers_favorite"], start.Character!.PerkIds);
 
+        // The character accrues XP: a player.xp row per raced round, and the folded state carries a
+        // level (>= the creation level 1). A character-free career emits no player.xp row.
+        Assert.Equal(2, journal.Count(r => r.Round is not null && r.Phase == JournalPhases.PlayerXp));
+        var round2State = StateStore.ReadRoundPlayerState(db, seasonId, 2)!;
+        Assert.True(round2State.Player.Level >= 1);
+
         // The whole character career re-simulates byte-identically. The re-sim MUST receive the same
         // character rules the live fold used; the player.character row being provenance-excluded is
         // proven by there being no "extra stored row" divergence.
