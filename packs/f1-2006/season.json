@@ -1,0 +1,1223 @@
+{
+    "year":  2006,
+    "seriesName":  "Formula One World Championship",
+    "ams2Class":  "F-V8_Gen1",
+    "pointsSystem":  {
+                         "racePoints":  [
+                                            10,
+                                            8,
+                                            6,
+                                            5,
+                                            4,
+                                            3,
+                                            2,
+                                            1
+                                        ],
+                         "sharedDrivePolicy":  "zero",
+                         "constructors":  {
+                                              "bestCarOnly":  false,
+                                              "bestN":  null
+                                          },
+                         "pointsAdjustments":  [
+
+                                               ]
+                     },
+    "rounds":  [
+                   {
+                       "round":  1,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Bahrain Grand Prix",
+                       "date":  "2006-03-12",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Bahrain International Circuit",
+                                     "id":  "hockenheim_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "barcelona_gp"
+                                                   ]
+                                 },
+                       "laps":  67,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-03-12",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Bahrain International Circuit - 57 laps / 308.5 km reproduced as 67 laps of the modern Hockenheim GP. AMS2 has no Bahrain; the redesigned Tilke Hockenheim GP is a same-era, same-designer wide-modern-GP stand-in."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  2,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Malaysian Grand Prix",
+                       "date":  "2006-03-19",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Sepang International Circuit",
+                                     "id":  "hockenheim_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "barcelona_gp"
+                                                   ]
+                                 },
+                       "laps":  68,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-03-19",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Sepang International Circuit - 56 laps / 310.4 km reproduced as 68 laps of the modern Hockenheim GP. Both are Hermann Tilke designs; the redesigned Hockenheim GP keeps Sepang's long-straight-into-hairpin rhythm (same stand-in as the f1-2000 pack)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  3,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Australian Grand Prix",
+                       "date":  "2006-04-02",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Melbourne Grand Prix Circuit",
+                                     "id":  "adelaide_modern",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "montrealmodern"
+                                                   ]
+                                 },
+                       "laps":  94,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-04-02",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Melbourne Grand Prix Circuit - 57 laps / 302.3 km reproduced as 94 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland-circuit character (same stand-in as the f1-2000 pack)."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  4,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "San Marino Grand Prix",
+                       "date":  "2006-04-23",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autodromo Internazionale Enzo e Dino Ferrari",
+                                     "id":  "imola_05",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "imola_01"
+                                                   ]
+                                 },
+                       "laps":  62,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-04-23",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Imola 2005 is the closest layout to the 2006 configuration; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  5,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "European Grand Prix",
+                       "date":  "2006-05-07",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Nürburgring",
+                                     "id":  "nurb_gp_2020",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "nurb_gp_2025"
+                                                   ]
+                                 },
+                       "laps":  60,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-05-07",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "The 2006 European GP ran the Nürburgring GP-Strecke; the venue is real, so the historical lap count is kept on the modern GP layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  6,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Spanish Grand Prix",
+                       "date":  "2006-05-14",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Barcelona-Catalunya",
+                                     "id":  "barcelona_gp_2001",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "barcelona_gp_1999"
+                                                   ]
+                                 },
+                       "laps":  66,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-05-14",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2006 Barcelona layout in AMS2; the venue is real, so the historical lap count is kept on the era-close pre-2007 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  7,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Monaco Grand Prix",
+                       "date":  "2006-05-28",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Monaco",
+                                     "id":  "azure_circuit",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "azure_circuit_88"
+                                                   ]
+                                 },
+                       "laps":  78,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-05-28",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's modern Azure Circuit matches the 2006 (post-2004 reprofile) Monaco layout; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  8,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "British Grand Prix",
+                       "date":  "2006-06-11",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Silverstone Circuit",
+                                     "id":  "silverstone_2001",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "silverstone_1991"
+                                                   ]
+                                 },
+                       "laps":  60,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-06-11",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2006 Silverstone in AMS2; the venue is real, so the historical lap count is kept on the near-identical 2001 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  9,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Canadian Grand Prix",
+                       "date":  "2006-06-25",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Gilles Villeneuve",
+                                     "id":  "montrealmodern",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "montrealhistoric_1991"
+                                                   ]
+                                 },
+                       "laps":  70,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-06-25",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "2006 Montreal is the same venue as Montreal Modern, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  10,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "United States Grand Prix",
+                       "date":  "2006-07-02",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Indianapolis Motor Speedway",
+                                     "id":  "indianapolis_2001_rc",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "indianapolis_2022_rc"
+                                                   ]
+                                 },
+                       "laps":  73,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.juan_pablo_montoya",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-07-02",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "The 2006 US GP ran the Indianapolis road course; AMS2's Indianapolis 2001 road course is that same layout, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  11,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "French Grand Prix",
+                       "date":  "2006-07-16",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Nevers Magny-Cours",
+                                     "id":  "le_mans_bugatti",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "barcelona_gp_1999"
+                                                   ]
+                                 },
+                       "laps":  74,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-07-16",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuit de Nevers Magny-Cours - 70 laps / 308.8 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (same stand-in as the f1-2000 and f1-1988 packs). Montoya's McLaren #4 seat passed to the unbindable Pedro de la Rosa from this round, so the grid is one car lighter."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  12,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "German Grand Prix",
+                       "date":  "2006-07-30",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hockenheimring",
+                                     "id":  "hockenheim_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "hockenheim_2001"
+                                                   ]
+                                 },
+                       "laps":  67,
+                       "grid":  {
+                                    "size":  21,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.jacques_villeneuve",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  20,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-07-30",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "The 2006 German GP ran the modern (2002+) Hockenheim GP; AMS2's Hockenheim GP is that same layout, so the historical lap count is kept. Sakon Yamamoto joins the Super Aguri #23 seat from this round."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  13,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Hungarian Grand Prix",
+                       "date":  "2006-08-06",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hungaroring",
+                                     "id":  "hungaroring_gp_2025",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  70,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-08-06",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept. Villeneuve's BMW Sauber #17 seat passed to the unbindable Robert Kubica from this round, so the grid is one car lighter."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  14,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Turkish Grand Prix",
+                       "date":  "2006-08-27",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Istanbul Park",
+                                     "id":  "barcelona_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "hockenheim_gp"
+                                                   ]
+                                 },
+                       "laps":  66,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-08-27",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Istanbul Park - 58 laps / 309.4 km reproduced as 66 laps of Barcelona GP. AMS2 has no Istanbul; the flowing Tilke-designed Barcelona GP is a same-era stand-in with a comparable high-speed-corner character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  15,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Italian Grand Prix",
+                       "date":  "2006-09-10",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autodromo Nazionale Monza",
+                                     "id":  "monza_2005",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "monza_1991"
+                                                   ]
+                                 },
+                       "laps":  53,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.david_coulthard",
+                                                             "driver.christian_klien",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-09-10",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Monza 2005 is the 2006 layout; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  16,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Chinese Grand Prix",
+                       "date":  "2006-10-01",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Shanghai International Circuit",
+                                     "id":  "barcelona_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "hockenheim_gp"
+                                                   ]
+                                 },
+                       "laps":  65,
+                       "grid":  {
+                                    "size":  19,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.david_coulthard",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  18,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-10-01",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Shanghai International Circuit - 56 laps / 305.3 km reproduced as 65 laps of Barcelona GP. AMS2 has no Shanghai; the Tilke-designed Barcelona GP is a same-era wide-modern-GP stand-in. Klien's Red Bull #15 seat passed to the unbindable Robert Doornbos from this round, so the grid is one car lighter."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  17,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Japanese Grand Prix",
+                       "date":  "2006-10-08",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Suzuka Circuit",
+                                     "id":  "kansai_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  53,
+                       "grid":  {
+                                    "size":  19,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.david_coulthard",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  18,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-10-08",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the GP layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  18,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Brazilian Grand Prix",
+                       "date":  "2006-10-22",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autódromo José Carlos Pace",
+                                     "id":  "interlagos_1993",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "interlagos_1991"
+                                                   ]
+                                 },
+                       "laps":  71,
+                       "grid":  {
+                                    "size":  19,
+                                    "starterDriverIds":  [
+                                                             "driver.fernando_alonso",
+                                                             "driver.michael_schumacher",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.ralf_schumacher",
+                                                             "driver.jarno_trulli",
+                                                             "driver.mark_webber",
+                                                             "driver.nico_rosberg",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.david_coulthard",
+                                                             "driver.vitantonio_liuzzi",
+                                                             "driver.scott_speed",
+                                                             "driver.tiago_monteiro",
+                                                             "driver.christijan_albers",
+                                                             "driver.takuma_sato",
+                                                             "driver.sakon_yamamoto"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  18,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2006-10-22",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2006 Interlagos layout in AMS2; the venue is real, so the historical lap count is kept on the era-close 1993 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   }
+               ]
+}

@@ -1,0 +1,32 @@
+{
+    "packId":  "f1-2006",
+    "name":  "Formula One 2006",
+    "version":  "1.0.0",
+    "formatVersion":  1,
+    "gameVersionTested":  "1.6.9.82",
+    "license":  "CC BY 4.0",
+    "attribution":  [
+                        "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+                        "Driver-to-livery bindings from the community F-V8_Gen1.xml NAMeS custom-AI set (NAMeS: Real Drivers for AMS2 by John B. Ellis), matching the 2006 F1 skinpack for the F-V8_Gen1 class"
+                    ],
+    "requires":  {
+                     "dlc":  [
+
+                             ],
+                     "skinPacks":  [
+                                       {
+                                           "name":  "2006 F1 Season (F-V8_Gen1 community skinpack)",
+                                           "overridesFolder":  "F1_Season_2006"
+                                       }
+                                   ]
+                 },
+    "notes":  [
+                  "Class: F-V8_Gen1 (F-V8_Gen1.xml NAMeS set). Renault is bound to the renault_r26 model; the other ten teams use the formula_v8_g1 model.",
+                  "Livery coverage: the installed F-V8_Gen1.xml NAMeS file carries exactly 22 drivers (the 11 teams x 2 season-primary seats). Every one is bound VERBATIM by its pseudo-team + number livery_name (e.g. \"Renault R26 #1\", \"Scuderia Forza #5\"). Pseudo-team map: Renault R26 = Renault, Scuderia Forza = Ferrari, McLean G.P. = McLaren, Hoshino = Honda, Deutsch Zir-Win Motorsport = BMW Sauber, TECH-J = Toyota, Didcot Racing = Williams, energyX Racing = Red Bull, energyX Faenza = Toro Rosso, FMR Racing = Midland (MF1), Team Agiro = Super Aguri.",
+                  "Uncovered f1db entrants (no livery in the installed NAMeS set, so NOT included as bindable entries): the mid-season replacement seats - Pedro de la Rosa (McLaren #4 rounds 11-18, replacing Montoya), Robert Doornbos (Red Bull #14/#15 rounds 16-18, replacing Klien), Robert Kubica (BMW Sauber #17 rounds 13-18, replacing Villeneuve), and the Super Aguri #22 chair before Yamamoto (Yuji Ide rounds 1-4, Franck Montagny rounds 5-11). The NAMeS file binds Team Agiro #23 to Sakon Yamamoto, so the Super Aguri second car is represented by Yamamoto for his real rounds (12-18). Season-primary seats vacated by these swaps therefore shrink the grid on the later rounds rather than being filled by an unbindable stand-in.",
+                  "Placeholder rounds (real venue kept, laps recomputed to preserve race distance): Bahrain/Sakhir and Malaysia/Sepang -> modern Hockenheim GP (hockenheim_gp); Australia/Melbourne -> Adelaide Modern (adelaide_modern); Turkey/Istanbul Park and China/Shanghai -> Barcelona GP (barcelona_gp, 2022 layout); France/Magny-Cours -> Le Mans Circuit Bugatti (le_mans_bugatti). AMS2 ships no Bahrain, Sepang, Istanbul, Shanghai or Magny-Cours; the four Tilke venues use same-era Tilke-designed / modern wide-GP stand-ins, and Magny-Cours reuses the same French-GP Bugatti stand-in as the f1-2000 and f1-1988 packs.",
+                  "Real-venue era stand-ins (isPlaceholder=false, historical lap count kept): San Marino/Imola -> imola_05; Europe/Nurburgring -> nurb_gp_2020; Spain/Catalunya -> barcelona_gp_2001; Monaco -> azure_circuit (post-2004 reprofile); Britain/Silverstone -> silverstone_2001; Canada/Montreal -> montrealmodern; USA/Indianapolis road course -> indianapolis_2001_rc; Germany/Hockenheim -> hockenheim_gp (the actual 2002+ modern layout raced in 2006); Hungary/Hungaroring -> hungaroring_gp_2025; Italy/Monza -> monza_2005 (the 2006 layout); Japan/Suzuka -> kansai_gp; Brazil/Interlagos -> interlagos_1993.",
+                  "Points: 2006 top-8 system [10,8,6,5,4,3,2,1], copied from the oracle points catalog (data/rules/f1-points-systems.json, 2006). No points adjustments applied in 2006.",
+                  "grid.size on every round is the count of that round's livery-bound f1db starters; every mapped track's Max AI cap exceeds the 22-car field, so grids run 19-22 as the season-primary seats are vacated by mid-season swaps (Montoya after round 10, Villeneuve after round 12, Klien after round 15). setupGuide opponents = grid.size - 1."
+              ]
+}

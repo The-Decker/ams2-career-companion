@@ -1,0 +1,27 @@
+{
+  "packId": "f1-1985",
+  "name": "Formula One 1985",
+  "version": "1.0.0",
+  "formatVersion": 1,
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings from the community F-Retro_Gen3.xml custom-AI set (jusk), matching Klukkluk's F1 1985 skinpack"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "F1 1985 Season (Klukkluk)",
+        "overridesFolder": "F1_Season_1985"
+      }
+    ]
+  },
+  "notes": [
+    "Coverage: f1db lists Manfred Winkelhock (ram, rounds 1-9) but he died before round 10; his RAM #9 stint is included through round 9 and Philippe Alliot inherits the #9 car (rounds 10-14) as the source AI set does.",
+    "Coverage: Stefan Bellof (tyrrell, rounds 2-11) died before the Belgian GP; his Tyrrell #4 stint is included through round 11, matching f1db and the source AI set.",
+    "Placeholder venues (isPlaceholder=true): Detroit -> Long Beach, Circuit Paul Ricard -> Le Mans Bugatti, 1984 Nurburgring GP-Strecke -> modern Nurburgring GP (Veedol), and Zandvoort -> Zolder (not in AMS2). Lap counts are recomputed to preserve the real race distance.",
+    "The source custom-AI XML carries per-track (tracks=\"...\") substitution overrides for reserve drivers sharing a car number; those stints are modelled here as separate round-scoped entries rather than carried into aiOverrides."
+  ]
+}

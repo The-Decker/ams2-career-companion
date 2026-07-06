@@ -1,0 +1,1074 @@
+﻿{
+  "year": 1985,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Retro_Gen3",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "wholeSeason": 11
+    },
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Brazilian Grand Prix",
+      "date": "1985-04-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Internacional Nelson Piquet",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.rene_arnoux",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.francois_hesnault",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.piercarlo_ghinzani",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-04-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Portuguese Grand Prix",
+      "date": "1985-04-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 67,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.francois_hesnault",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-04-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships Estoril as Cascais_1988; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "San Marino Grand Prix",
+      "date": "1985-05-05",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 60,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.francois_hesnault",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-05-05",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Monaco Grand Prix",
+      "date": "1985-05-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": ["azure_circuit"]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.francois_hesnault",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1985-05-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Canadian Grand Prix",
+      "date": "1985-06-16",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-06-16",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Detroit Grand Prix",
+      "date": "1985-06-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Detroit Street Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": ["adelaide_historic"]
+      },
+      "laps": 80,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-06-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Detroit Street Circuit — 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach preserves the era's American street-race character."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "French Grand Prix",
+      "date": "1985-07-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Paul Ricard",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": ["silverstone_1991"]
+      },
+      "laps": 74,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1985-07-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Paul Ricard — 53 laps / 307.9 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "British Grand Prix",
+      "date": "1985-07-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1975",
+        "isPlaceholder": false,
+        "fallbacks": ["silverstone_1991"]
+      },
+      "laps": 65,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1985-07-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1985 Silverstone layout in AMS2; the venue is real, so the historical lap count is kept on the era-closest 1975 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "German Grand Prix",
+      "date": "1985-08-04",
+      "championship": true,
+      "track": {
+        "realVenue": "Nürburgring",
+        "id": "nurb_gp_2020_veedol",
+        "isPlaceholder": true,
+        "fallbacks": ["nurb_gp_2020"]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 27,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.francois_hesnault",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.manfred_winkelhock",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 26,
+          "startTime": "14:00",
+          "date": "1985-08-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for the 1984 Nürburgring GP-Strecke — 67 laps / 304.3 km reproduced as 59 laps of the modern Nürburgring GP (Veedol). Same venue, later layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Austrian Grand Prix",
+      "date": "1985-08-18",
+      "championship": true,
+      "track": {
+        "realVenue": "Österreichring",
+        "id": "spielberg_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 52,
+      "grid": {
+        "size": 27,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.kenny_acheson",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 26,
+          "startTime": "14:00",
+          "date": "1985-08-18",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the Österreichring as Spielberg Historic; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Dutch Grand Prix",
+      "date": "1985-08-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Zandvoort",
+        "id": "Heusden",
+        "isPlaceholder": true,
+        "fallbacks": []
+      },
+      "laps": 74,
+      "grid": {
+        "size": 27,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.jacques_laffite",
+          "driver.martin_brundle",
+          "driver.stefan_bellof",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.jonathan_palmer",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.kenny_acheson",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 26,
+          "startTime": "14:00",
+          "date": "1985-08-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Zandvoort (not in AMS2) — 70 laps / 297.6 km reproduced as 74 laps of Zolder, a period-correct Benelux road circuit that hosted 1980s Grands Prix."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Italian Grand Prix",
+      "date": "1985-09-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 51,
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.jacques_laffite",
+          "driver.philippe_streiff",
+          "driver.martin_brundle",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.alan_jones",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.kenny_acheson",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1985-09-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1985 Monza in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1991 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Belgian Grand Prix",
+      "date": "1985-09-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 43,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.jacques_laffite",
+          "driver.philippe_streiff",
+          "driver.martin_brundle",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-09-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1985 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "European Grand Prix",
+      "date": "1985-10-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Brands Hatch",
+        "id": "brandshatch_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "grid": {
+        "size": 27,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.john_watson",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.jacques_laffite",
+          "driver.philippe_streiff",
+          "driver.martin_brundle",
+          "driver.ivan_capelli",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.alan_jones",
+          "driver.christian_danner",
+          "driver.pierluigi_martini",
+          "driver.philippe_alliot",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 26,
+          "startTime": "14:00",
+          "date": "1985-10-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Brands Hatch is real in AMS2 (modern GP layout); the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "South African Grand Prix",
+      "date": "1985-10-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Kyalami",
+        "id": "kyalami_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "grid": {
+        "size": 21,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.philippe_streiff",
+          "driver.martin_brundle",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.alan_jones",
+          "driver.pierluigi_martini",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 20,
+          "startTime": "14:00",
+          "date": "1985-10-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships Kyalami Classic as Kyalami Historic; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
+      "name": "Australian Grand Prix",
+      "date": "1985-11-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 82,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.niki_lauda",
+          "driver.michele_alboreto",
+          "driver.stefan_johansson",
+          "driver.ayrton_senna",
+          "driver.elio_de_angelis",
+          "driver.keke_rosberg",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.marc_surer",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.jacques_laffite",
+          "driver.philippe_streiff",
+          "driver.martin_brundle",
+          "driver.ivan_capelli",
+          "driver.teo_fabi",
+          "driver.piercarlo_ghinzani",
+          "driver.alan_jones",
+          "driver.pierluigi_martini",
+          "driver.huub_rothengatter"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-11-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}
+

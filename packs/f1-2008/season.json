@@ -1,0 +1,1223 @@
+{
+    "year":  2008,
+    "seriesName":  "Formula One World Championship",
+    "ams2Class":  "F-V8_Gen2",
+    "pointsSystem":  {
+                         "racePoints":  [
+                                            10,
+                                            8,
+                                            6,
+                                            5,
+                                            4,
+                                            3,
+                                            2,
+                                            1
+                                        ],
+                         "sharedDrivePolicy":  "zero",
+                         "constructors":  {
+                                              "bestCarOnly":  false,
+                                              "bestN":  null
+                                          },
+                         "pointsAdjustments":  [
+
+                                               ]
+                     },
+    "rounds":  [
+                   {
+                       "round":  1,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Australian Grand Prix",
+                       "date":  "2008-03-16",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Melbourne Grand Prix Circuit",
+                                     "id":  "adelaide_modern",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "montrealmodern"
+                                                   ]
+                                 },
+                       "laps":  95,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil",
+                                                             "driver.takuma_sato",
+                                                             "driver.anthony_davidson"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-03-16",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Melbourne Grand Prix Circuit - 58 laps / 306.1 km reproduced as 95 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland-circuit character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  2,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Malaysian Grand Prix",
+                       "date":  "2008-03-23",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Sepang International Circuit",
+                                     "id":  "hockenheim_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "circuit_of_the_americas_gp"
+                                                   ]
+                                 },
+                       "laps":  68,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil",
+                                                             "driver.takuma_sato",
+                                                             "driver.anthony_davidson"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-03-23",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Sepang International Circuit - 56 laps / 310.4 km reproduced as 68 laps of the modern Hockenheim GP layout. Both are Hermann Tilke designs; the redesigned Hockenheim GP keeps Sepang's long-straight-into-tight-hairpin rhythm and wide modern-GP character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  3,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Bahrain Grand Prix",
+                       "date":  "2008-04-06",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Bahrain International Circuit",
+                                     "id":  "circuit_of_the_americas_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "hockenheim_gp"
+                                                   ]
+                                 },
+                       "laps":  56,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.robert_kubica",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil",
+                                                             "driver.takuma_sato",
+                                                             "driver.anthony_davidson"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-04-06",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Bahrain International Circuit - 57 laps / 308.5 km reproduced as 56 laps of Circuit of the Americas. Both are Hermann Tilke desert/modern-GP designs; COTA stands in for Bahrain's mix of long straights, technical infield and heavy-braking hairpins."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  4,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Spanish Grand Prix",
+                       "date":  "2008-04-27",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Barcelona-Catalunya",
+                                     "id":  "barcelona_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "barcelona_gp_2001"
+                                                   ]
+                                 },
+                       "laps":  66,
+                       "grid":  {
+                                    "size":  22,
+                                    "starterDriverIds":  [
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.fernando_alonso",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.takuma_sato",
+                                                             "driver.anthony_davidson"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  21,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-04-27",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Circuit de Catalunya GP is the real venue (2007-onward chicane layout, matching 2008); the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  5,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Turkish Grand Prix",
+                       "date":  "2008-05-11",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Istanbul Park",
+                                     "id":  "nurb_gp_2020",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "circuit_of_the_americas_gp"
+                                                   ]
+                                 },
+                       "laps":  60,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-05-11",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Istanbul Park - 58 laps / 309.6 km reproduced as 60 laps of the Nurburgring GP. Both are fast, flowing modern-GP layouts with long multi-apex corners standing in for Istanbul's Turn 8."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  6,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Monaco Grand Prix",
+                       "date":  "2008-05-25",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Monaco",
+                                     "id":  "azure_circuit",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "azure_circuit_2021"
+                                                   ]
+                                 },
+                       "laps":  76,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-05-25",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Azure Circuit is Monaco; the venue is real and the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  7,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Canadian Grand Prix",
+                       "date":  "2008-06-08",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit Gilles Villeneuve",
+                                     "id":  "montrealmodern",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "montrealhistoric_1991"
+                                                   ]
+                                 },
+                       "laps":  70,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-06-08",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Montreal Modern is the same venue; the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  8,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "French Grand Prix",
+                       "date":  "2008-06-22",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Nevers Magny-Cours",
+                                     "id":  "le_mans_bugatti",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "brandshatch_gp"
+                                                   ]
+                                 },
+                       "laps":  74,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-06-22",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Circuit de Nevers Magny-Cours - 70 laps / 308.8 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue with a similar smooth, medium-speed character."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  9,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "British Grand Prix",
+                       "date":  "2008-07-06",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Silverstone Circuit",
+                                     "id":  "silverstone_2001",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "silverstone_2019"
+                                                   ]
+                                 },
+                       "laps":  60,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.mark_webber",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-07-06",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Silverstone 2001 is the pre-2010 Bridge layout used in 2008; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  10,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "German Grand Prix",
+                       "date":  "2008-07-20",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hockenheimring",
+                                     "id":  "hockenheim_gp",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "hockenheim_2001"
+                                                   ]
+                                 },
+                       "laps":  67,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.mark_webber",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-07-20",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Hockenheim GP is the post-2002 layout run in 2008; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  11,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Hungarian Grand Prix",
+                       "date":  "2008-08-03",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Hungaroring",
+                                     "id":  "hungaroring_gp_2025",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  70,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-08-03",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2 ships the modern Hungaroring; the venue is real and largely unchanged in character since the 1980s, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  12,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "European Grand Prix",
+                       "date":  "2008-08-24",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Valencia Street Circuit",
+                                     "id":  "imola",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "imola_05"
+                                                   ]
+                                 },
+                       "laps":  63,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.felipe_massa",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-08-24",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for the Valencia Street Circuit - 57 laps / 308.9 km reproduced as 63 laps of Imola. AMS2 has no Valencia; Imola stands in as an era-close, low-grip, stop-start technical layout with a comparable 90-degree-corner rhythm."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  13,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Belgian Grand Prix",
+                       "date":  "2008-09-07",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Circuit de Spa-Francorchamps",
+                                     "id":  "spa-francorchamps_2005",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "spa-francorchamps_2020"
+                                                   ]
+                                 },
+                       "laps":  44,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.felipe_massa",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-09-07",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Spa 2005 is the layout run in 2008; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  14,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Italian Grand Prix",
+                       "date":  "2008-09-14",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autodromo Nazionale Monza",
+                                     "id":  "monza_2005",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "monza_2020"
+                                                   ]
+                                 },
+                       "laps":  53,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.sebastian_vettel",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-09-14",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2's Monza 2005 is the layout run in 2008; the venue is real, so the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  15,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Singapore Grand Prix",
+                       "date":  "2008-09-28",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Marina Bay Street Circuit",
+                                     "id":  "azure_circuit",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "azure_circuit_2021"
+                                                   ]
+                                 },
+                       "laps":  90,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.felipe_massa",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "20:00",
+                                                          "date":  "2008-09-28",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for the Marina Bay Street Circuit - 61 laps / 300.5 km reproduced as 90 laps of the Azure Circuit (Monaco). AMS2 has no Singapore; Azure stands in as the closest street-circuit character. Start time set to 20:00 to reflect the inaugural night race."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  16,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Japanese Grand Prix",
+                       "date":  "2008-10-12",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Fuji Speedway",
+                                     "id":  "fuji",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+
+                                                   ]
+                                 },
+                       "laps":  67,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.felipe_massa",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-10-12",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "AMS2 ships Fuji Speedway, the real 2008 venue; the historical lap count is kept."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  17,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Chinese Grand Prix",
+                       "date":  "2008-10-19",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Shanghai International Circuit",
+                                     "id":  "circuit_of_the_americas_gp",
+                                     "isPlaceholder":  true,
+                                     "fallbacks":  [
+                                                       "nurb_gp_2020"
+                                                   ]
+                                 },
+                       "laps":  55,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.lewis_hamilton",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.felipe_massa",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.jarno_trulli",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-10-19",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "Placeholder for Shanghai International Circuit - 56 laps / 305.3 km reproduced as 55 laps of Circuit of the Americas. Both are Hermann Tilke designs; COTA stands in for Shanghai's long back straight and tightening spiral corners."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   },
+                   {
+                       "round":  18,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
+                       "name":  "Brazilian Grand Prix",
+                       "date":  "2008-11-02",
+                       "championship":  true,
+                       "track":  {
+                                     "realVenue":  "Autódromo José Carlos Pace",
+                                     "id":  "interlagos_1993",
+                                     "isPlaceholder":  false,
+                                     "fallbacks":  [
+                                                       "interlagos_1991"
+                                                   ]
+                                 },
+                       "laps":  71,
+                       "grid":  {
+                                    "size":  20,
+                                    "starterDriverIds":  [
+                                                             "driver.felipe_massa",
+                                                             "driver.jarno_trulli",
+                                                             "driver.kimi_raikkonen",
+                                                             "driver.lewis_hamilton",
+                                                             "driver.heikki_kovalainen",
+                                                             "driver.robert_kubica",
+                                                             "driver.nick_heidfeld",
+                                                             "driver.fernando_alonso",
+                                                             "driver.nelson_piquet_jr",
+                                                             "driver.timo_glock",
+                                                             "driver.mark_webber",
+                                                             "driver.david_coulthard",
+                                                             "driver.sebastian_vettel",
+                                                             "driver.sebastien_bourdais",
+                                                             "driver.nico_rosberg",
+                                                             "driver.kazuki_nakajima",
+                                                             "driver.jenson_button",
+                                                             "driver.rubens_barrichello",
+                                                             "driver.giancarlo_fisichella",
+                                                             "driver.adrian_sutil"
+                                                         ]
+                                },
+                       "setupGuide":  {
+                                          "session":  {
+                                                          "opponents":  19,
+                                                          "startTime":  "14:00",
+                                                          "date":  "2008-11-02",
+                                                          "weatherSlots":  [
+                                                                               "Clear"
+                                                                           ],
+                                                          "timeProgression":  "1x",
+                                                          "mandatoryPitStop":  false
+                                                      },
+                                          "notes":  "No 2008 Interlagos layout in AMS2; the venue is real, so the historical lap count is kept on the era-close 1993 layout."
+                                      },
+                       "guestEntries":  [
+
+                                        ],
+                       "aiOverrides":  {
+
+                                       }
+                   }
+               ]
+}
