@@ -94,6 +94,18 @@ public sealed record SeasonEndResult
 /// </summary>
 public static class SeasonEndPipeline
 {
+    /// <summary>The player's age-risk term for offer scoring: years past their (perk-shifted) peak,
+    /// scaled by the aging-decline multiplier. Identity/null mods reproduce the exact shipped value
+    /// (Math.Max(0, age+1−peakEnd)); a veteran-aging perk (agingCurve peakShift / declineAccelMult)
+    /// starts the age penalty LATER and grows it more gently — the real, felt cost of age lives here in
+    /// the offer market, NOT in on-track ratings (the sim's self-balancer makes lower talent an easier
+    /// rep bar, so a rating decline would not penalize the player).</summary>
+    public static double PlayerAgeRisk(int playerAge, int peakAgeEnd, PlayerPerkModifiers? mods)
+    {
+        double peakEnd = peakAgeEnd + (mods?.PeakShift ?? 0.0);
+        return Math.Max(0.0, playerAge + 1 - peakEnd) * (mods?.DeclineAccelMult ?? 1.0);
+    }
+
     public static SeasonEndResult Run(SeasonEndContext context)
     {
         var events = new List<JournalEvent>();
@@ -448,7 +460,7 @@ public static class SeasonEndPipeline
 
         // ---- step 6: player offers ------------------------------------------------------
         double salaryAsk = context.PlayerSalaryAskBu ?? Math.Max(1.0, finalRep / 10.0);
-        double ageRisk = Math.Max(0, context.PlayerAge + 1 - curve.PeakAgeEnd);
+        double ageRisk = PlayerAgeRisk(context.PlayerAge, curve.PeakAgeEnd, characterMods);
 
         // A veteran perk can relax the reputation floors so more (higher-tier) teams will talk to a
         // modestly-reputed driver (offerWeight/repFloorRelax). Null/identity mods = 0 tiers of relax

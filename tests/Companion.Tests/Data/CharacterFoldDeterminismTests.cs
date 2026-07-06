@@ -361,6 +361,79 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void AgingPerkCharacter_ShiftsTheOfferAgeRisk_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "aging.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 616161;
+        Companion.Core.Packs.SeasonPack pack;
+
+        var character = new CharacterProfile
+        {
+            Name = "Old Timer",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.55, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = 0.55,
+            },
+            PerkIds = ["late_bloomer"], // agingCurve peakShift +3 → the offer age penalty starts later
+            CpUnspent = 0,
+        };
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Aging",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = character,
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            Assert.NotNull(session.SeasonReview()); // runs the offer market with the shifted age risk
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // The perk-shifted age risk is a pure function of the folded perk + the player's age, so the
+        // offer set it produces re-derives byte-for-byte.
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30, // = PlayerAgeIn(TwoRoundPack, driver.hulme); must match the live derivation
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
+    [Fact]
     public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
     {
         string packDirectory = Path.Combine(_root, "pack");
