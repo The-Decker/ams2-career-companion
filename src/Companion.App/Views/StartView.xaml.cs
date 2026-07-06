@@ -80,6 +80,23 @@ public partial class StartView : UserControl
         }
     }
 
+    /// <summary>Right-click MRU → Delete career file…: view-layer confirmation (same contract as
+    /// the open picker's dialog — the VM command is the already-confirmed action, so it stays
+    /// unit-testable). Defaults to No; reachable by keyboard via the context-menu key.</summary>
+    private void OnRecentDelete(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            DataContext is not StartViewModel vm)
+            return;
+
+        var choice = MessageBox.Show(
+            $"Delete '{career.CareerName}' permanently?\n\n{career.Path}\n\n" +
+            "This deletes the career file from disk. It cannot be undone.",
+            "Delete career", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+        if (choice == MessageBoxResult.Yes)
+            vm.DeleteRecentCommand.Execute(career);
+    }
+
     /// <summary>Right-click MRU → Open the folder with the career file selected.</summary>
     private void OnRecentOpenFolder(object sender, RoutedEventArgs e)
     {

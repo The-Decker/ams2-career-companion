@@ -259,4 +259,131 @@ public sealed class SessionRecentCareersTests : IDisposable
         Assert.False(vm.HasRecentCareers);
         Assert.Empty(store.Load());
     }
+
+    // ---------- "Delete career file…" (delete from disk, not just the shortcut) ----------
+
+    [Fact]
+    public void DeleteRecent_DeletesTheFileAndRemovesTheEntry()
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+        string? deleted = null;
+        var vm = new StartViewModel(store, deleteCareerFile: path => deleted = path);
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.Equal(@"C:\a.ams2career", deleted);
+        Assert.Empty(vm.RecentCareers);
+        Assert.Empty(store.Load());
+        Assert.Null(vm.DeleteError);
+    }
+
+    [Fact]
+    public void DeleteRecent_UndeletableFile_ReportsAndKeepsTheEntry()
+    {
+        // A locked file (the career is open) or a permission failure: the career still exists on
+        // disk, so the gallery entry must survive and the banner must say why.
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "Monaco 1967");
+        var vm = new StartViewModel(store, deleteCareerFile: _ =>
+            throw new IOException("locked by another process"));
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.Single(vm.RecentCareers);
+        Assert.Single(store.Load());
+        Assert.NotNull(vm.DeleteError);
+        Assert.Contains("Monaco 1967", vm.DeleteError);
+        Assert.Contains("locked by another process", vm.DeleteError);
+    }
+
+    [Fact]
+    public void DeleteRecent_AfterAnError_ClearsTheBannerOnASuccessfulDelete()
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+        store.Touch(@"C:\b.ams2career", "B");
+        bool locked = true;
+        var vm = new StartViewModel(store, deleteCareerFile: _ =>
+        {
+            if (locked)
+                throw new IOException("in use");
+        });
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+        Assert.NotNull(vm.DeleteError);
+
+        locked = false;
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+        Assert.Null(vm.DeleteError);
+        Assert.Single(vm.RecentCareers);
+    }
+
+    [Fact]
+    public void DeleteRecent_DefaultDelete_RemovesTheFileAndSqliteSidecars()
+    {
+        // The real default delegate: the .ams2career goes, and any crash-leftover -wal/-shm
+        // sidecars go with it (best-effort).
+        string career = Path.Combine(_root, "delete-me.ams2career");
+        File.WriteAllText(career, "career-bytes");
+        File.WriteAllText(career + "-wal", "wal");
+        File.WriteAllText(career + "-shm", "shm");
+        var store = Store(exists: File.Exists);
+        store.Touch(career, "Delete me");
+        var vm = new StartViewModel(store);
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.False(File.Exists(career));
+        Assert.False(File.Exists(career + "-wal"));
+        Assert.False(File.Exists(career + "-shm"));
+        Assert.Empty(vm.RecentCareers);
+        Assert.Null(vm.DeleteError);
+    }
+
+    [Fact]
+    public void DeleteError_ClearsWhenTheUserMovesOn()
+    {
+        // A failed delete's banner must not outlive the entry it refers to: falling back to
+        // "Remove from this list" (or continuing/opening another career) clears it, mirroring
+        // OpenError's lifecycle.
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+        store.Touch(@"C:\b.ams2career", "B");
+        var vm = new StartViewModel(store,
+            careerFileExists: _ => true,
+            deleteCareerFile: _ => throw new IOException("in use"));
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+        Assert.NotNull(vm.DeleteError);
+        vm.RemoveRecentCommand.Execute(vm.RecentCareers[0]);
+        Assert.Null(vm.DeleteError);
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+        Assert.NotNull(vm.DeleteError);
+        vm.ContinueCommand.Execute(vm.RecentCareers[0]);
+        Assert.Null(vm.DeleteError);
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+        Assert.NotNull(vm.DeleteError);
+        vm.OpenCareerCommand.Execute(@"C:\elsewhere.ams2career");
+        Assert.Null(vm.DeleteError);
+    }
+
+    [Fact]
+    public void DeleteRecent_FileAlreadyGone_StillDropsTheEntry()
+    {
+        // Deleted outside the app between MRU load and the command: nothing to delete is not an
+        // error — the user asked for it gone, and it is.
+        string career = Path.Combine(_root, "already-gone.ams2career");
+        var store = Store(exists: _ => true); // keep the entry visible despite the missing file
+        store.Touch(career, "Ghost");
+        var vm = new StartViewModel(store);
+
+        vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.Empty(vm.RecentCareers);
+        Assert.Empty(store.Load());
+        Assert.Null(vm.DeleteError);
+    }
 }

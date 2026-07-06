@@ -48,5 +48,14 @@ public sealed class CareerDatabase : IDisposable
         }
     }
 
-    public void Dispose() => Connection.Dispose();
+    /// <summary>Dispose returns the connection to Microsoft.Data.Sqlite's pool, which keeps the
+    /// native file handle open — on Windows that blocks File.Delete/Move on the .ams2career (and
+    /// holds -wal/-shm) until the pool prunes. Closing a career must actually release the file
+    /// (the Start gallery's "Delete career file…" depends on it), so clear this connection's pool
+    /// after disposing. Same discipline as the test infrastructure's TempDb.</summary>
+    public void Dispose()
+    {
+        Connection.Dispose();
+        SqliteConnection.ClearPool(Connection);
+    }
 }

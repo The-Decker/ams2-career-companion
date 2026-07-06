@@ -22,6 +22,9 @@
                       ToolTip="Show the .ams2career file in Explorer" />
             <MenuItem Header="Remove from this list" Click="OnRecentRemove"
                       ToolTip="Only removes the shortcut — the career file stays on disk" />
+            <Separator />
+            <MenuItem Header="Delete career file…" Click="OnRecentDelete"
+                      ToolTip="Deletes this career's .ams2career file from disk — asks first, cannot be undone" />
         </ContextMenu>
     </UserControl.Resources>
     <Grid>
@@ -58,6 +61,15 @@
                 </Border>
 
                 <TextBlock Text="Recent careers" Style="{StaticResource H2}" Margin="0,36,0,8" />
+
+                <!-- "Delete career file…" failure (locked by an open session, permissions). The
+                     entry stays in the gallery because the file is still on disk. -->
+                <Border Background="{StaticResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
+                        Margin="0,0,0,8"
+                        Visibility="{Binding DeleteError, Converter={StaticResource NullCollapsed}}">
+                    <TextBlock Text="{Binding DeleteError}" Foreground="{StaticResource ErrorBrush}"
+                               TextWrapping="Wrap" />
+                </Border>
 
                 <!-- empty state (ux-round §4): no careers yet → arrow to New career + open button -->
                 <Border Style="{StaticResource Panel}" Padding="20"

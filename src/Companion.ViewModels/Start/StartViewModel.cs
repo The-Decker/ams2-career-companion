@@ -18,15 +18,18 @@ public sealed partial class StartViewModel : ObservableObject
     private readonly IRecentCareersStore _store;
     private readonly ISettingsService? _settings;
     private readonly Func<string, bool> _careerFileExists;
+    private readonly Action<string> _deleteCareerFile;
 
     public StartViewModel(
         IRecentCareersStore store,
         ISettingsService? settings = null,
-        Func<string, bool>? careerFileExists = null)
+        Func<string, bool>? careerFileExists = null,
+        Action<string>? deleteCareerFile = null)
     {
         _store = store;
         _settings = settings;
         _careerFileExists = careerFileExists ?? File.Exists;
+        _deleteCareerFile = deleteCareerFile ?? DeleteCareerFileFromDisk;
         if (_settings is not null)
             _settings.Changed += OnSettingsChanged;
         Refresh();
@@ -52,6 +55,12 @@ public sealed partial class StartViewModel : ObservableObject
     /// pre-flight cases the VM can answer itself (no dialog, testable).</summary>
     [ObservableProperty]
     private string? _openError;
+
+    /// <summary>Failure banner for "Delete career file…" (a locked or permission-blocked
+    /// .ams2career). Null when there is nothing to report. Distinct from <see cref="OpenError"/>
+    /// so a delete failure never hides behind (or clobbers) an open-picker message.</summary>
+    [ObservableProperty]
+    private string? _deleteError;
 
     public bool HasRecentCareers => RecentCareers.Count > 0;
 
@@ -79,6 +88,7 @@ public sealed partial class StartViewModel : ObservableObject
             return;
 
         OpenError = null;
+        DeleteError = null;
         // Preserve the stored year so an entry re-touched by "Continue" keeps its era art; the
         // shell re-records it with the authoritative summary year once the session opens anyway.
         _store.Touch(career.Path, career.CareerName, career.SeasonYear);
@@ -94,6 +104,7 @@ public sealed partial class StartViewModel : ObservableObject
     [RelayCommand]
     private void OpenCareer(string? path)
     {
+        DeleteError = null; // a stale delete failure shouldn't outlive the user's next action
         if (string.IsNullOrWhiteSpace(path))
         {
             OpenError = "No career file was selected.";
@@ -117,8 +128,56 @@ public sealed partial class StartViewModel : ObservableObject
     {
         if (career is null)
             return;
+        DeleteError = null; // the entry the banner referred to may be leaving the gallery
         _store.Remove(career.Path);
         Refresh();
+    }
+
+    /// <summary>"Delete career file…": deletes the .ams2career from disk, then drops the MRU
+    /// entry. The VIEW confirms first (dialogs are view-layer, same contract as the open picker);
+    /// this command is the already-confirmed action. A file that cannot be deleted (locked by an
+    /// open session, permissions) reports in <see cref="DeleteError"/> and KEEPS the entry — the
+    /// career still exists on disk. A file that is already gone still drops the entry.</summary>
+    [RelayCommand]
+    private void DeleteRecent(RecentCareer? career)
+    {
+        if (career is null)
+            return;
+
+        try
+        {
+            _deleteCareerFile(career.Path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            DeleteError = $"Could not delete '{career.CareerName}' — {ex.Message}\n" +
+                "If this career is open in the app, close it and try again.";
+            return;
+        }
+
+        DeleteError = null;
+        _store.Remove(career.Path);
+        Refresh();
+    }
+
+    /// <summary>Default delete: the career file itself, plus best-effort cleanup of the SQLite
+    /// sidecars (-wal/-shm) a crash can leave beside it. Only the main file's failure surfaces —
+    /// a stuck sidecar never blocks the delete the user asked for.</summary>
+    private static void DeleteCareerFileFromDisk(string path)
+    {
+        if (File.Exists(path))
+            File.Delete(path);
+        foreach (string sidecar in new[] { path + "-wal", path + "-shm" })
+        {
+            try
+            {
+                if (File.Exists(sidecar))
+                    File.Delete(sidecar);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+            }
+        }
     }
 
     /// <summary>Records a career in the MRU (called by the shell after a create or open).
