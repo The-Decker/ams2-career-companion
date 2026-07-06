@@ -123,6 +123,17 @@ public interface ICareerSession
     /// existing fake compiles.</summary>
     CharacterDossier? CharacterDossier() => null;
 
+    /// <summary>Character points the driver has available to spend on between-season development
+    /// (character depth 4): creation leftover + level grants − already spent, minus this season's
+    /// pending spends. 0 for a career with no character. Additive default: 0.</summary>
+    int AvailableCharacterCp() => 0;
+
+    /// <summary>Records a between-season development spend — raise a stat one step or add a perk,
+    /// journaled and applied at the next season's transition (re-derived identically on replay).
+    /// Additive default throws, so a session without character support says so.</summary>
+    void SpendCharacterPoint(CharacterSpend spend) => throw new NotSupportedException(
+        "This career session does not support character development.");
+
     SeasonPack Pack { get; }
 }
 

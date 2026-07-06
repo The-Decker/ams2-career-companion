@@ -32,6 +32,12 @@ public static class JournalPhases
     /// while its data rides in the start player state. (Increment 4a.)</summary>
     public const string PlayerCharacter = "player.character";
 
+    /// <summary>A between-season character-development spend (character depth 4): raise a stat or
+    /// add a perk. A player-choice INPUT (round = null) applied at the next season's transition and
+    /// re-applied identically on replay, so it is provenance-excluded from the byte-compare like
+    /// <see cref="PlayerCharacter"/>.</summary>
+    public const string PlayerStatSpend = "player.statSpend";
+
     /// <summary>The player's character XP update for the round — a DERIVED fold output (a pure
     /// function of the result), emitted only for a character career after the reputation row, so a
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>

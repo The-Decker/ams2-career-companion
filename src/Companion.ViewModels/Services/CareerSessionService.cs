@@ -452,11 +452,68 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     {
         if (_environment.RulesDirectory is null)
             return null;
-        if (CurrentPlayerState()?.Character is not { } character)
+        var player = CurrentPlayerState();
+        if (player?.Character is not { } character)
             return null;
-        var player = CurrentPlayerState()!;
-        return Companion.Core.Character.CharacterDossier.Build(
+        var dossier = Companion.Core.Character.CharacterDossier.Build(
             character, player.Level, player.Xp, _environment.Rules.Character);
+        // Reflect spends made this season but not yet applied at a transition.
+        int pending = PendingSpends().Sum(s => s.Cost);
+        return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };
+    }
+
+    /// <summary>Between-season spends journaled this (not-yet-transitioned) season — pending until
+    /// sign-and-continue applies them to the next season's character.</summary>
+    private IReadOnlyList<CharacterSpend> PendingSpends() =>
+        ReplayService.ReadCharacterSpends(_database, _seasonId);
+
+    /// <summary>Character points available to spend right now: the folded pool minus this season's
+    /// pending spends. 0 when the career has no character.</summary>
+    public int AvailableCharacterCp()
+    {
+        var player = CurrentPlayerState();
+        if (_environment.RulesDirectory is null || player?.Character is not { } character)
+            return 0;
+        return CharacterProgress.AvailableCp(character, player.Level, _environment.Rules.Character)
+               - PendingSpends().Sum(s => s.Cost);
+    }
+
+    /// <summary>Records a between-season development spend (character depth 4): raise a stat one step
+    /// or add a perk, charged to the available pool and journaled (applied at the next season's
+    /// transition, re-derived identically on replay). Throws when there is no character, the spend is
+    /// unaffordable, or the perk is already held.</summary>
+    public void SpendCharacterPoint(CharacterSpend spend)
+    {
+        if (_environment.RulesDirectory is null)
+            throw new InvalidOperationException("No character rules are loaded.");
+        var player = CurrentPlayerState();
+        if (player?.Character is not { } character)
+            throw new InvalidOperationException("This career has no character to develop.");
+        var rules = _environment.Rules.Character;
+
+        if (spend.Cost > AvailableCharacterCp())
+            throw new InvalidOperationException(
+                $"That costs {spend.Cost} points, but only {AvailableCharacterCp()} are available.");
+        if (spend.Kind == "perk")
+        {
+            if (!rules.TryGetPerk(spend.Target, out _))
+                throw new InvalidOperationException($"Unknown perk '{spend.Target}'.");
+            bool owned = character.PerkIds.Contains(spend.Target, StringComparer.Ordinal)
+                || PendingSpends().Any(s => s.Kind == "perk"
+                    && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
+            if (owned)
+                throw new InvalidOperationException("Your driver already has that perk.");
+        }
+
+        using var transaction = _database.Connection.BeginTransaction();
+        Execute(_database.Connection, transaction,
+            "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
+            "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'development');",
+            ("@utc", NowUtc()), ("@season", _seasonId),
+            ("@phase", JournalPhases.PlayerStatSpend),
+            ("@delta", JsonSerializer.Serialize(
+                new { kind = spend.Kind, target = spend.Target, cost = spend.Cost }, CoreJson.Options)));
+        transaction.Commit();
     }
 
     private int RoundCount => Pack.Season.Rounds.Count;
@@ -1109,10 +1166,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             ?? throw new InvalidOperationException(
                 "The season-end player state is missing — the season-end pipeline never ran.");
 
+        var simInputs = SimInputs();
         var plan = EraTransition.Build(
             Pack, toPack, driversEnd, teamsEnd, playerEnd, accepted.Terms,
             new StreamFactory(MasterSeedU), _environment.Rules.AgingCurves,
-            SimInputs().CanonRetirements);
+            simInputs.CanonRetirements,
+            // Between-season development (character depth 4): the spends journaled this season are
+            // applied to the character as it moves into the next season, re-derived identically on replay.
+            ReplayService.ReadCharacterSpends(_database, _seasonId),
+            simInputs.CharacterRules);
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
 

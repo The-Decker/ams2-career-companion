@@ -188,7 +188,8 @@ public sealed class EraSignAndContinueTests : IDisposable
 
     /// <summary>Creates the career on the 1967 pack (written into the packs root) and plays
     /// every round through the REAL Apply path (grid order = finishing order).</summary>
-    private CareerSessionService CreateAndPlaySeason()
+    private CareerSessionService CreateAndPlaySeason(
+        Companion.Core.Character.CharacterProfile? character = null)
     {
         var fromPack = FromPack1967();
         string fromDirectory = Path.Combine(PacksRoot, fromPack.Manifest.PackId);
@@ -201,6 +202,7 @@ public sealed class EraSignAndContinueTests : IDisposable
             CareerName = "Era Career",
             MasterSeed = 20260703,
             PlayerLiveryName = PlayerLivery,
+            Character = character,
         }, Environment());
 
         while (!session.Summary.SeasonComplete)
@@ -215,6 +217,56 @@ public sealed class EraSignAndContinueTests : IDisposable
             });
         }
         return session;
+    }
+
+    // ---------- character development across the season boundary (depth 4) ----------
+
+    [Fact]
+    public void SpendingBetweenSeasons_EvolvesTheCharacterIntoTheNewSeason()
+    {
+        var character = new Companion.Core.Character.CharacterProfile
+        {
+            Name = "Dev Driver",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+            },
+            PerkIds = ["sunday_driver"],
+            CpUnspent = 3,
+        };
+
+        string acceptedTeam;
+        using (var session = CreateAndPlaySeason(character))
+        {
+            // Spend a development point on pace + bank a new perk before signing.
+            int before = session.AvailableCharacterCp();
+            Assert.True(before >= 2);
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("pace", 1));
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("rain_man", 1));
+            Assert.Equal(before - 2, session.AvailableCharacterCp()); // pending spends reduce the pool now
+
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            acceptedTeam = review!.Offers[0].TeamId;
+            TestPackBuilder.Write(
+                ToPack(1969, "era-test-1969", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1969"));
+
+            var vm = new SeasonReviewViewModel(session);
+            vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+
+        // Reopen into season 2: the spends applied at the transition — pace raised a step and the
+        // banked perk is now on the driver.
+        using var reopened = CareerSessionService.OpenCareer(CareerPath, Environment());
+        var dossier = reopened.CharacterDossier();
+        Assert.NotNull(dossier);
+        Assert.Equal("Dev Driver", dossier!.Name);
+        Assert.Equal(0.55, dossier.Stats.First(s => s.Id == "pace").Value, 6); // 0.50 + one step
+        Assert.Contains(dossier.Perks, p => p.Id == "rain_man");
     }
 
     // ---------- the tests ----------

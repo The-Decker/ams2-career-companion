@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Packs;
 
@@ -94,10 +95,12 @@ public static class EraTransition
         PlayerOffer acceptedOffer,
         StreamFactory streams,
         AgingCurveSet agingCurves,
-        IReadOnlyDictionary<string, int>? canonRetirements = null) =>
+        IReadOnlyDictionary<string, int>? canonRetirements = null,
+        IReadOnlyList<CharacterSpend>? spends = null,
+        CharacterRules? characterRules = null) =>
         Build(
             fromPack, toPack, seasonEndResult.Drivers, seasonEndResult.Teams,
-            playerState, acceptedOffer, streams, agingCurves, canonRetirements);
+            playerState, acceptedOffer, streams, agingCurves, canonRetirements, spends, characterRules);
 
     /// <summary>State-list overload for callers that persisted the season's end states and
     /// no longer hold the <see cref="SeasonEndResult"/> (the app's sign-and-continue flow).</summary>
@@ -110,7 +113,9 @@ public static class EraTransition
         PlayerOffer acceptedOffer,
         StreamFactory streams,
         AgingCurveSet agingCurves,
-        IReadOnlyDictionary<string, int>? canonRetirements = null)
+        IReadOnlyDictionary<string, int>? canonRetirements = null,
+        IReadOnlyList<CharacterSpend>? spends = null,
+        CharacterRules? characterRules = null)
     {
         ArgumentNullException.ThrowIfNull(fromPack);
         ArgumentNullException.ThrowIfNull(toPack);
@@ -335,6 +340,14 @@ public static class EraTransition
                 CurrentTeamId = offerTeam.Id,
                 LiveryName = seat.Ams2LiveryName,
             };
+        }
+
+        // Between-season development (character depth 4): apply the player's spends to the carried
+        // character. These are journaled player.statSpend INPUTs, re-applied identically on replay so
+        // the evolving driver reproduces byte-for-byte. No spends (or no character) → unchanged.
+        if (spends is { Count: > 0 } && characterRules is not null && player.Character is { } devCharacter)
+        {
+            player = player with { Character = CharacterProgress.ApplyAll(devCharacter, spends, characterRules) };
         }
 
         return new TransitionPlan

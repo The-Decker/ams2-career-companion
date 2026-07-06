@@ -393,7 +393,8 @@ public static class ReplayService
                     .ToList(),
                 StateStore.ReadPlayerState(db, season.Id, StateStore.StageStart),
                 StateStore.ReadDriverStates(db, season.Id, StateStore.StageStart),
-                StateStore.ReadTeamStates(db, season.Id, StateStore.StageStart)))
+                StateStore.ReadTeamStates(db, season.Id, StateStore.StageStart),
+                ReadCharacterSpends(db, season.Id)))
             .ToList();
 
         int comparedRows = 0;
@@ -430,7 +431,7 @@ public static class ReplayService
                     IReadOnlyList<JournalEvent> transitionRows;
                     (divergence, transitionRows) = VerifyTransitionStartStates(
                         previousSeason.Season, fromPack, pack, previousEnd,
-                        acceptedOffers, current, masterSeed, inputs);
+                        acceptedOffers, current, masterSeed, inputs, previousSeason.Spends);
                     // The transition's journal rows were stored under this season before any
                     // round — regenerate them at the head of the sequence for the byte-compare.
                     foreach (var row in transitionRows)
@@ -791,7 +792,8 @@ public static class ReplayService
         IReadOnlyList<JournalRow> StoredJournal,
         PlayerCareerState? StartPlayer,
         IReadOnlyList<DriverCareerState> StartDrivers,
-        IReadOnlyList<TeamCareerState> StartTeams);
+        IReadOnlyList<TeamCareerState> StartTeams,
+        IReadOnlyList<CharacterSpend> Spends);
 
     private static bool IsComplete(SeasonRecord season) =>
         string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
@@ -901,7 +903,8 @@ public static class ReplayService
             IReadOnlyList<(long SeasonId, string TeamId)> acceptedOffers,
             StoredSeason current,
             ulong masterSeed,
-            ReplaySimInputs inputs)
+            ReplaySimInputs inputs,
+            IReadOnlyList<CharacterSpend> spends)
     {
         long seasonId = current.Season.Id;
         if (previousEnd is null)
@@ -942,7 +945,8 @@ public static class ReplayService
 
         var plan = EraTransition.Build(
             fromPack, toPack, previousEnd, previousEnd.Player, offer,
-            new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements);
+            new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements,
+            spends, inputs.CharacterRules);
         if (plan.ValidationErrors.Count > 0)
         {
             // A stored career started a season the plan would refuse today — the file was
@@ -1025,6 +1029,15 @@ public static class ReplayService
                     "PinnedPackEnvelope.LoadSeasonPack / ReadPinnedPack).");
         }
     }
+
+    /// <summary>The between-season character-development spends journaled under a season (character
+    /// depth 4), in order — the round fold never regenerates them (they are provenance-excluded), so
+    /// they are read here and re-applied at the season's transition, live and on replay alike.</summary>
+    public static IReadOnlyList<CharacterSpend> ReadCharacterSpends(CareerDatabase db, long seasonId) =>
+        JournalStore.ReadSeason(db, seasonId)
+            .Where(r => string.Equals(r.Phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal))
+            .Select(r => DataJson.Deserialize<CharacterSpend>(r.DeltaJson))
+            .ToList();
 
     private static List<(long SeasonId, string TeamId)> ReadAcceptedOffers(CareerDatabase db)
     {
