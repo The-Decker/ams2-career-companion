@@ -28,9 +28,15 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 3;
+    public const int CurrentVersion = 4;
 
     public int Version { get; init; } = CurrentVersion;
+
+    /// <summary>Whether the round was run in the WET (character depth: weather-conditional perks).
+    /// A raw INPUT the sim cannot re-derive, so it is stored. Null = unknown/legacy (every pre-v4
+    /// save) — the fold then evaluates neither wetRound nor dryRound, so weather perks stay dormant
+    /// and old careers replay byte-identically. true = wet, false = dry (explicitly captured).</summary>
+    public bool? IsWet { get; init; }
 
     /// <summary>The raw classification as imported (the engine's round-result shape).</summary>
     public required RoundResult Result { get; init; }

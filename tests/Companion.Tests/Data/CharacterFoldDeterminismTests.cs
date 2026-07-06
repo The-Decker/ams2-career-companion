@@ -206,6 +206,87 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         Assert.True(seasonId > 0);
     }
 
+    private static CharacterProfile RainManCharacter() => new()
+    {
+        Name = "Rain Master",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.65, ["marketability"] = 0.50, ["durability"] = 0.55,
+        },
+        PerkIds = ["rain_man"], // carScalar power gated on wetRound / dryRound
+        CpUnspent = 0,
+    };
+
+    [Fact]
+    public void WeatherPerkCharacter_CapturesTheWetFlag_FiresIt_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "weather.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 555000111;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Weather",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = RainManCharacter(),
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                    IsWet = round == 0, // round 1 wet, round 2 dry
+                });
+            }
+            Assert.NotNull(session.SeasonReview());
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+
+        // The wet flag was captured into the raw envelope (round 1 wet, round 2 dry).
+        var stored = ResultStore.ReadSeasonResults(db, seasonId);
+        Assert.True(stored.Single(r => r.Round == 1).ToEnvelope().IsWet);
+        Assert.False(stored.Single(r => r.Round == 2).ToEnvelope().IsWet);
+
+        // Rain Man's wet/dry carScalar fires per the captured weather, deterministically, so the
+        // whole career re-simulates byte-identically through the weather-conditional path.
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
     [Fact]
     public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
     {

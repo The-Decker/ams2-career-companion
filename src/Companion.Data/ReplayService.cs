@@ -572,8 +572,15 @@ public static class ReplayService
         // stay dormant. A character with no conditional perks (or an empty set) resolves to the exact
         // unconditional modifier, so non-conditional and non-character careers stay byte-identical.
         var gridConditions = new HashSet<string>(StringComparer.Ordinal);
-        if (hasCharacter && RaceLengthToken(pack, round) is { } raceLength)
-            gridConditions.Add(raceLength);
+        if (hasCharacter)
+        {
+            if (RaceLengthToken(pack, round) is { } raceLength)
+                gridConditions.Add(raceLength);
+            // Weather (character depth #2): null = legacy/unknown → neither wetRound nor dryRound
+            // fires, so pre-v4 saves replay byte-identically; a captured wet/dry flag fires the perk.
+            if (envelope.IsWet is bool wet)
+                gridConditions.Add(wet ? "wetRound" : "dryRound");
+        }
 
         PlayerPerkModifiers? gridMods = hasCharacter
             ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, gridConditions)

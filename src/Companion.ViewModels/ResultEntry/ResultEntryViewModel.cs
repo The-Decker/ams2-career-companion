@@ -114,6 +114,12 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             SliderUsed = clamped;
     }
 
+    /// <summary>Whether the round was run in the WET — captured for the weather-conditional perks
+    /// (Rain Man, Sunshine Specialist). Defaults dry; stored in the raw envelope on Apply. Harmless
+    /// for a character-free career (the fold never reads it).</summary>
+    [ObservableProperty]
+    private bool isWet;
+
     [ObservableProperty]
     private string input = "";
 
@@ -207,6 +213,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             .ToDictionary(s => s.DriverId, s => _dsqReasons[s.DriverId], StringComparer.Ordinal),
         SliderUsed = Math.Clamp(
             Math.Round(SliderUsed, MidpointRounding.AwayFromZero), MinSlider, MaxSlider),
+        IsWet = IsWet,
     };
 
     // ---------- commands (view maps Enter/Tab/Esc/F8/Ctrl+Z to these) ----------

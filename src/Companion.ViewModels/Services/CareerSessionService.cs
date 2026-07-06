@@ -1055,6 +1055,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             SliderUsed = Math.Clamp(slider, DifficultyModel.MinSlider, DifficultyModel.MaxSlider),
             PlayerDnfCause = PlayerDnfCauseFrom(draft),
             QualifyingOrder = draft.QualifyingOrder,
+            IsWet = draft.IsWet,
         };
     }
 

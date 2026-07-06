@@ -445,6 +445,11 @@ public sealed record ResultDraft
     /// the round's raw-result envelope. Null falls back to the current recommendation.</summary>
     public double? SliderUsed { get; init; }
 
+    /// <summary>Whether the round was run in the wet (asked on the result screen). Feeds the
+    /// weather-conditional perks (Rain Man, Sunshine Specialist); defaults dry. Stored in the raw
+    /// envelope; a character-free career never reads it.</summary>
+    public bool IsWet { get; init; }
+
     /// <summary>The qualifying order for this round (driver ids, pole first), when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in
     /// the raw envelope; never scored. Older producers omit it.</summary>

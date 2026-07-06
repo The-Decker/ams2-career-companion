@@ -216,6 +216,11 @@
                                FontSize="15" VerticalAlignment="Center" MinWidth="44" />
                 </StackPanel>
 
+                <!-- weather: mark a wet round for the weather-conditional perks (Rain Man, etc.) -->
+                <CheckBox DockPanel.Dock="Right" Content="Wet race" VerticalAlignment="Center"
+                          Margin="0,0,18,0" IsChecked="{Binding IsWet}" Focusable="False"
+                          ToolTip="Tick if you raced in the wet — it feeds weather perks like Rain Man, and is saved with the result." />
+
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold" FontSize="16" />
                     <TextBlock Text="{Binding ElapsedText}" Style="{StaticResource Mono}" FontSize="16"
