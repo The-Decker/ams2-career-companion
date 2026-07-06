@@ -1,7 +1,9 @@
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Companion.App.Converters;
 
@@ -126,19 +128,38 @@ public sealed class StringEqualsToVisibilityConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>A career name → its era accent brush, parsed from a 4-digit year in the name
-/// (career gallery). Neutral slate when the name carries no year.</summary>
+/// <summary>Shared era-year resolution for the gallery converters. A <see cref="RecentCareer"/>
+/// resolves to its STORED season year (falling back to a year parsed from the name for legacy
+/// entries — <see cref="Companion.ViewModels.Services.EraArtResolver.YearForEntry"/>); a bare int is
+/// itself; a bare string is parsed for a year. Null when nothing yields a plausible year, so the
+/// card shows its neutral placeholder.</summary>
+internal static class EraCardYear
+{
+    public static int? From(object? value) => value switch
+    {
+        Companion.ViewModels.Services.RecentCareer entry =>
+            Companion.ViewModels.Services.EraArtResolver.YearForEntry(entry),
+        int y => y,
+        string name => Companion.ViewModels.Services.EraArtResolver.YearFromText(name),
+        _ => null,
+    };
+}
+
+/// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era accent brush,
+/// keyed off the stored season year for MRU entries (career gallery). Neutral slate when no era
+/// resolves.</summary>
 public sealed class EraAccentBrushConverter : IValueConverter
 {
     private static readonly SolidColorBrush Neutral = new(Color.FromRgb(0x6A, 0x6A, 0x74));
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (Companion.Core.Career.EraThemes.FromText(value as string) is not { } theme)
+        if (EraCardYear.From(value) is not int year)
             return Neutral;
         try
         {
-            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(theme.AccentHex));
+            return new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString(Companion.Core.Career.EraThemes.ForYear(year).AccentHex));
         }
         catch (FormatException)
         {
@@ -150,12 +171,59 @@ public sealed class EraAccentBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>A career name → its era medium label ("TELEGRAM"/"FAX"/"EMAIL"), or "" when the
-/// name carries no 4-digit year.</summary>
+/// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era medium label
+/// ("TELEGRAM"/"FAX"/"EMAIL"), keyed off the stored season year for MRU entries; "" when no era
+/// resolves.</summary>
 public sealed class EraLabelConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-        Companion.Core.Career.EraThemes.FromText(value as string)?.Label ?? "";
+        EraCardYear.From(value) is int year ? Companion.Core.Career.EraThemes.ForYear(year).Label : "";
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>A career name (or a year) → the drop-in era-art image for its gallery card, or null
+/// when none is present (the card then shows its coloured era placeholder). Real historical photos
+/// live in <c>{BaseDirectory}\data\ams2\era-art\</c>; the resolver picks the most specific one
+/// (a year file like <c>1967.jpg</c> over the era-medium file like <c>telegram.jpg</c>) — see
+/// career-hub-design.md §11. The bitmap is loaded with <see cref="BitmapCacheOption.OnLoad"/> and
+/// frozen so the file is read once and never left locked (images can be swapped while the app runs).
+/// </summary>
+public sealed class EraImageConverter : IValueConverter
+{
+    /// <summary>The era-art folder beside the exe (populated by the App csproj asset glob).</summary>
+    private static readonly string EraArtDirectory =
+        Path.Combine(AppContext.BaseDirectory, "data", "ams2", "era-art");
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        // A RecentCareer resolves by its STORED season year (name-parse fallback for legacy entries);
+        // a bare int/name keep the old contract so non-gallery callers are unaffected.
+        if (EraCardYear.From(value) is not int resolvedYear)
+            return null;
+
+        string? path = Companion.ViewModels.Services.EraArtResolver.Resolve(EraArtDirectory, resolvedYear);
+        if (path is null)
+            return null;
+
+        try
+        {
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad; // read fully now → the file is never locked
+            image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            image.UriSource = new Uri(path, UriKind.Absolute);
+            image.EndInit();
+            image.Freeze(); // cross-thread safe + immutable
+            return image;
+        }
+        catch (Exception ex) when (ex is NotSupportedException or IOException or UriFormatException)
+        {
+            // A corrupt or unreadable image must never crash the gallery — fall back to the placeholder.
+            return null;
+        }
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();

@@ -40,6 +40,11 @@ public sealed record RoundUpdateContext
 
     /// <summary>Display name for {player} headline tokens; defaults to the player seat's name.</summary>
     public string? PlayerName { get; init; }
+
+    /// <summary>The player's qualifying position this round (1-based), when the round ran a
+    /// qualifying session; null on single-race rounds → no qualifying anchor and no event, so
+    /// single-race careers emit the identical journal sequence. (Increment 2.)</summary>
+    public int? PlayerQualifyingPosition { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -90,6 +95,14 @@ public static class RoundUpdate
         {
             double implied = PaceAnchorMath.ImpliedPlayerPace(grid, classified, context.SliderUsed);
             newAnchor = PaceAnchorMath.Update(player.PaceAnchor, implied);
+        }
+
+        // Qualifying (one-lap) anchor: calibrates only on rounds that ran qualifying (Inc 2).
+        double newQualiAnchor = player.QualifyingAnchor;
+        if (context.PlayerQualifyingPosition is { } qualiPos)
+        {
+            double impliedQuali = PaceAnchorMath.ImpliedPlayerQualiPace(grid, qualiPos, context.SliderUsed);
+            newQualiAnchor = PaceAnchorMath.Update(player.QualifyingAnchor, impliedQuali);
         }
 
         int recommendedSlider = newAnchor > 0.0
@@ -151,6 +164,24 @@ public static class RoundUpdate
             },
         };
 
+        // Qualifying anchor row (weekend rounds only) — a fixed position after the pace anchor,
+        // absent for single-race rounds so their journal sequence is unchanged.
+        if (context.PlayerQualifyingPosition is { } qPos)
+        {
+            events.Add(new JournalEvent
+            {
+                Phase = JournalPhases.PlayerQualiAnchor,
+                Entity = "player",
+                DeltaJson = CareerJson.Serialize(new
+                {
+                    from = Round4(player.QualifyingAnchor),
+                    to = Round4(newQualiAnchor),
+                    qualiPosition = qPos,
+                }),
+                Cause = cause,
+            });
+        }
+
         string? headline = null;
         if (context.Headlines is { } bank)
         {
@@ -185,6 +216,7 @@ public static class RoundUpdate
                 Opi = newOpi,
                 Reputation = newRep,
                 PaceAnchor = newAnchor,
+                QualifyingAnchor = newQualiAnchor,
             },
             Events = events,
             RecommendedSlider = recommendedSlider,

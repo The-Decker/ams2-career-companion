@@ -318,6 +318,70 @@ public sealed class EraSignAndContinueTests : IDisposable
     }
 
     [Fact]
+    public void SeasonScopedJournalFor_OverAMultiSeasonCareer_WalksAFinishedEarlierSeason()
+    {
+        string acceptedTeam;
+        using (var session = CreateAndPlaySeason()) // plays the whole 1967 season
+        {
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            acceptedTeam = review.Offers[0].TeamId;
+
+            TestPackBuilder.Write(
+                ToPack(1969, "era-test-1969", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1969"));
+
+            var vm = new SeasonReviewViewModel(session);
+            vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+
+        // Reopen: the session now points at the CURRENT (1969) season — 1967 is a finished
+        // earlier season living in the same career file, keyed by its own season id.
+        using var reopened = CareerSessionService.OpenCareer(CareerPath, Environment());
+        Assert.Equal(1969, reopened.Summary.SeasonYear);
+        ICareerSession seam = reopened;
+
+        // The season-scoped seam reaches the FINISHED 1967 season's player journal (the gap the
+        // History-card follow-up closes) — the current-season walk cannot, because 1967 is not
+        // this session's season.
+        Assert.True(seam.JournalFor("player").IsEmpty); // 1969 has no applied round yet
+        var finished = seam.JournalForSeason("player", 1967);
+        Assert.False(finished.IsEmpty);
+        Assert.Equal("player", finished.Entity);
+        Assert.Null(finished.Round);
+        // The 1967 title carries that season's year (resolved from that season's pinned pack).
+        Assert.Contains("1967", finished.Title);
+        // The finished season chained real per-round player rows (race results + folded state),
+        // ordered ascending by journal seq — the deterministic walk.
+        var seqs = finished.Contributions.Select(c => c.SourceSeq).ToList();
+        Assert.NotEmpty(seqs);
+        Assert.All(seqs, s => Assert.True(s > 0));
+        Assert.Equal(seqs.OrderBy(s => s).ToList(), seqs);
+        Assert.Contains(finished.Contributions, c => c.Label == "Expected finish");
+
+        // Narrowing to a single round of the finished season is a strict subset of the season walk.
+        var round1 = seam.JournalForSeason("player", 1967, 1);
+        Assert.False(round1.IsEmpty);
+        Assert.True(round1.Contributions.Count < finished.Contributions.Count);
+        Assert.Contains("Round 1", round1.Title);
+
+        // Season-scoped for the CURRENT year equals the current-season walk (byte-identical once a
+        // round is applied) — here both are empty because 1969 has no applied round.
+        Assert.True(seam.JournalForSeason("player", 1969).IsEmpty);
+
+        // A year with no season row in the career is a graceful no-op, never a throw.
+        Assert.True(seam.JournalForSeason("player", 1955).IsEmpty);
+
+        // Deterministic: a repeat call re-derives the identical chain (pure over the stored journal).
+        var again = seam.JournalForSeason("player", 1967);
+        Assert.Equal(
+            finished.Contributions.Select(c => (c.Label, c.Value, c.SourceSeq)),
+            again.Contributions.Select(c => (c.Label, c.Value, c.SourceSeq)));
+    }
+
+    [Fact]
     public void Sign_WhenTheAcceptedTeamIsMissingFromTheNextPack_SurfacesThePlansValidationError()
     {
         using (var session = CreateAndPlaySeason())

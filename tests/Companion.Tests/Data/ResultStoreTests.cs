@@ -145,4 +145,39 @@ public class ResultStoreTests
         Assert.Equal(original, JsonSerializer.Serialize(envelope.Result, CoreJson.Options));
         Assert.Equal(original, JsonSerializer.Serialize(stored.ToRoundResult(), CoreJson.Options));
     }
+
+    [Fact]
+    public void QualifyingOrderRoundTrips_AndOlderPayloadsReadNull()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        // A weekend round stores its qualifying order alongside the race result (v3).
+        var weekend = new RoundResultEnvelope
+        {
+            Result = DataCareerFixture.Rounds()[0],
+            QualifyingOrder = ["driver.b", "driver.a", "driver.c"],
+        };
+        ResultStore.Append(
+            db, seasonId, 1,
+            JsonSerializer.Serialize(weekend, CoreJson.Options),
+            DataCareerFixture.Utc);
+
+        var stored = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
+        Assert.Equal(RoundResultEnvelope.CurrentVersion, stored.Version); // v3
+        Assert.Equal(new[] { "driver.b", "driver.a", "driver.c" }, stored.QualifyingOrder);
+        // The race result is unchanged by the added field — scoring never sees qualifying.
+        Assert.Equal(
+            JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options),
+            JsonSerializer.Serialize(stored.Result, CoreJson.Options));
+
+        // A pre-weekend (v2) payload reads with a null order — every existing save.
+        var legacy = new RoundResultEnvelope { Version = 2, Result = DataCareerFixture.Rounds()[0] };
+        ResultStore.Append(
+            db, seasonId, 2,
+            JsonSerializer.Serialize(legacy, CoreJson.Options),
+            DataCareerFixture.Utc);
+        Assert.Null(ResultStore.ReadSeasonResults(db, seasonId)[1].ToEnvelope().QualifyingOrder);
+    }
 }

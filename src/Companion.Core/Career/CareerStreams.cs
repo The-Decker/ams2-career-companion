@@ -26,6 +26,10 @@ public static class JournalPhases
     /// every state change is a journal row).</summary>
     public const string PlayerExperience = "player.experience";
     public const string PlayerPaceAnchor = "player.paceAnchor";
+
+    /// <summary>The player's qualifying (one-lap) anchor update — emitted ONLY on rounds that ran
+    /// a qualifying session, so single-race careers never carry it and stay byte-identical. (Inc 2.)</summary>
+    public const string PlayerQualiAnchor = "player.qualiAnchor";
     public const string RaceResult = "race.result";
     public const string DriverAging = "driver.aging";
     public const string Retirement = "driver.retirement";

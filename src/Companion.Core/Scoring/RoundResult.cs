@@ -67,6 +67,16 @@ public sealed record SessionResult
     /// <summary>Holder(s) of the session's fastest lap. More than one id means an exact tie
     /// on lap time (1954 British GP had seven).</summary>
     public IReadOnlyList<string> FastestLapDriverIds { get; init; } = [];
+
+    /// <summary>Selects the points table for THIS session (Increment 2c), for an authored
+    /// race-weekend with two independently-scoring races: <c>null</c> = the shipped per-round
+    /// logic (<see cref="SessionKind.Sprint"/> → SprintPoints, else the round's
+    /// <see cref="RoundResult.AlternateRaceTableId"/> or the standard race table); "primary" =
+    /// the season's <see cref="PointsSystem.RacePoints"/>; "sprint" = <see cref="PointsSystem.SprintPoints"/>;
+    /// any other value = a named <see cref="PointsSystem.AlternateRaceTables"/> key. Null on every
+    /// historical fixture and every single-race round, so scoring is byte-identical until a pack
+    /// opts in.</summary>
+    public string? PointsTableId { get; init; }
 }
 
 /// <summary>Everything the engine consumes for one championship round.</summary>
@@ -86,6 +96,13 @@ public sealed record RoundResult
     /// <summary>Selects a named table from <see cref="PointsSystem.AlternateRaceTables"/>
     /// (2022+ shortened-race sliding scale). Null uses the season's standard race table.</summary>
     public string? AlternateRaceTableId { get; init; }
+
+    /// <summary>When true (Increment 2c.2), each scoring session becomes its own
+    /// <see cref="RoundScore"/> (sub-keyed by session index) so an authored two-race weekend's
+    /// races are kept/dropped independently by best-N. Default false = the shipped behaviour:
+    /// every session merges into one round score. NEVER set on a historical fixture or a
+    /// single-race round, so scoring stays byte-identical until a pack authors it.</summary>
+    public bool PerSessionScoring { get; init; }
 
     public required IReadOnlyList<SessionResult> Sessions { get; init; }
 }

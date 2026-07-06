@@ -42,7 +42,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         _watcherFactory = stagedFileWatcherFactory ?? (static () => null);
         _settings = settings ?? new SettingsService(new InMemorySettingsStore());
 
-        Start = new StartViewModel(recentCareers);
+        Start = new StartViewModel(recentCareers, _settings);
         Start.ContinueRequested += (_, path) => OpenCareer(path);
         Start.NewCareerRequested += (_, _) => BeginWizard();
 
@@ -85,7 +85,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     private void OnCareerCreated(object? sender, CareerCreatedEventArgs e)
     {
-        Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName);
+        Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName, e.Session.Summary.SeasonYear);
         _currentCareerPath = e.CareerFilePath;
         AttachHome(e.Session);
     }
@@ -106,7 +106,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
             return;
         }
 
-        Start.RecordCareer(path, session.Summary.CareerName);
+        Start.RecordCareer(path, session.Summary.CareerName, session.Summary.SeasonYear);
         _currentCareerPath = path;
         AttachHome(session);
     }

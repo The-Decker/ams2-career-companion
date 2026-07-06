@@ -27,6 +27,13 @@
     "rounds":  [
                    {
                        "round":  1,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Australian Grand Prix",
                        "date":  "2000-03-12",
                        "championship":  true,
@@ -88,6 +95,13 @@
                    },
                    {
                        "round":  2,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Brazilian Grand Prix",
                        "date":  "2000-03-26",
                        "championship":  true,
@@ -147,6 +161,13 @@
                    },
                    {
                        "round":  3,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "San Marino Grand Prix",
                        "date":  "2000-04-09",
                        "championship":  true,
@@ -208,6 +229,13 @@
                    },
                    {
                        "round":  4,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "British Grand Prix",
                        "date":  "2000-04-23",
                        "championship":  true,
@@ -269,6 +297,13 @@
                    },
                    {
                        "round":  5,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Spanish Grand Prix",
                        "date":  "2000-05-07",
                        "championship":  true,
@@ -330,6 +365,13 @@
                    },
                    {
                        "round":  6,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "European Grand Prix",
                        "date":  "2000-05-21",
                        "championship":  true,
@@ -391,6 +433,13 @@
                    },
                    {
                        "round":  7,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Monaco Grand Prix",
                        "date":  "2000-06-04",
                        "championship":  true,
@@ -451,6 +500,13 @@
                    },
                    {
                        "round":  8,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Canadian Grand Prix",
                        "date":  "2000-06-18",
                        "championship":  true,
@@ -512,6 +568,13 @@
                    },
                    {
                        "round":  9,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "French Grand Prix",
                        "date":  "2000-07-02",
                        "championship":  true,
@@ -574,6 +637,13 @@
                    },
                    {
                        "round":  10,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Austrian Grand Prix",
                        "date":  "2000-07-16",
                        "championship":  true,
@@ -635,6 +705,13 @@
                    },
                    {
                        "round":  11,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "German Grand Prix",
                        "date":  "2000-07-30",
                        "championship":  true,
@@ -696,6 +773,13 @@
                    },
                    {
                        "round":  12,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Hungarian Grand Prix",
                        "date":  "2000-08-13",
                        "championship":  true,
@@ -757,6 +841,13 @@
                    },
                    {
                        "round":  13,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Belgian Grand Prix",
                        "date":  "2000-08-27",
                        "championship":  true,
@@ -818,6 +909,13 @@
                    },
                    {
                        "round":  14,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Italian Grand Prix",
                        "date":  "2000-09-10",
                        "championship":  true,
@@ -879,6 +977,13 @@
                    },
                    {
                        "round":  15,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "United States Grand Prix",
                        "date":  "2000-09-24",
                        "championship":  true,
@@ -940,6 +1045,13 @@
                    },
                    {
                        "round":  16,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Japanese Grand Prix",
                        "date":  "2000-10-08",
                        "championship":  true,
@@ -1001,6 +1113,13 @@
                    },
                    {
                        "round":  17,
+                       "weekend": {
+                         "practice": { "present": true, "label": "Practice" },
+                         "qualifying": { "present": true, "label": "Qualifying" },
+                         "races": [
+                           { "id": "race", "label": "Grand Prix" }
+                         ]
+                       },
                        "name":  "Malaysian Grand Prix",
                        "date":  "2000-10-22",
                        "championship":  true,

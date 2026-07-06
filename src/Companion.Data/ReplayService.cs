@@ -548,44 +548,86 @@ public static class ReplayService
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
 
         var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName);
-        var playerOutcome = PlayerOutcome(envelope, inputs.PlayerDriverId);
-        if (grid is null || playerOutcome is null)
+        if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
-        var (finish, dnf) = playerOutcome.Value;
         int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
         var playerSeat = grid.Seats[playerIndex];
-
+        int playerTeamTier = startTeams
+            .FirstOrDefault(t => string.Equals(t.TeamId, playerSeat.TeamId, StringComparison.Ordinal))
+            ?.Tier ?? 3;
         var teammateIds = grid.Seats
             .Where(s => !s.IsPlayer && string.Equals(s.TeamId, playerSeat.TeamId, StringComparison.Ordinal))
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
 
-        var update = RoundUpdate.Apply(new RoundUpdateContext
+        // The round's scoring races (Increment 2e.2): usually one; a two-race weekend folds each
+        // independently, THREADING the player state race → race, so OPI/rep/pace calibrate per race.
+        // A single race runs the loop exactly once → the shipped fold, byte-identical.
+        var raceSessions = envelope.Result.Sessions.Where(s => s.Kind == SessionKind.Race).ToList();
+        int? qualifyingPosition = PlayerQualifyingPosition(envelope, inputs.PlayerDriverId);
+
+        var player = previous.Player;
+        int recommendedSlider = previous.RecommendedSlider;
+        string? headline = null;
+        int? expectedFinish = null;
+        bool playerRaced = false;
+
+        for (int i = 0; i < raceSessions.Count; i++)
         {
-            Grid = grid,
-            Player = previous.Player,
-            PlayerTeamTier = startTeams
-                .FirstOrDefault(t => string.Equals(t.TeamId, playerSeat.TeamId, StringComparison.Ordinal))
-                ?.Tier ?? 3,
-            PlayerFinish = finish,
-            PlayerDnf = dnf,
-            HasTeammate = teammateIds.Count > 0,
-            TeammateFinish = BestTeammateFinish(envelope.Result, teammateIds),
-            SliderUsed = envelope.SliderUsed ?? DefaultSlider(previous, grid),
-            PointsPositions = PointsPositions(pack, envelope.Result),
-            Streams = new StreamFactory(masterSeed),
-            Headlines = inputs.Headlines,
-            PlayerName = inputs.PlayerName,
-        });
-        events.AddRange(update.Events);
+            var outcome = PlayerOutcomeIn(raceSessions[i], envelope, inputs.PlayerDriverId);
+            if (outcome is null)
+                continue; // the player is not in this race's classification
+
+            var (finish, dnf) = outcome.Value;
+            var update = RoundUpdate.Apply(new RoundUpdateContext
+            {
+                Grid = grid,
+                Player = player,
+                PlayerTeamTier = playerTeamTier,
+                PlayerFinish = finish,
+                PlayerDnf = dnf,
+                HasTeammate = teammateIds.Count > 0,
+                TeammateFinish = BestTeammateFinishIn(raceSessions[i], teammateIds),
+                SliderUsed = envelope.SliderUsed ?? DefaultSlider(previous, grid),
+                PointsPositions = PointsPositionsFor(pack, raceSessions[i], envelope.Result),
+                Streams = new StreamFactory(masterSeed),
+                Headlines = inputs.Headlines,
+                PlayerName = inputs.PlayerName,
+                // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
+                PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
+            });
+
+            events.AddRange(update.Events);
+            player = update.Player;
+            recommendedSlider = update.RecommendedSlider;
+            headline = update.Headline;
+            expectedFinish = update.ExpectedFinish;
+            playerRaced = true;
+        }
+
+        if (!playerRaced)
+            return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
         return new RoundFoldOutcome(
             events,
-            new RoundPlayerState { Player = update.Player, RecommendedSlider = update.RecommendedSlider },
+            new RoundPlayerState { Player = player, RecommendedSlider = recommendedSlider },
             PlayerRaced: true,
-            update.Headline,
-            update.ExpectedFinish);
+            headline,
+            expectedFinish);
+    }
+
+    /// <summary>The player's 1-based qualifying position from the round's stored qualifying order
+    /// (Increment 2), or null when the round ran no qualifying (single-race) or the player is not
+    /// listed in it — either way no qualifying anchor is calibrated and no event is emitted.</summary>
+    private static int? PlayerQualifyingPosition(RoundResultEnvelope envelope, string playerDriverId)
+    {
+        if (envelope.QualifyingOrder is not { } order)
+            return null;
+        for (int i = 0; i < order.Count; i++)
+            if (string.Equals(order[i], playerDriverId, StringComparison.Ordinal))
+                return i + 1;
+        return null;
     }
 
     /// <summary>The round's grid with the player's seat marked, or null when the player has
@@ -613,11 +655,10 @@ public static class ReplayService
     /// <summary>The player's outcome in the round's race classification, or null when the
     /// player does not appear in it. Envelope defaults per the contract: a retired player
     /// without a stored cause is mechanical (no blame), a disqualified one driver error.</summary>
-    private static (int? Finish, DnfCause? Dnf)? PlayerOutcome(
-        RoundResultEnvelope envelope, string playerDriverId)
+    private static (int? Finish, DnfCause? Dnf)? PlayerOutcomeIn(
+        SessionResult race, RoundResultEnvelope envelope, string playerDriverId)
     {
-        var race = envelope.Result.Sessions.FirstOrDefault(s => s.Kind == SessionKind.Race);
-        var entry = race?.Entries.FirstOrDefault(e =>
+        var entry = race.Entries.FirstOrDefault(e =>
             string.Equals(e.DriverId, playerDriverId, StringComparison.Ordinal));
         return entry switch
         {
@@ -631,11 +672,8 @@ public static class ReplayService
         };
     }
 
-    private static int? BestTeammateFinish(RoundResult result, IReadOnlyCollection<string> teammateIds)
+    private static int? BestTeammateFinishIn(SessionResult race, IReadOnlyCollection<string> teammateIds)
     {
-        var race = result.Sessions.FirstOrDefault(s => s.Kind == SessionKind.Race);
-        if (race is null)
-            return null;
         int? best = null;
         foreach (var entry in race.Entries)
         {
@@ -665,9 +703,17 @@ public static class ReplayService
     /// <summary>How many positions score points this round, from the round's resolved
     /// scoring definition — the alternate (shortened-race) table when the result names one,
     /// else the season's race table.</summary>
-    private static int PointsPositions(SeasonPack pack, RoundResult result)
+    private static int PointsPositionsFor(SeasonPack pack, SessionResult session, RoundResult result)
     {
         var system = pack.Season.PointsSystem;
+        // A per-session authored table (Increment 2) takes precedence over the round's selection.
+        if (session.PointsTableId is { } id and not "primary")
+        {
+            if (id == "sprint" && system.SprintPoints is { } sprint)
+                return sprint.Count;
+            if (system.AlternateRaceTables is { } perSessionTables && perSessionTables.TryGetValue(id, out var perSession))
+                return perSession.Count;
+        }
         if (result.AlternateRaceTableId is { } tableId &&
             system.AlternateRaceTables is { } tables &&
             tables.TryGetValue(tableId, out var alternate))

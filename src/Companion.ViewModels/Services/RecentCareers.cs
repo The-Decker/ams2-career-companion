@@ -8,6 +8,14 @@ public sealed record RecentCareer
     public required string Path { get; init; }
     public required string CareerName { get; init; }
     public required DateTimeOffset LastOpenedUtc { get; init; }
+
+    /// <summary>The career's stored season year (<see cref="CareerSummary.SeasonYear"/>), used to
+    /// resolve the gallery card's era art/badge deterministically instead of parsing the name.
+    /// <c>0</c> means "no stored year" — a legacy entry persisted before this field existed; the
+    /// gallery falls back to reading a year out of the name for those (see
+    /// <see cref="EraArtResolver.YearForEntry"/>). Not <c>required</c> so JSON deserialization of an
+    /// older <c>recent.json</c> (which omits the property) reads it as the 0 default, back-compat.</summary>
+    public int SeasonYear { get; init; }
 }
 
 public interface IRecentCareersStore
@@ -15,8 +23,10 @@ public interface IRecentCareersStore
     /// <summary>Most recent first. Entries whose career file no longer exists are pruned.</summary>
     IReadOnlyList<RecentCareer> Load();
 
-    /// <summary>Insert or move to the front (capped list), then persist.</summary>
-    void Touch(string path, string careerName);
+    /// <summary>Insert or move to the front (capped list), then persist. <paramref name="seasonYear"/>
+    /// is the career's stored season year for the gallery's era art; pass <c>0</c> when it is unknown
+    /// (the gallery then falls back to parsing the name).</summary>
+    void Touch(string path, string careerName, int seasonYear = 0);
 
     void Remove(string path);
 }
@@ -58,7 +68,7 @@ public sealed class RecentCareersStore : IRecentCareersStore
     public IReadOnlyList<RecentCareer> Load() =>
         ReadFile().Where(entry => _careerFileExists(entry.Path)).ToList();
 
-    public void Touch(string path, string careerName)
+    public void Touch(string path, string careerName, int seasonYear = 0)
     {
         var entries = ReadFile()
             .Where(entry => !PathsEqual(entry.Path, path))
@@ -68,6 +78,7 @@ public sealed class RecentCareersStore : IRecentCareersStore
             Path = path,
             CareerName = careerName,
             LastOpenedUtc = _clock.GetUtcNow(),
+            SeasonYear = seasonYear,
         });
         WriteFile(entries.Take(Capacity).ToList());
     }

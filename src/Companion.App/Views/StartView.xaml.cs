@@ -5,14 +5,47 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Start;
+using Microsoft.Win32;
 
 namespace Companion.App.Views;
 
 public partial class StartView : UserControl
 {
+    /// <summary>The Ctrl+O accelerator target (bound in XAML) for the "Open career…" picker, so the
+    /// keybind and the button run the exact same code path (career-hub-design.md decision 8).</summary>
+    public static readonly RoutedUICommand OpenCareerFileCommand =
+        new("Open career file", nameof(OpenCareerFileCommand), typeof(StartView));
+
     public StartView()
     {
         InitializeComponent();
+        CommandBindings.Add(new CommandBinding(OpenCareerFileCommand, (_, _) => OpenCareerFilePicker()));
+    }
+
+    /// <summary>"Open career…" button: mirror of the Ctrl+O keybind.</summary>
+    private void OnOpenCareerFile(object sender, RoutedEventArgs e) => OpenCareerFilePicker();
+
+    /// <summary>Shows the .ams2career file dialog and hands the chosen path to the VM command. The
+    /// dialog (view-layer only, per the shell contract) never blocks the VM — the command takes the
+    /// path so it stays unit-testable; opening routes through the same continue flow as the gallery.</summary>
+    private void OpenCareerFilePicker()
+    {
+        if (DataContext is not StartViewModel vm)
+            return;
+
+        string careersFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "AMS2CareerCompanion", "Careers");
+        var dialog = new OpenFileDialog
+        {
+            Title = "Open career",
+            Filter = "AMS2 career files (*.ams2career)|*.ams2career|All files (*.*)|*.*",
+            CheckFileExists = true,
+            InitialDirectory = Directory.Exists(careersFolder) ? careersFolder : string.Empty,
+        };
+
+        if (dialog.ShowDialog(Window.GetWindow(this)) == true)
+            vm.OpenCareerCommand.Execute(dialog.FileName);
     }
 
     /// <summary>Double-click a recent career = continue it.</summary>
@@ -45,6 +78,46 @@ public partial class StartView : UserControl
         {
             vm.RemoveRecentCommand.Execute(career);
         }
+    }
+
+    /// <summary>Right-click MRU → Rename career…: view-layer prompt (keyboard-native: textbox
+    /// focused, Enter = rename, Esc = cancel), then the VM does the validated rename.</summary>
+    private void OnRecentRename(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            DataContext is not StartViewModel vm)
+            return;
+
+        var dialog = new RenameCareerDialog(career.CareerName) { Owner = Window.GetWindow(this) };
+        if (dialog.ShowDialog() == true)
+            vm.RenameRecent(career, dialog.NewName);
+    }
+
+    /// <summary>Right-click MRU → Duplicate career (non-destructive, no confirmation).</summary>
+    private void OnRecentDuplicate(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: RecentCareer career } &&
+            DataContext is StartViewModel vm)
+        {
+            vm.DuplicateRecentCommand.Execute(career);
+        }
+    }
+
+    /// <summary>Right-click MRU → Delete career file…: view-layer confirmation (same contract as
+    /// the open picker's dialog — the VM command is the already-confirmed action, so it stays
+    /// unit-testable). Defaults to No; reachable by keyboard via the context-menu key.</summary>
+    private void OnRecentDelete(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            DataContext is not StartViewModel vm)
+            return;
+
+        var choice = MessageBox.Show(
+            $"Delete '{career.CareerName}' permanently?\n\n{career.Path}\n\n" +
+            "This deletes the career file from disk. It cannot be undone.",
+            "Delete career", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+        if (choice == MessageBoxResult.Yes)
+            vm.DeleteRecentCommand.Execute(career);
     }
 
     /// <summary>Right-click MRU → Open the folder with the career file selected.</summary>

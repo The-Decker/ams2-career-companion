@@ -74,6 +74,16 @@
 
         <!-- ===== top: phase + input + action buttons + candidates ===== -->
         <StackPanel DockPanel.Dock="Top">
+            <!-- weekend session heading (Increment 2): names the current session — "Qualifying",
+                 "Feature", "Sprint". Only weekend sessions set a SessionLabel, so a plain single-race
+                 entry (SessionLabel null) renders exactly as the shipped loop. -->
+            <Border Style="{StaticResource Chip}" Background="{StaticResource AccentDimBrush}"
+                    HorizontalAlignment="Left" Margin="0,0,0,10"
+                    Visibility="{Binding SessionLabel, Converter={StaticResource NullCollapsed}}">
+                <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"
+                           Text="{Binding SessionLabel}" />
+            </Border>
+
             <!-- first-run coach mark: type OR drag (ux-round §4) -->
             <Border Style="{StaticResource CoachMark}" Margin="0,0,0,10"
                     Visibility="{Binding DataContext.CoachMarks.ShowResultEntryTypeOrDrag,
@@ -183,9 +193,13 @@
                 BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,1,0,0"
                 Padding="14,10" Margin="0,12,0,0" CornerRadius="6">
             <DockPanel>
-                <Button DockPanel.Dock="Right" Content="Confirm result  ⏎" Style="{StaticResource AccentButton}"
+                <!-- primary action: "Set the grid" on the qualifying step, "Confirm result" on the
+                     race step (Increment 2b.3). Content binds to the hosting HomeView; the render
+                     harness shows this view standalone, so the FallbackValue keeps its text. -->
+                <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}"
+                        Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='Confirm result  ⏎'}"
                         Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
-                        ToolTip="Score the round and review points + standings movement before applying" />
+                        ToolTip="Score the round and review points + standings movement before applying (or lock the qualifying grid and start the race)" />
 
                 <!-- the slider prompt: the in-game Opponent Skill this round was DRIVEN at
                      (prefilled with the pace-anchor recommendation, stored in the envelope) -->

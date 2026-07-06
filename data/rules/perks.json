@@ -149,6 +149,54 @@
         "startStats": { "pace": 0.55, "oneLap": 0.52, "craft": 0.30, "racecraft": 0.82, "adaptability": 0.45 },
         "startMeta": { "marketability": 0.60, "durability": 0.42 },
         "perkIds": ["hard_charger", "opportunist", "injury_prone"]
+      },
+      {
+        "id": "privateer",
+        "name": "The Privateer",
+        "description": "You bought the entry, built the car in your own lock-up and pay the bills yourself. Sponsor money keeps the lights on and a spanner in your own hand keeps you honest - a genuine racer-owner scraping a living at the back of the grid.",
+        "startStats": { "pace": 0.42, "oneLap": 0.40, "craft": 0.55, "racecraft": 0.45, "adaptability": 0.48 },
+        "startMeta": { "marketability": 0.48, "durability": 0.52 },
+        "perkIds": ["sponsor_magnet", "cheap_contract", "engineers_favorite"]
+      },
+      {
+        "id": "comeback_veteran",
+        "name": "The Comeback Veteran",
+        "description": "Written off years ago, you came back leaner and wiser than the paddock remembered. Fit as a fiddle and loyal to a fault, you keep drawing offers long after your peers hung up the helmet - even if the ultimate ceiling is behind you.",
+        "startStats": { "pace": 0.44, "oneLap": 0.42, "craft": 0.58, "racecraft": 0.46, "adaptability": 0.50 },
+        "startMeta": { "marketability": 0.46, "durability": 0.70 },
+        "perkIds": ["iron_constitution", "company_man", "stamina_freak"]
+      },
+      {
+        "id": "storm_chaser",
+        "name": "The Storm Chaser",
+        "description": "A wet-weather artist who thrives when the skies turn and the race runs long. You reinvent yourself for every changing condition and nurse the car to the flag - but on a bone-dry sprint you are just another midfield runner.",
+        "startStats": { "pace": 0.46, "oneLap": 0.44, "craft": 0.50, "racecraft": 0.46, "adaptability": 0.72 },
+        "startMeta": { "marketability": 0.50, "durability": 0.55 },
+        "perkIds": ["rain_man", "adaptable", "fuel_saver"]
+      },
+      {
+        "id": "pole_sitter",
+        "name": "The Pole Sitter",
+        "description": "A Saturday hero. You brake later than anyone and hang it on pole with metronomic regularity - the drama comes on qualifying day, and Sunday is a matter of holding station.",
+        "startStats": { "pace": 0.48, "oneLap": 0.78, "craft": 0.52, "racecraft": 0.50, "adaptability": 0.45 },
+        "startMeta": { "marketability": 0.56, "durability": 0.50 },
+        "perkIds": ["qualifying_specialist", "late_braker", "metronome"]
+      },
+      {
+        "id": "points_machine",
+        "name": "The Points Machine",
+        "description": "Unspectacular and unbreakable. You are never the story, but you are always there at the flag banking the points while the stars break down - a durable, metronomic professional the standings quietly reward.",
+        "startStats": { "pace": 0.50, "oneLap": 0.46, "craft": 0.60, "racecraft": 0.44, "adaptability": 0.50 },
+        "startMeta": { "marketability": 0.40, "durability": 0.66 },
+        "perkIds": ["consistency_king", "ironman", "quiet_professional"]
+      },
+      {
+        "id": "showman",
+        "name": "The Showman",
+        "description": "Chaos is your stage and the cameras adore you. When others crash you are already up the road, and a breakout weekend sends your stock soaring - but a quiet one just as quickly forgotten. Feast or famine, always in the headlines.",
+        "startStats": { "pace": 0.52, "oneLap": 0.50, "craft": 0.40, "racecraft": 0.62, "adaptability": 0.46 },
+        "startMeta": { "marketability": 0.74, "durability": 0.48 },
+        "perkIds": ["opportunist", "media_darling", "streaky"]
       }
     ]
   },

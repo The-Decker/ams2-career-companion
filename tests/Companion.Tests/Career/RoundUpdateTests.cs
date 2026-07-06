@@ -63,6 +63,29 @@ public class RoundUpdateTests
     }
 
     [Fact]
+    public void QualifyingAnchor_CalibratesAndEmits_OnlyWhenQualifyingRan()
+    {
+        // No qualifying (single-race): the anchor stays 0 and no qualiAnchor row is emitted —
+        // the journal sequence is exactly what it was before Increment 2.
+        var noQuali = RoundUpdate.Apply(Context(finish: 2));
+        Assert.Equal(0.0, noQuali.Player.QualifyingAnchor);
+        Assert.DoesNotContain(JournalPhases.PlayerQualiAnchor, noQuali.Events.Select(e => e.Phase));
+
+        // With a qualifying position: the one-lap anchor calibrates and emits its row.
+        var withQuali = RoundUpdate.Apply(Context(finish: 2) with { PlayerQualifyingPosition = 1 });
+        double expected = PaceAnchorMath.Update(
+            0.0, PaceAnchorMath.ImpliedPlayerQualiPace(CareerTestData.PlayerGrid(), 1, 90.0));
+        Assert.Equal(expected, withQuali.Player.QualifyingAnchor, 12);
+        Assert.Contains(JournalPhases.PlayerQualiAnchor, withQuali.Events.Select(e => e.Phase));
+
+        // The qualiAnchor row sits in a fixed position — right after the pace anchor.
+        var phases = withQuali.Events.Select(e => e.Phase).ToList();
+        Assert.Equal(
+            phases.IndexOf(JournalPhases.PlayerPaceAnchor) + 1,
+            phases.IndexOf(JournalPhases.PlayerQualiAnchor));
+    }
+
+    [Fact]
     public void ApplyIsDeterministic()
     {
         var first = RoundUpdate.Apply(Context(finish: 2));

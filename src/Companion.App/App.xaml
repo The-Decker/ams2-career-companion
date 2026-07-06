@@ -33,6 +33,9 @@
             <DataTemplate DataType="{x:Type hub:NewsViewModel}">
                 <views:NewsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type hub:HistoryViewModel}">
+                <views:HistoryView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type shell:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>

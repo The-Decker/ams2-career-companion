@@ -28,6 +28,13 @@
   "rounds": [
     {
       "round": 1,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "South African Grand Prix",
       "date": "1967-01-02",
       "championship": true,
@@ -92,6 +99,13 @@
     },
     {
       "round": 2,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Monaco Grand Prix",
       "date": "1967-05-07",
       "championship": true,
@@ -150,6 +164,13 @@
     },
     {
       "round": 3,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Dutch Grand Prix",
       "date": "1967-06-04",
       "championship": true,
@@ -201,6 +222,13 @@
     },
     {
       "round": 4,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Belgian Grand Prix",
       "date": "1967-06-18",
       "championship": true,
@@ -263,6 +291,13 @@
     },
     {
       "round": 5,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "French Grand Prix",
       "date": "1967-07-02",
       "championship": true,
@@ -309,6 +344,13 @@
     },
     {
       "round": 6,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "British Grand Prix",
       "date": "1967-07-15",
       "championship": true,
@@ -357,6 +399,13 @@
     },
     {
       "round": 7,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "German Grand Prix",
       "date": "1967-08-06",
       "championship": true,
@@ -416,6 +465,13 @@
     },
     {
       "round": 8,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Canadian Grand Prix",
       "date": "1967-08-27",
       "championship": true,
@@ -459,6 +515,13 @@
     },
     {
       "round": 9,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Italian Grand Prix",
       "date": "1967-09-10",
       "championship": true,
@@ -547,6 +610,13 @@
     },
     {
       "round": 10,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "United States Grand Prix",
       "date": "1967-10-01",
       "championship": true,
@@ -600,6 +670,13 @@
     },
     {
       "round": 11,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Mexican Grand Prix",
       "date": "1967-10-22",
       "championship": true,

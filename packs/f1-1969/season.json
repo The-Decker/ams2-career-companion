@@ -28,6 +28,13 @@
   "rounds": [
     {
       "round": 1,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "South African Grand Prix",
       "date": "1969-03-01",
       "championship": true,
@@ -77,6 +84,13 @@
     },
     {
       "round": 2,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Spanish Grand Prix",
       "date": "1969-05-04",
       "championship": true,
@@ -125,6 +139,13 @@
     },
     {
       "round": 3,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Monaco Grand Prix",
       "date": "1969-05-18",
       "championship": true,
@@ -182,6 +203,13 @@
     },
     {
       "round": 4,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Dutch Grand Prix",
       "date": "1969-06-21",
       "championship": true,
@@ -234,6 +262,13 @@
     },
     {
       "round": 5,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "French Grand Prix",
       "date": "1969-07-06",
       "championship": true,
@@ -282,6 +317,13 @@
     },
     {
       "round": 6,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "British Grand Prix",
       "date": "1969-07-19",
       "championship": true,
@@ -338,6 +380,13 @@
     },
     {
       "round": 7,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "German Grand Prix",
       "date": "1969-08-03",
       "championship": true,
@@ -387,6 +436,13 @@
     },
     {
       "round": 8,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Italian Grand Prix",
       "date": "1969-09-07",
       "championship": true,
@@ -447,6 +503,13 @@
     },
     {
       "round": 9,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Canadian Grand Prix",
       "date": "1969-09-20",
       "championship": true,
@@ -495,6 +558,13 @@
     },
     {
       "round": 10,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "United States Grand Prix",
       "date": "1969-10-05",
       "championship": true,
@@ -544,6 +614,13 @@
     },
     {
       "round": 11,
+      "weekend": {
+        "practice": { "present": true, "label": "Practice" },
+        "qualifying": { "present": true, "label": "Qualifying" },
+        "races": [
+          { "id": "race", "label": "Grand Prix" }
+        ]
+      },
       "name": "Mexican Grand Prix",
       "date": "1969-10-19",
       "championship": true,

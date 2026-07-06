@@ -25,6 +25,11 @@ public interface ICareerSession
     /// <summary>The current round's seats, in grid order, for the result-entry screen.</summary>
     IReadOnlyList<GridSeat> CurrentGrid();
 
+    /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
+    /// or null when the round runs today's single race. Additive default — sessions without
+    /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
+    PackWeekend? CurrentWeekend() => null;
+
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
     ConfirmModel Preview(ResultDraft draft);
 
@@ -42,6 +47,41 @@ public interface ICareerSession
     /// rows; the generative multi-slot article grammar is a later slice. Additive default:
     /// sessions without a news projection report an empty feed, so existing fakes compile.</summary>
     IReadOnlyList<NewsDispatch> ReadFeed() => [];
+
+    /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
+    /// 18): one lineage-aware card per season in the career — its year, the player's final
+    /// championship position, final reputation/OPI, the drivers' champion, and the season's key
+    /// headlines — plus an aggregate records book (best finish, wins, podiums, points, seasons)
+    /// rolled up across every season. Pure read-only projection over the same stored results,
+    /// folded player states and journal the other lenses read — re-derivable byte-identically,
+    /// no new persistence. Additive default: sessions without the projection report an empty
+    /// timeline, so existing fakes compile. (Increment 3.)</summary>
+    CareerTimeline CareerTimeline() => Services.CareerTimeline.Empty;
+
+    /// <summary>The clickable-everywhere "Why?" inspector (career-hub-design.md §5, decisions 4 +
+    /// 5): walks the append-only journal rows that produced a number the hub shows and returns them
+    /// as an ordered plain-language contribution breakdown. <paramref name="entity"/> is the journal
+    /// <c>entity</c> to walk (e.g. <c>"player"</c>, a driver id, a constructor id, a team id);
+    /// <paramref name="round"/> narrows to a single round when given, else the whole season's rows
+    /// for that entity are chained (oldest first). Pure read-only projection over the SAME journal
+    /// the news feed and replay byte-check read — no new persistence, and deterministic (ordered by
+    /// journal <c>seq</c>). The breakdown is an ORDERED LIST of labelled rows, not a single string,
+    /// so it accepts perk/stat contribution rows later (decision 5) with no format change. Additive
+    /// default: sessions without the projection report an empty chain, so existing fakes compile.</summary>
+    JournalChain JournalFor(string entity, int? round = null) => JournalChain.Empty;
+
+    /// <summary>The season-scoped "Why?" inspector: the same walk as
+    /// <see cref="JournalFor(string,int?)"/>, but over the season whose year is
+    /// <paramref name="seasonYear"/> rather than the CURRENT season — so a History card for ANY
+    /// completed season can open the inspector for that season's numbers (final standing, champion,
+    /// records), not just the current one (career-hub-design.md §4/§5, decision 18 "total recall").
+    /// Resolves the season row for the year in the same career file, then runs the identical read-only
+    /// projection over THAT season's journal — deterministic (journal <c>seq</c> order, ordinal
+    /// comparisons), pure, no new persistence. When no season matches the year the chain is empty
+    /// (a graceful no-op, never a throw). A DISTINCT name (not a <see cref="JournalFor(string,int?)"/>
+    /// overload) so an int-literal round can never bind here by mistake. Additive default: sessions
+    /// without the projection report an empty chain, so every existing fake compiles unchanged.</summary>
+    JournalChain JournalForSeason(string entity, int seasonYear, int? round = null) => JournalChain.Empty;
 
     /// <summary>Recommended Opponent Skill slider (70–120) for the CURRENT round, from the
     /// last folded round's pace anchor. Null before the anchor calibrates (fresh careers).
@@ -163,6 +203,150 @@ public sealed record NewsDispatch
     public string Body { get; init; } = "";
 }
 
+/// <summary>The History/Scrapbook projection: the per-season lineage of cards plus the aggregate
+/// records book (decision 18, "total recall"). A pure read model — no session coupling — so the
+/// History view-model can be built and tested from a plain value.</summary>
+public sealed record CareerTimeline
+{
+    /// <summary>Empty timeline (the seam default, and a fresh career before its first season
+    /// has any applied round).</summary>
+    public static readonly CareerTimeline Empty = new();
+
+    /// <summary>One card per season in the career, oldest season first (the lineage order).
+    /// A season with no applied round yet still appears — its result fields read "in progress".</summary>
+    public IReadOnlyList<CareerSeasonCard> Seasons { get; init; } = [];
+
+    /// <summary>Career-spanning bests/streaks/milestones aggregated across every season's
+    /// per-round snapshots.</summary>
+    public CareerRecordsBook Records { get; init; } = CareerRecordsBook.Empty;
+
+    public bool IsEmpty => Seasons.Count == 0;
+}
+
+/// <summary>One season's scrapbook card: the year, the player's final standing, final folded
+/// reputation/OPI, the drivers' champion, and the season's key headlines.</summary>
+public sealed record CareerSeasonCard
+{
+    public required int SeasonYear { get; init; }
+
+    /// <summary>The player's final championship position, or null when unclassified / the season
+    /// has no applied round yet.</summary>
+    public int? PlayerPosition { get; init; }
+
+    /// <summary>How many championship rounds have an applied result in this season.</summary>
+    public required int RoundsApplied { get; init; }
+
+    public required int RoundCount { get; init; }
+
+    /// <summary>True once every championship round of the season has a result — the season is in
+    /// the record books. False = still in progress (the current season, mid-run).</summary>
+    public bool IsComplete { get; init; }
+
+    /// <summary>Final reputation after the season-end pipeline (null before the season completes
+    /// or when no folded state exists).</summary>
+    public double? FinalReputation { get; init; }
+
+    /// <summary>Final overperformance index after the season-end pipeline; null as above.</summary>
+    public double? FinalOpi { get; init; }
+
+    /// <summary>The drivers' champion's display name (P1 in the final snapshot); null before any
+    /// round is applied.</summary>
+    public string? ChampionName { get; init; }
+
+    /// <summary>True when the player IS the drivers' champion — the card's crowning line.</summary>
+    public bool PlayerIsChampion { get; init; }
+
+    /// <summary>The season's journaled headlines in story order — the archived dispatches.</summary>
+    public IReadOnlyList<string> Headlines { get; init; } = [];
+}
+
+/// <summary>Career-spanning records: bests, counts and totals aggregated from every season's
+/// per-round standings snapshots (wins/podiums/points/best finish/seasons).</summary>
+public sealed record CareerRecordsBook
+{
+    public static readonly CareerRecordsBook Empty = new();
+
+    /// <summary>The player's best (numerically lowest) single-race finishing position across the
+    /// whole career; null before any round is applied.</summary>
+    public int? BestFinish { get; init; }
+
+    /// <summary>Race wins (finishes classified P1) across the career.</summary>
+    public int Wins { get; init; }
+
+    /// <summary>Podiums (finishes classified P1–P3) across the career.</summary>
+    public int Podiums { get; init; }
+
+    /// <summary>Total championship points the player has scored across every season (counted
+    /// points of the final snapshot of each season, summed).</summary>
+    public double TotalPoints { get; init; }
+
+    /// <summary>Drivers' championships won (seasons the player finished P1).</summary>
+    public int Championships { get; init; }
+
+    /// <summary>Seasons the player has started (has at least one applied round).</summary>
+    public int SeasonsRaced { get; init; }
+
+    /// <summary>The longest streak of consecutive race wins across the career.</summary>
+    public int LongestWinStreak { get; init; }
+
+    /// <summary>The longest streak of consecutive podium finishes across the career.</summary>
+    public int LongestPodiumStreak { get; init; }
+}
+
+/// <summary>The "Why?" inspector's causal chain for one entity (career-hub-design.md §5): the
+/// title of the thing being explained, the entity + optional round it was walked for, an ORDERED
+/// list of labelled contribution rows (the journal rows that produced the number, oldest first),
+/// and a plain-language summary sentence. A pure read model — no session coupling — so the
+/// inspector view-model is built and tested from a plain value. The ordered-row shape is the
+/// format designed to accept perk/stat rows later (decision 5) without changing the seam.</summary>
+public sealed record JournalChain
+{
+    /// <summary>The empty chain (the seam default, and any entity with no journal rows).</summary>
+    public static readonly JournalChain Empty = new();
+
+    /// <summary>The journal entity these contributions were walked for (e.g. <c>"player"</c>, a
+    /// driver id, a constructor/team id). Empty on <see cref="Empty"/>.</summary>
+    public string Entity { get; init; } = "";
+
+    /// <summary>The round the chain was narrowed to, or null for a whole-season chain.</summary>
+    public int? Round { get; init; }
+
+    /// <summary>A human-readable title for the inspector panel header (e.g. "Why P2 — Round 3").</summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>The contribution rows that produced the number, in journal <c>seq</c> order
+    /// (oldest first) — the walk-back the inspector renders top to bottom.</summary>
+    public IReadOnlyList<JournalContribution> Contributions { get; init; } = [];
+
+    /// <summary>A one-line plain-language summary of the chain (the Why? chip's sentence for the
+    /// most telling row), empty when nothing explanatory was found.</summary>
+    public string Summary { get; init; } = "";
+
+    public bool IsEmpty => Contributions.Count == 0;
+}
+
+/// <summary>One labelled row of a <see cref="JournalChain"/>: a short <see cref="Label"/> naming the
+/// contribution (e.g. "Expected finish", "Reputation", "Pace anchor", or — when the character layer
+/// ships — "tier-4 car", "Pace", "Rain Man"), an optional longer <see cref="Detail"/> sentence, an
+/// optional signed/absolute <see cref="Value"/> string for the number itself (e.g. "P8", "−3",
+/// "+2 (wet)"), and the source journal <see cref="SourceSeq"/> for provenance. The nullable Value
+/// keeps a purely narrative row (a headline, a note) valid alongside a numeric contribution.</summary>
+public sealed record JournalContribution
+{
+    public required string Label { get; init; }
+
+    /// <summary>A longer plain-language detail for the row; empty when the label + value say it all.</summary>
+    public string Detail { get; init; } = "";
+
+    /// <summary>The contribution's number as display text (e.g. "P8", "−3", "42.5", "+2 (wet)"),
+    /// or null for a narrative row that carries no number.</summary>
+    public string? Value { get; init; }
+
+    /// <summary>The journal <c>seq</c> this row was projected from — the provenance anchor and the
+    /// deterministic sort key. 0 for a synthesised row that has no single source.</summary>
+    public long SourceSeq { get; init; }
+}
+
 public sealed record StageOutcome
 {
     public required bool Success { get; init; }
@@ -222,6 +406,35 @@ public sealed record ResultDraft
     /// the result screen, prefilled with the last recommendation, editable 70–120). Stored in
     /// the round's raw-result envelope. Null falls back to the current recommendation.</summary>
     public double? SliderUsed { get; init; }
+
+    /// <summary>The qualifying order for this round (driver ids, pole first), when the pack's
+    /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in
+    /// the raw envelope; never scored. Older producers omit it.</summary>
+    public IReadOnlyList<string>? QualifyingOrder { get; init; }
+
+    /// <summary>Additional race classifications for an authored TWO-race weekend (Increment 2): the
+    /// PRIMARY race is this draft's own <see cref="Classified"/>/<see cref="DidNotFinish"/>/
+    /// <see cref="Disqualified"/> (race index 0); each entry here is a further race (index 1…),
+    /// scored on its own points table per the pack's <c>weekend.races</c>. Null/empty = today's
+    /// single race, so the round scores + folds exactly as before. Older producers omit it.</summary>
+    public IReadOnlyList<ExtraRaceResult>? AdditionalRaces { get; init; }
+}
+
+/// <summary>One additional race's classification in a two-race weekend (<see cref="ResultDraft.AdditionalRaces"/>),
+/// beyond the primary race the draft itself carries. Positions are implied by <see cref="Classified"/>
+/// order (index 0 = P1), exactly like the primary race. Scoring inputs only — its points come from the
+/// race's own table (per the pack weekend); the per-race DNF blame + per-session fold land in a later
+/// Increment-2 slice.</summary>
+public sealed record ExtraRaceResult
+{
+    /// <summary>Driver ids in finishing order (index 0 = P1).</summary>
+    public required IReadOnlyList<string> Classified { get; init; }
+
+    /// <summary>Driver id → one-letter DNF reason ("m"/"a"/"o"), same stable seam as the primary race.</summary>
+    public IReadOnlyDictionary<string, string> DidNotFinish { get; init; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
+
+    public IReadOnlyList<string> Disqualified { get; init; } = [];
 }
 
 /// <summary>A customised DNF cause carried beside the one-letter code in

@@ -38,11 +38,18 @@ public sealed record SeasonScoringDefinition
         new Dictionary<string, Rational>();
 }
 
-/// <summary>A round's contribution to one competitor's season total.</summary>
+/// <summary>A round's contribution to one competitor's season total. A round normally yields one
+/// score per competitor (<see cref="SessionIndex"/> null). An authored two-race weekend scored
+/// per session (<see cref="RoundResult.PerSessionScoring"/>) yields one score per race, sub-keyed
+/// by <see cref="SessionIndex"/> so best-N can keep or drop the two races independently.</summary>
 public sealed record RoundScore
 {
     public required int Round { get; init; }
     public required Rational Points { get; init; }
+
+    /// <summary>The 0-based session index within the round when the round scores each race
+    /// independently; null for the shipped one-score-per-round shape.</summary>
+    public int? SessionIndex { get; init; }
 }
 
 public sealed record DroppedResult
