@@ -64,7 +64,13 @@ public static class XpMath
         if (r.BeatTeammate && r.Dnf is null)
             bonus += cfg.BeatTeammate * Mult("beatTeammate");
 
-        return (int)Math.Round(finishTerm + bonus, MidpointRounding.AwayFromZero);
+        // Blanket per-round multipliers, NOT tied to one result cause: "all" scales every round
+        // (adaptable's -15%), "ageWindow" scales only while the round's age-window condition holds
+        // (wonderkid/late_bloomer — the fold folds ageLtPeak/ageGtePeak into these mods). Absent
+        // cause ⇒ ×1.0 exactly, so a career without these perks is byte-identical to the shipped path.
+        double blanket = Mult("all") * Mult("ageWindow");
+
+        return (int)Math.Round((finishTerm + bonus) * blanket, MidpointRounding.AwayFromZero);
     }
 
     /// <summary>Per-season XP: the best applicable championship-placement bonus plus the flat

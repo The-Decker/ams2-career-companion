@@ -110,6 +110,35 @@ public sealed class PerkResolverTests
     }
 
     [Fact]
+    public void Resolve_AgeWindowConditions_FireTheFront_OrBackLoadedHalf()
+    {
+        var rules = Rules();
+
+        // prodigy: raceSkill/qualifyingSkill +0.05 @ageLtPeak, raceSkill −0.02 @ageGtePeak. With no
+        // round context both halves are carried (dormant), the talent deltas stay at identity.
+        var dormant = PerkResolver.Resolve(["prodigy"], rules);
+        Assert.Equal(0.0, dormant.TalentDelta("raceSkill"));
+        Assert.Equal(3, dormant.Conditional.Count);
+
+        // Pre-peak (young): the fast-start bonus FIRES, the slump stays carried.
+        var young = PerkResolver.Resolve(["prodigy"], rules, new HashSet<string> { "ageLtPeak" });
+        Assert.Equal(0.05, young.TalentDelta("raceSkill"), 6);
+        Assert.Equal(0.05, young.TalentDelta("qualifyingSkill"), 6);
+        Assert.Single(young.Conditional); // only the ageGtePeak slump remains carried
+
+        // Past peak: the slump FIRES instead (−0.02 raceSkill), the youth bonus does not.
+        var veteran = PerkResolver.Resolve(["prodigy"], rules, new HashSet<string> { "ageGtePeak" });
+        Assert.Equal(-0.02, veteran.TalentDelta("raceSkill"), 6);
+        Assert.Equal(0.0, veteran.TalentDelta("qualifyingSkill"));
+
+        // wonderkid: xpRate ageWindow +0.40 @ageLtPeak / −0.25 @ageGtePeak — a blanket XP multiplier.
+        var wonderYoung = PerkResolver.Resolve(["wonderkid"], rules, new HashSet<string> { "ageLtPeak" });
+        Assert.Equal(1.40, wonderYoung.XpMult("ageWindow"), 6);
+        var wonderOld = PerkResolver.Resolve(["wonderkid"], rules, new HashSet<string> { "ageGtePeak" });
+        Assert.Equal(0.75, wonderOld.XpMult("ageWindow"), 6);
+    }
+
+    [Fact]
     public void Resolve_MultiplePerks_AccumulateAdditively()
     {
         // sunday_driver (raceSkill +0.06 / quali -0.06) + qualifying_specialist (quali +0.08 /

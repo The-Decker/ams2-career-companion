@@ -77,6 +77,26 @@ public sealed class XpMathTests
     };
 
     [Fact]
+    public void PerRound_BlanketMultipliers_ScaleTheWholeRound()
+    {
+        var cfg = Round();
+        // Expected P10, finished P4, scored points: (10-4)*6 = 36 + points 10 = 46 base.
+        var round = new XpMath.RoundInputs(
+            ExpectedFinish: 10, EffectiveFinish: 4, FinishPosition: 4,
+            ScoredPoints: true, BeatTeammate: false, Dnf: null);
+        Assert.Equal(46, XpMath.PerRound(cfg, round));
+
+        // adaptable: "all" ×0.85 scales the ENTIRE round (both the term and the bonus): 46*0.85 = 39.1 → 39.
+        Assert.Equal(39, XpMath.PerRound(cfg, round, Mods(("all", 0.85))));
+        // wonderkid young: "ageWindow" ×1.40 → 46*1.40 = 64.4 → 64.
+        Assert.Equal(64, XpMath.PerRound(cfg, round, Mods(("ageWindow", 1.40))));
+        // wonderkid at/past peak: "ageWindow" ×0.75 → 46*0.75 = 34.5 → 35 (away-from-zero).
+        Assert.Equal(35, XpMath.PerRound(cfg, round, Mods(("ageWindow", 0.75))));
+        // The two blanket multipliers compound: 46 * 0.85 * 1.40 = 54.74 → 55.
+        Assert.Equal(55, XpMath.PerRound(cfg, round, Mods(("all", 0.85), ("ageWindow", 1.40))));
+    }
+
+    [Fact]
     public void PerRound_OverperformanceTermIsClampedToTheCap()
     {
         // Expected last (P20), won (P1): (20-1)*6 = 114, clamped to the +60 cap, +win 40.

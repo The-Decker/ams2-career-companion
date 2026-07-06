@@ -213,10 +213,13 @@ public static class ReplayService
 
         var previous = PreviousRoundState(db, seasonId, upTo, tx);
         var startTeams = StateStore.ReadTeamStates(db, seasonId, StateStore.StageStart, tx);
+        // The player's age THIS season = first-season age + year distance (the same rule the season
+        // end and replay use), so the age-window perk conditions fold identically on every path.
+        int playerAge = inputs.PlayerAge + (pack.Season.Year - CareerStore.ReadSeasons(db, tx)[0].Year);
         var outcome = ComputeRoundFold(
             pack, masterSeed, inputs, startTeams,
             ChampionshipResults(pack, upTo),
-            upTo[^1].ToEnvelope(), round, previous);
+            upTo[^1].ToEnvelope(), round, playerAge, previous);
 
         JournalStore.AppendMany(db, seasonId, round, outcome.Events, utc, tx);
         StateStore.InsertRoundPlayerState(db, seasonId, round, outcome.State, tx);
@@ -456,13 +459,14 @@ public static class ReplayService
             // live path (non-championship rounds are folded — player update, carried state —
             // but their classifications never enter the standings engine).
             var soFar = new List<RoundResult>();
+            int playerAgeThisSeason = inputs.PlayerAge + (season.Year - firstYear);
             foreach (var stored in current.Results)
             {
                 if (ChampionshipCalendar.IsChampionshipRound(pack, stored.Round))
                     soFar.Add(stored.ToRoundResult());
                 var outcome = ComputeRoundFold(
                     pack, masterSeed, inputs, current.StartTeams, soFar,
-                    stored.ToEnvelope(), stored.Round, previousState);
+                    stored.ToEnvelope(), stored.Round, playerAgeThisSeason, previousState);
                 foreach (var journalEvent in outcome.Events)
                     regenerated.Add((stored.Round, journalEvent));
                 StateStore.InsertRoundPlayerState(db, season.Id, stored.Round, outcome.State, transaction);
@@ -473,11 +477,10 @@ public static class ReplayService
             SeasonEndResult? seasonEnd = null;
             if (IsComplete(season))
             {
-                int playerAge = inputs.PlayerAge + (season.Year - firstYear);
                 string seasonPlayerDriverId = SeasonPlayerDriverId(
                     pack, current.StartPlayer?.LiveryName, inputs.PlayerDriverId);
                 var context = BuildSeasonEndContext(
-                    season.Year, playerAge, pack, masterSeed, inputs, seasonPlayerDriverId, soFar,
+                    season.Year, playerAgeThisSeason, pack, masterSeed, inputs, seasonPlayerDriverId, soFar,
                     previousState.Player, current.StartDrivers, current.StartTeams);
                 seasonEnd = SeasonEndPipeline.Run(context);
                 foreach (var journalEvent in seasonEnd.Events)
@@ -556,6 +559,7 @@ public static class ReplayService
         IReadOnlyList<RoundResult> roundsSoFar,
         RoundResultEnvelope envelope,
         int round,
+        int playerAge,
         RoundPlayerState previous)
     {
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
@@ -567,9 +571,8 @@ public static class ReplayService
         var character = previous.Player.Character;
         bool hasCharacter = character is not null && inputs.CharacterRules is not null;
 
-        // Round-level perk conditions the fold can evaluate BEFORE the grid (race length). Weather and
-        // age-window conditions thread in later slices; until then they never match, so their perks
-        // stay dormant. A character with no conditional perks (or an empty set) resolves to the exact
+        // Round-level perk conditions the fold can evaluate BEFORE the grid (race length, weather, the
+        // age window). A character with no conditional perks (or an empty set) resolves to the exact
         // unconditional modifier, so non-conditional and non-character careers stay byte-identical.
         var gridConditions = new HashSet<string>(StringComparer.Ordinal);
         if (hasCharacter)
@@ -580,6 +583,12 @@ public static class ReplayService
             // fires, so pre-v4 saves replay byte-identically; a captured wet/dry flag fires the perk.
             if (envelope.IsWet is bool wet)
                 gridConditions.Add(wet ? "wetRound" : "dryRound");
+            // Age window (prodigy/wonderkid/late_bloomer): the player's age this season vs the era's
+            // peak-age start. Exactly one of the two fires per round, so a pre-peak youth and a
+            // past-peak veteran fold the front-/back-loaded halves of those perks — deterministic
+            // (age is a pure function of the season year offset), byte-identical without the perks.
+            if (inputs.AgingCurves.TryForYear(pack.Season.Year) is { } curve)
+                gridConditions.Add(playerAge < curve.PeakAgeStart ? "ageLtPeak" : "ageGtePeak");
         }
 
         PlayerPerkModifiers? gridMods = hasCharacter

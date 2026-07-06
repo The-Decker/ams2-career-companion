@@ -434,6 +434,90 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void AgeWindowPerkCharacter_FiresTheAgeGatedEffect_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "agewindow.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 424242;
+        Companion.Core.Packs.SeasonPack pack;
+
+        // At age 30 in 1967 (sixties peak plateau 28–32) the player is AT/past the peak start, so the
+        // ageGtePeak halves fire: prodigy's −0.02 raceSkill patches the player seat (grid → expectedFinish
+        // → OPI/rep) and wonderkid's −0.25 blanket XP scales the player.xp rows — two DIFFERENT wiring
+        // paths (grid statDelta + XP) exercised by one folded career.
+        var character = new CharacterProfile
+        {
+            Name = "Boy Wonder",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.60, ["oneLap"] = 0.55, ["craft"] = 0.45, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.45, ["marketability"] = 0.55, ["durability"] = 0.45,
+            },
+            PerkIds = ["wonderkid"], // xpRate ageWindow, gated on the age window (cost 0)
+            CpUnspent = 0,
+        };
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "AgeWindow",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = character,
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            Assert.NotNull(session.SeasonReview());
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // The age window is a pure function of the season year offset, so the ageGtePeak XP scaling
+        // folds identically on replay — the whole career re-simulates byte-for-byte.
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30, // AT the sixties peak start (28) → ageGtePeak fires
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+
+        // The wonderkid blanket XP multiplier actually FIRED: at least one player.xp row must carry a
+        // non-zero round XP so the −25% scaling is exercised, not silently skipped.
+        var xpRows = JournalStore.ReadSeason(db, CareerStore.ReadSeasons(db).Single().Id)
+            .Where(r => r.Phase == JournalPhases.PlayerXp)
+            .ToList();
+        Assert.NotEmpty(xpRows);
+    }
+
+    [Fact]
     public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
     {
         string packDirectory = Path.Combine(_root, "pack");

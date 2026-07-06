@@ -259,10 +259,12 @@ public static class CareerStore
             ("@id", seasonId));
 
     /// <summary>All seasons in career order (season id order).</summary>
-    public static IReadOnlyList<SeasonRecord> ReadSeasons(CareerDatabase db)
+    public static IReadOnlyList<SeasonRecord> ReadSeasons(
+        CareerDatabase db, Microsoft.Data.Sqlite.SqliteTransaction? transaction = null)
     {
         using var command = db.Command(
-            "SELECT id, year, pack_id, pack_version, status FROM season ORDER BY id;");
+            "SELECT id, year, pack_id, pack_version, status FROM season ORDER BY id;",
+            transaction);
         using var reader = command.ExecuteReader();
         var seasons = new List<SeasonRecord>();
         while (reader.Read())
