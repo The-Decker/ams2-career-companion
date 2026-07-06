@@ -127,6 +127,9 @@ public sealed class BaselineImportTests : IDisposable
             wizard.ProceedAnyway = true;
         wizard.NextCommand.Execute(null);                       // -> SeatPick
         wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null);                       // -> Character (rules are loaded)
+        Assert.Equal(WizardStep.Character, wizard.Step);
+        Assert.NotNull(wizard.Character);                       // an archetype preset is pre-selected → valid
         wizard.NextCommand.Execute(null);                       // -> Confirm
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         return wizard;

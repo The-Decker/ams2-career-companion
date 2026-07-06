@@ -3,13 +3,16 @@ using Companion.Core.Scoring;
 
 namespace Companion.ViewModels.Wizard;
 
-/// <summary>The four one-screen wizard steps (app-shell contract).</summary>
+/// <summary>The one-screen wizard steps (app-shell contract). The Character step (Increment 4a)
+/// sits between seat pick and confirm; it is present only when character rules are loaded, so a
+/// build without them (some tests) flows straight seat-pick → confirm.</summary>
 public enum WizardStep
 {
     SeasonPick = 0,
     Verification = 1,
     SeatPick = 2,
-    Confirm = 3,
+    Character = 3,
+    Confirm = 4,
 }
 
 /// <summary>One line of the verification step: a structural/content/scan finding. Info
