@@ -294,8 +294,11 @@ public static class ReplayService
         }
 
         int playerAge = inputs.PlayerAge + (season.Year - seasons[0].Year);
+        // The live season-end runs for the CURRENT season only, whose player driver id the caller
+        // already resolved into inputs — pass it straight through (the multi-season Resimulate path
+        // is the one that must re-resolve per season from the start-state livery).
         var context = BuildSeasonEndContext(
-            season.Year, playerAge, pack, masterSeed, inputs, rounds, player,
+            season.Year, playerAge, pack, masterSeed, inputs, inputs.PlayerDriverId, rounds, player,
             StateStore.ReadDriverStates(db, seasonId, StateStore.StageStart),
             StateStore.ReadTeamStates(db, seasonId, StateStore.StageStart));
         var result = SeasonEndPipeline.Run(context);
@@ -471,8 +474,10 @@ public static class ReplayService
             if (IsComplete(season))
             {
                 int playerAge = inputs.PlayerAge + (season.Year - firstYear);
+                string seasonPlayerDriverId = SeasonPlayerDriverId(
+                    pack, current.StartPlayer?.LiveryName, inputs.PlayerDriverId);
                 var context = BuildSeasonEndContext(
-                    season.Year, playerAge, pack, masterSeed, inputs, soFar,
+                    season.Year, playerAge, pack, masterSeed, inputs, seasonPlayerDriverId, soFar,
                     previousState.Player, current.StartDrivers, current.StartTeams);
                 seasonEnd = SeasonEndPipeline.Run(context);
                 foreach (var journalEvent in seasonEnd.Events)
@@ -585,7 +590,15 @@ public static class ReplayService
         // independently, THREADING the player state race → race, so OPI/rep/pace calibrate per race.
         // A single race runs the loop exactly once → the shipped fold, byte-identical.
         var raceSessions = envelope.Result.Sessions.Where(s => s.Kind == SessionKind.Race).ToList();
-        int? qualifyingPosition = PlayerQualifyingPosition(envelope, inputs.PlayerDriverId);
+
+        // Score the player under the driver id of the SEAT they occupy THIS season, resolved from
+        // their livery above — not a single career-global id. The two are identical in the first
+        // season (the player's livery IS that driver's seat), so every single-pack career and the
+        // oracle stay byte-identical; but after an era transition into a new team the player's seat
+        // driver id changes, and the global id would fail to find them in the new pack's results
+        // (dropping every player.* row). Keying off the resolved seat mirrors the live path.
+        string playerDriverId = playerSeat.DriverId;
+        int? qualifyingPosition = PlayerQualifyingPosition(envelope, playerDriverId);
 
         var player = previous.Player;
         int recommendedSlider = previous.RecommendedSlider;
@@ -595,7 +608,7 @@ public static class ReplayService
 
         for (int i = 0; i < raceSessions.Count; i++)
         {
-            var outcome = PlayerOutcomeIn(raceSessions[i], envelope, inputs.PlayerDriverId);
+            var outcome = PlayerOutcomeIn(raceSessions[i], envelope, playerDriverId);
             if (outcome is null)
                 continue; // the player is not in this race's classification
 
@@ -676,6 +689,25 @@ public static class ReplayService
         {
             return null;
         }
+    }
+
+    /// <summary>The player's driver id THIS season, resolved from their start-state livery the same
+    /// way the round fold resolves the seat — so a career that changed teams at an era transition
+    /// scores its season end (reputation, champion headline) under the seat it actually occupies,
+    /// not a stale career-global id. Falls back to the input id when there is no livery (a legacy
+    /// start state) or no seat resolves.</summary>
+    private static string SeasonPlayerDriverId(SeasonPack pack, string? liveryName, string fallback)
+    {
+        if (!string.IsNullOrEmpty(liveryName))
+        {
+            foreach (var round in pack.Season.Rounds)
+            {
+                var grid = ResolvePlayerGrid(pack, round.Round, liveryName);
+                if (grid is not null)
+                    return grid.Seats[SeatStrengthModel.PlayerSeatIndex(grid)].DriverId;
+            }
+        }
+        return fallback;
     }
 
     /// <summary>The player's outcome in the round's race classification, or null when the
@@ -804,6 +836,7 @@ public static class ReplayService
         SeasonPack pack,
         ulong masterSeed,
         ReplaySimInputs inputs,
+        string playerDriverId,
         IReadOnlyList<RoundResult> rounds,
         PlayerCareerState player,
         IReadOnlyList<DriverCareerState> drivers,
@@ -813,7 +846,7 @@ public static class ReplayService
         Streams = new StreamFactory(masterSeed),
         Pack = pack,
         Rounds = rounds,
-        PlayerDriverId = inputs.PlayerDriverId,
+        PlayerDriverId = playerDriverId,
         PlayerAge = playerAge,
         Player = player,
         Drivers = drivers,

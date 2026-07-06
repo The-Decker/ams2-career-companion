@@ -342,6 +342,69 @@ public sealed class EraSignAndContinueTests : IDisposable
         Assert.All(after, p => Assert.True(p.Cost <= remaining));
     }
 
+    [Fact]
+    public void SeatChangeAcrossTransition_ResimulatesByteIdentically()
+    {
+        // The player is driver.p (livery "Mid #4") in 1967 and, on signing the accepted team, takes
+        // the driver.next seat (livery "Next69 #4") in 1969 — the seat driver id CHANGES across the
+        // transition. The multi-pack Resimulate must find the player per season from their livery
+        // (fold + season end), not a single career-global id, or it falsely diverges.
+        string acceptedTeam;
+        using (var session = CreateAndPlaySeason())
+        {
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            acceptedTeam = review!.Offers[0].TeamId;
+            TestPackBuilder.Write(
+                ToPack(1969, "era-test-1969", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1969"));
+
+            var vm = new SeasonReviewViewModel(session);
+            vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+
+        // Play 1969 to completion.
+        using (var s2 = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            Assert.Equal(1969, s2.Summary.SeasonYear);
+            while (!s2.Summary.SeasonComplete)
+            {
+                var grid = s2.CurrentGrid();
+                Assert.NotEmpty(grid);
+                // The player's 1969 seat really is driver.next — the seat change we are exercising.
+                Assert.Contains(grid, seat => seat.IsPlayer && seat.DriverId == "driver.next");
+                s2.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(seat => seat.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+        }
+
+        // Re-simulate the whole two-pack career from raw results. PlayerDriverId here is the season-1
+        // id and now only a fallback — the fold and season end re-resolve the seat per season, so the
+        // 1969 rows reproduce byte-for-byte instead of dropping every player.* row.
+        using var db = CareerDatabase.Open(CareerPath);
+        var rules = Environment().Rules;
+        var report = ReplayService.Resimulate(db, unchecked((ulong)20260703), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.p",
+            PlayerAge = 1967 - 1940, // driver.p Born 1940, first season 1967
+            CharacterRules = rules.Character,
+        });
+
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} season={report.FirstDivergence?.SeasonId} " +
+            $"stored={report.FirstDivergence?.StoredDeltaJson} regen={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.Null(report.FirstDivergence);
+    }
+
     // ---------- the tests ----------
 
     [Fact]
