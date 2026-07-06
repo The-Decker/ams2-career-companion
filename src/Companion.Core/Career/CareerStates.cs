@@ -97,6 +97,14 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public long Xp { get; init; }
 
+    /// <summary>Within-season injury load banked from the driver-error-DNF injury perks (glass_cannon /
+    /// hot_head <c>perErrorAdd</c>): each driver-error DNF adds its perk's per-error contribution, and
+    /// the season-end injury roll reads the total ON TOP of the base hazard, then resets it to 0 so it
+    /// never compounds across seasons. 0 for any career without a perErrorAdd injury perk ⇒ the
+    /// player_state blob is byte-identical (WhenWritingDefault omits it). (Task #18.)</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public double SeasonInjuryLoad { get; init; }
+
     /// <summary>True once a character has been created for this career.</summary>
     [JsonIgnore]
     public bool HasCharacter => Character is not null;

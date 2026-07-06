@@ -14,11 +14,16 @@ public static class InjuryModel
     public const double RepPenalty = 8.0;
 
     /// <summary>The season-end injury hazard, 0..1: a neutral driver sits at 0.10, a fragile one
-    /// (low durability, a durability-cutting perk, a dangerous style) climbs toward the cap.</summary>
-    public static double Hazard(double durabilityStat, PlayerPerkModifiers mods)
+    /// (low durability, a durability-cutting perk, a dangerous style) climbs toward the cap.
+    /// <paramref name="seasonInjuryLoad"/> is the within-season sum of the per-error injury adds a
+    /// fragile driver banked by crashing (0 for a safe/no-perErrorAdd career), so binning it during
+    /// the year raises the off-season risk — the fragile-build stake made real.</summary>
+    public static double Hazard(
+        double durabilityStat, PlayerPerkModifiers mods, double seasonInjuryLoad = 0.0)
     {
         double durability = durabilityStat + mods.InjuryDurabilityDelta;
-        return Math.Clamp(0.10 + (0.5 - durability) * 0.4 + mods.InjuryBaseAdd, 0.0, 0.85);
+        return Math.Clamp(
+            0.10 + (0.5 - durability) * 0.4 + mods.InjuryBaseAdd + seasonInjuryLoad, 0.0, 0.85);
     }
 
     /// <summary>True when the character carries any injury-stream perk — the roll auto-enables for

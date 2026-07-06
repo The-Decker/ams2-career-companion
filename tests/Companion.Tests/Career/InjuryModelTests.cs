@@ -32,6 +32,21 @@ public sealed class InjuryModelTests
     }
 
     [Fact]
+    public void Hazard_AddsTheWithinSeasonInjuryLoad()
+    {
+        // A season spent crashing (banked perErrorAdd) raises the off-season risk on top of the base.
+        var neutral = PlayerPerkModifiers.Identity;
+        double clean = InjuryModel.Hazard(0.40, neutral);
+        double afterTwoCrashes = InjuryModel.Hazard(0.40, neutral, seasonInjuryLoad: 0.30);
+
+        Assert.Equal(clean + 0.30, afterTwoCrashes, 6);
+        // Absent load defaults to 0 → byte-identical to the shipped two-arg call.
+        Assert.Equal(clean, InjuryModel.Hazard(0.40, neutral, 0.0), 6);
+        // Still clamps at the 0.85 cap even with a large accumulated load.
+        Assert.Equal(0.85, InjuryModel.Hazard(0.20, neutral, seasonInjuryLoad: 1.0), 6);
+    }
+
+    [Fact]
     public void HasInjuryPerk_DetectsInjuryStreamPerks()
     {
         var rules = Rules();

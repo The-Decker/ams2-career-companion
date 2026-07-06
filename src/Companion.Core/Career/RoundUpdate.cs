@@ -56,6 +56,12 @@ public sealed record RoundUpdateContext
     /// XP curve + sources for the <c>player.xp</c> row. Null for a pre-character career (no XP row,
     /// journal sequence unchanged). (Increment 4a.)</summary>
     public CharacterRules? CharacterRules { get; init; }
+
+    /// <summary>The per-error injury contribution this race banks toward the season injury load — the
+    /// driverErrorDnf-gated <c>perErrorAdd</c> isolated from the unconditional base, so it stacks
+    /// exactly once per driver-error DNF. 0 on a clean round or a character without a perErrorAdd
+    /// injury perk ⇒ the folded player state is byte-identical. (Task #18.)</summary>
+    public double InjuryLoadDelta { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -264,6 +270,7 @@ public static class RoundUpdate
                 QualifyingAnchor = newQualiAnchor,
                 Xp = newXp,
                 Level = newLevel,
+                SeasonInjuryLoad = player.SeasonInjuryLoad + context.InjuryLoadDelta,
             },
             Events = events,
             RecommendedSlider = recommendedSlider,

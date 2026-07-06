@@ -594,6 +594,88 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void PerErrorInjuryPerk_BanksLoadFromCrashes_RaisesTheRoll_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "pererror.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 246810;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "PerError",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = FragileInjuryCharacter(), // glass_cannon: perErrorAdd +0.15 @driverErrorDnf
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            // Round 1: the player bins it (accident = driver error) → banks glass_cannon's perErrorAdd.
+            var grid1 = session.CurrentGrid();
+            session.Apply(new ResultDraft
+            {
+                Classified = grid1.Select(s => s.DriverId).Where(id => id != playerId).ToList(),
+                DidNotFinish = new Dictionary<string, string> { [playerId] = "a" },
+                Disqualified = [],
+            });
+            // Round 2: a clean finish — no further injury load.
+            var grid2 = session.CurrentGrid();
+            session.Apply(new ResultDraft
+            {
+                Classified = grid2.Select(s => s.DriverId).ToList(),
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+            });
+            Assert.NotNull(session.SeasonReview());
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // The driver-error DNF banked glass_cannon's +0.15 perErrorAdd into the round-1 player state.
+        double round1Load = StateStore.ReadRoundPlayerState(db, seasonId, 1)!.Player.SeasonInjuryLoad;
+        Assert.Equal(0.15, round1Load, 6);
+
+        // The season-end injury roll reads that banked load ON TOP of the base hazard, so binning it
+        // during the year raised the off-season risk — recompute the roll WITH the load and assert the
+        // journalled outcome matches (proving the cross-stage wiring fires, not just re-derives).
+        var mods = PerkResolver.Resolve(["glass_cannon"], rules.Character);
+        double hazardWithLoad = InjuryModel.Hazard(0.25, mods, round1Load);
+        Assert.True(hazardWithLoad > InjuryModel.Hazard(0.25, mods), "the banked load must raise the hazard");
+        double roll = new StreamFactory(unchecked((ulong)seed))
+            .CreateStream(CareerStreams.Injury, pack.Season.Year, 0, "player").NextDouble();
+        var journal = JournalStore.ReadSeason(db, seasonId);
+        Assert.Equal(roll < hazardWithLoad, journal.Any(r => r.Phase == JournalPhases.PlayerInjury));
+
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
+    [Fact]
     public void SeasonEndXp_RewardsTheChampionship_AndReplaysByteIdentically()
     {
         string packDirectory = Path.Combine(_root, "pack");

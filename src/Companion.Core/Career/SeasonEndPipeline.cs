@@ -258,7 +258,8 @@ public static class SeasonEndPipeline
             && context.CharacterRules is { } injuryRules
             && InjuryModel.HasInjuryPerk(injuryChar, injuryRules))
         {
-            double hazard = InjuryModel.Hazard(injuryChar.Stat("durability"), characterMods);
+            double hazard = InjuryModel.Hazard(
+                injuryChar.Stat("durability"), characterMods, player.SeasonInjuryLoad);
             double roll = context.Streams.CreateStream(CareerStreams.Injury, context.Year, 0, "player").NextDouble();
             if (roll < hazard)
             {
@@ -298,6 +299,9 @@ public static class SeasonEndPipeline
             SeasonsCompleted = player.SeasonsCompleted + 1,
             Xp = seasonEndXp,
             Level = seasonEndLevel,
+            // The per-error injury load is a WITHIN-season tally: consumed by the roll above, it resets
+            // so it never carries into next season's start state (SeasonRollover copies the end state).
+            SeasonInjuryLoad = 0.0,
         };
 
         // ---- step 3: aging -------------------------------------------------------------

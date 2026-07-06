@@ -658,6 +658,14 @@ public static class ReplayService
                 ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, raceConditions)
                 : null;
 
+            // A driver-error DNF banks the perErrorAdd injury contribution toward the season injury
+            // load (glass_cannon / hot_head). Isolate JUST the driverErrorDnf-gated add by subtracting
+            // the grid modifier's injury base — no injury effect is tier/length/weather/age gated, so
+            // gridMods.InjuryBaseAdd is exactly the unconditional injury base. 0 without such a perk.
+            double injuryLoadDelta = 0.0;
+            if (dnf == DnfCause.DriverError && raceMods is not null && gridMods is not null)
+                injuryLoadDelta = raceMods.InjuryBaseAdd - gridMods.InjuryBaseAdd;
+
             var update = RoundUpdate.Apply(new RoundUpdateContext
             {
                 Grid = grid,
@@ -678,6 +686,7 @@ public static class ReplayService
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
                 Modifiers = raceMods,
                 CharacterRules = character is not null ? inputs.CharacterRules : null,
+                InjuryLoadDelta = injuryLoadDelta,
             });
 
             events.AddRange(update.Events);
