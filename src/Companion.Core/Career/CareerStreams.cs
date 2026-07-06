@@ -12,6 +12,11 @@ public static class CareerStreams
     public const string Events = "events";
     public const string Headlines = "headlines";
     public const string TierDrift = "tier-drift";
+
+    /// <summary>The opt-in season-end injury roll (character depth 6): drawn ONLY for a character
+    /// carrying an injury-stream perk, so a default career consumes zero new draws and stays
+    /// replay-compatible with pre-character saves. Keyed (injury, year, 0, "player").</summary>
+    public const string Injury = "injury";
 }
 
 /// <summary>Journal phase names emitted by the career sim. Part of the save format (the news
@@ -31,6 +36,12 @@ public static class JournalPhases
     /// function of the result), emitted only for a character career after the reputation row, so a
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>
     public const string PlayerXp = "player.xp";
+
+    /// <summary>A season-end injury (character depth 6): a DERIVED row emitted only when a
+    /// character carrying an injury-stream perk fails the season-end injury roll. OPI-neutral — a
+    /// setback to standing, never a finishing position. Absent for every other career, so their
+    /// journal sequence is unchanged.</summary>
+    public const string PlayerInjury = "player.injury";
 
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>

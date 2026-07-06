@@ -197,6 +197,36 @@ public static class SeasonEndPipeline
             Cause = "season-final",
         });
 
+        // ---- injury (character depth 6): a fragile driver risks a season-end injury ----------
+        // Only a character carrying an injury-stream perk rolls, so a default career (or a character
+        // with no injury perk) consumes no new draws and stays byte-identical. A hit sets reputation
+        // back (which feeds the offers below) but never touches a finishing position.
+        if (characterMods is not null && player.Character is { } injuryChar
+            && context.CharacterRules is { } injuryRules
+            && InjuryModel.HasInjuryPerk(injuryChar, injuryRules))
+        {
+            double hazard = InjuryModel.Hazard(injuryChar.Stat("durability"), characterMods);
+            double roll = context.Streams.CreateStream(CareerStreams.Injury, context.Year, 0, "player").NextDouble();
+            if (roll < hazard)
+            {
+                double afterInjury = ReputationMath.Apply(finalRep, -InjuryModel.RepPenalty);
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.PlayerInjury,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        from = Round4(finalRep),
+                        to = Round4(afterInjury),
+                        delta = Round4(-InjuryModel.RepPenalty),
+                        hazard = Round4(hazard),
+                    }),
+                    Cause = "injury",
+                });
+                finalRep = afterInjury;
+            }
+        }
+
         player = player with
         {
             Reputation = finalRep,

@@ -25,6 +25,10 @@ public sealed record CharacterDossier
 
     public required IReadOnlyList<DossierPerk> Perks { get; init; }
 
+    /// <summary>The season-end injury risk this driver carries ("Low"/"Moderate"/"High"), or null
+    /// when the character has no injury-stream perk (and so is never exposed to the roll).</summary>
+    public string? InjuryRisk { get; init; }
+
     /// <summary>Progress through the current level, 0..1 (1 at the max level).</summary>
     public double LevelProgress => XpForNextLevel <= 0 ? 1.0 : Math.Clamp((double)XpIntoLevel / XpForNextLevel, 0.0, 1.0);
 
@@ -60,6 +64,13 @@ public sealed record CharacterDossier
                 });
         }
 
+        string? injuryRisk = null;
+        if (InjuryModel.HasInjuryPerk(character, rules))
+        {
+            double hazard = InjuryModel.Hazard(character.Stat("durability"), PerkResolver.Resolve(character.PerkIds, rules));
+            injuryRisk = hazard >= 0.30 ? "High" : hazard >= 0.16 ? "Moderate" : "Low";
+        }
+
         return new CharacterDossier
         {
             Name = character.Name,
@@ -70,6 +81,7 @@ public sealed record CharacterDossier
             CpUnspent = character.CpUnspent,
             Stats = stats,
             Perks = perks,
+            InjuryRisk = injuryRisk,
         };
     }
 }

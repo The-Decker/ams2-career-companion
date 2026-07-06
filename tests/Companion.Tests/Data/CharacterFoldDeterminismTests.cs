@@ -1,5 +1,6 @@
 using Companion.Core.Character;
 using Companion.Core.Career;
+using Companion.Core.Determinism;
 using Companion.Data;
 using Companion.Tests.ViewModels;
 using Companion.ViewModels.Services;
@@ -41,6 +42,91 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         PerkIds = ["engineers_favorite"], // power +0.010, drag -0.008 — a real on-track car edge
         CpUnspent = 2,
     };
+
+    private static CharacterProfile FragileInjuryCharacter() => new()
+    {
+        Name = "Glass Cannon",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.60, ["oneLap"] = 0.55, ["craft"] = 0.40, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = 0.25,
+        },
+        PerkIds = ["glass_cannon"], // stream: injury → the season-end injury roll auto-enables
+        CpUnspent = 0,
+    };
+
+    [Fact]
+    public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "injury.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 987654321;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Injury Fold",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = FragileInjuryCharacter(),
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            // Trigger the season-end pipeline (the injury roll lives there).
+            Assert.NotNull(session.SeasonReview());
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+
+        // The injury roll is a deterministic draw on the injury stream — recompute it and assert the
+        // player.injury row's presence matches (proving the roll fires and is provenance-correct).
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        var mods = PerkResolver.Resolve(["glass_cannon"], rules.Character);
+        double hazard = InjuryModel.Hazard(0.25, mods);
+        double roll = new StreamFactory(unchecked((ulong)seed))
+            .CreateStream(CareerStreams.Injury, pack.Season.Year, 0, "player").NextDouble();
+        bool expectInjury = roll < hazard;
+
+        var journal = JournalStore.ReadSeason(db, seasonId);
+        Assert.Equal(expectInjury, journal.Any(r => r.Phase == JournalPhases.PlayerInjury));
+
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
 
     [Fact]
     public void CharacterCareer_FoldsWithTheCharacterAndReplaysByteIdentically()
