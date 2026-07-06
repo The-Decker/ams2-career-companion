@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Companion.Core.Character;
 
 /// <summary>
@@ -20,9 +22,16 @@ public sealed record CharacterProfile
     /// character created before naming existed (then the app falls back to the seat's driver).</summary>
     public string Name { get; init; } = "";
 
-    /// <summary>Character Points not yet spent (leftover at creation + level grants), spendable
-    /// between seasons.</summary>
+    /// <summary>Character Points left over at CREATION (immutable) — the starting bank. The pool
+    /// available to spend later is this plus level grants minus <see cref="CpSpent"/>
+    /// (<see cref="CharacterProgress.AvailableCp"/>).</summary>
     public int CpUnspent { get; init; }
+
+    /// <summary>Total character points SPENT between seasons so far (raising stats, adding perks).
+    /// Accumulates as the driver develops; 0 for a character that has never spent. Omitted from the
+    /// state blob when 0, so a never-spent character serialises exactly as before.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int CpSpent { get; init; }
 
     public double Stat(string id) => Stats.GetValueOrDefault(id);
 
@@ -39,6 +48,7 @@ public sealed record CharacterProfile
         if (ReferenceEquals(this, other))
             return true;
         return CpUnspent == other.CpUnspent
+            && CpSpent == other.CpSpent
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
             && PerkIds.SequenceEqual(other.PerkIds)
             && StatsEqual(Stats, other.Stats);
@@ -48,6 +58,7 @@ public sealed record CharacterProfile
     {
         var hash = new HashCode();
         hash.Add(CpUnspent);
+        hash.Add(CpSpent);
         hash.Add(Name);
         foreach (string id in PerkIds)
             hash.Add(id);

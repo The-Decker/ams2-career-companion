@@ -29,7 +29,8 @@ public sealed class CharacterDossierTests
         Assert.Equal("Ace", dossier.Name);
         Assert.Equal(3, dossier.Level);
         Assert.Equal(250, dossier.Xp);
-        Assert.Equal(2, dossier.CpUnspent);
+        // Available CP = creation leftover (2) + level grants (2/level × 2 levels past L1) − spent (0).
+        Assert.Equal(2 + rules.Levels.LevelGrants.CharacterPointsPerLevel * 2, dossier.CpUnspent);
 
         Assert.Equal(7, dossier.Stats.Count);
         Assert.Contains(dossier.Stats, s => s.Id == "pace" && s.Value == 0.70 && s.Talent);

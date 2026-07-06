@@ -78,7 +78,7 @@ public sealed record CharacterDossier
             Xp = xp,
             XpIntoLevel = Math.Max(0, xp - cumulativeToLevel),
             XpForNextLevel = forNext,
-            CpUnspent = character.CpUnspent,
+            CpUnspent = CharacterProgress.AvailableCp(character, level, rules),
             Stats = stats,
             Perks = perks,
             InjuryRisk = injuryRisk,
