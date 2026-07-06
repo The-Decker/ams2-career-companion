@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Grid;
 using Companion.Core.Json;
@@ -42,6 +43,12 @@ public sealed record ReplaySimInputs
     public double? PlayerSalaryAskBu { get; init; }
 
     public string? PlayerName { get; init; }
+
+    /// <summary>The driver-character rules (perks.json), or null for a build without them. Combined
+    /// with the folded player's character to resolve the per-round <see cref="PlayerPerkModifiers"/>;
+    /// a null value (or a character-free career) folds byte-identically to the pre-character sim.
+    /// (Increment 4a.)</summary>
+    public CharacterRules? CharacterRules { get; init; }
 }
 
 public sealed record ReplayReport
@@ -547,7 +554,19 @@ public static class ReplayService
     {
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
 
-        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName);
+        // The player's character (folded into the carried state) resolves — once — into the perk
+        // modifier the round update reads and the grid patch that shapes the player seat. Null on
+        // both sides (a pre-character career, or a build with no character rules) → the fold is the
+        // exact shipped path, byte-identical. (Increment 4a.)
+        var character = previous.Player.Character;
+        PlayerPerkModifiers? mods = character is not null && inputs.CharacterRules is not null
+            ? PerkResolver.Resolve(character.PerkIds, inputs.CharacterRules)
+            : null;
+        PlayerCharacterPatch? gridPatch = character is not null && inputs.CharacterRules is not null
+            ? new PlayerCharacterPatch { Profile = character, Modifiers = mods!, Rules = inputs.CharacterRules }
+            : null;
+
+        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch);
         if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
@@ -596,6 +615,7 @@ public static class ReplayService
                 PlayerName = inputs.PlayerName,
                 // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
+                Modifiers = mods,
             });
 
             events.AddRange(update.Events);
@@ -633,7 +653,8 @@ public static class ReplayService
     /// <summary>The round's grid with the player's seat marked, or null when the player has
     /// no seat this round (no livery configured, or the entry's rounds range excludes it) —
     /// then the round folds with the player state carried over unchanged.</summary>
-    private static GridPlan? ResolvePlayerGrid(SeasonPack pack, int round, string? liveryName)
+    private static GridPlan? ResolvePlayerGrid(
+        SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null)
     {
         if (liveryName is null)
             return null;
@@ -644,7 +665,8 @@ public static class ReplayService
         // absent seat (the player's team is simply not entered this round) as "did not race".
         try
         {
-            return RoundGridResolver.Resolve(pack, round, new PlayerSeat { Ams2LiveryName = liveryName });
+            return RoundGridResolver.Resolve(
+                pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character });
         }
         catch (InvalidOperationException)
         {

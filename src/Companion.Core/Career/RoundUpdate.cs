@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Grid;
 
@@ -45,6 +46,11 @@ public sealed record RoundUpdateContext
     /// qualifying session; null on single-race rounds → no qualifying anchor and no event, so
     /// single-race careers emit the identical journal sequence. (Increment 2.)</summary>
     public int? PlayerQualifyingPosition { get; init; }
+
+    /// <summary>The player's resolved character modifier, or null for a pre-character career — then
+    /// every OPI/reputation/pace-anchor call takes its exact shipped path and the round is
+    /// byte-identical. Built once by the fold from the folded character. (Increment 4a.)</summary>
+    public PlayerPerkModifiers? Modifiers { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -77,16 +83,17 @@ public static class RoundUpdate
         int gridSize = grid.Seats.Count;
         int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
 
+        var mods = context.Modifiers;
         int expected = SeatStrengthModel.ExpectedFinish(grid, playerIndex);
-        double effective = OpiMath.EffectiveFinish(expected, context.PlayerFinish, context.PlayerDnf, gridSize);
+        double effective = OpiMath.EffectiveFinish(expected, context.PlayerFinish, context.PlayerDnf, gridSize, mods);
 
-        double newOpi = OpiMath.Update(player.Opi, expected, effective);
+        double newOpi = OpiMath.Update(player.Opi, expected, effective, mods);
 
         bool beatTeammate = context.HasTeammate
                             && context.PlayerFinish is { } finish
                             && (context.TeammateFinish is null || finish < context.TeammateFinish);
         double repDelta = ReputationMath.RoundDelta(
-            expected, effective, context.PlayerFinish, beatTeammate, context.PlayerTeamTier);
+            expected, effective, context.PlayerFinish, beatTeammate, context.PlayerTeamTier, mods);
         double newRep = ReputationMath.Apply(player.Reputation, repDelta);
 
         // The anchor calibrates only on classified finishes: a DNF carries no pace signal.
@@ -94,7 +101,7 @@ public static class RoundUpdate
         if (context.PlayerFinish is { } classified)
         {
             double implied = PaceAnchorMath.ImpliedPlayerPace(grid, classified, context.SliderUsed);
-            newAnchor = PaceAnchorMath.Update(player.PaceAnchor, implied);
+            newAnchor = PaceAnchorMath.Update(player.PaceAnchor, implied, mods);
         }
 
         // Qualifying (one-lap) anchor: calibrates only on rounds that ran qualifying (Inc 2).
@@ -102,7 +109,7 @@ public static class RoundUpdate
         if (context.PlayerQualifyingPosition is { } qualiPos)
         {
             double impliedQuali = PaceAnchorMath.ImpliedPlayerQualiPace(grid, qualiPos, context.SliderUsed);
-            newQualiAnchor = PaceAnchorMath.Update(player.QualifyingAnchor, impliedQuali);
+            newQualiAnchor = PaceAnchorMath.Update(player.QualifyingAnchor, impliedQuali, mods);
         }
 
         int recommendedSlider = newAnchor > 0.0

@@ -882,6 +882,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             Headlines = rules.Headlines,
             PlayerDriverId = _playerDriverId,
             PlayerAge = _playerFirstSeasonAge,
+            CharacterRules = rules.Character,
         };
     }
 

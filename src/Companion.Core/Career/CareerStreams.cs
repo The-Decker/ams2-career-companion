@@ -22,6 +22,11 @@ public static class JournalPhases
     public const string PlayerOpi = "player.opi";
     public const string PlayerReputation = "player.reputation";
 
+    /// <summary>The player's character, written ONCE at creation (round = null) — an INPUT the
+    /// round fold never regenerates, so it is provenance-excluded from the replay byte-compare
+    /// while its data rides in the start player state. (Increment 4a.)</summary>
+    public const string PlayerCharacter = "player.character";
+
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>
     public const string PlayerExperience = "player.experience";
