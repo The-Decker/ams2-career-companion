@@ -490,6 +490,9 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
 
         var journal = JournalStore.ReadSeason(db, seasonId);
         Assert.Equal(expectInjury, journal.Any(r => r.Phase == JournalPhases.PlayerInjury));
+        // When injured, the news feed gets a headline about it (depth 6: the stake is visible).
+        Assert.Equal(expectInjury,
+            journal.Any(r => r.Phase == JournalPhases.Headline && r.Cause == "injury"));
 
         var inputs = new ReplaySimInputs
         {

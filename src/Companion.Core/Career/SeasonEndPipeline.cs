@@ -263,6 +263,18 @@ public static class SeasonEndPipeline
                     }),
                     Cause = "injury",
                 });
+                // Surface the injury in the news feed (depth 6: the stake is felt, not silent).
+                string who = string.IsNullOrEmpty(injuryChar.Name) ? "The driver" : injuryChar.Name;
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.Headline,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        text = $"{who} sidelined by an off-season injury — reputation takes a knock",
+                    }),
+                    Cause = "injury",
+                });
                 finalRep = afterInjury;
             }
         }
