@@ -11,6 +11,11 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 
+  <!-- the render harness constructs the internal RippleAdorner directly to verify the motion layer -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Companion.RenderHarness.Tests" />
+  </ItemGroup>
+
   <!-- Refreshable data beside the exe (never compiled in): the extracted AMS2 content
        library, the rules data, and the bundled season packs. Copied to build output AND
        carried into publish, so the published single exe is self-sufficient. -->
