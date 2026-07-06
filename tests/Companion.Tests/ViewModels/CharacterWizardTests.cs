@@ -80,6 +80,35 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
+    public void MaxingEveryStat_ExceedsTheTalentCap_AndIsInvalid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        foreach (var s in vm.Stats.Concat(vm.MetaStats))
+            s.Value = 0.85;
+
+        Assert.True(vm.StatTotal > vm.StatCap);
+        Assert.False(vm.StatsWithinCap);
+        Assert.False(vm.IsValid);
+        Assert.NotNull(vm.Invalidity);
+        Assert.Contains("talent", vm.Invalidity);
+    }
+
+    [Fact]
+    public void RedistributingTalentWithinTheCap_StaysValid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        // Floor everything, then pour the freed talent into two stats — a real specialist, under cap.
+        foreach (var s in vm.Stats.Concat(vm.MetaStats))
+            s.Value = 0.15;
+        vm.Stats.First(s => s.Id == "pace").Value = 0.85;
+        vm.Stats.First(s => s.Id == "oneLap").Value = 0.85;
+
+        Assert.True(vm.StatsWithinCap);
+        Assert.True(vm.IsValid); // the default archetype's perks are in budget
+        Assert.Equal(0.85, vm.BuildProfile().Stat("pace"), 6);
+    }
+
+    [Fact]
     public void OverspendingEveryPositivePerk_IsInvalid()
     {
         var vm = new CharacterViewModel(Rules());

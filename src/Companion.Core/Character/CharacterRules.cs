@@ -95,6 +95,11 @@ public sealed record CharacterPointsRules
     public int MinBudgetAfterSpend { get; init; }
     public int MaxRefundHeadroom { get; init; }
 
+    /// <summary>The most total talent (sum of the seven stats) a driver may carry at creation.
+    /// Redistribution below it is free; the cap is what stops a max-everything build. Defaults to
+    /// 4.2 (neutral is 3.5) when the file omits it.</summary>
+    public double StatSumCap { get; init; } = 4.2;
+
     /// <summary>The inclusive net-spend window a valid creation build must land in:
     /// [minBudgetAfterSpend, creationBudget + maxRefundHeadroom].</summary>
     public int MaxNetSpend => CreationBudget + MaxRefundHeadroom;

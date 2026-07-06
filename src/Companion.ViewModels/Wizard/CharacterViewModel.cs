@@ -85,27 +85,40 @@ public sealed partial class CharacterViewModel : ObservableObject
         ApplyArchetype(value);
     }
 
-    /// <summary>The creation CP budget (10 by default).</summary>
+    /// <summary>The creation character-point budget for PERKS (10 by default).</summary>
     public int Budget => _rules.CharacterPoints.CreationBudget;
 
     /// <summary>Net CP the selected perks cost (refund perks are negative).</summary>
     public int NetCpSpend => Perks.Where(p => p.IsSelected).Sum(p => p.Cost);
 
-    /// <summary>CP left over from the budget for stat growth (never negative for display).</summary>
+    /// <summary>Perk CP left over against the budget (never negative for display).</summary>
     public int RemainingCp => Math.Max(0, Budget - NetCpSpend);
 
-    /// <summary>A build is valid when its net perk spend lands in the audited window
-    /// [minBudgetAfterSpend, budget + maxRefundHeadroom] (0..16 by default).</summary>
-    public bool IsValid =>
+    /// <summary>Perks fit the audited CP window [minBudgetAfterSpend, budget + maxRefundHeadroom].</summary>
+    public bool PerksInBudget =>
         NetCpSpend >= _rules.CharacterPoints.MinBudgetAfterSpend
         && NetCpSpend <= _rules.CharacterPoints.MaxNetSpend;
 
+    /// <summary>The most total talent a driver may carry across the seven stats. Redistribution is
+    /// free — being a 0.85 somewhere means being low elsewhere — but the SUM is capped, so no driver
+    /// is great at everything. Data-driven (perks.json).</summary>
+    public double StatCap => _rules.CharacterPoints.StatSumCap;
+
+    /// <summary>The current total across all seven stats.</summary>
+    public double StatTotal => Stats.Concat(MetaStats).Sum(s => s.Value);
+
+    public bool StatsWithinCap => StatTotal <= StatCap + 1e-9;
+
+    /// <summary>A build is valid when its perks fit the CP budget AND its stats fit the talent cap.</summary>
+    public bool IsValid => PerksInBudget && StatsWithinCap;
+
     /// <summary>The one-line reason the current build is invalid, for the wizard footer; null when valid.</summary>
-    public string? Invalidity => IsValid
-        ? null
-        : NetCpSpend < _rules.CharacterPoints.MinBudgetAfterSpend
-            ? $"This build refunds more CP than allowed — spend at least {_rules.CharacterPoints.MinBudgetAfterSpend}."
-            : $"This build costs {NetCpSpend} CP, over the {_rules.CharacterPoints.MaxNetSpend} maximum.";
+    public string? Invalidity => IsValid ? null
+        : !StatsWithinCap
+            ? $"Your stats total {StatTotal:0.00} of {StatCap:0.00} talent — lower one to raise another."
+            : NetCpSpend < _rules.CharacterPoints.MinBudgetAfterSpend
+                ? $"This build banks more perk points than allowed — spend at least {_rules.CharacterPoints.MinBudgetAfterSpend}."
+                : $"These perks cost {NetCpSpend} of a {_rules.CharacterPoints.MaxNetSpend} maximum — drop one.";
 
     private bool _suppressRecompute;
 
@@ -142,6 +155,9 @@ public sealed partial class CharacterViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(NetCpSpend));
         OnPropertyChanged(nameof(RemainingCp));
+        OnPropertyChanged(nameof(PerksInBudget));
+        OnPropertyChanged(nameof(StatTotal));
+        OnPropertyChanged(nameof(StatsWithinCap));
         OnPropertyChanged(nameof(IsValid));
         OnPropertyChanged(nameof(Invalidity));
     }

@@ -268,6 +268,27 @@ public class PerkBalanceAuditTests
         }
     }
 
+    [Fact]
+    public void EveryArchetypeStatSpreadFitsTheTalentCap()
+    {
+        // The 13 presets must all sum to <= the talent cap, so picking any of them is a valid,
+        // in-budget character (and proves the cap leaves room above the strongest preset).
+        var root = Root();
+        double cap = root.GetProperty("characterPoints").GetProperty("statSumCap").GetDouble();
+
+        foreach (var a in root.GetProperty("creation").GetProperty("archetypes").EnumerateArray())
+        {
+            string id = a.GetProperty("id").GetString()!;
+            double sum = 0.0;
+            foreach (var s in a.GetProperty("startStats").EnumerateObject())
+                sum += s.Value.GetDouble();
+            foreach (var s in a.GetProperty("startMeta").EnumerateObject())
+                sum += s.Value.GetDouble();
+            Assert.True(sum <= cap + 1e-9,
+                $"Archetype '{id}' stat sum {sum:0.00} exceeds the talent cap {cap:0.00}.");
+        }
+    }
+
     // ---------- progression curve (§3.2) ----------
 
     [Fact]

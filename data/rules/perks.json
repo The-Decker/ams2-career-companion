@@ -6,7 +6,8 @@
     "creationBudget": 10,
     "minBudgetAfterSpend": 0,
     "maxRefundHeadroom": 6,
-    "$comment": "Start with 10 CP. Positive-cost perks spend; negative-cost (drawback-heavy) perks refund up to +6 over budget so a fragile/greedy build can afford premium upsides. Net spend must land in [0, budget+maxRefundHeadroom]. Leftover CP buy +0.05 stat steps at creation and each level grants more."
+    "statSumCap": 4.2,
+    "$comment": "PERKS: start with 10 CP. Positive-cost perks spend; negative-cost (drawback-heavy) perks refund up to +6 over budget so a fragile/greedy build can afford premium upsides. Net perk spend must land in [0, budget+maxRefundHeadroom]. STATS: the seven stats may sum to at most statSumCap (neutral is 7*0.5=3.5); redistribution below the cap is free, so a driver can be great somewhere by being weak elsewhere, but NO driver is great at everything. The 13 archetype presets all sum <= the cap; maxing all seven (5.95) is impossible. Between-season level grants add CP to spend on new perks or +0.05 stat steps."
   },
 
   "stats": {
