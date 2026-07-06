@@ -235,6 +235,19 @@ public static class SeasonEndPipeline
                 }),
                 Cause = "season-final",
             });
+
+            // A level-up from the season's XP is worth a line in the news (progression made felt).
+            if (seasonEndLevel > player.Level)
+            {
+                string who = string.IsNullOrEmpty(player.Character.Name) ? "The driver" : player.Character.Name;
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.Headline,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new { text = $"{who} reaches Level {seasonEndLevel}" }),
+                    Cause = "level-up",
+                });
+            }
         }
 
         // ---- injury (character depth 6): a fragile driver risks a season-end injury ----------
