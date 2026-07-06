@@ -912,7 +912,9 @@ public static class ReplayService
         TeamArchetypeOverrides = inputs.TeamArchetypeOverrides,
         FreeAgents = inputs.FreeAgents,
         PlayerSalaryAskBu = inputs.PlayerSalaryAskBu,
-        PlayerName = inputs.PlayerName,
+        // Prefer the character's chosen name (the identity the digest/injury news use) over the input
+        // id, exactly as the round fold does — so "champion" reads the driver's name, not their id.
+        PlayerName = string.IsNullOrEmpty(player.Character?.Name) ? inputs.PlayerName : player.Character!.Name,
         CharacterRules = inputs.CharacterRules,
     };
 
