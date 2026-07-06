@@ -48,6 +48,40 @@ public sealed class PlayerCareerStateCharacterTests
     }
 
     [Fact]
+    public void StructurallyEqualCharacters_CompareEqual_AcrossSeparateInstances()
+    {
+        // The replay start-state gate compares PlayerCareerState with record ==/!=. A character's
+        // Stats (dictionary) and PerkIds (list) are collections; two states built independently
+        // (a re-derived season start vs the stored one) hold DIFFERENT collection instances with
+        // the SAME values. Without structural equality on CharacterProfile they compare unequal —
+        // a FALSE replay divergence at every season boundary. This locks the fix.
+        PlayerCareerState WithCharacter() => CharacterFree() with
+        {
+            Character = new CharacterProfile
+            {
+                Stats = new Dictionary<string, double>(StringComparer.Ordinal) { ["pace"] = 0.6, ["oneLap"] = 0.55 },
+                PerkIds = ["glass_cannon", "wonderkid"],
+                CpUnspent = 3,
+            },
+            Level = 2,
+            Xp = 200,
+        };
+
+        var a = WithCharacter();
+        var b = WithCharacter();
+
+        Assert.False(ReferenceEquals(a.Character!.Stats, b.Character!.Stats));
+        Assert.False(ReferenceEquals(a.Character.PerkIds, b.Character.PerkIds));
+        Assert.Equal(a, b);
+        Assert.True(a == b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+
+        // A genuinely different character is still unequal.
+        var different = a with { Character = a.Character with { PerkIds = ["glass_cannon"] } };
+        Assert.NotEqual(a, different);
+    }
+
+    [Fact]
     public void CharacterState_SerializesAndRoundTripsTheCharacter()
     {
         var state = CharacterFree() with

@@ -821,6 +821,7 @@ public static class ReplayService
         FreeAgents = inputs.FreeAgents,
         PlayerSalaryAskBu = inputs.PlayerSalaryAskBu,
         PlayerName = inputs.PlayerName,
+        CharacterRules = inputs.CharacterRules,
     };
 
     /// <summary>Re-derives a follow-on season's start states from the previous season's
