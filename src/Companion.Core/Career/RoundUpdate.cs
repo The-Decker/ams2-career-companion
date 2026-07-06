@@ -137,7 +137,8 @@ public static class RoundUpdate
                 FinishPosition: context.PlayerFinish,
                 ScoredPoints: context.PlayerFinish is { } scored && scored <= context.PointsPositions,
                 BeatTeammate: beatTeammate,
-                Dnf: context.PlayerDnf));
+                Dnf: context.PlayerDnf),
+                context.Modifiers); // xpRate perks scale the gain per cause (null mods = shipped formula)
             newXp = Math.Max(0, player.Xp + xpRound);
             newLevel = charRules.Levels.XpCurve.LevelForTotalXp(newXp);
             xpEvent = new JournalEvent

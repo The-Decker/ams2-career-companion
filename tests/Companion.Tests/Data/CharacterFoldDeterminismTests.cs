@@ -288,6 +288,79 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void XpRatePerkCharacter_ScalesTheXpRow_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "xprate.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 909090;
+        Companion.Core.Packs.SeasonPack pack;
+
+        var character = new CharacterProfile
+        {
+            Name = "The Grinder",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.55, ["oneLap"] = 0.60, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.55,
+            },
+            PerkIds = ["student_of_the_craft"], // xpRate: midfield/dnfMechanical up, win/podium down
+            CpUnspent = 0,
+        };
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "XpRate",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = character,
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            Assert.NotNull(session.SeasonReview());
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // The per-cause XP multipliers are a pure function of the folded perk + the round result, so
+        // the scaled player.xp rows reproduce byte-for-byte on replay.
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
+    [Fact]
     public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
     {
         string packDirectory = Path.Combine(_root, "pack");
