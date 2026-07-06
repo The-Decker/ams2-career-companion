@@ -4,6 +4,7 @@ using Companion.Ams2;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
 using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Grid;
 using Companion.Core.Json;
@@ -179,7 +180,24 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                     ("@utc", nowUtc), ("@season", seasonId),
                     ("@delta", JsonSerializer.Serialize(delta, CoreJson.Options)));
 
-                SeedStartStates(database, seasonId, pack, playerDriverId, request.PlayerLiveryName, transaction);
+                // The player's character (Increment 4a): journal the creation INPUT row (the Why?
+                // inspector reads it; replay excludes it as provenance) and seed it into the start
+                // player state, which is where the fold reads it deterministically.
+                if (request.Character is { } character)
+                {
+                    Execute(database.Connection, transaction,
+                        "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
+                        "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'career-created');",
+                        ("@utc", nowUtc), ("@season", seasonId),
+                        ("@phase", JournalPhases.PlayerCharacter),
+                        ("@delta", JsonSerializer.Serialize(
+                            new { stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
+                            CoreJson.Options)));
+                }
+
+                SeedStartStates(
+                    database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
+                    request.Character, transaction);
 
                 transaction.Commit();
             }
@@ -304,6 +322,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         SeasonPack pack,
         string playerDriverId,
         string playerLiveryName,
+        CharacterProfile? character,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -331,6 +350,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             SeasonsCompleted = 0,
             CurrentTeamId = playerTeamId,
             LiveryName = playerLiveryName,
+            // The character (null for a character-free career, which stays byte-identical): a fresh
+            // character starts at level 1 with 0 XP.
+            Character = character,
+            Level = character is null ? 0 : 1,
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
@@ -474,13 +497,43 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         SeasonComplete ? [] : ResolveGrid(CurrentRoundNumber).Seats;
 
     /// <summary>Resolves the round grid, marking the player's seat when their entry covers
-    /// this round (an entry's rounds range may exclude it — then the grid is all-AI).</summary>
+    /// this round (an entry's rounds range may exclude it — then the grid is all-AI). When the
+    /// career carries a character, the player seat is patched from it here too — so the STAGED
+    /// AMS2 file gets the perk car scalars and the briefing's expectation matches the fold (the
+    /// fold applies the identical patch). A character-free career resolves an unchanged grid.</summary>
     private GridPlan ResolveGrid(int round)
     {
         var plan = RoundGridResolver.Resolve(Pack, round);
         if (plan.Seats.Any(s => string.Equals(s.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal)))
-            plan = RoundGridResolver.Resolve(Pack, round, new PlayerSeat { Ams2LiveryName = _playerLiveryName });
+            plan = RoundGridResolver.Resolve(Pack, round,
+                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() });
         return plan;
+    }
+
+    private PlayerCharacterPatch? _characterPatch;
+    private bool _characterPatchResolved;
+
+    /// <summary>The career's character resolved into a grid patch, or null when it has no character
+    /// (or no character rules are loaded). Invariant across the career (perk ids + stats are fixed
+    /// at creation), so it is computed once and cached.</summary>
+    private PlayerCharacterPatch? CurrentCharacterPatch()
+    {
+        if (_characterPatchResolved)
+            return _characterPatch;
+        _characterPatchResolved = true;
+
+        var character = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.Character;
+        if (character is not null && _environment.RulesDirectory is not null)
+        {
+            var rules = _environment.Rules.Character;
+            _characterPatch = new PlayerCharacterPatch
+            {
+                Profile = character,
+                Modifiers = PerkResolver.Resolve(character.PerkIds, rules),
+                Rules = rules,
+            };
+        }
+        return _characterPatch;
     }
 
     // ---------- staging ----------
