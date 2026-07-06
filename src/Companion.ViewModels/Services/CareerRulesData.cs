@@ -1,4 +1,5 @@
 using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.News;
 
 namespace Companion.ViewModels.Services;
@@ -24,12 +25,19 @@ public sealed record CareerRulesData
     /// keeps each headline as the whole story.</summary>
     public required NewsArticleBank NewsArticles { get; init; }
 
+    /// <summary>The driver-character rules (<c>perks.json</c>): creation budget, stat mapping,
+    /// XP curve, the 42 perks and 13 archetype presets. Consumed by the character creation wizard
+    /// and — once a character career is simulated — by <c>PerkResolver</c>/<c>XpMath</c>. Loaded
+    /// eagerly like the other rules so the live and replay paths see the identical instance.</summary>
+    public required CharacterRules Character { get; init; }
+
     public static CareerRulesData Load(string rulesDirectory) => new()
     {
         AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
         Archetypes = TeamArchetypeCatalog.Parse(Read(rulesDirectory, "career-team-archetypes.json")),
         Headlines = HeadlineBank.Parse(Read(rulesDirectory, "career-headline-templates.json")),
         NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
+        Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
     };
 
     private static string Read(string rulesDirectory, string fileName)
