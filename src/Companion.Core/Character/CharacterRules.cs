@@ -260,4 +260,8 @@ public sealed record PerkEffect
     public string? Condition { get; init; }
 
     public double CpEquivalent { get; init; }
+
+    /// <summary>The authored human note for this effect, if any — a fallback description when the
+    /// UI describer has no friendlier phrase for the lever.</summary>
+    public string? Note { get; init; }
 }

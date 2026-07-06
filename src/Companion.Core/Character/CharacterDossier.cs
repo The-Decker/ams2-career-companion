@@ -48,7 +48,16 @@ public sealed record CharacterDossier
         foreach (string perkId in character.PerkIds)
         {
             if (rules.TryGetPerk(perkId, out var perk))
-                perks.Add(new DossierPerk(perk.Id, perk.Name, perk.Category, perk.Description, perk.Cost));
+                perks.Add(new DossierPerk
+                {
+                    Id = perk.Id,
+                    Name = perk.Name,
+                    Category = perk.Category,
+                    Description = perk.Description,
+                    Cost = perk.Cost,
+                    Benefits = PerkDescriber.Benefits(perk),
+                    Drawbacks = PerkDescriber.Drawbacks(perk),
+                });
         }
 
         return new CharacterDossier
@@ -69,8 +78,18 @@ public sealed record CharacterDossier
 /// talent stat (writes ratings) or a career meta-stat.</summary>
 public sealed record DossierStat(string Id, string Label, double Value, bool Talent);
 
-/// <summary>One perk row of the dossier: what it is and what it costs.</summary>
-public sealed record DossierPerk(string Id, string Name, string Category, string Description, int Cost);
+/// <summary>One perk row of the dossier: what it is, what it costs, and — in plain language — the
+/// good things it does and the costs it carries.</summary>
+public sealed record DossierPerk
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public required string Category { get; init; }
+    public required string Description { get; init; }
+    public required int Cost { get; init; }
+    public required IReadOnlyList<string> Benefits { get; init; }
+    public required IReadOnlyList<string> Drawbacks { get; init; }
+}
 
 /// <summary>Display labels for the character stats — shared by the creation wizard and the dossier
 /// so the two never drift.</summary>

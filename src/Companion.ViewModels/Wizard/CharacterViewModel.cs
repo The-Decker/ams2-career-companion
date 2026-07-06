@@ -25,7 +25,8 @@ public sealed partial class CharacterViewModel : ObservableObject
         MetaStats = _rules.Stats.MetaStats.Select(m => new StatSlider(m.Id, Label(m.Id), Recompute, m.Default)).ToList();
 
         Perks = _rules.Perks
-            .Select(p => new PerkOption(p.Id, p.Name, p.Category, p.Cost, p.Description))
+            .Select(p => new PerkOption(p.Id, p.Name, p.Category, p.Cost, p.Description,
+                PerkDescriber.Benefits(p), PerkDescriber.Drawbacks(p)))
             .ToList();
         // A perk toggled directly (the shelf checkbox binds IsSelected) recomputes the CP meter,
         // just like the command path.
@@ -213,7 +214,9 @@ public sealed partial class StatSlider : ObservableObject
 }
 
 /// <summary>One selectable perk on the shelf.</summary>
-public sealed partial class PerkOption(string id, string name, string category, int cost, string description)
+public sealed partial class PerkOption(
+    string id, string name, string category, int cost, string description,
+    IReadOnlyList<string> benefits, IReadOnlyList<string> drawbacks)
     : ObservableObject
 {
     public string Id { get; } = id;
@@ -221,6 +224,12 @@ public sealed partial class PerkOption(string id, string name, string category, 
     public string Category { get; } = category;
     public int Cost { get; } = cost;
     public string Description { get; } = description;
+
+    /// <summary>The good things this perk does, in plain language.</summary>
+    public IReadOnlyList<string> Benefits { get; } = benefits;
+
+    /// <summary>The costs this perk carries, in plain language.</summary>
+    public IReadOnlyList<string> Drawbacks { get; } = drawbacks;
 
     /// <summary>The perk cost shown with a sign ("+2", "0", "−1" for a refund).</summary>
     public string CostLabel => Cost > 0 ? $"+{Cost}" : Cost.ToString(System.Globalization.CultureInfo.InvariantCulture);

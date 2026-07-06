@@ -32,7 +32,13 @@ public sealed class DossierViewRenderTests
         ],
         Perks =
         [
-            new DossierPerk("rain_man", "Rain Man", "weather", "Untouchable in the wet, ordinary in the dry.", 1),
+            new DossierPerk
+            {
+                Id = "rain_man", Name = "Rain Man", Category = "weather",
+                Description = "Untouchable in the wet, ordinary in the dry.", Cost = 1,
+                Benefits = ["Stronger wet-weather pace — in the wet"],
+                Drawbacks = ["Weaker one-lap pace — in the dry"],
+            },
         ],
     };
 

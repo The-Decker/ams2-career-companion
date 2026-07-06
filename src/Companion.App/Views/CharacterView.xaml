@@ -108,8 +108,28 @@
                                     <ItemsControl ItemsSource="{Binding Perks}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="4,2"
-                                                          ToolTip="{Binding Description}">
+                                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="4,2">
+                                                    <CheckBox.ToolTip>
+                                                        <StackPanel MaxWidth="320">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                                                                       Margin="0,2,0,0" Opacity="0.85" />
+                                                            <ItemsControl ItemsSource="{Binding Benefits}" Margin="0,6,0,0">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock TextWrapping="Wrap"><Run Text="+  " FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                            <ItemsControl ItemsSource="{Binding Drawbacks}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock TextWrapping="Wrap" Opacity="0.85"><Run Text="−  " FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </StackPanel>
+                                                    </CheckBox.ToolTip>
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text="{Binding Name}" />
                                                         <TextBlock Text="{Binding CostLabel}" Style="{StaticResource Faint}"
