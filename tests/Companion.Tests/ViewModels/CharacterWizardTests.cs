@@ -121,6 +121,26 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
+    public void CarryingMorePerksThanTheCountCap_IsInvalid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        Assert.NotNull(vm.MaxPerks); // the shipped rules cap the perk count
+
+        // Clear the preset, then select one MORE than the cap allows — using only zero-cost perks so
+        // the CP net stays in budget and ONLY the count cap can fail the build.
+        foreach (var selected in vm.Perks.Where(p => p.IsSelected).ToList())
+            vm.TogglePerkCommand.Execute(selected);
+        foreach (var perk in vm.Perks.Where(p => p.Cost == 0).Take(vm.MaxPerks!.Value + 1))
+            vm.TogglePerkCommand.Execute(perk);
+
+        Assert.Equal(vm.MaxPerks!.Value + 1, vm.SelectedPerkCount);
+        Assert.True(vm.PerksInBudget);      // net is in budget — only the COUNT cap fails
+        Assert.False(vm.PerksWithinCount);
+        Assert.False(vm.IsValid);
+        Assert.Contains("at most", vm.Invalidity);
+    }
+
+    [Fact]
     public void StatSlider_ClampsToTheCreationBand()
     {
         var pace = new CharacterViewModel(Rules()).Stats.Single(s => s.Id == "pace");

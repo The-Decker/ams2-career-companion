@@ -18,7 +18,7 @@
         <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Padding="12,8" Margin="0,12,0,0">
             <StackPanel>
                 <TextBlock>
-                    <Run Text="Talent: " /><Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text=" allocated   ·   Perk points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=" spent" />
+                    <Run Text="Talent: " /><Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text=" allocated   ·   Perks: " /><Run Text="{Binding SelectedPerkCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerks, Mode=OneWay}" /><Run Text="   ·   Perk points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=" spent" />
                 </TextBlock>
                 <TextBlock Foreground="{StaticResource ErrorBrush}" Margin="0,4,0,0" TextWrapping="Wrap"
                            Text="{Binding Invalidity}">

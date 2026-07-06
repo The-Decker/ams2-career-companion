@@ -16,8 +16,8 @@ namespace Companion.Tests.Career;
 /// token is from the documented closed set (§7.2); |Σ cpEquivalent − cost| ≤ 0.5 per perk; no
 /// free-lunch (positive benefit-CP with zero drawback-CP) and no pure-trap (negative benefit-CP
 /// with no benefit at all); every perk carries ≥1 benefit AND ≥1 drawback effect; all 13 archetype
-/// presets reference real perk ids with net spend in [0, budget+headroom] = [0, 16]; ≥3 perks per
-/// category; the XP curve is strictly increasing.
+/// presets reference real perk ids with net spend in [0, budget+headroom] = [0, 9] and a perk count
+/// within the maxPerks cap (5); ≥3 perks per category; the XP curve is strictly increasing.
 /// </summary>
 public class PerkBalanceAuditTests
 {
@@ -220,6 +220,7 @@ public class PerkBalanceAuditTests
         int headroom = cp.GetProperty("maxRefundHeadroom").GetInt32();
         int minAfter = cp.GetProperty("minBudgetAfterSpend").GetInt32();
         int maxNet = budget + headroom;
+        int? maxPerks = cp.TryGetProperty("maxPerks", out var mp) ? mp.GetInt32() : null;
 
         // Real perk id -> cost map, for net-spend arithmetic.
         var perkCost = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -237,6 +238,12 @@ public class PerkBalanceAuditTests
 
             var ids = a.GetProperty("perkIds").EnumerateArray().Select(e => e.GetString()!).ToList();
             Assert.NotEmpty(ids);
+
+            // Every preset must fit the creation perk-count cap, so an archetype + a couple of
+            // player picks stays within it (the cap must leave room above the presets).
+            if (maxPerks is int cap)
+                Assert.True(ids.Count <= cap,
+                    $"Archetype '{id}' has {ids.Count} perks, over the maxPerks cap {cap}.");
 
             int net = 0;
             foreach (string pid in ids)

@@ -21,7 +21,7 @@ public sealed class CharacterSpendTests
     public void AvailableCp_IsCreationPlusLevelGrantsMinusSpent()
     {
         var rules = Rules();
-        int perLevel = rules.Levels.LevelGrants.CharacterPointsPerLevel; // 2
+        int perLevel = rules.Levels.LevelGrants.CharacterPointsPerLevel; // 3 in the shipped rules
 
         Assert.Equal(3, CharacterProgress.AvailableCp(Character(creationCp: 3), level: 1, rules)); // no grants at L1
         Assert.Equal(3 + perLevel * 4, CharacterProgress.AvailableCp(Character(creationCp: 3), level: 5, rules));
