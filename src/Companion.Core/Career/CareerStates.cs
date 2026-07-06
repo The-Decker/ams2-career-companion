@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using Companion.Core.Character;
+
 namespace Companion.Core.Career;
 
 /// <summary>Why a player DNF'd, for OPI blame assignment (docs/dev/career-sim.md, Player model).</summary>
@@ -72,6 +75,31 @@ public sealed record PlayerCareerState
     /// <summary>EXACT ams2LiveryName of the player's seat — identifies which pack entry the
     /// player occupies (that entry is excluded from the AI seat market).</summary>
     public string? LiveryName { get; init; }
+
+    // ---- Character system (Increment 4a) ----
+    // All default/null for a career created before the character system. Each is omitted from the
+    // serialized state blob when default (WhenWritingDefault), so a character-free career's
+    // player_state is BYTE-IDENTICAL to today's — the character layer perturbs nothing until a
+    // character is actually created (docs/dev/character-system.md §9).
+
+    /// <summary>The player's authored character (seven stats + perk ids + unspent CP), or null for
+    /// a pre-character career. Written once at creation (folded from the <c>player.character</c>
+    /// INPUT row); <see cref="CharacterProfile.CpUnspent"/> updates as CP are spent between seasons.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public CharacterProfile? Character { get; init; }
+
+    /// <summary>Current character level (1-based; 0 = no character). Derived from <see cref="Xp"/>
+    /// via the XP curve and journaled on each level-up.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int Level { get; init; }
+
+    /// <summary>Total accumulated character XP (a pure function of journaled results).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public long Xp { get; init; }
+
+    /// <summary>True once a character has been created for this career.</summary>
+    [JsonIgnore]
+    public bool HasCharacter => Character is not null;
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller
