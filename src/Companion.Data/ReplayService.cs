@@ -565,11 +565,21 @@ public static class ReplayService
         // both sides (a pre-character career, or a build with no character rules) → the fold is the
         // exact shipped path, byte-identical. (Increment 4a.)
         var character = previous.Player.Character;
-        PlayerPerkModifiers? mods = character is not null && inputs.CharacterRules is not null
-            ? PerkResolver.Resolve(character.PerkIds, inputs.CharacterRules)
+        bool hasCharacter = character is not null && inputs.CharacterRules is not null;
+
+        // Round-level perk conditions the fold can evaluate BEFORE the grid (race length). Weather and
+        // age-window conditions thread in later slices; until then they never match, so their perks
+        // stay dormant. A character with no conditional perks (or an empty set) resolves to the exact
+        // unconditional modifier, so non-conditional and non-character careers stay byte-identical.
+        var gridConditions = new HashSet<string>(StringComparer.Ordinal);
+        if (hasCharacter && RaceLengthToken(pack, round) is { } raceLength)
+            gridConditions.Add(raceLength);
+
+        PlayerPerkModifiers? gridMods = hasCharacter
+            ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, gridConditions)
             : null;
-        PlayerCharacterPatch? gridPatch = character is not null && inputs.CharacterRules is not null
-            ? new PlayerCharacterPatch { Profile = character, Modifiers = mods!, Rules = inputs.CharacterRules }
+        PlayerCharacterPatch? gridPatch = hasCharacter
+            ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
             : null;
 
         var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch);
@@ -585,6 +595,14 @@ public static class ReplayService
             .Where(s => !s.IsPlayer && string.Equals(s.TeamId, playerSeat.TeamId, StringComparison.Ordinal))
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
+
+        // Now the player's tier is known, add the tier-gated conditions for the per-race modifier.
+        var roundConditions = new HashSet<string>(gridConditions, StringComparer.Ordinal);
+        if (hasCharacter)
+        {
+            if (playerTeamTier <= 2) roundConditions.Add("tierLte2");
+            if (playerTeamTier >= 4) roundConditions.Add("tierGte4");
+        }
 
         // The round's scoring races (Increment 2e.2): usually one; a two-race weekend folds each
         // independently, THREADING the player state race → race, so OPI/rep/pace calibrate per race.
@@ -613,6 +631,17 @@ public static class ReplayService
                 continue; // the player is not in this race's classification
 
             var (finish, dnf) = outcome.Value;
+
+            // The per-race modifier adds the driver-error-DNF gate (round conditions are constant
+            // across a weekend; the DNF cause is per race). No character / no conditional perks →
+            // this equals the base modifier, so the fold stays byte-identical.
+            var raceConditions = roundConditions;
+            if (hasCharacter && dnf == DnfCause.DriverError)
+                raceConditions = new HashSet<string>(roundConditions, StringComparer.Ordinal) { "driverErrorDnf" };
+            var raceMods = hasCharacter
+                ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, raceConditions)
+                : null;
+
             var update = RoundUpdate.Apply(new RoundUpdateContext
             {
                 Grid = grid,
@@ -631,7 +660,7 @@ public static class ReplayService
                 PlayerName = string.IsNullOrEmpty(character?.Name) ? inputs.PlayerName : character.Name,
                 // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
-                Modifiers = mods,
+                Modifiers = raceMods,
                 CharacterRules = character is not null ? inputs.CharacterRules : null,
             });
 
@@ -689,6 +718,24 @@ public static class ReplayService
         {
             return null;
         }
+    }
+
+    /// <summary>Whether this round is a longer- or shorter-than-median race for the season (by lap
+    /// count) — "longRace" / "shortRace" — or null at the median or when laps are unknown. The split
+    /// is RELATIVE to this season's races, so it is deterministic and means the same across eras (an
+    /// 80-lap 1967 race and a 55-lap 2010s race can both be "long" for their own calendars).</summary>
+    private static string? RaceLengthToken(SeasonPack pack, int round)
+    {
+        var laps = pack.Season.Rounds.Select(r => r.Laps).Where(l => l > 0).OrderBy(l => l).ToList();
+        if (laps.Count == 0)
+            return null;
+        double median = laps.Count % 2 == 1
+            ? laps[laps.Count / 2]
+            : (laps[laps.Count / 2 - 1] + laps[laps.Count / 2]) / 2.0;
+        int thisLaps = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)?.Laps ?? 0;
+        if (thisLaps <= 0)
+            return null;
+        return thisLaps > median ? "longRace" : thisLaps < median ? "shortRace" : null;
     }
 
     /// <summary>The player's driver id THIS season, resolved from their start-state livery the same

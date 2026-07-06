@@ -12,7 +12,10 @@ namespace Companion.Core.Character;
 /// </summary>
 public static class PerkResolver
 {
-    public static PlayerPerkModifiers Resolve(IReadOnlyList<string> perkIds, CharacterRules rules)
+    public static PlayerPerkModifiers Resolve(
+        IReadOnlyList<string> perkIds,
+        CharacterRules rules,
+        IReadOnlySet<string>? activeConditions = null)
     {
         if (perkIds.Count == 0)
             return PlayerPerkModifiers.Identity;
@@ -30,6 +33,77 @@ public static class PerkResolver
         int repFloorRelax = 0, statPointsPerLevel = 0;
         double injuryDurability = 0.0, injuryBase = 0.0;
 
+        // One lever→accumulator mapping, reused by both unconditional effects and the conditional
+        // effects whose condition holds for this round (activeConditions) — so a fired conditional
+        // stacks onto exactly the same field its unconditional twin would.
+        void ApplyEffect(string lever, string? target, double m)
+        {
+            switch (lever)
+            {
+                case "statDelta" when target is { } rating:
+                    talent[rating] = talent.GetValueOrDefault(rating) + m;
+                    break;
+                case "carScalar":
+                    switch (target)
+                    {
+                        case "weight": weight += m; break;
+                        case "power": power += m; break;
+                        case "drag": drag += m; break;
+                    }
+                    break;
+                case "opiRetention":
+                    if (target == "gainSide") opiGain += m; else opiRetention += m;
+                    break;
+                case "opiErrorBlame":
+                    if (target == "floorBlend") blameFloor += m; else errorBlame += m;
+                    break;
+                case "reputationGainRate":
+                    if (target is "round" or "both") repRound += m;
+                    if (target is "season" or "both") repSeason += m;
+                    break;
+                case "underdogMultiplier":
+                    if (target == "topTierMult") topTier += m; else underdogLow += m;
+                    break;
+                case "marketability":
+                    marketability += m;
+                    break;
+                case "paceAnchorAlpha":
+                    anchorAlpha += m;
+                    break;
+                case "agingCurve":
+                    switch (target)
+                    {
+                        case "peakShift": peakShift += m; break;
+                        case "riseMult": riseMult += m; break;
+                        case "declineAccelMult": declineAccel += m; break;
+                    }
+                    break;
+                case "offerWeight":
+                    switch (target)
+                    {
+                        case "experience": offerExp += m; break;
+                        case "salaryAsk": salaryAsk += m; break;
+                        case "ageRisk": ageRisk += m; break;
+                        case "repFloorRelax": repFloorRelax += (int)Math.Round(m); break;
+                    }
+                    break;
+                case "income":
+                    if (target == "salaryOfferMult") salaryOffer += m; else payBu += m;
+                    break;
+                case "injuryHazard":
+                    if (target == "durabilityDelta") injuryDurability += m;
+                    else injuryBase += m; // baseAdd (unconditional perErrorAdd folds in here too)
+                    break;
+                case "xpRate":
+                    string cause = target ?? "all";
+                    xp[cause] = xp.GetValueOrDefault(cause, 1.0) + m;
+                    break;
+                case "statPoints":
+                    if (target == "perLevel") statPointsPerLevel += (int)Math.Round(m);
+                    break;
+            }
+        }
+
         foreach (string perkId in perkIds)
         {
             var perk = rules.PerkById(perkId);
@@ -37,76 +111,18 @@ public static class PerkResolver
             {
                 if (effect.Condition is not null)
                 {
-                    conditional.Add(new ConditionalPerkEffect(
-                        effect.Lever, effect.Target, effect.Magnitude, effect.Condition));
+                    // Fold the conditional effect in ONLY when the fold says its condition holds this
+                    // round; otherwise carry it (dormant) so a caller with no round context is
+                    // byte-identical to before.
+                    if (activeConditions is not null && activeConditions.Contains(effect.Condition))
+                        ApplyEffect(effect.Lever, effect.Target, effect.Magnitude);
+                    else
+                        conditional.Add(new ConditionalPerkEffect(
+                            effect.Lever, effect.Target, effect.Magnitude, effect.Condition));
                     continue;
                 }
 
-                double m = effect.Magnitude;
-                switch (effect.Lever)
-                {
-                    case "statDelta" when effect.Target is { } rating:
-                        talent[rating] = talent.GetValueOrDefault(rating) + m;
-                        break;
-                    case "carScalar":
-                        switch (effect.Target)
-                        {
-                            case "weight": weight += m; break;
-                            case "power": power += m; break;
-                            case "drag": drag += m; break;
-                        }
-                        break;
-                    case "opiRetention":
-                        if (effect.Target == "gainSide") opiGain += m; else opiRetention += m;
-                        break;
-                    case "opiErrorBlame":
-                        if (effect.Target == "floorBlend") blameFloor += m; else errorBlame += m;
-                        break;
-                    case "reputationGainRate":
-                        if (effect.Target is "round" or "both") repRound += m;
-                        if (effect.Target is "season" or "both") repSeason += m;
-                        break;
-                    case "underdogMultiplier":
-                        if (effect.Target == "topTierMult") topTier += m; else underdogLow += m;
-                        break;
-                    case "marketability":
-                        marketability += m;
-                        break;
-                    case "paceAnchorAlpha":
-                        anchorAlpha += m;
-                        break;
-                    case "agingCurve":
-                        switch (effect.Target)
-                        {
-                            case "peakShift": peakShift += m; break;
-                            case "riseMult": riseMult += m; break;
-                            case "declineAccelMult": declineAccel += m; break;
-                        }
-                        break;
-                    case "offerWeight":
-                        switch (effect.Target)
-                        {
-                            case "experience": offerExp += m; break;
-                            case "salaryAsk": salaryAsk += m; break;
-                            case "ageRisk": ageRisk += m; break;
-                            case "repFloorRelax": repFloorRelax += (int)Math.Round(m); break;
-                        }
-                        break;
-                    case "income":
-                        if (effect.Target == "salaryOfferMult") salaryOffer += m; else payBu += m;
-                        break;
-                    case "injuryHazard":
-                        if (effect.Target == "durabilityDelta") injuryDurability += m;
-                        else injuryBase += m; // baseAdd (unconditional perErrorAdd folds in here too)
-                        break;
-                    case "xpRate":
-                        string cause = effect.Target ?? "all";
-                        xp[cause] = xp.GetValueOrDefault(cause, 1.0) + m;
-                        break;
-                    case "statPoints":
-                        if (effect.Target == "perLevel") statPointsPerLevel += (int)Math.Round(m);
-                        break;
-                }
+                ApplyEffect(effect.Lever, effect.Target, effect.Magnitude);
             }
         }
 

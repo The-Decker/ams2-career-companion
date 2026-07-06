@@ -130,6 +130,82 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         Assert.NotNull(CareerStore.ReadSeasons(db)); // sanity: career intact
     }
 
+    private static CharacterProfile ConditionalPerkCharacter() => new()
+    {
+        Name = "Giant Killer",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = 0.55,
+        },
+        PerkIds = ["underdog_hero"], // underdogMultiplier gated on team tier — a conditional that fires per round
+        CpUnspent = 0,
+    };
+
+    [Fact]
+    public void ConditionalPerkCharacter_FiresTheRoundCondition_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "conditional.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 13572468;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Conditional",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = ConditionalPerkCharacter(),
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            Assert.NotNull(session.SeasonReview());
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // The tier-gated underdog multiplier fires every round the player's team tier matches, but it
+        // is a pure function of the (deterministic) grid tier, so the whole career re-simulates
+        // byte-identically through the same conditional evaluation.
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.True(seasonId > 0);
+    }
+
     [Fact]
     public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
     {
