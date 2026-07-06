@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Grid;
 
@@ -45,6 +46,16 @@ public sealed record RoundUpdateContext
     /// qualifying session; null on single-race rounds → no qualifying anchor and no event, so
     /// single-race careers emit the identical journal sequence. (Increment 2.)</summary>
     public int? PlayerQualifyingPosition { get; init; }
+
+    /// <summary>The player's resolved character modifier, or null for a pre-character career — then
+    /// every OPI/reputation/pace-anchor call takes its exact shipped path and the round is
+    /// byte-identical. Built once by the fold from the folded character. (Increment 4a.)</summary>
+    public PlayerPerkModifiers? Modifiers { get; init; }
+
+    /// <summary>The character rules (perks.json) when this career carries a character — supplies the
+    /// XP curve + sources for the <c>player.xp</c> row. Null for a pre-character career (no XP row,
+    /// journal sequence unchanged). (Increment 4a.)</summary>
+    public CharacterRules? CharacterRules { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -77,16 +88,17 @@ public static class RoundUpdate
         int gridSize = grid.Seats.Count;
         int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
 
+        var mods = context.Modifiers;
         int expected = SeatStrengthModel.ExpectedFinish(grid, playerIndex);
-        double effective = OpiMath.EffectiveFinish(expected, context.PlayerFinish, context.PlayerDnf, gridSize);
+        double effective = OpiMath.EffectiveFinish(expected, context.PlayerFinish, context.PlayerDnf, gridSize, mods);
 
-        double newOpi = OpiMath.Update(player.Opi, expected, effective);
+        double newOpi = OpiMath.Update(player.Opi, expected, effective, mods);
 
         bool beatTeammate = context.HasTeammate
                             && context.PlayerFinish is { } finish
                             && (context.TeammateFinish is null || finish < context.TeammateFinish);
         double repDelta = ReputationMath.RoundDelta(
-            expected, effective, context.PlayerFinish, beatTeammate, context.PlayerTeamTier);
+            expected, effective, context.PlayerFinish, beatTeammate, context.PlayerTeamTier, mods);
         double newRep = ReputationMath.Apply(player.Reputation, repDelta);
 
         // The anchor calibrates only on classified finishes: a DNF carries no pace signal.
@@ -94,7 +106,7 @@ public static class RoundUpdate
         if (context.PlayerFinish is { } classified)
         {
             double implied = PaceAnchorMath.ImpliedPlayerPace(grid, classified, context.SliderUsed);
-            newAnchor = PaceAnchorMath.Update(player.PaceAnchor, implied);
+            newAnchor = PaceAnchorMath.Update(player.PaceAnchor, implied, mods);
         }
 
         // Qualifying (one-lap) anchor: calibrates only on rounds that ran qualifying (Inc 2).
@@ -102,7 +114,7 @@ public static class RoundUpdate
         if (context.PlayerQualifyingPosition is { } qualiPos)
         {
             double impliedQuali = PaceAnchorMath.ImpliedPlayerQualiPace(grid, qualiPos, context.SliderUsed);
-            newQualiAnchor = PaceAnchorMath.Update(player.QualifyingAnchor, impliedQuali);
+            newQualiAnchor = PaceAnchorMath.Update(player.QualifyingAnchor, impliedQuali, mods);
         }
 
         int recommendedSlider = newAnchor > 0.0
@@ -110,6 +122,32 @@ public static class RoundUpdate
             : (int)Math.Round(context.SliderUsed, MidpointRounding.AwayFromZero);
 
         string cause = RaceCause(context, expected, effective);
+
+        // Character XP (Increment 4a): a pure function of this round's result. Accrued and journaled
+        // only for a character career — a pre-character career emits no player.xp row, so its journal
+        // sequence is unchanged.
+        long newXp = player.Xp;
+        int newLevel = player.Level;
+        JournalEvent? xpEvent = null;
+        if (player.Character is not null && context.CharacterRules is { } charRules)
+        {
+            int xpRound = XpMath.PerRound(charRules.Levels.XpSources.PerRound, new XpMath.RoundInputs(
+                ExpectedFinish: expected,
+                EffectiveFinish: effective,
+                FinishPosition: context.PlayerFinish,
+                ScoredPoints: context.PlayerFinish is { } scored && scored <= context.PointsPositions,
+                BeatTeammate: beatTeammate,
+                Dnf: context.PlayerDnf));
+            newXp = Math.Max(0, player.Xp + xpRound);
+            newLevel = charRules.Levels.XpCurve.LevelForTotalXp(newXp);
+            xpEvent = new JournalEvent
+            {
+                Phase = JournalPhases.PlayerXp,
+                Entity = "player",
+                DeltaJson = CareerJson.Serialize(new { from = player.Xp, to = newXp, round = xpRound, level = newLevel }),
+                Cause = cause,
+            };
+        }
 
         var events = new List<JournalEvent>
         {
@@ -150,19 +188,25 @@ public static class RoundUpdate
                 }),
                 Cause = cause,
             },
-            new()
-            {
-                Phase = JournalPhases.PlayerPaceAnchor,
-                Entity = "player",
-                DeltaJson = CareerJson.Serialize(new
-                {
-                    from = Round4(player.PaceAnchor),
-                    to = Round4(newAnchor),
-                    recommendedSlider,
-                }),
-                Cause = cause,
-            },
         };
+
+        // player.xp rides between the reputation and pace-anchor rows (a fixed position, absent for
+        // a character-free career).
+        if (xpEvent is not null)
+            events.Add(xpEvent);
+
+        events.Add(new JournalEvent
+        {
+            Phase = JournalPhases.PlayerPaceAnchor,
+            Entity = "player",
+            DeltaJson = CareerJson.Serialize(new
+            {
+                from = Round4(player.PaceAnchor),
+                to = Round4(newAnchor),
+                recommendedSlider,
+            }),
+            Cause = cause,
+        });
 
         // Qualifying anchor row (weekend rounds only) — a fixed position after the pace anchor,
         // absent for single-race rounds so their journal sequence is unchanged.
@@ -217,6 +261,8 @@ public static class RoundUpdate
                 Reputation = newRep,
                 PaceAnchor = newAnchor,
                 QualifyingAnchor = newQualiAnchor,
+                Xp = newXp,
+                Level = newLevel,
             },
             Events = events,
             RecommendedSlider = recommendedSlider,

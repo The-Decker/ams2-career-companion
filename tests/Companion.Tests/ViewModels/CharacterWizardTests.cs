@@ -1,0 +1,157 @@
+using Companion.Core.Character;
+using Companion.Tests.Career;
+using Companion.ViewModels.Services;
+using Companion.ViewModels.Wizard;
+
+namespace Companion.Tests.ViewModels;
+
+/// <summary>The wizard's character-creation step: the pure <see cref="CharacterViewModel"/> (archetype
+/// presets, perk toggling, live CP validity, profile building) and its integration into the wizard
+/// flow (the step appears when character rules are loaded and writes the character into the request).</summary>
+public sealed class CharacterWizardTests : IDisposable
+{
+    private readonly string _root = Directory.CreateTempSubdirectory("companion-char-wizard-").FullName;
+
+    public void Dispose()
+    {
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        try { Directory.Delete(_root, recursive: true); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
+    }
+
+    private static CharacterRules Rules() => CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+
+    // ---------- the viewmodel ----------
+
+    [Fact]
+    public void DefaultsToTheFirstArchetype_AsACompleteValidBuild()
+    {
+        var vm = new CharacterViewModel(Rules());
+        var first = vm.Archetypes[0];
+
+        Assert.NotNull(vm.SelectedArchetype);
+        Assert.True(vm.IsValid);
+        Assert.Null(vm.Invalidity);
+
+        // Stats and perks came from the preset.
+        Assert.Equal(first.StartStats["pace"], vm.Stats.Single(s => s.Id == "pace").Value, 6);
+        Assert.Equal(
+            first.PerkIds.OrderBy(x => x, StringComparer.Ordinal),
+            vm.Perks.Where(p => p.IsSelected).Select(p => p.Id).OrderBy(x => x, StringComparer.Ordinal));
+        Assert.Equal(first.PerkIds.Sum(id => Rules().PerkById(id).Cost), vm.NetCpSpend);
+    }
+
+    [Fact]
+    public void TogglePerk_MovesTheNetCpSpend()
+    {
+        var vm = new CharacterViewModel(Rules());
+        int before = vm.NetCpSpend;
+        var perk = vm.Perks.First(p => !p.IsSelected && p.Cost > 0);
+
+        vm.TogglePerkCommand.Execute(perk);
+
+        Assert.True(perk.IsSelected);
+        Assert.Equal(before + perk.Cost, vm.NetCpSpend);
+    }
+
+    [Fact]
+    public void SelectingAnArchetype_ReplacesStatsAndPerks()
+    {
+        var vm = new CharacterViewModel(Rules());
+        var target = vm.Archetypes.First(a => a.Id == "rain_master");
+
+        vm.SelectedArchetype = target;
+
+        Assert.Equal(target.StartStats["adaptability"], vm.Stats.Single(s => s.Id == "adaptability").Value, 6);
+        Assert.Equal(
+            target.PerkIds.OrderBy(x => x, StringComparer.Ordinal),
+            vm.Perks.Where(p => p.IsSelected).Select(p => p.Id).OrderBy(x => x, StringComparer.Ordinal));
+        Assert.True(vm.IsValid);
+    }
+
+    [Fact]
+    public void OverspendingEveryPositivePerk_IsInvalid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        foreach (var perk in vm.Perks.Where(p => p.Cost > 0 && !p.IsSelected).ToList())
+            vm.TogglePerkCommand.Execute(perk);
+
+        Assert.True(vm.NetCpSpend > vm.Budget);
+        Assert.False(vm.IsValid);
+        Assert.NotNull(vm.Invalidity);
+    }
+
+    [Fact]
+    public void StatSlider_ClampsToTheCreationBand()
+    {
+        var pace = new CharacterViewModel(Rules()).Stats.Single(s => s.Id == "pace");
+
+        pace.Value = 0.99;
+        Assert.Equal(0.85, pace.Value, 6);
+        pace.Value = 0.0;
+        Assert.Equal(0.15, pace.Value, 6);
+    }
+
+    [Fact]
+    public void BuildProfile_CarriesTheSelectedStatsPerksAndUnspentCp()
+    {
+        var vm = new CharacterViewModel(Rules());
+        var profile = vm.BuildProfile();
+
+        Assert.Equal(
+            vm.Perks.Where(p => p.IsSelected).Select(p => p.Id),
+            profile.PerkIds);
+        Assert.Equal(vm.Stats.Single(s => s.Id == "pace").Value, profile.Stat("pace"), 6);
+        Assert.Contains("marketability", profile.Stats.Keys); // meta stats included
+        Assert.Equal(vm.RemainingCp, profile.CpUnspent);
+    }
+
+    // ---------- wizard integration ----------
+
+    [Fact]
+    public void Wizard_WithRules_ShowsTheCharacterStep_AndWritesTheCharacterIntoTheRequest()
+    {
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), Path.Combine(_root, "packs", "pack"));
+        var factory = new FakeCareerFactory();
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+        var wizard = new NewCareerWizardViewModel(
+            environment, factory,
+            packSearchRoots: [Path.Combine(_root, "packs")],
+            careersDirectory: Path.Combine(_root, "careers"),
+            seedSource: new Random(9));
+
+        Assert.True(wizard.HasCharacterStep);
+
+        wizard.SelectedPack = Assert.Single(wizard.Packs);
+        wizard.NextCommand.Execute(null);                 // -> Verification
+        if (wizard.HasWarnings) wizard.ProceedAnyway = true;
+        wizard.NextCommand.Execute(null);                 // -> SeatPick
+        wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null);                 // -> Character
+        Assert.Equal(WizardStep.Character, wizard.Step);
+        Assert.NotNull(wizard.Character);
+
+        wizard.NextCommand.Execute(null);                 // -> Confirm
+        Assert.Equal(WizardStep.Confirm, wizard.Step);
+        wizard.NextCommand.Execute(null);                 // Create
+
+        var request = factory.LastRequest!;
+        Assert.NotNull(request.Character);
+        // The default archetype's perks came through (profile lists them in perks.json order — a
+        // deterministic order, so compared as a set here).
+        Assert.Equal(
+            wizard.Archetypes()[0].PerkIds.OrderBy(x => x, StringComparer.Ordinal),
+            request.Character!.PerkIds.OrderBy(x => x, StringComparer.Ordinal));
+        Assert.Contains("pace", request.Character.Stats.Keys);
+    }
+}
+
+file static class CharacterWizardTestExtensions
+{
+    /// <summary>The wizard's character archetypes (the step is built lazily; this reaches them for
+    /// the assertion once the character step exists).</summary>
+    public static IReadOnlyList<Archetype> Archetypes(this NewCareerWizardViewModel wizard) =>
+        wizard.Character!.Archetypes;
+}

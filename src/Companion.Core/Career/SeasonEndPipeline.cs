@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
@@ -56,6 +57,11 @@ public sealed record SeasonEndContext
 
     /// <summary>Display name for {champion} tokens when the player wins; defaults to the id.</summary>
     public string? PlayerName { get; init; }
+
+    /// <summary>The driver-character rules (perks.json), or null. Combined with the player's
+    /// character to scale the season reputation and the offer/salary scoring; null (or a
+    /// character-free player) leaves the season end byte-identical. (Increment 4a.)</summary>
+    public CharacterRules? CharacterRules { get; init; }
 }
 
 public sealed record SeasonEndResult
@@ -142,6 +148,11 @@ public static class SeasonEndPipeline
 
         // ---- step 2: player reputation/OPI finals -------------------------------------
         var player = context.Player;
+        // The player's character modifier (null for a character-free player or no rules → every
+        // call below takes its exact shipped path, so the season end is byte-identical).
+        PlayerPerkModifiers? characterMods = player.Character is { } chr && context.CharacterRules is { } crules
+            ? PerkResolver.Resolve(chr.PerkIds, crules)
+            : null;
         int? playerPosition = final.Drivers
             .FirstOrDefault(d => string.Equals(d.DriverId, context.PlayerDriverId, StringComparison.Ordinal))
             ?.Position;
@@ -149,7 +160,7 @@ public static class SeasonEndPipeline
             .FirstOrDefault(t => string.Equals(t.TeamId, player.CurrentTeamId, StringComparison.Ordinal))
             ?.Tier ?? 3;
 
-        double seasonRepDelta = ReputationMath.SeasonDelta(playerPosition, playerTier);
+        double seasonRepDelta = ReputationMath.SeasonDelta(playerPosition, playerTier, characterMods);
         double finalRep = ReputationMath.Apply(player.Reputation, seasonRepDelta);
 
         events.Add(new JournalEvent
@@ -387,12 +398,12 @@ public static class SeasonEndPipeline
 
             var archetype = context.Archetypes.ForTeam(team.Tier, ArchetypeOverride(context, team.TeamId));
             double score = TeamArchetypeCatalog.OfferScore(
-                archetype, finalRep, player.Opi, player.SeasonsCompleted, salaryAsk, ageRisk);
+                archetype, finalRep, player.Opi, player.SeasonsCompleted, salaryAsk, ageRisk, characterMods);
             scored.Add(new PlayerOffer
             {
                 TeamId = team.TeamId,
                 Tier = team.Tier,
-                SalaryBu = context.Archetypes.SalaryOffer(team.Tier, finalRep),
+                SalaryBu = context.Archetypes.SalaryOffer(team.Tier, finalRep, characterMods),
                 Score = Round4(score),
             });
         }

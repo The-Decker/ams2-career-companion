@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Packs;
 
 namespace Companion.Core.Grid;
@@ -208,8 +209,28 @@ public static class RoundGridResolver
                 $"this round's liveries are: {string.Join(", ", seats.Select(s => $"'{s.Ams2LiveryName}'"))}.");
         }
 
-        seats[index] = seats[index] with { IsPlayer = true };
+        // Mark the player seat, then patch it from the character (last in the merge chain:
+        // pack baseline → track form → aiOverrides → + character). No character = unchanged seat.
+        seats[index] = ApplyCharacter(seats[index] with { IsPlayer = true }, playerSeat.Character);
         return seats;
+    }
+
+    /// <summary>Patches the player seat's ratings (talent stats + perk deltas) and car scalars
+    /// (perk deltas) from the character. Null character returns the seat verbatim, so a pre-character
+    /// career resolves a byte-identical grid.</summary>
+    private static GridSeat ApplyCharacter(GridSeat seat, PlayerCharacterPatch? character)
+    {
+        if (character is null)
+            return seat;
+
+        var mods = character.Modifiers;
+        return seat with
+        {
+            Ratings = CharacterRatingWriter.Apply(seat.Ratings, character.Profile, character.Rules, mods),
+            WeightScalar = seat.WeightScalar + mods.WeightScalarDelta,
+            PowerScalar = seat.PowerScalar + mods.PowerScalarDelta,
+            DragScalar = seat.DragScalar + mods.DragScalarDelta,
+        };
     }
 
     // ---------- validation ----------

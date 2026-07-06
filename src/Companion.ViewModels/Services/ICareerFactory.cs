@@ -1,3 +1,5 @@
+using Companion.Core.Character;
+
 namespace Companion.ViewModels.Services;
 
 /// <summary>Everything needed to create a new career from a season pack.</summary>
@@ -25,6 +27,12 @@ public sealed record CareerCreationRequest
     /// <summary>Where <see cref="CommunityBaselineXml"/> was read from — journaled provenance
     /// only, never re-read.</summary>
     public string? CommunityBaselineSourcePath { get; init; }
+
+    /// <summary>The player's authored character (stats + perks), or null for a career with no
+    /// character. Written once at creation as the <c>player.character</c> INPUT row and seeded into
+    /// the start player state; the sim derives the rating writes + perk modifier from it
+    /// deterministically. (Increment 4a.)</summary>
+    public CharacterProfile? Character { get; init; }
 }
 
 /// <summary>

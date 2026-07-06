@@ -37,7 +37,11 @@ public static class DataJournalPhases
     public static bool IsProvenance(string phase) =>
         phase.StartsWith(AuditPrefix, StringComparison.Ordinal)
         || string.Equals(phase, CareerProvenance, StringComparison.Ordinal)
-        || string.Equals(phase, ResultProvenance, StringComparison.Ordinal);
+        || string.Equals(phase, ResultProvenance, StringComparison.Ordinal)
+        // The player.character creation row is a one-time INPUT (its data rides in the start
+        // player state, which survives WipeDerived) — the round fold never regenerates it, so
+        // the replay byte-compare must exclude it. (Increment 4a.)
+        || string.Equals(phase, JournalPhases.PlayerCharacter, StringComparison.Ordinal);
 }
 
 /// <summary>One persisted journal row: a <see cref="JournalEvent"/> plus the storage-assigned

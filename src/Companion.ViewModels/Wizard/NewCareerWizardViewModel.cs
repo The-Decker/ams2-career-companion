@@ -73,11 +73,16 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         WizardStep.SeasonPick => SelectedPack is { LoadError: null },
         WizardStep.Verification => !HasErrors && (!HasWarnings || ProceedAnyway),
         WizardStep.SeatPick => SelectedSeat is not null,
+        WizardStep.Character => Character?.IsValid ?? true,
         WizardStep.Confirm => CanCreate,
         _ => false,
     };
 
     public bool CanGoBack => Step > WizardStep.SeasonPick;
+
+    /// <summary>The character step exists only when character rules are available (the app always
+    /// ships perks.json; a rules-less environment — some tests — skips straight to confirm).</summary>
+    public bool HasCharacterStep => _environment.RulesDirectory is not null;
 
     [RelayCommand(CanExecute = nameof(CanGoNext))]
     private void Next()
@@ -100,6 +105,19 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.SeatPick:
+                if (HasCharacterStep)
+                {
+                    PrepareCharacter();
+                    Step = WizardStep.Character;
+                }
+                else
+                {
+                    PrepareConfirm();
+                    Step = WizardStep.Confirm;
+                }
+                break;
+
+            case WizardStep.Character:
                 PrepareConfirm();
                 Step = WizardStep.Confirm;
                 break;
@@ -113,8 +131,14 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanGoBack))]
     private void Back()
     {
-        if (CanGoBack)
-            Step = Step - 1;
+        if (!CanGoBack)
+            return;
+        // Confirm steps back over the (possibly skipped) character step.
+        Step = Step switch
+        {
+            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
+            _ => Step - 1,
+        };
     }
 
     partial void OnStepChanged(WizardStep value) => OnPropertyChanged(nameof(CanGoBack));
@@ -277,6 +301,32 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         }
     }
 
+    // ---------- step c2: character (Increment 4a) ----------
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
+    private CharacterViewModel? _character;
+
+    /// <summary>Builds the character step over the loaded rules and keeps the Next gate in sync as
+    /// the player edits it (a perk toggle can flip validity).</summary>
+    private void PrepareCharacter()
+    {
+        if (Character is not null)
+            Character.PropertyChanged -= OnCharacterChanged;
+        Character = new CharacterViewModel(_environment.Rules.Character);
+        Character.PropertyChanged += OnCharacterChanged;
+    }
+
+    private void OnCharacterChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(CharacterViewModel.IsValid))
+        {
+            OnPropertyChanged(nameof(CanGoNext));
+            NextCommand.NotifyCanExecuteChanged();
+        }
+    }
+
     // ---------- step d: confirm ----------
 
     [ObservableProperty]
@@ -407,6 +457,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             PlayerLiveryName = SelectedSeat!.LiveryName,
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
+            Character = Character?.BuildProfile(),
         };
 
         ICareerSession session;
