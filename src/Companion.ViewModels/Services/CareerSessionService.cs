@@ -436,6 +436,29 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             previous is null ? null : last.Opi - previous.Opi);
     }
 
+    /// <summary>The latest folded player state (the most recent round's, or the season-start state
+    /// before any round) — the one source of the current character, level and XP.</summary>
+    private PlayerCareerState? CurrentPlayerState()
+    {
+        var states = StateStore.ReadRoundPlayerStates(_database, _seasonId);
+        return states.Count > 0
+            ? states[^1].State.Player
+            : StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart);
+    }
+
+    /// <summary>The Driver dossier projection (character depth 3), or null when the career has no
+    /// character or no character rules are loaded.</summary>
+    public Companion.Core.Character.CharacterDossier? CharacterDossier()
+    {
+        if (_environment.RulesDirectory is null)
+            return null;
+        if (CurrentPlayerState()?.Character is not { } character)
+            return null;
+        var player = CurrentPlayerState()!;
+        return Companion.Core.Character.CharacterDossier.Build(
+            character, player.Level, player.Xp, _environment.Rules.Character);
+    }
+
     private int RoundCount => Pack.Season.Rounds.Count;
 
     /// <summary>1-based number of the round currently being played (last applied + 1).</summary>

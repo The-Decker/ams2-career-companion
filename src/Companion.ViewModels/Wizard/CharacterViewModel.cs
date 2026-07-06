@@ -16,18 +16,6 @@ public sealed partial class CharacterViewModel : ObservableObject
 {
     private readonly CharacterRules _rules;
 
-    private static readonly IReadOnlyDictionary<string, string> StatLabels =
-        new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["pace"] = "Pace",
-            ["oneLap"] = "One-lap pace",
-            ["craft"] = "Craft",
-            ["racecraft"] = "Racecraft",
-            ["adaptability"] = "Adaptability",
-            ["marketability"] = "Marketability",
-            ["durability"] = "Durability",
-        };
-
     public CharacterViewModel(CharacterRules rules, string? defaultName = null)
     {
         _rules = rules;
@@ -178,7 +166,7 @@ public sealed partial class CharacterViewModel : ObservableObject
         };
     }
 
-    private static string Label(string id) => StatLabels.GetValueOrDefault(id, id);
+    private static string Label(string id) => CharacterLabels.Stat(id);
 }
 
 /// <summary>One stat slider, clamped to the character-creation band (0.15–0.85 for talent stats,

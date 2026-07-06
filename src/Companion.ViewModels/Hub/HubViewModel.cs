@@ -22,6 +22,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 {
     public const string RaceTabKey = "race";
     public const string StandingsTabKey = "standings";
+    public const string DriverTabKey = "driver";
     public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
 
@@ -48,6 +49,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 
         News = new NewsViewModel(session, settings?.Current.NewsDetail ?? NewsDetailLevel.Articles);
         History = new HistoryViewModel(session);
+        Dossier = new DossierViewModel(session);
 
         Tabs =
         [
@@ -56,6 +58,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             new HubTabViewModel(HistoryTabKey, "History", "", History),
             new HubTabViewModel(NewsTabKey, "News", "", News),
         ];
+
+        // The Driver dossier tab is present only when the career carries a character (depth 3).
+        if (Dossier.HasCharacter)
+            Tabs.Insert(2, new HubTabViewModel(DriverTabKey, "Driver", "", Dossier));
 
         SelectTab(Tabs[0]); // auto-select Race on open
     }
@@ -69,6 +75,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// <summary>The History / Scrapbook lens (per-season cards, lineage timeline, records
     /// book, archived articles) — refreshed in place after every Apply like the other lenses.</summary>
     public HistoryViewModel History { get; }
+
+    /// <summary>The Driver dossier lens — the player's character, stats, perks and level/XP as the
+    /// career unfolds. Present as a tab only when the career has a character (depth 3).</summary>
+    public DossierViewModel Dossier { get; }
 
     /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
     /// the hub's era badge now, and the full resource-dictionary swap in a later slice.</summary>
@@ -155,6 +165,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             standings.Content = NewStandings();
         News.Refresh();
         History.Refresh();
+        Dossier.Refresh();
 
         if (RaceTab is { } race)
             SelectTab(race);

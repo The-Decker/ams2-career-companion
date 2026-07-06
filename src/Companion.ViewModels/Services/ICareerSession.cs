@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Numerics;
 using Companion.Core.Packs;
@@ -113,6 +114,14 @@ public interface ICareerSession
     /// season: reopen the career file to land in the new season. Additive member.</summary>
     void StartNextSeason(string teamId) => throw new NotSupportedException(
         "This career session does not support era transitions.");
+
+    /// <summary>The player's driver dossier (character depth 3): name, the seven stats, the chosen
+    /// perks with what they do, and progression (level + XP toward the next), projected from the
+    /// current folded player state + the character rules. Null for a career with no character (or no
+    /// character rules loaded) — so the hub shows the Driver tab only when there is a driver to show.
+    /// Pure read-only projection, re-derivable, no new persistence. Additive default: null, so every
+    /// existing fake compiles.</summary>
+    CharacterDossier? CharacterDossier() => null;
 
     SeasonPack Pack { get; }
 }
