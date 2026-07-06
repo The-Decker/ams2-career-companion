@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Companion.Core.Character;
 using Companion.Core.Json;
 
 namespace Companion.Core.Career;
@@ -67,15 +68,25 @@ public sealed class TeamArchetypeCatalog
     }
 
     /// <summary>The contract offer-scoring formula:
-    /// <c>w1·rep + w2·OPI + w3·experience − w4·salaryAsk − w5·ageRisk</c>.</summary>
+    /// <c>w1·rep + w2·OPI + w3·experience − w4·salaryAsk − w5·ageRisk</c>. A character's business
+    /// perks scale the experience / salary-ask / age-risk terms; a null modifier scores exactly the
+    /// shipped formula.</summary>
     public static double OfferScore(
         TeamArchetype archetype,
         double reputation,
         double opi,
         double experienceSeasons,
         double salaryAskBu,
-        double ageRiskYears)
+        double ageRiskYears,
+        PlayerPerkModifiers? mods = null)
     {
+        if (mods is not null)
+        {
+            experienceSeasons *= mods.OfferExperienceMult;
+            salaryAskBu *= mods.SalaryAskMult;
+            ageRiskYears *= mods.AgeRiskMult;
+        }
+
         var w = archetype.Weights;
         return w.Rep * reputation
                + w.Opi * opi
@@ -87,13 +98,17 @@ public sealed class TeamArchetypeCatalog
     public double RepFloor(int tier) =>
         RepFloorByTier.TryGetValue(Math.Clamp(tier, 1, 5), out double floor) ? floor : 0.0;
 
-    /// <summary>Offered salary: the tier's band interpolated by reputation, rounded to 0.1 BU.</summary>
-    public double SalaryOffer(int tier, double reputation)
+    /// <summary>Offered salary: the tier's band interpolated by reputation, rounded to 0.1 BU. A
+    /// character's income perk scales the figure; a null modifier keeps the shipped band.</summary>
+    public double SalaryOffer(int tier, double reputation, PlayerPerkModifiers? mods = null)
     {
         if (!SalaryBandsByTier.TryGetValue(Math.Clamp(tier, 1, 5), out var band))
             throw new KeyNotFoundException($"No salary band for tier {tier}.");
         double t = Math.Clamp(reputation, 0.0, 100.0) / 100.0;
-        return Math.Round(band.MinBu + (band.MaxBu - band.MinBu) * t, 1);
+        double offer = band.MinBu + (band.MaxBu - band.MinBu) * t;
+        if (mods is not null)
+            offer *= mods.SalaryOfferMult;
+        return Math.Round(offer, 1);
     }
 
     private sealed record CatalogDto

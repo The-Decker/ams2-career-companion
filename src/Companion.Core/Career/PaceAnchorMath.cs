@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Grid;
 
 namespace Companion.Core.Career;
@@ -12,11 +13,15 @@ public static class PaceAnchorMath
     public const double Alpha = 0.3;
 
     /// <summary>EWMA update. An anchor of 0 means "not yet calibrated": the first sample
-    /// seeds the anchor directly instead of averaging against nothing.</summary>
-    public static double Update(double anchor, double impliedPacePercent) =>
-        anchor <= 0.0
-            ? impliedPacePercent
-            : (1.0 - Alpha) * anchor + Alpha * impliedPacePercent;
+    /// seeds the anchor directly instead of averaging against nothing. A character perk can move
+    /// the smoothing α (a test driver converges quicker); a null modifier keeps the shipped 0.3.</summary>
+    public static double Update(double anchor, double impliedPacePercent, PlayerPerkModifiers? mods = null)
+    {
+        if (anchor <= 0.0)
+            return impliedPacePercent;
+        double alpha = mods?.AnchorAlpha ?? Alpha;
+        return (1.0 - alpha) * anchor + alpha * impliedPacePercent;
+    }
 
     /// <summary>The player's implied pace this round: the AI driver ranked at the player's
     /// finishing position by merged raceSkill is the player's nearest known yardstick; their
