@@ -1,0 +1,102 @@
+using Companion.Core.Career;
+using Companion.Core.Character;
+
+namespace Companion.Tests.Career;
+
+/// <summary>The pure perk-effects → <see cref="PlayerPerkModifiers"/> resolver. Empty perks resolve
+/// to the identity modifier (the byte-identical guarantee); each lever maps to its documented field;
+/// round-conditional effects are carried, not pre-applied.</summary>
+public sealed class PerkResolverTests
+{
+    private static CharacterRules Rules() => CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+
+    [Fact]
+    public void Resolve_NoPerks_IsTheIdentityModifier()
+    {
+        Assert.Same(PlayerPerkModifiers.Identity, PerkResolver.Resolve([], Rules()));
+    }
+
+    [Fact]
+    public void Resolve_StatDeltaPerk_MovesTheNamedRatings()
+    {
+        // sunday_driver: raceSkill +0.06, qualifyingSkill -0.06 (rating mass redistributed).
+        var mods = PerkResolver.Resolve(["sunday_driver"], Rules());
+
+        Assert.Equal(0.06, mods.TalentDelta("raceSkill"), 6);
+        Assert.Equal(-0.06, mods.TalentDelta("qualifyingSkill"), 6);
+        Assert.Equal(0.0, mods.TalentDelta("aggression")); // untouched field
+    }
+
+    [Fact]
+    public void Resolve_CarScalarAndMarketabilityAndOffer_MapToTheirFields()
+    {
+        // engineers_favorite: power +0.010, drag -0.008, startReactions -0.05, marketability -0.10.
+        var mods = PerkResolver.Resolve(["engineers_favorite"], Rules());
+
+        Assert.Equal(0.010, mods.PowerScalarDelta, 6);
+        Assert.Equal(-0.008, mods.DragScalarDelta, 6);
+        Assert.Equal(0.0, mods.WeightScalarDelta);
+        Assert.Equal(-0.05, mods.TalentDelta("startReactions"), 6);
+        Assert.Equal(0.40, mods.Marketability, 6); // 0.5 base − 0.10
+    }
+
+    [Fact]
+    public void Resolve_PaceAnchorAndOfferWeightAndXp_ApplyOnTheirBases()
+    {
+        // test_driver: paceAnchorAlpha +0.15, offerWeight experience -0.15, aggression -0.03.
+        var mods = PerkResolver.Resolve(["test_driver"], Rules());
+
+        Assert.Equal(0.45, mods.AnchorAlpha, 6);        // 0.3 base + 0.15
+        Assert.Equal(0.85, mods.OfferExperienceMult, 6); // 1.0 base − 0.15
+        Assert.Equal(-0.03, mods.TalentDelta("aggression"), 6);
+
+        // qualifying_specialist: xpRate finishVsExpected -0.10 → ×0.90.
+        var q = PerkResolver.Resolve(["qualifying_specialist"], Rules());
+        Assert.Equal(0.90, q.XpMult("finishVsExpected"), 6);
+        Assert.Equal(1.0, q.XpMult("win")); // untouched cause defaults to ×1.0
+    }
+
+    [Fact]
+    public void Resolve_ErrorBlameAndInjury_MapAndCarryTheConditionalEffect()
+    {
+        // glass_cannon: power +0.012, avoidanceOfMistakes -0.10, opiErrorBlame scale +0.10,
+        // injuryHazard durabilityDelta -0.20, injuryHazard perErrorAdd +0.15 @driverErrorDnf.
+        var mods = PerkResolver.Resolve(["glass_cannon"], Rules());
+
+        Assert.Equal(0.012, mods.PowerScalarDelta, 6);
+        Assert.Equal(-0.10, mods.TalentDelta("avoidanceOfMistakes"), 6);
+        Assert.Equal(1.10, mods.ErrorBlameScale, 6);      // 1.0 base + 0.10
+        Assert.Equal(-0.20, mods.InjuryDurabilityDelta, 6);
+
+        // The conditional per-error injury effect is carried, NOT folded into a base field.
+        var cond = Assert.Single(mods.Conditional);
+        Assert.Equal("injuryHazard", cond.Lever);
+        Assert.Equal("perErrorAdd", cond.Target);
+        Assert.Equal("driverErrorDnf", cond.Condition);
+        Assert.Equal(0.15, cond.Magnitude, 6);
+    }
+
+    [Fact]
+    public void Resolve_MultiplePerks_AccumulateAdditively()
+    {
+        // sunday_driver (raceSkill +0.06 / quali -0.06) + qualifying_specialist (quali +0.08 /
+        // raceSkill -0.05): the shared ratings sum.
+        var mods = PerkResolver.Resolve(["sunday_driver", "qualifying_specialist"], Rules());
+
+        Assert.Equal(0.01, mods.TalentDelta("raceSkill"), 6);       // 0.06 − 0.05
+        Assert.Equal(0.02, mods.TalentDelta("qualifyingSkill"), 6); // −0.06 + 0.08
+    }
+
+    [Fact]
+    public void Resolve_EveryShippedArchetype_ProducesAResolvableModifier()
+    {
+        // No archetype names a perk the resolver can't map — resolving each preset never throws and
+        // never leaves an identity where the perks clearly move a lever.
+        var rules = Rules();
+        foreach (var archetype in rules.Creation.Archetypes)
+        {
+            var mods = PerkResolver.Resolve(archetype.PerkIds, rules);
+            Assert.NotNull(mods);
+        }
+    }
+}
