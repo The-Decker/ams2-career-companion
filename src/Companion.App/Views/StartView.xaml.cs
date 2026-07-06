@@ -80,6 +80,29 @@ public partial class StartView : UserControl
         }
     }
 
+    /// <summary>Right-click MRU → Rename career…: view-layer prompt (keyboard-native: textbox
+    /// focused, Enter = rename, Esc = cancel), then the VM does the validated rename.</summary>
+    private void OnRecentRename(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            DataContext is not StartViewModel vm)
+            return;
+
+        var dialog = new RenameCareerDialog(career.CareerName) { Owner = Window.GetWindow(this) };
+        if (dialog.ShowDialog() == true)
+            vm.RenameRecent(career, dialog.NewName);
+    }
+
+    /// <summary>Right-click MRU → Duplicate career (non-destructive, no confirmation).</summary>
+    private void OnRecentDuplicate(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: RecentCareer career } &&
+            DataContext is StartViewModel vm)
+        {
+            vm.DuplicateRecentCommand.Execute(career);
+        }
+    }
+
     /// <summary>Right-click MRU → Delete career file…: view-layer confirmation (same contract as
     /// the open picker's dialog — the VM command is the already-confirmed action, so it stays
     /// unit-testable). Defaults to No; reachable by keyboard via the context-menu key.</summary>

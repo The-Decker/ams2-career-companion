@@ -20,6 +20,11 @@
             <Separator />
             <MenuItem Header="Open containing folder" Click="OnRecentOpenFolder"
                       ToolTip="Show the .ams2career file in Explorer" />
+            <Separator />
+            <MenuItem Header="Rename career…" Click="OnRecentRename"
+                      ToolTip="Renames the career and its .ams2career file to match" />
+            <MenuItem Header="Duplicate career" Click="OnRecentDuplicate"
+                      ToolTip="Copies this career as '&lt;name&gt; (copy)' — handy before a risky season" />
             <MenuItem Header="Remove from this list" Click="OnRecentRemove"
                       ToolTip="Only removes the shortcut — the career file stays on disk" />
             <Separator />
@@ -62,12 +67,13 @@
 
                 <TextBlock Text="Recent careers" Style="{StaticResource H2}" Margin="0,36,0,8" />
 
-                <!-- "Delete career file…" failure (locked by an open session, permissions). The
-                     entry stays in the gallery because the file is still on disk. -->
+                <!-- gallery file-operation failure (delete/rename/duplicate on a locked file,
+                     permissions, or an invalid rename target). The entry stays in the gallery
+                     because the file is still on disk. -->
                 <Border Background="{StaticResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
                         Margin="0,0,0,8"
-                        Visibility="{Binding DeleteError, Converter={StaticResource NullCollapsed}}">
-                    <TextBlock Text="{Binding DeleteError}" Foreground="{StaticResource ErrorBrush}"
+                        Visibility="{Binding GalleryError, Converter={StaticResource NullCollapsed}}">
+                    <TextBlock Text="{Binding GalleryError}" Foreground="{StaticResource ErrorBrush}"
                                TextWrapping="Wrap" />
                 </Border>
 

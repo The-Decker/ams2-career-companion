@@ -275,7 +275,7 @@ public sealed class SessionRecentCareersTests : IDisposable
         Assert.Equal(@"C:\a.ams2career", deleted);
         Assert.Empty(vm.RecentCareers);
         Assert.Empty(store.Load());
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
     }
 
     [Fact]
@@ -292,9 +292,9 @@ public sealed class SessionRecentCareersTests : IDisposable
 
         Assert.Single(vm.RecentCareers);
         Assert.Single(store.Load());
-        Assert.NotNull(vm.DeleteError);
-        Assert.Contains("Monaco 1967", vm.DeleteError);
-        Assert.Contains("locked by another process", vm.DeleteError);
+        Assert.NotNull(vm.GalleryError);
+        Assert.Contains("Monaco 1967", vm.GalleryError);
+        Assert.Contains("locked by another process", vm.GalleryError);
     }
 
     [Fact]
@@ -311,11 +311,11 @@ public sealed class SessionRecentCareersTests : IDisposable
         });
 
         vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
-        Assert.NotNull(vm.DeleteError);
+        Assert.NotNull(vm.GalleryError);
 
         locked = false;
         vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
         Assert.Single(vm.RecentCareers);
     }
 
@@ -338,11 +338,11 @@ public sealed class SessionRecentCareersTests : IDisposable
         Assert.False(File.Exists(career + "-wal"));
         Assert.False(File.Exists(career + "-shm"));
         Assert.Empty(vm.RecentCareers);
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
     }
 
     [Fact]
-    public void DeleteError_ClearsWhenTheUserMovesOn()
+    public void GalleryError_ClearsWhenTheUserMovesOn()
     {
         // A failed delete's banner must not outlive the entry it refers to: falling back to
         // "Remove from this list" (or continuing/opening another career) clears it, mirroring
@@ -355,19 +355,19 @@ public sealed class SessionRecentCareersTests : IDisposable
             deleteCareerFile: _ => throw new IOException("in use"));
 
         vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
-        Assert.NotNull(vm.DeleteError);
+        Assert.NotNull(vm.GalleryError);
         vm.RemoveRecentCommand.Execute(vm.RecentCareers[0]);
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
 
         vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
-        Assert.NotNull(vm.DeleteError);
+        Assert.NotNull(vm.GalleryError);
         vm.ContinueCommand.Execute(vm.RecentCareers[0]);
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
 
         vm.DeleteRecentCommand.Execute(vm.RecentCareers[0]);
-        Assert.NotNull(vm.DeleteError);
+        Assert.NotNull(vm.GalleryError);
         vm.OpenCareerCommand.Execute(@"C:\elsewhere.ams2career");
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
     }
 
     [Fact]
@@ -384,6 +384,154 @@ public sealed class SessionRecentCareersTests : IDisposable
 
         Assert.Empty(vm.RecentCareers);
         Assert.Empty(store.Load());
-        Assert.Null(vm.DeleteError);
+        Assert.Null(vm.GalleryError);
+    }
+
+    // ---------- "Rename career…" ----------
+
+    [Fact]
+    public void RenameRecent_RenamesTheFileAndUpdatesTheMru()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\Monaco.ams2career", "Monaco", seasonYear: 1967);
+        (string From, string To, string Name)? renamed = null;
+        var vm = new StartViewModel(store,
+            careerFileExists: path => path == @"C:\careers\Monaco.ams2career",
+            renameCareerFile: (from, to, name) => renamed = (from, to, name));
+
+        vm.RenameRecent(vm.RecentCareers[0], "Glory Years");
+
+        Assert.Equal(
+            (@"C:\careers\Monaco.ams2career", @"C:\careers\Glory Years.ams2career", "Glory Years"),
+            renamed);
+        var entry = Assert.Single(store.Load());
+        Assert.Equal(@"C:\careers\Glory Years.ams2career", entry.Path);
+        Assert.Equal("Glory Years", entry.CareerName);
+        Assert.Equal(1967, entry.SeasonYear); // era art survives the rename
+        Assert.Null(vm.GalleryError);
+    }
+
+    [Fact]
+    public void RenameRecent_SanitizesTheFileNameButKeepsTheDisplayName()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\a.ams2career", "A");
+        (string To, string Name)? renamed = null;
+        var vm = new StartViewModel(store,
+            careerFileExists: path => path == @"C:\careers\a.ams2career",
+            renameCareerFile: (_, to, name) => renamed = (to, name));
+
+        vm.RenameRecent(vm.RecentCareers[0], "What if: 1967?");
+
+        Assert.Equal((@"C:\careers\What if_ 1967_.ams2career", "What if: 1967?"), renamed);
+        Assert.Equal("What if: 1967?", store.Load()[0].CareerName);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public void RenameRecent_BlankName_SetsErrorAndChangesNothing(string? newName)
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+        var vm = new StartViewModel(store, renameCareerFile: (_, _, _) =>
+            throw new Xunit.Sdk.XunitException("must not rename on a blank name"));
+
+        vm.RenameRecent(vm.RecentCareers[0], newName);
+
+        Assert.NotNull(vm.GalleryError);
+        Assert.Equal("A", store.Load()[0].CareerName);
+    }
+
+    [Fact]
+    public void RenameRecent_TargetFileExists_SetsErrorAndChangesNothing()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\a.ams2career", "A");
+        var vm = new StartViewModel(store,
+            careerFileExists: _ => true, // every candidate path "exists" → guaranteed collision
+            renameCareerFile: (_, _, _) =>
+                throw new Xunit.Sdk.XunitException("must not rename onto an existing file"));
+
+        vm.RenameRecent(vm.RecentCareers[0], "B");
+
+        Assert.NotNull(vm.GalleryError);
+        Assert.Contains("already exists", vm.GalleryError);
+        Assert.Equal("A", store.Load()[0].CareerName);
+    }
+
+    [Fact]
+    public void RenameRecent_LockedFile_ReportsAndKeepsTheEntry()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\a.ams2career", "Monaco 1967");
+        var vm = new StartViewModel(store,
+            careerFileExists: path => path == @"C:\careers\a.ams2career",
+            renameCareerFile: (_, _, _) => throw new IOException("locked"));
+
+        vm.RenameRecent(vm.RecentCareers[0], "B");
+
+        Assert.NotNull(vm.GalleryError);
+        Assert.Contains("Monaco 1967", vm.GalleryError);
+        var entry = Assert.Single(store.Load());
+        Assert.Equal(@"C:\careers\a.ams2career", entry.Path);
+    }
+
+    // ---------- "Duplicate career" ----------
+
+    [Fact]
+    public void DuplicateRecent_CopiesBesideTheOriginalWithACopySuffix()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\Monaco.ams2career", "Monaco", seasonYear: 1967);
+        (string From, string To, string Name)? copied = null;
+        var vm = new StartViewModel(store,
+            careerFileExists: path => path == @"C:\careers\Monaco.ams2career",
+            duplicateCareerFile: (from, to, name) => copied = (from, to, name));
+
+        vm.DuplicateRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.Equal(
+            (@"C:\careers\Monaco.ams2career", @"C:\careers\Monaco (copy).ams2career", "Monaco (copy)"),
+            copied);
+        var entries = store.Load();
+        Assert.Equal(2, entries.Count);
+        Assert.Equal("Monaco (copy)", entries[0].CareerName); // the copy lands at the front
+        Assert.Equal(1967, entries[0].SeasonYear);
+        Assert.Null(vm.GalleryError);
+    }
+
+    [Fact]
+    public void DuplicateRecent_CollisionPicksTheNextCopyNumber()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\Monaco.ams2career", "Monaco");
+        string? copyPath = null;
+        var vm = new StartViewModel(store,
+            careerFileExists: path =>
+                path is @"C:\careers\Monaco.ams2career" or @"C:\careers\Monaco (copy).ams2career",
+            duplicateCareerFile: (_, to, _) => copyPath = to);
+
+        vm.DuplicateRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.Equal(@"C:\careers\Monaco (copy 2).ams2career", copyPath);
+        Assert.Equal("Monaco (copy 2)", store.Load()[0].CareerName);
+    }
+
+    [Fact]
+    public void DuplicateRecent_FailedCopy_ReportsAndAddsNothing()
+    {
+        var store = Store();
+        store.Touch(@"C:\careers\Monaco.ams2career", "Monaco");
+        var vm = new StartViewModel(store,
+            careerFileExists: path => path == @"C:\careers\Monaco.ams2career",
+            duplicateCareerFile: (_, _, _) => throw new IOException("disk full"));
+
+        vm.DuplicateRecentCommand.Execute(vm.RecentCareers[0]);
+
+        Assert.NotNull(vm.GalleryError);
+        Assert.Contains("Monaco", vm.GalleryError);
+        Assert.Single(store.Load());
     }
 }
