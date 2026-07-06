@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Character;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Standings;
 
@@ -21,6 +22,13 @@ public sealed partial class OfferLetterViewModel(SeasonOfferModel offer) : Obser
 
     [ObservableProperty]
     private bool _isAccepted = offer.Accepted;
+}
+
+/// <summary>One raisable stat row of the review's development block: the stat's id (command
+/// parameter), its display label, and its current value.</summary>
+public sealed record DevStatViewModel(string Id, string Label, double Value)
+{
+    public string ValueText => $"{Value:0.00}";
 }
 
 /// <summary>
@@ -49,6 +57,52 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         _acceptedTeamId = Review?.AcceptedTeamId;
         CanRestoreAiFile = session is IAiFileRestore;
         NextSeason = session.NextSeason();
+
+        RefreshDevelopment();
+    }
+
+    // ---------- character development (depth 4): spend banked points between seasons ----------
+
+    /// <summary>True when this career has a character to develop (the review shows the block).</summary>
+    public bool HasCharacter { get; private set; }
+
+    /// <summary>Character points available to spend now.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCp))]
+    private int _availableCp;
+
+    /// <summary>True while the driver still has a point to spend (gates the raise buttons).</summary>
+    public bool HasCp => AvailableCp > 0;
+
+    /// <summary>The driver's seven stats, each raisable one step for a point while any remain.</summary>
+    public ObservableCollection<DevStatViewModel> DevelopmentStats { get; } = [];
+
+    /// <summary>Raise one stat a step, spending a point (no-op when unaffordable or at the cap).</summary>
+    [RelayCommand]
+    private void RaiseStat(string? statId)
+    {
+        if (statId is null)
+            return;
+        try
+        {
+            _session.SpendCharacterPoint(CharacterSpend.Stat(statId, 1));
+        }
+        catch (InvalidOperationException)
+        {
+            return; // unaffordable or at the cap — the button just does nothing
+        }
+        RefreshDevelopment();
+    }
+
+    private void RefreshDevelopment()
+    {
+        var dossier = _session.CharacterDossier();
+        HasCharacter = dossier is not null;
+        AvailableCp = _session.AvailableCharacterCp();
+        DevelopmentStats.Clear();
+        foreach (var stat in dossier?.Stats ?? [])
+            DevelopmentStats.Add(new DevStatViewModel(stat.Id, stat.Label, stat.Value));
+        OnPropertyChanged(nameof(HasCharacter));
     }
 
     /// <summary>The final-standings block (drivers/constructors tabs + round matrix).</summary>

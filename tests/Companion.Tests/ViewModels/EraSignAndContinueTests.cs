@@ -269,6 +269,55 @@ public sealed class EraSignAndContinueTests : IDisposable
         Assert.Contains(dossier.Perks, p => p.Id == "rain_man");
     }
 
+    private static Companion.Core.Character.CharacterProfile DevCharacter() => new()
+    {
+        Name = "Dev Driver",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+        },
+        PerkIds = ["sunday_driver"],
+        CpUnspent = 3,
+    };
+
+    [Fact]
+    public void Spend_DerivesTheCostFromTheRules_IgnoringACraftedCheapCost()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int before = session.AvailableCharacterCp();
+
+        // A crafted spend claims rain_man is free (real cost 1). The service must ignore the claim,
+        // charge the real cost, and journal the real cost — otherwise the exploit replays byte-for-byte.
+        session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("rain_man", 0));
+        Assert.Equal(before - 1, session.AvailableCharacterCp());
+    }
+
+    [Fact]
+    public void Spend_RejectsADrawbackPerk_AndDoesNotChargeOrMintPoints()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int before = session.AvailableCharacterCp();
+
+        // glass_cannon costs -2: taking it must not refund/mint spendable points mid-career.
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("glass_cannon", -2)));
+        Assert.Equal(before, session.AvailableCharacterCp());
+    }
+
+    [Fact]
+    public void Spend_RejectsAnUnknownStatOrPerk()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int before = session.AvailableCharacterCp();
+
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("notAStat", 1)));
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("notAPerk", 1)));
+        Assert.Equal(before, session.AvailableCharacterCp());
+    }
+
     // ---------- the tests ----------
 
     [Fact]

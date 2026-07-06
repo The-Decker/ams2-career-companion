@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Companion.Ams2;
 using Companion.Ams2.ContentLibrary;
+using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Json;
 using Companion.Core.Packs;
@@ -285,6 +286,37 @@ internal sealed class FakeCareerSession : ICareerSession
         if (StartNextSeasonThrows is not null)
             throw StartNextSeasonThrows;
         SignedTeams.Add(teamId);
+    }
+
+    // ---------- character development (depth 4) ----------
+
+    /// <summary>The dossier surfaced to the Driver tab / review development block (null = no character).</summary>
+    public CharacterDossier? Dossier { get; set; }
+
+    /// <summary>Points the review's development block shows as available.</summary>
+    public int Cp { get; set; }
+
+    /// <summary>Development spends recorded through the seam, in order.</summary>
+    public List<CharacterSpend> Spends { get; } = [];
+
+    public CharacterDossier? CharacterDossier() => Dossier;
+
+    public int AvailableCharacterCp() => Cp;
+
+    public void SpendCharacterPoint(CharacterSpend spend)
+    {
+        if (spend.Cost > Cp)
+            throw new InvalidOperationException("unaffordable");
+        Spends.Add(spend);
+        Cp -= spend.Cost;
+        // Mirror the real session: a stat spend bumps the shown value a step so a re-read reflects it.
+        if (spend.Kind == "stat" && Dossier is { } dossier)
+        {
+            var raised = dossier.Stats
+                .Select(s => s.Id == spend.Target ? s with { Value = s.Value + 0.02 } : s)
+                .ToList();
+            Dossier = dossier with { Stats = raised };
+        }
     }
 }
 

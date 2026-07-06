@@ -491,19 +491,48 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             throw new InvalidOperationException("This career has no character to develop.");
         var rules = _environment.Rules.Character;
 
-        if (spend.Cost > AvailableCharacterCp())
-            throw new InvalidOperationException(
-                $"That costs {spend.Cost} points, but only {AvailableCharacterCp()} are available.");
-        if (spend.Kind == "perk")
+        // Derive the AUTHORITATIVE cost from the rules and never trust the caller's Cost. Otherwise a
+        // crafted spend could buy a costed perk for 0 (or mint points with a negative cost), and
+        // because the row is provenance-excluded it would replay byte-for-byte — baking the exploit
+        // permanently into the career. The journaled row carries the derived cost, not spend.Cost.
+        int cost;
+        if (spend.Kind == "stat")
         {
-            if (!rules.TryGetPerk(spend.Target, out _))
+            if (!IsKnownStat(rules, spend.Target))
+                throw new InvalidOperationException($"Unknown stat '{spend.Target}'.");
+            double step = rules.Levels.LevelGrants.StatStepValue;
+            double cap = rules.Levels.LevelGrants.StatCapPerRating;
+            int pendingSteps = PendingSpends().Count(s => s.Kind == "stat"
+                && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
+            double current = character.Stat(spend.Target) + (pendingSteps * step);
+            if (current + step > cap + 1e-9)
+                throw new InvalidOperationException("That stat is already at its maximum.");
+            cost = rules.Levels.LevelGrants.StatStepCpCost;
+        }
+        else if (spend.Kind == "perk")
+        {
+            if (!rules.TryGetPerk(spend.Target, out var perk))
                 throw new InvalidOperationException($"Unknown perk '{spend.Target}'.");
+            // Between-season development is spend-only: a drawback (<=0-cost) perk is a creation-time
+            // identity choice, not something you buy mid-career (and letting one refund CP would break
+            // the earned-points model).
+            if (perk.Cost <= 0)
+                throw new InvalidOperationException("That perk can only be chosen at creation.");
             bool owned = character.PerkIds.Contains(spend.Target, StringComparer.Ordinal)
                 || PendingSpends().Any(s => s.Kind == "perk"
                     && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
             if (owned)
                 throw new InvalidOperationException("Your driver already has that perk.");
+            cost = perk.Cost;
         }
+        else
+        {
+            throw new InvalidOperationException($"Unknown development spend kind '{spend.Kind}'.");
+        }
+
+        if (cost > AvailableCharacterCp())
+            throw new InvalidOperationException(
+                $"That costs {cost} points, but only {AvailableCharacterCp()} are available.");
 
         using var transaction = _database.Connection.BeginTransaction();
         Execute(_database.Connection, transaction,
@@ -512,9 +541,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             ("@utc", NowUtc()), ("@season", _seasonId),
             ("@phase", JournalPhases.PlayerStatSpend),
             ("@delta", JsonSerializer.Serialize(
-                new { kind = spend.Kind, target = spend.Target, cost = spend.Cost }, CoreJson.Options)));
+                new { kind = spend.Kind, target = spend.Target, cost }, CoreJson.Options)));
         transaction.Commit();
     }
+
+    /// <summary>True when the id names a real talent or meta stat (guards a development spend against
+    /// a crafted target that would otherwise inject a phantom entry into the stat map).</summary>
+    private static bool IsKnownStat(CharacterRules rules, string statId) =>
+        rules.Stats.TalentStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal))
+        || rules.Stats.MetaStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal));
 
     private int RoundCount => Pack.Season.Rounds.Count;
 

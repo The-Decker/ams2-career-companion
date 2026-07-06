@@ -219,6 +219,78 @@ public class SeasonReviewViewModelTests
         Assert.Contains("No backup", vm.RestoreBanner);
     }
 
+    // ---------- character development block (depth 4) ----------
+
+    private static Companion.Core.Character.CharacterDossier Dossier() => new()
+    {
+        Name = "Kobra",
+        Level = 3,
+        Xp = 500,
+        XpIntoLevel = 100,
+        XpForNextLevel = 300,
+        CpUnspent = 0,
+        Stats =
+        [
+            new Companion.Core.Character.DossierStat("pace", "Pace", 0.60, Talent: true),
+            new Companion.Core.Character.DossierStat("racecraft", "Racecraft", 0.55, Talent: true),
+        ],
+        Perks = [],
+    };
+
+    [Fact]
+    public void Development_HiddenWhenTheCareerHasNoCharacter()
+    {
+        var vm = new SeasonReviewViewModel(new FakeCareerSession { Review = Review() });
+
+        Assert.False(vm.HasCharacter);
+        Assert.Empty(vm.DevelopmentStats);
+        Assert.Equal(0, vm.AvailableCp);
+        Assert.False(vm.HasCp);
+    }
+
+    [Fact]
+    public void Development_ShowsPointsAndStats_AndRaisingSpendsThroughTheSeam()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 2 };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasCharacter);
+        Assert.Equal(2, vm.AvailableCp);
+        Assert.True(vm.HasCp);
+        Assert.Equal(2, vm.DevelopmentStats.Count);
+        Assert.Equal("Pace", vm.DevelopmentStats[0].Label);
+        Assert.Equal("0.60", vm.DevelopmentStats[0].ValueText);
+
+        // Raise pace: one stat spend goes through the seam, the pool drops, the shown value climbs.
+        vm.RaiseStatCommand.Execute("pace");
+        Assert.Single(session.Spends);
+        Assert.Equal("stat", session.Spends[0].Kind);
+        Assert.Equal("pace", session.Spends[0].Target);
+        Assert.Equal(1, vm.AvailableCp);
+        Assert.True(vm.HasCp);
+        Assert.Equal("0.62", vm.DevelopmentStats[0].ValueText);
+
+        // Spend the last point: the pool empties and the raise gate closes.
+        vm.RaiseStatCommand.Execute("pace");
+        Assert.Equal(0, vm.AvailableCp);
+        Assert.False(vm.HasCp);
+        Assert.Equal(2, session.Spends.Count);
+    }
+
+    [Fact]
+    public void Development_UnaffordableRaiseIsANoOp()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 0 };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasCharacter);
+        Assert.False(vm.HasCp);
+
+        vm.RaiseStatCommand.Execute("pace");   // no points: the command swallows the throw
+        Assert.Empty(session.Spends);
+        Assert.Equal(0, vm.AvailableCp);
+    }
+
     // ---------- the rest of the round wiring ----------
 
     [Fact]

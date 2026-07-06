@@ -66,6 +66,40 @@
                 </StackPanel>
             </Border>
 
+            <!-- character development: spend banked points before signing (depth 4) -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding HasCharacter, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <DockPanel>
+                        <TextBlock Text="Develop your driver" FontWeight="SemiBold" DockPanel.Dock="Left" />
+                        <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Right" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentBrush}">
+                            <Run Text="{Binding AvailableCp, Mode=OneWay}" /><Run Text=" points to spend" />
+                        </TextBlock>
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,4,0,10"
+                               Text="Spend points earned this season to raise a stat a step. Development is journaled and carries into next season when you sign." />
+                    <ItemsControl ItemsSource="{Binding DevelopmentStats}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="6" Padding="12,8" Margin="0,3" Background="{StaticResource SurfaceAltBrush}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" MinWidth="90" VerticalAlignment="Center"
+                                                Content="Raise +"
+                                                Command="{Binding DataContext.RaiseStatCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding Id}"
+                                                IsEnabled="{Binding DataContext.HasCp, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+                                        <TextBlock VerticalAlignment="Center" FontSize="15">
+                                            <Run Text="{Binding Label, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding ValueText, Mode=OneWay}" Foreground="{StaticResource TextMutedBrush}" />
+                                        </TextBlock>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
             <!-- era transition: sign & continue (M6) -->
             <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,10" Margin="0,12,0,0">
                 <StackPanel>
