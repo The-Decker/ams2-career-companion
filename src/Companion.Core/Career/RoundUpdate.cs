@@ -62,6 +62,12 @@ public sealed record RoundUpdateContext
     /// exactly once per driver-error DNF. 0 on a clean round or a character without a perErrorAdd
     /// injury perk ⇒ the folded player state is byte-identical. (Task #18.)</summary>
     public double InjuryLoadDelta { get; init; }
+
+    /// <summary>The Setup Gamble the player called before the race — the finishing position they bet
+    /// on (1-based), or null for no bet. Resolved against the actual finish + the sim's expected
+    /// finish only when it is a real gamble (called better than expected); otherwise a no-op, so a
+    /// round without a gamble is byte-identical. (Setup Gamble, 4b.)</summary>
+    public int? CalledShot { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -105,7 +111,20 @@ public static class RoundUpdate
                             && (context.TeammateFinish is null || finish < context.TeammateFinish);
         double repDelta = ReputationMath.RoundDelta(
             expected, effective, context.PlayerFinish, beatTeammate, context.PlayerTeamTier, mods);
-        double newRep = ReputationMath.Apply(player.Reputation, repDelta);
+        double repAfterRound = ReputationMath.Apply(player.Reputation, repDelta);
+
+        // Setup Gamble (called shot, 4b): if the player called a finish better than the sim expected,
+        // resolve the bet against the actual finish — a hit banks the stake in reputation (chained on
+        // top of the round move), a miss costs it. Pure function of the journaled call, so it
+        // re-simulates exactly; no call (or a non-gamble call) leaves rep untouched → byte-identical.
+        bool calledShotResolved = context.CalledShot is { } cs && CalledShotMath.IsGamble(cs, expected);
+        double calledShotRepDelta = calledShotResolved
+            ? CalledShotMath.ReputationDelta(context.CalledShot!.Value, context.PlayerFinish, expected)
+            : 0.0;
+        int calledShotXpBonus = calledShotResolved
+            ? CalledShotMath.XpBonus(context.CalledShot!.Value, context.PlayerFinish, expected)
+            : 0;
+        double newRep = ReputationMath.Apply(repAfterRound, calledShotRepDelta);
 
         // The anchor calibrates only on classified finishes: a DNF carries no pace signal.
         double newAnchor = player.PaceAnchor;
@@ -145,6 +164,8 @@ public static class RoundUpdate
                 BeatTeammate: beatTeammate,
                 Dnf: context.PlayerDnf),
                 context.Modifiers); // xpRate perks scale the gain per cause (null mods = shipped formula)
+            // A hit Setup Gamble also rewards character growth (0 without a bet or on a miss).
+            xpRound += calledShotXpBonus;
             newXp = Math.Max(0, player.Xp + xpRound);
             newLevel = charRules.Levels.XpCurve.LevelForTotalXp(newXp);
             xpEvent = new JournalEvent
@@ -196,6 +217,30 @@ public static class RoundUpdate
                 Cause = cause,
             },
         };
+
+        // Setup Gamble resolution (4b): a fixed position right after the reputation row it stakes,
+        // emitted ONLY when the player made a real gamble — so every ordinary round is unchanged.
+        if (calledShotResolved)
+        {
+            bool hit = CalledShotMath.Hit(context.CalledShot!.Value, context.PlayerFinish);
+            events.Add(new JournalEvent
+            {
+                Phase = JournalPhases.PlayerCall,
+                Entity = "player",
+                DeltaJson = CareerJson.Serialize(new
+                {
+                    called = context.CalledShot!.Value,
+                    expectedFinish = expected,
+                    actualFinish = context.PlayerFinish,
+                    hit,
+                    from = Round4(repAfterRound),
+                    to = Round4(newRep),
+                    delta = Round4(calledShotRepDelta),
+                    xpBonus = calledShotXpBonus,
+                }),
+                Cause = hit ? "gamble-hit" : "gamble-miss",
+            });
+        }
 
         // player.xp rides between the reputation and pace-anchor rows (a fixed position, absent for
         // a character-free career).

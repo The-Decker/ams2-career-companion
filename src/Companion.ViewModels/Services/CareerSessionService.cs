@@ -1082,6 +1082,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             PlayerDnfCause = PlayerDnfCauseFrom(draft),
             QualifyingOrder = draft.QualifyingOrder,
             IsWet = draft.IsWet,
+            CalledShot = draft.CalledShot,
         };
     }
 

@@ -848,4 +848,86 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
             $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
         Assert.True(report.ComparedRows > 0);
     }
+
+    [Fact]
+    public void SetupGamble_CalledShot_ResolvesReputation_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "gamble.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 778899;
+        Companion.Core.Packs.SeasonPack pack;
+
+        // No character — the Setup Gamble is a universal mechanic, so this also proves it stays
+        // byte-replayable on an ordinary (character-free) career.
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Gamble",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            // Round 1: call P1 (bolder than the mid-grid expected finish) AND finish P1 → a HIT.
+            var grid1 = session.CurrentGrid();
+            session.Apply(new ResultDraft
+            {
+                Classified = new[] { playerId }
+                    .Concat(grid1.Select(s => s.DriverId).Where(id => id != playerId)).ToList(),
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+                CalledShot = 1,
+            });
+            // Round 2: no gamble — an ordinary round, so no player.call row.
+            var grid2 = session.CurrentGrid();
+            session.Apply(new ResultDraft
+            {
+                Classified = grid2.Select(s => s.DriverId).ToList(),
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+            });
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+
+        // The gamble fired exactly once (round 1), it was a hit, and it moved reputation up.
+        var journal = JournalStore.ReadSeason(db, seasonId);
+        var callRow = Assert.Single(journal, r => r.Phase == JournalPhases.PlayerCall);
+        Assert.Equal(1, callRow.Round);
+        Assert.Equal("gamble-hit", callRow.Cause);
+        using (var d = System.Text.Json.JsonDocument.Parse(callRow.DeltaJson))
+        {
+            Assert.True(d.RootElement.GetProperty("hit").GetBoolean());
+            Assert.True(d.RootElement.GetProperty("delta").GetDouble() > 0.0);
+            Assert.True(d.RootElement.GetProperty("to").GetDouble()
+                > d.RootElement.GetProperty("from").GetDouble());
+        }
+
+        // The call rides the raw result envelope (ground truth), so the resolved player.call row
+        // re-derives byte-for-byte on replay.
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
 }

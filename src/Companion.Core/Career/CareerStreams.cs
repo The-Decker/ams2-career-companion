@@ -43,6 +43,12 @@ public static class JournalPhases
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>
     public const string PlayerXp = "player.xp";
 
+    /// <summary>A resolved Setup Gamble (called shot): a DERIVED row emitted only when the player
+    /// called a finish better than the sim expected (the call rides the raw result envelope). It
+    /// stakes reputation (and XP for a character) on hitting the call. Absent for every round without
+    /// a real gamble, so an ordinary career's journal sequence is unchanged. (Setup Gamble, 4b.)</summary>
+    public const string PlayerCall = "player.call";
+
     /// <summary>A season-end injury (character depth 6): a DERIVED row emitted only when a
     /// character carrying an injury-stream perk fails the season-end injury roll. OPI-neutral — a
     /// setback to standing, never a finishing position. Absent for every other career, so their

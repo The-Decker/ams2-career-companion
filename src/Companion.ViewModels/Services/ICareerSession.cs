@@ -460,6 +460,12 @@ public sealed record ResultDraft
     /// envelope; a character-free career never reads it.</summary>
     public bool IsWet { get; init; }
 
+    /// <summary>The Setup Gamble (called shot) the player committed to before the race — a finishing
+    /// position (1-based) they bet on beating. Null = no bet. Stored in the raw envelope; the fold
+    /// only resolves it when it is a real gamble (called better than the sim's expected finish), so a
+    /// round with no call — or a call no bolder than expected — folds exactly as before. (4b.)</summary>
+    public int? CalledShot { get; init; }
+
     /// <summary>The qualifying order for this round (driver ids, pole first), when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in
     /// the raw envelope; never scored. Older producers omit it.</summary>

@@ -687,6 +687,9 @@ public static class ReplayService
                 Modifiers = raceMods,
                 CharacterRules = character is not null ? inputs.CharacterRules : null,
                 InjuryLoadDelta = injuryLoadDelta,
+                // The Setup Gamble is a per-round commitment resolved against the race — like the
+                // qualifying anchor, only the first race of a weekend carries it.
+                CalledShot = i == 0 ? envelope.CalledShot : null,
             });
 
             events.AddRange(update.Events);

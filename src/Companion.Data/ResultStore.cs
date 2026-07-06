@@ -28,7 +28,7 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 4;
+    public const int CurrentVersion = 5;
 
     public int Version { get; init; } = CurrentVersion;
 
@@ -37,6 +37,12 @@ public sealed record RoundResultEnvelope
     /// save) — the fold then evaluates neither wetRound nor dryRound, so weather perks stay dormant
     /// and old careers replay byte-identically. true = wet, false = dry (explicitly captured).</summary>
     public bool? IsWet { get; init; }
+
+    /// <summary>The Setup Gamble (called shot) the player committed to before the race — the
+    /// finishing position they bet on (1-based). A raw player-choice INPUT the sim cannot re-derive,
+    /// so it is stored. Null = no bet (every pre-v5 save and every round the player did not gamble)
+    /// — the fold then resolves no call, so those rounds replay byte-identically. (Setup Gamble, 4b.)</summary>
+    public int? CalledShot { get; init; }
 
     /// <summary>The raw classification as imported (the engine's round-result shape).</summary>
     public required RoundResult Result { get; init; }
