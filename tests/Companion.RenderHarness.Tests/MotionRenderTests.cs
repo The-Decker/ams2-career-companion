@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using Companion.App;
 
 namespace Companion.RenderHarness.Tests;
@@ -51,6 +52,32 @@ public sealed class MotionRenderTests
 
             Assert.True(button.ActualWidth > 0);
             Assert.True(root.ActualHeight > 0);
+        });
+    }
+
+    [Fact]
+    public void Entrance_AnimatesContentChange_WithoutCrashing()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var host = new ContentControl { RenderTransformOrigin = new Point(0.5, 0.5) };
+            MotionAssist.SetEntrance(host, true);
+            var deco = new AdornerDecorator { Child = host };
+            deco.Measure(new Size(600, 400));
+            deco.Arrange(new Rect(0, 0, 600, 400));
+
+            // Two navigations — each should fire the fade+slide entrance without throwing.
+            host.Content = new TextBlock { Text = "Screen one" };
+            deco.UpdateLayout();
+            WpfRenderHarness.Pump();
+            host.Content = new Button { Content = "Screen two" };
+            deco.UpdateLayout();
+            WpfRenderHarness.Pump();
+
+            Assert.IsType<TranslateTransform>(host.RenderTransform);
         });
     }
 

@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -52,6 +54,57 @@ public static class MotionAssist
         catch
         {
             // presentation-only — a failed ripple must never interrupt the click
+        }
+    }
+
+    // ---------- entrance transition (screens fade + slide in on navigation) ----------
+
+    /// <summary>Set on a <see cref="ContentControl"/> (the shell's screen host): every time its
+    /// Content changes, the new screen fades up from slightly below — so moving between Start,
+    /// wizard, hub and settings feels like arriving somewhere, not a hard cut. Fails safe.</summary>
+    public static readonly DependencyProperty EntranceProperty =
+        DependencyProperty.RegisterAttached(
+            "Entrance", typeof(bool), typeof(MotionAssist),
+            new PropertyMetadata(false, OnEntranceChanged));
+
+    public static bool GetEntrance(DependencyObject d) => (bool)d.GetValue(EntranceProperty);
+    public static void SetEntrance(DependencyObject d, bool value) => d.SetValue(EntranceProperty, value);
+
+    private static readonly DependencyPropertyDescriptor ContentDescriptor =
+        DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty, typeof(ContentControl));
+
+    private static void OnEntranceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not ContentControl host)
+            return;
+        if ((bool)e.NewValue)
+        {
+            host.RenderTransform = new TranslateTransform();
+            ContentDescriptor.AddValueChanged(host, OnContentChanged);
+        }
+        else
+        {
+            ContentDescriptor.RemoveValueChanged(host, OnContentChanged);
+        }
+    }
+
+    private static void OnContentChanged(object? sender, EventArgs e)
+    {
+        if (sender is not ContentControl host)
+            return;
+        try
+        {
+            if (host.RenderTransform is not TranslateTransform slide)
+                host.RenderTransform = slide = new TranslateTransform();
+            var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+            host.BeginAnimation(UIElement.OpacityProperty,
+                new DoubleAnimation(0.0, 1.0, TimeSpan.FromMilliseconds(240)) { EasingFunction = ease });
+            slide.BeginAnimation(TranslateTransform.YProperty,
+                new DoubleAnimation(12.0, 0.0, TimeSpan.FromMilliseconds(280)) { EasingFunction = ease });
+        }
+        catch
+        {
+            // presentation-only — never let a transition break navigation
         }
     }
 }
