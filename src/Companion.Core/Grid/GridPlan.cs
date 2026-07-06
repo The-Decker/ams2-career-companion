@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Packs;
 
 namespace Companion.Core.Grid;
@@ -14,6 +15,24 @@ public sealed record PlayerSeat
 {
     /// <summary>EXACT livery display name (case-sensitive) of the entry the player takes over.</summary>
     public required string Ams2LiveryName { get; init; }
+
+    /// <summary>The player's character applied to this seat, or null for a pre-character career.
+    /// When present, the resolver patches the seat's ratings and car scalars from it (see
+    /// <see cref="PlayerCharacterPatch"/>); when null the seat is exactly what the pack/track/
+    /// override chain produced — byte-identical to a character-free career.</summary>
+    public PlayerCharacterPatch? Character { get; init; }
+}
+
+/// <summary>The player's character, pre-resolved for the grid patch: the authored profile, the
+/// perks' resolved <see cref="PlayerPerkModifiers"/>, and the character rules the rating writer
+/// needs. Talent stats + perk deltas patch the seat's <see cref="GridSeat.Ratings"/>
+/// (<see cref="CharacterRatingWriter"/>); the perks' car-scalar deltas patch weight/power/drag —
+/// the one lever that touches the real car (docs/dev/character-system.md §5-6).</summary>
+public sealed record PlayerCharacterPatch
+{
+    public required CharacterProfile Profile { get; init; }
+    public required PlayerPerkModifiers Modifiers { get; init; }
+    public required CharacterRules Rules { get; init; }
 }
 
 /// <summary>
