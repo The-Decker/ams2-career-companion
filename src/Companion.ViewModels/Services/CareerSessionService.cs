@@ -661,6 +661,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     public (string DriverId, string DisplayName)? PlayerIdentity() =>
         CharacterName() is { } name ? (_playerDriverId, name) : null;
 
+    /// <summary>The name of the team the player currently drives for, or null when unknown.</summary>
+    public string? PlayerTeamName()
+    {
+        string? teamId = CurrentPlayerState()?.CurrentTeamId;
+        if (string.IsNullOrEmpty(teamId))
+            return null;
+        return Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? teamId;
+    }
+
     /// <summary>Resolves the round grid, marking the player's seat when their entry covers
     /// this round (an entry's rounds range may exclude it — then the grid is all-AI). When the
     /// career carries a character, the player seat is patched from it here too — so the STAGED

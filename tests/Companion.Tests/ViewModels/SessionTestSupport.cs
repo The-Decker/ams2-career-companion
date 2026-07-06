@@ -309,6 +309,11 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public (string DriverId, string DisplayName)? PlayerIdentity() => Identity;
 
+    /// <summary>The team the player drives for, surfaced to the Driver dossier.</summary>
+    public string? TeamName { get; set; }
+
+    public string? PlayerTeamName() => TeamName;
+
     public int AvailableCharacterCp() => Cp;
 
     public IReadOnlyList<PurchasablePerk> PurchasablePerks() =>

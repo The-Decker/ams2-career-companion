@@ -9,6 +9,9 @@
 
             <!-- identity + progression -->
             <TextBlock Text="{Binding Name}" Style="{StaticResource H1}" />
+            <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
+                       Text="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                       Visibility="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullCollapsed}}" />
             <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                 <TextBlock Style="{StaticResource Muted}">
                     <Run Text="Level" /><Run Text=" " /><Run Text="{Binding Level, Mode=OneWay}" FontWeight="SemiBold" />

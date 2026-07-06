@@ -64,6 +64,17 @@ public sealed class CharacterDossierHubTests : IDisposable
     }
 
     [Fact]
+    public void Dossier_ShowsTheTeamAndSeasonTheDriverRacesFor()
+    {
+        using var session = CreateCareer(Character());
+        var vm = new DossierViewModel(session);
+
+        Assert.NotNull(vm.TeamLine);
+        Assert.Contains("Brabham-Repco", vm.TeamLine); // the player's seat team (StockLivery2)
+        Assert.Contains("1967", vm.TeamLine);
+    }
+
+    [Fact]
     public void CharacterFreeCareer_HubHasNoDriverTab()
     {
         using var hub = new HubViewModel(CreateCareer(character: null));

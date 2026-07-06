@@ -121,6 +121,10 @@ public interface ICareerSession
     /// no named character (then the historical name shows, as before). Additive default: null.</summary>
     (string DriverId, string DisplayName)? PlayerIdentity() => null;
 
+    /// <summary>The name of the team the player currently drives for (from the folded player state's
+    /// current team), or null when unknown. Additive default: null.</summary>
+    string? PlayerTeamName() => null;
+
     /// <summary>The player's driver dossier (character depth 3): name, the seven stats, the chosen
     /// perks with what they do, and progression (level + XP toward the next), projected from the
     /// current folded player state + the character rules. Null for a career with no character (or no
