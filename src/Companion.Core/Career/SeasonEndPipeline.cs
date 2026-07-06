@@ -450,10 +450,15 @@ public static class SeasonEndPipeline
         double salaryAsk = context.PlayerSalaryAskBu ?? Math.Max(1.0, finalRep / 10.0);
         double ageRisk = Math.Max(0, context.PlayerAge + 1 - curve.PeakAgeEnd);
 
+        // A veteran perk can relax the reputation floors so more (higher-tier) teams will talk to a
+        // modestly-reputed driver (offerWeight/repFloorRelax). Null/identity mods = 0 tiers of relax
+        // = the exact shipped gate, so non-character and no-perk careers stay byte-identical; RepFloor
+        // is monotonic in tier (a tested invariant), so relaxing lowers the bar.
+        int repFloorRelax = characterMods?.RepFloorRelaxTiers ?? 0;
         var scored = new List<PlayerOffer>();
         foreach (var team in teams.OrderBy(t => t.TeamId, StringComparer.Ordinal))
         {
-            if (finalRep < context.Archetypes.RepFloor(team.Tier))
+            if (finalRep < context.Archetypes.RepFloor(team.Tier - repFloorRelax))
                 continue;
 
             var archetype = context.Archetypes.ForTeam(team.Tier, ArchetypeOverride(context, team.TeamId));

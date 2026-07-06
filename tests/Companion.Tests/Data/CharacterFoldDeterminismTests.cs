@@ -55,6 +55,81 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         CpUnspent = 0,
     };
 
+    private static CharacterProfile RepFloorRelaxCharacter() => new()
+    {
+        Name = "Old Hand",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.55, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = 0.55,
+        },
+        PerkIds = ["journeyman"], // offerWeight/repFloorRelax — relaxes the season-end offer gate
+        CpUnspent = 0,
+    };
+
+    [Fact]
+    public void RepFloorRelaxCharacter_RelaxesTheOfferGate_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "relax.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 20260706;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Relax Gate",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = RepFloorRelaxCharacter(),
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                session.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(s => s.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            Assert.NotNull(session.SeasonReview()); // runs the offer gate (now relaxed by the perk)
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // The relaxed offer gate is a pure function of the folded (journaled) perk, so replay
+        // reproduces the exact same offer set — the new path stays byte-replayable.
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30, // = PlayerAgeIn(TwoRoundPack, driver.hulme): 1967 − (1967−30 default born)
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.NotNull(CareerStore.ReadSeasons(db)); // sanity: career intact
+    }
+
     [Fact]
     public void InjuryPerkCharacter_RollsInjuryAtSeasonEnd_AndReplaysByteIdentically()
     {
