@@ -59,6 +59,38 @@ public class RoundGridResolverTests
         Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 6).Seats, s => s.DriverId == "driver.hubert_hahne");
     }
 
+    // ---------- the player races the FULL season, even when their historical driver sat out ----------
+
+    [Fact]
+    public void Resolve_PlayerSeat_RacesEveryRound_EvenWhenTheirHistoricalDriverSatOut()
+    {
+        var pack = GridTestData.LoadReferencePack("f1-1967");
+        // John Surtees ran rounds "1-4,6-7,9-11" — historically OUT for rounds 5 and 8.
+        var player = new PlayerSeat { Ams2LiveryName = "Honda #7 J. Surtees" };
+
+        // Round 4: Surtees raced, so the player takes his real seat (replacement, exactly as before).
+        var seat4 = Assert.Single(RoundGridResolver.Resolve(pack, 4, player).Seats, s => s.IsPlayer);
+        Assert.Equal("Honda #7 J. Surtees", seat4.Ams2LiveryName);
+
+        // Round 5: Surtees sat out — but the player still races, seated from their own livery entry,
+        // instead of being benched (the old behaviour returned no player seat).
+        var seat5 = Assert.Single(RoundGridResolver.Resolve(pack, 5, player).Seats, s => s.IsPlayer);
+        Assert.Equal("Honda #7 J. Surtees", seat5.Ams2LiveryName);
+        Assert.Equal("driver.john_surtees", seat5.DriverId);
+
+        // Without a player seat, round 5's historical field still excludes Surtees (unchanged).
+        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 5).Seats, s => s.DriverId == "driver.john_surtees");
+    }
+
+    [Fact]
+    public void Resolve_PlayerSeat_LiveryMatchingNoEntryAtAll_StillThrows()
+    {
+        var pack = GridTestData.LoadReferencePack("f1-1967");
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "No Such Livery #99" }));
+        Assert.Contains("matches no entry", ex.Message);
+    }
+
     // ---------- 1988 mid-season swap: Mansell out, Brundle in for round 11 ----------
 
     [Fact]
@@ -275,17 +307,18 @@ public class RoundGridResolverTests
     }
 
     [Fact]
-    public void Resolve_PlayerSeat_UnknownLivery_ThrowsWithTheLiveryAndRound()
+    public void Resolve_PlayerSeat_DriverOutThisRound_SeatsThePlayerAnyway()
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");
 
-        // Bruce McLaren does not run round 1 (rounds "2-3,8-11") — his livery is a valid pack
-        // string but not part of THIS round's grid.
-        var ex = Assert.Throws<InvalidOperationException>(() =>
-            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "McLaren-BRM #14 B. McLaren" }));
-
-        Assert.Contains("McLaren-BRM #14 B. McLaren", ex.Message);
-        Assert.Contains("round-1", ex.Message);
+        // Bruce McLaren does not run round 1 (rounds "2-3,8-11"), but the player who took his seat
+        // still races round 1 — seated from McLaren's entry — rather than being benched. (The player
+        // races the full season regardless of the historical driver's schedule.)
+        var seat = Assert.Single(
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "McLaren-BRM #14 B. McLaren" }).Seats,
+            s => s.IsPlayer);
+        Assert.Equal("McLaren-BRM #14 B. McLaren", seat.Ams2LiveryName);
+        Assert.Equal("driver.bruce_mclaren", seat.DriverId);
     }
 
     [Fact]

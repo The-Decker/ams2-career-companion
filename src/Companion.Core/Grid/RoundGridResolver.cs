@@ -203,10 +203,32 @@ public static class RoundGridResolver
 
         if (index < 0)
         {
-            throw new InvalidOperationException(
-                $"Player livery '{playerSeat.Ams2LiveryName}' is not in the round-{round.Round} grid of " +
-                $"{pack.Manifest.PackId} ({round.Name}). The binding is exact (case-sensitive); " +
-                $"this round's liveries are: {string.Join(", ", seats.Select(s => $"'{s.Ams2LiveryName}'"))}.");
+            // The player takes over a real historical seat by livery, but the driver they replaced may
+            // not have been entered EVERY round (they left or retired mid-season historically). The
+            // player races the WHOLE season regardless: seat them from their livery's own entry — which
+            // exists in the pack even when its rounds range excludes this round — so a mid-season
+            // historical exit never benches the player. The final CapToGridSize keeps the player and
+            // trims the slowest AI, so the field stays at grid.size. Only a livery that matches NO entry
+            // at all is a genuine misconfiguration and still errors.
+            var playerEntry = pack.Entries.FirstOrDefault(e =>
+                string.Equals(e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
+            if (playerEntry is null)
+            {
+                throw new InvalidOperationException(
+                    $"Player livery '{playerSeat.Ams2LiveryName}' matches no entry in {pack.Manifest.PackId} " +
+                    $"({round.Name}). The binding is exact (case-sensitive); this round's liveries are: " +
+                    $"{string.Join(", ", seats.Select(s => $"'{s.Ams2LiveryName}'"))}.");
+            }
+
+            var driversById = IndexById(pack.Drivers, d => d.Id, pack, "drivers.json");
+            var teamsById = IndexById(pack.Teams, t => t.Id, pack, "teams.json");
+            var addedSeat = BuildSeat(
+                pack, round,
+                LookupDriver(driversById, playerEntry.DriverId, pack, round),
+                LookupTeam(teamsById, playerEntry.TeamId, pack, round),
+                playerEntry.Number, playerEntry.Ams2LiveryName, isGuest: false);
+            seats.Add(ApplyCharacter(addedSeat with { IsPlayer = true }, playerSeat.Character));
+            return seats;
         }
 
         // Mark the player seat, then patch it from the character (last in the merge chain:
