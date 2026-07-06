@@ -197,6 +197,34 @@ public static class SeasonEndPipeline
             Cause = "season-final",
         });
 
+        // ---- character season XP (progression you feel): the big end-of-season reward ---------
+        // A character career banks the best championship-placement bonus plus the season-completed
+        // grant (pure XpMath.PerSeason — no stream). A pre-character career (or one without rules)
+        // emits no row and leaves Xp/Level at their defaults, so its journal + player-state blob are
+        // byte-identical and the f1db oracle is untouched.
+        long seasonEndXp = player.Xp;
+        int seasonEndLevel = player.Level;
+        if (player.Character is not null && context.CharacterRules is { } xpRules)
+        {
+            int seasonXp = XpMath.PerSeason(
+                xpRules.Levels.XpSources.PerSeason, playerPosition, seasonCompleted: true);
+            seasonEndXp = Math.Max(0, player.Xp + seasonXp);
+            seasonEndLevel = xpRules.Levels.XpCurve.LevelForTotalXp(seasonEndXp);
+            events.Add(new JournalEvent
+            {
+                Phase = JournalPhases.PlayerXp,
+                Entity = "player",
+                DeltaJson = CareerJson.Serialize(new
+                {
+                    from = player.Xp,
+                    to = seasonEndXp,
+                    season = seasonXp,
+                    level = seasonEndLevel,
+                }),
+                Cause = "season-final",
+            });
+        }
+
         // ---- injury (character depth 6): a fragile driver risks a season-end injury ----------
         // Only a character carrying an injury-stream perk rolls, so a default career (or a character
         // with no injury perk) consumes no new draws and stays byte-identical. A hit sets reputation
@@ -231,6 +259,8 @@ public static class SeasonEndPipeline
         {
             Reputation = finalRep,
             SeasonsCompleted = player.SeasonsCompleted + 1,
+            Xp = seasonEndXp,
+            Level = seasonEndLevel,
         };
 
         // ---- step 3: aging -------------------------------------------------------------

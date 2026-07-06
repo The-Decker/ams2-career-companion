@@ -129,6 +129,86 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void SeasonEndXp_RewardsTheChampionship_AndReplaysByteIdentically()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "xp.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        const string playerId = "driver.hulme";
+        const long seed = 424242;
+        Companion.Core.Packs.SeasonPack pack;
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "Season XP",
+                       MasterSeed = seed,
+                       PlayerLiveryName = TestPackBuilder.StockLivery2,
+                       Character = Character(),
+                   },
+                   environment))
+        {
+            pack = session.Pack;
+            for (int round = 0; round < 2; round++)
+            {
+                var grid = session.CurrentGrid();
+                // The player wins every round → champion, so the placement bonus is the title bonus.
+                var order = new[] { playerId }
+                    .Concat(grid.Select(s => s.DriverId).Where(id => id != playerId))
+                    .ToList();
+                session.Apply(new ResultDraft
+                {
+                    Classified = order,
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+            Assert.NotNull(session.SeasonReview()); // triggers the season-end pipeline
+        }
+        // The session's Dispose clears its own connection pool (the delete-handle fix), so the file
+        // reopens cleanly without a process-wide ClearAllPools (which races other parallel DB tests).
+
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+
+        // A single season-final player.xp row banks the title bonus + the season-completed grant,
+        // and it advances the driver's total XP.
+        var journal = JournalStore.ReadSeason(db, seasonId);
+        var seasonXpRow = Assert.Single(
+            journal, r => r.Phase == JournalPhases.PlayerXp && r.Cause == "season-final");
+        var perSeason = rules.Character.Levels.XpSources.PerSeason;
+        int expectedBonus = (int)Math.Round(
+            perSeason.Championship1 + perSeason.SeasonCompleted, MidpointRounding.AwayFromZero);
+        using var delta = System.Text.Json.JsonDocument.Parse(seasonXpRow.DeltaJson);
+        Assert.Equal(expectedBonus, delta.RootElement.GetProperty("season").GetInt32());
+        Assert.True(delta.RootElement.GetProperty("to").GetInt64()
+            > delta.RootElement.GetProperty("from").GetInt64());
+
+        // The season-XP row is a pure function of the championship result, so replay reproduces it.
+        var inputs = new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        };
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)seed), inputs);
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
+    [Fact]
     public void CharacterCareer_FoldsWithTheCharacterAndReplaysByteIdentically()
     {
         string packDirectory = Path.Combine(_root, "pack");
