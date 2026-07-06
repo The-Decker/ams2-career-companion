@@ -31,7 +31,7 @@ public static class PerkResolver
         double peakShift = 0.0, riseMult = 1.0, declineAccel = 1.0;
         double offerExp = 1.0, salaryAsk = 1.0, ageRisk = 1.0, payBu = 0.0, salaryOffer = 1.0;
         int repFloorRelax = 0, statPointsPerLevel = 0;
-        double injuryDurability = 0.0, injuryBase = 0.0;
+        double injuryDurability = 0.0, injuryBase = 0.0, statSoftCap = 0.0;
 
         // One lever→accumulator mapping, reused by both unconditional effects and the conditional
         // effects whose condition holds for this round (activeConditions) — so a fired conditional
@@ -100,6 +100,7 @@ public static class PerkResolver
                     break;
                 case "statPoints":
                     if (target == "perLevel") statPointsPerLevel += (int)Math.Round(m);
+                    else if (target == "softCap") statSoftCap += m;
                     break;
             }
         }
@@ -155,6 +156,7 @@ public static class PerkResolver
             InjuryDurabilityDelta = injuryDurability,
             InjuryBaseAdd = injuryBase,
             StatPointsPerLevelBonus = statPointsPerLevel,
+            StatSoftCapDelta = statSoftCap,
             Conditional = conditional,
         };
     }

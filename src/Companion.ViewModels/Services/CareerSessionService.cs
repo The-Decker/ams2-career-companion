@@ -501,7 +501,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             if (!IsKnownStat(rules, spend.Target))
                 throw new InvalidOperationException($"Unknown stat '{spend.Target}'.");
             double step = rules.Levels.LevelGrants.StatStepValue;
-            double cap = rules.Levels.LevelGrants.StatCapPerRating;
+            // A statPoints/softCap perk (iron_constitution) lowers the in-career raise ceiling.
+            double cap = rules.Levels.LevelGrants.StatCapPerRating
+                + PerkResolver.Resolve(character.PerkIds, rules).StatSoftCapDelta;
             int pendingSteps = PendingSpends().Count(s => s.Kind == "stat"
                 && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
             double current = character.Stat(spend.Target) + (pendingSteps * step);

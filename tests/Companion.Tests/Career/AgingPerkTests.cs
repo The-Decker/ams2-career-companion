@@ -40,5 +40,7 @@ public sealed class AgingPerkTests
         Assert.Equal(0.50, PerkResolver.Resolve(["iron_constitution"], rules).DeclineAccelMult, 6);
         // ...and it also carries peakShift +3 (a long, late plateau).
         Assert.Equal(3.0, PerkResolver.Resolve(["iron_constitution"], rules).PeakShift, 6);
+        // ...and its statPoints softCap drawback lowers the in-career stat-raise ceiling by 0.10.
+        Assert.Equal(-0.10, PerkResolver.Resolve(["iron_constitution"], rules).StatSoftCapDelta, 6);
     }
 }

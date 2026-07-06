@@ -319,6 +319,30 @@ public sealed class EraSignAndContinueTests : IDisposable
     }
 
     [Fact]
+    public void Spend_SoftCapPerk_CapsInCareerStatRaisesLower()
+    {
+        var softCapped = new Companion.Core.Character.CharacterProfile
+        {
+            Name = "Iron Man",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.85, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.55,
+            },
+            PerkIds = ["iron_constitution"], // statPoints softCap −0.10 → in-career ceiling 0.89
+            CpUnspent = 3,
+        };
+        using var session = CreateAndPlaySeason(softCapped);
+        Assert.True(session.AvailableCharacterCp() >= 1);
+
+        // pace is at 0.85; a step (0.90) would exceed the perk's 0.89 ceiling → rejected.
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("pace", 1)));
+        // a low stat is still raisable (well under the ceiling).
+        session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("craft", 1));
+    }
+
+    [Fact]
     public void PurchasablePerks_AreAffordableUnownedPositiveCost_CheapestFirst()
     {
         using var session = CreateAndPlaySeason(DevCharacter());
