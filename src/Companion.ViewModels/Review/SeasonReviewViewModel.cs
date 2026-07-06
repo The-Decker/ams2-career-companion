@@ -68,7 +68,7 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
 
-        FinalStandings = new StandingsViewModel(session.AllSnapshots(), session.Pack);
+        FinalStandings = new StandingsViewModel(session.AllSnapshots(), session.Pack, session: session);
         Review = session.SeasonReview();
         Headlines = Review?.Headlines ?? [];
         Offers = new ObservableCollection<OfferLetterViewModel>(

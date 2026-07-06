@@ -115,6 +115,11 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
         _session = session;
 
         var driverNames = pack.Drivers.ToDictionary(d => d.Id, d => d.Name, StringComparer.Ordinal);
+        // Render the player's chosen character name on their row (the drivers tab AND the round matrix
+        // both read this map), instead of the historical driver they seated. Null identity = the
+        // historical name, exactly as before.
+        if (session?.PlayerIdentity() is { } player)
+            driverNames[player.DriverId] = player.DisplayName;
         var teamNames = pack.Teams.ToDictionary(t => t.Id, t => t.Name, StringComparer.Ordinal);
 
         var ordered = snapshots.OrderBy(s => s.AfterRound).ToArray();

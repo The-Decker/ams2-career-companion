@@ -115,6 +115,12 @@ public interface ICareerSession
     void StartNextSeason(string teamId) => throw new NotSupportedException(
         "This career session does not support era transitions.");
 
+    /// <summary>The player's driver id + chosen character name for this season, so screens that
+    /// render driver names (grid / result entry, standings, round matrix) show the character on the
+    /// player's row instead of the historical driver whose seat they took. Null when the career has
+    /// no named character (then the historical name shows, as before). Additive default: null.</summary>
+    (string DriverId, string DisplayName)? PlayerIdentity() => null;
+
     /// <summary>The player's driver dossier (character depth 3): name, the seven stats, the chosen
     /// perks with what they do, and progression (level + XP toward the next), projected from the
     /// current folded player state + the character rules. Null for a career with no character (or no

@@ -641,8 +641,23 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         return null;
     }
 
-    public IReadOnlyList<GridSeat> CurrentGrid() =>
-        SeasonComplete ? [] : ResolveGrid(CurrentRoundNumber).Seats;
+    public IReadOnlyList<GridSeat> CurrentGrid()
+    {
+        if (SeasonComplete)
+            return [];
+        var seats = ResolveGrid(CurrentRoundNumber).Seats;
+        // Show the player's chosen character name on their seat, not the historical driver they took
+        // over. Display only — the seat's DriverId (what results score under) and the staged AMS2 file
+        // (bound by livery) are untouched, so nothing about the sim or the AI file changes.
+        return CharacterName() is { } name
+            ? seats.Select(s => s.IsPlayer ? s with { DriverName = name } : s).ToList()
+            : seats;
+    }
+
+    /// <summary>The player's driver id + character name for name-rendering screens, or null when the
+    /// career has no named character.</summary>
+    public (string DriverId, string DisplayName)? PlayerIdentity() =>
+        CharacterName() is { } name ? (_playerDriverId, name) : null;
 
     /// <summary>Resolves the round grid, marking the player's seat when their entry covers
     /// this round (an entry's rounds range may exclude it — then the grid is all-AI). When the

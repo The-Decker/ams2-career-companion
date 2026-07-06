@@ -304,6 +304,11 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public CharacterDossier? CharacterDossier() => Dossier;
 
+    /// <summary>The player's driver id + character display name, surfaced to name-rendering screens.</summary>
+    public (string DriverId, string DisplayName)? Identity { get; set; }
+
+    public (string DriverId, string DisplayName)? PlayerIdentity() => Identity;
+
     public int AvailableCharacterCp() => Cp;
 
     public IReadOnlyList<PurchasablePerk> PurchasablePerks() =>
