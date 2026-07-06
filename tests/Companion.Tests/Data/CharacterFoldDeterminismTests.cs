@@ -31,6 +31,7 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
 
     private static CharacterProfile Character() => new()
     {
+        Name = "Ace McTest",
         Stats = new Dictionary<string, double>(StringComparer.Ordinal)
         {
             ["pace"] = 0.85, ["oneLap"] = 0.60, ["craft"] = 0.50,
@@ -104,7 +105,8 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
         var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
         Assert.True(start.HasCharacter);
         Assert.Equal(1, start.Level);
-        Assert.Equal(["engineers_favorite"], start.Character!.PerkIds);
+        Assert.Equal("Ace McTest", start.Character!.Name); // the chosen driver name folds + persists
+        Assert.Equal(["engineers_favorite"], start.Character.PerkIds);
 
         // The character accrues XP: a player.xp row per raced round, and the folded state carries a
         // level (>= the creation level 1). A character-free career emits no player.xp row.

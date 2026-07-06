@@ -6,6 +6,14 @@
          control is keyboard-operable: the archetype list (arrows), the stat sliders (arrows), and
          the perk checkboxes (Space) — decision 8 parity. -->
     <DockPanel>
+        <!-- driver name: the identity the whole app uses -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+            <TextBlock DockPanel.Dock="Left" Text="Driver name" FontWeight="SemiBold" FontSize="15"
+                       VerticalAlignment="Center" Margin="0,0,12,0" />
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" FontSize="15"
+                     MaxLength="40" AutomationProperties.Name="Driver name" />
+        </DockPanel>
+
         <!-- character-points meter (always in view at the bottom) -->
         <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Padding="12,8" Margin="0,12,0,0">
             <StackPanel>

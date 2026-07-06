@@ -612,7 +612,9 @@ public static class ReplayService
                 PointsPositions = PointsPositionsFor(pack, raceSessions[i], envelope.Result),
                 Streams = new StreamFactory(masterSeed),
                 Headlines = inputs.Headlines,
-                PlayerName = inputs.PlayerName,
+                // The character's chosen name is the identity the news uses; a character-free career
+                // (or an unnamed character) keeps the input name → byte-identical.
+                PlayerName = string.IsNullOrEmpty(character?.Name) ? inputs.PlayerName : character.Name,
                 // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
                 Modifiers = mods,

@@ -15,6 +15,11 @@ public sealed record CharacterProfile
 
     public required IReadOnlyList<string> PerkIds { get; init; }
 
+    /// <summary>The player's chosen driver name — the identity the whole app uses (news, standings,
+    /// dossier), rather than the historical driver whose seat they took. Empty for a legacy
+    /// character created before naming existed (then the app falls back to the seat's driver).</summary>
+    public string Name { get; init; } = "";
+
     /// <summary>Character Points not yet spent (leftover at creation + level grants), spendable
     /// between seasons.</summary>
     public int CpUnspent { get; init; }
@@ -34,6 +39,7 @@ public sealed record CharacterProfile
         if (ReferenceEquals(this, other))
             return true;
         return CpUnspent == other.CpUnspent
+            && string.Equals(Name, other.Name, StringComparison.Ordinal)
             && PerkIds.SequenceEqual(other.PerkIds)
             && StatsEqual(Stats, other.Stats);
     }
@@ -42,6 +48,7 @@ public sealed record CharacterProfile
     {
         var hash = new HashCode();
         hash.Add(CpUnspent);
+        hash.Add(Name);
         foreach (string id in PerkIds)
             hash.Add(id);
         foreach (var (key, value) in Stats.OrderBy(kv => kv.Key, StringComparer.Ordinal))

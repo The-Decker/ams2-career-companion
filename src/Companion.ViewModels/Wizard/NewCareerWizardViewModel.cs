@@ -314,7 +314,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
-        Character = new CharacterViewModel(_environment.Rules.Character);
+        // Pre-fill the driver name with the seat's historical driver as a starting point.
+        Character = new CharacterViewModel(_environment.Rules.Character, SelectedSeat?.DriverName);
         Character.PropertyChanged += OnCharacterChanged;
     }
 

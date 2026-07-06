@@ -42,6 +42,16 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
+    public void Name_PreFillsFromTheSeatDriver_AndBuildProfileCarriesTheEditedName()
+    {
+        var vm = new CharacterViewModel(Rules(), "Denny Hulme");
+        Assert.Equal("Denny Hulme", vm.Name); // pre-filled with the seat's historical driver
+
+        vm.Name = "  Ayrton da Silva  ";
+        Assert.Equal("Ayrton da Silva", vm.BuildProfile().Name); // trimmed, the player's own identity
+    }
+
+    [Fact]
     public void TogglePerk_MovesTheNetCpSpend()
     {
         var vm = new CharacterViewModel(Rules());
@@ -128,10 +138,12 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.NextCommand.Execute(null);                 // -> Verification
         if (wizard.HasWarnings) wizard.ProceedAnyway = true;
         wizard.NextCommand.Execute(null);                 // -> SeatPick
-        wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.SelectedSeat = seat;
         wizard.NextCommand.Execute(null);                 // -> Character
         Assert.Equal(WizardStep.Character, wizard.Step);
         Assert.NotNull(wizard.Character);
+        Assert.Equal(seat.DriverName, wizard.Character!.Name); // driver name pre-filled from the seat
 
         wizard.NextCommand.Execute(null);                 // -> Confirm
         Assert.Equal(WizardStep.Confirm, wizard.Step);
@@ -139,11 +151,12 @@ public sealed class CharacterWizardTests : IDisposable
 
         var request = factory.LastRequest!;
         Assert.NotNull(request.Character);
+        Assert.Equal(seat.DriverName, request.Character!.Name); // the named driver reached creation
         // The default archetype's perks came through (profile lists them in perks.json order — a
         // deterministic order, so compared as a set here).
         Assert.Equal(
             wizard.Archetypes()[0].PerkIds.OrderBy(x => x, StringComparer.Ordinal),
-            request.Character!.PerkIds.OrderBy(x => x, StringComparer.Ordinal));
+            request.Character.PerkIds.OrderBy(x => x, StringComparer.Ordinal));
         Assert.Contains("pace", request.Character.Stats.Keys);
     }
 }

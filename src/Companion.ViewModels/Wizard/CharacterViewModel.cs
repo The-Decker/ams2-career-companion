@@ -28,9 +28,10 @@ public sealed partial class CharacterViewModel : ObservableObject
             ["durability"] = "Durability",
         };
 
-    public CharacterViewModel(CharacterRules rules)
+    public CharacterViewModel(CharacterRules rules, string? defaultName = null)
     {
         _rules = rules;
+        _name = defaultName?.Trim() ?? "";
 
         Stats = _rules.Stats.TalentStats.Select(s => new StatSlider(s.Id, Label(s.Id), Recompute)).ToList();
         MetaStats = _rules.Stats.MetaStats.Select(m => new StatSlider(m.Id, Label(m.Id), Recompute, m.Default)).ToList();
@@ -68,6 +69,11 @@ public sealed partial class CharacterViewModel : ObservableObject
     public IReadOnlyList<PerkCategory> PerkCategories { get; }
 
     public IReadOnlyList<Archetype> Archetypes { get; }
+
+    /// <summary>The player's driver name — the identity the whole app will use. Pre-filled with the
+    /// seat's historical driver as a starting point; the player makes it their own.</summary>
+    [ObservableProperty]
+    private string _name;
 
     [ObservableProperty]
     private Archetype? _selectedArchetype;
@@ -149,6 +155,7 @@ public sealed partial class CharacterViewModel : ObservableObject
 
         return new CharacterProfile
         {
+            Name = Name.Trim(),
             Stats = stats,
             PerkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList(),
             CpUnspent = RemainingCp,

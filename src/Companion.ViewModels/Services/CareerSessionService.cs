@@ -191,7 +191,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                         ("@utc", nowUtc), ("@season", seasonId),
                         ("@phase", JournalPhases.PlayerCharacter),
                         ("@delta", JsonSerializer.Serialize(
-                            new { stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
+                            new { name = character.Name, stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
                             CoreJson.Options)));
                 }
 
@@ -534,6 +534,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             };
         }
         return _characterPatch;
+    }
+
+    /// <summary>The player's chosen character name for this season, or null when there is none — the
+    /// display identity the news/standings use instead of the historical driver they replaced.</summary>
+    private string? CharacterName()
+    {
+        string? name = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.Character?.Name;
+        return string.IsNullOrEmpty(name) ? null : name;
     }
 
     // ---------- staging ----------
@@ -1254,7 +1262,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             Year = Pack.Season.Year,
             Round = round,
             RaceName = packRound?.Name ?? grid.RoundName,
-            PlayerName = playerSeat?.DriverName ?? _playerDriverId,
+            PlayerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId,
             TeamName = playerSeat?.TeamName ?? "",
             PlayerFinish = actual,
             ExpectedFinish = expected,
