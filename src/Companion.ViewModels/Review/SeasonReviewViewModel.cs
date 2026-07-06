@@ -1,27 +1,55 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
 using Companion.Core.Character;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Standings;
 
 namespace Companion.ViewModels.Review;
 
-/// <summary>One offer letter row of the review screen.</summary>
-public sealed partial class OfferLetterViewModel(SeasonOfferModel offer) : ObservableObject
+/// <summary>One offer letter of the review screen — the offer's facts plus a period-document
+/// rendering of it (telegram / fax / email by era), so signing feels like answering the paddock.</summary>
+public sealed partial class OfferLetterViewModel : ObservableObject
 {
-    public string TeamId { get; } = offer.TeamId;
+    public OfferLetterViewModel(SeasonOfferModel offer, OfferDocument document)
+    {
+        TeamId = offer.TeamId;
+        TeamName = offer.TeamName;
+        TierText = $"Tier {offer.Tier}";
+        SalaryText = $"{offer.SalaryBu:0.##} BU / season";
+        ScoreText = $"score {offer.Score:0.####}";
+        _isAccepted = offer.Accepted;
+        Document = document;
+    }
 
-    public string TeamName { get; } = offer.TeamName;
+    public string TeamId { get; }
 
-    public string TierText { get; } = $"Tier {offer.Tier}";
+    public string TeamName { get; }
 
-    public string SalaryText { get; } = $"{offer.SalaryBu:0.##} BU / season";
+    public string TierText { get; }
 
-    public string ScoreText { get; } = $"score {offer.Score:0.####}";
+    public string SalaryText { get; }
+
+    public string ScoreText { get; }
+
+    /// <summary>The period-document form of this offer (era medium, letterhead, dateline, body).</summary>
+    public OfferDocument Document { get; }
+
+    public string MediumLabel => Document.Era.Label;
+
+    public string AccentHex => Document.Era.AccentHex;
+
+    public string DocumentFontStack => Document.Era.DocumentFontStack;
+
+    public string Letterhead => Document.Letterhead;
+
+    public string Dateline => Document.Dateline;
+
+    public string BodyText => Document.Body;
 
     [ObservableProperty]
-    private bool _isAccepted = offer.Accepted;
+    private bool _isAccepted;
 }
 
 /// <summary>One raisable stat row of the review's development block: the stat's id (command
@@ -71,8 +99,14 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         FinalStandings = new StandingsViewModel(session.AllSnapshots(), session.Pack, session: session);
         Review = session.SeasonReview();
         Headlines = Review?.Headlines ?? [];
+
+        // Render each offer as a period document (telegram / fax / email) for the season's era,
+        // addressed to the driver by their character name.
+        int seasonYear = Review?.SeasonYear ?? session.Pack.Season.Year;
+        string driverName = session.PlayerIdentity()?.DisplayName ?? "";
         Offers = new ObservableCollection<OfferLetterViewModel>(
-            (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(o)));
+            (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(
+                o, OfferDocument.Compose(seasonYear, o.TeamName, o.Tier, o.SalaryBu, driverName))));
         _acceptedTeamId = Review?.AcceptedTeamId;
         CanRestoreAiFile = session is IAiFileRestore;
         NextSeason = session.NextSeason();

@@ -16,11 +16,13 @@
                 <StackPanel>
                     <TextBlock Text="Offer letters" FontWeight="SemiBold" Margin="0,0,0,4" />
                     <TextBlock Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap"
-                               Text="Scored from your season-long folded reputation and overperformance. Accepting is journaled; a new acceptance replaces the previous one." />
+                               Text="Each seat, written up in the medium of its era. Scored from your season-long reputation and overperformance; accepting is journaled and a new acceptance replaces the previous one." />
                     <ItemsControl ItemsSource="{Binding Offers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border CornerRadius="6" Padding="12,8" Margin="0,3">
+                                <!-- the offer as a period document (telegram / fax / email by era) -->
+                                <Border CornerRadius="6" Margin="0,4" BorderThickness="1"
+                                        BorderBrush="{Binding AccentHex, Converter={StaticResource HexBrush}}">
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
@@ -32,28 +34,47 @@
                                         </Style>
                                     </Border.Style>
                                     <DockPanel>
-                                        <Button DockPanel.Dock="Right" MinWidth="110" VerticalAlignment="Center"
-                                                Command="{Binding DataContext.AcceptOfferCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                CommandParameter="{Binding}">
-                                            <Button.Style>
-                                                <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
-                                                    <Setter Property="Content" Value="Accept" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsAccepted}" Value="True">
-                                                            <Setter Property="Content" Value="✔ Accepted" />
-                                                            <Setter Property="IsEnabled" Value="False" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock FontSize="15">
-                                                <Run Text="{Binding TeamName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding TierText, Mode=OneWay}" Foreground="{StaticResource TextMutedBrush}" />
-                                            </TextBlock>
-                                            <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0">
-                                                <Run Text="{Binding SalaryText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding ScoreText, Mode=OneWay}" />
-                                            </TextBlock>
+                                        <!-- era accent spine -->
+                                        <Border DockPanel.Dock="Left" Width="4"
+                                                Background="{Binding AccentHex, Converter={StaticResource HexBrush}}" />
+                                        <StackPanel Margin="14,11">
+                                            <!-- masthead: letterhead + medium stamp -->
+                                            <DockPanel>
+                                                <TextBlock DockPanel.Dock="Right" Text="{Binding MediumLabel}"
+                                                           FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center"
+                                                           Foreground="{Binding AccentHex, Converter={StaticResource HexBrush}}" />
+                                                <TextBlock Text="{Binding Letterhead}" FontWeight="SemiBold" FontSize="13"
+                                                           FontFamily="{Binding DocumentFontStack}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </DockPanel>
+                                            <TextBlock Text="{Binding Dateline}" Style="{StaticResource Faint}"
+                                                       FontSize="11" FontFamily="{Binding DocumentFontStack}"
+                                                       Margin="0,1,0,9" />
+                                            <!-- the letter itself, in the era's voice -->
+                                            <TextBlock Text="{Binding BodyText}" TextWrapping="Wrap" FontSize="13"
+                                                       LineHeight="19" FontFamily="{Binding DocumentFontStack}"
+                                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <!-- footer: terms + accept -->
+                                            <DockPanel Margin="0,11,0,0">
+                                                <Button DockPanel.Dock="Right" MinWidth="110" VerticalAlignment="Center"
+                                                        Command="{Binding DataContext.AcceptOfferCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
+                                                            <Setter Property="Content" Value="Accept" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsAccepted}" Value="True">
+                                                                    <Setter Property="Content" Value="✔ Accepted" />
+                                                                    <Setter Property="IsEnabled" Value="False" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                                <TextBlock VerticalAlignment="Center" Style="{StaticResource Muted}" FontSize="12">
+                                                    <Run Text="{Binding TierText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding SalaryText, Mode=OneWay}" />
+                                                </TextBlock>
+                                            </DockPanel>
                                         </StackPanel>
                                     </DockPanel>
                                 </Border>

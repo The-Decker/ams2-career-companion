@@ -44,6 +44,7 @@
     <conv:GlyphBrushConverter x:Key="GlyphBrush" />
     <conv:CandidatesVisibilityConverter x:Key="CandidatesVisible" />
     <conv:EraAccentBrushConverter x:Key="EraAccent" />
+    <conv:HexBrushConverter x:Key="HexBrush" />
     <conv:EraLabelConverter x:Key="EraLabel" />
     <conv:EraImageConverter x:Key="EraImage" />
 

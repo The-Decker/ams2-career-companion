@@ -171,6 +171,30 @@ public sealed class EraAccentBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>A "#RRGGBB" hex string → a SolidColorBrush (e.g. an offer document's era accent, which
+/// the view-model already carries as hex). Transparent when the value is not a parseable hex.</summary>
+public sealed class HexBrushConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is string hex && !string.IsNullOrWhiteSpace(hex))
+        {
+            try
+            {
+                return new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+            }
+            catch (FormatException)
+            {
+                // fall through to transparent
+            }
+        }
+        return Brushes.Transparent;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era medium label
 /// ("TELEGRAM"/"FAX"/"EMAIL"), keyed off the stored season year for MRU entries; "" when no era
 /// resolves.</summary>
