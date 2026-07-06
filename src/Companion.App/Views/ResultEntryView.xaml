@@ -247,8 +247,11 @@
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource Panel}">
                         <Style.Triggers>
+                            <!-- light the zone up (accent border + wash) when a drag hovers it -->
                             <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
                                 <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderThickness" Value="1.5" />
+                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -283,6 +286,8 @@
                         <Style.Triggers>
                             <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
                                 <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderThickness" Value="1.5" />
+                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
