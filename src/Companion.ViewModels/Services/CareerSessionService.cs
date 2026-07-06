@@ -656,6 +656,28 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             : seats;
     }
 
+    /// <summary>The sim's expected finish for the player this round, resolved EXACTLY as the fold's
+    /// grid resolution (2-arg resolve with the player seat + character patch), so the Setup Gamble
+    /// briefing shows the same number the bet is staked against. Null when the season is complete or
+    /// the player has no seat this round.</summary>
+    public int? CurrentExpectedFinish()
+    {
+        if (SeasonComplete)
+            return null;
+        GridPlan grid;
+        try
+        {
+            grid = RoundGridResolver.Resolve(Pack, CurrentRoundNumber,
+                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() });
+        }
+        catch (InvalidOperationException)
+        {
+            return null; // the player's livery matches no entry this round
+        }
+        int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
+        return playerIndex < 0 ? null : SeatStrengthModel.ExpectedFinish(grid, playerIndex);
+    }
+
     /// <summary>The player's driver id + character name for name-rendering screens, or null when the
     /// career has no named character.</summary>
     public (string DriverId, string DisplayName)? PlayerIdentity() =>

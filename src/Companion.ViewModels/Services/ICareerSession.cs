@@ -26,6 +26,12 @@ public interface ICareerSession
     /// <summary>The current round's seats, in grid order, for the result-entry screen.</summary>
     IReadOnlyList<GridSeat> CurrentGrid();
 
+    /// <summary>The sim's expected finishing position for the player this round (1-based), computed
+    /// from the resolved grid exactly as the fold does — so the Setup Gamble briefing frames a call
+    /// against the same number the bet is later staked on. Null when the season is complete or the
+    /// player has no seat this round. Additive default so fakes without it compile. (Setup Gamble, 4b.)</summary>
+    int? CurrentExpectedFinish() => null;
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>

@@ -74,6 +74,62 @@ public class BriefingViewModelTests
         Assert.Contains("Laps: 64", text);
     }
 
+    // ---------- Setup Gamble: the pre-race called shot (4b) ----------
+
+    [Fact]
+    public void Gamble_OffersACallAgainstTheExpectedFinish_AndPreviewsTheStake()
+    {
+        var session = SessionWithRealRound3();
+        session.ExpectedFinish = 10;
+        var vm = new BriefingViewModel(session);
+
+        Assert.True(vm.CanGamble);
+        Assert.False(vm.HasCalledShot);
+        Assert.Contains("expects you around P10", vm.CalledShotSummary);
+
+        // "Bolder" from no call starts one place better than expected (P9) — the base stake.
+        vm.CallBolderCommand.Execute(null);
+        Assert.Equal(9, vm.CalledShot);
+        Assert.True(vm.HasCalledShot);
+        Assert.Contains("Called P9", vm.CalledShotSummary);
+        Assert.Contains("staking 3", vm.CalledShotSummary);
+
+        // Bolder again → P8, a bigger stake (4).
+        vm.CallBolderCommand.Execute(null);
+        Assert.Equal(8, vm.CalledShot);
+        Assert.Contains("staking 4", vm.CalledShotSummary);
+
+        // Withdraw the bet.
+        vm.ClearCallCommand.Execute(null);
+        Assert.Null(vm.CalledShot);
+        Assert.False(vm.HasCalledShot);
+    }
+
+    [Fact]
+    public void Gamble_ACallNoBolderThanExpected_IsFlaggedAsNotAGamble()
+    {
+        var session = SessionWithRealRound3();
+        session.ExpectedFinish = 5;
+        var vm = new BriefingViewModel(session) { CalledShot = 7 }; // behind the expected finish
+
+        Assert.False(Companion.Core.Career.CalledShotMath.IsGamble(7, 5));
+        Assert.Contains("isn't a gamble", vm.CalledShotSummary);
+    }
+
+    [Fact]
+    public void Gamble_HiddenWhenThePlayerHasNoSeat_OrCannotCallBolder()
+    {
+        // No expected finish (no seat this round) → no gamble offered.
+        var noSeat = SessionWithRealRound3();
+        noSeat.ExpectedFinish = null;
+        Assert.False(new BriefingViewModel(noSeat).CanGamble);
+
+        // Already expected to win (P1) → nothing bolder to call.
+        var poleFavourite = SessionWithRealRound3();
+        poleFavourite.ExpectedFinish = 1;
+        Assert.False(new BriefingViewModel(poleFavourite).CanGamble);
+    }
+
     // ---------- staging banner ----------
 
     [Fact]

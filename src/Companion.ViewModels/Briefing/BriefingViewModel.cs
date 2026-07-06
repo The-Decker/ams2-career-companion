@@ -83,6 +83,72 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// <summary>True once every round has an applied result — there is nothing to brief.</summary>
     public bool SeasonComplete => Briefing is null;
 
+    // ---------- Setup Gamble: the pre-race called shot (4b) ----------
+
+    /// <summary>The sim's expected finish for this round (from the resolved grid), the yardstick the
+    /// gamble is called against. Null when the player has no seat this round — then no gamble.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanGamble), nameof(CalledShotSummary))]
+    private int? _expectedFinish;
+
+    /// <summary>The number of cars on this round's grid — the safe end of the call range.</summary>
+    private int _gridSize;
+
+    /// <summary>The finish the player has called (1-based), or null for no bet. Rides the round's raw
+    /// envelope when the result is applied and is resolved by the fold only when it is a real gamble
+    /// (bolder than <see cref="ExpectedFinish"/>). Reset each round.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCalledShot), nameof(CalledShotSummary))]
+    private int? _calledShot;
+
+    /// <summary>True when a gamble can be offered at all: the player has a seat and the expectation
+    /// leaves room to call something bolder (you cannot out-call an expected pole).</summary>
+    public bool CanGamble => !SeasonComplete && ExpectedFinish is > 1;
+
+    /// <summary>True when the player has committed a call this round.</summary>
+    public bool HasCalledShot => CalledShot is not null;
+
+    /// <summary>One legible line describing the current call and its reputation stake — what the view
+    /// shows so the gamble is never a silent no-op.</summary>
+    public string CalledShotSummary
+    {
+        get
+        {
+            if (ExpectedFinish is not { } expected)
+                return "";
+            if (CalledShot is not { } called)
+                return $"The sim expects you around P{expected}. Call a bolder finish to stake reputation on it.";
+            if (!Companion.Core.Career.CalledShotMath.IsGamble(called, expected))
+                return $"P{called} isn't a gamble — call better than P{expected} to put reputation on the line.";
+            double stake = Companion.Core.Career.CalledShotMath.Stake(called, expected);
+            return $"Called P{called}: staking {stake:0.#} reputation — hit it for +{stake:0.#}, miss for −{stake:0.#}.";
+        }
+    }
+
+    /// <summary>Call a bolder finish (a lower P number). From no call, starts one place better than
+    /// the expected finish — the least-ambitious real gamble. Clamped at P1.</summary>
+    [RelayCommand]
+    private void CallBolder()
+    {
+        if (ExpectedFinish is not { } expected || expected <= 1)
+            return;
+        CalledShot = CalledShot is { } c ? Math.Max(1, c - 1) : expected - 1;
+    }
+
+    /// <summary>Ease the call one place (a higher P number). Past the expected finish it stops being a
+    /// gamble; drop it entirely with <see cref="ClearCallCommand"/>.</summary>
+    [RelayCommand]
+    private void CallSafer()
+    {
+        if (CalledShot is not { } c)
+            return;
+        CalledShot = Math.Min(_gridSize > 0 ? _gridSize : c + 1, c + 1);
+    }
+
+    /// <summary>Withdraw the bet — no gamble this round.</summary>
+    [RelayCommand]
+    private void ClearCall() => CalledShot = null;
+
     /// <summary>The check-off rows, in in-game custom-race screen order.</summary>
     public ObservableCollection<BriefingChecklistItem> Settings { get; } = [];
 
@@ -117,6 +183,12 @@ public sealed partial class BriefingViewModel : ObservableObject
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
                 ? $"Recommended Opponent Skill: {slider}% — calibrated from your pace so far (never auto-applied)."
                 : null;
+
+            // Setup Gamble: a fresh round starts with no bet; expose the expectation the call is made
+            // against (and the grid size that bounds a safe call).
+            ExpectedFinish = _session.CurrentExpectedFinish();
+            _gridSize = _session.CurrentGrid().Count;
+            CalledShot = null;
         }
         else
         {
@@ -126,9 +198,14 @@ public sealed partial class BriefingViewModel : ObservableObject
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
+            ExpectedFinish = null;
+            _gridSize = 0;
+            CalledShot = null;
             CompactChecklistOpen = false; // nothing left to tick — close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));
+        OnPropertyChanged(nameof(CanGamble));
+        OnPropertyChanged(nameof(CalledShotSummary));
         RaiseProgressChanged();
     }
 

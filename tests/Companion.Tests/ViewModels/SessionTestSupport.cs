@@ -241,7 +241,15 @@ internal sealed class FakeCareerSession : ICareerSession
             ? StageOutcomes.Dequeue()
             : new StageOutcome { Success = false, Messages = ["no staged outcome queued"] };
 
-    public IReadOnlyList<GridSeat> CurrentGrid() => [];
+    /// <summary>The seats <see cref="CurrentGrid"/> returns (empty by default).</summary>
+    public IReadOnlyList<GridSeat> Grid { get; set; } = [];
+
+    public IReadOnlyList<GridSeat> CurrentGrid() => Grid;
+
+    /// <summary>The value <see cref="CurrentExpectedFinish"/> returns (null = no seat/gamble).</summary>
+    public int? ExpectedFinish { get; set; }
+
+    public int? CurrentExpectedFinish() => ExpectedFinish;
 
     public ConfirmModel Preview(ResultDraft draft) => new()
     {

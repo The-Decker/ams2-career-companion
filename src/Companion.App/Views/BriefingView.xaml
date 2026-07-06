@@ -142,6 +142,25 @@
                            Text="{Binding DifficultyRecommendation}" />
             </Border>
 
+            <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's
+                 expected finish; only shown when the round leaves room to call something bolder. -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding CanGamble, Converter={StaticResource BoolCollapsed}}">
+                <StackPanel>
+                    <TextBlock Text="Setup Gamble — call your shot" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding CalledShotSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Bolder ◂" Command="{Binding CallBolderCommand}" MinWidth="90"
+                                ToolTip="Call a better finish (a lower position) — a bolder gamble stakes more reputation" />
+                        <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="8,0,0,0" MinWidth="90"
+                                ToolTip="Ease the call one place" />
+                        <Button Content="No bet" Command="{Binding ClearCallCommand}" Margin="8,0,0,0" MinWidth="80"
+                                Visibility="{Binding HasCalledShot, Converter={StaticResource BoolCollapsed}}"
+                                ToolTip="Withdraw the gamble for this round" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- setup notes (placeholder distance note etc.) -->
             <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
                     Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">
