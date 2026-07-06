@@ -299,9 +299,15 @@ internal sealed class FakeCareerSession : ICareerSession
     /// <summary>Development spends recorded through the seam, in order.</summary>
     public List<CharacterSpend> Spends { get; } = [];
 
+    /// <summary>Perks the review's development block offers for purchase.</summary>
+    public List<PurchasablePerk> Buyable { get; } = [];
+
     public CharacterDossier? CharacterDossier() => Dossier;
 
     public int AvailableCharacterCp() => Cp;
+
+    public IReadOnlyList<PurchasablePerk> PurchasablePerks() =>
+        Buyable.Where(p => p.Cost <= Cp).ToList();
 
     public void SpendCharacterPoint(CharacterSpend spend)
     {
@@ -317,6 +323,9 @@ internal sealed class FakeCareerSession : ICareerSession
                 .ToList();
             Dossier = dossier with { Stats = raised };
         }
+        // A bought perk is no longer on offer.
+        if (spend.Kind == "perk")
+            Buyable.RemoveAll(p => p.Id == spend.Target);
     }
 }
 

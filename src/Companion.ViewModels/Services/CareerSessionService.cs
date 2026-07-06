@@ -551,6 +551,39 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         rules.Stats.TalentStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal))
         || rules.Stats.MetaStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal));
 
+    /// <summary>The perks the driver can buy right now: positive-cost, not already owned or pending,
+    /// and affordable from the current pool — cheapest first. Empty with no character or no points.</summary>
+    public IReadOnlyList<PurchasablePerk> PurchasablePerks()
+    {
+        var player = CurrentPlayerState();
+        if (_environment.RulesDirectory is null || player?.Character is not { } character)
+            return [];
+        int available = AvailableCharacterCp();
+        if (available <= 0)
+            return [];
+
+        var rules = _environment.Rules.Character;
+        var owned = new HashSet<string>(character.PerkIds, StringComparer.Ordinal);
+        foreach (var spend in PendingSpends())
+            if (spend.Kind == "perk")
+                owned.Add(spend.Target);
+
+        return rules.Perks
+            .Where(p => p.Cost > 0 && p.Cost <= available && !owned.Contains(p.Id))
+            .OrderBy(p => p.Cost)
+            .ThenBy(p => p.Name, StringComparer.Ordinal)
+            .Select(p => new PurchasablePerk
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Category = p.Category,
+                Cost = p.Cost,
+                Benefits = PerkDescriber.Benefits(p),
+                Drawbacks = PerkDescriber.Drawbacks(p),
+            })
+            .ToList();
+    }
+
     private int RoundCount => Pack.Season.Rounds.Count;
 
     /// <summary>1-based number of the round currently being played (last applied + 1).</summary>

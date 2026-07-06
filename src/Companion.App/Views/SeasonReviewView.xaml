@@ -97,6 +97,35 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <!-- buy a NEW perk with banked points -->
+                    <StackPanel Visibility="{Binding HasPurchasablePerks, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="New perks you can afford" FontWeight="SemiBold" Margin="0,14,0,4" />
+                        <ItemsControl ItemsSource="{Binding DevelopmentPerks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="6" Padding="12,8" Margin="0,3" Background="{StaticResource SurfaceAltBrush}">
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right" MinWidth="90" VerticalAlignment="Center"
+                                                    Content="Buy"
+                                                    Command="{Binding DataContext.BuyPerkCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock FontSize="15">
+                                                    <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding CostText, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                                                </TextBlock>
+                                                <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                                           Text="{Binding BenefitText}" />
+                                                <TextBlock Style="{StaticResource Faint}" Margin="0,1,0,0" TextWrapping="Wrap"
+                                                           Text="{Binding DrawbackText}"
+                                                           Visibility="{Binding HasDrawback, Converter={StaticResource BoolVisible}}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

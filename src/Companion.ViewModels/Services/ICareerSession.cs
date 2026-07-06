@@ -134,7 +134,25 @@ public interface ICareerSession
     void SpendCharacterPoint(CharacterSpend spend) => throw new NotSupportedException(
         "This career session does not support character development.");
 
+    /// <summary>The perks the driver can BUY with banked points right now (character depth 4): each
+    /// positive-cost perk not already owned (or pending) that the player can currently afford, with
+    /// its real cost and plain-language benefits/drawbacks. Empty for a career with no character or no
+    /// points to spend. Additive default: empty.</summary>
+    IReadOnlyList<PurchasablePerk> PurchasablePerks() => [];
+
     SeasonPack Pack { get; }
+}
+
+/// <summary>One perk offered on the season-review development block: what it is, what it costs, and —
+/// in plain language — what it does, for a Buy button that spends banked points (character depth 4).</summary>
+public sealed record PurchasablePerk
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public required string Category { get; init; }
+    public required int Cost { get; init; }
+    public required IReadOnlyList<string> Benefits { get; init; }
+    public required IReadOnlyList<string> Drawbacks { get; init; }
 }
 
 /// <summary>The discovered next era pack for the season review's sign-and-continue block.</summary>

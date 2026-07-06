@@ -31,6 +31,25 @@ public sealed record DevStatViewModel(string Id, string Label, double Value)
     public string ValueText => $"{Value:0.00}";
 }
 
+/// <summary>One buyable perk row of the review's development block: what it is, what it costs, and —
+/// in plain language — what it does, for a Buy button that spends banked points.</summary>
+public sealed record PurchasablePerkViewModel(PurchasablePerk Perk)
+{
+    public string Id => Perk.Id;
+
+    public string Name => Perk.Name;
+
+    public string CategoryText => Perk.Category;
+
+    public string CostText => Perk.Cost == 1 ? "1 pt" : $"{Perk.Cost} pts";
+
+    public string BenefitText => string.Join("   ·   ", Perk.Benefits);
+
+    public string DrawbackText => string.Join("   ·   ", Perk.Drawbacks);
+
+    public bool HasDrawback => Perk.Drawbacks.Count > 0;
+}
+
 /// <summary>
 /// The season review + offers screen (docs/dev/m5-fix-integration.md, "App wiring"): final
 /// standings, the journal's headline digest, the offer letters with accept-one (journaled),
@@ -77,6 +96,13 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
     /// <summary>The driver's seven stats, each raisable one step for a point while any remain.</summary>
     public ObservableCollection<DevStatViewModel> DevelopmentStats { get; } = [];
 
+    /// <summary>Perks the driver can afford to buy right now (cheapest first); empty when the pool
+    /// can't afford any unowned perk.</summary>
+    public ObservableCollection<PurchasablePerkViewModel> DevelopmentPerks { get; } = [];
+
+    /// <summary>True while there is at least one affordable perk to buy (shows the perk subsection).</summary>
+    public bool HasPurchasablePerks { get; private set; }
+
     /// <summary>Raise one stat a step, spending a point (no-op when unaffordable or at the cap).</summary>
     [RelayCommand]
     private void RaiseStat(string? statId)
@@ -94,6 +120,26 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         RefreshDevelopment();
     }
 
+    /// <summary>Buy a perk, spending its points (no-op when unaffordable or already owned).</summary>
+    [RelayCommand]
+    private void BuyPerk(string? perkId)
+    {
+        if (perkId is null)
+            return;
+        var row = DevelopmentPerks.FirstOrDefault(p => p.Id == perkId);
+        if (row is null)
+            return;
+        try
+        {
+            _session.SpendCharacterPoint(CharacterSpend.Perk(row.Id, row.Perk.Cost));
+        }
+        catch (InvalidOperationException)
+        {
+            return; // unaffordable / already owned — the button just does nothing
+        }
+        RefreshDevelopment();
+    }
+
     private void RefreshDevelopment()
     {
         var dossier = _session.CharacterDossier();
@@ -102,7 +148,12 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         DevelopmentStats.Clear();
         foreach (var stat in dossier?.Stats ?? [])
             DevelopmentStats.Add(new DevStatViewModel(stat.Id, stat.Label, stat.Value));
+        DevelopmentPerks.Clear();
+        foreach (var perk in _session.PurchasablePerks())
+            DevelopmentPerks.Add(new PurchasablePerkViewModel(perk));
+        HasPurchasablePerks = DevelopmentPerks.Count > 0;
         OnPropertyChanged(nameof(HasCharacter));
+        OnPropertyChanged(nameof(HasPurchasablePerks));
     }
 
     /// <summary>The final-standings block (drivers/constructors tabs + round matrix).</summary>

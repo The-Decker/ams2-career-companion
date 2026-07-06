@@ -278,6 +278,48 @@ public class SeasonReviewViewModelTests
     }
 
     [Fact]
+    public void Development_OffersAffordablePerks_AndBuyingSpendsThroughTheSeam()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 2 };
+        session.Buyable.Add(new PurchasablePerk
+        {
+            Id = "rain_man", Name = "Rain Man", Category = "weather", Cost = 1,
+            Benefits = ["Faster in the wet"], Drawbacks = [],
+        });
+        session.Buyable.Add(new PurchasablePerk
+        {
+            Id = "engineers_favorite", Name = "Engineer's Favorite", Category = "crew", Cost = 2,
+            Benefits = ["A stronger car"], Drawbacks = ["Costs two points"],
+        });
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasPurchasablePerks);
+        Assert.Equal(2, vm.DevelopmentPerks.Count);
+        Assert.Equal("1 pt", vm.DevelopmentPerks[0].CostText);
+        Assert.Equal("2 pts", vm.DevelopmentPerks[1].CostText);
+        Assert.True(vm.DevelopmentPerks[1].HasDrawback);
+
+        // Buy Rain Man: the spend goes through the seam and the pool drops to 1, which no longer
+        // affords the 2-point perk — so the offer list empties.
+        vm.BuyPerkCommand.Execute("rain_man");
+        Assert.Contains(session.Spends, s => s.Kind == "perk" && s.Target == "rain_man");
+        Assert.Equal(1, vm.AvailableCp);
+        Assert.Empty(vm.DevelopmentPerks);
+        Assert.False(vm.HasPurchasablePerks);
+    }
+
+    [Fact]
+    public void Development_NoPerksOfferedWhenNoneAreListed()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 2 };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasCharacter);
+        Assert.False(vm.HasPurchasablePerks);
+        Assert.Empty(vm.DevelopmentPerks);
+    }
+
+    [Fact]
     public void Development_UnaffordableRaiseIsANoOp()
     {
         var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 0 };

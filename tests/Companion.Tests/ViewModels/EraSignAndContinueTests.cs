@@ -318,6 +318,30 @@ public sealed class EraSignAndContinueTests : IDisposable
         Assert.Equal(before, session.AvailableCharacterCp());
     }
 
+    [Fact]
+    public void PurchasablePerks_AreAffordableUnownedPositiveCost_CheapestFirst()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int available = session.AvailableCharacterCp();
+        Assert.True(available >= 2);
+
+        var offered = ((ICareerSession)session).PurchasablePerks();
+        Assert.NotEmpty(offered);
+        Assert.All(offered, p => Assert.InRange(p.Cost, 1, available));   // affordable + positive
+        Assert.DoesNotContain(offered, p => p.Id == "sunday_driver");     // already owned
+        Assert.DoesNotContain(offered, p => p.Id == "glass_cannon");      // drawback (<=0 cost) perk
+        var costs = offered.Select(p => p.Cost).ToList();
+        Assert.Equal(costs.OrderBy(c => c).ToList(), costs);              // cheapest first
+
+        // Buy one: it drops off the offer list, and a now-unaffordable perk is filtered out.
+        string bought = offered[0].Id;
+        session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk(bought, offered[0].Cost));
+        var after = ((ICareerSession)session).PurchasablePerks();
+        Assert.DoesNotContain(after, p => p.Id == bought);
+        int remaining = session.AvailableCharacterCp();
+        Assert.All(after, p => Assert.True(p.Cost <= remaining));
+    }
+
     // ---------- the tests ----------
 
     [Fact]
