@@ -758,6 +758,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             chosen.SourceFile, liveryName, _environment.Clock.GetUtcNow(), slot: null, maxSlot: maxSlot);
     }
 
+    /// <summary>The grid editor's per-seat cosmetic overrides for this season (v4 staging_override
+    /// table). Read-only projection over a non-journaled table — the sim never sees it.</summary>
+    public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
+        StagingOverrideStore.Read(_database, _seasonId);
+
+    /// <summary>Persists one seat's rename/rebind (empty clears it). Applied at the next stage to the
+    /// custom-AI file only; the journal/fold are untouched, so replay stays byte-identical.</summary>
+    public void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) =>
+        StagingOverrideStore.Set(_database, _seasonId, liveryKey, seatOverride);
+
     /// <summary>The player's driver id + character name for name-rendering screens, or null when the
     /// career has no named character.</summary>
     public (string DriverId, string DisplayName)? PlayerIdentity() =>
@@ -882,7 +892,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             // pack's own driver baseline) is applied over them.
             var result = GridStager.StageOrRefuse(
                 file, installation.CustomAiDriversDirectory, _environment.Clock.GetUtcNow(), force,
-                PackBaselineByLivery());
+                PackBaselineByLivery(),
+                // The grid editor's cosmetic per-seat overrides (rename / rebind livery), applied to
+                // the staged file only — never the resolved grid the sim scores.
+                StagingOverrideStore.Read(_database, _seasonId));
 
             if (result.RequiresForce)
             {

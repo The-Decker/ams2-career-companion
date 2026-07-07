@@ -55,6 +55,17 @@ public interface ICareerSession
     LiveryActivationResult ActivateLivery(string liveryName) =>
         LiveryActivationResult.Failed("This career session cannot activate liveries.");
 
+    /// <summary>The grid editor's current per-seat COSMETIC overrides for this season, keyed by the
+    /// seat's original <c>ams2LiveryName</c>: a custom driver name and/or a rebound livery, applied
+    /// only to the staged custom-AI file (never the sim). Empty default so existing fakes compile.</summary>
+    IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
+        new Dictionary<string, SeatStagingOverride>(StringComparer.Ordinal);
+
+    /// <summary>Saves one seat's grid-editor override (rename / rebind livery), keyed by its original
+    /// livery; an empty override clears it. Persisted per season OUTSIDE the journal, so the sim/fold
+    /// stay byte-identical. Applied at the next stage. Additive default: a no-op so fakes compile.</summary>
+    void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) { }
+
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
     ConfirmModel Preview(ResultDraft draft);
 

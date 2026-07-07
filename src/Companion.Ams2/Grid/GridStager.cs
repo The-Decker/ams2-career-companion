@@ -86,6 +86,42 @@ public static class GridStager
 
     private static double? ScalarOrNull(double scalar) => scalar == 1.0 ? null : scalar;
 
+    // ---------- grid editor: cosmetic per-seat staging overrides ----------
+
+    /// <summary>
+    /// Applies the Skins grid editor's per-seat overrides to a built <see cref="CustomAiFile"/>:
+    /// for each driver whose (original) <c>livery_name</c> is a key in <paramref name="overrides"/>,
+    /// swaps in the custom driver name and/or rebinds the livery. The map is keyed by the seat's
+    /// ORIGINAL livery, so it is applied AFTER the NAMeS-primary merge (which keys on the same
+    /// original livery) — the player's explicit edit is the final authority over the installed
+    /// community name. Null/empty overrides return the file unchanged (byte-identical), so a career
+    /// with no edits stages exactly as before. Cosmetic only: this never touches the resolved grid
+    /// the sim scores.
+    /// </summary>
+    public static CustomAiFile ApplyStagingOverrides(
+        CustomAiFile file, IReadOnlyDictionary<string, SeatStagingOverride>? overrides)
+    {
+        if (overrides is null || overrides.Count == 0)
+            return file;
+
+        bool changed = false;
+        var drivers = file.Drivers.Select(driver =>
+        {
+            if (!overrides.TryGetValue(driver.LiveryName, out var seat) || seat.IsEmpty)
+                return driver;
+            changed = true;
+            return driver with
+            {
+                Name = seat.DriverName is { Length: > 0 } ? seat.DriverName : driver.Name,
+                LiveryName = seat.LiveryName is { Length: > 0 } ? seat.LiveryName : driver.LiveryName,
+            };
+        }).ToList();
+
+        // Nothing actually matched a seat — return the original file so a no-edit stage stays a
+        // byte-identical no-op.
+        return changed ? file with { Drivers = drivers } : file;
+    }
+
     // ---------- NAMeS-primary merge ("found before overwritten") ----------
 
     /// <summary>
@@ -240,9 +276,10 @@ public static class GridStager
         string customAiDriversDirectory,
         DateTimeOffset now,
         bool force = false,
-        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null)
+        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null,
+        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null)
     {
-        var result = StageOrRefuse(file, customAiDriversDirectory, now, force, packBaselineByLivery);
+        var result = StageOrRefuse(file, customAiDriversDirectory, now, force, packBaselineByLivery, overrides);
         return result.RequiresForce
             ? throw new InvalidOperationException(result.Report)
             : result;
@@ -258,7 +295,8 @@ public static class GridStager
         string customAiDriversDirectory,
         DateTimeOffset now,
         bool force = false,
-        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null)
+        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null,
+        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null)
     {
         string target = Path.Combine(customAiDriversDirectory, file.VehicleClass + ".xml");
 
@@ -275,6 +313,10 @@ public static class GridStager
         var toWrite = installedIsForeign
             ? MergeInstalledPrimary(file, installed, packBaselineByLivery)
             : file;
+
+        // The grid editor's per-seat cosmetic overrides are applied LAST — after the NAMeS-primary
+        // merge — so the player's explicit rename/rebind wins over the installed community value.
+        toWrite = ApplyStagingOverrides(toWrite, overrides);
 
         // Diff-aware no-op: when the merged file matches the installed file, nothing is
         // written — the user's curated file stays in place.
