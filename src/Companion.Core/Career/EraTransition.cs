@@ -97,10 +97,13 @@ public static class EraTransition
         AgingCurveSet agingCurves,
         IReadOnlyDictionary<string, int>? canonRetirements = null,
         IReadOnlyList<CharacterSpend>? spends = null,
-        CharacterRules? characterRules = null) =>
+        CharacterRules? characterRules = null,
+        int? fromYearOverride = null,
+        int? toYearOverride = null) =>
         Build(
             fromPack, toPack, seasonEndResult.Drivers, seasonEndResult.Teams,
-            playerState, acceptedOffer, streams, agingCurves, canonRetirements, spends, characterRules);
+            playerState, acceptedOffer, streams, agingCurves, canonRetirements, spends, characterRules,
+            fromYearOverride, toYearOverride);
 
     /// <summary>State-list overload for callers that persisted the season's end states and
     /// no longer hold the <see cref="SeasonEndResult"/> (the app's sign-and-continue flow).</summary>
@@ -115,7 +118,9 @@ public static class EraTransition
         AgingCurveSet agingCurves,
         IReadOnlyDictionary<string, int>? canonRetirements = null,
         IReadOnlyList<CharacterSpend>? spends = null,
-        CharacterRules? characterRules = null)
+        CharacterRules? characterRules = null,
+        int? fromYearOverride = null,
+        int? toYearOverride = null)
     {
         ArgumentNullException.ThrowIfNull(fromPack);
         ArgumentNullException.ThrowIfNull(toPack);
@@ -124,8 +129,12 @@ public static class EraTransition
         ArgumentNullException.ThrowIfNull(streams);
         ArgumentNullException.ThrowIfNull(agingCurves);
 
-        int fromYear = fromPack.Season.Year;
-        int toYear = toPack.Season.Year;
+        // The SEASON years drive the transition, not the packs' nominal years: a carryover season
+        // (same car reused for a later year) makes the FROM season's year run ahead of the from-pack's
+        // year, so the caller passes the real season years. Default to the pack years — for every
+        // non-carryover career season year == pack year, so existing careers are byte-identical.
+        int fromYear = fromYearOverride ?? fromPack.Season.Year;
+        int toYear = toYearOverride ?? toPack.Season.Year;
         if (toYear <= fromYear)
             throw new InvalidOperationException(
                 $"Era transition must move the career forward in time: the finished season is " +

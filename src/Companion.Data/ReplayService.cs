@@ -1055,10 +1055,15 @@ public static class ReplayService
             }, []);
         }
 
+        // Drive the transition off the SEASON-record years, not the packs' nominal years: after a
+        // carryover the FROM season's year runs ahead of the from-pack's year, and using the pack
+        // year would re-bridge (double-age) the carried year. For every non-carryover boundary the
+        // season year equals the pack year, so this is byte-identical for existing careers.
         var plan = EraTransition.Build(
             fromPack, toPack, previousEnd, previousEnd.Player, offer,
             new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements,
-            spends, inputs.CharacterRules);
+            spends, inputs.CharacterRules,
+            fromYearOverride: previousSeason.Year, toYearOverride: current.Season.Year);
         if (plan.ValidationErrors.Count > 0)
         {
             // A stored career started a season the plan would refuse today — the file was
