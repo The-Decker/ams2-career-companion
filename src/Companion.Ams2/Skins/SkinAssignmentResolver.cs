@@ -12,9 +12,15 @@ namespace Companion.Ams2.Skins;
 /// per-car picture instead of buried in warning lines.</summary>
 public enum SkinStatus
 {
-    /// <summary>A scanned <c>LIVERY_OVERRIDE</c> supplies a custom skin for this livery NAME —
-    /// the car shows the community skin.</summary>
+    /// <summary>A scanned <c>LIVERY_OVERRIDE</c> with a real numeric slot supplies a custom skin
+    /// for this livery NAME — the car shows the community skin in-game.</summary>
     CustomSkin,
+
+    /// <summary>A skin override for this NAME is installed on disk but its slot is a "##"
+    /// placeholder — the livery is NOT switched on in-game (a selector never assigned it a real
+    /// slot), so the car falls back to a default skin even though the .dds files exist. This is
+    /// the "the app lists it but AMS2 doesn't show it" case — fixable by activating the livery.</summary>
+    InstalledInactive,
 
     /// <summary>The NAME matches a known stock livery — the car shows the game's default livery
     /// for that slot (no custom skin installed, but it still looks right).</summary>
@@ -79,6 +85,16 @@ public sealed record SkinAssignmentPlan
 
     public required IReadOnlyList<SkinAssignment> Assignments { get; init; }
 
+    /// <summary>The livery NAMEs that are ACTIVE in-game for this class (a real slot in an installed
+    /// override, OR a stock name), sorted — the pool the grid editor's livery picker offers, and
+    /// what an AI can actually be bound to. Empty on <see cref="Empty"/>.</summary>
+    public IReadOnlyList<string> ActiveLiveries { get; init; } = [];
+
+    /// <summary>The livery NAMEs installed for this class as "##" placeholders but NOT switched on
+    /// in-game (no real slot) — the pool the livery activator can turn on. Sorted. Empty on
+    /// <see cref="Empty"/>.</summary>
+    public IReadOnlyList<string> InactiveLiveries { get; init; } = [];
+
     /// <summary>The player's own car this round, or null when the player has no seat (an all-AI
     /// round). The view uses it to tell the player exactly which livery to select in-game.</summary>
     public SkinAssignment? PlayerCar => Assignments.FirstOrDefault(a => a.IsPlayer);
@@ -86,6 +102,7 @@ public sealed record SkinAssignmentPlan
     public int CustomSkinCount => Assignments.Count(a => a.Status == SkinStatus.CustomSkin);
     public int DefaultSkinCount =>
         Assignments.Count(a => a.Status is SkinStatus.StockDefault or SkinStatus.NameOnly);
+    public int InactiveCount => Assignments.Count(a => a.Status == SkinStatus.InstalledInactive);
     public int UnboundCount => Assignments.Count(a => a.Status == SkinStatus.Unbound);
 
     public bool IsEmpty => Assignments.Count == 0;
@@ -96,6 +113,7 @@ public sealed record SkinAssignmentPlan
             ? "No cars to resolve."
             : $"{CustomSkinCount} custom skin{(CustomSkinCount == 1 ? "" : "s")}, " +
               $"{DefaultSkinCount} default" +
+              (InactiveCount > 0 ? $", {InactiveCount} not active" : "") +
               (UnboundCount > 0 ? $", {UnboundCount} unbound" : "") +
               $" of {Assignments.Count} cars.";
 }
@@ -123,15 +141,15 @@ public static class SkinAssignmentResolver
             .Select(v => v.Dir)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        // NAME → the best installed override for it: prefer one in this class's folders, else any.
+        // NAME → the best installed override for it. Preference order: ACTIVE (real slot) beats a
+        // "##" placeholder, and within the same active-ness an in-class folder beats an out-of-class
+        // one — so a livery that IS switched on in-game always wins the lookup.
         var overrideByName = new Dictionary<string, InstalledLivery>(StringComparer.Ordinal);
         foreach (var livery in installedLiveries)
         {
-            bool inClass = classFolders.Contains(livery.VehicleFolder);
-            if (!overrideByName.TryGetValue(livery.Name, out var existing))
+            if (!overrideByName.TryGetValue(livery.Name, out var existing) ||
+                OverrideScore(livery, classFolders) > OverrideScore(existing, classFolders))
                 overrideByName[livery.Name] = livery;
-            else if (inClass && !classFolders.Contains(existing.VehicleFolder))
-                overrideByName[livery.Name] = livery; // upgrade to the in-class match
         }
 
         var aiNames = installedAiNames is { LiveryNames.Count: > 0 }
@@ -157,7 +175,7 @@ public static class SkinAssignmentResolver
 
             if (overrideByName.TryGetValue(name, out var skin))
             {
-                status = SkinStatus.CustomSkin;
+                status = skin.IsActive ? SkinStatus.CustomSkin : SkinStatus.InstalledInactive;
                 folder = skin.VehicleFolder;
             }
             else if (stock.Contains(name))
@@ -191,10 +209,39 @@ public static class SkinAssignmentResolver
             };
         }).ToList();
 
+        // The livery pools the grid editor + activator draw from. ACTIVE = a real-slot override for
+        // an in-class folder, plus stock names (both bind in-game). INACTIVE = a "##" placeholder for
+        // an in-class folder that has no active entry — the activator's candidates.
+        bool anyClassFolders = classFolders.Count > 0;
+        var inClass = installedLiveries
+            .Where(l => !anyClassFolders || classFolders.Contains(l.VehicleFolder))
+            .ToList();
+        var activeNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var l in inClass.Where(l => l.IsActive))
+            activeNames.Add(l.Name);
+        activeNames.UnionWith(stock);
+        var inactiveNames = inClass
+            .Where(l => !l.IsActive && !activeNames.Contains(l.Name))
+            .Select(l => l.Name)
+            .ToHashSet(StringComparer.Ordinal);
+
         return new SkinAssignmentPlan
         {
             Ams2Class = plan.Ams2Class,
             Assignments = assignments,
+            ActiveLiveries = activeNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
+            InactiveLiveries = inactiveNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
         };
+    }
+
+    /// <summary>Ranks an override candidate for the NAME → best-override lookup: active beats
+    /// placeholder, and within the same active-ness an in-class folder beats out-of-class. Higher
+    /// wins.</summary>
+    private static int OverrideScore(InstalledLivery livery, IReadOnlySet<string> classFolders)
+    {
+        int score = livery.IsActive ? 2 : 0;
+        if (classFolders.Contains(livery.VehicleFolder))
+            score += 1;
+        return score;
     }
 }

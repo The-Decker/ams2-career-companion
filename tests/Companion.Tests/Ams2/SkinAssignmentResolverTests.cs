@@ -32,6 +32,39 @@ public class SkinAssignmentResolverTests
     }
 
     [Fact]
+    public void SeatWithPlaceholderOverride_IsInstalledInactive_NotCustomSkin()
+    {
+        // Installed on disk as a "##" placeholder (no real slot) → NOT active in-game (the Skoal #10 bug).
+        var plan = PlanWith(Seat("Skoal #10", "K. Acheson"));
+        var skins = new[] { Livery("Skoal #10", VehicleDir, slot: "##") };
+
+        var result = SkinAssignmentResolver.Resolve(plan, skins, Library(), installedAiNames: null);
+
+        var car = Assert.Single(result.Assignments);
+        Assert.Equal(SkinStatus.InstalledInactive, car.Status);
+        Assert.Equal(1, result.InactiveCount);
+        Assert.Contains("Skoal #10", result.InactiveLiveries);
+        Assert.DoesNotContain("Skoal #10", result.ActiveLiveries);
+    }
+
+    [Fact]
+    public void ActiveSlot_IsPreferredOverPlaceholder_ForTheSameName()
+    {
+        // The same NAME shipped both as an active slot AND a placeholder — the active one wins.
+        var plan = PlanWith(Seat("Skoal #9", "P. Alliot"));
+        var skins = new[]
+        {
+            Livery("Skoal #9", VehicleDir, slot: "##"),
+            Livery("Skoal #9", VehicleDir, slot: "53"),
+        };
+
+        var result = SkinAssignmentResolver.Resolve(plan, skins, Library(), installedAiNames: null);
+
+        Assert.Equal(SkinStatus.CustomSkin, Assert.Single(result.Assignments).Status);
+        Assert.Contains("Skoal #9", result.ActiveLiveries);
+    }
+
+    [Fact]
     public void SeatMatchingStockName_IsStockDefault()
     {
         var plan = PlanWith(Seat("Stock Car #1", "A. Driver"));
@@ -157,11 +190,12 @@ public class SkinAssignmentResolverTests
         Seats = seats,
     };
 
-    private static InstalledLivery Livery(string name, string folder) => new()
+    private static InstalledLivery Livery(string name, string folder, string slot = "51") => new()
     {
         Name = name,
         VehicleFolder = folder,
         SourceFile = $@"Y:\...\Overrides\{folder}\{folder}.xml",
+        Slot = slot,
     };
 
     private static InstalledAiNameSet AiNames(params string[] names) => new()

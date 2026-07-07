@@ -110,8 +110,8 @@ public sealed partial class SkinsViewModel : ObservableObject
             Cars.Add(ToRow(a));
 
         Summary = plan.Summary;
-        HasUnbound = plan.UnboundCount > 0;
-        HasMissingSkins = plan.DefaultSkinCount > 0 || plan.UnboundCount > 0;
+        HasUnbound = plan.UnboundCount > 0 || plan.InactiveCount > 0;
+        HasMissingSkins = plan.DefaultSkinCount > 0 || plan.InactiveCount > 0 || plan.UnboundCount > 0;
 
         if (plan.PlayerCar is { } player)
         {
@@ -148,6 +148,10 @@ public sealed partial class SkinsViewModel : ObservableObject
                 "Custom skin",
                 SkinTone.Good,
                 a.VehicleFolder is { Length: > 0 } folder ? $"installed under {folder}" : ""),
+            SkinStatus.InstalledInactive => (
+                "Installed — not active",
+                SkinTone.Warn,
+                "the skin is on disk but not switched on in-game (a “##” placeholder) — activate it or pick an active livery"),
             SkinStatus.StockDefault => (
                 "Default livery",
                 SkinTone.Neutral,

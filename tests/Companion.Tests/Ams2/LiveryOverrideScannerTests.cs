@@ -262,4 +262,44 @@ public sealed class LiveryOverrideScannerTests : IDisposable
         // Existing references stay untouched.
         Assert.Equal("<x>&amp;&#38;&#x26;</x>", LenientXml.Clean("<x>&amp;&#38;&#x26;</x>"));
     }
+
+    // ---------- slot capture: active (real number) vs "##" placeholder ----------
+
+    [Fact]
+    public void CapturesTheLiverySlot_DistinguishingActiveFromPlaceholder_StrictPath()
+    {
+        // The exact Skoal shape: #9 slotted (active), #10 a "##" placeholder (installed, not on).
+        Write("formula_retro_g3", "formula_retro_g3.xml", """
+            <?xml version="1.0" encoding="utf-8" ?>
+            <USER_OVERRIDES>
+              <LIVERY_OVERRIDE LIVERY="53" NAME="Skoal Bandit Formula 1 Team #9"><TEXTURE PATH="a.dds" /></LIVERY_OVERRIDE>
+              <LIVERY_OVERRIDE LIVERY="##" NAME="Skoal Bandit Formula 1 Team #10"><TEXTURE PATH="b.dds" /></LIVERY_OVERRIDE>
+            </USER_OVERRIDES>
+            """);
+
+        var byName = Scan().Liveries.ToDictionary(l => l.Name);
+
+        Assert.Equal("53", byName["Skoal Bandit Formula 1 Team #9"].Slot);
+        Assert.True(byName["Skoal Bandit Formula 1 Team #9"].IsActive);
+        Assert.False(byName["Skoal Bandit Formula 1 Team #10"].IsActive); // "##" → not active
+    }
+
+    [Fact]
+    public void ExtractElementAttributePairs_ScrapesSlotAndName_OrderIndependent()
+    {
+        // The regex fallback (for markup no parser survives) must still pair slot + name.
+        const string text = """
+            <LIVERY_OVERRIDE NAME="Name First #1" LIVERY="51" />
+            <LIVERY_OVERRIDE LIVERY="##" NAME="Slot First Placeholder" />
+            <LIVERY_OVERRIDE NAME="No Slot" />
+            <LIVERY_OVERRIDE LIVERY="52" NAME="" />
+            """;
+
+        var pairs = LenientXml.ExtractElementAttributePairs(text, "LIVERY_OVERRIDE", "LIVERY", "NAME");
+
+        Assert.Equal(3, pairs.Count); // the empty-NAME one is skipped
+        Assert.Equal(("51", "Name First #1"), pairs[0]);
+        Assert.Equal(("##", "Slot First Placeholder"), pairs[1]);
+        Assert.Equal(("", "No Slot"), pairs[2]); // NAME present, LIVERY absent → "" slot
+    }
 }
