@@ -898,12 +898,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// <summary>Explicit "apply this grid to AMS2": ALWAYS writes an app-marked file (backup-first),
     /// bypassing the diff-aware no-op and the community-file gate — so a grid the user chose is
     /// verifiable on disk (the AMS2 diagnosis found the default flow wrote 0 bytes, which is why
-    /// "nothing changes"). This is what the "Apply grid to AMS2" action calls.</summary>
-    public StageOutcome ApplyGridToAms2() => StageCurrentGrid(force: true, alwaysWrite: true);
+    /// "nothing changes"). Binds every AI driver to a REAL base-game livery for the class so AMS2
+    /// accepts the file and shows the drivers (confirmed in-game). This is the "Apply grid to AMS2"
+    /// action.</summary>
+    public StageOutcome ApplyGridToAms2() =>
+        StageCurrentGrid(force: true, alwaysWrite: true, baseGameLiveries: true);
 
     public StageOutcome StageCurrentGrid(bool force) => StageCurrentGrid(force, alwaysWrite: false);
 
-    public StageOutcome StageCurrentGrid(bool force, bool alwaysWrite)
+    public StageOutcome StageCurrentGrid(bool force, bool alwaysWrite, bool baseGameLiveries = false)
     {
         var messages = new List<string>();
 
@@ -925,6 +928,24 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         var file = GridStager.Build(plan,
             $"{Pack.Manifest.Name} | Round {roundNumber}: {packRound.Name} | seed {MasterSeed}");
+
+        // Guaranteed-load binding: rebind each AI driver onto a REAL base-game livery for the class
+        // (the game ships these names — from official-liveries.json — so it accepts the file and
+        // shows the drivers) instead of the pack's community-skin names the install may not have.
+        // Cosmetic staging only; never touches the resolved grid the sim scores. Opt-in via the
+        // explicit "Apply grid to AMS2" action.
+        if (baseGameLiveries)
+        {
+            var rebound = BaseGameLiveryBinder.RebindToBaseGame(file, _environment.ContentLibrary);
+            if (!ReferenceEquals(rebound, file))
+            {
+                file = rebound;
+                messages.Add(
+                    $"Bound the grid to real base-game {file.VehicleClass} liveries so AMS2 loads it " +
+                    "and shows the drivers. Car paint is the game's default; install the matching " +
+                    "community skins to see historical liveries.");
+            }
+        }
 
         Ams2Installation? installation = _environment.LocateInstall();
         if (installation is null)

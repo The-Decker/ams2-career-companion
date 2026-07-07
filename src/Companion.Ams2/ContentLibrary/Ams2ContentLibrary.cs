@@ -57,6 +57,16 @@ public sealed record Ams2LiveryClassEntry
         new Dictionary<string, IReadOnlyList<string>>();
 }
 
+/// <summary>One real BASE-GAME livery of a class: the exact <c>name</c> a custom-AI
+/// <c>livery_name</c> must match to bind, plus its car <c>model</c> and in-game <c>slot</c>
+/// (per-model, from 50). Sourced from the enum.gg livery dump (official-liveries.json).</summary>
+public sealed record OfficialLivery
+{
+    public required string Name { get; init; }
+    public string? Model { get; init; }
+    public int Slot { get; init; }
+}
+
 /// <summary>
 /// The machine-extracted AMS2 content library (data/ams2/*.json): classes, vehicles, tracks,
 /// and known livery names. Refreshable data extracted from a local install — never compiled
@@ -82,6 +92,13 @@ public sealed class Ams2ContentLibrary
     public IReadOnlyDictionary<string, int> LiveryCaps { get; init; } =
         new Dictionary<string, int>(StringComparer.Ordinal);
 
+    /// <summary>Per-class BASE-GAME liveries (class → the liveries the game ships, in dump order),
+    /// from <c>official-liveries.json</c> (the enum.gg dump). These are the EXACT names a custom-AI
+    /// <c>livery_name</c> must match to bind in-game — the ground truth for a guaranteed-loading
+    /// grid. Optional data file — empty when it is not present.</summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<OfficialLivery>> OfficialLiveries { get; init; } =
+        new Dictionary<string, IReadOnlyList<OfficialLivery>>(StringComparer.Ordinal);
+
     public required string ExtractedFrom { get; init; }
 
     public static Ams2ContentLibrary Load(string dataDirectory)
@@ -92,6 +109,7 @@ public sealed class Ams2ContentLibrary
         var liveries = ReadFile<LiveriesFile>(Path.Combine(dataDirectory, "liveries.json"));
         // Optional: absent on older data dirs / test fixtures — an empty cap map, not a failure.
         var caps = ReadOptional<LiveryCapsFile>(Path.Combine(dataDirectory, "livery-caps.json"));
+        var official = ReadOptional<OfficialLiveriesFile>(Path.Combine(dataDirectory, "official-liveries.json"));
 
         return new Ams2ContentLibrary
         {
@@ -103,6 +121,8 @@ public sealed class Ams2ContentLibrary
             Liveries = liveries.Classes.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal),
             LiveryCaps = caps?.Caps.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal)
                          ?? new Dictionary<string, int>(StringComparer.Ordinal),
+            OfficialLiveries = official?.Classes.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal)
+                               ?? new Dictionary<string, IReadOnlyList<OfficialLivery>>(StringComparer.Ordinal),
             ExtractedFrom = classes.ExtractedFrom ?? "unknown",
         };
     }
@@ -176,5 +196,12 @@ public sealed class Ams2ContentLibrary
         public string? ExtractedFrom { get; init; }
         public IReadOnlyDictionary<string, int> Caps { get; init; } =
             new Dictionary<string, int>(StringComparer.Ordinal);
+    }
+
+    private sealed record OfficialLiveriesFile
+    {
+        public string? Source { get; init; }
+        public IReadOnlyDictionary<string, IReadOnlyList<OfficialLivery>> Classes { get; init; } =
+            new Dictionary<string, IReadOnlyList<OfficialLivery>>(StringComparer.Ordinal);
     }
 }
