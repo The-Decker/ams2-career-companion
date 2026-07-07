@@ -115,6 +115,40 @@ public class GridPreflightNamesPrimaryTests
         Assert.Contains(report.Issues, i => i.Severity == PreflightSeverity.Warning);
     }
 
+    // ---------- livery-name hygiene (diagnosis #7: byte-exact match; whitespace/non-ASCII break it) ----------
+
+    [Fact]
+    public void LiveryNameWithTrailingWhitespace_Warns()
+    {
+        var file = FileWith(Morbidelli + " "); // stray trailing space
+        var report = GridPreflight.Check(
+            file, LibraryWithClassButNoStockLiveries(), installedLiveries: [], installedAiNames: null);
+
+        Assert.Contains(report.Issues, i =>
+            i.Severity == PreflightSeverity.Warning && i.Message.Contains("whitespace"));
+    }
+
+    [Fact]
+    public void LiveryNameWithNonAscii_Warns()
+    {
+        var file = FileWith("Café Racing #1");
+        var report = GridPreflight.Check(
+            file, LibraryWithClassButNoStockLiveries(), installedLiveries: [], installedAiNames: null);
+
+        Assert.Contains(report.Issues, i =>
+            i.Severity == PreflightSeverity.Warning && i.Message.Contains("non-ASCII"));
+    }
+
+    [Fact]
+    public void CleanLiveryName_HasNoHygieneWarning()
+    {
+        var file = FileWith(Morbidelli);
+        var report = GridPreflight.Check(
+            file, LibraryWithClassButNoStockLiveries(), installedLiveries: [], installedAiNames: AiNames(Morbidelli));
+
+        Assert.DoesNotContain(report.Issues, i => i.Message.Contains("whitespace") || i.Message.Contains("non-ASCII"));
+    }
+
     // ---------- helpers ----------
 
     private static InstalledAiNameSet AiNames(params string[] names) => new()
