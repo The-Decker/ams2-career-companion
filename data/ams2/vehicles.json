@@ -1,5 +1,5 @@
 {
-  "extractedFrom": "AMS2 build 23820506, 2026-07-02 (all .crd files incl. engine/track-config variants)",
+  "extractedFrom": "AMS2 build 24053735, 2026-07-07 (all .crd files incl. engine/track-config variants)",
   "vehicles": [
     {
       "id": "alpine_a110_gt4_evo",
@@ -4426,6 +4426,34 @@
       "performanceIndex": 107
     },
     {
+      "id": "gillet_vertigo_streiff_gt2",
+      "dir": "gillet_vertigo_streiff_gt2",
+      "name": "Gillet_Vertigo_Streiff_GT2",
+      "vehicleName": "Gillet Vertigo Streiff",
+      "manufacturer": "Gillet",
+      "model": "Gillet GT2",
+      "year": 2005,
+      "vehicleClass": "GTR_04",
+      "group": "GT2",
+      "aiOnly": false,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
+      "id": "gillet_vertigo_streiff_gt2_ld",
+      "dir": "gillet_vertigo_streiff_gt2",
+      "name": "Gillet_Vertigo_Streiff_GT2_LD",
+      "vehicleName": "Gillet Vertigo Streiff - Low Downforce",
+      "manufacturer": "Gillet",
+      "model": "Gillet GT2",
+      "year": 2005,
+      "vehicleClass": "GTR_04_LD",
+      "group": "GT2",
+      "aiOnly": true,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
       "id": "ginetta_g40",
       "dir": "ginetta_g40",
       "name": "Ginetta_G40",
@@ -4958,9 +4986,9 @@
       "performanceIndex": 129
     },
     {
-      "id": "lister_storm",
-      "dir": "lister_storm",
-      "name": "Lister_Storm",
+      "id": "lister_storm_gtm",
+      "dir": "lister_storm_gtm",
+      "name": "Lister_Storm_GTM",
       "vehicleName": "Lister Storm GTM",
       "manufacturer": "Lister",
       "model": "Storm GTM",
@@ -4972,9 +5000,9 @@
       "performanceIndex": 107
     },
     {
-      "id": "lister_storm_ld",
-      "dir": "lister_storm",
-      "name": "Lister_Storm_LD",
+      "id": "lister_storm_gtm_ld",
+      "dir": "lister_storm_gtm",
+      "name": "Lister_Storm_GTM_LD",
       "vehicleName": "Lister Storm GTM - Low Downforce",
       "manufacturer": "Lister",
       "model": "Storm GTM",
@@ -5124,6 +5152,20 @@
       "aiOnly": true,
       "isOpenWheeler": true,
       "performanceIndex": 458
+    },
+    {
+      "id": "maserati_gransport_trofeo",
+      "dir": "maserati_gransport_trofeo",
+      "name": "Maserati_GranSport_Trofeo",
+      "vehicleName": "Maserati GranSport Trofeo",
+      "manufacturer": "Maserati",
+      "model": "Maserati_GranSport_Trofeo",
+      "year": 2005,
+      "vehicleClass": "Trofeo_2005",
+      "group": "GT",
+      "aiOnly": false,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
     },
     {
       "id": "maserati_gt2_stradale",
@@ -6025,7 +6067,7 @@
       "id": "milano_55gt",
       "dir": "milano_55gt",
       "name": "Milano_55GT",
-      "vehicleName": "Milano 55GT",
+      "vehicleName": "Milano GT55",
       "manufacturer": "Reiza",
       "model": "55GT",
       "year": 2005,
@@ -6039,7 +6081,7 @@
       "id": "milano_55gt_ld",
       "dir": "milano_55gt",
       "name": "Milano_55GT_LD",
-      "vehicleName": "Milano 55GT - Low Downforce",
+      "vehicleName": "Milano GT55 - Low Downforce",
       "manufacturer": "Reiza",
       "model": "55GT",
       "year": 2005,
@@ -6356,6 +6398,34 @@
       "aiOnly": true,
       "isOpenWheeler": false,
       "performanceIndex": 129
+    },
+    {
+      "id": "panoz_esperante_gtlm",
+      "dir": "panoz_esperante_gtlm",
+      "name": "Panoz_Esperante_GTLM",
+      "vehicleName": "Panoz Esperante GTLM",
+      "manufacturer": "Panoz",
+      "model": "Esperante GTLM",
+      "year": 2005,
+      "vehicleClass": "GT2_05",
+      "group": "GT2",
+      "aiOnly": false,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
+      "id": "panoz_esperante_gtlm_ld",
+      "dir": "panoz_esperante_gtlm",
+      "name": "Panoz_Esperante_GTLM_LD",
+      "vehicleName": "Panoz Esperante GTLM - Low Downforce",
+      "manufacturer": "Panoz",
+      "model": "Esperante GTLM",
+      "year": 2005,
+      "vehicleClass": "GT2_05_LD",
+      "group": "GT2",
+      "aiOnly": true,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
     },
     {
       "id": "pas_classica",
@@ -6918,6 +6988,34 @@
       "performanceIndex": 129
     },
     {
+      "id": "saleen_s7r_gt1",
+      "dir": "saleen_s7r_gt1",
+      "name": "Saleen_S7R_GT1",
+      "vehicleName": "Saleen S7-R GT1",
+      "manufacturer": "Saleen",
+      "model": "S7-R GT1",
+      "year": 2005,
+      "vehicleClass": "GT1_05",
+      "group": "GT1",
+      "aiOnly": false,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
+      "id": "saleen_s7r_gt1_ld",
+      "dir": "saleen_s7r_gt1",
+      "name": "Saleen_S7R_GT1_LD",
+      "vehicleName": "Saleen S7-R GT1 - Low Downforce",
+      "manufacturer": "Saleen",
+      "model": "S7-R GT1",
+      "year": 2005,
+      "vehicleClass": "GT1_05_LD",
+      "group": "GT1",
+      "aiOnly": true,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
       "id": "sauber_c9",
       "dir": "sauber_c9",
       "name": "Sauber_C9_LD",
@@ -6986,6 +7084,34 @@
       "aiOnly": false,
       "isOpenWheeler": false,
       "performanceIndex": 51
+    },
+    {
+      "id": "spyker_c8_spyder_gt2r",
+      "dir": "spyker_c8_spyder_gt2r",
+      "name": "Spyker_C8_Spyder_GT2R",
+      "vehicleName": "Spyker C8 Spyder GT2-R",
+      "manufacturer": "Spyker",
+      "model": "Spyker C8",
+      "year": 2005,
+      "vehicleClass": "GT2_05",
+      "group": "GT2",
+      "aiOnly": false,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
+      "id": "spyker_c8_spyder_gt2r_ld",
+      "dir": "spyker_c8_spyder_gt2r",
+      "name": "Spyker_C8_Spyder_GT2R_LD",
+      "vehicleName": "Spyker C8 Spyder GT2-R - Low Downforce",
+      "manufacturer": "Spyker",
+      "model": "Spyker C8",
+      "year": 2005,
+      "vehicleClass": "GT2_05_LD",
+      "group": "GT2",
+      "aiOnly": true,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
     },
     {
       "id": "stock_corolla",
@@ -7392,6 +7518,34 @@
       "aiOnly": false,
       "isOpenWheeler": false,
       "performanceIndex": 129
+    },
+    {
+      "id": "tvr_tuscan_t400r_gt2",
+      "dir": "tvr_tuscan_t400r_gt2",
+      "name": "TVR_Tuscan_T400R_GT2",
+      "vehicleName": "TVR Tuscan T400R GT2",
+      "manufacturer": "TVR",
+      "model": "Tuscan T400R GT2",
+      "year": 2005,
+      "vehicleClass": "GT2_05",
+      "group": "GT2",
+      "aiOnly": false,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
+    },
+    {
+      "id": "tvr_tuscan_t400r_gt2_ld",
+      "dir": "tvr_tuscan_t400r_gt2",
+      "name": "TVR_Tuscan_T400R_GT2_LD",
+      "vehicleName": "TVR Tuscan T400R GT2 - Low Downforce",
+      "manufacturer": "TVR",
+      "model": "Tuscan T400R GT2",
+      "year": 2005,
+      "vehicleClass": "GT2_05_LD",
+      "group": "GT2",
+      "aiOnly": true,
+      "isOpenWheeler": false,
+      "performanceIndex": 107
     },
     {
       "id": "ultima",
