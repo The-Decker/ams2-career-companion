@@ -189,7 +189,8 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.NextCommand.Execute(null);                 // -> SeatPick
         var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
         wizard.SelectedSeat = seat;
-        wizard.NextCommand.Execute(null);                 // -> Character
+        wizard.NextCommand.Execute(null);                 // -> Grid (choose the field)
+        wizard.NextCommand.Execute(null);                 // -> Character (whole field by default)
         Assert.Equal(WizardStep.Character, wizard.Step);
         Assert.NotNull(wizard.Character);
         Assert.Equal(seat.DriverName, wizard.Character!.Name); // driver name pre-filled from the seat

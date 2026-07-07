@@ -79,6 +79,7 @@ public sealed class SettingsConsumersTests : IDisposable
             wizard.ProceedAnyway = true;
         wizard.NextCommand.Execute(null);
         wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null);          // -> Grid (choose the field)
         wizard.NextCommand.Execute(null);          // -> Character (rules loaded)
         if (wizard.Step == WizardStep.Character)
             wizard.NextCommand.Execute(null);      // -> Confirm (archetype preset is valid)

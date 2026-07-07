@@ -151,6 +151,11 @@ public sealed class WizardGatingTests : IDisposable
         wizard.SelectedSeat = seat;
         wizard.NextCommand.Execute(null);
 
+        // choose the grid (v0.6.0): defaults to the whole field, so a single Next continues.
+        Assert.Equal(WizardStep.Grid, wizard.Step);
+        Assert.True(wizard.GridChoices.Count > 0 && wizard.GridChoices.All(c => c.IsIncluded));
+        wizard.NextCommand.Execute(null);
+
         // d: confirm — defaults and rules summary.
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         Assert.Equal("Test Championship 1967", wizard.CareerName);
@@ -178,6 +183,82 @@ public sealed class WizardGatingTests : IDisposable
         Assert.EndsWith(".ams2career", request.CareerFilePath);
         Assert.StartsWith(Path.Combine(_root, "careers"), request.CareerFilePath);
         Assert.NotEqual(0, defaultSeed); // Random(1234) never yields 0 here; documents the default was real
+    }
+
+    // ---------- choose the grid (v0.6.0) ----------
+
+    private NewCareerWizardViewModel WizardAtGrid(string folderName)
+    {
+        // A three-seat pack so excluding one leaves a valid field (player + one AI).
+        var basePack = TestPackBuilder.TwoRoundPack();
+        var pack3 = basePack with
+        {
+            Drivers = basePack.Drivers.Append(TestPackBuilder.Driver("driver.clark")).ToList(),
+            Entries = basePack.Entries
+                .Append(TestPackBuilder.Entry("team.brabham", "driver.clark", "3", "Stock Livery #3")).ToList(),
+        };
+        WritePack(folderName, pack3);
+        var wizard = Wizard();
+        SelectPack(wizard, folderName);
+        wizard.NextCommand.Execute(null); // -> Verification
+        wizard.ProceedAnyway = true;      // "Stock Livery #3" is unknown to the test library → a warning
+        wizard.NextCommand.Execute(null); // -> SeatPick
+        wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null); // -> Grid
+        return wizard;
+    }
+
+    private static void AdvanceToCreate(NewCareerWizardViewModel wizard)
+    {
+        while (wizard.Step != WizardStep.Confirm)
+            wizard.NextCommand.Execute(null);
+        wizard.CareerName = "Grid Test";
+        wizard.NextCommand.Execute(null); // Create
+    }
+
+    [Fact]
+    public void GridStep_ExcludingASeat_WritesTheChosenFieldIntoTheRequest()
+    {
+        var wizard = WizardAtGrid("grid-exclude");
+        Assert.Equal(WizardStep.Grid, wizard.Step);
+        Assert.Equal(3, wizard.GridChoices.Count);
+
+        var player = wizard.GridChoices.Single(c => c.LiveryName == TestPackBuilder.StockLivery2);
+        Assert.True(player is { IsLocked: true, IsIncluded: true }); // player is locked on
+
+        wizard.GridChoices.Single(c => c.LiveryName == "Stock Livery #3").IsIncluded = false;
+        Assert.Equal(2, wizard.IncludedCount);
+        Assert.True(wizard.CanGoNext);
+
+        AdvanceToCreate(wizard);
+
+        var selection = _factory.LastRequest!.GridSelection;
+        Assert.NotNull(selection);
+        Assert.Contains(TestPackBuilder.StockLivery2, selection!.IncludedLiveries!);
+        Assert.DoesNotContain("Stock Livery #3", selection.IncludedLiveries!);
+    }
+
+    [Fact]
+    public void GridStep_WholeFieldIncluded_LeavesTheRequestSelectionNull()
+    {
+        var wizard = WizardAtGrid("grid-all");
+        Assert.True(wizard.GridChoices.All(c => c.IsIncluded));
+
+        AdvanceToCreate(wizard);
+
+        Assert.Null(_factory.LastRequest!.GridSelection); // whole pack → identity, byte-identical
+    }
+
+    [Fact]
+    public void GridStep_BlocksNext_BelowTwoCars()
+    {
+        var wizard = WizardAtGrid("grid-block");
+        // Exclude everything except the locked player → 1 car → a race needs at least two.
+        foreach (var c in wizard.GridChoices.Where(c => !c.IsLocked))
+            c.IsIncluded = false;
+
+        Assert.Equal(1, wizard.IncludedCount);
+        Assert.False(wizard.CanGoNext);
     }
 
     // ---------- back navigation ----------

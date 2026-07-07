@@ -54,7 +54,19 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="4 · Driver"
+                <TextBlock Text="4 · Grid">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="5 · Driver"
                            Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
@@ -67,7 +79,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="5 · Confirm">
+                <TextBlock Text="6 · Confirm">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
@@ -330,6 +342,36 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Border>
+            </DockPanel>
+
+            <!-- c1. choose the grid (v0.6.0) -->
+            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Grid}}">
+                <TextBlock DockPanel.Dock="Top" Text="Choose your grid" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
+                           Text="Pick who's on the grid this season. Uncheck anyone you don't want racing — your own car is always in. In AMS2, set AI Opponents so the field fills with exactly these drivers." />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10">
+                    <Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars on the grid  —  set AI Opponents to this minus one." />
+                </TextBlock>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Left">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,4">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
+                                                  IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
+                                                   Text="You" Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}" />
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </DockPanel>
 
             <!-- c2. character (Increment 4a) -->

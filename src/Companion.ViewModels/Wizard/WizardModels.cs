@@ -11,8 +11,30 @@ public enum WizardStep
     SeasonPick = 0,
     Verification = 1,
     SeatPick = 2,
-    Character = 3,
-    Confirm = 4,
+    /// <summary>Choose the season's field — which seats are on the grid (v0.6.0). Always present;
+    /// defaults to the whole pack, so leaving it untouched is byte-identical to before.</summary>
+    Grid = 3,
+    Character = 4,
+    Confirm = 5,
+}
+
+/// <summary>One includable seat on the grid-choice step: a seat (by livery) the player can toggle
+/// on/off for the season field. The player's own seat is <see cref="IsLocked"/> (always included).</summary>
+public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+{
+    public required string LiveryName { get; init; }
+    public required string DriverName { get; init; }
+    public required string TeamName { get; init; }
+
+    /// <summary>The player's own seat — always on the grid, its checkbox disabled.</summary>
+    public bool IsLocked { get; init; }
+
+    /// <summary>True when the seat can be toggled (i.e. NOT the locked player seat) — the checkbox's
+    /// enabled state.</summary>
+    public bool IsUnlocked => !IsLocked;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool _isIncluded = true;
 }
 
 /// <summary>One line of the verification step: a structural/content/scan finding. Info

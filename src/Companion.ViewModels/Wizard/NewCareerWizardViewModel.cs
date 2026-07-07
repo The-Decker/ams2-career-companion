@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Packs;
+using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
@@ -73,6 +75,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         WizardStep.SeasonPick => SelectedPack is { LoadError: null },
         WizardStep.Verification => !HasErrors && (!HasWarnings || ProceedAnyway),
         WizardStep.SeatPick => SelectedSeat is not null,
+        WizardStep.Grid => GridChoices.Count(c => c.IsIncluded) >= 2,
         WizardStep.Character => Character?.IsValid ?? true,
         WizardStep.Confirm => CanCreate,
         _ => false,
@@ -105,6 +108,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.SeatPick:
+                BuildGridChoices();
+                Step = WizardStep.Grid;
+                break;
+
+            case WizardStep.Grid:
                 if (HasCharacterStep)
                 {
                     PrepareCharacter();
@@ -133,10 +141,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (!CanGoBack)
             return;
-        // Confirm steps back over the (possibly skipped) character step.
+        // Confirm steps back over the (possibly skipped) character step to the grid step.
         Step = Step switch
         {
-            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
+            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.Grid,
             _ => Step - 1,
         };
     }
@@ -315,6 +323,74 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             ? pack.Season.Rounds.Count(r => range.Contains(r.Round))
             : 0;
 
+    // ---------- step: choose the grid (v0.6.0) ----------
+
+    /// <summary>The season's seats (one per livery) the player can include/exclude for the field.
+    /// Every seat starts included (whole pack = the default, byte-identical); the player's own seat is
+    /// locked in.</summary>
+    public ObservableCollection<GridSeatChoice> GridChoices { get; } = [];
+
+    /// <summary>The count of included seats — the field size the player must set AI Opponents to
+    /// (minus their own car) in AMS2.</summary>
+    public int IncludedCount => GridChoices.Count(c => c.IsIncluded);
+
+    private void BuildGridChoices()
+    {
+        foreach (var old in GridChoices)
+            old.PropertyChanged -= OnGridChoiceChanged;
+        GridChoices.Clear();
+
+        var pack = Pack!;
+        var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
+        var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
+        string? playerLivery = SelectedSeat?.LiveryName;
+
+        // One choice per livery (grouped like BuildSeats), the seat represented by its longest-tenure
+        // driver. The player's own seat is locked on.
+        foreach (var group in pack.Entries
+                     .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
+                     .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal))
+        {
+            var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
+            var choice = new GridSeatChoice
+            {
+                LiveryName = entry.Ams2LiveryName,
+                DriverName = driversById[entry.DriverId].Name,
+                TeamName = teamsById[entry.TeamId].Name,
+                IsLocked = string.Equals(entry.Ams2LiveryName, playerLivery, StringComparison.Ordinal),
+                IsIncluded = true,
+            };
+            choice.PropertyChanged += OnGridChoiceChanged;
+            GridChoices.Add(choice);
+        }
+        OnPropertyChanged(nameof(IncludedCount));
+    }
+
+    private void OnGridChoiceChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(GridSeatChoice.IsIncluded))
+            return;
+        OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(CanGoNext));
+        NextCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>The chosen field, or null when every seat is included (the whole pack — the identity
+    /// that keeps the career byte-identical to one made before this feature). The player's own seat is
+    /// always included.</summary>
+    private GridSelection? BuildGridSelection()
+    {
+        if (GridChoices.Count == 0)
+            return null;
+        var included = GridChoices
+            .Where(c => c.IsIncluded || c.IsLocked)
+            .Select(c => c.LiveryName)
+            .ToList();
+        return included.Count == GridChoices.Count
+            ? null
+            : new GridSelection { IncludedLiveries = included };
+    }
+
     // ---------- step c2: character (Increment 4a) ----------
 
     [ObservableProperty]
@@ -473,6 +549,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             Character = Character?.BuildProfile(),
+            GridSelection = BuildGridSelection(),
         };
 
         ICareerSession session;
