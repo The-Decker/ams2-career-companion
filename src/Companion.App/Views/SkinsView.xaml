@@ -119,6 +119,48 @@
                        Text="No grid to show — the season is complete, you have no seat this round, or no AMS2 install was found."
                        Visibility="{Binding Cars.Count, Converter={StaticResource CountCollapsed}}" />
 
+            <!-- ACTIVATE skins: turn installed-but-inactive ("##") liveries ON in-game -->
+            <StackPanel Margin="0,24,0,0"
+                        Visibility="{Binding HasActivatable, Converter={StaticResource BoolVisible}}">
+                <TextBlock Text="Activate installed skins" Style="{StaticResource H2}" Margin="0,0,0,4" />
+                <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                           Text="These liveries are installed on disk but not switched on in AMS2 (the skin pack left them as “##” placeholders). Activate one to give it a real livery slot — the app backs up the skin file first, then makes a minimal edit. Restart AMS2 to see it. This is the only place the app edits a community skin file." />
+
+                <!-- activation outcome banner -->
+                <Border Margin="0,0,0,8" Padding="12,8" CornerRadius="6"
+                        Visibility="{Binding ActivationBanner, Converter={StaticResource NullCollapsed}}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActivationSucceeded}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding ActivationBanner}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                </Border>
+
+                <ItemsControl ItemsSource="{Binding ActivatableLiveries}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,6">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Content="Activate" MinWidth="80"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.ActivateLiveryCommand,
+                                                      RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" />
+                                    <TextBlock Text="{Binding}" FontFamily="Consolas" VerticalAlignment="Center"
+                                               TextWrapping="Wrap" />
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
             <!-- required skin packs (shown when something will look default) -->
             <StackPanel Margin="0,22,0,0"
                         Visibility="{Binding HasMissingSkins, Converter={StaticResource BoolVisible}}">

@@ -46,6 +46,15 @@ public interface ICareerSession
     /// user's community files. Additive default: an empty plan, so existing fakes compile.</summary>
     SkinAssignmentPlan CurrentSkinAssignments() => SkinAssignmentPlan.Empty;
 
+    /// <summary>Switches an installed-but-inactive livery (a "##" placeholder) ON for this class by
+    /// assigning it a real slot in the community override XML — the fix for "the skin is installed
+    /// but AMS2 doesn't show it" (e.g. 1985 Skoal #10). The one place the app writes a COMMUNITY skin
+    /// file: it snapshots the file first (timestamped backup) and makes a minimal in-place edit, only
+    /// on this explicit user action. Does NOT touch the career journal/fold, so the sim is unaffected.
+    /// Additive default: a clear "not supported" failure so existing fakes compile.</summary>
+    LiveryActivationResult ActivateLivery(string liveryName) =>
+        LiveryActivationResult.Failed("This career session cannot activate liveries.");
+
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
     ConfirmModel Preview(ResultDraft draft);
 

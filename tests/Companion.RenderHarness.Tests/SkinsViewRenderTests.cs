@@ -56,11 +56,18 @@ public sealed class SkinsViewRenderTests
                 },
                 new SkinAssignment
                 {
+                    DriverName = "K. Acheson", TeamName = "Skoal Bandit", Number = "10",
+                    LiveryName = "Skoal Bandit Formula 1 Team #10", IsPlayer = false,
+                    Status = SkinStatus.InstalledInactive,
+                },
+                new SkinAssignment
+                {
                     DriverName = "Nova Reyes", TeamName = "Lotus-Ford", Number = "1",
                     LiveryName = "Lotus-Ford Cosworth #1 G. Hill", IsPlayer = true,
                     Status = SkinStatus.CustomSkin, VehicleFolder = "lotus_49c",
                 },
             ],
+            InactiveLiveries = ["Skoal Bandit Formula 1 Team #10", "RAM #11 Winkelhock"],
         };
 
         public BriefingModel? CurrentBriefing() => null;
@@ -118,8 +125,10 @@ public sealed class SkinsViewRenderTests
         {
             var vm = new SkinsViewModel(new SkinsSession());
             Assert.True(vm.HasPlayerCar);
-            Assert.Equal(4, vm.Cars.Count);
+            Assert.Equal(5, vm.Cars.Count);
             Assert.True(vm.HasUnbound);
+            Assert.True(vm.HasActivatable);
+            Assert.Equal(2, vm.ActivatableLiveries.Count);
             Assert.Single(vm.RequiredSkinPacks);
 
             var view = new SkinsView { DataContext = vm };

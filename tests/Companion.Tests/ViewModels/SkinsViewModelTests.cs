@@ -139,6 +139,70 @@ public sealed class SkinsViewModelTests
         Assert.False(vm.HasUnbound);
     }
 
+    [Fact]
+    public void SurfacesInactiveLiveriesAsActivatable()
+    {
+        var session = new FakeCareerSession
+        {
+            SkinPlan = new SkinAssignmentPlan
+            {
+                Ams2Class = "F-Retro_Gen3",
+                Assignments = [Assign("K. Acheson", "Skoal", "Skoal #10", SkinStatus.InstalledInactive)],
+                InactiveLiveries = ["Skoal Bandit Formula 1 Team #10", "Another Inactive #7"],
+            },
+        };
+
+        var vm = new SkinsViewModel(session);
+
+        Assert.True(vm.HasActivatable);
+        Assert.Equal(2, vm.ActivatableLiveries.Count);
+        Assert.Contains("Skoal Bandit Formula 1 Team #10", vm.ActivatableLiveries);
+    }
+
+    [Fact]
+    public void ActivateLivery_CallsTheSeam_AndShowsTheOutcome()
+    {
+        var session = new FakeCareerSession
+        {
+            SkinPlan = new SkinAssignmentPlan
+            {
+                Ams2Class = "F-Retro_Gen3",
+                Assignments = [],
+                InactiveLiveries = ["Skoal Bandit Formula 1 Team #10"],
+            },
+            ActivationResult = new LiveryActivationResult
+            {
+                Success = true, Slot = 61, Message = "Activated “Skoal #10” as livery slot 61.",
+            },
+        };
+        var vm = new SkinsViewModel(session);
+
+        vm.ActivateLiveryCommand.Execute("Skoal Bandit Formula 1 Team #10");
+
+        Assert.Equal("Skoal Bandit Formula 1 Team #10", Assert.Single(session.ActivatedLiveries));
+        Assert.True(vm.ActivationSucceeded);
+        Assert.Contains("slot 61", vm.ActivationBanner);
+    }
+
+    [Fact]
+    public void ActivateLivery_FailureShowsAmberOutcome()
+    {
+        var session = new FakeCareerSession
+        {
+            SkinPlan = new SkinAssignmentPlan
+            {
+                Ams2Class = "x", Assignments = [], InactiveLiveries = ["Bogus #1"],
+            },
+            ActivationResult = LiveryActivationResult.Failed("No AMS2 installation was found."),
+        };
+        var vm = new SkinsViewModel(session);
+
+        vm.ActivateLiveryCommand.Execute("Bogus #1");
+
+        Assert.False(vm.ActivationSucceeded);
+        Assert.Contains("No AMS2", vm.ActivationBanner);
+    }
+
     // ---------- helpers ----------
 
     private static SkinAssignment Assign(

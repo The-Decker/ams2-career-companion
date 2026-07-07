@@ -320,6 +320,19 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public SkinAssignmentPlan CurrentSkinAssignments() => SkinPlan;
 
+    /// <summary>Livery names activated through the seam, in order.</summary>
+    public List<string> ActivatedLiveries { get; } = [];
+
+    /// <summary>The result the activator returns (success by default).</summary>
+    public LiveryActivationResult ActivationResult { get; set; } =
+        new() { Success = true, Slot = 61, Message = "Activated as slot 61." };
+
+    public LiveryActivationResult ActivateLivery(string liveryName)
+    {
+        ActivatedLiveries.Add(liveryName);
+        return ActivationResult;
+    }
+
     /// <summary>The player's driver id + character display name, surfaced to name-rendering screens.</summary>
     public (string DriverId, string DisplayName)? Identity { get; set; }
 

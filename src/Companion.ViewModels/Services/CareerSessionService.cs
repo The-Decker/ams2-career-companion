@@ -719,6 +719,38 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         return result;
     }
 
+    /// <summary>Switches an inactive placeholder livery ON in its community override file. Finds the
+    /// installed placeholder for the name (preferring one in this class's vehicle folders), then
+    /// assigns it the next free slot via <see cref="LiveryOverrideWriter"/> (backup-first). Writes
+    /// only that community skin file; never the career DB — so the sim/fold/oracle are untouched.</summary>
+    public LiveryActivationResult ActivateLivery(string liveryName)
+    {
+        var installation = _environment.LocateInstall();
+        if (installation is null)
+            return LiveryActivationResult.Failed(
+                "No AMS2 installation was found — cannot locate the skin files to activate.");
+
+        var scan = _environment.ScanInstalledLiveries(installation);
+        var classFolders = _environment.ContentLibrary.Vehicles.Values
+            .Where(v => string.Equals(v.VehicleClass, Pack.Season.Ams2Class, StringComparison.Ordinal))
+            .Select(v => v.Dir)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var candidates = scan.Liveries
+            .Where(l => string.Equals(l.Name, liveryName, StringComparison.Ordinal) && !l.IsActive)
+            .ToList();
+        // Prefer a placeholder in THIS class's folder; fall back to any (the content library can be
+        // stale and not know a class's folders — the scan is the ground truth either way).
+        var chosen = candidates.FirstOrDefault(l => classFolders.Contains(l.VehicleFolder))
+            ?? candidates.FirstOrDefault();
+
+        if (chosen is null)
+            return LiveryActivationResult.Failed(
+                $"“{liveryName}” has no installed inactive placeholder to activate (it may already be active).");
+
+        return LiveryOverrideWriter.ActivateInFile(chosen.SourceFile, liveryName, _environment.Clock.GetUtcNow());
+    }
+
     /// <summary>The player's driver id + character name for name-rendering screens, or null when the
     /// career has no named character.</summary>
     public (string DriverId, string DisplayName)? PlayerIdentity() =>

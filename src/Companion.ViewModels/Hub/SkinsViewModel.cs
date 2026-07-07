@@ -72,6 +72,22 @@ public sealed partial class SkinsViewModel : ObservableObject
     /// missing skins from.</summary>
     public ObservableCollection<SkinPackRef> RequiredSkinPacks { get; } = [];
 
+    /// <summary>Liveries installed on disk as "##" placeholders but NOT switched on in-game — the
+    /// activator's candidates. Turning one on writes the community override file (backup-first).</summary>
+    public ObservableCollection<string> ActivatableLiveries { get; } = [];
+
+    /// <summary>True when there is at least one inactive livery to activate — shows the activator.</summary>
+    [ObservableProperty]
+    private bool _hasActivatable;
+
+    /// <summary>The outcome banner of the last activation (null before any).</summary>
+    [ObservableProperty]
+    private string? _activationBanner;
+
+    /// <summary>True when the last activation succeeded (green banner) vs failed (amber).</summary>
+    [ObservableProperty]
+    private bool _activationSucceeded;
+
     [ObservableProperty]
     private string _summary = "";
 
@@ -137,7 +153,28 @@ public sealed partial class SkinsViewModel : ObservableObject
                 OverridesFolder = pack.OverridesFolder,
             });
 
+        ActivatableLiveries.Clear();
+        foreach (var name in plan.InactiveLiveries)
+            ActivatableLiveries.Add(name);
+        HasActivatable = ActivatableLiveries.Count > 0;
+
         OnPropertyChanged(nameof(HasPlayerCar));
+    }
+
+    /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the
+    /// community override file, backup-first) — the fix for "installed but AMS2 doesn't show it".
+    /// Re-projects afterwards so the newly-active livery moves out of the activatable list and any
+    /// car bound to it flips to "Custom skin".</summary>
+    [RelayCommand]
+    private void ActivateLivery(string? liveryName)
+    {
+        if (string.IsNullOrEmpty(liveryName))
+            return;
+
+        var result = _session.ActivateLivery(liveryName);
+        ActivationSucceeded = result.Success;
+        ActivationBanner = result.Message;
+        Refresh();
     }
 
     private static SkinRow ToRow(SkinAssignment a)
