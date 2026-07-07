@@ -152,6 +152,11 @@ public static class PackContentValidator
             return;
         }
 
+        // Liveries the installed AI file defines but has no scanned skin for are NOT a per-car
+        // problem — the driver name binds, the car just uses the default skin until you add the
+        // pack's skins. Reporting one line per car buried the real warnings under a wall of text, so
+        // they are counted and summarised in ONE info line.
+        int aiDefinedNoSkin = 0;
         foreach (var livery in bound)
         {
             // (1) The installed AI file defines this name — it binds. The skin may fall back to
@@ -159,10 +164,7 @@ public static class PackContentValidator
             if (aiNames.Contains(livery))
             {
                 if (!skins.Contains(livery) && !stock.Contains(livery))
-                    issues.Add(Info(
-                        $"Livery '{livery}' is defined by your installed {ams2Class} AI file — the name binds. " +
-                        "No matching skin was scanned, so it may fall back to the default skin; " +
-                        "manage skins with the pack's own selector."));
+                    aiDefinedNoSkin++;
                 continue;
             }
 
@@ -180,6 +182,12 @@ public static class PackContentValidator
                 : $"Livery '{livery}' was not found in your installed {ams2Class} AI file, installed skin " +
                   $"overrides, or known stock names — the entry will not bind. {RequiredSkinPacks(pack.Manifest)}"));
         }
+
+        if (aiDefinedNoSkin > 0)
+            issues.Add(Info(
+                $"{aiDefinedNoSkin} of this grid's cars use names from your installed {ams2Class} AI file " +
+                "(the driver names bind in-game), but no matching skins were scanned — those cars may show " +
+                "the default skin until you install the pack's skins. This is normal and does not block staging."));
     }
 
     private static string RequiredSkinPacks(PackManifest manifest)

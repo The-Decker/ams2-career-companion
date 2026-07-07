@@ -127,10 +127,12 @@ internal sealed class RippleAdorner : Adorner
         IsHitTestVisible = false;
 
         double w = adorned.ActualWidth, h = adorned.ActualHeight;
-        // Radius = distance to the farthest corner, so the ripple always reaches every edge.
-        _radius = Math.Max(
+        // A SMALL, subtle ripple: cap the radius so it stays a soft local touch, not a full-surface
+        // flash. Reaches roughly the near edge, never the far corners.
+        double corner = Math.Max(
             Math.Max(Dist(origin, 0, 0), Dist(origin, w, 0)),
             Math.Max(Dist(origin, 0, h), Dist(origin, w, h)));
+        _radius = Math.Min(corner, 34.0);
 
         // Keep the wash inside the control's rounded box (the button chrome is CornerRadius 5).
         Clip = new RectangleGeometry(new Rect(0, 0, w, h), 5, 5);
@@ -148,12 +150,13 @@ internal sealed class RippleAdorner : Adorner
         };
         _children.Add(_ellipse);
 
-        var dur = TimeSpan.FromMilliseconds(460);
+        var dur = TimeSpan.FromMilliseconds(360);
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
         var grow = new DoubleAnimation(0.0, 1.0, dur) { EasingFunction = ease };
         scale.BeginAnimation(ScaleTransform.ScaleXProperty, grow);
         scale.BeginAnimation(ScaleTransform.ScaleYProperty, grow);
-        var fade = new DoubleAnimation(0.26, 0.0, dur) { EasingFunction = ease };
+        // A whisper of white that fades fast — present but never "crazy".
+        var fade = new DoubleAnimation(0.09, 0.0, dur) { EasingFunction = ease };
         fade.Completed += (_, _) =>
         {
             try { AdornerLayer.GetAdornerLayer(AdornedElement)?.Remove(this); }

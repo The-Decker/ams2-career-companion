@@ -276,12 +276,19 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
         var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
 
-        foreach (var entry in pack.Entries)
+        // The player picks a SEAT (a livery) and drives it the WHOLE season. When a historical seat
+        // changed drivers mid-year (e.g. Watson subbing for Lauda), the pack has two entries with the
+        // SAME livery — so group by livery and show ONE seat, represented by the driver who held it
+        // for the most rounds. Packs whose livery names embed the driver (e.g. "1988 Williams #5 -
+        // N. Mansell") never collide, so they are unaffected; team-only livery names (1985) no longer
+        // list the same seat twice. (Dangling team/driver refs are validation findings, skipped.)
+        foreach (var group in pack.Entries
+                     .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
+                     .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal))
         {
-            // A dangling reference is a validation finding, not a seat — skip defensively.
-            if (!teamsById.TryGetValue(entry.TeamId, out var team) ||
-                !driversById.TryGetValue(entry.DriverId, out var driver))
-                continue;
+            var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
+            var team = teamsById[entry.TeamId];
+            var driver = driversById[entry.DriverId];
 
             Seats.Add(new SeatOption
             {
@@ -300,6 +307,13 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             });
         }
     }
+
+    /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
+    /// primary driver of a seat that changed hands mid-season.</summary>
+    private static int RoundsCovered(Companion.Core.Packs.SeasonPack pack, string rounds) =>
+        Companion.Core.Packs.RoundsRange.TryParse(rounds, out var range, out _)
+            ? pack.Season.Rounds.Count(r => range.Contains(r.Round))
+            : 0;
 
     // ---------- step c2: character (Increment 4a) ----------
 
