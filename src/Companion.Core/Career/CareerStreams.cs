@@ -32,6 +32,11 @@ public static class JournalPhases
     /// while its data rides in the start player state. (Increment 4a.)</summary>
     public const string PlayerCharacter = "player.character";
 
+    /// <summary>The player's chosen season field (v0.6.0 "choose the entire grid"), written ONCE at
+    /// creation (round = null) — an INPUT the round fold never regenerates, so it is
+    /// provenance-excluded from the byte-compare while its data rides in the start player state.</summary>
+    public const string PlayerGridSelection = "player.gridSelection";
+
     /// <summary>A between-season character-development spend (character depth 4): raise a stat or
     /// add a perk. A player-choice INPUT (round = null) applied at the next season's transition and
     /// re-applied identically on replay, so it is provenance-excluded from the byte-compare like

@@ -598,7 +598,7 @@ public static class ReplayService
             ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
             : null;
 
-        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch);
+        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch, previous.Player.GridSelection);
         if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
@@ -728,7 +728,8 @@ public static class ReplayService
     /// no seat this round (no livery configured, or the entry's rounds range excludes it) —
     /// then the round folds with the player state carried over unchanged.</summary>
     private static GridPlan? ResolvePlayerGrid(
-        SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null)
+        SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null,
+        GridSelection? gridSelection = null)
     {
         if (liveryName is null)
             return null;
@@ -740,7 +741,8 @@ public static class ReplayService
         try
         {
             return RoundGridResolver.Resolve(
-                pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character });
+                pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
+                gridSelection);
         }
         catch (InvalidOperationException)
         {

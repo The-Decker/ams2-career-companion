@@ -33,6 +33,11 @@ public sealed record CareerCreationRequest
     /// the start player state; the sim derives the rating writes + perk modifier from it
     /// deterministically. (Increment 4a.)</summary>
     public CharacterProfile? Character { get; init; }
+
+    /// <summary>The season field the player chose (the liveries on the grid), or null for the whole
+    /// pack. A creation-time deterministic INPUT seeded into the season start state; the sim folds
+    /// exactly this field and the staged custom-AI file carries exactly these drivers. (v0.6.0.)</summary>
+    public Companion.Core.Grid.GridSelection? GridSelection { get; init; }
 }
 
 /// <summary>

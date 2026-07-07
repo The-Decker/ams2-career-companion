@@ -196,9 +196,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                             CoreJson.Options)));
                 }
 
+                // The chosen season field (v0.6.0): journal the creation INPUT row (provenance-excluded
+                // from replay; its data rides in the start state) when the player narrowed the grid.
+                if (request.GridSelection is { IncludesEverything: false } selection)
+                {
+                    Execute(database.Connection, transaction,
+                        "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
+                        "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'career-created');",
+                        ("@utc", nowUtc), ("@season", seasonId),
+                        ("@phase", JournalPhases.PlayerGridSelection),
+                        ("@delta", JsonSerializer.Serialize(
+                            new { includedLiveries = selection.IncludedLiveries }, CoreJson.Options)));
+                }
+
                 SeedStartStates(
                     database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
-                    request.Character, transaction);
+                    request.Character, request.GridSelection, transaction);
 
                 transaction.Commit();
             }
@@ -324,6 +337,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         string playerDriverId,
         string playerLiveryName,
         CharacterProfile? character,
+        Companion.Core.Grid.GridSelection? gridSelection,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -355,6 +369,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // character starts at level 1 with 0 XP.
             Character = character,
             Level = character is null ? 0 : 1,
+            // The chosen season field (null = whole pack → byte-identical). Carried forward each
+            // round; the fold resolves the grid to exactly this field.
+            GridSelection = gridSelection is { IncludesEverything: false } ? gridSelection : null,
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
@@ -669,7 +686,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         try
         {
             grid = RoundGridResolver.Resolve(Pack, CurrentRoundNumber,
-                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() });
+                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+                CurrentGridSelection());
         }
         catch (InvalidOperationException)
         {
@@ -789,11 +807,31 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// fold applies the identical patch). A character-free career resolves an unchanged grid.</summary>
     private GridPlan ResolveGrid(int round)
     {
-        var plan = RoundGridResolver.Resolve(Pack, round);
+        // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
+        // the fold scores. Null selection = whole pack (byte-identical). The player's own seat is
+        // always kept by the resolver, so the field can never bench them.
+        var selection = CurrentGridSelection();
+        var plan = RoundGridResolver.Resolve(Pack, round, playerSeat: null, selection);
         if (plan.Seats.Any(s => string.Equals(s.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal)))
             plan = RoundGridResolver.Resolve(Pack, round,
-                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() });
+                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+                selection);
         return plan;
+    }
+
+    private Companion.Core.Grid.GridSelection? _gridSelection;
+    private bool _gridSelectionResolved;
+
+    /// <summary>The career's chosen season field (v0.6.0), read once from the start state and cached.
+    /// Null for a whole-pack career (byte-identical). Both the display resolve and the fold read the
+    /// SAME selection, so the grid the player sees, stages, and scores are one and the same.</summary>
+    private Companion.Core.Grid.GridSelection? CurrentGridSelection()
+    {
+        if (_gridSelectionResolved)
+            return _gridSelection;
+        _gridSelectionResolved = true;
+        _gridSelection = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.GridSelection;
+        return _gridSelection;
     }
 
     private PlayerCharacterPatch? _characterPatch;
@@ -2210,7 +2248,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private RoundResult ToRoundResult(ResultDraft draft, int roundNumber, PackRound packRound)
     {
         var rules = RoundRuleResolver.Resolve(Pack.Season.PointsSystem, packRound);
-        var teamByDriver = RoundGridResolver.Resolve(Pack, roundNumber).Seats
+        var teamByDriver = RoundGridResolver.Resolve(Pack, roundNumber, playerSeat: null, CurrentGridSelection()).Seats
             .ToDictionary(s => s.DriverId, s => s.TeamId, StringComparer.Ordinal);
 
         // Race 0 is the draft's own classification; a two-race weekend adds the rest (Increment 2).
@@ -2295,7 +2333,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     private void ValidateDraft(ResultDraft draft, int roundNumber)
     {
-        var gridDrivers = RoundGridResolver.Resolve(Pack, roundNumber).Seats
+        var gridDrivers = RoundGridResolver.Resolve(Pack, roundNumber, playerSeat: null, CurrentGridSelection()).Seats
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
 

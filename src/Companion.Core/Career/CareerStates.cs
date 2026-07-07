@@ -108,6 +108,16 @@ public sealed record PlayerCareerState
     /// <summary>True once a character has been created for this career.</summary>
     [JsonIgnore]
     public bool HasCharacter => Character is not null;
+
+    // ---- Chosen grid (v0.6.0 "choose the entire grid") ----
+
+    /// <summary>The season field the player chose at creation (the liveries on the grid), or null
+    /// for the whole-pack field. A creation-time deterministic INPUT seeded into the season start
+    /// state and carried forward each round; the fold resolves the grid to exactly this field so the
+    /// sim scores the chosen grid, not the canonical one. Omitted when null (WhenWritingDefault), so
+    /// a career that chose the whole field is byte-identical to one made before this feature.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public Companion.Core.Grid.GridSelection? GridSelection { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller
