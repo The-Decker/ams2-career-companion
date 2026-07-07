@@ -24,10 +24,19 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
@@ -46,8 +55,11 @@
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
+          "driver.julian_bailey",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -65,10 +77,7 @@
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
-          "driver.philippe_alliot",
-          "driver.gabriele_tarquini",
-          "driver.oscar_larrauri",
-          "driver.stefano_modena"
+          "driver.philippe_alliot"
         ]
       },
       "setupGuide": {
@@ -90,10 +99,19 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "San Marino Grand Prix",
@@ -116,6 +134,7 @@
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -155,10 +174,19 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -177,13 +205,14 @@
         "size": 25,
         "starterDriverIds": [
           "driver.nelson_piquet",
+          "driver.satoru_nakajima",
           "driver.jonathan_palmer",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
-          "driver.philippe_streiff",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
           "driver.derek_warwick",
@@ -199,8 +228,7 @@
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
           "driver.philippe_alliot",
-          "driver.gabriele_tarquini",
-          "driver.oscar_larrauri"
+          "driver.gabriele_tarquini"
         ]
       },
       "setupGuide": {
@@ -222,10 +250,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Mexican Grand Prix",
@@ -241,10 +278,11 @@
       },
       "laps": 68,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
+          "driver.jonathan_palmer",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
@@ -258,8 +296,8 @@
           "driver.eddie_cheever",
           "driver.alessandro_nannini",
           "driver.thierry_boutsen",
+          "driver.nicola_larini",
           "driver.andrea_de_cesaris",
-          "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
@@ -267,12 +305,12 @@
           "driver.yannick_dalmas",
           "driver.philippe_alliot",
           "driver.gabriele_tarquini",
-          "driver.oscar_larrauri"
+          "driver.stefano_modena"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-05-29",
           "weatherSlots": [
@@ -289,10 +327,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -315,6 +362,7 @@
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -330,10 +378,9 @@
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
+          "driver.yannick_dalmas",
           "driver.philippe_alliot",
-          "driver.gabriele_tarquini",
-          "driver.oscar_larrauri",
-          "driver.stefano_modena"
+          "driver.oscar_larrauri"
         ]
       },
       "setupGuide": {
@@ -355,10 +402,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Detroit Grand Prix",
@@ -374,38 +430,39 @@
       },
       "laps": 80,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
+          "driver.satoru_nakajima",
           "driver.jonathan_palmer",
           "driver.julian_bailey",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
           "driver.mauricio_gugelmin",
+          "driver.ivan_capelli",
           "driver.derek_warwick",
           "driver.eddie_cheever",
           "driver.alessandro_nannini",
           "driver.thierry_boutsen",
-          "driver.nicola_larini",
           "driver.andrea_de_cesaris",
-          "driver.luis_perez_sala",
+          "driver.pierluigi_martini",
           "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
-          "driver.yannick_dalmas",
           "driver.philippe_alliot",
           "driver.oscar_larrauri",
-          "driver.stefano_modena",
-          "driver.pierluigi_martini"
+          "driver.stefano_modena"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-06-19",
           "weatherSlots": [
@@ -422,10 +479,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -442,13 +508,14 @@
       },
       "laps": 73,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
           "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
@@ -461,19 +528,19 @@
           "driver.thierry_boutsen",
           "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
           "driver.philippe_alliot",
           "driver.oscar_larrauri",
-          "driver.stefano_modena",
-          "driver.pierluigi_martini"
+          "driver.stefano_modena"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-07-03",
           "weatherSlots": [
@@ -490,10 +557,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -509,7 +585,7 @@
       },
       "laps": 65,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
@@ -517,6 +593,8 @@
           "driver.julian_bailey",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -526,21 +604,20 @@
           "driver.eddie_cheever",
           "driver.alessandro_nannini",
           "driver.thierry_boutsen",
-          "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
           "driver.philippe_alliot",
-          "driver.stefano_modena",
-          "driver.pierluigi_martini"
+          "driver.stefano_modena"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-07-10",
           "weatherSlots": [
@@ -557,10 +634,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
@@ -574,7 +660,7 @@
       },
       "laps": 44,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
@@ -594,6 +680,7 @@
           "driver.thierry_boutsen",
           "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
@@ -605,7 +692,7 @@
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-07-24",
           "weatherSlots": [
@@ -622,10 +709,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Hungarian Grand Prix",
@@ -639,13 +735,16 @@
       },
       "laps": 76,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
+          "driver.julian_bailey",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -656,21 +755,19 @@
           "driver.alessandro_nannini",
           "driver.thierry_boutsen",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
-          "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
           "driver.philippe_alliot",
-          "driver.gabriele_tarquini",
-          "driver.stefano_modena",
-          "driver.pierluigi_martini"
+          "driver.gabriele_tarquini"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-08-07",
           "weatherSlots": [
@@ -687,10 +784,19 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -704,11 +810,12 @@
       },
       "laps": 43,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
+          "driver.martin_brundle",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
           "driver.bernd_schneider",
@@ -723,19 +830,19 @@
           "driver.thierry_boutsen",
           "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
           "driver.philippe_alliot",
-          "driver.gabriele_tarquini",
-          "driver.martin_brundle"
+          "driver.gabriele_tarquini"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-08-28",
           "weatherSlots": [
@@ -752,10 +859,19 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -769,11 +885,13 @@
       },
       "laps": 51,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
+          "driver.jonathan_palmer",
           "driver.julian_bailey",
+          "driver.jean_louis_schlesser",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
           "driver.bernd_schneider",
@@ -786,21 +904,20 @@
           "driver.eddie_cheever",
           "driver.alessandro_nannini",
           "driver.thierry_boutsen",
-          "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.rene_arnoux",
+          "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
-          "driver.philippe_alliot",
-          "driver.jean_louis_schlesser",
-          "driver.pierluigi_martini"
+          "driver.philippe_alliot"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-09-11",
           "weatherSlots": [
@@ -817,10 +934,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Portuguese Grand Prix",
@@ -834,13 +960,15 @@
       },
       "laps": 70,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -852,20 +980,19 @@
           "driver.thierry_boutsen",
           "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
-          "driver.philippe_alliot",
-          "driver.gabriele_tarquini",
-          "driver.pierluigi_martini"
+          "driver.philippe_alliot"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-09-25",
           "weatherSlots": [
@@ -882,10 +1009,19 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
@@ -899,13 +1035,15 @@
       },
       "laps": 72,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -917,20 +1055,19 @@
           "driver.thierry_boutsen",
           "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.yannick_dalmas",
-          "driver.philippe_alliot",
-          "driver.stefano_modena",
-          "driver.pierluigi_martini"
+          "driver.philippe_alliot"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-10-02",
           "weatherSlots": [
@@ -947,10 +1084,19 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Japanese Grand Prix",
@@ -964,14 +1110,14 @@
       },
       "laps": 51,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
-          "driver.julian_bailey",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
+          "driver.piercarlo_ghinzani",
           "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
@@ -984,18 +1130,19 @@
           "driver.thierry_boutsen",
           "driver.nicola_larini",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.rene_arnoux",
+          "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
-          "driver.philippe_alliot",
-          "driver.pierluigi_martini",
-          "driver.aguri_suzuki"
+          "driver.aguri_suzuki",
+          "driver.philippe_alliot"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1988-10-30",
           "weatherSlots": [
@@ -1012,10 +1159,19 @@
     {
       "round": 16,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Australian Grand Prix",
@@ -1034,9 +1190,11 @@
           "driver.nelson_piquet",
           "driver.satoru_nakajima",
           "driver.jonathan_palmer",
+          "driver.julian_bailey",
           "driver.nigel_mansell",
           "driver.riccardo_patrese",
           "driver.piercarlo_ghinzani",
+          "driver.bernd_schneider",
           "driver.alain_prost",
           "driver.ayrton_senna",
           "driver.philippe_streiff",
@@ -1047,15 +1205,14 @@
           "driver.alessandro_nannini",
           "driver.thierry_boutsen",
           "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
           "driver.luis_perez_sala",
           "driver.rene_arnoux",
           "driver.stefan_johansson",
           "driver.michele_alboreto",
           "driver.gerhard_berger",
           "driver.philippe_alliot",
-          "driver.oscar_larrauri",
-          "driver.stefano_modena",
-          "driver.pierluigi_martini"
+          "driver.stefano_modena"
         ]
       },
       "setupGuide": {

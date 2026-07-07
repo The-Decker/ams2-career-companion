@@ -304,9 +304,10 @@ public class GridStagerTests
         Assert.DoesNotContain("1988 Williams #5 - N. Mansell", liveries);
         // Every livery is unique — the duplicate-livery gate held.
         Assert.Equal(liveries.Count, liveries.Distinct(StringComparer.Ordinal).Count());
-        // The grid-cap fix: Pérez-Sala DNQ'd the 1988 Belgian GP, so he is NOT on round 11's grid
-        // even though his entry covers the round — only historical starters seat.
-        Assert.DoesNotContain("1988 Minardi #24 - L. Pérez-Sala", liveries);
+        // The grid-cap fix: Martini (Minardi #23) DNQ'd the 1988 Belgian GP in the preset-matched
+        // grids, so he is NOT on round 11's grid even though his entry covers the round — only the
+        // round's listed starters seat.
+        Assert.DoesNotContain("1988 Minardi #23 - P. Martini", liveries);
     }
 
     [Fact]
