@@ -368,6 +368,57 @@ public sealed class EraSignAndContinueTests : IDisposable
     }
 
     [Fact]
+    public void CharacterAge_IsTheDriversOwn_ShownInTheDossier_AndDrivesTheSim()
+    {
+        // driver.p (the seat) is really 27 in 1967 (Born 1940). The character is a 41-year-old
+        // veteran — a REAL age, unlike the historical driver's — so if the age is used at all it
+        // MUST be 41, never the borrowed 27.
+        var veteran = new Companion.Core.Character.CharacterProfile
+        {
+            Name = "Old Hand",
+            Age = 41,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+            },
+            PerkIds = [],
+            CpUnspent = 0,
+        };
+
+        using (var session = CreateAndPlaySeason(veteran))
+        {
+            var dossier = ((ICareerSession)session).CharacterDossier();
+            Assert.NotNull(dossier);
+            Assert.Equal(41, dossier!.Age); // the driver's OWN age, shown — not the seat's 27
+        }
+
+        // Reopen: the age persists and still reads as the driver's own.
+        using (var reopened = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            Assert.Equal(41, reopened.CharacterDossier()!.Age);
+        }
+
+        // It is the age the SIM ran on, not the historical 27: re-simulating with 41 is byte-identical;
+        // with the seat driver's 27 it diverges — proof the character's age really drives the career.
+        using var db = CareerDatabase.Open(CareerPath);
+        var rules = Environment().Rules;
+        ReplaySimInputs Inputs(int age) => new()
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.p",
+            PlayerAge = age,
+            CharacterRules = rules.Character,
+        };
+        Assert.True(ReplayService.Resimulate(db, unchecked((ulong)20260703), Inputs(41)).Identical,
+            "the career must re-simulate on the character's real age (41)");
+        Assert.False(ReplayService.Resimulate(db, unchecked((ulong)20260703), Inputs(27)).Identical,
+            "using the historical driver's age (27) must diverge — the character age is what counts");
+    }
+
+    [Fact]
     public void SeatChangeAcrossTransition_ResimulatesByteIdentically()
     {
         // The player is driver.p (livery "Mid #4") in 1967 and, on signing the accepted team, takes

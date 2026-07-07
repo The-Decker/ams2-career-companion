@@ -16,6 +16,10 @@
                 <TextBlock Style="{StaticResource Muted}">
                     <Run Text="Level" /><Run Text=" " /><Run Text="{Binding Level, Mode=OneWay}" FontWeight="SemiBold" />
                 </TextBlock>
+                <TextBlock Style="{StaticResource Muted}" Margin="16,0,0,0"
+                           Visibility="{Binding Age, Converter={StaticResource NullCollapsed}}">
+                    <Run Text="Age" /><Run Text=" " /><Run Text="{Binding Age, Mode=OneWay}" FontWeight="SemiBold" />
+                </TextBlock>
                 <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0">
                     <Run Text="{Binding Xp, Mode=OneWay}" /><Run Text=" XP" />
                 </TextBlock>

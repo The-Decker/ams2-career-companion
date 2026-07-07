@@ -9,6 +9,11 @@ namespace Companion.Core.Character;
 public sealed record CharacterDossier
 {
     public required string Name { get; init; }
+
+    /// <summary>The driver's CURRENT age (their created first-season age plus the seasons since), or
+    /// null for a legacy character created before ages existed. A real, visible part of the driver.</summary>
+    public int? Age { get; init; }
+
     public required int Level { get; init; }
     public required long Xp { get; init; }
 
@@ -32,7 +37,8 @@ public sealed record CharacterDossier
     /// <summary>Progress through the current level, 0..1 (1 at the max level).</summary>
     public double LevelProgress => XpForNextLevel <= 0 ? 1.0 : Math.Clamp((double)XpIntoLevel / XpForNextLevel, 0.0, 1.0);
 
-    public static CharacterDossier Build(CharacterProfile character, int level, long xp, CharacterRules rules)
+    public static CharacterDossier Build(
+        CharacterProfile character, int level, long xp, CharacterRules rules, int? age = null)
     {
         var curve = rules.Levels.XpCurve;
 
@@ -74,6 +80,7 @@ public sealed record CharacterDossier
         return new CharacterDossier
         {
             Name = character.Name,
+            Age = age,
             Level = level,
             Xp = xp,
             XpIntoLevel = Math.Max(0, xp - cumulativeToLevel),

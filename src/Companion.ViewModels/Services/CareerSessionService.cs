@@ -49,6 +49,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// season — the same car reused for a later year — so this, not the pack's nominal year, is the
     /// season's year for display and for computing the next year.</summary>
     private readonly int _seasonYear;
+    private readonly int _firstSeasonYear;
     private readonly string _careerName;
     private readonly string _playerLiveryName;
     private readonly string _playerDriverId;
@@ -85,9 +86,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         CareerFilePath = careerFilePath;
         _seasonId = seasonId;
         // The season's real year (carryover-aware): the season row exists by now on both the
-        // create and open paths. Fall back to the pack year only if it is somehow absent.
-        _seasonYear = CareerStore.ReadSeasons(database).FirstOrDefault(s => s.Id == seasonId)?.Year
-                      ?? pack.Season.Year;
+        // create and open paths. Fall back to the pack year only if it is somehow absent. Capture
+        // the FIRST season's year too, so the driver's current age = created age + seasons since.
+        var allSeasons = CareerStore.ReadSeasons(database);
+        _seasonYear = allSeasons.FirstOrDefault(s => s.Id == seasonId)?.Year ?? pack.Season.Year;
+        _firstSeasonYear = allSeasons.Count > 0 ? allSeasons[0].Year : _seasonYear;
         _careerName = careerName;
         MasterSeed = masterSeed;
         _playerLiveryName = playerLiveryName;
@@ -228,7 +231,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return new CareerSessionService(
                 database, environment, pack, request.CareerFilePath, seasonId,
                 request.CareerName, request.MasterSeed, request.PlayerLiveryName, playerDriverId,
-                PlayerAgeIn(pack, playerDriverId),
+                // A real character sets its OWN first-season age; without one (or a legacy character)
+                // the age falls back to the historical driver whose seat was taken.
+                request.Character?.Age ?? PlayerAgeIn(pack, playerDriverId),
                 import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile);
         }
         catch
@@ -278,6 +283,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             var delta = JsonSerializer.Deserialize<CareerCreatedDelta>(deltaJson, CoreJson.Options)
                 ?? throw new InvalidOperationException("Career-created journal row deserialized to null.");
 
+            // A real character carries its OWN first-season age (in the first season's start state);
+            // a legacy/no-character career has none and falls back to the seat driver's age below.
+            int? characterAge = StateStore.ReadPlayerState(database, first.Id, StateStore.StageStart)?.Character?.Age;
+
             string playerLiveryName;
             string playerDriverId;
             string baselineSource;
@@ -288,7 +297,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 playerLiveryName = delta.PlayerLiveryName;
                 playerDriverId = delta.PlayerDriverId;
                 baselineSource = delta.BaselineSource;
-                playerFirstSeasonAge = PlayerAgeIn(pack, playerDriverId);
+                playerFirstSeasonAge = characterAge ?? PlayerAgeIn(pack, playerDriverId);
             }
             else
             {
@@ -312,7 +321,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 // the first season's pinned pack and the wizard's seat pick.
                 var firstPack = PinnedPackEnvelope.LoadSeasonPack(
                     CareerStore.ReadPinnedPack(database, first.PackId, first.PackVersion).PackJson);
-                playerFirstSeasonAge = PlayerAgeIn(firstPack, delta.PlayerDriverId);
+                playerFirstSeasonAge = characterAge ?? PlayerAgeIn(firstPack, delta.PlayerDriverId);
             }
 
             return new CareerSessionService(
@@ -482,8 +491,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (player?.Character is not { } character)
             return null;
+        // The driver's current age: their real created age advanced by the seasons played. Null for a
+        // legacy character with no authored age (we never present the borrowed historical age as theirs).
+        int? currentAge = character.Age is { } startAge
+            ? startAge + (_seasonYear - _firstSeasonYear)
+            : null;
         var dossier = Companion.Core.Character.CharacterDossier.Build(
-            character, player.Level, player.Xp, _environment.Rules.Character);
+            character, player.Level, player.Xp, _environment.Rules.Character, currentAge);
         // Reflect spends made this season but not yet applied at a transition.
         int pending = PendingSpends().Sum(s => s.Cost);
         return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };

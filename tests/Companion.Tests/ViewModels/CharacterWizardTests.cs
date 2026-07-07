@@ -141,6 +141,22 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
+    public void BuildProfile_CarriesTheDriverAge_ClampedToTheCreationBand()
+    {
+        var vm = new CharacterViewModel(Rules());
+        Assert.Equal(CharacterViewModel.DefaultAge, vm.Age); // a sensible rookie default
+
+        vm.Age = 19;
+        Assert.Equal(19, vm.BuildProfile().Age);
+
+        vm.Age = 99; // out of the creation band
+        Assert.Equal(CharacterViewModel.MaxAge, vm.BuildProfile().Age);
+
+        vm.Age = 3;
+        Assert.Equal(CharacterViewModel.MinAge, vm.BuildProfile().Age);
+    }
+
+    [Fact]
     public void StatSlider_ClampsToTheCreationBand()
     {
         var pace = new CharacterViewModel(Rules()).Stats.Single(s => s.Id == "pace");

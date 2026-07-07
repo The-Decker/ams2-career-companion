@@ -64,6 +64,17 @@ public sealed partial class CharacterViewModel : ObservableObject
     [ObservableProperty]
     private string _name;
 
+    /// <summary>Youngest / oldest a created driver can be, and the default (a typical rookie).</summary>
+    public const int MinAge = 16;
+    public const int MaxAge = 45;
+    public const int DefaultAge = 23;
+
+    /// <summary>The driver's REAL age in their first season — the character's own age (16–45), which
+    /// drives the sim's season-end aging and the contract-offer age risk. A young driver has years of
+    /// growth ahead; a veteran is courted more warily. Independent of the historical seat.</summary>
+    [ObservableProperty]
+    private int _age = DefaultAge;
+
     [ObservableProperty]
     private Archetype? _selectedArchetype;
 
@@ -76,6 +87,11 @@ public sealed partial class CharacterViewModel : ObservableObject
 
     /// <summary>The creation character-point budget for PERKS (data-driven; 6 in the shipped rules).</summary>
     public int Budget => _rules.CharacterPoints.CreationBudget;
+
+    /// <summary>The MOST perk points a build may spend — the budget plus the drawback refund headroom
+    /// (9 = 6 + 3 in the shipped rules): taking a drawback-heavy perk refunds points you can pour into
+    /// one premium upside. Displayed so the meter never reads a nonsensical "8 of 6".</summary>
+    public int MaxPerkPoints => _rules.CharacterPoints.MaxNetSpend;
 
     /// <summary>Net CP the selected perks cost (refund perks are negative).</summary>
     public int NetCpSpend => Perks.Where(p => p.IsSelected).Sum(p => p.Cost);
@@ -175,6 +191,7 @@ public sealed partial class CharacterViewModel : ObservableObject
         return new CharacterProfile
         {
             Name = Name.Trim(),
+            Age = Math.Clamp(Age, MinAge, MaxAge),
             Stats = stats,
             PerkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList(),
             CpUnspent = RemainingCp,
