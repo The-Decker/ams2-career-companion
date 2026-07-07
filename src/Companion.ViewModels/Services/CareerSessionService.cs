@@ -943,14 +943,37 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // explicit "Apply grid to AMS2" action.
         if (baseGameLiveries)
         {
-            var rebound = BaseGameLiveryBinder.RebindToBaseGame(file, _environment.ContentLibrary);
+            // Smart binding: keep a driver's real community livery where that skin is INSTALLED AND
+            // ACTIVE on disk (real historical paint) and floor every other car onto a base-game livery
+            // the game always ships (guaranteed load). So an installed 1988 skin pack shows its real
+            // liveries while a car whose skin the player has not installed still loads instead of
+            // reverting the whole class to stock. A class spans several vehicle models (e.g.
+            // formula_classic_g2m1/2/3 + mclaren_mp44), each with its own Overrides folder — union them.
+            var skinScan = _environment.ScanInstalledLiveries(_environment.LocateInstall());
+            var classFolders = _environment.ContentLibrary.Vehicles.Values
+                .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                .Select(v => v.Dir)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var installedActive = skinScan.Liveries
+                .Where(l => l.IsActive && (classFolders.Count == 0 || classFolders.Contains(l.VehicleFolder)))
+                .Select(l => l.Name)
+                .ToHashSet(StringComparer.Ordinal);
+
+            int baseSeats = file.Drivers.Count(d => d.Tracks.Count == 0);
+            int keptCommunity = file.Drivers.Count(d => d.Tracks.Count == 0 && installedActive.Contains(d.LiveryName));
+            var rebound = BaseGameLiveryBinder.RebindToBaseGame(file, _environment.ContentLibrary, installedActive);
             if (!ReferenceEquals(rebound, file))
             {
                 file = rebound;
                 messages.Add(
-                    $"Bound the grid to real base-game {file.VehicleClass} liveries so AMS2 loads it " +
-                    "and shows the drivers. Car paint is the game's default; install the matching " +
-                    "community skins to see historical liveries.");
+                    keptCommunity == 0
+                        ? $"Bound the grid to real base-game {file.VehicleClass} liveries so AMS2 loads it " +
+                          "and shows the drivers. Car paint is the game's default; install the matching " +
+                          "community skins to see historical liveries."
+                        : keptCommunity >= baseSeats
+                            ? $"All {baseSeats} cars are on installed community skins — AMS2 will show the real liveries."
+                            : $"Kept {keptCommunity} installed community skin(s) and bound the other " +
+                              $"{baseSeats - keptCommunity} to base-game {file.VehicleClass} liveries so every car loads.");
             }
         }
 

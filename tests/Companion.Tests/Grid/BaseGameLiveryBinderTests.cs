@@ -68,4 +68,53 @@ public sealed class BaseGameLiveryBinderTests
         Assert.Same(file, BaseGameLiveryBinder.RebindToBaseGame(file, (IReadOnlyList<OfficialLivery>?)null));
         Assert.Same(file, BaseGameLiveryBinder.RebindToBaseGame(file, Base()));
     }
+
+    private static IReadOnlySet<string> Installed(params string[] names) =>
+        new HashSet<string>(names, StringComparer.Ordinal);
+
+    [Fact]
+    public void InstalledActiveSkin_IsKept_TheRestAreFlooredToBaseGame()
+    {
+        var file = FileOf("1988 Lotus #1 - N. Piquet", "1988 McLaren #12 - A. Senna", "1988 Ferrari #27 - M. Alboreto");
+
+        // Only the McLaren skin is installed & active on disk — it keeps its real paint.
+        var result = BaseGameLiveryBinder.RebindToBaseGame(
+            file,
+            Base("United Racing #3", "United Racing #4", "McLaren MP4/4 #11"),
+            Installed("1988 McLaren #12 - A. Senna"));
+
+        Assert.Equal(
+            new[] { "United Racing #3", "1988 McLaren #12 - A. Senna", "United Racing #4" },
+            result.Drivers.Select(d => d.LiveryName));
+    }
+
+    [Fact]
+    public void EveryDriverOnAnInstalledSkin_KeepsAllRealPaint_NoBaseGameUsed()
+    {
+        var file = FileOf("1988 Lotus #1 - N. Piquet", "1988 McLaren #12 - A. Senna");
+
+        var result = BaseGameLiveryBinder.RebindToBaseGame(
+            file,
+            Base("United Racing #3", "United Racing #4"),
+            Installed("1988 Lotus #1 - N. Piquet", "1988 McLaren #12 - A. Senna"));
+
+        Assert.Equal(
+            new[] { "1988 Lotus #1 - N. Piquet", "1988 McLaren #12 - A. Senna" },
+            result.Drivers.Select(d => d.LiveryName));
+    }
+
+    [Fact]
+    public void FlooredDriversStayDistinct_EvenWhenSomeSkinsAreKept()
+    {
+        var file = FileOf("keep-me", "floor-a", "floor-b");
+
+        var result = BaseGameLiveryBinder.RebindToBaseGame(
+            file,
+            Base("United Racing #3", "United Racing #4", "United Racing #5"),
+            Installed("keep-me"));
+
+        Assert.Equal(
+            new[] { "keep-me", "United Racing #3", "United Racing #4" },
+            result.Drivers.Select(d => d.LiveryName));
+    }
 }
