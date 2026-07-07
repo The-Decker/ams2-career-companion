@@ -331,12 +331,26 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public ObservableCollection<GridSeatChoice> GridChoices { get; } = [];
 
     /// <summary>Total cars on the grid — every included seat, the player's own car included.</summary>
+    /// <summary>The largest per-round grid size in the pack (26 for 1988, where only 26 of ~30 qualify
+    /// each round). Cached when the choices are built. Zero for a pack with no grid blocks.</summary>
+    private int _maxRoundGridSize;
+
+    /// <summary>The season roster the player picked — every included seat (their own car included).
+    /// This is the pool of cars that CAN race; the per-race grid draws from it (see MaxRaceCars).</summary>
     public int IncludedCount => GridChoices.Count(c => c.IsIncluded);
 
-    /// <summary>The exact number to type into AMS2's "AI Opponents" — the AI cars on the grid, i.e.
-    /// the field minus the player's own car. Surfaced directly so the player never has to do the
-    /// "minus one" arithmetic themselves.</summary>
-    public int AiOpponentCount => Math.Max(0, IncludedCount - 1);
+    /// <summary>The most cars actually on track in a single round given the selection: the per-race
+    /// grid size, capped by how many seats are included. For a pre-qualifying season this is smaller
+    /// than the roster (1988: 30-car roster, 26 on the grid) — so it, not IncludedCount, is what the
+    /// player sees racing.</summary>
+    public int MaxRaceCars => _maxRoundGridSize <= 0
+        ? IncludedCount
+        : Math.Min(IncludedCount, _maxRoundGridSize);
+
+    /// <summary>The exact number to type into AMS2's "AI Opponents" — the on-track grid minus the
+    /// player's own car. Derived from MaxRaceCars, NOT the roster: a pre-qualifying season fields
+    /// fewer cars per round than the full field, so roster-minus-one would be too high.</summary>
+    public int AiOpponentCount => Math.Max(0, MaxRaceCars - 1);
 
     private void BuildGridChoices()
     {
@@ -349,25 +363,36 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
         string? playerLivery = SelectedSeat?.LiveryName;
 
-        // One choice per livery (grouped like BuildSeats), the seat represented by its longest-tenure
-        // driver. The player's own seat is locked on.
+        // The largest field the game actually puts on track in any round. With per-race grids
+        // (1988 pre-qualifying: ~30 cars for 26 slots) this is the round grid size, not the roster —
+        // it drives the AI-opponent guidance so the number matches what the player sees racing.
+        _maxRoundGridSize = pack.Season.Rounds.Select(r => r.Grid?.Size ?? 0).DefaultIfEmpty(0).Max();
+
+        // One choice per SEAT (car number), NOT per livery. A seat that changed drivers mid-season
+        // (Williams #5 = Mansell/Brundle/Schlesser) is ONE car across the year, so it is one row —
+        // otherwise a pack whose livery names embed the driver lists the same seat several times and
+        // over-counts the field (the "34 cars" bug). Represented by its longest-tenure driver; the
+        // choice carries every livery so excluding it drops them all.
         foreach (var group in pack.Entries
                      .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
-                     .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal))
+                     .GroupBy(e => e.Number, StringComparer.Ordinal))
         {
             var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
+            var liveries = group.Select(e => e.Ams2LiveryName).Distinct(StringComparer.Ordinal).ToList();
             var choice = new GridSeatChoice
             {
                 LiveryName = entry.Ams2LiveryName,
+                Liveries = liveries,
                 DriverName = driversById[entry.DriverId].Name,
                 TeamName = teamsById[entry.TeamId].Name,
-                IsLocked = string.Equals(entry.Ams2LiveryName, playerLivery, StringComparison.Ordinal),
+                IsLocked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal),
                 IsIncluded = true,
             };
             choice.PropertyChanged += OnGridChoiceChanged;
             GridChoices.Add(choice);
         }
         OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(MaxRaceCars));
         OnPropertyChanged(nameof(AiOpponentCount));
     }
 
@@ -376,6 +401,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         if (e.PropertyName != nameof(GridSeatChoice.IsIncluded))
             return;
         OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(MaxRaceCars));
         OnPropertyChanged(nameof(AiOpponentCount));
         OnPropertyChanged(nameof(CanGoNext));
         NextCommand.NotifyCanExecuteChanged();
@@ -388,13 +414,15 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (GridChoices.Count == 0)
             return null;
+        // Whole field (no seat excluded) → null selection, so the career is byte-identical to one
+        // created before this feature existed.
+        if (GridChoices.All(c => c.IsIncluded || c.IsLocked))
+            return null;
         var included = GridChoices
             .Where(c => c.IsIncluded || c.IsLocked)
-            .Select(c => c.LiveryName)
+            .SelectMany(c => c.Liveries)   // a seat contributes ALL its liveries (mid-season swaps)
             .ToList();
-        return included.Count == GridChoices.Count
-            ? null
-            : new GridSelection { IncludedLiveries = included };
+        return new GridSelection { IncludedLiveries = included };
     }
 
     // ---------- step c2: character (Increment 4a) ----------

@@ -350,7 +350,7 @@
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
                            Text="Your own car is always in — it's the row marked &quot;You&quot;. Uncheck any driver you don't want racing on the grid this season." />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
-                    <Run Text="In AMS2, set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  —  that, plus your own car, makes " /><Run Text="{Binding IncludedCount, Mode=OneWay}" /><Run Text=" cars on the grid." />
+                    <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
                     <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Left">

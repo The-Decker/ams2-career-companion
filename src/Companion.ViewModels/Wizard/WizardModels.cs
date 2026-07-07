@@ -22,7 +22,14 @@ public enum WizardStep
 /// on/off for the season field. The player's own seat is <see cref="IsLocked"/> (always included).</summary>
 public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
 {
+    /// <summary>The seat's primary (longest-tenure) livery, shown on the row.</summary>
     public required string LiveryName { get; init; }
+
+    /// <summary>Every livery this seat uses across the season — one per driver when the seat changed
+    /// hands mid-year (e.g. Williams #5 = Mansell / Brundle / Schlesser). Excluding the seat drops all
+    /// of them from the field; the grid selection is built from these, not the single primary livery.</summary>
+    public required IReadOnlyList<string> Liveries { get; init; }
+
     public required string DriverName { get; init; }
     public required string TeamName { get; init; }
 
