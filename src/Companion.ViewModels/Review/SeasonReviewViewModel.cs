@@ -261,23 +261,27 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
 
     // ---------- era transition: sign & continue (M6) ----------
 
-    /// <summary>The discovered next era pack (v1 rule: the smallest season year greater than
-    /// this season's). Null when nothing later is installed — the block then explains what
-    /// season packs are and where they go.</summary>
+    /// <summary>Where the career goes next: a real era CHANGEOVER when a dedicated next-year pack is
+    /// installed, otherwise a CARRYOVER on the same car. Non-null once the season is complete — the
+    /// career never dead-ends.</summary>
     public NextSeasonInfo? NextSeason { get; }
 
     public bool HasNextSeason => NextSeason is not null;
 
-    /// <summary>What the era-transition block says: sign-and-continue guidance when a next
-    /// pack exists, otherwise the no-next-pack explainer (what packs are, where they go).</summary>
-    public string EraTransitionText => NextSeason is { } next
-        ? $"Your career continues: {next.PackName} is installed. Accept an offer above, then " +
-          $"sign to carry your age, reputation, form and every team lineage into {next.SeasonYear}."
-        : "This season is complete and no later season pack is installed, so the career pauses " +
-          "here. Season packs are plain JSON folders (pack.json, season.json, teams.json, " +
-          "drivers.json, entries.json) holding a year's calendar, entry list and ratings. Drop " +
-          "a later-year pack into Documents\\AMS2CareerCompanion\\Packs or the packs folder " +
-          "beside the app, reopen this career, and the \"Sign & start\" button appears right here.";
+    /// <summary>What the sign-and-continue block says: same-car carryover guidance when no
+    /// dedicated next-year pack exists, otherwise the era-changeover guidance for the next pack.</summary>
+    public string EraTransitionText => NextSeason switch
+    {
+        { IsCarryover: true } next =>
+            $"No {next.SeasonYear} season pack is installed, so your career carries on in the same car " +
+            $"and liveries — the grid ages, retires and refills around you. Accept an offer above, then " +
+            $"sign to take your age, reputation and form into {next.SeasonYear}. Drop a later-year pack " +
+            "in the packs folder and the car switches over when that season arrives.",
+        { } next =>
+            $"Your career continues: {next.PackName} is installed. Accept an offer above, then sign to " +
+            $"carry your age, reputation, form and every team lineage into {next.SeasonYear}.",
+        _ => "This season is complete.",
+    };
 
     /// <summary>The bridge note when the next pack skips years, e.g. "1968 has no pack — your
     /// career bridges through it." Null for consecutive seasons (or no next pack).</summary>

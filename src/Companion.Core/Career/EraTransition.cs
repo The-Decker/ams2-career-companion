@@ -378,6 +378,17 @@ public static class EraTransition
         };
     }
 
+    /// <summary>The exact livery the player takes at <paramref name="teamId"/> in
+    /// <paramref name="pack"/> — the same seat <see cref="Build"/> resolves for an era changeover,
+    /// exposed for the SAME-PACK carryover path (which seats through
+    /// <see cref="SeasonRollover"/> rather than a transition plan). Null when the team has no
+    /// entries.</summary>
+    public static string? ResolveSeatLivery(SeasonPack pack, string teamId)
+    {
+        ArgumentNullException.ThrowIfNull(pack);
+        return ResolveSeat(pack, teamId)?.Ams2LiveryName;
+    }
+
     /// <summary>The seat the player takes at the accepted team: the first entries.json entry
     /// covering EVERY calendar round ("1-N" preference), else the first covering round 1,
     /// else the team's first entry. Null when the team has no entries at all.</summary>

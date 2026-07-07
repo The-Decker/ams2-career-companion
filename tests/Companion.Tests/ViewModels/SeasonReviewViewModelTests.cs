@@ -54,10 +54,10 @@ public class SeasonReviewViewModelTests
         Assert.Equal(new[] { "Headline one", "Headline two" }, vm.Headlines);
         Assert.True(vm.HasHeadlines);
         Assert.False(vm.OfferAccepted);
-        // No next pack installed: the block explains what packs are and where they go.
+        // A null next season (this fake leaves it unset) collapses the block to a terminal note —
+        // the real session always offers a carryover or a changeover once the season is complete.
         Assert.False(vm.HasNextSeason);
-        Assert.Contains("season pack", vm.EraTransitionText, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("AMS2CareerCompanion\\Packs", vm.EraTransitionText);
+        Assert.Equal("This season is complete.", vm.EraTransitionText);
         Assert.Null(vm.BridgeNote);
         Assert.False(vm.SignAndContinueCommand.CanExecute(null));
         Assert.False(vm.CanRestoreAiFile);           // plain session: no restore surface

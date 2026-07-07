@@ -211,9 +211,16 @@ public sealed record NextSeasonInfo
 
     public required int SeasonYear { get; init; }
 
+    /// <summary>True when this is a CARRYOVER: no dedicated pack exists for <see cref="SeasonYear"/>,
+    /// so the career reuses the CURRENT car/liveries (the same pinned pack) for one more year — the
+    /// grid having aged, retired, and refilled at season end. False for a real era CHANGEOVER into a
+    /// later-year pack (<see cref="PackDirectory"/> then points at that pack on disk; for a carryover
+    /// it is empty, since the pinned pack is reused, not re-read).</summary>
+    public bool IsCarryover { get; init; }
+
     /// <summary>The years between the finished season and the next pack (ascending, empty
-    /// for consecutive years). v1 BRIDGES them: everyone ages through the gap — the review
-    /// shows the bridge note, e.g. "1968 has no pack — your career bridges through it".</summary>
+    /// for consecutive years). With year-by-year carryover this is always empty — every year is
+    /// played, either on a dedicated pack or as a carryover — so no year is silently bridged.</summary>
     public required IReadOnlyList<int> BridgedYears { get; init; }
 }
 

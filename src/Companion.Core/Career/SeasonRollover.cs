@@ -1,3 +1,5 @@
+using Companion.Core.Character;
+
 namespace Companion.Core.Career;
 
 /// <summary>Start-of-season states for season N+1, derived from season N's end states.</summary>
@@ -29,17 +31,29 @@ public static class SeasonRollover
         IReadOnlyList<DriverCareerState> driversEnd,
         IReadOnlyList<TeamCareerState> teamsEnd,
         string acceptedTeamId,
-        string? playerLiveryName)
+        string? playerLiveryName,
+        IReadOnlyList<CharacterSpend>? spends = null,
+        CharacterRules? characterRules = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(acceptedTeamId);
 
+        var player = playerEnd with
+        {
+            CurrentTeamId = acceptedTeamId,
+            LiveryName = playerLiveryName ?? playerEnd.LiveryName,
+        };
+
+        // Between-season development (character depth 4): apply the player's journaled statSpend
+        // INPUTs to the carried character as the career rolls into the next year — the exact same
+        // application the era-transition path makes, so a same-pack CARRYOVER develops the driver
+        // just like a changeover. No spends (or no character) → unchanged, so ordinary rollovers
+        // stay byte-identical.
+        if (spends is { Count: > 0 } && characterRules is not null && player.Character is { } character)
+            player = player with { Character = CharacterProgress.ApplyAll(character, spends, characterRules) };
+
         return new SeasonStartStates
         {
-            Player = playerEnd with
-            {
-                CurrentTeamId = acceptedTeamId,
-                LiveryName = playerLiveryName ?? playerEnd.LiveryName,
-            },
+            Player = player,
             Drivers = driversEnd,
             Teams = teamsEnd,
         };

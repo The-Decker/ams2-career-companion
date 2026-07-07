@@ -429,7 +429,8 @@ public static class ReplayService
                 if (samePack)
                 {
                     divergence = VerifyRolloverStartStates(
-                        previousSeason.Season, previousEnd, acceptedOffers, current);
+                        previousSeason.Season, previousEnd, acceptedOffers, current,
+                        previousSeason.Spends, inputs.CharacterRules);
                 }
                 else
                 {
@@ -950,7 +951,9 @@ public static class ReplayService
         SeasonRecord previousSeason,
         SeasonEndResult? previousEnd,
         IReadOnlyList<(long SeasonId, string TeamId)> acceptedOffers,
-        StoredSeason current)
+        StoredSeason current,
+        IReadOnlyList<CharacterSpend> spends,
+        CharacterRules? characterRules)
     {
         long seasonId = current.Season.Id;
         if (previousEnd is null)
@@ -977,7 +980,8 @@ public static class ReplayService
 
         var derived = SeasonRollover.Derive(
             previousEnd.Player, previousEnd.Drivers, previousEnd.Teams,
-            acceptedTeam, current.StartPlayer?.LiveryName);
+            acceptedTeam, current.StartPlayer?.LiveryName,
+            spends, characterRules);
 
         if (current.StartPlayer is null || derived.Player != current.StartPlayer)
         {

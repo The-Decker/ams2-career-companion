@@ -44,6 +44,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private readonly CareerDatabase _database;
     private readonly CareerEnvironment _environment;
     private readonly long _seasonId;
+    /// <summary>The CURRENT season's real calendar year (from its season record). Equals
+    /// <c>Pack.Season.Year</c> for every ordinary season, but runs ahead of it for a CARRYOVER
+    /// season — the same car reused for a later year — so this, not the pack's nominal year, is the
+    /// season's year for display and for computing the next year.</summary>
+    private readonly int _seasonYear;
     private readonly string _careerName;
     private readonly string _playerLiveryName;
     private readonly string _playerDriverId;
@@ -79,6 +84,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         Pack = pack;
         CareerFilePath = careerFilePath;
         _seasonId = seasonId;
+        // The season's real year (carryover-aware): the season row exists by now on both the
+        // create and open paths. Fall back to the pack year only if it is somehow absent.
+        _seasonYear = CareerStore.ReadSeasons(database).FirstOrDefault(s => s.Id == seasonId)?.Year
+                      ?? pack.Season.Year;
         _careerName = careerName;
         MasterSeed = masterSeed;
         _playerLiveryName = playerLiveryName;
@@ -418,7 +427,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return new CareerSummary
             {
                 CareerName = _careerName,
-                SeasonYear = Pack.Season.Year,
+                SeasonYear = _seasonYear,
                 SeriesName = Pack.Season.SeriesName,
                 CurrentRound = complete ? RoundCount : CurrentRoundNumber,
                 RoundCount = RoundCount,
@@ -1321,7 +1330,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         return new SeasonReviewModel
         {
-            SeasonYear = Pack.Season.Year,
+            SeasonYear = _seasonYear,
             PlayerPosition = standings?.Drivers
                 .FirstOrDefault(d => d.DriverId == _playerDriverId)?.Position,
             FinalReputation = finalPlayer?.Reputation ?? 0.0,
@@ -1365,27 +1374,45 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     // ---------- era transition (M6 sign-and-continue) ----------
 
-    /// <summary>The next era pack per the v1 rule (see <see cref="ICareerSession.NextSeason"/>):
-    /// scans the environment's pack search roots and picks the readable pack with the
-    /// smallest season year strictly greater than the current season's. Null while the
-    /// season is incomplete or when nothing later exists.</summary>
+    /// <summary>The next season the career rolls into — ALWAYS the very next calendar year (the
+    /// career never dead-ends). If a dedicated pack exists for that exact year it is a real era
+    /// CHANGEOVER into that pack; otherwise it is a CARRYOVER that reuses the current car/liveries
+    /// for one more year (the same pinned pack), carrying on until a later pack's year is reached.
+    /// Null only while the season is still in progress.</summary>
     public NextSeasonInfo? NextSeason()
     {
         if (!SeasonComplete)
             return null;
 
-        var next = PackDiscovery.NextAfter(
-            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()), Pack.Season.Year);
-        if (next?.Manifest is null || next.SeasonYear is not { } year)
-            return null;
+        int nextYear = _seasonYear + 1;
+        var changeover = PackDiscovery.NextAfter(
+            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()), _seasonYear);
 
+        // A dedicated pack whose year is exactly next year = the real car changeover.
+        if (changeover?.Manifest is not null && changeover.SeasonYear == nextYear)
+        {
+            return new NextSeasonInfo
+            {
+                IsCarryover = false,
+                PackDirectory = changeover.Directory,
+                PackId = changeover.Manifest.PackId,
+                PackName = changeover.Manifest.Name,
+                SeasonYear = nextYear,
+                BridgedYears = [],
+            };
+        }
+
+        // Otherwise carry the current car forward one year: either a later pack exists but is still
+        // a few years off (we carry over until we reach it) or there is no later pack at all (the
+        // career runs on this car indefinitely).
         return new NextSeasonInfo
         {
-            PackDirectory = next.Directory,
-            PackId = next.Manifest.PackId,
-            PackName = next.Manifest.Name,
-            SeasonYear = year,
-            BridgedYears = Enumerable.Range(Pack.Season.Year + 1, year - Pack.Season.Year - 1).ToList(),
+            IsCarryover = true,
+            PackDirectory = "",
+            PackId = Pack.Manifest.PackId,
+            PackName = Pack.Manifest.Name,
+            SeasonYear = nextYear,
+            BridgedYears = [],
         };
     }
 
@@ -1414,25 +1441,41 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         var next = NextSeason()
             ?? throw new InvalidOperationException(
-                "No next season pack was found — put a later-year season pack in the packs " +
-                "folder beside the app or in Documents\\AMS2CareerCompanion\\Packs, then sign again.");
-        var toPack = SeasonPackFiles.Read(next.PackDirectory).Parse();
+                "The season is not complete — finish it before signing on for next year.");
 
         var driversEnd = StateStore.ReadDriverStates(_database, _seasonId, StateStore.StageEnd);
         var teamsEnd = StateStore.ReadTeamStates(_database, _seasonId, StateStore.StageEnd);
         var playerEnd = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageEnd)
             ?? throw new InvalidOperationException(
                 "The season-end player state is missing — the season-end pipeline never ran.");
-
         var simInputs = SimInputs();
+        // The spends journaled this season develop the character as it rolls into next year —
+        // applied identically on the live and replay paths so the evolving driver re-derives.
+        var spends = ReplayService.ReadCharacterSpends(_database, _seasonId);
+
+        if (next.IsCarryover)
+        {
+            // Same car, next year: seat the player at the accepted team's seat in THIS pack, then
+            // roll the (already aged / retired / market-filled) end states forward. Same-pack, so
+            // replay re-derives through SeasonRollover — byte-identical by construction.
+            string? livery = EraTransition.ResolveSeatLivery(Pack, teamId) ?? playerEnd.LiveryName;
+            var startStates = SeasonRollover.Derive(
+                playerEnd, driversEnd, teamsEnd, teamId, livery, spends, simInputs.CharacterRules);
+            CareerStore.StartCarryoverSeason(
+                _database, startStates, next.SeasonYear,
+                Pack.Manifest.PackId, Pack.Manifest.Version, NowUtc());
+            return;
+        }
+
+        // A real era changeover into a later-year pack.
+        var toPack = SeasonPackFiles.Read(next.PackDirectory).Parse();
         var plan = EraTransition.Build(
             Pack, toPack, driversEnd, teamsEnd, playerEnd, accepted.Terms,
             new StreamFactory(MasterSeedU), _environment.Rules.AgingCurves,
-            simInputs.CanonRetirements,
-            // Between-season development (character depth 4): the spends journaled this season are
-            // applied to the character as it moves into the next season, re-derived identically on replay.
-            ReplayService.ReadCharacterSpends(_database, _seasonId),
-            simInputs.CharacterRules);
+            simInputs.CanonRetirements, spends, simInputs.CharacterRules,
+            // Drive the boundary off the real SEASON years: after a carryover the finished season's
+            // year runs ahead of this pack's nominal year, and the transition must start from it.
+            fromYearOverride: _seasonYear, toYearOverride: next.SeasonYear);
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
 
@@ -1515,7 +1558,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             dispatches.Add(new NewsDispatch
             {
                 Headline = text,
-                SeasonYear = Pack.Season.Year,
+                SeasonYear = _seasonYear,
                 Round = row.Round,
                 Kind = row.Round is null ? "season" : "race",
                 WhyText = why,
@@ -1613,7 +1656,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         {
             Phase = resultRow.Phase,
             Cause = resultRow.Cause,
-            Year = Pack.Season.Year,
+            Year = _seasonYear,
             Round = round,
             RaceName = packRound?.Name ?? grid.RoundName,
             PlayerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId,
@@ -1661,7 +1704,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         {
             Phase = "season.digest",
             Cause = playerIsChampion ? "player-champion" : "season-complete",
-            Year = Pack.Season.Year,
+            Year = _seasonYear,
             Round = 0,
             PlayerName = playerName,
             TeamName = playerSeat?.TeamName ?? "",
