@@ -90,6 +90,17 @@
         "{winner} took the win",
         "{winner} led the way"
       ]
+    },
+    "seasonClose": {
+      "1990s": [
+        "A full season's data, distilled to a single line in the record book.",
+        "The trucks head for winter; a campaign's worth of numbers goes under the microscope.",
+        "One season logged and closed, the next already on the drawing board."
+      ],
+      "default": [
+        "The season is run.",
+        "Attention turns to the year ahead."
+      ]
     }
   },
   "bodies": {
@@ -165,6 +176,24 @@
       ],
       "default": [
         "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "season.digest|player-champion": {
+      "1990s": [
+        "The {year} season is complete, and the title table settles on a single name: {player}. A methodical, season-long campaign hands {team} the championship, earned round by round and written into the numbers. {pool:seasonClose}",
+        "Champions are made across a full season, and the {year} data leaves no argument — {player} is world champion. {team} turned pace into points with a consistency the paddock will study for years. {pool:seasonClose}"
+      ],
+      "default": [
+        "{player} is the {year} champion, a title season for {team}. {pool:seasonClose}"
+      ]
+    },
+    "season.digest|season-complete": {
+      "1990s": [
+        "The {year} championship is decided: {champLeader} takes the title, while {player} closes the season {champPosition} for {team}. The margins tell the story of where the campaign was won and lost. {pool:seasonClose}",
+        "Season's end, and the final standings read {champLeader} champion of {year}, {player} classified {champPosition}. {team} turn to the winter and the data that separated them from the front. {pool:seasonClose}"
+      ],
+      "default": [
+        "{champLeader} took the {year} title; {player} finished the year {champPosition}. {pool:seasonClose}"
       ]
     }
   }

@@ -90,6 +90,17 @@
         "the car handling beautifully",
         "the machine well and truly sorted"
       ]
+    },
+    "seasonClose": {
+      "1970s": [
+        "The transporters roll for home now, and a long summer of racing folds gently into the record and the memory.",
+        "In the motorhomes the corks are pulled and the sponsors' guests linger late, for a season like this one comes but rarely.",
+        "The paddock empties, the money men tally their winnings, and already the talk drifts toward next spring and all it might hold."
+      ],
+      "default": [
+        "The season is run, and the paddock turns its face toward winter.",
+        "So closes another year of racing, and another begins to take shape."
+      ]
     }
   },
   "bodies": {
@@ -165,6 +176,24 @@
       ],
       "default": [
         "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "season.digest|player-champion": {
+      "1970s": [
+        "The season of {year} is run to its very last mile, and it is {player} who stands atop it all — champion of the world, the {team} name gilded now in the record book for as long as men keep such things. It has been a long and glorious summer of racing, of glamour and grease and money by the fistful, and every hard-won yard of it belonged, in the end, to this. {pool:seasonClose}",
+        "Champions are not made in a single afternoon but forged across the whole long arc of a season, and the {year} crown, richly and unarguably, is {player}'s. The {team} motorhome will toast this one for years yet, the sponsors' colours never worn more proudly than they are tonight. {pool:seasonClose}"
+      ],
+      "default": [
+        "{player} is champion of {year}, a title season for {team}. {pool:seasonClose}"
+      ]
+    },
+    "season.digest|season-complete": {
+      "1970s": [
+        "The {year} championship is settled at the last, and it is {champLeader} who carries off the crown, {player} classified {champPosition} at the season's close for {team}. There is no shame in a year run hard and honest, and the winter now offers time enough to sharpen the blade for the campaign to come. {pool:seasonClose}",
+        "So the long reckoning of {year} is complete: {champLeader} stands champion of the world, {player} closing the year {champPosition} for {team}. The season had its glories and its cruelties both, as every season must, and already the paddock's thoughts are drifting toward next spring. {pool:seasonClose}"
+      ],
+      "default": [
+        "{champLeader} took the {year} title; {player} finished the year {champPosition} for {team}. {pool:seasonClose}"
       ]
     }
   }

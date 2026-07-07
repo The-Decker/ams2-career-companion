@@ -77,6 +77,17 @@
         "The timing data agreed.",
         "The splits backed it up."
       ]
+    },
+    "seasonClose": {
+      "2000s": [
+        "The season's data is archived; the manufacturer program resets for next year.",
+        "The final standings are locked, and the offseason simulator work begins.",
+        "The championship servers go quiet until lights-out on a new campaign."
+      ],
+      "default": [
+        "The season is in the books.",
+        "On to next year."
+      ]
     }
   },
   "bodies": {
@@ -152,6 +163,24 @@
       ],
       "default": [
         "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "season.digest|player-champion": {
+      "2000s": [
+        "SEASON REVIEW — {year}. {player} closes the campaign as world champion, the {team} program topping the final standings after a title run the timing data flagged early. {pool:seasonClose}",
+        "The {year} title is settled and the number reads {champPosition}: {player} is champion, {team}'s manufacturer effort rewarded across a full season of points. {pool:seasonClose}"
+      ],
+      "default": [
+        "{player} tops the final {year} standings — champion, and a title season logged for {team}. {pool:seasonClose}"
+      ]
+    },
+    "season.digest|season-complete": {
+      "2000s": [
+        "SEASON REVIEW — {year}. {champLeader} takes the championship; {player} signs off {champPosition} in the final standings for {team}, the season's numbers filed for the offseason review. {pool:seasonClose}",
+        "The {year} campaign is complete: {champLeader} is champion, {player} classified {champPosition} for {team}. The data crew turns to the winter build. {pool:seasonClose}"
+      ],
+      "default": [
+        "{champLeader} took the {year} title; {player} finished the year {champPosition} for {team}. {pool:seasonClose}"
       ]
     }
   }

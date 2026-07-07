@@ -17,14 +17,21 @@ public static class NewsArticleComposer
     /// <summary>Builds the deterministic article body, or null when the bank has no template
     /// for the facts' <c>phase|cause</c> (the caller keeps the headline as the whole story).
     /// A fresh stream is created per call, so the render is independent of, and consistent
-    /// with, every prior render of the same round.</summary>
-    public static string? Compose(NewsArticleBank bank, NewsFacts facts, ulong masterSeed)
+    /// with, every prior render of the same round.
+    ///
+    /// <paramref name="streamDiscriminator"/> is the third stream key component (default
+    /// <c>"race"</c>, matching the shipped race-headline path). A season-summary article passes
+    /// <c>"season"</c> so it draws from a distinct sub-stream than that round's race body — the
+    /// same year+round can therefore carry both a race article and, at year end, a season article
+    /// without one determining the other's wording.</summary>
+    public static string? Compose(
+        NewsArticleBank bank, NewsFacts facts, ulong masterSeed, string streamDiscriminator = "race")
     {
         ArgumentNullException.ThrowIfNull(bank);
         ArgumentNullException.ThrowIfNull(facts);
 
         var stream = new StreamFactory(masterSeed)
-            .CreateStream(CareerStreams.Headlines, facts.Year, facts.Round, "race");
+            .CreateStream(CareerStreams.Headlines, facts.Year, facts.Round, streamDiscriminator);
         return bank.BuildBody(facts, stream);
     }
 }

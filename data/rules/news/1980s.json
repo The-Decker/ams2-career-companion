@@ -90,6 +90,17 @@
         "A result worth watching.",
         "The grandstands roared."
       ]
+    },
+    "seasonClose": {
+      "1980s": [
+        "Roll the season reel, cue the champagne — the boost cools now till spring.",
+        "The TV money's counted and the trophies polished; the winter belongs to next year's turbo.",
+        "Kill the boost and load the transporters — another turbo-age year goes in the book for {team}."
+      ],
+      "default": [
+        "The {year} season is done for {team}.",
+        "The books close on another year."
+      ]
     }
   },
   "bodies": {
@@ -165,6 +176,24 @@
       ],
       "default": [
         "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "season.digest|player-champion": {
+      "1980s": [
+        "THE {year} TITLE IS {player}'S — and the whole world watched it happen. World champion, with the {team} name splashed across every back page and the champagne going up like a monster boost. {pool:seasonClose}",
+        "Cue the anthem and crank the volume: {player} is champion of {year}. A season {team} will be selling to the sponsors for a decade, headlines and highlight reels all the way. {pool:seasonClose}"
+      ],
+      "default": [
+        "{player} is the {year} champion, a title year for {team}. {pool:seasonClose}"
+      ]
+    },
+    "season.digest|season-complete": {
+      "1980s": [
+        "THE {year} CROWN GOES TO {champLeader}. {player} brings the {team} car home {champPosition} on the year — not the headline they wanted, but the boost lives to fight another season. {pool:seasonClose}",
+        "Final reckoning of {year}: {champLeader} takes the title, {player} classified {champPosition} for {team}. The transporters point at the winter and next year's turbo. {pool:seasonClose}"
+      ],
+      "default": [
+        "{champLeader} took the {year} title; {player} finished the year {champPosition}. {pool:seasonClose}"
       ]
     }
   }

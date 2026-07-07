@@ -1500,6 +1500,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 var facts = NewsFactsFor(round, resultRow, rawByRound, snapshotsByOrdinal);
                 body = NewsArticleComposer.Compose(articles, facts, MasterSeedU) ?? "";
             }
+            else if (string.Equals(row.Entity, "season", StringComparison.Ordinal)
+                     && string.Equals(row.Cause, "season-digest", StringComparison.Ordinal))
+            {
+                // The season-in-review article: the season-digest headline (round-less) hangs a
+                // period-voiced "champion crowned / final standing" body. Read-side only — the body
+                // is derived deterministically from the seed + final standings, nothing is folded.
+                snapshotsByOrdinal ??= AllSnapshots().ToDictionary(s => s.AfterRound);
+                articles ??= _environment.Rules.NewsArticles;
+                if (SeasonDigestFacts(snapshotsByOrdinal) is { } seasonFacts)
+                    body = NewsArticleComposer.Compose(articles, seasonFacts, MasterSeedU, "season") ?? "";
+            }
 
             dispatches.Add(new NewsDispatch
             {
@@ -1621,6 +1632,46 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     /// <summary>Display name for a driver id in a resolved grid, falling back to the pack's
     /// driver table then the raw id — so a name is always available for {winner}/{champLeader}.</summary>
+    /// <summary>Projects the season's closing facts for the <c>season.digest</c> article from the
+    /// final standings snapshot: who took the title, and where the player finished the year. The
+    /// cause splits the corpus into a celebratory <c>player-champion</c> body and a reflective
+    /// <c>season-complete</c> one. Only the season-neutral tokens are populated
+    /// ({player} {team} {year} {champLeader} {champPosition}); race-only slots stay null so a
+    /// season template that never names them still fills cleanly. Null when there is no scored
+    /// standing yet (an unraced season carries no digest).</summary>
+    private NewsFacts? SeasonDigestFacts(IReadOnlyDictionary<int, StandingsSnapshot> snapshotsByOrdinal)
+    {
+        if (snapshotsByOrdinal.Count == 0)
+            return null;
+        var final = snapshotsByOrdinal[snapshotsByOrdinal.Keys.Max()];
+        var champion = final.Drivers.FirstOrDefault(d => d.Position == 1);
+        if (champion is null)
+            return null;
+
+        var grid = ResolveGrid(Pack.Season.Rounds.Max(r => r.Round));
+        var playerSeat = grid.Seats.FirstOrDefault(s =>
+            string.Equals(s.DriverId, _playerDriverId, StringComparison.Ordinal));
+        bool playerIsChampion = string.Equals(champion.DriverId, _playerDriverId, StringComparison.Ordinal);
+        string playerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId;
+        int? playerPosition = final.Drivers
+            .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal))
+            ?.Position;
+
+        return new NewsFacts
+        {
+            Phase = "season.digest",
+            Cause = playerIsChampion ? "player-champion" : "season-complete",
+            Year = Pack.Season.Year,
+            Round = 0,
+            PlayerName = playerName,
+            TeamName = playerSeat?.TeamName ?? "",
+            // {champLeader} is the crowned champion; when the player wins, it is the player's own name.
+            ChampionshipLeaderName = playerIsChampion ? playerName : DriverDisplayName(grid, champion.DriverId),
+            ChampionshipPosition = playerPosition,
+            PlayerLeadsChampionship = playerIsChampion,
+        };
+    }
+
     private string DriverDisplayName(GridPlan grid, string driverId) =>
         grid.Seats.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal))?.DriverName
         ?? Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, driverId, StringComparison.Ordinal))?.Name

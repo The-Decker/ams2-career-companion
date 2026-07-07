@@ -212,6 +212,45 @@ public sealed class SessionServiceTests : IDisposable
     }
 
     [Fact]
+    public void ReadFeed_SeasonDigest_CarriesAPeriodVoicedSeasonInReviewBody()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+        using var session = CareerSessionService.CreateCareer(Request(), environment);
+
+        // Play every championship round (a clean full classification each time).
+        for (int i = 0; i < 40 && !session.Summary.SeasonComplete; i++)
+        {
+            var gridOrder = session.CurrentGrid().Select(s => s.DriverId).ToList();
+            session.Apply(new ResultDraft
+            {
+                Classified = gridOrder,
+                DidNotFinish = new Dictionary<string, string>(),
+                Disqualified = [],
+            });
+        }
+        Assert.True(session.Summary.SeasonComplete, "the season should complete after its rounds are applied");
+
+        // Completing the season runs the season-end pipeline, which journals the round-less
+        // season-digest headline. The feed hangs a generated "season in review" body on it.
+        Assert.NotNull(session.SeasonReview());
+
+        // Several round-less headlines are season-kind (promoted/relegated, retirement
+        // foreshadow), but ONLY the season-digest gets a composed article body — so exactly one
+        // season dispatch carries a body, and that is the season-in-review.
+        var seasonDispatch = Assert.Single(
+            session.ReadFeed(), d => d.Kind == "season" && !string.IsNullOrWhiteSpace(d.Body));
+        Assert.False(string.IsNullOrWhiteSpace(seasonDispatch.Headline));
+        Assert.DoesNotContain("{", seasonDispatch.Body);
+        Assert.DoesNotContain("}", seasonDispatch.Body);
+        Assert.Contains("1967", seasonDispatch.Body); // {year} — every season template names it
+
+        // Determinism: the derived body re-renders identically on a second read.
+        var second = Assert.Single(
+            session.ReadFeed(), d => d.Kind == "season" && !string.IsNullOrWhiteSpace(d.Body));
+        Assert.Equal(seasonDispatch.Body, second.Body);
+    }
+
+    [Fact]
     public void ReadFeed_ArticleBodies_AreByteIdenticalAcrossCalls()
     {
         var environment = ViewModelTestData.Environment(DocumentsDirectory);

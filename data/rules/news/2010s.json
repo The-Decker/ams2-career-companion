@@ -89,6 +89,17 @@
         "The pundits approve.",
         "A drive the analysts will replay."
       ]
+    },
+    "seasonClose": {
+      "2010s": [
+        "Season's done, data's archived, and the paddock is already crunching next year's numbers.",
+        "The timing screens go dark for winter — every debrief from here points at the season to come.",
+        "Roll the credits on the campaign; the analysts will be replaying this one all off-season."
+      ],
+      "default": [
+        "The season is in the books.",
+        "On to the winter and next year."
+      ]
     }
   },
   "bodies": {
@@ -164,6 +175,24 @@
       ],
       "default": [
         "{player} runs to {position} at {race}, a quiet day for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "season.digest|player-champion": {
+      "2010s": [
+        "The {year} season is run and {player} is world champion. Lights-out in the opener to flag in the finale, {team} kept the numbers on their side all year, and now the title is theirs. {pool:seasonClose}",
+        "Title confirmed: {player} closes out {year} on top and untouchable when it mattered most. The {team} garage erupts, the feeds all agree — thoroughly earned. {pool:seasonClose}"
+      ],
+      "default": [
+        "{player} is the {year} champion, a title year for {team}. {pool:seasonClose}"
+      ]
+    },
+    "season.digest|season-complete": {
+      "2010s": [
+        "The {year} title is settled and it's {champLeader} lifting it. {player} signs off {champPosition} for {team} — some highlights, some deletes, plenty in the data to build on. {pool:seasonClose}",
+        "Final standings are in: {champLeader} takes {year}, {player} classified {champPosition}. The {team} pit wall is already scrolling forward to next year's numbers. {pool:seasonClose}"
+      ],
+      "default": [
+        "{champLeader} takes the {year} title; {player} ends the year {champPosition} for {team}. {pool:seasonClose}"
       ]
     }
   }

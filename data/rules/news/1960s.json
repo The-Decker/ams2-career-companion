@@ -64,6 +64,17 @@
         "beyond the expected {expected}",
         "past a predicted {expected}"
       ]
+    },
+    "seasonClose": {
+      "1960s": [
+        "The paddock scatters to the winter, the record book closed for another year. STOP.",
+        "Until the flag falls again, next season.",
+        "A campaign for the history books, whatever comes next."
+      ],
+      "default": [
+        "The season is complete.",
+        "On to next year."
+      ]
     }
   },
   "bodies": {
@@ -139,6 +150,24 @@
       ],
       "default": [
         "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "season.digest|player-champion": {
+      "1960s": [
+        "THE {year} SEASON IS RUN. STOP. And it is {player} who stands above all — champion of the world, the {team} name struck into the record book. {pool:seasonClose}",
+        "Champions are forged across a long season, and in {year} the crown is {player}'s. STOP. A campaign {team} will toast for years to come. {pool:seasonClose}"
+      ],
+      "default": [
+        "{player} is the {year} champion, a title season for {team}. {pool:seasonClose}"
+      ]
+    },
+    "season.digest|season-complete": {
+      "1960s": [
+        "THE {year} TITLE IS DECIDED. STOP. {champLeader} takes the championship; {player} closes the year {champPosition} for {team}. {pool:seasonClose}",
+        "The season's final reckoning: {champLeader} is champion of {year}, {player} classified {champPosition}. {team} look to the winter and the year to come. {pool:seasonClose}"
+      ],
+      "default": [
+        "{champLeader} took the {year} title; {player} finished the year {champPosition}. {pool:seasonClose}"
       ]
     }
   }

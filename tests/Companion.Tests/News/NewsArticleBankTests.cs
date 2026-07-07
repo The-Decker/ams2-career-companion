@@ -125,6 +125,43 @@ public sealed class NewsArticleBankTests
         }
     }
 
+    [Theory]
+    [MemberData(nameof(EraYears))]
+    public void EveryEra_BuildsASeasonInReviewBody_ForBothOutcomes(int year, string eraKey)
+    {
+        var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
+
+        // Both season-digest outcomes must render a clean body in every era: player-champion
+        // (the player took the title) and season-complete (someone else did). These use the
+        // season-neutral tokens only — a race token or an undeclared seasonClose pool would throw.
+        foreach (string cause in new[] { "player-champion", "season-complete" })
+        {
+            bool playerChampion = cause == "player-champion";
+            var facts = new NewsFacts
+            {
+                Phase = "season.digest",
+                Cause = cause,
+                Year = year,
+                Round = 0,
+                PlayerName = "A. Driver",
+                TeamName = "Constructor",
+                ChampionshipLeaderName = playerChampion ? "A. Driver" : "T. Champ",
+                ChampionshipPosition = playerChampion ? 1 : 4,
+                PlayerLeadsChampionship = playerChampion,
+            };
+
+            for (ulong seed = 1; seed <= 6; seed++)
+            {
+                string? body = NewsArticleComposer.Compose(bank, facts, seed, "season");
+                Assert.False(string.IsNullOrWhiteSpace(body),
+                    $"{eraKey} season.digest|{cause} produced an empty body at seed {seed}.");
+                Assert.DoesNotContain("{", body);
+                Assert.DoesNotContain("}", body);
+                Assert.Contains(year.ToString(System.Globalization.CultureInfo.InvariantCulture), body);
+            }
+        }
+    }
+
     [Fact]
     public void ShippedCorpus_FillsEverySlot_ForASampleRace()
     {
