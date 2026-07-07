@@ -1,4 +1,5 @@
 using Companion.Ams2.Skins;
+using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Hub;
 
@@ -202,6 +203,94 @@ public sealed class SkinsViewModelTests
         Assert.False(vm.ActivationSucceeded);
         Assert.Contains("No AMS2", vm.ActivationBanner);
     }
+
+    // ---------- grid editor ----------
+
+    [Fact]
+    public void BuildsAnEditorPerSeat_WithLiveryOptions()
+    {
+        var session = new FakeCareerSession
+        {
+            SkinPlan = new SkinAssignmentPlan
+            {
+                Ams2Class = "F-Retro_Gen3",
+                Assignments =
+                [
+                    Assign("K. Acheson", "Skoal", "Skoal #10", SkinStatus.InstalledInactive),
+                    Assign("A. Senna", "McLaren", "McLaren #1", SkinStatus.CustomSkin),
+                ],
+                ActiveLiveries = ["McLaren #1", "Ferrari #27", "Williams #5"],
+            },
+        };
+
+        var vm = new SkinsViewModel(session);
+
+        Assert.Equal(2, vm.Editors.Count);
+        var skoal = vm.Editors[0];
+        Assert.Equal("Skoal #10", skoal.LiveryKey);
+        Assert.Equal("K. Acheson", skoal.DriverName);
+        Assert.Equal("Skoal #10", skoal.SelectedLivery);      // defaults to its own livery
+        Assert.Contains("Skoal #10", skoal.LiveryOptions);    // own livery selectable
+        Assert.Contains("Ferrari #27", skoal.LiveryOptions);  // + active liveries to rebind to
+    }
+
+    [Fact]
+    public void RenamingADriver_PersistsAsAnOverride()
+    {
+        var session = Session("Skoal #10", "K. Acheson");
+        var vm = new SkinsViewModel(session);
+
+        vm.Editors[0].DriverName = "Mike Kobra";
+
+        Assert.Equal("Mike Kobra", session.Overrides["Skoal #10"].DriverName);
+        Assert.Null(session.Overrides["Skoal #10"].LiveryName);
+    }
+
+    [Fact]
+    public void RebindingALivery_PersistsAsAnOverride()
+    {
+        var session = Session("Skoal #10", "K. Acheson", active: ["Ferrari #27"]);
+        var vm = new SkinsViewModel(session);
+
+        vm.Editors[0].SelectedLivery = "Ferrari #27";
+
+        Assert.Equal("Ferrari #27", session.Overrides["Skoal #10"].LiveryName);
+    }
+
+    [Fact]
+    public void ResettingTheNameBackToOriginal_ClearsTheOverride()
+    {
+        var session = Session("Skoal #10", "K. Acheson");
+        var vm = new SkinsViewModel(session);
+
+        vm.Editors[0].DriverName = "Mike Kobra";
+        Assert.True(session.Overrides.ContainsKey("Skoal #10"));
+
+        vm.Editors[0].DriverName = "K. Acheson"; // back to the pack's driver
+        Assert.False(session.Overrides.ContainsKey("Skoal #10"));
+    }
+
+    [Fact]
+    public void EditorSeedsFromAnExistingSavedOverride()
+    {
+        var session = Session("Skoal #10", "K. Acheson", active: ["Ferrari #27"]);
+        session.Overrides["Skoal #10"] = new SeatStagingOverride { DriverName = "Renamed", LiveryName = "Ferrari #27" };
+
+        var vm = new SkinsViewModel(session);
+
+        Assert.Equal("Renamed", vm.Editors[0].DriverName);
+        Assert.Equal("Ferrari #27", vm.Editors[0].SelectedLivery);
+    }
+
+    private static FakeCareerSession Session(string livery, string driver, string[]? active = null) => new()
+    {
+        SkinPlan = new SkinAssignmentPlan
+        {
+            Ams2Class = "F-Retro_Gen3",
+            Assignments = [Assign(driver, "Team", livery, SkinStatus.CustomSkin)],
+            ActiveLiveries = active ?? [],
+        },
+    };
 
     // ---------- helpers ----------
 

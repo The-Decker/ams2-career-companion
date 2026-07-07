@@ -133,6 +133,37 @@
                        Text="No grid to show — the season is complete, you have no seat this round, or no AMS2 install was found."
                        Visibility="{Binding Cars.Count, Converter={StaticResource CountCollapsed}}" />
 
+            <!-- EDIT THE GRID: rename drivers + rebind liveries (cosmetic, staged AI file only) -->
+            <StackPanel Margin="0,26,0,0"
+                        Visibility="{Binding Editors.Count, Converter={StaticResource CountVisible}}">
+                <TextBlock Text="Edit the grid" Style="{StaticResource H2}" Margin="0,0,0,4" />
+                <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                           Text="Rename any driver, or rebind a car to a different active livery. Changes are written to the AI file when you stage the round — they never touch results or standings. Your car's own livery is still the one you pick in-game." />
+                <ItemsControl ItemsSource="{Binding Editors}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Panel}" Padding="12,9" Margin="0,0,0,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                        <TextBlock Text="Driver name" Style="{StaticResource Faint}" Margin="0,0,0,3" />
+                                        <TextBox Text="{Binding DriverName, UpdateSourceTrigger=LostFocus}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="Livery (skin)" Style="{StaticResource Faint}" Margin="0,0,0,3" />
+                                        <ComboBox ItemsSource="{Binding LiveryOptions}"
+                                                  SelectedItem="{Binding SelectedLivery}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
             <!-- ACTIVATE skins: turn installed-but-inactive ("##") liveries ON in-game -->
             <StackPanel Margin="0,24,0,0"
                         Visibility="{Binding HasActivatable, Converter={StaticResource BoolVisible}}">

@@ -68,6 +68,7 @@ public sealed class SkinsViewRenderTests
                 },
             ],
             InactiveLiveries = ["Skoal Bandit Formula 1 Team #10", "RAM #11 Winkelhock"],
+            ActiveLiveries = ["Ferrari #11 C. Amon", "Brabham-Ford Cosworth #3 J. Brabham"],
             // A tiny cap so the over-cap warning panel + budget line both render (XAML validation).
             LiveryCap = 4,
         };
@@ -131,6 +132,7 @@ public sealed class SkinsViewRenderTests
             Assert.True(vm.HasUnbound);
             Assert.True(vm.HasActivatable);
             Assert.Equal(2, vm.ActivatableLiveries.Count);
+            Assert.Equal(5, vm.Editors.Count); // an editable row per seat
             Assert.Single(vm.RequiredSkinPacks);
 
             var view = new SkinsView { DataContext = vm };

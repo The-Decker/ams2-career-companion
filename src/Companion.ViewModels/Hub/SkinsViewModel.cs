@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Ams2.Skins;
+using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
 
@@ -43,6 +44,72 @@ public sealed record SkinPackRef
     public string? OverridesFolder { get; init; }
 }
 
+/// <summary>One editable grid seat (the grid editor): rename the driver and/or rebind the seat to a
+/// different ACTIVE livery. Edits persist through the supplied callback (a cosmetic staging override,
+/// keyed by the seat's ORIGINAL livery) and land in the staged custom-AI file at the next stage —
+/// never the sim. Auto-saves when a field commits (text on focus-loss, livery on selection).</summary>
+public sealed partial class SeatEditor : ObservableObject
+{
+    private readonly Action<string, SeatStagingOverride> _save;
+    private readonly bool _loading;
+
+    public SeatEditor(
+        string liveryKey,
+        string originalDriverName,
+        string currentDriverName,
+        string currentLivery,
+        IReadOnlyList<string> liveryOptions,
+        Action<string, SeatStagingOverride> save)
+    {
+        LiveryKey = liveryKey;
+        OriginalDriverName = originalDriverName;
+        LiveryOptions = liveryOptions;
+        _save = save;
+
+        _loading = true;
+        _driverName = currentDriverName;
+        _selectedLivery = currentLivery;
+        _loading = false;
+    }
+
+    /// <summary>The seat's ORIGINAL livery — the stable key the override is stored under (never
+    /// changes when the driver is renamed or the skin rebound).</summary>
+    public string LiveryKey { get; }
+
+    /// <summary>The driver the pack authored for this seat — the baseline a rename is measured against
+    /// (so clearing back to it removes the override).</summary>
+    public string OriginalDriverName { get; }
+
+    /// <summary>The liveries this seat can wear: its own original plus every ACTIVE livery for the
+    /// class. Picking one other than the original rebinds the seat's skin.</summary>
+    public IReadOnlyList<string> LiveryOptions { get; }
+
+    [ObservableProperty]
+    private string _driverName;
+
+    [ObservableProperty]
+    private string _selectedLivery;
+
+    partial void OnDriverNameChanged(string value) => Persist();
+
+    partial void OnSelectedLiveryChanged(string value) => Persist();
+
+    private void Persist()
+    {
+        if (_loading)
+            return;
+
+        string? nameOverride =
+            string.IsNullOrWhiteSpace(DriverName) || string.Equals(DriverName, OriginalDriverName, StringComparison.Ordinal)
+                ? null
+                : DriverName;
+        string? liveryOverride =
+            string.Equals(SelectedLivery, LiveryKey, StringComparison.Ordinal) ? null : SelectedLivery;
+
+        _save(LiveryKey, new SeatStagingOverride { DriverName = nameOverride, LiveryName = liveryOverride });
+    }
+}
+
 /// <summary>
 /// The hub's Skins lens: what livery/skin every car on the current round's grid will actually
 /// show in AMS2, and — the headline — the exact livery the player must pick for their OWN car on
@@ -75,6 +142,10 @@ public sealed partial class SkinsViewModel : ObservableObject
     /// <summary>Liveries installed on disk as "##" placeholders but NOT switched on in-game — the
     /// activator's candidates. Turning one on writes the community override file (backup-first).</summary>
     public ObservableCollection<string> ActivatableLiveries { get; } = [];
+
+    /// <summary>The editable grid: one row per seat for renaming the driver + rebinding the livery.
+    /// Edits persist as cosmetic staging overrides applied to the custom-AI file at the next stage.</summary>
+    public ObservableCollection<SeatEditor> Editors { get; } = [];
 
     /// <summary>True when there is at least one inactive livery to activate — shows the activator.</summary>
     [ObservableProperty]
@@ -185,8 +256,35 @@ public sealed partial class SkinsViewModel : ObservableObject
             ActivatableLiveries.Add(name);
         HasActivatable = ActivatableLiveries.Count > 0;
 
+        // Editable grid: one row per seat, seeded from any saved override. Livery options = the
+        // seat's own livery plus every active livery for the class (so "keep original" is selectable
+        // and any rebind targets a livery that actually renders in-game).
+        var overrides = _session.SeatStagingOverrides();
+        Editors.Clear();
+        foreach (var a in plan.Assignments)
+        {
+            overrides.TryGetValue(a.LiveryName, out var ov);
+            string currentName = ov?.DriverName is { Length: > 0 } n ? n : a.DriverName;
+            string currentLivery = ov?.LiveryName is { Length: > 0 } l ? l : a.LiveryName;
+
+            var options = new List<string> { a.LiveryName };
+            if (!string.Equals(currentLivery, a.LiveryName, StringComparison.Ordinal))
+                options.Add(currentLivery);
+            options.AddRange(plan.ActiveLiveries.Where(x =>
+                !string.Equals(x, a.LiveryName, StringComparison.Ordinal) &&
+                !string.Equals(x, currentLivery, StringComparison.Ordinal)));
+
+            Editors.Add(new SeatEditor(a.LiveryName, a.DriverName, currentName, currentLivery, options, SaveOverride));
+        }
+
         OnPropertyChanged(nameof(HasPlayerCar));
     }
+
+    /// <summary>Persists one seat's grid-editor override through the session (rename / rebind). The
+    /// lens re-projects to the new picture on the next natural refresh (Apply / reopen); we don't
+    /// rebuild on every keystroke so editing keeps focus.</summary>
+    private void SaveOverride(string liveryKey, SeatStagingOverride seatOverride) =>
+        _session.SetSeatStagingOverride(liveryKey, seatOverride);
 
     /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the
     /// community override file, backup-first) — the fix for "installed but AMS2 doesn't show it".

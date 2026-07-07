@@ -333,6 +333,19 @@ internal sealed class FakeCareerSession : ICareerSession
         return ActivationResult;
     }
 
+    /// <summary>The grid-editor overrides this fake persists (rename / rebind), keyed by livery.</summary>
+    public Dictionary<string, SeatStagingOverride> Overrides { get; } = new(StringComparer.Ordinal);
+
+    public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() => Overrides;
+
+    public void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride)
+    {
+        if (seatOverride.IsEmpty)
+            Overrides.Remove(liveryKey);
+        else
+            Overrides[liveryKey] = seatOverride;
+    }
+
     /// <summary>The player's driver id + character display name, surfaced to name-rendering screens.</summary>
     public (string DriverId, string DisplayName)? Identity { get; set; }
 
