@@ -244,6 +244,29 @@ public class ResultEntryViewModelTests
     }
 
     [Fact]
+    public void SurnameMatch_IgnoresAccents_TypedWithoutTheDiacritic()
+    {
+        // A surname with a diacritic must match when the player types the plain ASCII letters —
+        // most keyboards can't type "é". (Also the reverse, so typing the accent still works.)
+        var grid = new[]
+        {
+            Seat("d.perez", "Luis Pérez-Sala", "24"),
+            Seat("d.rai", "Kimi Räikkönen", "7"),
+            Seat(PlayerId, "Test Player", "3", isPlayer: true),
+        };
+        var vm = new ResultEntryViewModel(grid, PlayerId);
+
+        vm.Input = "perez";                       // no accent
+        Assert.Equal(new[] { "d.perez" }, Ids(vm.Candidates));
+
+        vm.Input = "pérez";                       // with accent still works
+        Assert.Equal(new[] { "d.perez" }, Ids(vm.Candidates));
+
+        vm.Input = "raik";                        // "Räikkönen" typed plain
+        Assert.Equal(new[] { "d.rai" }, Ids(vm.Candidates));
+    }
+
+    [Fact]
     public void AmbiguousPrefix_ShowsCandidatesInGridOrder_TabWraps()
     {
         var vm = Vm();
