@@ -2,6 +2,7 @@ using Companion.Ams2.Skins;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Hub;
+using Companion.ViewModels.Services;
 
 namespace Companion.Tests.ViewModels;
 
@@ -280,6 +281,39 @@ public sealed class SkinsViewModelTests
 
         Assert.Equal("Renamed", vm.Editors[0].DriverName);
         Assert.Equal("Ferrari #27", vm.Editors[0].SelectedLivery);
+    }
+
+    [Fact]
+    public void StageGrid_PushesThroughTheSeam_AndShowsTheOutcome()
+    {
+        var session = Session("Skoal #10", "K. Acheson");
+        session.StageOutcomes.Enqueue(new StageOutcome
+        {
+            Success = true, WrittenPath = @"C:\...\F-Retro_Gen3.xml", Messages = ["staged"],
+        });
+        var vm = new SkinsViewModel(session);
+
+        vm.StageGridCommand.Execute(null);
+
+        Assert.True(vm.StageSucceeded);
+        Assert.Contains("Pushed the grid", vm.StageBanner);
+    }
+
+    [Fact]
+    public void StageGrid_CommunityFileGate_ShowsStageAnyway()
+    {
+        var session = Session("Skoal #10", "K. Acheson");
+        session.StageOutcomes.Enqueue(new StageOutcome
+        {
+            Success = false, BlockedByForceGate = true, Messages = ["community file"],
+        });
+        var vm = new SkinsViewModel(session);
+
+        vm.StageGridCommand.Execute(null);
+
+        Assert.True(vm.StageBlocked);
+        Assert.False(vm.StageSucceeded);
+        Assert.Contains("Stage anyway", vm.StageBanner);
     }
 
     private static FakeCareerSession Session(string livery, string driver, string[]? active = null) => new()

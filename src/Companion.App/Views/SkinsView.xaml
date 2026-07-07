@@ -138,7 +138,30 @@
                         Visibility="{Binding Editors.Count, Converter={StaticResource CountVisible}}">
                 <TextBlock Text="Edit the grid" Style="{StaticResource H2}" Margin="0,0,0,4" />
                 <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,8"
-                           Text="Rename any driver, or rebind a car to a different active livery. Changes are written to the AI file when you stage the round — they never touch results or standings. Your car's own livery is still the one you pick in-game." />
+                           Text="Rename any driver, or rebind a car to a different active livery. Edits are written to the AI file when you push the grid below — they never touch results or standings. Your car's own livery is still the one you pick in-game." />
+
+                <!-- push the grid (with edits) into AMS2 — the "apply" action -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <Button Content="Stage grid into AMS2" MinWidth="160" Command="{Binding StageGridCommand}" />
+                    <Button Content="Stage anyway (backup first)" MinWidth="150" Margin="8,0,0,0"
+                            Command="{Binding ForceStageGridCommand}"
+                            Visibility="{Binding StageBlocked, Converter={StaticResource BoolVisible}}" />
+                </StackPanel>
+                <Border Margin="0,0,0,10" Padding="12,8" CornerRadius="6"
+                        Visibility="{Binding StageBanner, Converter={StaticResource NullCollapsed}}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding StageBanner}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                </Border>
+
                 <ItemsControl ItemsSource="{Binding Editors}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>

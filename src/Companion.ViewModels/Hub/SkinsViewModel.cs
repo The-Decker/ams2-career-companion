@@ -286,6 +286,56 @@ public sealed partial class SkinsViewModel : ObservableObject
     private void SaveOverride(string liveryKey, SeatStagingOverride seatOverride) =>
         _session.SetSeatStagingOverride(liveryKey, seatOverride);
 
+    // ---------- push the grid (with edits) into AMS2 ----------
+
+    /// <summary>The outcome banner of the last stage (null before any).</summary>
+    [ObservableProperty]
+    private string? _stageBanner;
+
+    [ObservableProperty]
+    private bool _stageSucceeded;
+
+    /// <summary>True when staging paused on the community-file gate — the view shows "Stage anyway".</summary>
+    [ObservableProperty]
+    private bool _stageBlocked;
+
+    /// <summary>True when the session supports the force-stage escape hatch (community NAMeS file).</summary>
+    public bool CanForceStage => _session is IForceStaging;
+
+    /// <summary>Writes this round's grid — INCLUDING your renames/rebinds — into the AMS2 custom-AI
+    /// file (same staging as the Race tab, backup-first). This is how edits reach the game.</summary>
+    [RelayCommand]
+    private void StageGrid() => ApplyStage(_session.StageCurrentGrid());
+
+    [RelayCommand]
+    private void ForceStageGrid()
+    {
+        if (_session is IForceStaging forceStaging)
+            ApplyStage(forceStaging.StageCurrentGrid(force: true));
+    }
+
+    private void ApplyStage(StageOutcome outcome)
+    {
+        StageSucceeded = outcome.Success;
+        StageBlocked = outcome.BlockedByForceGate;
+        StageBanner = ComposeStageBanner(outcome);
+    }
+
+    private static string ComposeStageBanner(StageOutcome outcome)
+    {
+        if (outcome.BlockedByForceGate)
+            return "Ready to push — click “Stage anyway (backup first)” to write the grid (with your edits) " +
+                   "into AMS2. Your installed AI is a community file, so the app only writes it when you " +
+                   "confirm; a timestamped backup is taken first.";
+        if (!outcome.Success)
+            return outcome.Messages.Count > 0 ? $"Couldn't stage — {outcome.Messages[^1]}" : "Couldn't stage.";
+        if (outcome.NoOpAlreadyMatches)
+            return "✔ Your installed AI file already matches this grid — nothing to write.";
+        return outcome.BackupPath is { Length: > 0 } backup
+            ? $"✔ Pushed the grid (with your edits) into AMS2 — previous file backed up to {System.IO.Path.GetFileName(backup)}. Set up your race in AMS2 to see it."
+            : "✔ Pushed the grid (with your edits) into AMS2. Set up your race in AMS2 to see it.";
+    }
+
     /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the
     /// community override file, backup-first) — the fix for "installed but AMS2 doesn't show it".
     /// Re-projects afterwards so the newly-active livery moves out of the activatable list and any
