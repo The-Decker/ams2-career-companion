@@ -383,10 +383,11 @@ public sealed partial class BriefingViewModel : ObservableObject
     private static string ComposeBanner(StageOutcome outcome)
     {
         if (outcome.BlockedByForceGate)
-            return outcome.Messages.Count > 0
-                ? outcome.Messages[^1] // the calm explanation — this is a choice, not a failure
-                : "Your installed AI file differs from this round's grid. " +
-                  "'Stage anyway' takes a timestamped backup first.";
+            // Not a failure — a deliberate safety pause. Tell the user exactly what to click and
+            // that nothing is at risk, so the community-file gate never reads as an error.
+            return "Ready to stage — click “Stage anyway (backup first)” to write this round's " +
+                   "grid into AMS2. Your installed names/AI is a community file, so the app only writes " +
+                   "it when you confirm; a timestamped backup is taken first, so nothing is lost.";
 
         if (!outcome.Success)
             return outcome.Messages.Count > 0

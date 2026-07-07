@@ -88,7 +88,10 @@ public class BriefingBannerToneTests
         vm.StageGridCommand.Execute(null);
 
         Assert.Equal(StageBannerTone.Info, vm.BannerTone);
-        Assert.Equal(GateMessage, vm.StageBanner);
+        // The banner is a clear, directive prompt (names the button, promises a backup) — not the
+        // raw gate message, and never reads as a failure.
+        Assert.Contains("Stage anyway", vm.StageBanner);
+        Assert.Contains("backup", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("failed", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("aborted", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
 
