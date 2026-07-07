@@ -1,8 +1,10 @@
 using System.Globalization;
 using System.Text.Json;
+using System.IO;
 using Companion.Ams2;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
+using Companion.Ams2.Scenarios;
 using Companion.Ams2.Skins;
 using Companion.Core.Career;
 using Companion.Core.Character;
@@ -904,6 +906,60 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     public StageOutcome ApplyGridToAms2() =>
         StageCurrentGrid(force: true, alwaysWrite: true, baseGameLiveries: true);
 
+    /// <summary>Activates the round's community liveries by replaying the pack's scenario .bat swaps —
+    /// the community skin packs rotate which liveries are on the grid PER RACE by copying a round
+    /// variant over each vehicle model's active override file. Discovers the .bat in the AMS2 root
+    /// (the one that manages this class's custom-AI file) and applies the round's swaps backup-first.
+    /// Skin files only — never the career DB, so the sim/fold/oracle are untouched. Null when there is
+    /// no install, no matching .bat, or the .bat has no entry for this round.</summary>
+    private ScenarioApplyResult? ApplyScenarioForRound(int round)
+    {
+        var installation = _environment.LocateInstall();
+        if (installation is null)
+            return null;
+        string root = installation.InstallDirectory;
+
+        string? batPath;
+        try
+        {
+            batPath = Directory.EnumerateFiles(root, "*.bat", SearchOption.TopDirectoryOnly)
+                .FirstOrDefault(f => BatManagesClass(f, Pack.Season.Ams2Class));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+        if (batPath is null)
+            return null;
+
+        try
+        {
+            var map = BatScenarioReader.Parse(File.ReadAllText(batPath));
+            return map.TryGetValue(round, out var swaps)
+                ? ScenarioApplier.Apply(root, swaps, _environment.Clock.GetUtcNow())
+                : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>True when the batch file manages this vehicle class — it references the class's
+    /// custom-AI file name (e.g. "F-Classic_Gen2"), so it is the scenario selector for this class
+    /// regardless of its own arbitrary filename.</summary>
+    private static bool BatManagesClass(string batPath, string vehicleClass)
+    {
+        try
+        {
+            return File.ReadAllText(batPath).Contains(vehicleClass, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
     // The per-round staging buttons (Briefing "Stage" / "Stage anyway") ALSO bind to real base-game
     // liveries so the written file is guaranteed to load in AMS2 — same as the Skins-tab "Stage grid
     // into AMS2" action. Without this, the per-round path wrote the pack's community-skin livery names
@@ -943,6 +999,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // explicit "Apply grid to AMS2" action.
         if (baseGameLiveries)
         {
+            // First, activate THIS round's community liveries the way the pack's scenario .bat does:
+            // swap each vehicle model's active override file to the round's variant (backup-first). A
+            // pre-qualifying season rotates which liveries are on the grid per race; without this the
+            // app wrote the custom-AI file but AMS2's livery pool stayed on the wrong variant and
+            // stock-filled the cars our file didn't happen to match. After this the round's real skins
+            // are ACTIVE, so the smart binding below keeps them. No scenario .bat (other packs) → no-op.
+            var scenario = ApplyScenarioForRound(roundNumber);
+            if (scenario is { AnyApplied: true })
+                messages.Add(
+                    $"Activated this race's liveries — {scenario.Applied} vehicle model(s) switched to the " +
+                    "round's skins (your previous set was backed up).");
+
             // Smart binding: keep a driver's real community livery where that skin is INSTALLED AND
             // ACTIVE on disk (real historical paint) and floor every other car onto a base-game livery
             // the game always ships (guaranteed load). So an installed 1988 skin pack shows its real
