@@ -21,7 +21,8 @@ namespace Companion.Core.Grid;
 /// </summary>
 public static class RoundGridResolver
 {
-    public static GridPlan Resolve(SeasonPack pack, int round, PlayerSeat? playerSeat = null)
+    public static GridPlan Resolve(
+        SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null)
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
@@ -54,6 +55,13 @@ public static class RoundGridResolver
             }
         }
 
+        // "Choose the entire grid": when the career carries a field selection, only its chosen
+        // liveries seat — EXCEPT the player's own livery, which is always kept so a chosen field can
+        // never bench the player. Null selection = the whole pack field (byte-identical identity).
+        bool Selected(string livery) =>
+            selection is null || selection.Includes(livery) ||
+            (playerSeat is not null && string.Equals(livery, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
+
         var seats = new List<GridSeat>();
 
         foreach (var entry in pack.Entries)
@@ -61,6 +69,8 @@ public static class RoundGridResolver
             if (!ParseRounds(entry).Contains(round))
                 continue;
             if (starters is not null && !starters.Contains(entry.DriverId))
+                continue;
+            if (!Selected(entry.Ams2LiveryName))
                 continue;
 
             seats.Add(BuildSeat(
@@ -72,6 +82,9 @@ public static class RoundGridResolver
 
         foreach (var guest in packRound.GuestEntries)
         {
+            if (!Selected(guest.Ams2LiveryName))
+                continue;
+
             seats.Add(BuildSeat(
                 pack, packRound,
                 LookupDriver(driversById, guest.DriverId, pack, packRound),
