@@ -1,0 +1,171 @@
+{
+  "$comment": "Generative news-article corpus for the 1970s (glamour-and-grit motorsport-weekly voice — warm, novelistic, present-tense print race reports, cigarette-livery money and jet-set danger, wings and ground-effect arriving late-decade), parsed by Companion.Core.News.NewsArticleBank. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically via the 'headlines' PCG32 stream. Bodies compose literal prose, fact tokens, and {pool:name} references. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}.",
+  "eras": [
+    { "key": "1970s", "fromYear": 1970, "toYear": 1979 }
+  ],
+  "pools": {
+    "dateline": {
+      "1970s": [
+        "From the paddock at {race}, our correspondent writes.",
+        "A dispatch from {race}, in the season of {year}.",
+        "Trackside at {race}, where the sponsors' colours blaze.",
+        "Filed from the pit lane at {race}, {year}.",
+        "By our man among the transporters and the money."
+      ],
+      "default": [
+        "Race report from {race}, {year}.",
+        "A report from {race}."
+      ]
+    },
+    "closeGood": {
+      "1970s": [
+        "In the motorhomes tonight the champagne is on ice, and the season sings.",
+        "The paddock, all money and glamour, has found itself a new favourite.",
+        "One for the scrapbooks, and for the backers who paid handsomely to be there.",
+        "The crowd streams away warmed by what they have seen.",
+        "A drive to set the turnstiles clicking at the next round."
+      ],
+      "default": [
+        "A fine afternoon's work.",
+        "The season carries on."
+      ]
+    },
+    "closeBad": {
+      "1970s": [
+        "In the transporter there are long faces and longer silences.",
+        "The sponsors' guests drift away, their champagne gone flat.",
+        "A weekend the team will want washed clean from the record.",
+        "There is racing yet to come, and the paddock is nothing if not forgiving.",
+        "The stopwatch, cruel and honest, keeps its own counsel."
+      ],
+      "default": [
+        "A day best forgotten.",
+        "The team looks ahead to the next round."
+      ]
+    },
+    "champLine": {
+      "1970s": [
+        "In the title chase {player} now stands {champPosition}, {champMove} on the campaign.",
+        "The championship ledger reads {player} {champPosition} — {champMove} as the season unfolds.",
+        "That leaves {player} {champPosition} in the hunt for the crown, {champMove}, with {champLeader} the man to beat.",
+        "{player} sits {champPosition} in the running for the title, {champMove}."
+      ],
+      "default": [
+        "{player} is {champPosition} in the championship.",
+        "That puts {player} {champPosition} in the standings."
+      ]
+    },
+    "expectationBeat": {
+      "1970s": [
+        "from a car the pundits had pencilled in for no better than {expected}",
+        "against a machine reckoned worth only {expected}",
+        "having been fancied for nothing grander than {expected}"
+      ],
+      "default": [
+        "beyond the expected {expected}",
+        "past a predicted {expected}"
+      ]
+    },
+    "sponsorLine": {
+      "1970s": [
+        "the cigarette livery gleaming under the lights",
+        "backers' names bright along the flanks",
+        "the sponsors' colours worn like a matador's cape",
+        "the money men on the pit wall smiling for once",
+        "the bodywork ablaze with the season's richest names"
+      ],
+      "default": [
+        "the team colours out in force",
+        "the sponsors watching from the pit wall"
+      ]
+    },
+    "techNote": {
+      "1970s": [
+        "the new wings biting hard into the corners",
+        "downforce pressing the car into the road as never before",
+        "the ground-effect skirts doing their quiet, ferocious work",
+        "the aerodynamics rewriting what a corner might be taken at"
+      ],
+      "default": [
+        "the car handling beautifully",
+        "the machine well and truly sorted"
+      ]
+    }
+  },
+  "bodies": {
+    "race.result|win": {
+      "1970s": [
+        "{pool:dateline} {player} takes {race} for {team}, a victory built lap by imperious lap and driven home ahead of a field of {fieldSize}. The {year} win comes with {pool:sponsorLine}, and no one in the paddock argues its merit. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} There is a winner at {race}, and it is {player}. From flag to flag the {team} car is never truly headed, {pool:techNote}, and the grandstands rise as one at the finish. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory, glorious and complete, for {player} at {race}. Round {round} of {year} belongs to {team} outright — the sort of drive that sends photographers scrambling and sponsors reaching for their cheque-books. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} wins {race} for {team}, leading home a field of {fieldSize}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|podium": {
+      "1970s": [
+        "{pool:dateline} A place on the rostrum for {player}, home {position} at {race} and drenched in champagne for the trouble. {team} split the leaders in a field of {fieldSize}, with {winner} first to the flag. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} carries {team} onto the podium at {race}, {position} at the fall of the flag with {pool:sponsorLine}. Only {winner} finished ahead. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {position} and a podium for {player} at {race}, a drive {pool:expectationBeat} that had the pit wall on its feet. {winner} won the day, but the afternoon belonged to {team} as much as anyone. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|points": {
+      "1970s": [
+        "{pool:dateline} {player} brings the {team} car home {position} at {race}, honest points banked from a field of {fieldSize}. {winner} took the spoils, but the ledger ticks over nicely. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No champagne, but no complaints: {player} scores at {race}, {position} at the flag and the {team} account the healthier for it. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} scored points at {race}, finishing {position} for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|overperformed": {
+      "1970s": [
+        "{pool:dateline} They will talk of this one for weeks: {player} hauls the {team} machine to {position} at {race} {pool:expectationBeat}, {pool:techNote} and a right foot that would not be denied. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The drive of the afternoon, by common consent, is {player}'s — {position} at {race} from a field of {fieldSize}, {pool:expectationBeat}, and the whole paddock knows it. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} overdelivered at {race}, home {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|underperformed": {
+      "1970s": [
+        "{pool:dateline} A flat afternoon for {player}, only {position} at {race} where {expected} had seemed the least of it. {team} will pore over the timing sheets long into the night. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The pace simply never came for {player} at {race}, home {position} in a field of {fieldSize} while {winner} disappeared up the road. A weekend {team} would rather not dwell upon. {pool:champLine} {pool:closeBad}"
+      ],
+      "default": [
+        "{player} was below par at {race}, only {position} when {expected} was the hope. {pool:champLine} {pool:closeBad}"
+      ]
+    },
+    "race.result|dnf-mechanical": {
+      "1970s": [
+        "{pool:dateline} Cruelty of the mechanical sort at {race}: the {team} car lets {player} down while running strong, no blame at all to the driver, from an afternoon that had promised {expected}. {winner} took the win. {pool:closeBad}",
+        "{pool:dateline} Smoke, then silence, and {player} is out at {race} with the machine broken beneath him. The romance of the sport turns hard on days like these. {pool:closeBad}"
+      ],
+      "default": [
+        "{player} retired from {race} with mechanical trouble. {pool:closeBad}"
+      ]
+    },
+    "race.result|dnf-driver-error": {
+      "1970s": [
+        "{pool:dateline} {player} goes off at {race} and is out on the spot — a moment's misjudgement that leaves {team} to tally the cost. {winner} led home a field of {fieldSize}. {pool:closeBad}",
+        "{pool:dateline} A grand chance thrown away: {player} puts the {team} car into the scenery at {race}, out where {expected} had beckoned so warmly only laps before. {pool:closeBad}"
+      ],
+      "default": [
+        "{player} crashed out of {race} through driver error. {pool:closeBad}"
+      ]
+    },
+    "race.result|midfield": {
+      "1970s": [
+        "{pool:dateline} A quiet, professional afternoon for {player}, {position} at {race} in a field of {fieldSize}. Little for the front pages, but the miles are logged and the {team} car is home intact. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No headlines for {player} at {race}, {position} at the flag and some way behind {winner}. An unremarkable day amid the glamour for {team}. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    }
+  }
+}

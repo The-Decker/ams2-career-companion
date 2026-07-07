@@ -1,0 +1,158 @@
+{
+  "$comment": "Generative news-article corpus for the 2000s (digital live-timing / manufacturer-war online race-report voice), parsed by Companion.Core.News.NewsArticleBank. Crisp modern newswire cadence: stats-forward, sector times and telemetry to hand, global HD broadcast, manufacturer mega-budgets. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically. Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools'. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only.",
+  "eras": [
+    { "key": "2000s", "fromYear": 2000, "toYear": 2009 }
+  ],
+  "pools": {
+    "dateline": {
+      "2000s": [
+        "LIVE TIMING REPORT — {race}, {year}.",
+        "RACE CENTRE: {race}, round {round}.",
+        "FROM THE MEDIA CENTRE AT {race}.",
+        "ONLINE RACE REPORT — {race}, {year}.",
+        "PADDOCK WIRE — {race}, round {round}."
+      ],
+      "default": [
+        "Race report, {race}.",
+        "From {race}, {year}."
+      ]
+    },
+    "closeGood": {
+      "2000s": [
+        "The data goes back to the factory; the momentum stays with the team.",
+        "One for the season highlights package.",
+        "The timing sheets will read kindly in the Monday debrief.",
+        "A benchmark the rest of the grid now has to chase.",
+        "Points banked, and a happy manufacturer board."
+      ],
+      "default": [
+        "A solid weekend's work.",
+        "The season moves on."
+      ]
+    },
+    "closeBad": {
+      "2000s": [
+        "The engineers will spend the flight home buried in the data.",
+        "A weekend the team will want scrubbed from the servers.",
+        "Questions for the debrief, and few easy answers.",
+        "The manufacturer board will want a better story next time.",
+        "Back to the simulator before the next round."
+      ],
+      "default": [
+        "A weekend to move past.",
+        "The team resets for the next round."
+      ]
+    },
+    "champLine": {
+      "2000s": [
+        "In the standings {player} sits {champPosition}, {champMove}, with {champLeader} setting the pace.",
+        "The championship table now reads {player} {champPosition} — {champMove} on the season.",
+        "That leaves {player} {champPosition} in the title race, {champMove}, chasing {champLeader}."
+      ],
+      "default": [
+        "{player} is {champPosition} in the standings, {champMove}.",
+        "That leaves {player} {champPosition} in the championship."
+      ]
+    },
+    "expectationBeat": {
+      "2000s": [
+        "against pre-race models that called {expected}",
+        "with the form guide pegged at {expected}",
+        "when the grid data pointed to {expected}"
+      ],
+      "default": [
+        "beyond an expected {expected}",
+        "past a projected {expected}"
+      ]
+    },
+    "sectorNote": {
+      "2000s": [
+        "The sector splits told the whole story.",
+        "Every timing loop had the {team} car in the green.",
+        "The live splits backed up the result.",
+        "Purple sectors where it mattered most.",
+        "The broadcast timing graphic said as much."
+      ],
+      "default": [
+        "The timing data agreed.",
+        "The splits backed it up."
+      ]
+    }
+  },
+  "bodies": {
+    "race.result|win": {
+      "2000s": [
+        "{pool:dateline} {player} takes the win at {race}, controlling the {year} race from the front for {team}. The gap over a {fieldSize}-car field never came under threat once the pit sequence played out. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory logged: {player} wins {race} for {team}. Sector by sector the {team} car set the benchmark, and the broadcast graphics ran out of rivals to track. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} beats a {expected} projection and then some — a flag-to-flag win at {race}. {team}'s manufacturer program has its result, and the live timing has a new fastest name. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} won {race} for {team}, heading a field of {fieldSize}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|podium": {
+      "2000s": [
+        "{pool:dateline} {player} on the podium at {race}, home {position} for {team} in a {fieldSize}-car field. {winner} took the win, but the {team} car was in the fight to the flag. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A rostrum result: {player} finishes {position} at {race}, splitting the frontrunners on a day when the sector times stacked up. {winner} led home, {team} banked the silverware. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Podium for {player} — {position} at {race}, {pool:expectationBeat}, and the {team} garage has plenty to work with. Only {winner} finished ahead. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|points": {
+      "2000s": [
+        "{pool:dateline} {player} banks championship points at {race}, {position} at the flag for {team} from a {fieldSize}-car field. {winner} won the day; the {team} data crew will take the clean run. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A points-scoring afternoon for {player} — {position} at {race}. No podium, but the numbers add up and the standings tick over for {team}. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} scored points at {race}, finishing {position}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|overperformed": {
+      "2000s": [
+        "{pool:dateline} Overachievement at {race}: {player} hauls the {team} car to {position}, {pool:expectationBeat}. The paddock — and the TV timing loop — did a double take. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} outdrives the machinery at {race}, {position} from a {fieldSize}-car field when the pre-race models said {expected}. Drive of the day, by any metric. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} overdelivered at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
+      ]
+    },
+    "race.result|underperformed": {
+      "2000s": [
+        "{pool:dateline} A weekend that got away from {player}: {position} at {race} when {expected} was on the table. {team} will comb the telemetry for the deficit, and {winner} won. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} off the pace at {race}, home {position} in a {fieldSize}-car field. The sector times flattered no one in the {team} garage this weekend. {pool:champLine} {pool:closeBad}"
+      ],
+      "default": [
+        "{player} was below par at {race}, only {position} when {expected} was expected. {pool:champLine} {pool:closeBad}"
+      ]
+    },
+    "race.result|dnf-mechanical": {
+      "2000s": [
+        "{pool:dateline} {player} is out at {race} — a mechanical failure ends the run for {team}, no fault of the driver's. Reliability, not pace, wrote the result; {winner} took the win. {pool:closeBad}",
+        "{pool:dateline} Retirement at {race}: the {team} car let go while running its race and the telemetry flatlined. A {expected} projection counts for nothing once the machine stops. {pool:closeBad}"
+      ],
+      "default": [
+        "{player} retired from {race} with a mechanical failure. {pool:closeBad}"
+      ]
+    },
+    "race.result|dnf-driver-error": {
+      "2000s": [
+        "{pool:dateline} {player} out of {race} — a driver error puts the {team} car in the barriers with the job unfinished. {winner} led a {fieldSize}-car field home. {pool:closeBad}",
+        "{pool:dateline} A costly mistake at {race}: {player} throws away a run that promised {expected}, the incident replaying on every broadcast angle. {team} counts the cost. {pool:closeBad}"
+      ],
+      "default": [
+        "{player} crashed out of {race} through driver error. {pool:closeBad}"
+      ]
+    },
+    "race.result|midfield": {
+      "2000s": [
+        "{pool:dateline} A quiet, clean run for {player} — {position} at {race} in a {fieldSize}-car field. Not one for the highlight reel, but the laps and data are in the bank for {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} logs {position} at {race}, mid-pack behind {winner}. A low-key afternoon for {team}, with little for the timing screens to flag. {pool:champLine} {pool:closeGood}"
+      ],
+      "default": [
+        "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+      ]
+    }
+  }
+}

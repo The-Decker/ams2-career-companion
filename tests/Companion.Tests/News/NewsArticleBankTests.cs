@@ -54,6 +54,77 @@ public sealed class NewsArticleBankTests
         }
     }
 
+    // A representative year inside each shipped era's declared range — the era files span
+    // 1946..2029 contiguously (1960s/1970s/1980s/1990s/2000s/2010s), covering every bundled pack.
+    public static IEnumerable<object[]> EraYears() =>
+    [
+        [1967, "1960s"], [1974, "1970s"], [1985, "1980s"],
+        [1992, "1990s"], [2005, "2000s"], [2016, "2010s"],
+    ];
+
+    private static readonly string[] RaceCauses =
+    [
+        "win", "podium", "points", "overperformed",
+        "underperformed", "dnf-mechanical", "dnf-driver-error", "midfield",
+    ];
+
+    [Theory]
+    [MemberData(nameof(EraYears))]
+    public void EveryEra_ResolvesForItsYear_AndCoversEveryRaceCause(int year, string eraKey)
+    {
+        var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
+
+        Assert.Equal(eraKey, bank.ResolveEra(year));
+        foreach (string cause in RaceCauses)
+        {
+            var templates = bank.Templates("race.result", cause, year);
+            Assert.True(templates.Count >= 1, $"{eraKey} corpus missing bodies for race.result|{cause}.");
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(EraYears))]
+    public void EveryEra_BuildsAFullBody_ForEveryCause_AcrossSeeds(int year, string eraKey)
+    {
+        var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
+
+        // Exercising BuildBody per era×cause is the real validator: it THROWS on an unknown
+        // token or an undeclared {pool:name}, so an agent-authored corpus with a typo'd token
+        // or a missing pool fails here rather than silently in a career's news feed.
+        foreach (string cause in RaceCauses)
+        {
+            bool dnf = cause.StartsWith("dnf-", StringComparison.Ordinal);
+            var facts = new NewsFacts
+            {
+                Phase = "race.result",
+                Cause = cause,
+                Year = year,
+                Round = 3,
+                RaceName = "Grand Prix",
+                PlayerName = "A. Driver",
+                TeamName = "Constructor",
+                PlayerFinish = dnf ? null : 4,
+                ExpectedFinish = 6,
+                Dnf = dnf,
+                WinnerName = "R. Ival",
+                FieldSize = 20,
+                ChampionshipPosition = 5,
+                ChampionshipDelta = 1,
+                ChampionshipLeaderName = "T. Leader",
+                PlayerLeadsChampionship = false,
+            };
+
+            for (ulong seed = 1; seed <= 8; seed++)
+            {
+                string? body = NewsArticleComposer.Compose(bank, facts, seed);
+                Assert.False(string.IsNullOrWhiteSpace(body),
+                    $"{eraKey} race.result|{cause} produced an empty body at seed {seed}.");
+                Assert.DoesNotContain("{", body);
+                Assert.DoesNotContain("}", body);
+            }
+        }
+    }
+
     [Fact]
     public void ShippedCorpus_FillsEverySlot_ForASampleRace()
     {
