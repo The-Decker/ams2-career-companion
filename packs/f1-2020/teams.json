@@ -1,0 +1,154 @@
+﻿{
+    "teams":  [
+                  {
+                      "id":  "team.mercedes",
+                      "name":  "Mercedes",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.95,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.red_bull",
+                      "name":  "Red Bull Racing",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.82,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.mclaren",
+                      "name":  "McLaren",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.9,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.racing_point",
+                      "name":  "Racing Point",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.85,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.renault",
+                      "name":  "Renault",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.84,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.ferrari",
+                      "name":  "Ferrari",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.82,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.alphatauri",
+                      "name":  "AlphaTauri",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.alfa_romeo",
+                      "name":  "Alfa Romeo Racing",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  3,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.haas",
+                      "name":  "Haas F1 Team",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.72,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.williams",
+                      "name":  "Williams",
+                      "carVehicleIds":  [
+                                            "formula_ultimate_2019"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.8,
+                      "prestige":  2,
+                      "budgetTier":  1
+                  }
+              ]
+}
