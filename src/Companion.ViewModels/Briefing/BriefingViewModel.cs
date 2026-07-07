@@ -400,8 +400,10 @@ public sealed partial class BriefingViewModel : ObservableObject
             return $"✔ Installed {written} already matches — nothing written (using your installed AI file)";
 
         return outcome.BackupPath is { Length: > 0 } backup
-            ? $"Staged {written} — previous file backed up to {backup}"
-            : $"Staged {written} — no previous file, nothing to back up";
+            ? $"Staged {written} — written into your LIVE AMS2 file at {outcome.WrittenPath} (the file AMS2 reads). " +
+              $"Your previous copy was backed up to {backup} — a safety copy in the _companion-backups subfolder, which AMS2 ignores."
+            : $"Staged {written} — written into your LIVE AMS2 file at {outcome.WrittenPath} (the file AMS2 reads). " +
+              "No previous file existed, so nothing was backed up.";
     }
 
     private void OnWatchedFileChanged(object? sender, string path)

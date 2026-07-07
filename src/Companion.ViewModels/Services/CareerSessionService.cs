@@ -904,7 +904,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     public StageOutcome ApplyGridToAms2() =>
         StageCurrentGrid(force: true, alwaysWrite: true, baseGameLiveries: true);
 
-    public StageOutcome StageCurrentGrid(bool force) => StageCurrentGrid(force, alwaysWrite: false);
+    // The per-round staging buttons (Briefing "Stage" / "Stage anyway") ALSO bind to real base-game
+    // liveries so the written file is guaranteed to load in AMS2 — same as the Skins-tab "Stage grid
+    // into AMS2" action. Without this, the per-round path wrote the pack's community-skin livery names
+    // (e.g. "1988 Lotus #1 - N. Piquet"); if the player has not installed those skins AMS2 silently
+    // reverts the whole class to stock and shows nothing. Cosmetic staging only; the resolved grid the
+    // sim scores is untouched, so the fold/oracle stay byte-identical. (A later refinement can prefer an
+    // INSTALLED community-skin name per seat and fall back to the base-game floor otherwise.)
+    public StageOutcome StageCurrentGrid(bool force) => StageCurrentGrid(force, alwaysWrite: false, baseGameLiveries: true);
 
     public StageOutcome StageCurrentGrid(bool force, bool alwaysWrite, bool baseGameLiveries = false)
     {

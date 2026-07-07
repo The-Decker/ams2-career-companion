@@ -159,7 +159,7 @@ public class BriefingViewModelTests
         vm.StageGridCommand.Execute(null);
 
         Assert.True(vm.StageSucceeded);
-        Assert.Contains("nothing to back up", vm.StageBanner);
+        Assert.Contains("nothing was backed up", vm.StageBanner);
     }
 
     [Fact]
