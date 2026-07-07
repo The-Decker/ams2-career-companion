@@ -330,9 +330,13 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// locked in.</summary>
     public ObservableCollection<GridSeatChoice> GridChoices { get; } = [];
 
-    /// <summary>The count of included seats — the field size the player must set AI Opponents to
-    /// (minus their own car) in AMS2.</summary>
+    /// <summary>Total cars on the grid — every included seat, the player's own car included.</summary>
     public int IncludedCount => GridChoices.Count(c => c.IsIncluded);
+
+    /// <summary>The exact number to type into AMS2's "AI Opponents" — the AI cars on the grid, i.e.
+    /// the field minus the player's own car. Surfaced directly so the player never has to do the
+    /// "minus one" arithmetic themselves.</summary>
+    public int AiOpponentCount => Math.Max(0, IncludedCount - 1);
 
     private void BuildGridChoices()
     {
@@ -364,6 +368,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             GridChoices.Add(choice);
         }
         OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(AiOpponentCount));
     }
 
     private void OnGridChoiceChanged(object? sender, PropertyChangedEventArgs e)
@@ -371,6 +376,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         if (e.PropertyName != nameof(GridSeatChoice.IsIncluded))
             return;
         OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(AiOpponentCount));
         OnPropertyChanged(nameof(CanGoNext));
         NextCommand.NotifyCanExecuteChanged();
     }

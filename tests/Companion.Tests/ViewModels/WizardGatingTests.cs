@@ -226,8 +226,13 @@ public sealed class WizardGatingTests : IDisposable
         var player = wizard.GridChoices.Single(c => c.LiveryName == TestPackBuilder.StockLivery2);
         Assert.True(player is { IsLocked: true, IsIncluded: true }); // player is locked on
 
+        // The AI-opponent count is the field minus the player's own car — the exact number to type
+        // into AMS2, so the player never does the "minus one" themselves.
+        Assert.Equal(2, wizard.AiOpponentCount); // 3 cars in, minus the player
+
         wizard.GridChoices.Single(c => c.LiveryName == "Stock Livery #3").IsIncluded = false;
         Assert.Equal(2, wizard.IncludedCount);
+        Assert.Equal(1, wizard.AiOpponentCount); // 2 cars in, minus the player
         Assert.True(wizard.CanGoNext);
 
         AdvanceToCreate(wizard);

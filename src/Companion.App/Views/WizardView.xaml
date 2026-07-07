@@ -348,9 +348,9 @@
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Grid}}">
                 <TextBlock DockPanel.Dock="Top" Text="Choose your grid" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
-                           Text="Pick who's on the grid this season. Uncheck anyone you don't want racing — your own car is always in. In AMS2, set AI Opponents so the field fills with exactly these drivers." />
-                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10">
-                    <Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars on the grid  —  set AI Opponents to this minus one." />
+                           Text="Your own car is always in — it's the row marked &quot;You&quot;. Uncheck any driver you don't want racing on the grid this season." />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
+                    <Run Text="In AMS2, set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  —  that, plus your own car, makes " /><Run Text="{Binding IncludedCount, Mode=OneWay}" /><Run Text=" cars on the grid." />
                 </TextBlock>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
                     <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Left">
