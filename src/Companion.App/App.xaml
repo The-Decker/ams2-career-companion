@@ -39,6 +39,9 @@
             <DataTemplate DataType="{x:Type hub:DossierViewModel}">
                 <views:DossierView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type hub:SkinsViewModel}">
+                <views:SkinsView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type shell:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Companion.Ams2;
 using Companion.Ams2.ContentLibrary;
+using Companion.Ams2.Skins;
 using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Json;
@@ -311,6 +312,13 @@ internal sealed class FakeCareerSession : ICareerSession
     public List<PurchasablePerk> Buyable { get; } = [];
 
     public CharacterDossier? CharacterDossier() => Dossier;
+
+    // ---------- skins (read-only lens) ----------
+
+    /// <summary>The skin picture the Skins lens projects (empty by default).</summary>
+    public SkinAssignmentPlan SkinPlan { get; set; } = SkinAssignmentPlan.Empty;
+
+    public SkinAssignmentPlan CurrentSkinAssignments() => SkinPlan;
 
     /// <summary>The player's driver id + character display name, surfaced to name-rendering screens.</summary>
     public (string DriverId, string DisplayName)? Identity { get; set; }

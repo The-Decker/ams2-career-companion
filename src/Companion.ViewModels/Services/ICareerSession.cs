@@ -1,3 +1,4 @@
+using Companion.Ams2.Skins;
 using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Numerics;
@@ -36,6 +37,14 @@ public interface ICareerSession
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
     PackWeekend? CurrentWeekend() => null;
+
+    /// <summary>What skin every car on this round's grid will show in AMS2 — the read-only
+    /// resolution of the driver → <c>livery_name</c> → installed livery NAME → skin chain
+    /// (correlated against the installed skin overrides + NAMeS file + stock library). Powers
+    /// the briefing's Skins panel: the player's-own-car "pick this livery in-game" crib and the
+    /// per-AI-car skin picture. Pure read-only projection — writes nothing, never touches the
+    /// user's community files. Additive default: an empty plan, so existing fakes compile.</summary>
+    SkinAssignmentPlan CurrentSkinAssignments() => SkinAssignmentPlan.Empty;
 
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
     ConfirmModel Preview(ResultDraft draft);

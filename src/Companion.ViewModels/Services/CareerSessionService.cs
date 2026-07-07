@@ -3,6 +3,7 @@ using System.Text.Json;
 using Companion.Ams2;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
+using Companion.Ams2.Skins;
 using Companion.Core.Career;
 using Companion.Core.Character;
 using Companion.Core.Determinism;
@@ -676,6 +677,46 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         }
         int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
         return playerIndex < 0 ? null : SeatStrengthModel.ExpectedFinish(grid, playerIndex);
+    }
+
+    /// <summary>What skin every car on the current round's grid will show — the read-only skin
+    /// picture the briefing's Skins panel renders (player-own-car crib + per-AI-car status). Reads
+    /// the resolved grid, the installed skin-override scan and the installed NAMeS file; writes
+    /// nothing. The player's seat shows the character name (matching <see cref="CurrentGrid"/>), so
+    /// the "your car" crib names the driver the player actually is. Empty when the season is complete,
+    /// the player's livery matches no entry this round, or no install is found.</summary>
+    public SkinAssignmentPlan CurrentSkinAssignments()
+    {
+        if (SeasonComplete)
+            return SkinAssignmentPlan.Empty;
+
+        GridPlan plan;
+        try
+        {
+            plan = ResolveGrid(CurrentRoundNumber);
+        }
+        catch (InvalidOperationException)
+        {
+            return SkinAssignmentPlan.Empty;
+        }
+
+        var installation = _environment.LocateInstall();
+        var scan = _environment.ScanInstalledLiveries(installation);
+        var aiNames = _environment.ScanInstalledAiNames(installation, plan.Ams2Class);
+
+        var result = SkinAssignmentResolver.Resolve(plan, scan.Liveries, _environment.ContentLibrary, aiNames);
+
+        // Show the player's chosen character name on their car (as CurrentGrid does) — display only,
+        // the livery NAME (the binding + what they pick in-game) is untouched.
+        if (CharacterName() is { } name && result.Assignments.Any(a => a.IsPlayer))
+        {
+            var patched = result.Assignments
+                .Select(a => a.IsPlayer ? a with { DriverName = name } : a)
+                .ToList();
+            result = result with { Assignments = patched };
+        }
+
+        return result;
     }
 
     /// <summary>The player's driver id + character name for name-rendering screens, or null when the

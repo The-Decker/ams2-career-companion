@@ -1,0 +1,155 @@
+<UserControl x:Class="Companion.App.Views.SkinsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- The Skins lens (read-only): what livery/skin every car on this round's grid will show in
+         AMS2, and the crib for the player's OWN car (a manual in-game pick the app can only guide).
+         DataContext is a SkinsViewModel. Writes nothing — never touches the user's community skins. -->
+    <UserControl.Resources>
+        <!-- status chip: coloured by SkinTone (Good/Neutral/Warn) -->
+        <Style x:Key="SkinChip" TargetType="Border">
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8,2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{StaticResource FieldBrush}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Tone}" Value="Good">
+                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Tone}" Value="Warn">
+                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SkinChipText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Tone}" Value="Good">
+                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Tone}" Value="Warn">
+                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel MaxWidth="780" Margin="40,32" HorizontalAlignment="Left">
+
+            <!-- header -->
+            <TextBlock Text="Skins" Style="{StaticResource H1}" />
+            <TextBlock Text="{Binding Summary}" Style="{StaticResource Muted}" Margin="0,2,0,0" />
+
+            <!-- YOUR CAR crib — the headline: the exact livery to pick in-game -->
+            <Border Margin="0,20,0,0" Padding="18,14" CornerRadius="8"
+                    Background="{StaticResource SurfaceAltBrush}"
+                    BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                    Visibility="{Binding HasPlayerCar, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Margin="0,0,0,2">
+                        <Run Text="Your car" /><Run Text="  ·  " Foreground="{StaticResource TextFaintBrush}" /><Run
+                            Text="{Binding PlayerDriverName, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap"
+                               Text="On AMS2's vehicle-selection screen, pick this exact livery (case-sensitive) so your car looks right — the app can't set it for you:" />
+                    <Border Margin="0,8,0,0" Padding="12,8" CornerRadius="6"
+                            Background="{StaticResource FieldBrush}">
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="Copy" MinWidth="64"
+                                    Command="{Binding CopyPlayerLiveryCommand}" Margin="10,0,0,0" />
+                            <TextBox Text="{Binding PlayerLiveryName, Mode=OneWay}" IsReadOnly="True"
+                                     BorderThickness="0" Background="Transparent"
+                                     Foreground="{StaticResource TextBrush}" FontFamily="Consolas" FontSize="14"
+                                     VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                        </DockPanel>
+                    </Border>
+                    <TextBlock Style="{StaticResource Faint}" Margin="0,8,0,0" TextWrapping="Wrap"
+                               Visibility="{Binding PlayerStatusNote, Converter={StaticResource NullCollapsed}}"
+                               Text="{Binding PlayerStatusNote}" />
+                    <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
+                               Text="Tip: set Opponents to one less than the grid so a livery is left for you. If an AI grabs your livery (AMS2 duplicates when the grid is bigger than the livery pool), re-pick. Launch AMS2 with -showLiveryIDs to see each livery's slot number." />
+                </StackPanel>
+            </Border>
+
+            <!-- per-car skin picture -->
+            <TextBlock Text="This round's cars" Style="{StaticResource H2}" Margin="0,26,0,8" />
+            <ItemsControl ItemsSource="{Binding Cars}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Panel}" Padding="14,10" Margin="0,0,0,6">
+                            <DockPanel>
+                                <!-- status chip -->
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SkinChip}">
+                                    <TextBlock Text="{Binding StatusLabel}" Style="{StaticResource SkinChipText}" />
+                                </Border>
+                                <!-- copy button -->
+                                <Button DockPanel.Dock="Right" Content="Copy" MinWidth="56" Margin="0,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.CopyLiveryCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}" />
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="★ " Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
+                                        <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" FontSize="14"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Style="{StaticResource Faint}" VerticalAlignment="Center" Margin="8,0,0,0">
+                                            <Run Text="{Binding TeamName, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding LiveryName}" Style="{StaticResource Muted}"
+                                               FontFamily="Consolas" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding Detail}" Style="{StaticResource Faint}"
+                                               Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Visibility="{Binding Detail, Converter={StaticResource StringVisible}}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- empty state -->
+            <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0"
+                       Text="No grid to show — the season is complete, you have no seat this round, or no AMS2 install was found."
+                       Visibility="{Binding Cars.Count, Converter={StaticResource CountCollapsed}}" />
+
+            <!-- required skin packs (shown when something will look default) -->
+            <StackPanel Margin="0,22,0,0"
+                        Visibility="{Binding HasMissingSkins, Converter={StaticResource BoolVisible}}">
+                <TextBlock Text="Install the season's skins" Style="{StaticResource H2}" Margin="0,0,0,4"
+                           Visibility="{Binding RequiredSkinPacks.Count, Converter={StaticResource CountVisible}}" />
+                <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                           Visibility="{Binding RequiredSkinPacks.Count, Converter={StaticResource CountVisible}}"
+                           Text="Some cars will show a default skin until these community skin packs are installed under Vehicles\Textures\CustomLiveries\Overrides. The driver names still bind — only the paint is missing." />
+                <ItemsControl ItemsSource="{Binding RequiredSkinPacks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,6">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                    <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Visibility="{Binding OverridesFolder, Converter={StaticResource NullCollapsed}}">
+                                        <Run Text="Overrides folder: " /><Run Text="{Binding OverridesFolder, Mode=OneWay}" FontFamily="Consolas" />
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Visibility="{Binding Url, Converter={StaticResource NullCollapsed}}"
+                                               Text="{Binding Url}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <!-- footer: the honest scope note -->
+            <TextBlock Style="{StaticResource Faint}" Margin="0,18,0,0" TextWrapping="Wrap"
+                       Text="This view is read-only. When you stage a round, the app writes only the custom-AI file (driver names + ratings, bound to each livery); it never edits your community skin files. AI cars show the skin matching their livery name; your own car's livery is the one you pick on AMS2's vehicle-selection screen." />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

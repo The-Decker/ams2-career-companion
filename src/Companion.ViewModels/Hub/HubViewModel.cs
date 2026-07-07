@@ -25,6 +25,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     public const string DriverTabKey = "driver";
     public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
+    public const string SkinsTabKey = "skins";
 
     private readonly ICareerSession _session;
     private readonly ISettingsService? _settings;
@@ -50,11 +51,13 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         News = new NewsViewModel(session, settings?.Current.NewsDetail ?? NewsDetailLevel.Articles);
         History = new HistoryViewModel(session);
         Dossier = new DossierViewModel(session);
+        Skins = new SkinsViewModel(session);
 
         Tabs =
         [
             new HubTabViewModel(RaceTabKey, "Race", "", Home),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
+            new HubTabViewModel(SkinsTabKey, "Skins", "", Skins),
             new HubTabViewModel(HistoryTabKey, "History", "", History),
             new HubTabViewModel(NewsTabKey, "News", "", News),
         ];
@@ -79,6 +82,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// <summary>The Driver dossier lens — the player's character, stats, perks and level/XP as the
     /// career unfolds. Present as a tab only when the career has a character (depth 3).</summary>
     public DossierViewModel Dossier { get; }
+
+    /// <summary>The Skins lens: what livery/skin every car will show in AMS2, plus the crib for the
+    /// player own-car pick. Always present (every career has a grid); refreshed per round.</summary>
+    public SkinsViewModel Skins { get; }
 
     /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
     /// the hub's era badge now, and the full resource-dictionary swap in a later slice.</summary>
@@ -166,6 +173,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         News.Refresh();
         History.Refresh();
         Dossier.Refresh();
+        Skins.Refresh();
 
         if (RaceTab is { } race)
             SelectTab(race);
