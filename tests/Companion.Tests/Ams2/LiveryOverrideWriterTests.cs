@@ -122,6 +122,32 @@ public sealed class LiveryOverrideWriterTests
     }
 
     [Fact]
+    public void ActivateInFile_PicksASlotFreeAcrossSiblingOverrideFiles()
+    {
+        // AMS2 merges root override XMLs by slot; a slot used in a sibling (_dist) is not free.
+        string dir = Directory.CreateTempSubdirectory("companion-livery-siblings-").FullName;
+        try
+        {
+            string main = Path.Combine(dir, "car.xml");
+            File.WriteAllText(main,
+                "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"A\"/>" +
+                "<LIVERY_OVERRIDE LIVERY=\"##\" NAME=\"Target\"/></USER_OVERRIDES>");
+            // Sibling already uses 52 — so the next free across both is 53.
+            File.WriteAllText(Path.Combine(dir, "car_dist.xml"),
+                "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"B\"/></USER_OVERRIDES>");
+
+            var result = LiveryOverrideWriter.ActivateInFile(main, "Target", DateTimeOffset.UnixEpoch);
+
+            Assert.True(result.Success);
+            Assert.Equal(53, result.Slot); // 51 (main) + 52 (sibling) used → 53
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [Fact]
     public void ActivateInFile_Fails_WhenTheNameHasNoPlaceholder()
     {
         string dir = Directory.CreateTempSubdirectory("companion-livery-activate-").FullName;

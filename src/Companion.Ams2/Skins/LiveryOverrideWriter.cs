@@ -158,18 +158,24 @@ public static class LiveryOverrideWriter
         string overrideXmlPath, string liveryName, DateTimeOffset now, int? slot = null)
     {
         string xml;
+        string siblingsCombined;
         try
         {
             xml = File.ReadAllText(overrideXmlPath);
+            // AMS2 merges ALL root override XMLs in the vehicle folder by slot (the main file plus
+            // e.g. _dist / _sc variants), so a slot used by a sibling is NOT free. Pick the next
+            // slot free across every sibling, not just this file, to avoid a merge collision.
+            siblingsCombined = CombineFolderOverrides(overrideXmlPath);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             return LiveryActivationResult.Failed($"Could not read the skin file: {ex.Message}");
         }
 
-        int assigned = slot ?? NextFreeSlot(xml);
-        if (!SlotIsFree(xml, assigned))
-            return LiveryActivationResult.Failed($"Slot {assigned} is already in use in {Path.GetFileName(overrideXmlPath)}.");
+        int assigned = slot ?? NextFreeSlot(siblingsCombined);
+        if (!SlotIsFree(siblingsCombined, assigned))
+            return LiveryActivationResult.Failed(
+                $"Slot {assigned} is already in use for this car (in {Path.GetFileName(overrideXmlPath)} or a sibling override file).");
 
         string? edited = Activate(xml, liveryName, assigned);
         if (edited is null)
@@ -196,6 +202,31 @@ public static class LiveryOverrideWriter
             Message = $"Activated “{liveryName}” as livery slot {assigned}. AMS2 will show it after a restart. " +
                       $"Original backed up to {Path.GetFileName(backup)}.",
         };
+    }
+
+    /// <summary>The concatenated text of EVERY root override <c>*.xml</c> in the vehicle folder
+    /// (the target file plus siblings like <c>_dist</c>/<c>_sc</c>) — the search space for a slot
+    /// that is free across the whole car, since AMS2 merges them. Unreadable siblings are skipped;
+    /// the target file's text is always included even if it alone is passed.</summary>
+    private static string CombineFolderOverrides(string overrideXmlPath)
+    {
+        string? directory = Path.GetDirectoryName(overrideXmlPath);
+        if (directory is null || !Directory.Exists(directory))
+            return SafeRead(overrideXmlPath);
+
+        var builder = new StringBuilder();
+        foreach (var file in Directory.EnumerateFiles(directory, "*.xml", SearchOption.TopDirectoryOnly))
+        {
+            builder.Append(SafeRead(file));
+            builder.Append('\n');
+        }
+        return builder.ToString();
+    }
+
+    private static string SafeRead(string path)
+    {
+        try { return File.ReadAllText(path); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return ""; }
     }
 
     /// <summary>Timestamped snapshot of the override file into a <c>_companion-backups</c> subfolder
