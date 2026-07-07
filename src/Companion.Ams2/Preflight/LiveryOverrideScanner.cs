@@ -135,8 +135,13 @@ public static class LiveryOverrideScanner
                     entries = TryLenient(text);
                     if (entries is null)
                     {
+                        // Strip <!-- --> spans BEFORE scraping: AMS2 ignores commented
+                        // LIVERY_OVERRIDE entries (the "##" placeholder examples + Reiza's _dist
+                        // template live entirely inside comments), so they must never be reported as
+                        // installed liveries. The strict/lenient passes already skip comments; the
+                        // regex fallback must too.
                         var scraped = LenientXml.ExtractElementAttributePairs(
-                            text, OverrideElement, LiveryAttribute, NameAttribute);
+                            LenientXml.StripComments(text), OverrideElement, LiveryAttribute, NameAttribute);
                         if (scraped.Count == 0)
                         {
                             unreadable.Add(

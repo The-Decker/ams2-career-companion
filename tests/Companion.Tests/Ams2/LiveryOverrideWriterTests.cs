@@ -122,9 +122,10 @@ public sealed class LiveryOverrideWriterTests
     }
 
     [Fact]
-    public void ActivateInFile_PicksASlotFreeAcrossSiblingOverrideFiles()
+    public void ActivateInFile_ScopesToTheSingleLooseFile_IgnoringSiblings()
     {
-        // AMS2 merges root override XMLs by slot; a slot used in a sibling (_dist) is not free.
+        // AMS2 loads ONLY the single <vehicle>.xml (the diagnosis corrected the old "merges siblings"
+        // model). A slot used only in a _dist sibling does NOT occupy a slot in the real file.
         string dir = Directory.CreateTempSubdirectory("companion-livery-siblings-").FullName;
         try
         {
@@ -132,19 +133,51 @@ public sealed class LiveryOverrideWriterTests
             File.WriteAllText(main,
                 "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"A\"/>" +
                 "<LIVERY_OVERRIDE LIVERY=\"##\" NAME=\"Target\"/></USER_OVERRIDES>");
-            // Sibling already uses 52 — so the next free across both is 53.
+            // The sibling (inert template) uses 52 — but AMS2 ignores it, so 52 is still free here.
             File.WriteAllText(Path.Combine(dir, "car_dist.xml"),
                 "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"B\"/></USER_OVERRIDES>");
 
             var result = LiveryOverrideWriter.ActivateInFile(main, "Target", DateTimeOffset.UnixEpoch);
 
             Assert.True(result.Success);
-            Assert.Equal(53, result.Slot); // 51 (main) + 52 (sibling) used → 53
+            Assert.Equal(52, result.Slot); // only 51 is used IN THIS FILE → next free is 52
         }
         finally
         {
             Directory.Delete(dir, recursive: true);
         }
+    }
+
+    // ---------- comment-awareness (the diagnosis: "##" placeholders live inside XML comments) ----------
+
+    [Fact]
+    public void Activate_RefusesEntriesInsideXmlComments()
+    {
+        // The "##" placeholder is inside a <!-- --> block (the real-world shape). AMS2 never parses
+        // it, so activating it would corrupt the file for zero effect — the writer must refuse.
+        const string commented =
+            "<USER_OVERRIDES>\n" +
+            "  <LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Real\"/>\n" +
+            "  <!-- ALTERNATE LIVERY OPTIONS\n" +
+            "  <LIVERY_OVERRIDE LIVERY=\"##\" NAME=\"Commented\"/>\n" +
+            "  -->\n" +
+            "</USER_OVERRIDES>\n";
+
+        Assert.Null(LiveryOverrideWriter.Activate(commented, "Commented", 52)); // inside a comment → refused
+        Assert.Null(LiveryOverrideWriter.Deactivate(commented, "Commented"));
+    }
+
+    [Fact]
+    public void NextFreeSlot_IgnoresSlotsInsideComments()
+    {
+        // Slots 59/60/61 are commented-out examples; only 51 is a real active slot.
+        const string xml =
+            "<USER_OVERRIDES>\n" +
+            "  <LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Real\"/>\n" +
+            "  <!-- <LIVERY_OVERRIDE LIVERY=\"59\"/> <LIVERY_OVERRIDE LIVERY=\"60\"/> -->\n" +
+            "</USER_OVERRIDES>\n";
+
+        Assert.Equal(52, LiveryOverrideWriter.NextFreeSlot(xml)); // 51 real; 59/60 commented → ignored
     }
 
     [Fact]

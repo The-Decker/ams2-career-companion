@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Companion.Ams2.CustomAi;
 
 namespace Companion.Ams2.Skins;
 
@@ -60,8 +61,12 @@ public static class LiveryOverrideWriter
     /// numeric <c>LIVERY</c> in the file — the slot activation assigns next. Gaps are filled.</summary>
     public static int NextFreeSlot(string xml)
     {
+        // Only COUNT slots AMS2 actually loads — strip <!-- --> comments first, so the "##"
+        // placeholder examples + numbered example slots that live inside comments never occupy a
+        // slot number (the AMS2 diagnosis: only non-commented numeric slots are real).
+        string live = LenientXml.StripComments(xml);
         var used = new HashSet<int>();
-        foreach (Match m in NumericLivery.Matches(xml))
+        foreach (Match m in NumericLivery.Matches(live))
             if (int.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int n))
                 used.Add(n);
 
@@ -71,14 +76,43 @@ public static class LiveryOverrideWriter
         return slot;
     }
 
-    /// <summary>Whether the numeric slot is free (not already used) in the file.</summary>
+    /// <summary>Whether the numeric slot is free (not already used by a NON-commented entry).</summary>
     public static bool SlotIsFree(string xml, int slot)
     {
-        foreach (Match m in NumericLivery.Matches(xml))
+        foreach (Match m in NumericLivery.Matches(LenientXml.StripComments(xml)))
             if (int.TryParse(m.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int n) &&
                 n == slot)
                 return false;
         return true;
+    }
+
+    /// <summary>The <c>&lt;!-- --&gt;</c> spans in <paramref name="xml"/> (start inclusive, end
+    /// exclusive) — used to refuse editing a LIVERY_OVERRIDE that lives inside a comment (AMS2 never
+    /// parses commented entries, so activating one would be a silent no-op that only corrupts the
+    /// file). An unterminated comment runs to end-of-text.</summary>
+    private static List<(int Start, int End)> CommentSpans(string xml)
+    {
+        var spans = new List<(int, int)>();
+        int i = 0;
+        while (true)
+        {
+            int start = xml.IndexOf("<!--", i, StringComparison.Ordinal);
+            if (start < 0)
+                break;
+            int end = xml.IndexOf("-->", start + 4, StringComparison.Ordinal);
+            if (end < 0) { spans.Add((start, xml.Length)); break; }
+            spans.Add((start, end + 3));
+            i = end + 3;
+        }
+        return spans;
+    }
+
+    private static bool IsInComment(int index, List<(int Start, int End)> spans)
+    {
+        foreach (var (start, end) in spans)
+            if (index >= start && index < end)
+                return true;
+        return false;
     }
 
     /// <summary>
@@ -89,8 +123,12 @@ public static class LiveryOverrideWriter
     /// </summary>
     public static string? Activate(string xml, string liveryName, int slot)
     {
+        var comments = CommentSpans(xml);
         foreach (Match tag in OverrideTag.Matches(xml))
         {
+            if (IsInComment(tag.Index, comments))
+                continue; // a commented-out placeholder — AMS2 never loads it, so never edit it
+
             var name = NameAttr.Match(tag.Value);
             if (!name.Success || !string.Equals(name.Groups[1].Value, liveryName, StringComparison.Ordinal))
                 continue;
@@ -118,8 +156,12 @@ public static class LiveryOverrideWriter
     /// </summary>
     public static string? Deactivate(string xml, string liveryName)
     {
+        var comments = CommentSpans(xml);
         foreach (Match tag in OverrideTag.Matches(xml))
         {
+            if (IsInComment(tag.Index, comments))
+                continue;
+
             var name = NameAttr.Match(tag.Value);
             if (!name.Success || !string.Equals(name.Groups[1].Value, liveryName, StringComparison.Ordinal))
                 continue;
@@ -158,24 +200,22 @@ public static class LiveryOverrideWriter
         string overrideXmlPath, string liveryName, DateTimeOffset now, int? slot = null, int? maxSlot = null)
     {
         string xml;
-        string siblingsCombined;
         try
         {
             xml = File.ReadAllText(overrideXmlPath);
-            // AMS2 merges ALL root override XMLs in the vehicle folder by slot (the main file plus
-            // e.g. _dist / _sc variants), so a slot used by a sibling is NOT free. Pick the next
-            // slot free across every sibling, not just this file, to avoid a merge collision.
-            siblingsCombined = CombineFolderOverrides(overrideXmlPath);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             return LiveryActivationResult.Failed($"Could not read the skin file: {ex.Message}");
         }
 
-        int assigned = slot ?? NextFreeSlot(siblingsCombined);
-        if (!SlotIsFree(siblingsCombined, assigned))
+        // AMS2 loads ONLY the single loose <vehicle>.xml (verified against the exe's ReplacementSystem
+        // loader) — sibling files like <vehicle>_dist.xml are inert templates it never reads. So the
+        // free-slot search is scoped to THIS file only (comments stripped inside NextFreeSlot).
+        int assigned = slot ?? NextFreeSlot(xml);
+        if (!SlotIsFree(xml, assigned))
             return LiveryActivationResult.Failed(
-                $"Slot {assigned} is already in use for this car (in {Path.GetFileName(overrideXmlPath)} or a sibling override file).");
+                $"Slot {assigned} is already in use in {Path.GetFileName(overrideXmlPath)}.");
 
         // Respect the class's livery cap — AMS2 will not load a slot beyond the car's livery count,
         // so writing one would silently do nothing. Refuse loudly instead.
@@ -209,31 +249,6 @@ public static class LiveryOverrideWriter
             Message = $"Activated “{liveryName}” as livery slot {assigned}. AMS2 will show it after a restart. " +
                       $"Original backed up to {Path.GetFileName(backup)}.",
         };
-    }
-
-    /// <summary>The concatenated text of EVERY root override <c>*.xml</c> in the vehicle folder
-    /// (the target file plus siblings like <c>_dist</c>/<c>_sc</c>) — the search space for a slot
-    /// that is free across the whole car, since AMS2 merges them. Unreadable siblings are skipped;
-    /// the target file's text is always included even if it alone is passed.</summary>
-    private static string CombineFolderOverrides(string overrideXmlPath)
-    {
-        string? directory = Path.GetDirectoryName(overrideXmlPath);
-        if (directory is null || !Directory.Exists(directory))
-            return SafeRead(overrideXmlPath);
-
-        var builder = new StringBuilder();
-        foreach (var file in Directory.EnumerateFiles(directory, "*.xml", SearchOption.TopDirectoryOnly))
-        {
-            builder.Append(SafeRead(file));
-            builder.Append('\n');
-        }
-        return builder.ToString();
-    }
-
-    private static string SafeRead(string path)
-    {
-        try { return File.ReadAllText(path); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return ""; }
     }
 
     /// <summary>Timestamped snapshot of the override file into a <c>_companion-backups</c> subfolder

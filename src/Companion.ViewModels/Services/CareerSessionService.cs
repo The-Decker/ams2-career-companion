@@ -32,7 +32,7 @@ namespace Companion.ViewModels.Services;
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
 /// </summary>
-public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFileRestore, IDisposable
+public sealed class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAiFileRestore, IDisposable
 {
     /// <summary><see cref="BaselineSource"/> value: the pinned baseline is pack-authored.</summary>
     public const string BaselineSourcePack = "pack";
@@ -834,7 +834,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
     public StageOutcome StageCurrentGrid() => StageCurrentGrid(force: false);
 
-    public StageOutcome StageCurrentGrid(bool force)
+    /// <summary>Explicit "apply this grid to AMS2": ALWAYS writes an app-marked file (backup-first),
+    /// bypassing the diff-aware no-op and the community-file gate — so a grid the user chose is
+    /// verifiable on disk (the AMS2 diagnosis found the default flow wrote 0 bytes, which is why
+    /// "nothing changes"). This is what the "Apply grid to AMS2" action calls.</summary>
+    public StageOutcome ApplyGridToAms2() => StageCurrentGrid(force: true, alwaysWrite: true);
+
+    public StageOutcome StageCurrentGrid(bool force) => StageCurrentGrid(force, alwaysWrite: false);
+
+    public StageOutcome StageCurrentGrid(bool force, bool alwaysWrite)
     {
         var messages = new List<string>();
 
@@ -895,7 +903,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 PackBaselineByLivery(),
                 // The grid editor's cosmetic per-seat overrides (rename / rebind livery), applied to
                 // the staged file only — never the resolved grid the sim scores.
-                StagingOverrideStore.Read(_database, _seasonId));
+                StagingOverrideStore.Read(_database, _seasonId),
+                alwaysWrite);
 
             if (result.RequiresForce)
             {

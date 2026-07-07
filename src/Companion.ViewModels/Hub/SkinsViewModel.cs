@@ -303,9 +303,12 @@ public sealed partial class SkinsViewModel : ObservableObject
     public bool CanForceStage => _session is IForceStaging;
 
     /// <summary>Writes this round's grid — INCLUDING your renames/rebinds — into the AMS2 custom-AI
-    /// file (same staging as the Race tab, backup-first). This is how edits reach the game.</summary>
+    /// file (backup-first). Prefers the explicit "apply" path that ALWAYS writes an app-marked file
+    /// (so the write is verifiable on disk — the AMS2 diagnosis found the ordinary flow often wrote
+    /// nothing); falls back to normal staging for sessions without that seam.</summary>
     [RelayCommand]
-    private void StageGrid() => ApplyStage(_session.StageCurrentGrid());
+    private void StageGrid() =>
+        ApplyStage(_session is IExplicitGridApply apply ? apply.ApplyGridToAms2() : _session.StageCurrentGrid());
 
     [RelayCommand]
     private void ForceStageGrid()
@@ -331,9 +334,10 @@ public sealed partial class SkinsViewModel : ObservableObject
             return outcome.Messages.Count > 0 ? $"Couldn't stage — {outcome.Messages[^1]}" : "Couldn't stage.";
         if (outcome.NoOpAlreadyMatches)
             return "✔ Your installed AI file already matches this grid — nothing to write.";
-        return outcome.BackupPath is { Length: > 0 } backup
-            ? $"✔ Pushed the grid (with your edits) into AMS2 — previous file backed up to {System.IO.Path.GetFileName(backup)}. Set up your race in AMS2 to see it."
-            : "✔ Pushed the grid (with your edits) into AMS2. Set up your race in AMS2 to see it.";
+        string written = outcome.WrittenPath is { Length: > 0 } p ? $" Written to: {p}." : "";
+        string backupNote = outcome.BackupPath is { Length: > 0 } backup
+            ? $" (previous file backed up to {System.IO.Path.GetFileName(backup)})" : "";
+        return $"✔ Pushed the grid into AMS2{backupNote}.{written} Close AMS2 before staging, then launch fresh and set up your race.";
     }
 
     /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the

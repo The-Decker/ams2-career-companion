@@ -277,9 +277,10 @@ public static class GridStager
         DateTimeOffset now,
         bool force = false,
         IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null,
-        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null)
+        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null,
+        bool alwaysWrite = false)
     {
-        var result = StageOrRefuse(file, customAiDriversDirectory, now, force, packBaselineByLivery, overrides);
+        var result = StageOrRefuse(file, customAiDriversDirectory, now, force, packBaselineByLivery, overrides, alwaysWrite);
         return result.RequiresForce
             ? throw new InvalidOperationException(result.Report)
             : result;
@@ -296,7 +297,8 @@ public static class GridStager
         DateTimeOffset now,
         bool force = false,
         IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null,
-        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null)
+        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null,
+        bool alwaysWrite = false)
     {
         string target = Path.Combine(customAiDriversDirectory, file.VehicleClass + ".xml");
 
@@ -319,8 +321,11 @@ public static class GridStager
         toWrite = ApplyStagingOverrides(toWrite, overrides);
 
         // Diff-aware no-op: when the merged file matches the installed file, nothing is
-        // written — the user's curated file stays in place.
-        if (installed is not null && CustomAiEquivalence.Compare(toWrite, installed).Matches)
+        // written — the user's curated file stays in place. SKIPPED for an explicit "apply this
+        // grid" (alwaysWrite): the user chose this grid, so we ALWAYS write an app-marked file
+        // (backup-first) even when the content is diff-equal, so the write is verifiable on disk
+        // (the AMS2-diagnosis "why nothing changes": in the default flow the app wrote 0 bytes).
+        if (!alwaysWrite && installed is not null && CustomAiEquivalence.Compare(toWrite, installed).Matches)
         {
             return new StageResult
             {
@@ -333,7 +338,9 @@ public static class GridStager
             };
         }
 
-        if (!force && File.Exists(target) && !LooksGenerated(target))
+        // The community-file gate is bypassed by an explicit apply (alwaysWrite implies the user
+        // confirmed) — a timestamped backup is still taken first.
+        if (!force && !alwaysWrite && File.Exists(target) && !LooksGenerated(target))
         {
             return new StageResult
             {

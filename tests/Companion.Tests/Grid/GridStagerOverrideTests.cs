@@ -85,6 +85,49 @@ public class GridStagerOverrideTests
         Assert.Equal(File.ReadAllText(withNull), File.ReadAllText(withEmpty));
     }
 
+    // ---------- explicit apply: alwaysWrite (the #1 diagnosis fix) ----------
+
+    [Fact]
+    public void AlwaysWrite_WritesAnAppMarkedFile_OverACommunityFile_WithoutForce()
+    {
+        // A foreign community file exists. Normal staging without force REFUSES (0 bytes) — the bug
+        // that left Mike's edits unwritten. alwaysWrite writes it anyway (backup-first), marked.
+        using var dir = new TempInstall(
+            "<custom_ai_drivers><driver livery_name=\"" + Livery + "\">" +
+            "<name>Kenny Acheson</name></driver></custom_ai_drivers>");
+
+        var generated = Build(Seat(livery: Livery, name: "K. Acheson"));
+
+        var refused = GridStager.StageOrRefuse(generated, dir.Path, Timestamp());
+        Assert.True(refused.RequiresForce); // the old behavior: nothing written
+
+        var applied = GridStager.Stage(generated, dir.Path, Timestamp(), alwaysWrite: true);
+        Assert.False(applied.NoOpAlreadyMatches);
+        Assert.Null(applied.RequiresForce ? "x" : null);
+        Assert.NotNull(applied.BackupPath); // community file snapshotted first
+        string onDisk = File.ReadAllText(applied.WrittenPath!);
+        Assert.Contains(GridStager.GeneratedMarker, onDisk); // app-marked → verifiable on disk
+    }
+
+    [Fact]
+    public void AlwaysWrite_WritesEvenWhenContentMatches_KillingTheSilentNoOp()
+    {
+        // Stage once to an empty dir → app-marked file on disk. Re-staging the SAME grid normally is
+        // a diff-aware no-op (0 bytes). alwaysWrite writes again regardless, so an explicit apply is
+        // ALWAYS verifiable on disk.
+        using var dir = new TempInstall(null);
+        var generated = Build(Seat(livery: Livery, name: "K. Acheson"));
+
+        GridStager.Stage(generated, dir.Path, Timestamp()); // first write (app-marked)
+
+        var noOp = GridStager.Stage(generated, dir.Path, Timestamp());
+        Assert.True(noOp.NoOpAlreadyMatches); // nothing written
+
+        var applied = GridStager.Stage(generated, dir.Path, Timestamp(), alwaysWrite: true);
+        Assert.False(applied.NoOpAlreadyMatches); // written despite matching
+        Assert.NotNull(applied.BackupPath);
+    }
+
     // ---------- helpers ----------
 
     private static IReadOnlyDictionary<string, SeatStagingOverride> Map(string livery, SeatStagingOverride ov) =>

@@ -66,3 +66,15 @@ public interface IForceStaging
 {
     StageOutcome StageCurrentGrid(bool force);
 }
+
+/// <summary>
+/// The explicit "apply this grid to AMS2" action: ALWAYS writes an app-marked custom-AI file
+/// (backup-first), bypassing the diff-aware no-op and the community-file gate, so a grid the user
+/// deliberately chose lands on disk and is verifiable there. The AMS2 diagnosis (2026-07-07) found
+/// the ordinary staging flow frequently wrote 0 bytes (NAMeS-primary no-op + force-gate) — which is
+/// why the user's edits never reached the game. This path guarantees a real write.
+/// </summary>
+public interface IExplicitGridApply
+{
+    StageOutcome ApplyGridToAms2();
+}
