@@ -95,6 +95,24 @@ public sealed record SkinAssignmentPlan
     /// <see cref="Empty"/>.</summary>
     public IReadOnlyList<string> InactiveLiveries { get; init; } = [];
 
+    /// <summary>The class's livery-slot CAP (max distinct liveries the game can show), or null when
+    /// unknown for this class. Custom slots run 51..(50+cap); the activator will not exceed it, and
+    /// a grid needing more distinct liveries than the cap cannot show them all.</summary>
+    public int? LiveryCap { get; init; }
+
+    /// <summary>How many liveries are active in-game for this class (the "used" side of the budget).</summary>
+    public int ActiveLiveryCount => ActiveLiveries.Count;
+
+    /// <summary>How many DISTINCT liveries this round's grid asks for (one per unique livery NAME) —
+    /// compared against <see cref="LiveryCap"/>, more than the cap means some cars must duplicate or
+    /// show a default skin.</summary>
+    public int DistinctLiveriesOnGrid =>
+        Assignments.Select(a => a.LiveryName).Distinct(StringComparer.Ordinal).Count();
+
+    /// <summary>True when this round's grid needs more distinct liveries than the class can show —
+    /// the historical field is bigger than the livery cap, so it cannot be fully represented.</summary>
+    public bool ExceedsCap => LiveryCap is { } cap && DistinctLiveriesOnGrid > cap;
+
     /// <summary>The player's own car this round, or null when the player has no seat (an all-AI
     /// round). The view uses it to tell the player exactly which livery to select in-game.</summary>
     public SkinAssignment? PlayerCar => Assignments.FirstOrDefault(a => a.IsPlayer);
@@ -225,12 +243,15 @@ public static class SkinAssignmentResolver
             .Select(l => l.Name)
             .ToHashSet(StringComparer.Ordinal);
 
+        int? liveryCap = library.LiveryCaps.TryGetValue(plan.Ams2Class, out int cap) ? cap : null;
+
         return new SkinAssignmentPlan
         {
             Ams2Class = plan.Ams2Class,
             Assignments = assignments,
             ActiveLiveries = activeNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
             InactiveLiveries = inactiveNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
+            LiveryCap = liveryCap,
         };
     }
 

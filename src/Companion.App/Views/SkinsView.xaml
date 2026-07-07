@@ -42,6 +42,20 @@
             <!-- header -->
             <TextBlock Text="Skins" Style="{StaticResource H1}" />
             <TextBlock Text="{Binding Summary}" Style="{StaticResource Muted}" Margin="0,2,0,0" />
+            <TextBlock Text="{Binding LiveryBudget}" Style="{StaticResource Faint}" Margin="0,2,0,0"
+                       Visibility="{Binding LiveryBudget, Converter={StaticResource StringVisible}}" />
+
+            <!-- over-cap warning: the historical field is bigger than the class's livery cap -->
+            <Border Margin="0,10,0,0" Padding="12,9" CornerRadius="6"
+                    Background="{StaticResource WarningDimBrush}"
+                    Visibility="{Binding ExceedsCap, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <TextBlock Text="More cars than liveries" FontWeight="SemiBold"
+                               Foreground="{StaticResource WarningBrush}" />
+                    <TextBlock Text="{Binding CapWarning}" Style="{StaticResource Body}" TextWrapping="Wrap"
+                               Margin="0,3,0,0" />
+                </StackPanel>
+            </Border>
 
             <!-- YOUR CAR crib — the headline: the exact livery to pick in-game -->
             <Border Margin="0,20,0,0" Padding="18,14" CornerRadius="8"

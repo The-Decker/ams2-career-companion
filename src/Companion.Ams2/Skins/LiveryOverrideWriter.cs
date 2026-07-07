@@ -155,7 +155,7 @@ public static class LiveryOverrideWriter
     /// "not found / already active" paths.
     /// </summary>
     public static LiveryActivationResult ActivateInFile(
-        string overrideXmlPath, string liveryName, DateTimeOffset now, int? slot = null)
+        string overrideXmlPath, string liveryName, DateTimeOffset now, int? slot = null, int? maxSlot = null)
     {
         string xml;
         string siblingsCombined;
@@ -176,6 +176,13 @@ public static class LiveryOverrideWriter
         if (!SlotIsFree(siblingsCombined, assigned))
             return LiveryActivationResult.Failed(
                 $"Slot {assigned} is already in use for this car (in {Path.GetFileName(overrideXmlPath)} or a sibling override file).");
+
+        // Respect the class's livery cap — AMS2 will not load a slot beyond the car's livery count,
+        // so writing one would silently do nothing. Refuse loudly instead.
+        if (maxSlot is { } max && assigned > max)
+            return LiveryActivationResult.Failed(
+                $"This class is at its livery limit ({max - FirstCustomSlot + 1} liveries) — AMS2 can't show another. " +
+                "Deactivate a livery you don't need first, then activate this one.");
 
         string? edited = Activate(xml, liveryName, assigned);
         if (edited is null)

@@ -91,6 +91,20 @@ public sealed partial class SkinsViewModel : ObservableObject
     [ObservableProperty]
     private string _summary = "";
 
+    /// <summary>The livery budget for this class, e.g. "Livery slots: 22 of 24 active" — how many of
+    /// the class's fixed livery cap are switched on. Empty when the cap is unknown and none active.</summary>
+    [ObservableProperty]
+    private string _liveryBudget = "";
+
+    /// <summary>True when this round's grid asks for more distinct liveries than the class can show —
+    /// the historical field is bigger than the livery cap.</summary>
+    [ObservableProperty]
+    private bool _exceedsCap;
+
+    /// <summary>The over-cap explanation (how many cars can't have their own livery), or null.</summary>
+    [ObservableProperty]
+    private string? _capWarning;
+
     /// <summary>The exact livery NAME the player selects for their own car in-game. Null when the
     /// player has no seat this round (an all-AI round).</summary>
     [ObservableProperty]
@@ -128,6 +142,19 @@ public sealed partial class SkinsViewModel : ObservableObject
         Summary = plan.Summary;
         HasUnbound = plan.UnboundCount > 0 || plan.InactiveCount > 0;
         HasMissingSkins = plan.DefaultSkinCount > 0 || plan.InactiveCount > 0 || plan.UnboundCount > 0;
+
+        LiveryBudget = plan.LiveryCap is { } cap
+            ? $"Livery slots: {plan.ActiveLiveryCount} of {cap} active for {plan.Ams2Class}."
+            : plan.ActiveLiveryCount > 0
+                ? $"{plan.ActiveLiveryCount} liveries active for {plan.Ams2Class}."
+                : "";
+        ExceedsCap = plan.ExceedsCap;
+        CapWarning = plan.ExceedsCap
+            ? $"This grid asks for {plan.DistinctLiveriesOnGrid} distinct liveries but {plan.Ams2Class} shows at " +
+              $"most {plan.LiveryCap}. {plan.DistinctLiveriesOnGrid - plan.LiveryCap!.Value} car(s) can't get their " +
+              "own livery — they'll duplicate another or use a default skin. For an accurate field, race a grid of " +
+              $"{plan.LiveryCap} or fewer."
+            : null;
 
         if (plan.PlayerCar is { } player)
         {

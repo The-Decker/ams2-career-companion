@@ -205,13 +205,40 @@ public class SkinAssignmentResolverTests
         SourceFile = @"Y:\...\CustomAIDrivers\F-Vintage_Gen2.xml",
     };
 
+    [Fact]
+    public void LiveryCap_IsSetFromTheLibrary()
+    {
+        var plan = PlanWith(Seat("Brabham #3", "A"));
+        var result = SkinAssignmentResolver.Resolve(plan, [], Build([], cap: 24), installedAiNames: null);
+        Assert.Equal(24, result.LiveryCap);
+    }
+
+    [Fact]
+    public void ExceedsCap_WhenGridNeedsMoreDistinctLiveriesThanTheClassAllows()
+    {
+        // 3 distinct liveries on the grid, class caps at 2 → the field can't be fully represented.
+        var plan = PlanWith(Seat("Car #1", "A"), Seat("Car #2", "B"), Seat("Car #3", "C"));
+        var result = SkinAssignmentResolver.Resolve(plan, [], Build([], cap: 2), installedAiNames: null);
+
+        Assert.True(result.ExceedsCap);
+        Assert.Equal(3, result.DistinctLiveriesOnGrid);
+    }
+
+    [Fact]
+    public void DoesNotExceedCap_WhenGridFitsOrCapUnknown()
+    {
+        var plan = PlanWith(Seat("Car #1", "A"), Seat("Car #2", "B"));
+        Assert.False(SkinAssignmentResolver.Resolve(plan, [], Build([], cap: 2), installedAiNames: null).ExceedsCap);
+        Assert.False(SkinAssignmentResolver.Resolve(plan, [], Build([], cap: null), installedAiNames: null).ExceedsCap);
+    }
+
     /// <summary>A library whose class maps to <see cref="VehicleDir"/> (so in-class disambiguation
     /// works) with no stock liveries.</summary>
     private static Ams2ContentLibrary Library() => Build(stockLiveries: []);
 
     private static Ams2ContentLibrary LibraryWithStock(params string[] stock) => Build(stock);
 
-    private static Ams2ContentLibrary Build(IReadOnlyList<string> stockLiveries) => new()
+    private static Ams2ContentLibrary Build(IReadOnlyList<string> stockLiveries, int? cap = null) => new()
     {
         Classes = new Dictionary<string, Ams2Class>(StringComparer.Ordinal)
         {
@@ -226,6 +253,9 @@ public class SkinAssignmentResolverTests
         {
             [VehicleClass] = new Ams2LiveryClassEntry { StockLib1563 = stockLiveries },
         },
+        LiveryCaps = cap is { } c
+            ? new Dictionary<string, int>(StringComparer.Ordinal) { [VehicleClass] = c }
+            : new Dictionary<string, int>(StringComparer.Ordinal),
         ExtractedFrom = "unit-test",
     };
 }

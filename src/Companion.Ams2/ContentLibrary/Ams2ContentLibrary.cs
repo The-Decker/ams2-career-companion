@@ -74,6 +74,14 @@ public sealed class Ams2ContentLibrary
     public required IReadOnlyDictionary<string, Ams2Vehicle> Vehicles { get; init; }
     public required IReadOnlyDictionary<string, Ams2Track> Tracks { get; init; }
     public required IReadOnlyDictionary<string, Ams2LiveryClassEntry> Liveries { get; init; }
+
+    /// <summary>Per-class livery-slot CAP (xmlName → max distinct liveries), from
+    /// <c>livery-caps.json</c> — how many liveries the game can show for a class, so custom slots
+    /// run 51..(50+cap). A class absent from the map has an UNKNOWN cap (not unlimited); callers
+    /// degrade gracefully. Optional data file — empty when it is not present.</summary>
+    public IReadOnlyDictionary<string, int> LiveryCaps { get; init; } =
+        new Dictionary<string, int>(StringComparer.Ordinal);
+
     public required string ExtractedFrom { get; init; }
 
     public static Ams2ContentLibrary Load(string dataDirectory)
@@ -82,6 +90,8 @@ public sealed class Ams2ContentLibrary
         var vehicles = ReadFile<VehiclesFile>(Path.Combine(dataDirectory, "vehicles.json"));
         var tracks = ReadFile<TracksFile>(Path.Combine(dataDirectory, "tracks.json"));
         var liveries = ReadFile<LiveriesFile>(Path.Combine(dataDirectory, "liveries.json"));
+        // Optional: absent on older data dirs / test fixtures — an empty cap map, not a failure.
+        var caps = ReadOptional<LiveryCapsFile>(Path.Combine(dataDirectory, "livery-caps.json"));
 
         return new Ams2ContentLibrary
         {
@@ -91,6 +101,8 @@ public sealed class Ams2ContentLibrary
             Vehicles = DeduplicateVehicles(vehicles.Vehicles),
             Tracks = tracks.Tracks.ToDictionary(t => t.Id, StringComparer.Ordinal),
             Liveries = liveries.Classes.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal),
+            LiveryCaps = caps?.Caps.ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.Ordinal)
+                         ?? new Dictionary<string, int>(StringComparer.Ordinal),
             ExtractedFrom = classes.ExtractedFrom ?? "unknown",
         };
     }
@@ -130,6 +142,11 @@ public sealed class Ams2ContentLibrary
                ?? throw new JsonException($"{path} deserialized to null.");
     }
 
+    /// <summary>Reads an OPTIONAL data file — returns null (not a throw) when the file is absent,
+    /// so a missing refreshable file degrades gracefully.</summary>
+    private static T? ReadOptional<T>(string path) where T : class =>
+        File.Exists(path) ? ReadFile<T>(path) : null;
+
     private sealed record ClassesFile
     {
         public string? ExtractedFrom { get; init; }
@@ -152,5 +169,12 @@ public sealed class Ams2ContentLibrary
     {
         public string? ExtractedFrom { get; init; }
         public required IReadOnlyDictionary<string, Ams2LiveryClassEntry> Classes { get; init; }
+    }
+
+    private sealed record LiveryCapsFile
+    {
+        public string? ExtractedFrom { get; init; }
+        public IReadOnlyDictionary<string, int> Caps { get; init; } =
+            new Dictionary<string, int>(StringComparer.Ordinal);
     }
 }

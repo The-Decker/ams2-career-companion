@@ -148,6 +148,34 @@ public sealed class LiveryOverrideWriterTests
     }
 
     [Fact]
+    public void ActivateInFile_RefusesToExceedTheClassLiveryCap()
+    {
+        string dir = Directory.CreateTempSubdirectory("companion-livery-cap-").FullName;
+        try
+        {
+            string path = Path.Combine(dir, "car.xml");
+            // Slots 51..53 all used; cap of 3 liveries means max slot 53 → the next free (54) is over.
+            File.WriteAllText(path,
+                "<USER_OVERRIDES>" +
+                "<LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"A\"/>" +
+                "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"B\"/>" +
+                "<LIVERY_OVERRIDE LIVERY=\"53\" NAME=\"C\"/>" +
+                "<LIVERY_OVERRIDE LIVERY=\"##\" NAME=\"Target\"/></USER_OVERRIDES>");
+
+            var result = LiveryOverrideWriter.ActivateInFile(
+                path, "Target", DateTimeOffset.UnixEpoch, slot: null, maxSlot: 53);
+
+            Assert.False(result.Success);
+            Assert.Contains("livery limit", result.Message);
+            Assert.Contains("LIVERY=\"##\"", File.ReadAllText(path)); // unchanged
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [Fact]
     public void ActivateInFile_Fails_WhenTheNameHasNoPlaceholder()
     {
         string dir = Directory.CreateTempSubdirectory("companion-livery-activate-").FullName;

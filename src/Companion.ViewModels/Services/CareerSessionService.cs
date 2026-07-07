@@ -748,7 +748,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             return LiveryActivationResult.Failed(
                 $"“{liveryName}” has no installed inactive placeholder to activate (it may already be active).");
 
-        return LiveryOverrideWriter.ActivateInFile(chosen.SourceFile, liveryName, _environment.Clock.GetUtcNow());
+        // Cap the slot at the class's livery limit (custom slots run 51..(50+cap)) so we never write
+        // a slot AMS2 would silently ignore. Unknown cap → no ceiling (best effort).
+        int? maxSlot = _environment.ContentLibrary.LiveryCaps.TryGetValue(Pack.Season.Ams2Class, out int cap)
+            ? LiveryOverrideWriter.FirstCustomSlot + cap - 1
+            : null;
+
+        return LiveryOverrideWriter.ActivateInFile(
+            chosen.SourceFile, liveryName, _environment.Clock.GetUtcNow(), slot: null, maxSlot: maxSlot);
     }
 
     /// <summary>The player's driver id + character name for name-rendering screens, or null when the

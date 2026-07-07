@@ -68,6 +68,8 @@ public sealed class SkinsViewRenderTests
                 },
             ],
             InactiveLiveries = ["Skoal Bandit Formula 1 Team #10", "RAM #11 Winkelhock"],
+            // A tiny cap so the over-cap warning panel + budget line both render (XAML validation).
+            LiveryCap = 4,
         };
 
         public BriefingModel? CurrentBriefing() => null;
