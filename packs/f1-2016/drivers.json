@@ -68,7 +68,7 @@
     },
     {
       "id": "driver.kimi_raikkonen",
-      "name": "Kimi Räikkönen",
+      "name": "Kimi R\u00E4ikk\u00F6nen",
       "country": "FIN",
       "born": 1979,
       "ratings": {
@@ -178,7 +178,7 @@
     },
     {
       "id": "driver.nico_hulkenberg",
-      "name": "Nico Hülkenberg",
+      "name": "Nico H\u00FClkenberg",
       "country": "DEU",
       "born": 1987,
       "ratings": {
@@ -200,7 +200,7 @@
     },
     {
       "id": "driver.sergio_perez",
-      "name": "Sergio Pérez",
+      "name": "Sergio P\u00E9rez",
       "country": "MEX",
       "born": 1990,
       "ratings": {
@@ -464,7 +464,7 @@
     },
     {
       "id": "driver.esteban_gutierrez",
-      "name": "Esteban Gutiérrez",
+      "name": "Esteban Guti\u00E9rrez",
       "country": "MEX",
       "born": 1991,
       "ratings": {
@@ -482,50 +482,6 @@
         "weatherTyreChanges": 0.57,
         "avoidanceOfMistakes": 0.55,
         "avoidanceOfForcedMistakes": 0.35
-      }
-    },
-    {
-      "id": "driver.stoffel_vandoorne",
-      "name": "Stoffel Vandoorne",
-      "country": "BEL",
-      "born": 1992,
-      "ratings": {
-        "raceSkill": 0.91,
-        "qualifyingSkill": 0.84,
-        "aggression": 0.57,
-        "defending": 0.56,
-        "stamina": 0.9,
-        "consistency": 0.9,
-        "startReactions": 0.64,
-        "wetSkill": 0.53,
-        "tyreManagement": 0.71,
-        "fuelManagement": 0.72,
-        "blueFlagConceding": 0.79,
-        "weatherTyreChanges": 0.66,
-        "avoidanceOfMistakes": 0.77,
-        "avoidanceOfForcedMistakes": 0.5
-      }
-    },
-    {
-      "id": "driver.esteban_ocon",
-      "name": "Esteban Ocon",
-      "country": "FRA",
-      "born": 1996,
-      "ratings": {
-        "raceSkill": 0.86,
-        "qualifyingSkill": 0.7,
-        "aggression": 0.51,
-        "defending": 0.59,
-        "stamina": 0.91,
-        "consistency": 0.91,
-        "startReactions": 0.66,
-        "wetSkill": 0.55,
-        "tyreManagement": 0.72,
-        "fuelManagement": 0.79,
-        "blueFlagConceding": 0.74,
-        "weatherTyreChanges": 0.67,
-        "avoidanceOfMistakes": 0.73,
-        "avoidanceOfForcedMistakes": 0.62
       }
     }
   ]

@@ -24,10 +24,19 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Australian Grand Prix",
@@ -43,34 +52,35 @@
       },
       "laps": 96,
       "grid": {
-        "size": 21,
+        "size": 22,
         "starterDriverIds": [
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.nicola_larini",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.jarno_trulli",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 20,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1997-03-09",
           "weatherSlots": [
@@ -79,7 +89,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Melbourne Grand Prix Circuit — 58 laps / 307.6 km reproduced as 96 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland-circuit character."
+        "notes": "Placeholder for Melbourne Grand Prix Circuit \u2014 58 laps / 307.6 km reproduced as 96 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland-circuit character."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -87,17 +97,26 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
       "date": "1997-03-30",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo José Carlos Pace",
+        "realVenue": "Aut\u00F3dromo Jos\u00E9 Carlos Pace",
         "id": "interlagos_1991",
         "isPlaceholder": false,
         "fallbacks": [
@@ -106,34 +125,35 @@
       },
       "laps": 72,
       "grid": {
-        "size": 21,
+        "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.nicola_larini",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
+          "driver.rubens_barrichello",
+          "driver.shinji_nakano",
           "driver.jarno_trulli",
-          "driver.rubens_barrichello"
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 20,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1997-03-30",
           "weatherSlots": [
@@ -150,17 +170,26 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Argentine Grand Prix",
       "date": "1997-04-13",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Juan y Oscar Gálvez",
+        "realVenue": "Aut\u00F3dromo Juan y Oscar G\u00E1lvez",
         "id": "buenos_aires_6t",
         "isPlaceholder": false,
         "fallbacks": [
@@ -171,28 +200,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.nicola_larini",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.jarno_trulli",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -206,7 +235,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "The 1997 Argentine GP ran Circuito No. 6 at the Gálvez autodrome; AMS2's Buenos Aires Circuito 6T is the 1990s Grand Prix configuration of the same venue (4.259 km — an exact length match), so the historical lap count is kept."
+        "notes": "The 1997 Argentine GP ran Circuito No. 6 at the G\u00E1lvez autodrome; AMS2\u0027s Buenos Aires Circuito 6T is the 1990s Grand Prix configuration of the same venue (4.259 km \u2014 an exact length match), so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -214,10 +243,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "San Marino Grand Prix",
@@ -233,34 +271,35 @@
       },
       "laps": 62,
       "grid": {
-        "size": 21,
+        "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.nicola_larini",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 20,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1997-04-27",
           "weatherSlots": [
@@ -277,10 +316,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -298,28 +346,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.nicola_larini",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.jarno_trulli",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -333,7 +381,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "1997 Monaco predates the 2003-04 harbour-front reprofiles, so the 1988 layout is the era-closest; the venue is real and the historical lap count is kept (the 1997 race ran 62 laps under the two-hour rule in the wet — f1db's official race length)."
+        "notes": "1997 Monaco predates the 2003-04 harbour-front reprofiles, so the 1988 layout is the era-closest; the venue is real and the historical lap count is kept (the 1997 race ran 62 laps under the two-hour rule in the wet \u2014 f1db\u0027s official race length)."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -341,10 +389,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
@@ -362,28 +419,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.jarno_trulli",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -405,10 +462,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -426,28 +492,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.alexander_wurz",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.jarno_trulli",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -461,7 +527,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "1997 Montreal is the post-1996 configuration of the same venue as Montreal Modern, so the historical lap count is kept; the race was red-flagged on lap 54 of 69 and f1db's official 54-lap race length is used."
+        "notes": "1997 Montreal is the post-1996 configuration of the same venue as Montreal Modern, so the historical lap count is kept; the race was red-flagged on lap 54 of 69 and f1db\u0027s official 54-lap race length is used."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -469,10 +535,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -491,28 +566,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.alexander_wurz",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.norberto_fontana",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -526,7 +601,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit de Nevers Magny-Cours — 72 laps / 306 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (the curated 1991+ era override avoids double-booking this season's Spanish GP at Barcelona)."
+        "notes": "Placeholder for Circuit de Nevers Magny-Cours \u2014 72 laps / 306 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (the curated 1991\u002B era override avoids double-booking this season\u0027s Spanish GP at Barcelona)."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -534,10 +609,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -555,28 +639,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.alexander_wurz",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.norberto_fontana",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -598,10 +682,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
@@ -619,28 +712,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.norberto_fontana",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -662,10 +755,19 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Hungarian Grand Prix",
@@ -681,28 +783,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -724,10 +826,19 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -745,28 +856,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -788,10 +899,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -809,28 +929,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -852,10 +972,19 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Austrian Grand Prix",
@@ -871,34 +1000,35 @@
       },
       "laps": 71,
       "grid": {
-        "size": 21,
+        "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.jarno_trulli",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 20,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1997-09-21",
           "weatherSlots": [
@@ -907,7 +1037,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "The 1997 Austrian GP ran the A1-Ring; AMS2's Spielberg 2001 is that same layout (f1db lists the venue under its current Red Bull Ring name), so the historical lap count is kept."
+        "notes": "The 1997 Austrian GP ran the A1-Ring; AMS2\u0027s Spielberg 2001 is that same layout (f1db lists the venue under its current Red Bull Ring name), so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -915,17 +1045,26 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Luxembourg Grand Prix",
       "date": "1997-09-28",
       "championship": true,
       "track": {
-        "realVenue": "Nürburgring",
+        "realVenue": "N\u00FCrburgring",
         "id": "nurb_gp_2020",
         "isPlaceholder": false,
         "fallbacks": [
@@ -937,28 +1076,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.gianni_morbidelli",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
@@ -972,7 +1111,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "The 1997 Luxembourg GP ran the Nürburgring GP-Strecke before the 2002 Mercedes-Arena extension; the venue is real, so the historical lap count is kept on the modern GP layout."
+        "notes": "The 1997 Luxembourg GP ran the N\u00FCrburgring GP-Strecke before the 2002 Mercedes-Arena extension; the venue is real, so the historical lap count is kept on the modern GP layout."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -980,10 +1119,19 @@
     {
       "round": 16,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Japanese Grand Prix",
@@ -997,34 +1145,35 @@
       },
       "laps": 53,
       "grid": {
-        "size": 21,
+        "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 20,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1997-10-12",
           "weatherSlots": [
@@ -1041,10 +1190,19 @@
     {
       "round": 17,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "European Grand Prix",
@@ -1062,28 +1220,28 @@
       "grid": {
         "size": 22,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.pedro_diniz",
           "driver.jacques_villeneuve",
-          "driver.heinz_harald_frentzen",
           "driver.michael_schumacher",
-          "driver.eddie_irvine",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
+          "driver.heinz_harald_frentzen",
           "driver.david_coulthard",
+          "driver.mika_hakkinen",
+          "driver.jean_alesi",
           "driver.ralf_schumacher",
-          "driver.giancarlo_fisichella",
-          "driver.olivier_panis",
-          "driver.shinji_nakano",
           "driver.johnny_herbert",
-          "driver.norberto_fontana",
-          "driver.jos_verstappen",
-          "driver.mika_salo",
-          "driver.ukyo_katayama",
-          "driver.tarso_marques",
+          "driver.eddie_irvine",
+          "driver.gerhard_berger",
+          "driver.olivier_panis",
+          "driver.giancarlo_fisichella",
+          "driver.damon_hill",
           "driver.rubens_barrichello",
-          "driver.jan_magnussen"
+          "driver.shinji_nakano",
+          "driver.jarno_trulli",
+          "driver.jan_magnussen",
+          "driver.nicola_larini",
+          "driver.mika_salo",
+          "driver.jos_verstappen",
+          "driver.pedro_diniz",
+          "driver.ukyo_katayama"
         ]
       },
       "setupGuide": {

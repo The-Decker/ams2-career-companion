@@ -45,28 +45,6 @@
       }
     },
     {
-      "id": "driver.john_watson",
-      "name": "John Watson",
-      "country": "GBR",
-      "born": 1946,
-      "ratings": {
-        "raceSkill": 0.85,
-        "qualifyingSkill": 0.57,
-        "aggression": 0.6,
-        "defending": 0.59,
-        "stamina": 0.69,
-        "consistency": 0.81,
-        "startReactions": 0.73,
-        "wetSkill": 0.71,
-        "tyreManagement": 0.78,
-        "fuelManagement": 0.82,
-        "blueFlagConceding": 0.81,
-        "weatherTyreChanges": 0.8,
-        "avoidanceOfMistakes": 0.44,
-        "avoidanceOfForcedMistakes": 0.35
-      }
-    },
-    {
       "id": "driver.michele_alboreto",
       "name": "Michele Alboreto",
       "country": "ITA",
@@ -112,7 +90,7 @@
     },
     {
       "id": "driver.rene_arnoux",
-      "name": "René Arnoux",
+      "name": "Ren\u00E9 Arnoux",
       "country": "FRA",
       "born": 1948,
       "ratings": {
@@ -199,30 +177,8 @@
       }
     },
     {
-      "id": "driver.marc_surer",
-      "name": "Marc Surer",
-      "country": "CHE",
-      "born": 1951,
-      "ratings": {
-        "raceSkill": 0.76,
-        "qualifyingSkill": 0.8,
-        "aggression": 0.48,
-        "defending": 0.34,
-        "stamina": 0.59,
-        "consistency": 0.69,
-        "startReactions": 0.69,
-        "wetSkill": 0.68,
-        "tyreManagement": 0.7,
-        "fuelManagement": 0.75,
-        "blueFlagConceding": 0.95,
-        "weatherTyreChanges": 0.81,
-        "avoidanceOfMistakes": 0.38,
-        "avoidanceOfForcedMistakes": 0.28
-      }
-    },
-    {
       "id": "driver.francois_hesnault",
-      "name": "François Hesnault",
+      "name": "Fran\u00E7ois Hesnault",
       "country": "FRA",
       "born": 1956,
       "ratings": {
@@ -284,28 +240,6 @@
         "weatherTyreChanges": 0.71,
         "avoidanceOfMistakes": 0.39,
         "avoidanceOfForcedMistakes": 0.26
-      }
-    },
-    {
-      "id": "driver.kenny_acheson",
-      "name": "Kenny Acheson",
-      "country": "GBR",
-      "born": 1957,
-      "ratings": {
-        "raceSkill": 0.43,
-        "qualifyingSkill": 0.44,
-        "aggression": 0.39,
-        "defending": 0.31,
-        "stamina": 0.68,
-        "consistency": 0.64,
-        "startReactions": 0.63,
-        "wetSkill": 0.51,
-        "tyreManagement": 0.62,
-        "fuelManagement": 0.69,
-        "blueFlagConceding": 0.98,
-        "weatherTyreChanges": 0.76,
-        "avoidanceOfMistakes": 0.31,
-        "avoidanceOfForcedMistakes": 0.21
       }
     },
     {
@@ -441,28 +375,6 @@
       }
     },
     {
-      "id": "driver.teo_fabi",
-      "name": "Teo Fabi",
-      "country": "ITA",
-      "born": 1955,
-      "ratings": {
-        "raceSkill": 0.64,
-        "qualifyingSkill": 0.75,
-        "aggression": 0.49,
-        "defending": 0.39,
-        "stamina": 0.71,
-        "consistency": 0.71,
-        "startReactions": 0.62,
-        "wetSkill": 0.7,
-        "tyreManagement": 0.62,
-        "fuelManagement": 0.73,
-        "blueFlagConceding": 0.94,
-        "weatherTyreChanges": 0.69,
-        "avoidanceOfMistakes": 0.43,
-        "avoidanceOfForcedMistakes": 0.26
-      }
-    },
-    {
       "id": "driver.piercarlo_ghinzani",
       "name": "Piercarlo Ghinzani",
       "country": "ITA",
@@ -551,28 +463,6 @@
       }
     },
     {
-      "id": "driver.huub_rothengatter",
-      "name": "Huub Rothengatter",
-      "country": "NLD",
-      "born": 1954,
-      "ratings": {
-        "raceSkill": 0.39,
-        "qualifyingSkill": 0.41,
-        "aggression": 0.23,
-        "defending": 0.29,
-        "stamina": 0.7,
-        "consistency": 0.71,
-        "startReactions": 0.73,
-        "wetSkill": 0.49,
-        "tyreManagement": 0.55,
-        "fuelManagement": 0.52,
-        "blueFlagConceding": 0.96,
-        "weatherTyreChanges": 0.86,
-        "avoidanceOfMistakes": 0.28,
-        "avoidanceOfForcedMistakes": 0.14
-      }
-    },
-    {
       "id": "driver.andrea_de_cesaris",
       "name": "Andrea de Cesaris",
       "country": "ITA",
@@ -592,28 +482,6 @@
         "weatherTyreChanges": 0.73,
         "avoidanceOfMistakes": 0.42,
         "avoidanceOfForcedMistakes": 0.24
-      }
-    },
-    {
-      "id": "driver.philippe_streiff",
-      "name": "Philippe Streiff",
-      "country": "FRA",
-      "born": 1955,
-      "ratings": {
-        "raceSkill": 0.72,
-        "qualifyingSkill": 0.69,
-        "aggression": 0.55,
-        "defending": 0.42,
-        "stamina": 0.69,
-        "consistency": 0.65,
-        "startReactions": 0.84,
-        "wetSkill": 0.78,
-        "tyreManagement": 0.77,
-        "fuelManagement": 0.78,
-        "blueFlagConceding": 0.94,
-        "weatherTyreChanges": 0.8,
-        "avoidanceOfMistakes": 0.38,
-        "avoidanceOfForcedMistakes": 0.21
       }
     },
     {
@@ -661,72 +529,6 @@
       }
     },
     {
-      "id": "driver.jonathan_palmer",
-      "name": "Jonathan Palmer",
-      "country": "GBR",
-      "born": 1956,
-      "ratings": {
-        "raceSkill": 0.5,
-        "qualifyingSkill": 0.52,
-        "aggression": 0.48,
-        "defending": 0.42,
-        "stamina": 0.62,
-        "consistency": 0.67,
-        "startReactions": 0.71,
-        "wetSkill": 0.62,
-        "tyreManagement": 0.67,
-        "fuelManagement": 0.62,
-        "blueFlagConceding": 0.86,
-        "weatherTyreChanges": 0.98,
-        "avoidanceOfMistakes": 0.38,
-        "avoidanceOfForcedMistakes": 0.24
-      }
-    },
-    {
-      "id": "driver.christian_danner",
-      "name": "Christian Danner",
-      "country": "DEU",
-      "born": 1958,
-      "ratings": {
-        "raceSkill": 0.42,
-        "qualifyingSkill": 0.43,
-        "aggression": 0.26,
-        "defending": 0.36,
-        "stamina": 0.71,
-        "consistency": 0.69,
-        "startReactions": 0.71,
-        "wetSkill": 0.55,
-        "tyreManagement": 0.59,
-        "fuelManagement": 0.61,
-        "blueFlagConceding": 0.94,
-        "weatherTyreChanges": 0.79,
-        "avoidanceOfMistakes": 0.34,
-        "avoidanceOfForcedMistakes": 0.26
-      }
-    },
-    {
-      "id": "driver.alan_jones",
-      "name": "Alan Jones",
-      "country": "AUS",
-      "born": 1946,
-      "ratings": {
-        "raceSkill": 0.55,
-        "qualifyingSkill": 0.56,
-        "aggression": 0.62,
-        "defending": 0.56,
-        "stamina": 0.64,
-        "consistency": 0.78,
-        "startReactions": 0.71,
-        "wetSkill": 0.74,
-        "tyreManagement": 0.74,
-        "fuelManagement": 0.86,
-        "blueFlagConceding": 0.79,
-        "weatherTyreChanges": 0.78,
-        "avoidanceOfMistakes": 0.46,
-        "avoidanceOfForcedMistakes": 0.38
-      }
-    },
-    {
       "id": "driver.martin_brundle",
       "name": "Martin Brundle",
       "country": "GBR",
@@ -746,50 +548,6 @@
         "weatherTyreChanges": 0.61,
         "avoidanceOfMistakes": 0.48,
         "avoidanceOfForcedMistakes": 0.3
-      }
-    },
-    {
-      "id": "driver.stefan_bellof",
-      "name": "Stefan Bellof",
-      "country": "DEU",
-      "born": 1957,
-      "ratings": {
-        "raceSkill": 0.54,
-        "qualifyingSkill": 0.51,
-        "aggression": 0.52,
-        "defending": 0.39,
-        "stamina": 0.81,
-        "consistency": 0.76,
-        "startReactions": 0.81,
-        "wetSkill": 0.72,
-        "tyreManagement": 0.65,
-        "fuelManagement": 0.7,
-        "blueFlagConceding": 0.93,
-        "weatherTyreChanges": 0.62,
-        "avoidanceOfMistakes": 0.41,
-        "avoidanceOfForcedMistakes": 0.26
-      }
-    },
-    {
-      "id": "driver.ivan_capelli",
-      "name": "Ivan Capelli",
-      "country": "ITA",
-      "born": 1963,
-      "ratings": {
-        "raceSkill": 0.46,
-        "qualifyingSkill": 0.47,
-        "aggression": 0.58,
-        "defending": 0.42,
-        "stamina": 0.71,
-        "consistency": 0.78,
-        "startReactions": 0.71,
-        "wetSkill": 0.51,
-        "tyreManagement": 0.69,
-        "fuelManagement": 0.87,
-        "blueFlagConceding": 0.98,
-        "weatherTyreChanges": 0.83,
-        "avoidanceOfMistakes": 0.4,
-        "avoidanceOfForcedMistakes": 0.24
       }
     }
   ]

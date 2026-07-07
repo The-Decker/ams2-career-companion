@@ -1,4 +1,4 @@
-﻿{
+{
   "year": 1985,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-Retro_Gen3",
@@ -24,17 +24,26 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
       "date": "1985-04-07",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Internacional Nelson Piquet",
+        "realVenue": "Aut\u00F3dromo Internacional Nelson Piquet",
         "id": "jacarepagua_historic",
         "isPlaceholder": false,
         "fallbacks": []
@@ -44,29 +53,29 @@
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.rene_arnoux",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.francois_hesnault",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
           "driver.piercarlo_ghinzani",
-          "driver.pierluigi_martini",
-          "driver.philippe_alliot",
+          "driver.martin_brundle",
           "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
           "driver.mauro_baldi"
         ]
       },
@@ -89,17 +98,26 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Portuguese Grand Prix",
       "date": "1985-04-21",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo do Estoril",
+        "realVenue": "Aut\u00F3dromo do Estoril",
         "id": "estoril_1988",
         "isPlaceholder": false,
         "fallbacks": []
@@ -109,30 +127,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.francois_hesnault",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
@@ -154,10 +172,19 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "San Marino Grand Prix",
@@ -174,30 +201,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.francois_hesnault",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
@@ -219,10 +246,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -232,43 +268,44 @@
         "realVenue": "Circuit de Monaco",
         "id": "azure_circuit_88",
         "isPlaceholder": false,
-        "fallbacks": ["azure_circuit"]
+        "fallbacks": [
+          "azure_circuit"
+        ]
       },
       "laps": 78,
       "grid": {
-        "size": 26,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.francois_hesnault",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-05-19",
           "weatherSlots": [
@@ -285,10 +322,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -305,30 +351,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
@@ -350,10 +396,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Detroit Grand Prix",
@@ -363,37 +418,39 @@
         "realVenue": "Detroit Street Circuit",
         "id": "long_beach",
         "isPlaceholder": true,
-        "fallbacks": ["adelaide_historic"]
+        "fallbacks": [
+          "adelaide_historic"
+        ]
       },
       "laps": 80,
       "grid": {
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
@@ -407,7 +464,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Detroit Street Circuit — 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach preserves the era's American street-race character."
+        "notes": "Placeholder for Detroit Street Circuit \u2014 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach preserves the era\u0027s American street-race character."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -415,10 +472,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -428,43 +494,44 @@
         "realVenue": "Circuit Paul Ricard",
         "id": "le_mans_bugatti",
         "isPlaceholder": true,
-        "fallbacks": ["silverstone_1991"]
+        "fallbacks": [
+          "silverstone_1991"
+        ]
       },
       "laps": 74,
       "grid": {
-        "size": 26,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-07-07",
           "weatherSlots": [
@@ -473,7 +540,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit Paul Ricard — 53 laps / 307.9 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+        "notes": "Placeholder for Circuit Paul Ricard \u2014 53 laps / 307.9 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -481,10 +548,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -494,43 +570,44 @@
         "realVenue": "Silverstone Circuit",
         "id": "silverstone_1975",
         "isPlaceholder": false,
-        "fallbacks": ["silverstone_1991"]
+        "fallbacks": [
+          "silverstone_1991"
+        ]
       },
       "laps": 65,
       "grid": {
-        "size": 26,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.manfred_winkelhock"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-07-21",
           "weatherSlots": [
@@ -547,57 +624,66 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
       "date": "1985-08-04",
       "championship": true,
       "track": {
-        "realVenue": "Nürburgring",
+        "realVenue": "N\u00FCrburgring",
         "id": "nurb_gp_2020_veedol",
         "isPlaceholder": true,
-        "fallbacks": ["nurb_gp_2020"]
+        "fallbacks": [
+          "nurb_gp_2020"
+        ]
       },
       "laps": 59,
       "grid": {
-        "size": 27,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
-          "driver.francois_hesnault",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
+          "driver.piercarlo_ghinzani",
           "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
-          "driver.philippe_alliot",
           "driver.manfred_winkelhock",
-          "driver.huub_rothengatter"
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 26,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-08-04",
           "weatherSlots": [
@@ -606,7 +692,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for the 1984 Nürburgring GP-Strecke — 67 laps / 304.3 km reproduced as 59 laps of the modern Nürburgring GP (Veedol). Same venue, later layout."
+        "notes": "Placeholder for the 1984 N\u00FCrburgring GP-Strecke \u2014 67 laps / 304.3 km reproduced as 59 laps of the modern N\u00FCrburgring GP (Veedol). Same venue, later layout."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -614,57 +700,64 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Austrian Grand Prix",
       "date": "1985-08-18",
       "championship": true,
       "track": {
-        "realVenue": "Österreichring",
+        "realVenue": "\u00D6sterreichring",
         "id": "spielberg_historic",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 52,
       "grid": {
-        "size": 27,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.kenny_acheson",
-          "driver.huub_rothengatter"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 26,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-08-18",
           "weatherSlots": [
@@ -673,7 +766,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2 ships the Österreichring as Spielberg Historic; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2 ships the \u00D6sterreichring as Spielberg Historic; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -681,10 +774,19 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Dutch Grand Prix",
@@ -698,40 +800,38 @@
       },
       "laps": 74,
       "grid": {
-        "size": 27,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.andrea_de_cesaris",
-          "driver.jacques_laffite",
-          "driver.martin_brundle",
-          "driver.stefan_bellof",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.jonathan_palmer",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.kenny_acheson",
-          "driver.huub_rothengatter"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 26,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-08-25",
           "weatherSlots": [
@@ -740,7 +840,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit Zandvoort (not in AMS2) — 70 laps / 297.6 km reproduced as 74 laps of Zolder, a period-correct Benelux road circuit that hosted 1980s Grands Prix."
+        "notes": "Placeholder for Circuit Zandvoort (not in AMS2) \u2014 70 laps / 297.6 km reproduced as 74 laps of Zolder, a period-correct Benelux road circuit that hosted 1980s Grands Prix."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -748,10 +848,19 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -765,39 +874,38 @@
       },
       "laps": 51,
       "grid": {
-        "size": 26,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.jacques_laffite",
-          "driver.philippe_streiff",
-          "driver.martin_brundle",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.alan_jones",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.kenny_acheson",
-          "driver.huub_rothengatter"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-09-08",
           "weatherSlots": [
@@ -814,10 +922,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -834,30 +951,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.jacques_laffite",
-          "driver.philippe_streiff",
-          "driver.martin_brundle",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.christian_danner",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.huub_rothengatter"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
@@ -879,10 +996,19 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "European Grand Prix",
@@ -896,40 +1022,38 @@
       },
       "laps": 75,
       "grid": {
-        "size": 27,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.john_watson",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.jacques_laffite",
-          "driver.philippe_streiff",
-          "driver.martin_brundle",
-          "driver.ivan_capelli",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.alan_jones",
-          "driver.christian_danner",
-          "driver.pierluigi_martini",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
           "driver.philippe_alliot",
-          "driver.huub_rothengatter"
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 26,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-10-06",
           "weatherSlots": [
@@ -946,10 +1070,19 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "South African Grand Prix",
@@ -963,34 +1096,38 @@
       },
       "laps": 75,
       "grid": {
-        "size": 21,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
-          "driver.gerhard_berger",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.philippe_streiff",
-          "driver.martin_brundle",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.alan_jones",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
           "driver.pierluigi_martini",
-          "driver.huub_rothengatter"
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 20,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1985-10-19",
           "weatherSlots": [
@@ -1007,10 +1144,19 @@
     {
       "round": 16,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Australian Grand Prix",
@@ -1027,30 +1173,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
-          "driver.niki_lauda",
-          "driver.michele_alboreto",
-          "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.elio_de_angelis",
           "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.marc_surer",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
           "driver.patrick_tambay",
           "driver.derek_warwick",
-          "driver.gerhard_berger",
+          "driver.jacques_laffite",
           "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
           "driver.riccardo_patrese",
           "driver.eddie_cheever",
-          "driver.jacques_laffite",
-          "driver.philippe_streiff",
-          "driver.martin_brundle",
-          "driver.ivan_capelli",
-          "driver.teo_fabi",
           "driver.piercarlo_ghinzani",
-          "driver.alan_jones",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
           "driver.pierluigi_martini",
-          "driver.huub_rothengatter"
+          "driver.mauro_baldi"
         ]
       },
       "setupGuide": {
@@ -1071,4 +1217,3 @@
     }
   ]
 }
-

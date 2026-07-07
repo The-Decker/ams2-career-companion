@@ -1,1643 +1,1555 @@
 {
-    "year":  2016,
-    "seriesName":  "Formula One World Championship",
-    "ams2Class":  "F-Ultimate_Gen1",
-    "pointsSystem":  {
-                         "racePoints":  [
-                                            25,
-                                            18,
-                                            15,
-                                            12,
-                                            10,
-                                            8,
-                                            6,
-                                            4,
-                                            2,
-                                            1
-                                        ],
-                         "sharedDrivePolicy":  "zero",
-                         "constructors":  {
-                                              "bestCarOnly":  false,
-                                              "bestN":  null
-                                          }
-                     },
-    "rounds":  [
-                   {
-                       "round":  1,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Australian Grand Prix",
-                       "date":  "2016-03-20",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Melbourne Grand Prix Circuit",
-                                     "id":  "adelaide_modern",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "interlagos"
-                                                   ]
-                                 },
-                       "laps":  94,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-03-20",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Melbourne Grand Prix Circuit — 57 laps / 302.3 km reproduced as 94 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland street-circuit character."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  2,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Bahrain Grand Prix",
-                       "date":  "2016-04-03",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Bahrain International Circuit",
-                                     "id":  "jerez_2019",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "imola"
-                                                   ]
-                                 },
-                       "laps":  70,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.jenson_button",
-                                                             "driver.stoffel_vandoorne",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-04-03",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Bahrain International Circuit — 57 laps / 308.2 km reproduced as 70 laps of Jerez 2019. Jerez is a modern permanent Spanish autodrome standing in for the Tilke desert layout."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  3,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Chinese Grand Prix",
-                       "date":  "2016-04-17",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Shanghai International Circuit",
-                                     "id":  "nurburgring_gp",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "barcelona_gp"
-                                                   ]
-                                 },
-                       "laps":  59,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-04-17",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Shanghai International Circuit — 56 laps / 305.1 km reproduced as 59 laps of the Nürburgring GP. Both are wide modern GP circuits with a long back straight into heavy braking."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  4,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Russian Grand Prix",
-                       "date":  "2016-05-01",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Sochi Autodrom",
-                                     "id":  "estoril_2019",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "jerez_2019"
-                                                   ]
-                                 },
-                       "laps":  74,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-05-01",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Sochi Autodrom — 53 laps / 309.7 km reproduced as 74 laps of Estoril 2019. Estoril stands in as a flowing modern permanent circuit."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  5,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Spanish Grand Prix",
-                       "date":  "2016-05-15",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Circuit de Barcelona-Catalunya",
-                                     "id":  "barcelona_gp",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "barcelona_gp_2001"
-                                                   ]
-                                 },
-                       "laps":  66,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-05-15",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  ""
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  6,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Monaco Grand Prix",
-                       "date":  "2016-05-29",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Circuit de Monaco",
-                                     "id":  "azure_circuit_2021",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "azure_circuit"
-                                                   ]
-                                 },
-                       "laps":  78,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-05-29",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the 2021 Azure (Monaco) layout; the venue is real and largely unchanged since 2016, so the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  7,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Canadian Grand Prix",
-                       "date":  "2016-06-12",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Circuit Gilles Villeneuve",
-                                     "id":  "montrealmodern",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "montrealhistoric_1991"
-                                                   ]
-                                 },
-                       "laps":  70,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-06-12",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the modern Montreal layout; the venue is real, so the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  8,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "European Grand Prix",
-                       "date":  "2016-06-19",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Baku City Circuit",
-                                     "id":  "long_beach",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "azure_circuit_2021"
-                                                   ]
-                                 },
-                       "laps":  97,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-06-19",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Baku City Circuit — 51 laps / 306.2 km reproduced as 97 laps of Long Beach. Long Beach keeps the fast street-circuit character with long straights and 90-degree corners."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  9,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Austrian Grand Prix",
-                       "date":  "2016-07-03",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Red Bull Ring",
-                                     "id":  "spielberg_gp",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "spielberg_2001"
-                                                   ]
-                                 },
-                       "laps":  71,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-07-03",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the modern Red Bull Ring (Spielberg GP); the venue is real, so the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  10,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "British Grand Prix",
-                       "date":  "2016-07-10",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Silverstone Circuit",
-                                     "id":  "silverstone_2019",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "silverstone_2001"
-                                                   ]
-                                 },
-                       "laps":  52,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-07-10",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the 2019 Silverstone layout, effectively identical to 2016; the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  11,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Hungarian Grand Prix",
-                       "date":  "2016-07-24",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Hungaroring",
-                                     "id":  "hungaroring_gp_2025",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-
-                                                   ]
-                                 },
-                       "laps":  70,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-07-24",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 2016, so the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  12,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "German Grand Prix",
-                       "date":  "2016-07-31",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Hockenheimring",
-                                     "id":  "hockenheim_gp",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "hockenheim_2001"
-                                                   ]
-                                 },
-                       "laps":  67,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.rio_haryanto"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-07-31",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the modern Hockenheim GP layout, the same circuit used for the 2016 German GP; the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  13,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Belgian Grand Prix",
-                       "date":  "2016-08-28",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Circuit de Spa-Francorchamps",
-                                     "id":  "spa-francorchamps_2022",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "spa-francorchamps_2005"
-                                                   ]
-                                 },
-                       "laps":  44,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-08-28",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the 2022 Spa layout; the venue is real and close to the 2016 configuration, so the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  14,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Italian Grand Prix",
-                       "date":  "2016-09-04",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Autodromo Nazionale Monza",
-                                     "id":  "monza_2020",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "monza_2005"
-                                                   ]
-                                 },
-                       "laps":  53,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-09-04",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the 2020 Monza layout, effectively identical to 2016; the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  15,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Singapore Grand Prix",
-                       "date":  "2016-09-18",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Marina Bay Street Circuit",
-                                     "id":  "imola",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "long_beach"
-                                                   ]
-                                 },
-                       "laps":  63,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-09-18",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Marina Bay Street Circuit — 61 laps / 308.8 km reproduced as 63 laps of Imola. Imola stands in as a tight, walled modern permanent circuit for the Singapore night race."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  16,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Malaysian Grand Prix",
-                       "date":  "2016-10-02",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Sepang International Circuit",
-                                     "id":  "curvelo",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "nurburgring_gp"
-                                                   ]
-                                 },
-                       "laps":  70,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-10-02",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Sepang International Circuit — 56 laps / 310.4 km reproduced as 70 laps of Curvelo. Curvelo is a modern permanent circuit standing in for the Tilke layout."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  17,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Japanese Grand Prix",
-                       "date":  "2016-10-09",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Suzuka Circuit",
-                                     "id":  "kansai_gp",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "kansai_classic"
-                                                   ]
-                                 },
-                       "laps":  53,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-10-09",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  18,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "United States Grand Prix",
-                       "date":  "2016-10-23",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Circuit of the Americas",
-                                     "id":  "circuit_of_the_americas_gp",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-
-                                                   ]
-                                 },
-                       "laps":  56,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-10-23",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the Circuit of the Americas GP layout, the same circuit used for the 2016 US GP; the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  19,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Mexican Grand Prix",
-                       "date":  "2016-10-30",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Autódromo Hermanos Rodríguez",
-                                     "id":  "interlagos_1993",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "interlagos"
-                                                   ]
-                                 },
-                       "laps":  71,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-10-30",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Autódromo Hermanos Rodríguez — 71 laps / 305.4 km reproduced as 71 laps of Interlagos 1993. Interlagos keeps the Latin-American venue character."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  20,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Brazilian Grand Prix",
-                       "date":  "2016-11-13",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Autódromo José Carlos Pace",
-                                     "id":  "interlagos",
-                                     "isPlaceholder":  false,
-                                     "fallbacks":  [
-                                                       "interlagos_1993"
-                                                   ]
-                                 },
-                       "laps":  71,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-11-13",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "AMS2 ships the modern Interlagos layout, the same circuit used for the 2016 Brazilian GP; the historical lap count is kept."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   },
-                   {
-                       "round":  21,
-                       "weekend":  {
-                                       "practice":  {
-                                                        "present":  true,
-                                                        "label":  "Practice"
-                                                    },
-                                       "qualifying":  {
-                                                          "present":  true,
-                                                          "label":  "Qualifying"
-                                                      },
-                                       "races":  [
-                                                     {
-                                                         "id":  "race",
-                                                         "label":  "Grand Prix"
-                                                     }
-                                                 ]
-                                   },
-                       "name":  "Abu Dhabi Grand Prix",
-                       "date":  "2016-11-27",
-                       "championship":  true,
-                       "track":  {
-                                     "realVenue":  "Yas Marina Circuit",
-                                     "id":  "imola_05",
-                                     "isPlaceholder":  true,
-                                     "fallbacks":  [
-                                                       "imola"
-                                                   ]
-                                 },
-                       "laps":  62,
-                       "grid":  {
-                                    "size":  22,
-                                    "starterDriverIds":  [
-                                                             "driver.lewis_hamilton",
-                                                             "driver.nico_rosberg",
-                                                             "driver.sebastian_vettel",
-                                                             "driver.kimi_raikkonen",
-                                                             "driver.daniel_ricciardo",
-                                                             "driver.max_verstappen",
-                                                             "driver.daniil_kvyat",
-                                                             "driver.valtteri_bottas",
-                                                             "driver.felipe_massa",
-                                                             "driver.nico_hulkenberg",
-                                                             "driver.sergio_perez",
-                                                             "driver.carlos_sainz",
-                                                             "driver.fernando_alonso",
-                                                             "driver.jenson_button",
-                                                             "driver.kevin_magnussen",
-                                                             "driver.jolyon_palmer",
-                                                             "driver.romain_grosjean",
-                                                             "driver.esteban_gutierrez",
-                                                             "driver.marcus_ericsson",
-                                                             "driver.felipe_nasr",
-                                                             "driver.pascal_wehrlein",
-                                                             "driver.esteban_ocon"
-                                                         ]
-                                },
-                       "setupGuide":  {
-                                          "session":  {
-                                                          "opponents":  21,
-                                                          "startTime":  "14:00",
-                                                          "date":  "2016-11-27",
-                                                          "weatherSlots":  [
-                                                                               "Clear"
-                                                                           ],
-                                                          "timeProgression":  "1x",
-                                                          "mandatoryPitStop":  false
-                                                      },
-                                          "notes":  "Placeholder for Yas Marina Circuit — 55 laps / 305.4 km reproduced as 62 laps of Imola 2005. The 2005 Imola layout stands in as a modern permanent circuit for the season finale."
-                                      },
-                       "guestEntries":  [
-
-                                        ],
-                       "aiOverrides":  {
-
-                                       }
-                   }
-               ]
+  "year": 2016,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Ultimate_Gen1",
+  "pointsSystem": {
+    "racePoints": [
+      25,
+      18,
+      15,
+      12,
+      10,
+      8,
+      6,
+      4,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Australian Grand Prix",
+      "date": "2016-03-20",
+      "championship": true,
+      "track": {
+        "realVenue": "Melbourne Grand Prix Circuit",
+        "id": "adelaide_modern",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "interlagos"
+        ]
+      },
+      "laps": 94,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-03-20",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Melbourne Grand Prix Circuit \u2014 57 laps / 302.3 km reproduced as 94 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland street-circuit character."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Bahrain Grand Prix",
+      "date": "2016-04-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Bahrain International Circuit",
+        "id": "jerez_2019",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "imola"
+        ]
+      },
+      "laps": 70,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-04-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Bahrain International Circuit \u2014 57 laps / 308.2 km reproduced as 70 laps of Jerez 2019. Jerez is a modern permanent Spanish autodrome standing in for the Tilke desert layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Chinese Grand Prix",
+      "date": "2016-04-17",
+      "championship": true,
+      "track": {
+        "realVenue": "Shanghai International Circuit",
+        "id": "nurburgring_gp",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "barcelona_gp"
+        ]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-04-17",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Shanghai International Circuit \u2014 56 laps / 305.1 km reproduced as 59 laps of the N\u00FCrburgring GP. Both are wide modern GP circuits with a long back straight into heavy braking."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Russian Grand Prix",
+      "date": "2016-05-01",
+      "championship": true,
+      "track": {
+        "realVenue": "Sochi Autodrom",
+        "id": "estoril_2019",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "jerez_2019"
+        ]
+      },
+      "laps": 74,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-05-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Sochi Autodrom \u2014 53 laps / 309.7 km reproduced as 74 laps of Estoril 2019. Estoril stands in as a flowing modern permanent circuit."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Spanish Grand Prix",
+      "date": "2016-05-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Barcelona-Catalunya",
+        "id": "barcelona_gp",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "barcelona_gp_2001"
+        ]
+      },
+      "laps": 66,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-05-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Monaco Grand Prix",
+      "date": "2016-05-29",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_2021",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-05-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2021 Azure (Monaco) layout; the venue is real and largely unchanged since 2016, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Canadian Grand Prix",
+      "date": "2016-06-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealmodern",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "montrealhistoric_1991"
+        ]
+      },
+      "laps": 70,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-06-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the modern Montreal layout; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "European Grand Prix",
+      "date": "2016-06-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Baku City Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "azure_circuit_2021"
+        ]
+      },
+      "laps": 97,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-06-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Baku City Circuit \u2014 51 laps / 306.2 km reproduced as 97 laps of Long Beach. Long Beach keeps the fast street-circuit character with long straights and 90-degree corners."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Austrian Grand Prix",
+      "date": "2016-07-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Red Bull Ring",
+        "id": "spielberg_gp",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "spielberg_2001"
+        ]
+      },
+      "laps": 71,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-07-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the modern Red Bull Ring (Spielberg GP); the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "British Grand Prix",
+      "date": "2016-07-10",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_2019",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_2001"
+        ]
+      },
+      "laps": 52,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-07-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2019 Silverstone layout, effectively identical to 2016; the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Hungarian Grand Prix",
+      "date": "2016-07-24",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-07-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 2016, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "German Grand Prix",
+      "date": "2016-07-31",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_gp",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "hockenheim_2001"
+        ]
+      },
+      "laps": 67,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-07-31",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the modern Hockenheim GP layout, the same circuit used for the 2016 German GP; the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Belgian Grand Prix",
+      "date": "2016-08-28",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_2022",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "spa-francorchamps_2005"
+        ]
+      },
+      "laps": 44,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-08-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2022 Spa layout; the venue is real and close to the 2016 configuration, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Italian Grand Prix",
+      "date": "2016-09-04",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_2020",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "monza_2005"
+        ]
+      },
+      "laps": 53,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-09-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2020 Monza layout, effectively identical to 2016; the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Singapore Grand Prix",
+      "date": "2016-09-18",
+      "championship": true,
+      "track": {
+        "realVenue": "Marina Bay Street Circuit",
+        "id": "imola",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "long_beach"
+        ]
+      },
+      "laps": 63,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-09-18",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Marina Bay Street Circuit \u2014 61 laps / 308.8 km reproduced as 63 laps of Imola. Imola stands in as a tight, walled modern permanent circuit for the Singapore night race."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Malaysian Grand Prix",
+      "date": "2016-10-02",
+      "championship": true,
+      "track": {
+        "realVenue": "Sepang International Circuit",
+        "id": "curvelo",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "nurburgring_gp"
+        ]
+      },
+      "laps": 70,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-10-02",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Sepang International Circuit \u2014 56 laps / 310.4 km reproduced as 70 laps of Curvelo. Curvelo is a modern permanent circuit standing in for the Tilke layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 17,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Japanese Grand Prix",
+      "date": "2016-10-09",
+      "championship": true,
+      "track": {
+        "realVenue": "Suzuka Circuit",
+        "id": "kansai_gp",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "kansai_classic"
+        ]
+      },
+      "laps": 53,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-10-09",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 18,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "United States Grand Prix",
+      "date": "2016-10-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit of the Americas",
+        "id": "circuit_of_the_americas_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 56,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-10-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the Circuit of the Americas GP layout, the same circuit used for the 2016 US GP; the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 19,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Mexican Grand Prix",
+      "date": "2016-10-30",
+      "championship": true,
+      "track": {
+        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
+        "id": "interlagos_1993",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "interlagos"
+        ]
+      },
+      "laps": 71,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-10-30",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 71 laps / 305.4 km reproduced as 71 laps of Interlagos 1993. Interlagos keeps the Latin-American venue character."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 20,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Brazilian Grand Prix",
+      "date": "2016-11-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Aut\u00F3dromo Jos\u00E9 Carlos Pace",
+        "id": "interlagos",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "interlagos_1993"
+        ]
+      },
+      "laps": 71,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-11-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the modern Interlagos layout, the same circuit used for the 2016 Brazilian GP; the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 21,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Abu Dhabi Grand Prix",
+      "date": "2016-11-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Yas Marina Circuit",
+        "id": "imola_05",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "imola"
+        ]
+      },
+      "laps": 62,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.lewis_hamilton",
+          "driver.nico_rosberg",
+          "driver.sebastian_vettel",
+          "driver.max_verstappen",
+          "driver.kimi_raikkonen",
+          "driver.daniel_ricciardo",
+          "driver.sergio_perez",
+          "driver.valtteri_bottas",
+          "driver.nico_hulkenberg",
+          "driver.felipe_massa",
+          "driver.daniil_kvyat",
+          "driver.carlos_sainz",
+          "driver.fernando_alonso",
+          "driver.jenson_button",
+          "driver.romain_grosjean",
+          "driver.esteban_gutierrez",
+          "driver.kevin_magnussen",
+          "driver.jolyon_palmer",
+          "driver.felipe_nasr",
+          "driver.marcus_ericsson",
+          "driver.pascal_wehrlein",
+          "driver.rio_haryanto"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "2016-11-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Yas Marina Circuit \u2014 55 laps / 305.4 km reproduced as 62 laps of Imola 2005. The 2005 Imola layout stands in as a modern permanent circuit for the season finale."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
 }

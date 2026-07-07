@@ -29,10 +29,19 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "South African Grand Prix",
@@ -50,19 +59,19 @@
       "grid": {
         "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.mario_andretti",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
           "driver.peter_de_klerk"
         ]
       },
@@ -85,17 +94,26 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
       "date": "1969-05-04",
       "championship": true,
       "track": {
-        "realVenue": "Circuito de Montjuïc",
+        "realVenue": "Circuito de Montju\u00EFc",
         "id": "brandshatch_gp",
         "isPlaceholder": true,
         "fallbacks": [
@@ -104,26 +122,27 @@
       },
       "laps": 87,
       "grid": {
-        "size": 13,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 12,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-05-04",
           "weatherSlots": [
@@ -132,7 +151,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuito de Montjuïc — 90 laps / 341.2 km reproduced as 87 laps of BrandsHatch GP."
+        "notes": "Placeholder for Circuito de Montju\u00EFc \u2014 90 laps / 341.2 km reproduced as 87 laps of BrandsHatch GP."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -140,10 +159,19 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -159,26 +187,27 @@
       },
       "laps": 80,
       "grid": {
-        "size": 13,
+        "size": 14,
         "starterDriverIds": [
+          "driver.jackie_stewart",
+          "driver.jochen_rindt",
+          "driver.jacky_ickx",
+          "driver.denny_hulme",
+          "driver.jack_brabham",
           "driver.graham_hill",
           "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
-          "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
           "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
           "driver.john_surtees",
+          "driver.mario_andretti",
           "driver.jackie_oliver",
-          "driver.jack_brabham",
-          "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.silvio_moser"
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 12,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-05-18",
           "weatherSlots": [
@@ -204,10 +233,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Dutch Grand Prix",
@@ -225,28 +263,27 @@
       },
       "laps": 64,
       "grid": {
-        "size": 15,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.vic_elford",
-          "driver.silvio_moser"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 14,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-06-21",
           "weatherSlots": [
@@ -255,7 +292,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit Park Zandvoort — 90 laps / 377.4 km reproduced as 64 laps of Spielberg Vintage."
+        "notes": "Placeholder for Circuit Park Zandvoort \u2014 90 laps / 377.4 km reproduced as 64 laps of Spielberg Vintage."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -263,10 +300,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -283,25 +329,27 @@
       },
       "laps": 47,
       "grid": {
-        "size": 12,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.vic_elford",
-          "driver.silvio_moser"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 11,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-07-06",
           "weatherSlots": [
@@ -310,7 +358,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Charade Circuit — 38 laps / 306.1 km reproduced as 47 laps of Rouen."
+        "notes": "Placeholder for Charade Circuit \u2014 38 laps / 306.1 km reproduced as 47 laps of Rouen."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -318,10 +366,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -337,29 +394,27 @@
       },
       "laps": 84,
       "grid": {
-        "size": 16,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
-          "driver.pedro_rodriguez",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.vic_elford",
-          "driver.jo_bonnier",
-          "driver.derek_bell"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 15,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-07-19",
           "weatherSlots": [
@@ -381,46 +436,53 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
       "date": "1969-08-03",
       "championship": true,
       "track": {
-        "realVenue": "Nürburgring",
+        "realVenue": "N\u00FCrburgring",
         "id": "nurb_1971_nords",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 14,
       "grid": {
-        "size": 16,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.mario_andretti",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.jackie_oliver",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.vic_elford",
-          "driver.jo_bonnier",
-          "driver.richard_attwood",
-          "driver.henri_pescarolo",
-          "driver.francois_cevert"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 15,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-08-03",
           "weatherSlots": [
@@ -437,10 +499,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -456,20 +527,20 @@
       "grid": {
         "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.pedro_rodriguez",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.silvio_moser"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
@@ -504,10 +575,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -521,28 +601,27 @@
       },
       "laps": 90,
       "grid": {
-        "size": 15,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.pedro_rodriguez",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.silvio_moser",
-          "driver.pete_lovely"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 14,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-09-20",
           "weatherSlots": [
@@ -559,10 +638,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "United States Grand Prix",
@@ -576,29 +664,27 @@
       },
       "laps": 108,
       "grid": {
-        "size": 16,
+        "size": 14,
         "starterDriverIds": [
-          "driver.graham_hill",
-          "driver.jochen_rindt",
-          "driver.mario_andretti",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.pedro_rodriguez",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.silvio_moser",
-          "driver.pete_lovely",
-          "driver.george_eaton"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 15,
+          "opponents": 13,
           "startTime": "14:00",
           "date": "1969-10-05",
           "weatherSlots": [
@@ -607,7 +693,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Watkins Glen layouts are 1971+; the venue is real, so the historical lap count is kept on the era-different layout."
+        "notes": "AMS2\u0027s Watkins Glen layouts are 1971\u002B; the venue is real, so the historical lap count is kept on the era-different layout."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -615,17 +701,26 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Mexican Grand Prix",
       "date": "1969-10-19",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Hermanos Rodríguez",
+        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
         "id": "interlagos_historic",
         "isPlaceholder": true,
         "fallbacks": [
@@ -636,20 +731,20 @@
       "grid": {
         "size": 14,
         "starterDriverIds": [
-          "driver.jochen_rindt",
-          "driver.jo_siffert",
-          "driver.denny_hulme",
           "driver.jackie_stewart",
-          "driver.jean_pierre_beltoise",
-          "driver.pedro_rodriguez",
-          "driver.john_surtees",
-          "driver.jackie_oliver",
-          "driver.jack_brabham",
+          "driver.jochen_rindt",
           "driver.jacky_ickx",
-          "driver.piers_courage",
-          "driver.silvio_moser",
-          "driver.pete_lovely",
-          "driver.george_eaton"
+          "driver.denny_hulme",
+          "driver.jack_brabham",
+          "driver.graham_hill",
+          "driver.jo_siffert",
+          "driver.chris_amon",
+          "driver.bruce_mclaren",
+          "driver.jean_pierre_beltoise",
+          "driver.john_surtees",
+          "driver.mario_andretti",
+          "driver.jackie_oliver",
+          "driver.peter_de_klerk"
         ]
       },
       "setupGuide": {
@@ -663,7 +758,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
+        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
       },
       "guestEntries": [],
       "aiOverrides": {}

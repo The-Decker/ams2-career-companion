@@ -133,28 +133,6 @@
       }
     },
     {
-      "id": "driver.david_brabham",
-      "name": "David Brabham",
-      "country": "AUS",
-      "born": 1965,
-      "ratings": {
-        "raceSkill": 0.53,
-        "qualifyingSkill": 0.54,
-        "aggression": 0.46,
-        "defending": 0.23,
-        "stamina": 0.52,
-        "consistency": 0.38,
-        "startReactions": 0.55,
-        "wetSkill": 0.58,
-        "tyreManagement": 0.61,
-        "fuelManagement": 0.66,
-        "blueFlagConceding": 0.98,
-        "weatherTyreChanges": 0.56,
-        "avoidanceOfMistakes": 0.29,
-        "avoidanceOfForcedMistakes": 0.26
-      }
-    },
-    {
       "id": "driver.gregor_foitek",
       "name": "Gregor Foitek",
       "country": "CHE",
@@ -218,28 +196,6 @@
         "weatherTyreChanges": 0.68,
         "avoidanceOfMistakes": 0.41,
         "avoidanceOfForcedMistakes": 0.28
-      }
-    },
-    {
-      "id": "driver.alex_caffi",
-      "name": "Alex Caffi",
-      "country": "ITA",
-      "born": 1964,
-      "ratings": {
-        "raceSkill": 0.56,
-        "qualifyingSkill": 0.57,
-        "aggression": 0.53,
-        "defending": 0.16,
-        "stamina": 0.59,
-        "consistency": 0.43,
-        "startReactions": 0.74,
-        "wetSkill": 0.56,
-        "tyreManagement": 0.68,
-        "fuelManagement": 0.33,
-        "blueFlagConceding": 0.98,
-        "weatherTyreChanges": 0.82,
-        "avoidanceOfMistakes": 0.38,
-        "avoidanceOfForcedMistakes": 0.22
       }
     },
     {
@@ -309,28 +265,6 @@
       }
     },
     {
-      "id": "driver.johnny_herbert",
-      "name": "Johnny Herbert",
-      "country": "GBR",
-      "born": 1964,
-      "ratings": {
-        "raceSkill": 0.76,
-        "qualifyingSkill": 0.78,
-        "aggression": 0.53,
-        "defending": 0.23,
-        "stamina": 0.68,
-        "consistency": 0.71,
-        "startReactions": 0.74,
-        "wetSkill": 0.58,
-        "tyreManagement": 0.61,
-        "fuelManagement": 0.4,
-        "blueFlagConceding": 0.98,
-        "weatherTyreChanges": 0.81,
-        "avoidanceOfMistakes": 0.39,
-        "avoidanceOfForcedMistakes": 0.29
-      }
-    },
-    {
       "id": "driver.olivier_grouillard",
       "name": "Olivier Grouillard",
       "country": "FRA",
@@ -354,7 +288,7 @@
     },
     {
       "id": "driver.mauricio_gugelmin",
-      "name": "Maurício Gugelmin",
+      "name": "Maur\u00EDcio Gugelmin",
       "country": "BRA",
       "born": 1963,
       "ratings": {
@@ -529,28 +463,6 @@
       }
     },
     {
-      "id": "driver.emanuele_pirro",
-      "name": "Emanuele Pirro",
-      "country": "ITA",
-      "born": 1962,
-      "ratings": {
-        "raceSkill": 0.62,
-        "qualifyingSkill": 0.64,
-        "aggression": 0.55,
-        "defending": 0.39,
-        "stamina": 0.63,
-        "consistency": 0.62,
-        "startReactions": 0.71,
-        "wetSkill": 0.61,
-        "tyreManagement": 0.71,
-        "fuelManagement": 0.34,
-        "blueFlagConceding": 0.94,
-        "weatherTyreChanges": 0.75,
-        "avoidanceOfMistakes": 0.4,
-        "avoidanceOfForcedMistakes": 0.29
-      }
-    },
-    {
       "id": "driver.andrea_de_cesaris",
       "name": "Andrea de Cesaris",
       "country": "ITA",
@@ -706,7 +618,7 @@
     },
     {
       "id": "driver.eric_bernard",
-      "name": "Éric Bernard",
+      "name": "\u00C9ric Bernard",
       "country": "FRA",
       "born": 1964,
       "ratings": {
@@ -856,28 +768,6 @@
         "weatherTyreChanges": 0.61,
         "avoidanceOfMistakes": 0.24,
         "avoidanceOfForcedMistakes": 0.16
-      }
-    },
-    {
-      "id": "driver.bruno_giacomelli",
-      "name": "Bruno Giacomelli",
-      "country": "ITA",
-      "born": 1952,
-      "ratings": {
-        "raceSkill": 0.45,
-        "qualifyingSkill": 0.47,
-        "aggression": 0.3,
-        "defending": 0.11,
-        "stamina": 0.34,
-        "consistency": 0.41,
-        "startReactions": 0.46,
-        "wetSkill": 0.51,
-        "tyreManagement": 0.48,
-        "fuelManagement": 0.4,
-        "blueFlagConceding": 0.97,
-        "weatherTyreChanges": 0.55,
-        "avoidanceOfMistakes": 0.26,
-        "avoidanceOfForcedMistakes": 0.23
       }
     }
   ]

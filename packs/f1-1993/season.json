@@ -21,10 +21,19 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "South African Grand Prix",
@@ -42,32 +51,32 @@
       "grid": {
         "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
           "driver.ivan_capelli",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
@@ -81,7 +90,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "The 1993 South African GP ran the circuit rebuilt in 1992; AMS2's Kyalami 2019 is the same venue's modern layout, so the historical lap count is kept."
+        "notes": "The 1993 South African GP ran the circuit rebuilt in 1992; AMS2\u0027s Kyalami 2019 is the same venue\u0027s modern layout, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -89,17 +98,26 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
       "date": "1993-03-28",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo José Carlos Pace",
+        "realVenue": "Aut\u00F3dromo Jos\u00E9 Carlos Pace",
         "id": "interlagos_1993",
         "isPlaceholder": false,
         "fallbacks": [
@@ -108,38 +126,39 @@
       },
       "laps": 71,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-03-28",
           "weatherSlots": [
@@ -156,10 +175,19 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "European Grand Prix",
@@ -173,38 +201,39 @@
       },
       "laps": 76,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-04-11",
           "weatherSlots": [
@@ -221,10 +250,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "San Marino Grand Prix",
@@ -240,31 +278,31 @@
       "grid": {
         "size": 25,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.luca_badoer",
-          "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
+          "driver.christian_fittipaldi"
         ]
       },
       "setupGuide": {
@@ -286,10 +324,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
@@ -305,38 +352,39 @@
       },
       "laps": 65,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-05-09",
           "weatherSlots": [
@@ -353,10 +401,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -372,38 +429,39 @@
       },
       "laps": 78,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-05-23",
           "weatherSlots": [
@@ -420,10 +478,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -439,38 +506,39 @@
       },
       "laps": 69,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-06-13",
           "weatherSlots": [
@@ -487,10 +555,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -507,38 +584,39 @@
       },
       "laps": 73,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.fabrizio_barbazza",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-07-04",
           "weatherSlots": [
@@ -547,7 +625,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit de Nevers Magny-Cours — 72 laps / 306 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+        "notes": "Placeholder for Circuit de Nevers Magny-Cours \u2014 72 laps / 306 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -555,10 +633,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -574,38 +661,39 @@
       },
       "laps": 59,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-07-11",
           "weatherSlots": [
@@ -622,10 +710,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
@@ -641,32 +738,32 @@
       "grid": {
         "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
@@ -680,7 +777,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "The 1993 German GP ran Hockenheim with the 1992-revised Ostkurve; the venue is real, so the historical lap count is kept on AMS2's 1988 layout."
+        "notes": "The 1993 German GP ran Hockenheim with the 1992-revised Ostkurve; the venue is real, so the historical lap count is kept on AMS2\u0027s 1988 layout."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -688,10 +785,19 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Hungarian Grand Prix",
@@ -707,32 +813,32 @@
       "grid": {
         "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.alex_zanardi",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
@@ -754,10 +860,19 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -771,38 +886,39 @@
       },
       "laps": 44,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.thierry_boutsen",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-08-29",
           "weatherSlots": [
@@ -819,10 +935,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -838,32 +963,32 @@
       "grid": {
         "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.michael_andretti",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.pedro_lamy",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.marco_apicella",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
@@ -885,17 +1010,26 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Portuguese Grand Prix",
       "date": "1993-09-26",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo do Estoril",
+        "realVenue": "Aut\u00F3dromo do Estoril",
         "id": "estoril_1988",
         "isPlaceholder": false,
         "fallbacks": []
@@ -904,32 +1038,32 @@
       "grid": {
         "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.mika_hakkinen",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.pedro_lamy",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.emanuele_naspetti",
-          "driver.philippe_alliot",
-          "driver.erik_comas",
-          "driver.michele_alboreto",
-          "driver.luca_badoer",
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
           "driver.christian_fittipaldi",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
@@ -951,10 +1085,19 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Japanese Grand Prix",
@@ -970,37 +1113,39 @@
       },
       "laps": 53,
       "grid": {
-        "size": 24,
+        "size": 26,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.mika_hakkinen",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.pedro_lamy",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.eddie_irvine",
-          "driver.toshio_suzuki",
-          "driver.erik_comas",
-          "driver.jean_marc_gounon",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
+          "driver.christian_fittipaldi",
+          "driver.fabrizio_barbazza"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 23,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1993-10-24",
           "weatherSlots": [
@@ -1017,10 +1162,19 @@
     {
       "round": 16,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Australian Grand Prix",
@@ -1034,37 +1188,38 @@
       },
       "laps": 79,
       "grid": {
-        "size": 24,
+        "size": 25,
         "starterDriverIds": [
-          "driver.damon_hill",
-          "driver.alain_prost",
-          "driver.ukyo_katayama",
-          "driver.andrea_de_cesaris",
           "driver.michael_schumacher",
-          "driver.riccardo_patrese",
-          "driver.mika_hakkinen",
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.alain_prost",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.damon_hill",
           "driver.derek_warwick",
+          "driver.michael_andretti",
           "driver.aguri_suzuki",
-          "driver.pedro_lamy",
+          "driver.erik_comas",
+          "driver.philippe_alliot",
+          "driver.andrea_de_cesaris",
+          "driver.ukyo_katayama",
+          "driver.martin_brundle",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.mark_blundell",
+          "driver.jj_lehto",
+          "driver.luca_badoer",
           "driver.johnny_herbert",
           "driver.rubens_barrichello",
-          "driver.eddie_irvine",
-          "driver.toshio_suzuki",
-          "driver.erik_comas",
-          "driver.jean_marc_gounon",
-          "driver.pierluigi_martini",
-          "driver.martin_brundle",
-          "driver.mark_blundell",
-          "driver.jean_alesi",
-          "driver.gerhard_berger",
-          "driver.karl_wendlinger",
-          "driver.jj_lehto"
+          "driver.ivan_capelli",
+          "driver.alex_zanardi",
+          "driver.christian_fittipaldi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 23,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1993-11-07",
           "weatherSlots": [

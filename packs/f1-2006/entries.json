@@ -1,158 +1,151 @@
 {
-    "entries":  [
-                    {
-                        "teamId":  "team.renault",
-                        "driverId":  "driver.fernando_alonso",
-                        "number":  "1",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Renault R26 #1"
-                    },
-                    {
-                        "teamId":  "team.renault",
-                        "driverId":  "driver.giancarlo_fisichella",
-                        "number":  "2",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Renault R26 #2"
-                    },
-                    {
-                        "teamId":  "team.mclaren",
-                        "driverId":  "driver.kimi_raikkonen",
-                        "number":  "3",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "McLean G.P. #3"
-                    },
-                    {
-                        "teamId":  "team.mclaren",
-                        "driverId":  "driver.juan_pablo_montoya",
-                        "number":  "4",
-                        "rounds":  "1-10",
-                        "ams2LiveryName":  "McLean G.P. #4"
-                    },
-                    {
-                        "teamId":  "team.ferrari",
-                        "driverId":  "driver.michael_schumacher",
-                        "number":  "5",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Scuderia Forza #5"
-                    },
-                    {
-                        "teamId":  "team.ferrari",
-                        "driverId":  "driver.felipe_massa",
-                        "number":  "6",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Scuderia Forza #6"
-                    },
-                    {
-                        "teamId":  "team.toyota",
-                        "driverId":  "driver.ralf_schumacher",
-                        "number":  "7",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "TECH-J #7"
-                    },
-                    {
-                        "teamId":  "team.toyota",
-                        "driverId":  "driver.jarno_trulli",
-                        "number":  "8",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "TECH-J #8"
-                    },
-                    {
-                        "teamId":  "team.williams",
-                        "driverId":  "driver.mark_webber",
-                        "number":  "9",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Didcot Racing #9"
-                    },
-                    {
-                        "teamId":  "team.williams",
-                        "driverId":  "driver.nico_rosberg",
-                        "number":  "10",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Didcot Racing #10"
-                    },
-                    {
-                        "teamId":  "team.honda",
-                        "driverId":  "driver.rubens_barrichello",
-                        "number":  "11",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Hoshino #11"
-                    },
-                    {
-                        "teamId":  "team.honda",
-                        "driverId":  "driver.jenson_button",
-                        "number":  "12",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Hoshino #12"
-                    },
-                    {
-                        "teamId":  "team.red_bull",
-                        "driverId":  "driver.david_coulthard",
-                        "number":  "14",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "energyX Racing #14"
-                    },
-                    {
-                        "teamId":  "team.red_bull",
-                        "driverId":  "driver.christian_klien",
-                        "number":  "15",
-                        "rounds":  "1-15",
-                        "ams2LiveryName":  "energyX Racing #15"
-                    },
-                    {
-                        "teamId":  "team.bmw_sauber",
-                        "driverId":  "driver.nick_heidfeld",
-                        "number":  "16",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Deutsch Zir-Win Motorsport #16"
-                    },
-                    {
-                        "teamId":  "team.bmw_sauber",
-                        "driverId":  "driver.jacques_villeneuve",
-                        "number":  "17",
-                        "rounds":  "1-12",
-                        "ams2LiveryName":  "Deutsch Zir-Win Motorsport #17"
-                    },
-                    {
-                        "teamId":  "team.midland",
-                        "driverId":  "driver.tiago_monteiro",
-                        "number":  "18",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "FMR Racing #18"
-                    },
-                    {
-                        "teamId":  "team.midland",
-                        "driverId":  "driver.christijan_albers",
-                        "number":  "19",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "FMR Racing #19"
-                    },
-                    {
-                        "teamId":  "team.toro_rosso",
-                        "driverId":  "driver.vitantonio_liuzzi",
-                        "number":  "20",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "energyX Faenza #20"
-                    },
-                    {
-                        "teamId":  "team.toro_rosso",
-                        "driverId":  "driver.scott_speed",
-                        "number":  "21",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "energyX Faenza #21"
-                    },
-                    {
-                        "teamId":  "team.super_aguri",
-                        "driverId":  "driver.takuma_sato",
-                        "number":  "22",
-                        "rounds":  "1-18",
-                        "ams2LiveryName":  "Team Agiro #22"
-                    },
-                    {
-                        "teamId":  "team.super_aguri",
-                        "driverId":  "driver.sakon_yamamoto",
-                        "number":  "23",
-                        "rounds":  "12-18",
-                        "ams2LiveryName":  "Team Agiro #23"
-                    }
-                ]
+  "entries": [
+    {
+      "teamId": "team.renault",
+      "driverId": "driver.fernando_alonso",
+      "number": "1",
+      "rounds": "1-18",
+      "ams2LiveryName": "Renault R26 #1"
+    },
+    {
+      "teamId": "team.renault",
+      "driverId": "driver.giancarlo_fisichella",
+      "number": "2",
+      "rounds": "1-18",
+      "ams2LiveryName": "Renault R26 #2"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.kimi_raikkonen",
+      "number": "3",
+      "rounds": "1-18",
+      "ams2LiveryName": "McLean G.P. #3"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.juan_pablo_montoya",
+      "number": "4",
+      "rounds": "1-18",
+      "ams2LiveryName": "McLean G.P. #4"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.michael_schumacher",
+      "number": "5",
+      "rounds": "1-18",
+      "ams2LiveryName": "Scuderia Forza #5"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.felipe_massa",
+      "number": "6",
+      "rounds": "1-18",
+      "ams2LiveryName": "Scuderia Forza #6"
+    },
+    {
+      "teamId": "team.toyota",
+      "driverId": "driver.ralf_schumacher",
+      "number": "7",
+      "rounds": "1-18",
+      "ams2LiveryName": "TECH-J #7"
+    },
+    {
+      "teamId": "team.toyota",
+      "driverId": "driver.jarno_trulli",
+      "number": "8",
+      "rounds": "1-18",
+      "ams2LiveryName": "TECH-J #8"
+    },
+    {
+      "teamId": "team.williams",
+      "driverId": "driver.mark_webber",
+      "number": "9",
+      "rounds": "1-18",
+      "ams2LiveryName": "Didcot Racing #9"
+    },
+    {
+      "teamId": "team.williams",
+      "driverId": "driver.nico_rosberg",
+      "number": "10",
+      "rounds": "1-18",
+      "ams2LiveryName": "Didcot Racing #10"
+    },
+    {
+      "teamId": "team.honda",
+      "driverId": "driver.rubens_barrichello",
+      "number": "11",
+      "rounds": "1-18",
+      "ams2LiveryName": "Hoshino #11"
+    },
+    {
+      "teamId": "team.honda",
+      "driverId": "driver.jenson_button",
+      "number": "12",
+      "rounds": "1-18",
+      "ams2LiveryName": "Hoshino #12"
+    },
+    {
+      "teamId": "team.red_bull",
+      "driverId": "driver.david_coulthard",
+      "number": "14",
+      "rounds": "1-18",
+      "ams2LiveryName": "energyX Racing #14"
+    },
+    {
+      "teamId": "team.red_bull",
+      "driverId": "driver.christian_klien",
+      "number": "15",
+      "rounds": "1-18",
+      "ams2LiveryName": "energyX Racing #15"
+    },
+    {
+      "teamId": "team.bmw_sauber",
+      "driverId": "driver.nick_heidfeld",
+      "number": "16",
+      "rounds": "1-18",
+      "ams2LiveryName": "Deutsch Zir-Win Motorsport #16"
+    },
+    {
+      "teamId": "team.bmw_sauber",
+      "driverId": "driver.jacques_villeneuve",
+      "number": "17",
+      "rounds": "1-18",
+      "ams2LiveryName": "Deutsch Zir-Win Motorsport #17"
+    },
+    {
+      "teamId": "team.midland",
+      "driverId": "driver.tiago_monteiro",
+      "number": "18",
+      "rounds": "1-18",
+      "ams2LiveryName": "FMR Racing #18"
+    },
+    {
+      "teamId": "team.midland",
+      "driverId": "driver.christijan_albers",
+      "number": "19",
+      "rounds": "1-18",
+      "ams2LiveryName": "FMR Racing #19"
+    },
+    {
+      "teamId": "team.toro_rosso",
+      "driverId": "driver.vitantonio_liuzzi",
+      "number": "20",
+      "rounds": "1-18",
+      "ams2LiveryName": "energyX Faenza #20"
+    },
+    {
+      "teamId": "team.toro_rosso",
+      "driverId": "driver.scott_speed",
+      "number": "21",
+      "rounds": "1-18",
+      "ams2LiveryName": "energyX Faenza #21"
+    },
+    {
+      "teamId": "team.super_aguri",
+      "driverId": "driver.takuma_sato",
+      "number": "22",
+      "rounds": "1-18",
+      "ams2LiveryName": "Team Agiro #22"
+    }
+  ]
 }
