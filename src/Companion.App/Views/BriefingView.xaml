@@ -33,20 +33,24 @@
             <!-- Circuit map: the f1db-derived vector layout of the circuit this round is run on, with a
                  one-line caption (name · length · turns · direction). Collapses when the round has no
                  circuit data. Always shows (no user art needed) — the "very important visual per race". -->
-            <Border Style="{StaticResource Panel}" Margin="0,12,0,0" Padding="14" HorizontalAlignment="Left"
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0" Padding="16" MaxWidth="720"
+                    HorizontalAlignment="Left"
                     Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
                 <DockPanel>
-                    <Viewbox DockPanel.Dock="Left" Width="150" Height="150" Margin="0,0,16,0">
+                    <Viewbox DockPanel.Dock="Left" Width="168" Height="168" Margin="0,0,20,0" VerticalAlignment="Top">
                         <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                               Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
                               StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                     </Viewbox>
-                    <StackPanel VerticalAlignment="Center" MaxWidth="360">
-                        <TextBlock Text="Circuit" Style="{StaticResource Faint}" />
-                        <TextBlock Text="{Binding VenueDisplayName}" FontWeight="SemiBold" FontSize="15"
-                                   TextWrapping="Wrap" Margin="0,2,0,0" />
-                        <TextBlock Text="{Binding CircuitCaption}" Style="{StaticResource Muted}"
-                                   TextWrapping="Wrap" Margin="0,4,0,0" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="CIRCUIT" Style="{StaticResource Faint}" FontSize="11" />
+                        <TextBlock Text="{Binding VenueDisplayName}" FontWeight="SemiBold" FontSize="18"
+                                   TextWrapping="Wrap" Margin="0,3,0,0" />
+                        <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                   TextWrapping="Wrap" Margin="0,5,0,0" />
+                        <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}"
+                                   TextWrapping="Wrap" Margin="0,10,0,0"
+                                   Visibility="{Binding CircuitHistory, Converter={StaticResource StringVisible}}" />
                     </StackPanel>
                 </DockPanel>
             </Border>

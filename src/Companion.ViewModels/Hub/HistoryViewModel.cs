@@ -366,6 +366,7 @@ public sealed partial class HistoricalRoundViewModel : ObservableObject
 
         CircuitLayoutId = round.Circuit?.LayoutId ?? "";
         CircuitCaption = CircuitCaptions.Compose(round.Circuit);
+        CircuitHistory = round.Circuit?.History ?? "";
     }
 
     /// <summary>True once the player has raced this round — the real result is unlocked. False = a
@@ -380,6 +381,9 @@ public sealed partial class HistoricalRoundViewModel : ObservableObject
     public bool HasCircuit => CircuitLayoutId.Length > 0;
     /// <summary>"Imola · 4.96 km · 22 turns · anti-clockwise circuit" — the preview detail.</summary>
     public string CircuitCaption { get; }
+    /// <summary>A brief, data-grounded circuit history for the preview.</summary>
+    public string CircuitHistory { get; } = "";
+    public bool HasCircuitHistory => CircuitHistory.Length > 0;
 
     /// <summary>The winner line, but only once revealed — a preview never leaks it.</summary>
     public string WinnerText { get; }

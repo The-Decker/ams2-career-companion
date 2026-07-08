@@ -25,12 +25,14 @@ conn.Open();
 // so small beats pretty, and literal accents match the app's other data files.
 var jsonOptions = new JsonSerializerOptions { WriteIndented = false, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 int written = 0;
+// circuit_id -> (first year, last year) that circuit hosted a race, cached across all seasons.
+var yearSpans = new Dictionary<string, (int Min, int Max)?>();
 
 for (int year = startYear; year <= endYear; year++)
 {
     var rounds = Rows(conn,
         "SELECT r.id, r.round, gp.full_name, r.circuit_layout_id, c.name, c.place_name, c.type, c.direction, " +
-        "cl.length, cl.turns " +
+        "cl.length, cl.turns, c.id, c.previous_names, c.total_races_held " +
         "FROM race r JOIN grand_prix gp ON r.grand_prix_id = gp.id " +
         "JOIN circuit c ON r.circuit_id = c.id " +
         "LEFT JOIN circuit_layout cl ON r.circuit_layout_id = cl.id " +
@@ -126,6 +128,8 @@ for (int year = startYear; year <= endYear; year++)
                 ["direction"] = round[7],      // CLOCKWISE / ANTI_CLOCKWISE
                 ["lengthKm"] = TrimPoints(round[8]),
                 ["turns"] = round[9] is { Length: > 0 } t ? int.Parse(t, CultureInfo.InvariantCulture) : null,
+                // A brief, DATA-GROUNDED circuit history (former name + place + WC races + year span).
+                ["history"] = CircuitHistory(conn, round[10], round[4], round[5], round[11], round[12], yearSpans),
             };
         }
 
@@ -148,6 +152,39 @@ for (int year = startYear; year <= endYear; year++)
 }
 
 Console.WriteLine($"Wrote {written} season files to {outDir}");
+
+static string CircuitHistory(SqliteConnection conn, string? circuitId, string? name, string? place,
+    string? prevNames, string? totalRaces, Dictionary<string, (int Min, int Max)?> cache)
+{
+    if (string.IsNullOrWhiteSpace(name))
+        return "";
+    string former = !string.IsNullOrWhiteSpace(prevNames) ? $" (formerly {prevNames})" : "";
+    string inPlace = !string.IsNullOrWhiteSpace(place) && !place!.Equals(name, StringComparison.OrdinalIgnoreCase)
+        ? $" in {place}"
+        : "";
+    string hosted = "";
+    if (!string.IsNullOrWhiteSpace(circuitId) && int.TryParse(totalRaces, out int total) && total > 0
+        && YearSpan(conn, circuitId!, cache) is (int min, int max))
+    {
+        string gp = total == 1 ? "F1 World Championship Grand Prix" : "F1 World Championship Grands Prix";
+        string years = min == max ? $"in {min}" : $"between {min} and {max}";
+        hosted = $" hosted {total} {gp} {years}";
+    }
+    return $"The {name} circuit{former}{inPlace}{hosted}.";
+}
+
+static (int Min, int Max)? YearSpan(SqliteConnection conn, string circuitId, Dictionary<string, (int Min, int Max)?> cache)
+{
+    if (cache.TryGetValue(circuitId, out var cached))
+        return cached;
+    (int, int)? span = null;
+    var rows = Rows(conn, "SELECT MIN(year), MAX(year) FROM race WHERE circuit_id = $c;", ("$c", circuitId));
+    if (rows.Count == 1 && rows[0][0] is { } minS && rows[0][1] is { } maxS
+        && int.TryParse(minS, out int min) && int.TryParse(maxS, out int max))
+        span = (min, max);
+    cache[circuitId] = span;
+    return span;
+}
 
 static string? TrimPoints(string? points)
 {

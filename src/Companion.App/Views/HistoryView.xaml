@@ -41,13 +41,18 @@
                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
                     <!-- circuit map + detail: the "what the track is like" preview, shown either way -->
                     <DockPanel Margin="0,0,0,6" Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
-                        <Viewbox DockPanel.Dock="Left" Width="88" Height="88" Margin="0,0,12,0" VerticalAlignment="Top">
+                        <Viewbox DockPanel.Dock="Left" Width="96" Height="96" Margin="0,0,14,0" VerticalAlignment="Top">
                             <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                                   Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                         </Viewbox>
-                        <TextBlock Text="{Binding CircuitCaption}" Style="{StaticResource Muted}"
-                                   TextWrapping="Wrap" VerticalAlignment="Center" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Muted}"
+                                       TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+                        </StackPanel>
                     </DockPanel>
                     <!-- REVEALED: the historical document (fastest lap + full classified result) -->
                     <StackPanel Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}">
@@ -196,7 +201,7 @@
                                             Margin="0,0,0,8"
                                             Visibility="{Binding IsSeasonComplete, Converter={StaticResource BoolCollapsed}}">
                                         <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
-                                                   Text="Each race is a preview until you run it — the real result unlocks as you go. The champion stays sealed until you finish the season." />
+                                                   Text="Results unlock as you race; the champion stays sealed until season's end." />
                                     </Border>
                                     <ItemsControl ItemsSource="{Binding Rounds}"
                                                   ItemTemplate="{StaticResource HistoricalRoundTemplate}" />
@@ -256,8 +261,11 @@
                             </Viewbox>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Name}" FontSize="19" FontWeight="SemiBold" TextWrapping="Wrap" />
-                                <TextBlock Text="{Binding CircuitCaption}" Style="{StaticResource Muted}" TextWrapping="Wrap"
-                                           Margin="0,4,0,0" />
+                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0" />
+                                <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}" TextWrapping="Wrap"
+                                           Margin="0,8,0,0"
+                                           Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
                                 <TextBlock Style="{StaticResource Faint}" Margin="0,8,0,0" TextWrapping="Wrap"
                                            Text="Race it in your career to see how it really unfolded." />
                             </StackPanel>

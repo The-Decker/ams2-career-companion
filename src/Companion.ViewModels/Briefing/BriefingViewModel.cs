@@ -78,10 +78,15 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string _circuitLayoutId = "";
 
-    /// <summary>Human circuit caption ("Imola · 4.96 km · 22 turns · anti-clockwise circuit") shown
-    /// under the circuit map. Empty when no circuit info.</summary>
+    /// <summary>Human circuit caption ("Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit")
+    /// shown under the venue heading — no circuit name (the heading already shows it). Empty when no
+    /// circuit info.</summary>
     [ObservableProperty]
     private string _circuitCaption = "";
+
+    /// <summary>A brief, data-grounded history of the circuit, shown on the race-setup preview.</summary>
+    [ObservableProperty]
+    private string _circuitHistory = "";
 
     [ObservableProperty]
     private bool _isPlaceholder;
@@ -199,7 +204,8 @@ public sealed partial class BriefingViewModel : ObservableObject
             var circuit = _session.HistoricalSeason(_session.Summary.SeasonYear)?.Rounds
                 .FirstOrDefault(r => r.Round == briefing.Round.Round)?.Circuit;
             CircuitLayoutId = circuit?.LayoutId ?? "";
-            CircuitCaption = CircuitCaptions.Compose(circuit);
+            CircuitCaption = CircuitCaptions.Compose(circuit, includeName: false);
+            CircuitHistory = circuit?.History ?? "";
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
@@ -220,6 +226,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             TrackId = "";
             CircuitLayoutId = "";
             CircuitCaption = "";
+            CircuitHistory = "";
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;

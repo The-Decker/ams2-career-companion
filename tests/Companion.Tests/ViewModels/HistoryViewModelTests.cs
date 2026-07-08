@@ -336,6 +336,24 @@ public sealed class HistoryViewModelTests
         Assert.False(history.HasNextRacePreview); // season done -> no upcoming preview
     }
 
+    [Fact]
+    public void Circuit_caption_drops_the_name_when_it_is_already_the_heading()
+    {
+        var circuit = new HistoricalCircuit
+        {
+            Name = "Nelson Piquet", Place = "Rio de Janeiro", LengthKm = "5.03", Turns = 11,
+            Direction = "ANTI_CLOCKWISE", Type = "RACE",
+        };
+
+        Assert.Equal(
+            "Nelson Piquet · Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit",
+            CircuitCaptions.Compose(circuit));
+        // Briefing form (venue is the heading) — no duplicated circuit name.
+        Assert.Equal(
+            "Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit",
+            CircuitCaptions.Compose(circuit, includeName: false));
+    }
+
     private sealed class HistoryFakeSession : ICareerSession
     {
         public Companion.ViewModels.Services.CareerTimeline Timeline { get; init; } =

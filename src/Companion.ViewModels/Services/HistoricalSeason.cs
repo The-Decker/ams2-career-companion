@@ -74,6 +74,10 @@ public sealed record HistoricalCircuit
     /// <summary>Layout length in km, as text ("3.33").</summary>
     public string? LengthKm { get; init; }
     public int? Turns { get; init; }
+    /// <summary>A brief, data-grounded circuit history ("The Nelson Piquet circuit (formerly
+    /// Jacarepaguá) in Rio de Janeiro hosted 10 F1 World Championship Grands Prix between 1978 and
+    /// 1989."). Null/empty when unknown.</summary>
+    public string? History { get; init; }
 }
 
 /// <summary>One driver's line in a historical race result.</summary>
@@ -92,14 +96,18 @@ public sealed record HistoricalResult
 /// History preview read identically.</summary>
 public static class CircuitCaptions
 {
-    public static string Compose(HistoricalCircuit? circuit)
+    /// <param name="includeName">When true (default) the caption leads with the circuit name + place
+    /// ("Nelson Piquet · Rio de Janeiro · …"). Set false where the name is already the heading (the
+    /// briefing shows the venue above the caption), so the caption leads with the place instead — no
+    /// duplicated name.</param>
+    public static string Compose(HistoricalCircuit? circuit, bool includeName = true)
     {
         if (circuit is null)
             return "";
 
         var parts = new List<string>();
 
-        string headline = circuit.Name ?? "";
+        string headline = includeName ? circuit.Name ?? "" : "";
         if (circuit.Place is { Length: > 0 } place &&
             !string.Equals(place, circuit.Name, StringComparison.OrdinalIgnoreCase))
         {
