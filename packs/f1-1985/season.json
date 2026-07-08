@@ -794,7 +794,7 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit Zandvoort",
-        "id": "Heusden",
+        "id": "hockenheim_1988",
         "isPlaceholder": true,
         "fallbacks": [],
         "alternate": {
@@ -803,7 +803,7 @@
           "isRealVenue": false
         }
       },
-      "laps": 74,
+      "laps": 44,
       "grid": {
         "size": 25,
         "starterDriverIds": [
@@ -845,7 +845,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit Zandvoort (not in AMS2) \u2014 70 laps / 297.6 km reproduced as 74 laps of Zolder, a period-correct Benelux road circuit that hosted 1980s Grands Prix."
+        "notes": "Placeholder for Circuit Zandvoort (not in AMS2 base) \u2014 70 laps / 297.6 km reproduced as 44 laps of Hockenheim 1988. Optional mod alternate: Heusden."
       },
       "guestEntries": [],
       "aiOverrides": {}

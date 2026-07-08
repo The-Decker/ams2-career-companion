@@ -1284,11 +1284,16 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit of the Americas",
-        "id": "circuit_of_the_americas_gp",
-        "isPlaceholder": false,
-        "fallbacks": []
+        "id": "donington_gp",
+        "isPlaceholder": true,
+        "fallbacks": [],
+        "alternate": {
+          "id": "circuit_of_the_americas_gp",
+          "laps": 56,
+          "isRealVenue": true
+        }
       },
-      "laps": 56,
+      "laps": 77,
       "grid": {
         "size": 22,
         "starterDriverIds": [
@@ -1327,7 +1332,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2 ships the Circuit of the Americas GP layout, the same circuit used for the 2016 US GP; the historical lap count is kept."
+        "notes": "Placeholder for Circuit of the Americas (not in AMS2 base) \u2014 56 laps / 308.7 km reproduced as 77 laps of Donington GP. The real venue is available as an optional mod track (circuit_of_the_americas_gp); enable alternate tracks to race it at its authentic 56 laps."
       },
       "guestEntries": [],
       "aiOverrides": {}
