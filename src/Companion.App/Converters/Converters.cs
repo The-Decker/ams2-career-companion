@@ -328,6 +328,66 @@ public sealed class KeyedAssetImageConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>A circuit-layout id (e.g. "monaco-5") → a frozen <see cref="Geometry"/> for the circuit
+/// map, from the shipped <c>data/ams2/circuits/&lt;layoutId&gt;.json</c> (f1db-derived path data,
+/// already normalized to WPF's path mini-language by the build tool). Rendered by a <c>Path</c> with
+/// <c>Stretch="Uniform"</c>. Parsed once per layout and cached (frozen → cross-thread safe); null when
+/// the file is missing or the path fails to parse (the view then shows no map).</summary>
+public sealed class CircuitGeometryConverter : IValueConverter
+{
+    private static readonly string CircuitsDirectory =
+        Path.Combine(AppContext.BaseDirectory, "data", "ams2", "circuits");
+    private static readonly Dictionary<string, Geometry?> Cache = new(StringComparer.Ordinal);
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string layoutId || string.IsNullOrWhiteSpace(layoutId))
+            return null;
+        lock (Cache)
+        {
+            if (Cache.TryGetValue(layoutId, out var cached))
+                return cached;
+            var geometry = LoadFrom(CircuitsDirectory, layoutId);
+            Cache[layoutId] = geometry;
+            return geometry;
+        }
+    }
+
+    /// <summary>Reads <c>&lt;directory&gt;/&lt;layoutId&gt;.json</c> and parses its normalized path data
+    /// into a frozen <see cref="Geometry"/> (null on missing/unreadable/unparseable). Public + directory
+    /// -parameterized so it can be tested against the real shipped circuit files.</summary>
+    public static Geometry? LoadFrom(string directory, string layoutId)
+    {
+        string file = Path.Combine(directory, layoutId + ".json");
+        if (!File.Exists(file))
+            return null;
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(file));
+            if (!doc.RootElement.TryGetProperty("paths", out var paths))
+                return null;
+            var group = new GeometryGroup { FillRule = FillRule.Nonzero };
+            foreach (var p in paths.EnumerateArray())
+            {
+                if (p.GetString() is { Length: > 0 } d)
+                    group.Children.Add(Geometry.Parse(d));
+            }
+            if (group.Children.Count == 0)
+                return null;
+            group.Freeze();
+            return group;
+        }
+        catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or FormatException or InvalidOperationException)
+        {
+            // A bad/unreadable circuit file must never crash a screen — just show no map.
+            return null;
+        }
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {

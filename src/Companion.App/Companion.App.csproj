@@ -36,6 +36,9 @@
          beside the exe, read-only (the sim never scores them). Regenerate with tools/derive_history.cs
          (dotnet run, passing tools/_f1db/f1db.db and data/history as the two args). -->
     <None Include="..\..\data\history\*.json" Link="data\history\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Circuit-map geometry (f1db-derived, CC BY 4.0), keyed by circuit-layout id — the vector track
+         maps the race-setup + History screens render. Regenerate with tools/derive_circuits.cs. -->
+    <None Include="..\..\data\ams2\circuits\*.json" Link="data\ams2\circuits\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\data\rules\news\*.json" Link="data\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\packs\**\*.*" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

@@ -66,6 +66,7 @@
     <conv:TrackImageConverter x:Key="TrackImage" />
     <conv:ExpandGlyphConverter x:Key="ExpandGlyph" />
     <conv:KeyedAssetImageConverter x:Key="AssetImage" />
+    <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">

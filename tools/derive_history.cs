@@ -29,7 +29,11 @@ int written = 0;
 for (int year = startYear; year <= endYear; year++)
 {
     var rounds = Rows(conn,
-        "SELECT r.id, r.round, gp.full_name FROM race r JOIN grand_prix gp ON r.grand_prix_id = gp.id " +
+        "SELECT r.id, r.round, gp.full_name, r.circuit_layout_id, c.name, c.place_name, c.type, c.direction, " +
+        "cl.length, cl.turns " +
+        "FROM race r JOIN grand_prix gp ON r.grand_prix_id = gp.id " +
+        "JOIN circuit c ON r.circuit_id = c.id " +
+        "LEFT JOIN circuit_layout cl ON r.circuit_layout_id = cl.id " +
         "WHERE r.year = $y ORDER BY r.round;", ("$y", year));
     if (rounds.Count == 0)
         continue;
@@ -108,6 +112,23 @@ for (int year = startYear; year <= endYear; year++)
             if (fl) fastestLap = driver;
         }
 
+        // Circuit info (round[3..9]) for the race preview + the circuit-map key. layoutId keys the
+        // shipped SVG geometry (data/ams2/circuits/<layoutId>.json); the rest is preview detail.
+        JsonObject? circuit = null;
+        if (round[3] is { Length: > 0 } layoutId)
+        {
+            circuit = new JsonObject
+            {
+                ["layoutId"] = layoutId,
+                ["name"] = round[4],
+                ["place"] = round[5],
+                ["type"] = round[6],           // RACE / STREET
+                ["direction"] = round[7],      // CLOCKWISE / ANTI_CLOCKWISE
+                ["lengthKm"] = TrimPoints(round[8]),
+                ["turns"] = round[9] is { Length: > 0 } t ? int.Parse(t, CultureInfo.InvariantCulture) : null,
+            };
+        }
+
         roundsArray.Add(new JsonObject
         {
             ["round"] = roundNumber,
@@ -115,6 +136,7 @@ for (int year = startYear; year <= endYear; year++)
             ["winner"] = winner,
             ["winnerTeam"] = winnerTeam,
             ["fastestLap"] = fastestLap,
+            ["circuit"] = circuit,
             ["results"] = resultsArray,
         });
     }

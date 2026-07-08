@@ -30,6 +30,27 @@
                 </Border>
             </Border>
 
+            <!-- Circuit map: the f1db-derived vector layout of the circuit this round is run on, with a
+                 one-line caption (name · length · turns · direction). Collapses when the round has no
+                 circuit data. Always shows (no user art needed) — the "very important visual per race". -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0" Padding="14" HorizontalAlignment="Left"
+                    Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
+                <DockPanel>
+                    <Viewbox DockPanel.Dock="Left" Width="150" Height="150" Margin="0,0,16,0">
+                        <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                              Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                              StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                    </Viewbox>
+                    <StackPanel VerticalAlignment="Center" MaxWidth="360">
+                        <TextBlock Text="Circuit" Style="{StaticResource Faint}" />
+                        <TextBlock Text="{Binding VenueDisplayName}" FontWeight="SemiBold" FontSize="15"
+                                   TextWrapping="Wrap" Margin="0,2,0,0" />
+                        <TextBlock Text="{Binding CircuitCaption}" Style="{StaticResource Muted}"
+                                   TextWrapping="Wrap" Margin="0,4,0,0" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
             <!-- season-complete state (Home normally swaps away before this shows) -->
             <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
                        Text="Season complete — there is no round left to brief."

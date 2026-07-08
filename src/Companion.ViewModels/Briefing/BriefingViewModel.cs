@@ -73,6 +73,16 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string _trackId = "";
 
+    /// <summary>The f1db circuit-layout id for this round (from the shipped history data), keying the
+    /// vector circuit map on the race-setup screen. Empty when unknown.</summary>
+    [ObservableProperty]
+    private string _circuitLayoutId = "";
+
+    /// <summary>Human circuit caption ("Imola · 4.96 km · 22 turns · anti-clockwise circuit") shown
+    /// under the circuit map. Empty when no circuit info.</summary>
+    [ObservableProperty]
+    private string _circuitCaption = "";
+
     [ObservableProperty]
     private bool _isPlaceholder;
 
@@ -184,6 +194,12 @@ public sealed partial class BriefingViewModel : ObservableObject
             Title = BriefingComposer.ComposeTitle(briefing);
             VenueDisplayName = briefing.VenueDisplayName;
             TrackId = briefing.Round.Track.Id;
+            // The real circuit for this round (from the shipped history data, keyed by season year +
+            // round) drives the vector circuit map + caption on the race-setup screen. Absent => no map.
+            var circuit = _session.HistoricalSeason(_session.Summary.SeasonYear)?.Rounds
+                .FirstOrDefault(r => r.Round == briefing.Round.Round)?.Circuit;
+            CircuitLayoutId = circuit?.LayoutId ?? "";
+            CircuitCaption = CircuitCaptions.Compose(circuit);
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
@@ -202,6 +218,8 @@ public sealed partial class BriefingViewModel : ObservableObject
             Title = "";
             VenueDisplayName = "";
             TrackId = "";
+            CircuitLayoutId = "";
+            CircuitCaption = "";
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
