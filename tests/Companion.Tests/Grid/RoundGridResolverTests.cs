@@ -355,6 +355,27 @@ public class RoundGridResolverTests
     }
 
     [Fact]
+    public void Resolve_Uncapped_KeepsTheCarTheGridCapWouldDrop()
+    {
+        // The zero-stock staging pass resolves the full qualified field (capToGridSize:false) so it can
+        // name every active livery — including the peer the cap dropped to seat a DNQ player — instead of
+        // leaving AMS2 to stock-fill that slot. The sim always uses the capped grid.
+        var pack = GridTestData.LoadReferencePack("f1-1988");
+        var player = new PlayerSeat
+        {
+            Ams2LiveryName = pack.Entries.First(e => e.DriverId == "driver.gabriele_tarquini").Ams2LiveryName,
+        };
+
+        var capped = RoundGridResolver.Resolve(pack, 1, player);                     // 26 — one qualifier dropped
+        var full = RoundGridResolver.Resolve(pack, 1, player, capToGridSize: false); // nothing dropped
+
+        Assert.True(full.Seats.Count > capped.Seats.Count);
+        Assert.All(capped.Seats, s => Assert.Contains(full.Seats, f => f.DriverId == s.DriverId));
+        var dropped = full.Seats.Select(s => s.DriverId).Except(capped.Seats.Select(s => s.DriverId)).ToList();
+        Assert.NotEmpty(dropped); // the cap-dropped car the finalize will name
+    }
+
+    [Fact]
     public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive()
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");

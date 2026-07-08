@@ -1158,6 +1158,37 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                             : $"Kept {keptCommunity} installed community skin(s) and bound the other " +
                               $"{baseSeats - keptCommunity} to base-game {file.VehicleClass} liveries so every car loads.");
             }
+
+            // Zero-stock: name every LIVE-active community livery. A car whose livery is active in the
+            // pool but which the grid CAP dropped (or a peer whose slot a bubble-car graft took) would
+            // otherwise leave AMS2 stock-filling that slot with a made-up driver. Add it from the full
+            // (uncapped) field so every visible car shows its real driver. Cosmetic — the sim always
+            // scores the capped grid; these extra names ride the AMS2 file only.
+            try
+            {
+                bool playerEntry = Pack.Entries.Any(e =>
+                    string.Equals(e.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal));
+                var fullField = RoundGridResolver.Resolve(Pack, roundNumber,
+                    playerEntry
+                        ? new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() }
+                        : null,
+                    CurrentGridSelection(), capToGridSize: false);
+                var byLivery = fullField.Seats
+                    .GroupBy(s => s.Ams2LiveryName, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => GridStager.SeatToDriver(g.First()), StringComparer.Ordinal);
+                var have = file.Drivers.Select(d => d.LiveryName).ToHashSet(StringComparer.Ordinal);
+                var extra = installedActive
+                    .Where(n => !have.Contains(n) && byLivery.ContainsKey(n))
+                    .Select(n => byLivery[n]).ToList();
+                if (extra.Count > 0)
+                {
+                    file = file with { Drivers = file.Drivers.Concat(extra).ToList() };
+                    messages.Add(
+                        $"Named {extra.Count} more active livery{(extra.Count == 1 ? "" : "s")} so no car on " +
+                        "the grid shows a stock/made-up driver.");
+                }
+            }
+            catch (InvalidOperationException) { /* best-effort cosmetic pass — never blocks staging */ }
         }
 
         Ams2Installation? installation = _environment.LocateInstall();

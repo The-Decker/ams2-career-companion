@@ -63,6 +63,11 @@ public static class GridStager
             : $" {GeneratedMarker} ",
     };
 
+    /// <summary>Public seat→driver conversion for the zero-stock staging pass: names a livery that is
+    /// active in the pool but absent from the capped grid (a car the cap dropped, or a graft-displaced
+    /// peer), so AMS2 never stock-fills its slot. Cosmetic — never affects the sim's resolved grid.</summary>
+    public static CustomAiDriver SeatToDriver(GridSeat seat) => ToCustomAiDriver(seat, null);
+
     private static PackDriverForm? FormFor(
         IReadOnlyDictionary<string, PackDriverForm>? roundForm, GridSeat seat) =>
         roundForm is not null && roundForm.TryGetValue(seat.DriverId, out var f) ? f : null;

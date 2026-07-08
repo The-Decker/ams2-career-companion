@@ -22,7 +22,8 @@ namespace Companion.Core.Grid;
 public static class RoundGridResolver
 {
     public static GridPlan Resolve(
-        SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null)
+        SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null,
+        bool capToGridSize = true)
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
@@ -97,7 +98,10 @@ public static class RoundGridResolver
         if (playerSeat is not null)
             seats = ApplyPlayerSeat(pack, packRound, seats, playerSeat);
 
-        if (packRound.Grid is { } capGrid)
+        // The cap trims the field to the track's grid size for the SIM. Staging can opt out
+        // (capToGridSize:false) to enumerate the whole qualified field — used only to name every
+        // live-active livery so AMS2 never stock-fills a slot (cosmetic; the fold always caps).
+        if (capToGridSize && packRound.Grid is { } capGrid)
             seats = CapToGridSize(seats, capGrid.Size);
 
         return new GridPlan
