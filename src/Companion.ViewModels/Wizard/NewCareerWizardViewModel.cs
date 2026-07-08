@@ -258,6 +258,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Error, issue.Message,
                 IsInfo: issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Info));
 
+        RefreshAlternateTrackStatus(installation?.InstallDirectory);
+
         OnPropertyChanged(nameof(HasErrors));
         OnPropertyChanged(nameof(HasWarnings));
         OnPropertyChanged(nameof(LiveryScanDetails));
@@ -265,6 +267,64 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(CanGoNext));
         NextCommand.NotifyCanExecuteChanged();
     }
+
+    // ---------- step b (cont): optional alternate MOD tracks (the "RockyTM track switch") ----------
+
+    /// <summary>OPT-IN alternate mod tracks. When ticked AND every required mod is installed, the new
+    /// career swaps the flagged rounds to their alternate venues; otherwise the season stays on its
+    /// base/DLC defaults (no mod dependency). Toggling re-checks the install.</summary>
+    [ObservableProperty]
+    private bool _useAlternateTracks;
+
+    /// <summary>The mod tracks this pack's alternates need, each flagged installed or not (empty when
+    /// the pack offers no alternates). Refreshed from the install on verification + on toggling.</summary>
+    public ObservableCollection<Companion.Ams2.Preflight.RequiredModTrack> AlternateModTracks { get; } = [];
+
+    public bool PackHasAlternateTracks => AlternateModTracks.Count > 0;
+
+    public bool AllAlternateModsInstalled =>
+        AlternateModTracks.Count > 0 && AlternateModTracks.All(t => t.Installed);
+
+    /// <summary>One honest line on what the tick will actually do given the install state.</summary>
+    public string AlternateTrackStatus
+    {
+        get
+        {
+            int total = AlternateModTracks.Count;
+            if (total == 0)
+                return "This season has no alternate tracks.";
+            int missing = AlternateModTracks.Count(t => !t.Installed);
+            if (!UseAlternateTracks)
+                return $"{total} alternate mod track(s) available — tick to use them (checks they're installed).";
+            return missing == 0
+                ? $"✔ All {total} alternate mod track(s) installed — the season will use them."
+                : $"⚠ {missing} of {total} required mod track(s) not installed — alternates will NOT be " +
+                  "applied; the season stays on its default AMS2 tracks. Install the missing mods and re-tick, " +
+                  "or race the defaults.";
+        }
+    }
+
+    private void RefreshAlternateTrackStatus(string? installDirectory)
+    {
+        AlternateModTracks.Clear();
+        if (Pack is { } pack)
+            foreach (var t in Companion.Ams2.Preflight.AlternateTrackPreflight.RequiredModTracks(
+                         pack, _environment.ContentLibrary, installDirectory))
+                AlternateModTracks.Add(t);
+        OnPropertyChanged(nameof(PackHasAlternateTracks));
+        OnPropertyChanged(nameof(AllAlternateModsInstalled));
+        OnPropertyChanged(nameof(AlternateTrackStatus));
+    }
+
+    /// <summary>The "check installed" action — re-probe the install for the required mod tracks
+    /// (e.g. after installing a missing one). Mirrors the tick's own re-check.</summary>
+    [RelayCommand]
+    private void CheckAlternateMods() =>
+        RefreshAlternateTrackStatus(_environment.LocateInstall()?.InstallDirectory);
+
+    partial void OnUseAlternateTracksChanged(bool value) =>
+        // Ticking re-checks the install (Mike: "the tick is pressed to check the optional maps are installed").
+        RefreshAlternateTrackStatus(_environment.LocateInstall()?.InstallDirectory);
 
     // ---------- step c: seat pick ----------
 
@@ -629,6 +689,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             // Ratings Phase 3: every new career is form-reactive — the sim's field reacts to who is
             // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
             FormAware = true,
+            // Opt-in alternate mod tracks — the service applies them only if every required mod is
+            // installed (else it silently keeps the default AMS2 tracks). Default OFF.
+            UseAlternateTracks = UseAlternateTracks,
         };
 
         ICareerSession session;

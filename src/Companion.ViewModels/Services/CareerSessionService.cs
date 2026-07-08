@@ -135,6 +135,19 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             pack = files.Parse();
         }
 
+        // OPT-IN alternate mod tracks (Mike's rule): swap each round with a track.alternate to that
+        // alternate ONLY when the player opted in AND every required mod is installed — otherwise the
+        // season keeps its base/DLC defaults (no mod dependency). The TRANSFORMED season.json is
+        // pinned, so the fold reads the alternates and replays stay byte-identical (no seed).
+        if (request.UseAlternateTracks &&
+            AlternateTrackTransform.HasAlternates(pack) &&
+            AlternateTrackPreflight.CanApplyAlternates(
+                pack, environment.ContentLibrary, environment.LocateInstall()?.InstallDirectory))
+        {
+            files = files with { SeasonJson = AlternateTrackTransform.ApplyToSeasonJson(files.SeasonJson) };
+            pack = files.Parse();
+        }
+
         string playerDriverId = ResolvePlayerDriverId(pack, request.PlayerLiveryName);
 
         if (File.Exists(request.CareerFilePath))

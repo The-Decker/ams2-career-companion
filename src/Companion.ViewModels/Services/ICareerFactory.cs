@@ -45,6 +45,14 @@ public sealed record CareerCreationRequest
     /// Default false so existing creation callers (and every test that does not opt in) fold exactly
     /// as before — byte-identical. The new-career wizard sets it true for all new careers.</summary>
     public bool FormAware { get; init; }
+
+    /// <summary>OPT-IN alternate mod tracks (Mike's "RockyTM track switch"): when true AND every mod
+    /// track the pack's alternates need is installed, the creation-time transform swaps each round
+    /// with a <c>track.alternate</c> to that alternate BEFORE pinning — so the pinned pack drives the
+    /// mod venues and replays stay byte-identical. When false (default) — or true but a required mod
+    /// is missing — the season is pinned on its base/DLC defaults and NO mod track is used, so the
+    /// default never depends on a mod. Seed-driven per-round variety is a later slice.</summary>
+    public bool UseAlternateTracks { get; init; }
 }
 
 /// <summary>

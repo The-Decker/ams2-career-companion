@@ -259,6 +259,47 @@
                             </Style>
                         </CheckBox.Style>
                     </CheckBox>
+
+                    <!-- optional alternate MOD tracks (the "RockyTM track switch"): opt-in AND
+                         install-verified. Off (or any required mod missing) => default AMS2 tracks only. -->
+                    <Border Style="{StaticResource Panel}" Margin="0,10,0,0"
+                            Visibility="{Binding PackHasAlternateTracks, Converter={StaticResource BoolVisible}}">
+                        <StackPanel>
+                            <CheckBox Content="Use alternate tracks (community mods) where they make sense"
+                                      IsChecked="{Binding UseAlternateTracks}"
+                                      ToolTip="Swaps this season's placeholder rounds to era/character-appropriate mod circuits — but ONLY if every required mod is installed. Off = default AMS2 tracks only." />
+                            <TextBlock Text="{Binding AlternateTrackStatus}" Style="{StaticResource Body}"
+                                       TextWrapping="Wrap" Margin="0,6,0,0" />
+                            <ItemsControl ItemsSource="{Binding AlternateModTracks}" Margin="0,6,0,0"
+                                          Visibility="{Binding UseAlternateTracks, Converter={StaticResource BoolVisible}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,1">
+                                            <TextBlock DockPanel.Dock="Left" Width="18" VerticalAlignment="Top">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                        <Setter Property="Text" Value="✗" />
+                                                        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Installed}" Value="True">
+                                                                <Setter Property="Text" Value="✔" />
+                                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"><Run Text="{Binding DisplayName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="{Binding Tag, Mode=OneWay, StringFormat=' ({0})'}" /></TextBlock>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Content="Re-check installed mods" Command="{Binding CheckAlternateModsCommand}"
+                                    HorizontalAlignment="Left" Margin="0,8,0,0" Style="{StaticResource SubtleButton}"
+                                    Visibility="{Binding UseAlternateTracks, Converter={StaticResource BoolVisible}}"
+                                    ToolTip="Re-scan your AMS2 install for the mod tracks this season's alternates need" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
                 <Border Style="{StaticResource Panel}">
                     <DockPanel>
