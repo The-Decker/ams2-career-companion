@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Companion.Core.Scoring;
 
 namespace Companion.Core.Packs;
@@ -19,6 +20,25 @@ public sealed record SeasonDefinition
     public required CatalogSeason PointsSystem { get; init; }
 
     public required IReadOnlyList<PackRound> Rounds { get; init; }
+
+    /// <summary>Optional STAGING-ONLY per-race form overlay: round number -> (driver id -> additive
+    /// pace nudge). Applied ONLY when the app writes the AMS2 custom-AI file for that round
+    /// (<see cref="Companion.Core.Grid"/> staging), so a driver who was hot that weekend is faster
+    /// on track and a slumping one slower — grounded in f1db per-race qualifying vs the season
+    /// baseline. The resolver, fold, scoring engine and f1db oracle NEVER read this: it is sim-inert
+    /// by construction, so a career carrying form re-simulates byte-identically. Absent => no form.
+    /// Guarded with WhenWritingNull so a form-less pack round-trips byte-identically.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyDictionary<int, IReadOnlyDictionary<string, PackDriverForm>>? DriverForm { get; init; }
+}
+
+/// <summary>A single driver's STAGING-ONLY per-round form nudge: an ADDITIVE delta on the two pace
+/// ratings, clamped into 0..1 when applied to the staged custom-AI file. Never read by the sim/fold
+/// (see <see cref="SeasonDefinition.DriverForm"/>). Absent components default to 0 (no nudge).</summary>
+public sealed record PackDriverForm
+{
+    public double RaceSkill { get; init; }
+    public double QualifyingSkill { get; init; }
 }
 
 public sealed record PackRound

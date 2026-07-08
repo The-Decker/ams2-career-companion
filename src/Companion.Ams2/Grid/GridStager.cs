@@ -2,6 +2,7 @@ using Companion.Ams2.ContentLibrary;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Preflight;
 using Companion.Core.Grid;
+using Companion.Core.Packs;
 
 namespace Companion.Ams2.Grid;
 
@@ -46,23 +47,36 @@ public static class GridStager
 
     // ---------- build ----------
 
-    public static CustomAiFile Build(GridPlan plan, string? headerComment = null) => new()
+    /// <param name="roundForm">STAGING-ONLY per-race form nudge for this round, keyed by driver id
+    /// (additive pace delta, clamped 0..1). Applied to the written AMS2 file ONLY — the resolved
+    /// <see cref="GridPlan"/> the sim scores is never touched, so a career carrying form re-simulates
+    /// byte-identically. Null/absent => no nudge (byte-identical output).</param>
+    public static CustomAiFile Build(
+        GridPlan plan,
+        string? headerComment = null,
+        IReadOnlyDictionary<string, PackDriverForm>? roundForm = null) => new()
     {
         VehicleClass = plan.Ams2Class,
-        Drivers = plan.Seats.Select(ToCustomAiDriver).ToList(),
+        Drivers = plan.Seats.Select(seat => ToCustomAiDriver(seat, FormFor(roundForm, seat))).ToList(),
         HeaderComment = headerComment is { Length: > 0 }
             ? $" {GeneratedMarker} | {headerComment} "
             : $" {GeneratedMarker} ",
     };
 
-    private static CustomAiDriver ToCustomAiDriver(GridSeat seat) => new()
+    private static PackDriverForm? FormFor(
+        IReadOnlyDictionary<string, PackDriverForm>? roundForm, GridSeat seat) =>
+        roundForm is not null && roundForm.TryGetValue(seat.DriverId, out var f) ? f : null;
+
+    private static CustomAiDriver ToCustomAiDriver(GridSeat seat, PackDriverForm? form = null) => new()
     {
         LiveryName = seat.Ams2LiveryName,
         Name = seat.DriverName,
         Country = seat.Country,
 
-        RaceSkill = seat.Ratings.RaceSkill,
-        QualifyingSkill = seat.Ratings.QualifyingSkill,
+        // Form is a STAGING-ONLY additive nudge on the two pace ratings, clamped to 0..1. It rides
+        // the written file, never the resolved seat the sim scores (sim-inert).
+        RaceSkill = Nudge(seat.Ratings.RaceSkill, form?.RaceSkill),
+        QualifyingSkill = Nudge(seat.Ratings.QualifyingSkill, form?.QualifyingSkill),
         Aggression = seat.Ratings.Aggression,
         Defending = seat.Ratings.Defending,
         Stamina = seat.Ratings.Stamina,
@@ -85,6 +99,11 @@ public static class GridStager
     };
 
     private static double? ScalarOrNull(double scalar) => scalar == 1.0 ? null : scalar;
+
+    /// <summary>Applies an additive form delta to a base rating, clamped to 0..1. Null delta (or
+    /// zero) returns the base verbatim.</summary>
+    private static double Nudge(double baseValue, double? delta) =>
+        delta is { } d && d != 0.0 ? Math.Clamp(baseValue + d, 0.0, 1.0) : baseValue;
 
     // ---------- grid editor: cosmetic per-seat staging overrides ----------
 

@@ -989,8 +989,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return Failed(messages, ex.Message);
         }
 
+        // STAGING-ONLY per-race form overlay: nudge each driver's staged pace ratings toward that
+        // weekend's historical form (f1db-derived). Read only here (never the resolver/fold), so a
+        // career carrying form re-simulates byte-identically. Absent on a pack => null => no nudge.
+        var roundForm = Pack.Season.DriverForm?.GetValueOrDefault(roundNumber);
         var file = GridStager.Build(plan,
-            $"{Pack.Manifest.Name} | Round {roundNumber}: {packRound.Name} | seed {MasterSeed}");
+            $"{Pack.Manifest.Name} | Round {roundNumber}: {packRound.Name} | seed {MasterSeed}",
+            roundForm);
 
         // Guaranteed-load binding: rebind each AI driver onto a REAL base-game livery for the class
         // (the game ships these names — from official-liveries.json — so it accepts the file and
