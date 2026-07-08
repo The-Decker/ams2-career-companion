@@ -94,6 +94,13 @@ public interface ICareerSession
     /// timeline, so existing fakes compile. (Increment 3.)</summary>
     CareerTimeline CareerTimeline() => Services.CareerTimeline.Empty;
 
+    /// <summary>The REAL historical results of a season (f1db-derived, CC BY 4.0) — "what really
+    /// happened" reference content the History tab shows ALONGSIDE the player's own (diverged) career
+    /// for the same year, clearly separated. Null when no history is shipped for that year. Pure
+    /// read-only reference: the sim/fold never scores it, so it can never affect a replayed result.
+    /// Additive default: sessions without it report null, so existing fakes compile.</summary>
+    HistoricalSeason? HistoricalSeason(int year) => null;
+
     /// <summary>The clickable-everywhere "Why?" inspector (career-hub-design.md §5, decisions 4 +
     /// 5): walks the append-only journal rows that produced a number the hub shows and returns them
     /// as an ordered plain-language contribution breakdown. <paramref name="entity"/> is the journal

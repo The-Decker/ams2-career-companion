@@ -69,9 +69,11 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
 
         Seasons.Clear();
         // Newest season first reads best as a scrapbook (this season at the top), while the
-        // records book aggregates the whole lineage regardless of order.
+        // records book aggregates the whole lineage regardless of order. Each card also carries the
+        // REAL historical results of its year (f1db-derived, read-only) so the player can see "what
+        // really happened" next to their own diverged season — null when none is shipped for the year.
         foreach (var card in timeline.Seasons.Reverse())
-            Seasons.Add(new SeasonCardViewModel(card));
+            Seasons.Add(new SeasonCardViewModel(card, _session.HistoricalSeason(card.SeasonYear)));
 
         Records = new RecordsBookViewModel(timeline.Records);
 
@@ -90,11 +92,18 @@ public sealed class SeasonCardViewModel
 {
     private readonly CareerSeasonCard _card;
 
-    public SeasonCardViewModel(CareerSeasonCard card)
+    public SeasonCardViewModel(CareerSeasonCard card, HistoricalSeason? realSeason = null)
     {
         ArgumentNullException.ThrowIfNull(card);
         _card = card;
+        RealSeason = realSeason is not null ? new HistoricalSeasonViewModel(realSeason) : null;
     }
+
+    /// <summary>The REAL historical results of this card's year ("what really happened"), or null
+    /// when none is shipped. Rendered as a clearly-separated panel below the player's own numbers.</summary>
+    public HistoricalSeasonViewModel? RealSeason { get; }
+
+    public bool HasRealSeason => RealSeason is not null;
 
     public int SeasonYear => _card.SeasonYear;
 
@@ -178,3 +187,97 @@ public sealed class RecordsBookViewModel
 
 /// <summary>One labelled record ("Best finish" → "P2").</summary>
 public sealed record RecordRow(string Label, string Value);
+
+/// <summary>"What really happened" — a season's REAL historical results (f1db-derived, CC BY 4.0),
+/// shown alongside the player's own diverged career. Display-only projection of
+/// <see cref="HistoricalSeason"/>; collapsed by default (opt-in per season so a multi-season
+/// scrapbook stays compact).</summary>
+public sealed partial class HistoricalSeasonViewModel : ObservableObject
+{
+    /// <summary>Whether the "what really happened" panel is expanded for this season (default off).</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    [RelayCommand]
+    private void Toggle() => IsExpanded = !IsExpanded;
+
+    public HistoricalSeasonViewModel(HistoricalSeason season)
+    {
+        ArgumentNullException.ThrowIfNull(season);
+        Year = season.Year;
+        Source = season.Source ?? "";
+
+        if (season.DriversChampion is { } champ)
+        {
+            string team = champ.Team is { Length: > 0 } t ? $" · {t}" : "";
+            string points = champ.Points is { Length: > 0 } p ? $" · {p} pts" : "";
+            DriversChampionText = $"{champ.Driver}{team}{points}";
+        }
+        if (season.ConstructorsChampion is { } cons)
+        {
+            string points = cons.Points is { Length: > 0 } p ? $" · {p} pts" : "";
+            ConstructorsChampionText = $"{cons.Team}{points}";
+        }
+
+        Rounds = season.Rounds.Select(r => new HistoricalRoundViewModel(r)).ToList();
+    }
+
+    public int Year { get; }
+
+    /// <summary>CC BY 4.0 attribution line.</summary>
+    public string Source { get; }
+
+    /// <summary>"Denny Hulme · Brabham · 51 pts" — empty when unknown.</summary>
+    public string DriversChampionText { get; } = "";
+
+    public bool HasDriversChampion => DriversChampionText.Length > 0;
+
+    public string ConstructorsChampionText { get; } = "";
+
+    public bool HasConstructorsChampion => ConstructorsChampionText.Length > 0;
+
+    /// <summary>Every real race of the season, in calendar order, each expandable to its full grid.</summary>
+    public IReadOnlyList<HistoricalRoundViewModel> Rounds { get; }
+}
+
+/// <summary>One real historical race: a one-line summary (winner + fastest lap) and the full
+/// classified result behind an expander (collapsed by default).</summary>
+public sealed partial class HistoricalRoundViewModel : ObservableObject
+{
+    /// <summary>Whether this round's full classified result is shown (default off — the summary
+    /// line always shows; the grid expands on demand).</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    [RelayCommand]
+    private void Toggle() => IsExpanded = !IsExpanded;
+
+    public HistoricalRoundViewModel(HistoricalRound round)
+    {
+        ArgumentNullException.ThrowIfNull(round);
+        RoundLabel = $"R{round.Round}";
+        Name = round.Name;
+        WinnerText = round.Winner is { Length: > 0 } w
+            ? (round.WinnerTeam is { Length: > 0 } team ? $"{w} · {team}" : w)
+            : "—";
+        FastestLapText = round.FastestLap is { Length: > 0 } fl ? $"Fastest lap: {fl}" : "";
+        Results = round.Results
+            .Select(x => new HistoricalResultRow(x.Pos, x.Driver, x.Team, x.Status ?? ""))
+            .ToList();
+    }
+
+    public string RoundLabel { get; }
+    public string Name { get; }
+    /// <summary>"Pedro Rodríguez · Cooper", or "—" when unknown.</summary>
+    public string WinnerText { get; }
+    public string FastestLapText { get; }
+    public bool HasFastestLap => FastestLapText.Length > 0;
+    public IReadOnlyList<HistoricalResultRow> Results { get; }
+    public bool HasResults => Results.Count > 0;
+}
+
+/// <summary>One row of a historical race's full classified result.</summary>
+public sealed record HistoricalResultRow(string Pos, string Driver, string Team, string Status)
+{
+    public bool HasStatus => Status.Length > 0;
+}

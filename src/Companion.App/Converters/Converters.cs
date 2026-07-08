@@ -295,6 +295,17 @@ public sealed class TrackImageConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>bool IsExpanded → a Segoe MDL2 chevron glyph: ChevronDown (open) / ChevronRight
+/// (closed). For collapsible section headers.</summary>
+public sealed class ExpandGlyphConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is true ? "" : ""; // ChevronDown : ChevronRight
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {

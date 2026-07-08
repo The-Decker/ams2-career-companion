@@ -27,6 +27,12 @@ public sealed class CareerEnvironment
     /// requires it (<see cref="Rules"/> throws a clear error when it is missing).</summary>
     public string? RulesDirectory { get; init; }
 
+    /// <summary>Directory of the app-shipped historical-results JSON (<c>data/history/&lt;year&gt;.json</c>,
+    /// f1db-derived, CC BY 4.0) the History tab shows as "what really happened". Reference content only —
+    /// the sim/fold never reads it. Null = the feature is simply absent (the History tab shows only the
+    /// player's own career).</summary>
+    public string? HistoryDirectory { get; init; }
+
     /// <summary>Season-pack search roots for era-transition discovery (M6 sign-and-continue).
     /// Null = <see cref="PackDiscovery.DefaultSearchRoots"/> (the exe-adjacent packs folder,
     /// then Documents\AMS2CareerCompanion\Packs). A Func so the app can fold in the settings
@@ -55,6 +61,9 @@ public sealed class CareerEnvironment
         RulesDirectory = Path.Combine(
             Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(ams2DataDirectory)) ?? ams2DataDirectory,
             "rules"),
+        HistoryDirectory = Path.Combine(
+            Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(ams2DataDirectory)) ?? ams2DataDirectory,
+            "history"),
     };
 
     /// <summary>Scans installed skin-pack livery overrides for this machine (install-side and

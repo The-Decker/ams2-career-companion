@@ -134,6 +134,73 @@ public sealed class HistoryViewModelTests
 
     /// <summary>A session that only implements what the History lens reads — the additive
     /// default seam members keep this minimal and prove the lens couples to nothing else.</summary>
+    [Fact]
+    public void Season_card_carries_the_real_historical_results_for_its_year()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons =
+                [
+                    new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 11 },
+                    new CareerSeasonCard { SeasonYear = 1968, RoundsApplied = 1, RoundCount = 12 },
+                ],
+            },
+            HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+            {
+                [1967] = new HistoricalSeason
+                {
+                    Year = 1967,
+                    Source = "Derived from f1db (CC BY 4.0)",
+                    DriversChampion = new HistoricalChampion { Driver = "Denny Hulme", Team = "Brabham", Points = "51" },
+                    ConstructorsChampion = new HistoricalTeamChampion { Team = "Brabham", Points = "63" },
+                    Rounds =
+                    [
+                        new HistoricalRound
+                        {
+                            Round = 1, Name = "South African Grand Prix",
+                            Winner = "Pedro Rodríguez", WinnerTeam = "Cooper", FastestLap = "Denny Hulme",
+                            Results =
+                            [
+                                new HistoricalResult { Pos = "1", Driver = "Pedro Rodríguez", Team = "Cooper" },
+                                new HistoricalResult { Pos = "DNF", Driver = "Jim Clark", Team = "Lotus", Status = "Engine" },
+                            ],
+                        },
+                    ],
+                },
+                // 1968 deliberately has NO shipped history → that card carries none.
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+
+        var card1968 = history.Seasons[0]; // newest first
+        var card1967 = history.Seasons[1];
+
+        Assert.False(card1968.HasRealSeason);
+        Assert.True(card1967.HasRealSeason);
+
+        var real = card1967.RealSeason!;
+        Assert.Equal(1967, real.Year);
+        Assert.False(real.IsExpanded); // collapsed by default
+        Assert.Contains("Denny Hulme", real.DriversChampionText);
+        Assert.Contains("Brabham", real.DriversChampionText);
+        Assert.True(real.HasConstructorsChampion);
+
+        var round = Assert.Single(real.Rounds);
+        Assert.Equal("R1", round.RoundLabel);
+        Assert.Contains("Pedro Rodríguez", round.WinnerText);
+        Assert.Contains("Cooper", round.WinnerText);
+        Assert.True(round.HasFastestLap);
+        Assert.Equal(2, round.Results.Count);
+
+        var dnf = round.Results[1];
+        Assert.Equal("DNF", dnf.Pos);
+        Assert.True(dnf.HasStatus);
+        Assert.Equal("Engine", dnf.Status);
+    }
+
     private sealed class HistoryFakeSession : ICareerSession
     {
         public Companion.ViewModels.Services.CareerTimeline Timeline { get; init; } =
@@ -142,6 +209,12 @@ public sealed class HistoryViewModelTests
         public IReadOnlyList<NewsDispatch> Feed { get; init; } = [];
 
         public Companion.ViewModels.Services.CareerTimeline CareerTimeline() => Timeline;
+
+        public IReadOnlyDictionary<int, HistoricalSeason> HistoricalSeasons { get; init; } =
+            new Dictionary<int, HistoricalSeason>();
+
+        public HistoricalSeason? HistoricalSeason(int year) =>
+            HistoricalSeasons.GetValueOrDefault(year);
 
         public IReadOnlyList<NewsDispatch> ReadFeed() => Feed;
 

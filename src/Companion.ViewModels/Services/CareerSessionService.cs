@@ -2436,6 +2436,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// re-derivable byte-identically. A multi-season career (M6 era transitions) walks every
     /// <c>season</c> row in career order, resolving each season's pinned pack, player seat,
     /// standings and headlines independently.</summary>
+    private IHistoricalSeasonStore? _historicalSeasons;
+
+    /// <summary>The real historical results for a season (f1db-derived, CC BY 4.0), loaded on demand
+    /// from the app-shipped <c>data/history/&lt;year&gt;.json</c> and cached. Read-only reference
+    /// content the History tab shows next to the player's own career — the sim/fold never reads it.</summary>
+    public HistoricalSeason? HistoricalSeason(int year) =>
+        (_historicalSeasons ??= new HistoricalSeasonStore(_environment.HistoryDirectory)).ForYear(year);
+
     public CareerTimeline CareerTimeline()
     {
         var seasons = CareerStore.ReadSeasons(_database);
