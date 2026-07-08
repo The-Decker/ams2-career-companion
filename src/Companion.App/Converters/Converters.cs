@@ -241,11 +241,19 @@ public sealed class EraImageConverter : IValueConverter
         return path is null ? null : LoadFrozen(path);
     }
 
-    /// <summary>Loads an image fully now (<see cref="BitmapCacheOption.OnLoad"/>) and freezes it, so
-    /// the file is never left locked (art can be swapped while the app runs) and the bitmap is
-    /// cross-thread safe. A corrupt/unreadable file returns null — the gallery never crashes on bad
-    /// art, it just shows the coloured placeholder.</summary>
-    private static BitmapImage? LoadFrozen(string path)
+    private static BitmapImage? LoadFrozen(string path) => FrozenImage.Load(path);
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Shared user-image loader for the gallery / track / story art converters. Loads a file
+/// fully now (<see cref="BitmapCacheOption.OnLoad"/>) and freezes it, so the file is never left
+/// locked (art can be swapped while the app runs) and the bitmap is cross-thread safe. A
+/// corrupt/unreadable file returns null — a view never crashes on bad art, it shows its placeholder.</summary>
+internal static class FrozenImage
+{
+    public static BitmapImage? Load(string path)
     {
         try
         {
@@ -262,6 +270,25 @@ public sealed class EraImageConverter : IValueConverter
         {
             return null;
         }
+    }
+}
+
+/// <summary>A track id (string) → the drop-in track-layout thumbnail for that track, or null when
+/// none is present (the view then hides the image). User-managed art lives in
+/// <c>{BaseDirectory}\data\ams2\track-art\&lt;trackId&gt;.{jpg,jpeg,png}</c> — the shared
+/// "folder + key + resolver with fallback" convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>),
+/// keyed by the track id from data/ams2/tracks.json. Untracked, like era art.</summary>
+public sealed class TrackImageConverter : IValueConverter
+{
+    private static readonly string TrackArtDirectory =
+        Path.Combine(AppContext.BaseDirectory, "data", "ams2", "track-art");
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string trackId || string.IsNullOrWhiteSpace(trackId))
+            return null;
+        string? path = Companion.ViewModels.Services.UserImageResolver.ResolveByKey(TrackArtDirectory, trackId);
+        return path is null ? null : FrozenImage.Load(path);
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

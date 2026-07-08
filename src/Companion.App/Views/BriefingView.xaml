@@ -16,6 +16,20 @@
                 </Border>
             </StackPanel>
 
+            <!-- Optional track-layout thumbnail: drop <trackId>.jpg/.png into data\ams2\track-art
+                 (the shared user-asset convention, keyed by the round's AMS2 track id). Collapses
+                 entirely when no image is present, so the briefing is unchanged without art. The
+                 x:Name lets the converter re-read when the round changes. -->
+            <Border x:Name="TrackArt" Margin="0,12,0,0" CornerRadius="7" MaxWidth="560" HorizontalAlignment="Left"
+                    BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    Visibility="{Binding ElementName=TrackArtImage, Path=Source, Converter={StaticResource NullCollapsed}}">
+                <Border CornerRadius="6" ClipToBounds="True">
+                    <Image x:Name="TrackArtImage" Stretch="Uniform" StretchDirection="DownOnly"
+                           Source="{Binding TrackId, Converter={StaticResource TrackImage}}"
+                           ToolTip="{Binding VenueDisplayName, StringFormat='{}{0} — track layout'}" />
+                </Border>
+            </Border>
+
             <!-- season-complete state (Home normally swaps away before this shows) -->
             <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
                        Text="Season complete — there is no round left to brief."

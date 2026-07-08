@@ -68,6 +68,11 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string _venueDisplayName = "";
 
+    /// <summary>The round's AMS2 track id (from the pack round's track ref), used to resolve the
+    /// optional track-layout thumbnail (data/ams2/track-art/&lt;trackId&gt;). Empty when no round.</summary>
+    [ObservableProperty]
+    private string _trackId = "";
+
     [ObservableProperty]
     private bool _isPlaceholder;
 
@@ -178,6 +183,7 @@ public sealed partial class BriefingViewModel : ObservableObject
 
             Title = BriefingComposer.ComposeTitle(briefing);
             VenueDisplayName = briefing.VenueDisplayName;
+            TrackId = briefing.Round.Track.Id;
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
@@ -195,6 +201,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             _currentRoundNumber = 0;
             Title = "";
             VenueDisplayName = "";
+            TrackId = "";
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;

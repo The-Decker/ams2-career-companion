@@ -63,6 +63,7 @@
     <conv:HexBrushConverter x:Key="HexBrush" />
     <conv:EraLabelConverter x:Key="EraLabel" />
     <conv:EraImageConverter x:Key="EraImage" />
+    <conv:TrackImageConverter x:Key="TrackImage" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">
