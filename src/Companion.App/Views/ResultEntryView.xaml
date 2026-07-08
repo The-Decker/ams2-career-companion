@@ -74,6 +74,35 @@
 
         <!-- ===== top: phase + input + action buttons + candidates ===== -->
         <StackPanel DockPanel.Dock="Top">
+            <!-- Circuit strip: the vector layout of the circuit this result is for, so the track the
+                 player just raced is in view while entering results. Binds through the hosting HomeView
+                 to the briefing's circuit data (the same round the entry is for). The render harness
+                 hosts this view with no HomeView ancestor, so the bindings don't resolve and the strip
+                 stays collapsed (FallbackValue). Reference-only, sim-inert. -->
+            <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,10" HorizontalAlignment="Left"
+                    Visibility="{Binding DataContext.Briefing.CircuitLayoutId,
+                                 RelativeSource={RelativeSource AncestorType=views:HomeView},
+                                 Converter={StaticResource StringVisible}, FallbackValue=Collapsed}">
+                <StackPanel Orientation="Horizontal">
+                    <Viewbox Width="60" Height="60" Margin="0,0,14,0" VerticalAlignment="Center">
+                        <Path Data="{Binding DataContext.Briefing.CircuitLayoutId,
+                                     RelativeSource={RelativeSource AncestorType=views:HomeView},
+                                     Converter={StaticResource CircuitGeometry}}"
+                              Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                              StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                    </Viewbox>
+                    <StackPanel VerticalAlignment="Center" MaxWidth="480">
+                        <TextBlock Text="CIRCUIT" Style="{StaticResource Faint}" FontSize="10" />
+                        <TextBlock FontWeight="SemiBold" FontSize="15" TextTrimming="CharacterEllipsis"
+                                   Text="{Binding DataContext.Briefing.VenueDisplayName,
+                                          RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
+                        <TextBlock Foreground="{StaticResource AccentBrush}" FontSize="12" TextWrapping="Wrap"
+                                   Text="{Binding DataContext.Briefing.CircuitCaption,
+                                          RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- weekend session heading (Increment 2): names the current session — "Qualifying",
                  "Feature", "Sprint". Only weekend sessions set a SessionLabel, so a plain single-race
                  entry (SessionLabel null) renders exactly as the shipped loop. -->
