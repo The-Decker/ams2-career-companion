@@ -422,9 +422,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (guest is not null)
             return guest.DriverId;
 
-        throw new InvalidOperationException(
-            $"Player livery '{playerLiveryName}' is not an entry of pack {pack.Manifest.PackId} — " +
-            "the seat pick must offer pack entries only.");
+        // Player-as-own-entrant: a livery matching no pack entry is a custom/non-standard skin the player
+        // chose. Instead of refusing, give them a stable synthetic driver id — the resolver seats them as
+        // their own independent entrant, so a custom skin works and the career never dead-ends. Matches
+        // RoundGridResolver's synthetic-seat branch (same id) so creation, staging and the fold agree.
+        return RoundGridResolver.SyntheticPlayerDriverId;
     }
 
     // ---------- summary / round state ----------
@@ -835,25 +837,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     {
         // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
         // the fold scores. Null selection = whole pack (byte-identical).
-        var selection = CurrentGridSelection();
-
-        // Seat the player whenever their livery is a real pack entry — EVEN on a round their car did
-        // not qualify / start historically (1988 was a pre-qualifying year: ~30 cars for 26 slots, so
-        // a driver like Coloni's Tarquini DNQs some rounds). AMS2's grid size is hardcoded, so the
-        // resolver seats the player from their own entry and CapToGridSize drops the SLOWEST qualifier
-        // (lowest raceSkill — a peer backmarker, never a front-runner) to hold the size. This mirrors
-        // the fold + CurrentExpectedFinish, which already seat the player unconditionally, so the
-        // STAGED AMS2 file finally matches what the sim scores — the player is always on the grid.
-        // Only a livery that matches NO pack entry (a non-standard skin, unsupported today) has no seat
-        // to build, so it resolves the all-AI field instead of throwing.
-        bool playerIsPackEntry = Pack.Entries.Any(e =>
-            string.Equals(e.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal));
-        if (!playerIsPackEntry)
-            return RoundGridResolver.Resolve(Pack, round, playerSeat: null, selection);
-
+        // ALWAYS seat the player — even on a round their car did not qualify (1988 pre-qualifying: a
+        // driver like Coloni's Tarquini DNQs some rounds; the resolver seats them from their own entry
+        // and CapToGridSize drops the slowest peer to hold AMS2's hardcoded grid size), and even on a
+        // custom/non-standard livery that matches no pack entry (the resolver seats them as their own
+        // synthetic entrant). This mirrors the fold + CurrentExpectedFinish, which seat the player
+        // unconditionally, so the staged AMS2 file matches what the sim scores. Existing careers on a
+        // qualifying pack livery resolve byte-identically.
         return RoundGridResolver.Resolve(Pack, round,
             new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
-            selection);
+            CurrentGridSelection());
     }
 
     private Companion.Core.Grid.GridSelection? _gridSelection;
@@ -1166,12 +1159,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // scores the capped grid; these extra names ride the AMS2 file only.
             try
             {
-                bool playerEntry = Pack.Entries.Any(e =>
-                    string.Equals(e.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal));
                 var fullField = RoundGridResolver.Resolve(Pack, roundNumber,
-                    playerEntry
-                        ? new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() }
-                        : null,
+                    new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
                     CurrentGridSelection(), capToGridSize: false);
                 var byLivery = fullField.Seats
                     .GroupBy(s => s.Ams2LiveryName, StringComparer.Ordinal)
@@ -2621,7 +2610,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private RoundResult ToRoundResult(ResultDraft draft, int roundNumber, PackRound packRound)
     {
         var rules = RoundRuleResolver.Resolve(Pack.Season.PointsSystem, packRound);
-        var teamByDriver = RoundGridResolver.Resolve(Pack, roundNumber, playerSeat: null, CurrentGridSelection()).Seats
+        var teamByDriver = ResolveGrid(roundNumber).Seats
             .ToDictionary(s => s.DriverId, s => s.TeamId, StringComparer.Ordinal);
 
         // Race 0 is the draft's own classification; a two-race weekend adds the rest (Increment 2).
@@ -2706,7 +2695,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     private void ValidateDraft(ResultDraft draft, int roundNumber)
     {
-        var gridDrivers = RoundGridResolver.Resolve(Pack, roundNumber, playerSeat: null, CurrentGridSelection()).Seats
+        var gridDrivers = ResolveGrid(roundNumber).Seats
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
 

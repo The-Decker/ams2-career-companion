@@ -478,14 +478,17 @@ public sealed class SessionServiceTests : IDisposable
     }
 
     [Fact]
-    public void CreateCareer_RejectsALiveryThatIsNotAPackEntry()
+    public void CreateCareer_OnACustomLivery_SeatsAnOwnEntrant()
     {
+        // Player-as-own-entrant: a livery that is not a pack entry (a custom/non-standard skin) no longer
+        // refuses — the player is seated as their own independent synthetic entrant so the career runs.
         var environment = ViewModelTestData.Environment(DocumentsDirectory);
         var request = Request() with { PlayerLiveryName = "No Such Livery" };
 
-        var ex = Assert.Throws<InvalidOperationException>(
-            () => CareerSessionService.CreateCareer(request, environment));
-        Assert.Contains("No Such Livery", ex.Message);
+        using var session = CareerSessionService.CreateCareer(request, environment);
+        var player = Assert.Single(session.CurrentGrid(), s => s.IsPlayer);
+        Assert.Equal("No Such Livery", player.Ams2LiveryName);
+        Assert.Equal(Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId, player.DriverId);
     }
 
     // ---------- staging ----------

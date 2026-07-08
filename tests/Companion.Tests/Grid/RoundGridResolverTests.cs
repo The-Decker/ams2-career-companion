@@ -83,12 +83,16 @@ public class RoundGridResolverTests
     }
 
     [Fact]
-    public void Resolve_PlayerSeat_LiveryMatchingNoEntryAtAll_StillThrows()
+    public void Resolve_PlayerSeat_LiveryMatchingNoEntry_SeatsAnOwnEntrant()
     {
+        // Player-as-own-entrant: a custom livery no pack driver holds seats the player as their own
+        // independent synthetic entrant (stable id) rather than throwing — so custom skins work.
         var pack = GridTestData.LoadReferencePack("f1-1967");
-        var ex = Assert.Throws<InvalidOperationException>(() =>
-            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "No Such Livery #99" }));
-        Assert.Contains("matches no entry", ex.Message);
+        var seat = Assert.Single(
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "My Custom Skin #99" }).Seats,
+            s => s.IsPlayer);
+        Assert.Equal("My Custom Skin #99", seat.Ams2LiveryName);
+        Assert.Equal(RoundGridResolver.SyntheticPlayerDriverId, seat.DriverId);
     }
 
     // ---------- 1988 mid-season swap: Mansell out, Brundle in for round 11 ----------
@@ -376,12 +380,15 @@ public class RoundGridResolverTests
     }
 
     [Fact]
-    public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive()
+    public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive_WrongCaseBecomesAnOwnEntrant()
     {
+        // Binding stays exact/case-sensitive: an almost-right livery (wrong case) does NOT bind the real
+        // seat — it is treated as a custom livery and seats the player as their own entrant.
         var pack = GridTestData.LoadReferencePack("f1-1967");
-
-        Assert.Throws<InvalidOperationException>(() =>
-            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "LOTUS-FORD COSWORTH #5 J. CLARK" }));
+        var seat = Assert.Single(
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "LOTUS-FORD COSWORTH #5 J. CLARK" }).Seats,
+            s => s.IsPlayer);
+        Assert.Equal(RoundGridResolver.SyntheticPlayerDriverId, seat.DriverId); // NOT driver.jim_clark
     }
 
     // ---------- errors: unknown round, duplicate liveries ----------

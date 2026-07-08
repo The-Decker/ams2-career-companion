@@ -231,10 +231,16 @@ public static class RoundGridResolver
                 string.Equals(e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
             if (playerEntry is null)
             {
-                throw new InvalidOperationException(
-                    $"Player livery '{playerSeat.Ams2LiveryName}' matches no entry in {pack.Manifest.PackId} " +
-                    $"({round.Name}). The binding is exact (case-sensitive); this round's liveries are: " +
-                    $"{string.Join(", ", seats.Select(s => $"'{s.Ams2LiveryName}'"))}.");
+                // Player-as-own-entrant: the chosen livery matches NO pack entry (a non-standard / custom
+                // skin the player picked). Seat them as their OWN full-season synthetic entrant — a stable
+                // synthetic driver id, a neutral independent team, and baseline ratings the character patch
+                // then shapes — so a custom skin works AND the career never dead-ends on a livery no
+                // historical driver holds. Existing careers pick a pack-entry livery, so they never reach
+                // this branch (byte-identical). CapToGridSize keeps the player and trims the slowest AI.
+                seats.Add(ApplyCharacter(
+                    SyntheticPlayerSeat(playerSeat.Ams2LiveryName) with { IsPlayer = true },
+                    playerSeat.Character));
+                return seats;
             }
 
             var driversById = IndexById(pack.Drivers, d => d.Id, pack, "drivers.json");
@@ -271,6 +277,51 @@ public static class RoundGridResolver
             DragScalar = seat.DragScalar + mods.DragScalarDelta,
         };
     }
+
+    // ---------- player-as-own-entrant ----------
+
+    /// <summary>Stable driver id for a player racing their OWN entrant (a non-pack / custom livery). One
+    /// player ⇒ one id, so it never collides with a pack driver ("driver.&lt;name&gt;") and stays fixed
+    /// across the whole career — the fold's player-identity key.</summary>
+    public const string SyntheticPlayerDriverId = "driver.player-entrant";
+
+    /// <summary>A neutral independent seat for the player-as-own-entrant path: mid-field baseline ratings
+    /// (the character patch then shapes them), a neutral team (no physics scalars), on the player's chosen
+    /// livery. The display name is a placeholder — the app shows the character's name via PlayerIdentity.</summary>
+    private static GridSeat SyntheticPlayerSeat(string livery) => new()
+    {
+        DriverId = SyntheticPlayerDriverId,
+        DriverName = "Privateer",
+        Country = "",
+        TeamId = "team.independent",
+        TeamName = "Independent",
+        Number = null,
+        Ams2LiveryName = livery,
+        Ratings = NeutralRatings,
+        Reliability = 0.85,
+        WeightScalar = 1.0,
+        PowerScalar = 1.0,
+        DragScalar = 1.0,
+        IsGuest = false,
+    };
+
+    private static readonly PackDriverRatings NeutralRatings = new()
+    {
+        RaceSkill = 0.80,
+        QualifyingSkill = 0.78,
+        Aggression = 0.5,
+        Defending = 0.5,
+        Stamina = 0.8,
+        Consistency = 0.8,
+        StartReactions = 0.5,
+        WetSkill = 0.5,
+        TyreManagement = 0.7,
+        FuelManagement = 0.7,
+        BlueFlagConceding = 0.5,
+        WeatherTyreChanges = 0.5,
+        AvoidanceOfMistakes = 0.5,
+        AvoidanceOfForcedMistakes = 0.5,
+    };
 
     // ---------- validation ----------
 
