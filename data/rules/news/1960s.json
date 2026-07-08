@@ -10,11 +10,20 @@
         "TRACKSIDE DISPATCH — {race}, {year}.",
         "BY TELEGRAPH FROM THE PADDOCK.",
         "OUR CORRESPONDENT CABLES FROM {race}.",
-        "WIRE FILED AT THE FALL OF THE FLAG."
+        "WIRE FILED AT THE FALL OF THE FLAG.",
+        "CABLED FROM THE PIT LANE, {race}.",
+        "OUR MAN AT {race} WIRES THIS DISPATCH.",
+        "FILED BY TELEGRAPH, ROUND {round} OF {year}.",
+        "FROM THE GRANDSTAND RAIL, A WIRE REPORT.",
+        "DISPATCH FROM {race}, THE INK STILL WET. STOP.",
+        "BY CABLE FROM THE {year} PADDOCK.",
+        "WIRED AS THE DUST SETTLED AT {race}."
       ],
       "default": [
         "Race report.",
-        "From {race}, {year}."
+        "From {race}, {year}.",
+        "Dispatch from {race}.",
+        "Round {round} report."
       ]
     },
     "closeGood": {
@@ -23,11 +32,20 @@
         "Rivals will note the name; the season is far from run. STOP.",
         "A drive the crowd will not soon forget.",
         "The record book keeps the rest.",
-        "More of the same, and the paddock will talk of little else."
+        "More of the same, and the paddock will talk of little else.",
+        "The works will sleep easy this night. STOP.",
+        "A name for the headlines, and deservedly so.",
+        "The paddock lifts its cap to a fine drive.",
+        "Such afternoons are why men take to the wheel.",
+        "The team packs up with heads held high. STOP.",
+        "One for the scrapbook, and the mantelpiece besides.",
+        "The crowd went home well satisfied."
       ],
       "default": [
         "A strong afternoon's work.",
-        "The season rolls on."
+        "The season rolls on.",
+        "A fine result all round.",
+        "The team is well pleased."
       ]
     },
     "closeBad": {
@@ -36,44 +54,74 @@
         "There will be quieter words back at the works.",
         "A weekend the team will wish to forget.",
         "Better days lie ahead, the paddock trusts.",
-        "The stopwatch tells no kind story this day."
+        "The stopwatch tells no kind story this day.",
+        "The transporter rolls for home under a grey sky. STOP.",
+        "Fortune turned her face away this weekend.",
+        "The engineers have a long night's reckoning ahead.",
+        "Racing gives, and racing takes; today it took.",
+        "A page best turned quickly, and soon forgotten.",
+        "The pit board reads only regret this afternoon. STOP.",
+        "The team trusts the luck will even out in time."
       ],
       "default": [
         "A day to move past.",
-        "The team regroups for the next round."
+        "The team regroups for the next round.",
+        "A disappointing afternoon.",
+        "The team looks ahead."
       ]
     },
     "champLine": {
       "1960s": [
         "In the championship {player} sits {champPosition}, {champMove}.",
         "The title table now reads {player} {champPosition} — {champMove} on the season.",
-        "{player} stands {champPosition} in the running for the crown, {champMove}."
+        "{player} stands {champPosition} in the running for the crown, {champMove}.",
+        "In the run for the crown {player} lies {champPosition}, {champMove}.",
+        "The championship reckoning: {player} {champPosition}, {champMove} on the year.",
+        "As for the title, {player} holds {champPosition} — {champMove}.",
+        "The points table places {player} {champPosition}, {champMove} since last we wired.",
+        "For the championship, read {player} at {champPosition}, {champMove}."
       ],
       "default": [
         "{player} is {champPosition} in the standings.",
-        "That leaves {player} {champPosition} in the championship."
+        "That leaves {player} {champPosition} in the championship.",
+        "In the standings, {player} is {champPosition}.",
+        "{player} holds {champPosition} for the title."
       ]
     },
     "expectationBeat": {
       "1960s": [
         "against a car reckoned good only for {expected}",
         "having been fancied no better than {expected}",
-        "from a machine the timekeepers pegged at {expected}"
+        "from a machine the timekeepers pegged at {expected}",
+        "when the form book promised only {expected}",
+        "with a motor rated no higher than {expected}",
+        "though the paddock had settled on {expected}",
+        "in defiance of a predicted {expected}",
+        "past all expectation of {expected}"
       ],
       "default": [
         "beyond the expected {expected}",
-        "past a predicted {expected}"
+        "past a predicted {expected}",
+        "better than the expected {expected}",
+        "ahead of a forecast {expected}"
       ]
     },
     "seasonClose": {
       "1960s": [
         "The paddock scatters to the winter, the record book closed for another year. STOP.",
         "Until the flag falls again, next season.",
-        "A campaign for the history books, whatever comes next."
+        "A campaign for the history books, whatever comes next.",
+        "The garages fall dark till spring. STOP.",
+        "The wire falls silent until the new campaign.",
+        "Another year written into the annals of the sport.",
+        "The mechanics turn to the winter's toil, and to next year.",
+        "So closes the book on a season none will forget. STOP."
       ],
       "default": [
         "The season is complete.",
-        "On to next year."
+        "On to next year.",
+        "That is the season done.",
+        "The year is in the books."
       ]
     }
   },
@@ -82,92 +130,161 @@
       "1960s": [
         "{pool:dateline} {player} took the flag first at {race}, a commanding win for {team}. Leading home a field of {fieldSize}, the drive brooked no argument. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Victory at {race}. {player} controlled the {year} affair from the front, the {team} machine never headed once clear. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} WINS {race}. STOP. The chequered flag falls to {team} and to a driver in imperious form, {expected} on the form book be damned. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} WINS {race}. STOP. The chequered flag falls to {team} and to a driver in imperious form, {expected} on the form book be damned. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} MASTERS {race}. STOP. Away cleanly and never troubled, the {team} car led every lap that mattered before a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A flag-to-flag triumph at {race} for {player}. Round {round} of the {year} campaign falls to {team}, and handsomely. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} wins {race} at his ease. The {team} machine answered every call, {expected} on paper counting for nothing on the road. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} THE FLAG IS {player}'S AT {race}. STOP. First of {fieldSize} runners home, a victory {team} will long savour. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No man could touch {player} at {race} this {year}. The {team} car ran faultless from the fall of the flag to the last. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} takes {race} in commanding style, {team} first past the post in a field of {fieldSize}. A drive of rare authority. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory, and no argument: {player} led {race} from lights to flag for {team}. Round {round} could not have gone sweeter. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} won {race} for {team}, leading a field of {fieldSize}. {pool:champLine} {pool:closeGood}"
+        "{player} won {race} for {team}, leading a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
+        "{player} won {race} at round {round} for {team}, first of {fieldSize}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|podium": {
       "1960s": [
         "{pool:dateline} A rostrum finish for {player}, home {position} at {race}. {team} split the front-runners in a field of {fieldSize}, {winner} taking the honours. {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} carried {team} to {position} at {race}, champagne on the podium and a drive {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} PODIUM FOR {player}. STOP. {position} at {race}, behind only {winner} at the flag. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} PODIUM FOR {player}. STOP. {position} at {race}, behind only {winner} at the flag. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} onto the rostrum at {race}, {position} of a field of {fieldSize}. {winner} took the spoils, but the {team} man had his share of the champagne. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A ROSTRUM AT {race}. STOP. {player} home {position}, {winner} the winner, and the {team} garage well content. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {position} at {race} for {player}, a place on the podium and a drive {pool:expectationBeat}. {winner} led the way home. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} split the field to take {position} at {race}, round {round} of {year}. Only {winner} finished ahead of the {team} car. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Champagne for {player} at {race}: {position} at the flag behind {winner}, from a field of {fieldSize}. {team} smiling. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} claims {position} at {race}, a fine podium for {team}. The winner {winner} led, but the crowd cheered the rostrum loudest. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}"
+        "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}",
+        "{player} took {position} on the podium at {race} behind {winner}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|points": {
       "1960s": [
         "{pool:dateline} {player} brought the {team} car home {position} at {race}, points in the ledger from a field of {fieldSize}. {winner} won the day. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A useful afternoon: {player} scored at {race}, {position} at the flag. No fireworks, but the championship account ticks over. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} A useful afternoon: {player} scored at {race}, {position} at the flag. No fireworks, but the championship account ticks over. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} in the points at {race}, {position} of {fieldSize} for {team}. {winner} won; the ledger gains all the same. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A steady {position} for {player} at {race}, round {round} banked for {team}. Quiet, but the championship account grows. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} POINTS FOR {player}. STOP. {position} at {race} behind winner {winner}, and the {team} tally the richer for it. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No podium this day, but {player} took {position} at {race} and points besides. {team} will settle for that. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} brought {team} home {position} at {race}, scoring from a field of {fieldSize}. {winner} led the afternoon. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A workman's reward: {player} scored at {race}, {position} at the flag. The season's ledger ticks along for {team}. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} scored points at {race}, finishing {position}. {pool:champLine} {pool:closeGood}"
+        "{player} scored points at {race}, finishing {position}. {pool:champLine} {pool:closeGood}",
+        "{player} scored at {race}, home {position} of {fieldSize} for {team}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|overperformed": {
       "1960s": [
         "{pool:dateline} GIANT-KILLING AT {race}. STOP. {player} dragged the {team} machine to {position} {pool:expectationBeat}, and the paddock took note. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} made the {team} car sing at {race}, {position} from a field of {fieldSize} and the drive of the day by common consent. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} made the {team} car sing at {race}, {position} from a field of {fieldSize} and the drive of the day by common consent. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} DEFIED THE FORM BOOK AT {race}. STOP. {position} from a car fancied no higher, {pool:expectationBeat}. The paddock buzzed. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A drive above the machine: {player} wrung {position} from the {team} car at {race}, {pool:expectationBeat}. {winner} won, but the talk was of the {team} man. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} punched clean above his weight at {race}, {position} of {fieldSize} and by a distance the best of the drive. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} THE DRIVE OF THE DAY BELONGS TO {player}. STOP. {position} at {race}, {pool:expectationBeat}, and every stopwatch in the pit lane a witness. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Round {round} at {race} became a showcase for {player}: {position} from a {team} car no one gave a hope. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} made the improbable look ordinary at {race}, {position} {pool:expectationBeat}. {team} scarcely believed the timing sheets. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} overdelivered at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
+        "{player} overdelivered at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
+        "{player} beat expectation at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|underperformed": {
       "1960s": [
         "{pool:dateline} An off-song afternoon for {player}, {position} at {race} when {expected} was the reasonable hope. {team} will seek answers. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} {player} short of pace at {race}, home only {position} in a field of {fieldSize}. {winner} led a race that never came to the {team} driver. {pool:champLine} {pool:closeBad}"
+        "{pool:dateline} {player} short of pace at {race}, home only {position} in a field of {fieldSize}. {winner} led a race that never came to the {team} driver. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} A flat afternoon for {player} at {race}, home {position} when {expected} was the fair hope. {team} left scratching heads. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} never found his rhythm at {race}, {position} of {fieldSize} and adrift of {winner}. Round {round} to forget for {team}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} BELOW PAR AT {race}. STOP. {player} classified {position}, short of the {expected} the {team} camp had counted upon. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The pace would not come for {player} at {race}; {position} at the flag while {winner} disappeared up the road. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} laboured to {position} at {race}, well shy of {expected}. A quiet, disappointing wire from the {team} garage. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} An afternoon of might-have-beens: {player} {position} at {race}, {expected} the promise, {winner} the reality up front. {pool:champLine} {pool:closeBad}"
       ],
       "default": [
-        "{player} was below par at {race}, only {position} when {expected} was expected. {pool:champLine} {pool:closeBad}"
+        "{player} was below par at {race}, only {position} when {expected} was expected. {pool:champLine} {pool:closeBad}",
+        "{player} disappointed at {race}, only {position} against a hoped-for {expected}. {pool:champLine} {pool:closeBad}"
       ]
     },
     "race.result|dnf-mechanical": {
       "1960s": [
         "{pool:dateline} HEARTBREAK FOR {player}. STOP. The {team} machine expired at {race}, no fault of the driver, from what had promised {expected}. {winner} took the win. {pool:closeBad}",
-        "{pool:dateline} Smoke and silence at {race}: mechanical failure sidelined {player} while running its race. The car cried enough. {pool:closeBad}"
+        "{pool:dateline} Smoke and silence at {race}: mechanical failure sidelined {player} while running its race. The car cried enough. {pool:closeBad}",
+        "{pool:dateline} THE MOTOR LET GO AT {race}. STOP. {player} out through no fault of his own, {expected} snatched away by a failing {team} machine. {winner} won. {pool:closeBad}",
+        "{pool:dateline} A trail of oil at {race} told the tale: mechanical trouble ended {player}'s run while it yet had promise. {pool:closeBad}",
+        "{pool:dateline} {player} coasted to a halt at {race}, the {team} car beaten by its own machinery. {winner} led a field of {fieldSize} home. {pool:closeBad}",
+        "{pool:dateline} Cruel fortune at {race}: {player} sidelined by breakage on round {round}, the {expected} it promised gone for nought. {pool:closeBad}",
+        "{pool:dateline} SILENCE FROM THE {team} PIT AT {race}. STOP. The engine cried enough and {player} with it, out of the {year} running. {pool:closeBad}",
+        "{pool:dateline} No luck for {player} at {race}; a component gave way and a good drive with it, {winner} taking the honours. {pool:closeBad}"
       ],
       "default": [
-        "{player} retired from {race} with car trouble. {pool:closeBad}"
+        "{player} retired from {race} with car trouble. {pool:closeBad}",
+        "{player} retired from {race} at round {round} with mechanical failure. {pool:closeBad}"
       ]
     },
     "race.result|dnf-driver-error": {
       "1960s": [
         "{pool:dateline} {player} OFF THE ROAD AT {race}. STOP. A moment's misjudgement ended the run and left {team} to count the cost. {winner} led home a field of {fieldSize}. {pool:closeBad}",
-        "{pool:dateline} A costly slip: {player} threw away {race} by his own hand, out where {expected} had beckoned. {pool:closeBad}"
+        "{pool:dateline} A costly slip: {player} threw away {race} by his own hand, out where {expected} had beckoned. {pool:closeBad}",
+        "{pool:dateline} INTO THE STRAW BALES AT {race}. STOP. {player} the author of his own misfortune, out where {expected} had lain within reach. {winner} led {fieldSize} home. {pool:closeBad}",
+        "{pool:dateline} A rare error from {player} ended {race} early; the {team} man ran wide and out on round {round}. {pool:closeBad}",
+        "{pool:dateline} {player} caught out at {race}, a lock-up and a spin ending a run that had promised {expected}. {winner} won the day. {pool:closeBad}",
+        "{pool:dateline} A moment's want of judgement cost {player} dear at {race}: off, and out, with the {team} car crumpled. {pool:closeBad}",
+        "{pool:dateline} {player} overreached at {race} and paid the price, beached and beaten by his own hand while {winner} pressed on. {pool:closeBad}",
+        "{pool:dateline} THE {team} CAR IS IN THE FENCE AT {race}. STOP. {player} unhurt, the drive undone by a single misstep. {pool:closeBad}"
       ],
       "default": [
-        "{player} crashed out of {race} through driver error. {pool:closeBad}"
+        "{player} crashed out of {race} through driver error. {pool:closeBad}",
+        "{player} spun out of {race} at round {round} through his own error. {pool:closeBad}"
       ]
     },
     "race.result|midfield": {
       "1960s": [
         "{pool:dateline} A workmanlike run for {player}, {position} at {race} in a field of {fieldSize}. Little to report; the miles were logged and the car came home. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} No headlines for {player} at {race}, home {position} behind {winner}. A quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} No headlines for {player} at {race}, home {position} behind {winner}. A quiet afternoon for {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A grey afternoon's motoring for {player}, {position} at {race} in a field of {fieldSize}. The car came home and little else. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} logged the miles at {race}, {position} of {fieldSize} and out of the headlines. {winner} took the win. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Round {round} passed quietly for {player}: {position} at {race}, no drama, no glory, the {team} car intact. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} An honest, unremarkable run: {player} {position} at {race} behind {winner}. The wire has little more to add. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} threaded the midfield at {race} to {position}, a workaday result for {team} in the {year} campaign. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Nothing to trouble the headline-writers: {player} home {position} at {race}, {winner} well up the road. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
+        "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}",
+        "{player} came home {position} at {race}, a quiet round {round} for {team}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "season.digest|player-champion": {
       "1960s": [
         "THE {year} SEASON IS RUN. STOP. And it is {player} who stands above all — champion of the world, the {team} name struck into the record book. {pool:seasonClose}",
-        "Champions are forged across a long season, and in {year} the crown is {player}'s. STOP. A campaign {team} will toast for years to come. {pool:seasonClose}"
+        "Champions are forged across a long season, and in {year} the crown is {player}'s. STOP. A campaign {team} will toast for years to come. {pool:seasonClose}",
+        "IT IS DONE. STOP. {player} is champion of {year}, and the {team} name is graven into the record book for all time. {pool:seasonClose}",
+        "The long {year} campaign is run, and the crown rests with {player}. STOP. {team} scale the summit of the sport. {pool:seasonClose}",
+        "A CHAMPION IS MADE. STOP. Across a full season {player} bested all comers; {year} belongs to him and to {team}. {pool:seasonClose}",
+        "When the final flag fell on {year}, one name stood above the rest — {player}, world champion, {team} triumphant. {pool:seasonClose}",
+        "The {year} title is settled, and settled in {player}'s favour. A season of which {team} will speak for a generation. {pool:seasonClose}"
       ],
       "default": [
-        "{player} is the {year} champion, a title season for {team}. {pool:seasonClose}"
+        "{player} is the {year} champion, a title season for {team}. {pool:seasonClose}",
+        "{player} is champion of {year} for {team}. {pool:seasonClose}"
       ]
     },
     "season.digest|season-complete": {
       "1960s": [
         "THE {year} TITLE IS DECIDED. STOP. {champLeader} takes the championship; {player} closes the year {champPosition} for {team}. {pool:seasonClose}",
-        "The season's final reckoning: {champLeader} is champion of {year}, {player} classified {champPosition}. {team} look to the winter and the year to come. {pool:seasonClose}"
+        "The season's final reckoning: {champLeader} is champion of {year}, {player} classified {champPosition}. {team} look to the winter and the year to come. {pool:seasonClose}",
+        "THE CURTAIN FALLS ON {year}. STOP. {champLeader} is champion; {player} ends the year {champPosition} for {team}. {pool:seasonClose}",
+        "A full season reckoned: {champLeader} takes the {year} crown, {player} classified {champPosition}. {team} turn their eyes to the winter. {pool:seasonClose}",
+        "The {year} championship goes to {champLeader}. STOP. {player} closes {champPosition} for {team}, a campaign of lessons and promise. {pool:seasonClose}",
+        "So ends {year}: {champLeader} the champion, {player} {champPosition} at the final tally. The record book is closed. {pool:seasonClose}",
+        "The last wire of {year}: {champLeader} crowned, {player} home {champPosition} for {team}. Till the flag falls anew. {pool:seasonClose}"
       ],
       "default": [
-        "{champLeader} took the {year} title; {player} finished the year {champPosition}. {pool:seasonClose}"
+        "{champLeader} took the {year} title; {player} finished the year {champPosition}. {pool:seasonClose}",
+        "{champLeader} won the {year} title; {player} finished {champPosition} for {team}. {pool:seasonClose}"
       ]
     }
   }

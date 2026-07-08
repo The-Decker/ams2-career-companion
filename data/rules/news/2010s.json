@@ -10,11 +10,18 @@
         "{race}, {year}: timesheets final, telemetry logged, takes already flying.",
         "Lights out to checkered at {race} — here's how it landed.",
         "Trackside at {race}, {year}. Reaction coming in fast.",
-        "Race report, {race} {year}, as it happened."
+        "Race report, {race} {year}, as it happened.",
+        "{race}, {year} — apex to apex, and the takes are already live.",
+        "Checkered flag at {race}, {year}. Refreshing the timing tower one last time.",
+        "{race} {year}: data uploaded, debrief booked, the story's below.",
+        "Green flag to chequered at {race} — {year}, and here's the scroll.",
+        "Feed cuts to the podium at {race}, {year}. Rewind with us.",
+        "Post-race at {race}, {year} — telemetry synced, verdicts loading."
       ],
       "default": [
         "Race report from {race}, {year}.",
-        "{race}, {year}."
+        "{race}, {year}.",
+        "Filed from {race}, {year}."
       ]
     },
     "closeGood": {
@@ -23,11 +30,18 @@
         "Cue the paddock buzz — this one trends.",
         "Momentum, and every dashboard in the paddock backs it up.",
         "The garage erupts and the analysts are already replaying it.",
-        "A result that reads well on every screen. On to the next round."
+        "A result that reads well on every screen. On to the next round.",
+        "Screens green, garage loud, socials louder. Next round can't come soon enough.",
+        "That's one for the highlight reel and the data-loggers both.",
+        "The pit wall exhales, the feeds cheer, and the momentum is real.",
+        "Every sector, every stint, every screen — all pointing the same happy way.",
+        "Bank it, upload it, celebrate it. Onward.",
+        "The timing tower tells a lovely story tonight."
       ],
       "default": [
         "A strong day at the office.",
-        "On to the next round."
+        "On to the next round.",
+        "A good day banked."
       ]
     },
     "closeBad": {
@@ -36,11 +50,18 @@
         "The engineers go quiet and the data gets pulled apart.",
         "One to delete from the memory banks — reset for the next round.",
         "Not what the numbers promised. Straight back to the simulator.",
-        "The paddock chatter turns critical; the team just wants next weekend."
+        "The paddock chatter turns critical; the team just wants next weekend.",
+        "The group chat goes quiet; the engineers just want the flight home.",
+        "Delete, debrief, move on. The data will tell the tale later.",
+        "Screens red, faces long — reset and reload for next weekend.",
+        "One for the 'learnings' folder. The sim gets a workout this week.",
+        "The feeds pile on, the paddock winces, and the team looks to next round.",
+        "Not a line of that telemetry made anyone smile. Onward, quickly."
       ],
       "default": [
         "A weekend to move past.",
-        "The team resets for the next round."
+        "The team resets for the next round.",
+        "A day to file away."
       ]
     },
     "champLine": {
@@ -48,22 +69,34 @@
         "Standings update: {player} sits {champPosition}, {champMove}, with {champLeader} setting the pace at the top.",
         "The title picture reads {player} {champPosition} and {champMove}, chasing {champLeader}.",
         "That leaves {player} {champPosition} in the championship, {champMove}.",
-        "Championship-wise: {player} {champPosition}, {champMove}."
+        "Championship-wise: {player} {champPosition}, {champMove}.",
+        "Points table refreshed: {player} {champPosition}, {champMove}, {champLeader} still the benchmark up top.",
+        "Where it leaves the title fight: {player} {champPosition} and {champMove}, eyes on {champLeader}.",
+        "In the standings scroll, {player} is {champPosition}, {champMove}, with {champLeader} out front.",
+        "Championship ticker: {player} {champPosition}, {champMove}.",
+        "The bigger picture — {player} {champPosition} in the table, {champMove}, {champLeader} leading."
       ],
       "default": [
         "{player} is {champPosition} in the standings, {champMove}.",
-        "That puts {player} {champPosition} in the championship."
+        "That puts {player} {champPosition} in the championship.",
+        "{player} holds {champPosition}, {champMove}."
       ]
     },
     "expectationBeat": {
       "2010s": [
         "from a car the models had pegged at {expected}",
         "against a data-driven forecast of {expected}",
-        "with the pre-race sims calling {expected} at best"
+        "with the pre-race sims calling {expected} at best",
+        "when the data had them nailed to {expected}",
+        "from a package the sims never rated above {expected}",
+        "past a forecast the engineers signed off at {expected}",
+        "with every model whispering {expected} beforehand",
+        "though the pre-event numbers said {expected}"
       ],
       "default": [
         "beyond the expected {expected}",
-        "past a predicted {expected}"
+        "past a predicted {expected}",
+        "above the modelled {expected}"
       ]
     },
     "techNote": {
@@ -71,11 +104,18 @@
         "DRS deployed, tyres managed, the strategy call nailed.",
         "Power unit deployment on point all afternoon.",
         "The undercut worked and the pit wall read the race to the lap.",
-        "Tyre deg managed, energy harvest maxed, every sector backing the plan."
+        "Tyre deg managed, energy harvest maxed, every sector backing the plan.",
+        "Energy deployment metered to the metre, tyres nursed to the flag.",
+        "Every DRS zone used, every harvest lap banked, the strategy screen never blinked.",
+        "The overcut landed, the deg curve behaved, the pit wall called it clean.",
+        "Hybrid modes juggled to perfection, the delta green all afternoon.",
+        "Brake temps in the window, tyre pressures on target, the call spot-on.",
+        "Battery, tyres, track position — every variable stacked the right way."
       ],
       "default": [
         "The strategy held up.",
-        "A clean run on setup and strategy."
+        "A clean run on setup and strategy.",
+        "Setup and strategy did their job."
       ]
     },
     "punditTake": {
@@ -83,22 +123,35 @@
         "The commentary booth calls it the drive of the day.",
         "Second-screen verdict: nailed it.",
         "The analysts are already queuing up to praise it.",
-        "The feeds light up and the paddock consensus forms fast — glowing."
+        "The feeds light up and the paddock consensus forms fast — glowing.",
+        "The timing-screen crowd and the booth are in rare agreement: superb.",
+        "Analysts fire up the replays; the verdict's already unanimous.",
+        "The paddock hot-takes converge fast, and they're all warm.",
+        "Social feeds and the commentary team sing the same tune.",
+        "Driver-of-the-day polls don't look like they'll be close.",
+        "The pundits reach for the superlatives and don't hold back."
       ],
       "default": [
         "The pundits approve.",
-        "A drive the analysts will replay."
+        "A drive the analysts will replay.",
+        "The analysts nod along."
       ]
     },
     "seasonClose": {
       "2010s": [
         "Season's done, data's archived, and the paddock is already crunching next year's numbers.",
         "The timing screens go dark for winter — every debrief from here points at the season to come.",
-        "Roll the credits on the campaign; the analysts will be replaying this one all off-season."
+        "Roll the credits on the campaign; the analysts will be replaying this one all off-season.",
+        "The lights go out on the campaign; the number-crunchers don't sleep till spring.",
+        "Season archived, telemetry boxed, and the paddock pivots straight to next year.",
+        "That's a wrap on the year — expect this one on the replay loops all winter.",
+        "Off-season begins the moment the last dataset uploads. Back soon.",
+        "The timing towers dim, the debriefs roll on, and next season's build starts now."
       ],
       "default": [
         "The season is in the books.",
-        "On to the winter and next year."
+        "On to the winter and next year.",
+        "The year is done; the winter work begins."
       ]
     }
   },
@@ -107,92 +160,150 @@
       "2010s": [
         "{pool:dateline} {player} wins {race}. Lights to flag, {team} in total control of a {fieldSize}-car field, and nobody laid a glove on them. {pool:techNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} Win in the bag for {player} — {team} manage the gap, hit every window, and take {race} going away. {pool:punditTake} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} P1 for {player} at {race}. The {team} car had the legs all weekend and the timing screens never lied, {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} P1 for {player} at {race}. The {team} car had the legs all weekend and the timing screens never lied, {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} takes {race}. Pole converted, gap controlled, {team} flawless across a {fieldSize}-car field — a lights-to-flag masterclass. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Job done for {player} at {race}. {team} hit every strategy window and the timing tower stayed green all afternoon. {pool:punditTake} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} P1, {player}, {race}. The {team} package had the pace and the data proved it {pool:expectationBeat}. Untouchable. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory for {player} at {race} — controlled the {fieldSize}-car field from the front and never looked flustered. {pool:punditTake} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} converts at {race}. {team} nailed the launch, managed the deg, and cruised home for the win. {pool:techNote} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} wins {race} for {team}, leading home a {fieldSize}-car field. {pool:champLine} {pool:closeGood}"
+        "{player} wins {race} for {team}, leading home a {fieldSize}-car field. {pool:champLine} {pool:closeGood}",
+        "{player} takes {race} for {team} from a {fieldSize}-car field. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|podium": {
       "2010s": [
         "{pool:dateline} Podium for {player} — {position} at {race}, splitting the big names as {winner} takes the win. {team} banked it with a smart strategy call. {pool:techNote} {pool:champLine} {pool:closeGood}",
         "{pool:dateline} {player} climbs the rostrum at {race}, home {position} behind {winner} in a {fieldSize}-car field. {pool:punditTake} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Champagne for {team}. {player} brings it home {position} at {race}, a drive {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} Champagne for {team}. {player} brings it home {position} at {race}, a drive {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Rostrum for {player} — {position} at {race}, holding station as {winner} takes it. {team} played the strategy screen perfectly. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} banks a podium at {race}, {position} in a {fieldSize}-car field behind {winner}. The undercut did the work. {pool:punditTake} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Big result for {team}: {player} home {position} at {race} {pool:expectationBeat}. Champagne, and deservedly. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Top-three for {player} at {race}, {position} behind {winner} across a {fieldSize}-car field. A tidy, clever drive. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} climbs to {position} at {race}. {team} timed the stops, nursed the tyres, and grabbed the rostrum. {pool:punditTake} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} finishes {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}"
+        "{player} finishes {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}",
+        "{player} takes {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|points": {
       "2010s": [
         "{pool:dateline} Points on the board for {player} — {position} at {race} from a {fieldSize}-car field, {winner} up front. Not a headline day, but the tally moves. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {team} bank the points at {race}, {player} home {position}. The strategy call was solid and the score ticks over. {pool:techNote} {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {team} bank the points at {race}, {player} home {position}. The strategy call was solid and the score ticks over. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Solid points for {player} — {position} at {race} in a {fieldSize}-car field, {winner} out front. No fireworks, but the tally climbs. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {team} leave {race} with points, {player} home {position}. The strategy screen behaved and the score ticks up. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Points banked at {race} for {player}, {position} on the day. Not a highlight-reel run, but the data's clean and the tally moves. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} scores at {race}, {position} in a {fieldSize}-car field. {winner} won it; {team} quietly did the job. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A points finish for {player} — {position} at {race}. The kind of steady Sunday that adds up over a season. {pool:techNote} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} scores at {race}, home {position}. {pool:champLine} {pool:closeGood}"
+        "{player} scores at {race}, home {position}. {pool:champLine} {pool:closeGood}",
+        "{player} banks points at {race}, home {position} for {team}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|overperformed": {
       "2010s": [
         "{pool:dateline} Drive of the day from {player}. {position} at {race} {pool:expectationBeat} — the {team} garage can't quite believe the timesheet. {pool:punditTake} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} punches way above the car at {race}, hauling {team} to {position} in a {fieldSize}-car field {pool:expectationBeat}. {pool:techNote} {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} punches way above the car at {race}, hauling {team} to {position} in a {fieldSize}-car field {pool:expectationBeat}. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} steals the show at {race}, {position} {pool:expectationBeat}. The {team} data screen barely believes it. {pool:punditTake} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Way above the car for {player} — {position} at {race} in a {fieldSize}-car field {pool:expectationBeat}. Sensational. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The timesheet doesn't lie: {player} hauls {team} to {position} at {race} {pool:expectationBeat}. Drive of the day, no contest. {pool:punditTake} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} rewrites the sims at {race}, {position} when the models said otherwise. {team} will take that all day. {pool:techNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Overachievement of the weekend: {player} {position} at {race} {pool:expectationBeat}. The feeds can't get enough. {pool:punditTake} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} overdelivers at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
+        "{player} overdelivers at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
+        "{player} beats the odds at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|underperformed": {
       "2010s": [
         "{pool:dateline} Off the pace for {player} — {position} at {race} when the sims called {expected}. {team} will pull the data apart, and {winner} led it. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} A flat afternoon for {team}. {player} home only {position} in a {fieldSize}-car field, well short of the {expected} the form book wanted. {pool:champLine} {pool:closeBad}"
+        "{pool:dateline} A flat afternoon for {team}. {player} home only {position} in a {fieldSize}-car field, well short of the {expected} the form book wanted. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} Below par for {player} — {position} at {race} when the sims wanted {expected}. {team} pull the data; {winner} led it home. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} A frustrating afternoon for {team}. {player} only {position} in a {fieldSize}-car field, short of the {expected} the numbers promised. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The models said {expected}; the flag said {position}. A quiet, disappointing {race} for {player}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} never got going at {race}, home {position} when {expected} was there for the taking. The debrief awaits. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} Off-colour for {team} at {race} — {player} classified {position}, well adrift of the {expected} the form book called. {pool:champLine} {pool:closeBad}"
       ],
       "default": [
-        "{player} underdelivers at {race}, only {position} when {expected} was on the cards. {pool:champLine} {pool:closeBad}"
+        "{player} underdelivers at {race}, only {position} when {expected} was on the cards. {pool:champLine} {pool:closeBad}",
+        "{player} falls short at {race}, {position} when {expected} was on the cards. {pool:champLine} {pool:closeBad}"
       ]
     },
     "race.result|dnf-mechanical": {
       "2010s": [
         "{pool:dateline} Power unit gremlins end {player}'s race at {race}. The {team} car cries enough while running strong — no fault of the driver — and {winner} takes the win. {pool:closeBad}",
-        "{pool:dateline} Smoke on the telemetry and it's over for {player} at {race}, a mechanical failure with {expected} still on the table. The garage goes silent. {pool:closeBad}"
+        "{pool:dateline} Smoke on the telemetry and it's over for {player} at {race}, a mechanical failure with {expected} still on the table. The garage goes silent. {pool:closeBad}",
+        "{pool:dateline} The telemetry flatlines and {player}'s {race} is done — a mechanical letdown with no blame on the driver. {winner} inherits clear air. {pool:closeBad}",
+        "{pool:dateline} Power unit failure pulls {player} out of {race} while running well. {team} can only stare at the data as {winner} rolls on. {pool:closeBad}",
+        "{pool:dateline} Warning lights, then silence: {player} parks it at {race} with {expected} still on the cards. Cruel luck for {team}. {pool:closeBad}",
+        "{pool:dateline} Reliability bites {team} at {race}. {player} out with a mechanical, the timing screen freezing on a race that was going somewhere. {pool:closeBad}",
+        "{pool:dateline} {player} coasts to a halt at {race}, the car crying enough. No driver error — just hardware — and {winner} takes the spoils. {pool:closeBad}"
       ],
       "default": [
-        "{player} retires from {race} with a mechanical failure. {pool:closeBad}"
+        "{player} retires from {race} with a mechanical failure. {pool:closeBad}",
+        "{player} retires from {race} for {team} with a mechanical. {pool:closeBad}"
       ]
     },
     "race.result|dnf-driver-error": {
       "2010s": [
         "{pool:dateline} {player} into the barriers at {race}. A moment's misjudgement and the run is over, leaving {team} to count the cost while {winner} leads home a {fieldSize}-car field. {pool:closeBad}",
-        "{pool:dateline} A costly error from {player} at {race} — the weekend thrown away by the driver's own hand with {expected} in reach. The debrief will sting. {pool:closeBad}"
+        "{pool:dateline} A costly error from {player} at {race} — the weekend thrown away by the driver's own hand with {expected} in reach. The debrief will sting. {pool:closeBad}",
+        "{pool:dateline} {player} loses it at {race}, into the wall and out of the race. A costly slip for {team} as {winner} leads home a {fieldSize}-car field. {pool:closeBad}",
+        "{pool:dateline} One mistake, race over: {player} beaches it at {race} with {expected} in reach. The replay won't be kind. {pool:closeBad}",
+        "{pool:dateline} Error from {player} at {race} — a lock-up, a lawn, a retirement. {team} count the cost while {winner} cruises. {pool:closeBad}",
+        "{pool:dateline} {player} throws it away at {race}, a self-inflicted end to the weekend. The debrief will replay that corner a lot. {pool:closeBad}",
+        "{pool:dateline} Into the gravel and out of the running: {player}'s {race} unravels at their own hand, {expected} left on the table. {pool:closeBad}"
       ],
       "default": [
-        "{player} crashes out of {race} through driver error. {pool:closeBad}"
+        "{player} crashes out of {race} through driver error. {pool:closeBad}",
+        "{player} crashes out of {race}, a driver error for {team}. {pool:closeBad}"
       ]
     },
     "race.result|midfield": {
       "2010s": [
         "{pool:dateline} A quiet run for {player}, {position} at {race} in a {fieldSize}-car field. Nothing flashy — laps logged, car home, data banked. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} No headlines for {team} at {race}. {player} brings it home {position}, {winner} up front, and the weekend goes in the books. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} No headlines for {team} at {race}. {player} brings it home {position}, {winner} up front, and the weekend goes in the books. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} An anonymous afternoon for {player}, {position} at {race} in a {fieldSize}-car field. Laps banked, car intact, nothing to see. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {team} slip through {race} unnoticed — {player} {position}, {winner} up front, the data logged for later. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A grey-zone {race} for {player}: {position}, no drama, no headlines, just a completed Sunday. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} runs in the pack at {race}, home {position} in a {fieldSize}-car field. The kind of quiet day the season needs its share of. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Mid-table for {team} at {race} — {player} {position}, {winner} winning, and the weekend files itself away. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} runs to {position} at {race}, a quiet day for {team}. {pool:champLine} {pool:closeGood}"
+        "{player} runs to {position} at {race}, a quiet day for {team}. {pool:champLine} {pool:closeGood}",
+        "{player} comes home {position} at {race}, a quiet day for {team}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "season.digest|player-champion": {
       "2010s": [
         "The {year} season is run and {player} is world champion. Lights-out in the opener to flag in the finale, {team} kept the numbers on their side all year, and now the title is theirs. {pool:seasonClose}",
-        "Title confirmed: {player} closes out {year} on top and untouchable when it mattered most. The {team} garage erupts, the feeds all agree — thoroughly earned. {pool:seasonClose}"
+        "Title confirmed: {player} closes out {year} on top and untouchable when it mattered most. The {team} garage erupts, the feeds all agree — thoroughly earned. {pool:seasonClose}",
+        "It's done: {player} is the {year} world champion. {team} stacked the data in their favour week after week, and the title is the payoff. {pool:seasonClose}",
+        "{year} belongs to {player}. From the opener's lights to the finale's flag, {team} were the team to beat, and the crown is theirs. {pool:seasonClose}",
+        "Champion. {player} closes {year} on top, the feeds unanimous and the {team} garage in bits. A campaign that held up on every screen. {pool:seasonClose}",
+        "The maths is settled and {player} takes the {year} title. A season {team} controlled where it counted — thoroughly, deservedly earned. {pool:seasonClose}"
       ],
       "default": [
-        "{player} is the {year} champion, a title year for {team}. {pool:seasonClose}"
+        "{player} is the {year} champion, a title year for {team}. {pool:seasonClose}",
+        "{player} wins the {year} title for {team}. {pool:seasonClose}"
       ]
     },
     "season.digest|season-complete": {
       "2010s": [
         "The {year} title is settled and it's {champLeader} lifting it. {player} signs off {champPosition} for {team} — some highlights, some deletes, plenty in the data to build on. {pool:seasonClose}",
-        "Final standings are in: {champLeader} takes {year}, {player} classified {champPosition}. The {team} pit wall is already scrolling forward to next year's numbers. {pool:seasonClose}"
+        "Final standings are in: {champLeader} takes {year}, {player} classified {champPosition}. The {team} pit wall is already scrolling forward to next year's numbers. {pool:seasonClose}",
+        "The book closes on {year} with {champLeader} on top. {player} ends it {champPosition} for {team} — a mixed dataset, plenty to build on. {pool:seasonClose}",
+        "{champLeader} is your {year} champion; {player} signs off {champPosition}. The {team} pit wall is already modelling next season. {pool:seasonClose}",
+        "Standings locked for {year}: {champLeader} lifts it, {player} classified {champPosition} for {team}. Some highlights, some deletes, all logged. {pool:seasonClose}",
+        "That's {year} done — {champLeader} the champion, {player} {champPosition}. {team} pack up the data and turn the page. {pool:seasonClose}"
       ],
       "default": [
-        "{champLeader} takes the {year} title; {player} ends the year {champPosition} for {team}. {pool:seasonClose}"
+        "{champLeader} takes the {year} title; {player} ends the year {champPosition} for {team}. {pool:seasonClose}",
+        "{champLeader} wins {year}; {player} ends {champPosition} for {team}. {pool:seasonClose}"
       ]
     }
   }
