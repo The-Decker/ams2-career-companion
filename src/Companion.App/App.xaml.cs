@@ -16,8 +16,9 @@ namespace Companion.App;
 /// data\ams2, data\rules and packs\ are copied beside it at build/publish time.
 ///
 /// Settings live-apply (ux-round contract section 3): the accent color mutates the shared
-/// AccentBrush/AccentDimBrush instances in place and the font scale replaces the AppFontSize
-/// resource, so every open screen restyles immediately — no restart, no view reload.
+/// AccentBrush/AccentDimBrush instances in place and the font scale replaces the AppUiScale
+/// resource (which every window's root LayoutTransform reads), so every open screen — and every
+/// tear-off window — restyles and rescales immediately, no restart, no view reload.
 /// </summary>
 public partial class App : Application
 {
@@ -70,14 +71,19 @@ public partial class App : Application
     }
 
     /// <summary>Pushes the appearance settings into the theme resources: accent + derived
-    /// dim accent (a 24% blend toward the window background) and the root font size
-    /// (14 × scale). Mutating the brush instances updates every StaticResource reference.</summary>
+    /// dim accent (a 24% blend toward the window background) and the root UI scale (font scale ÷
+    /// 100), which every window's root LayoutTransform multiplies by so ALL text and spacing scale
+    /// uniformly — inline sizes, headings and tear-off windows included, not just inherited body
+    /// text. Mutating the brush instances / replacing the resources updates every reference live.</summary>
     private void ApplyAppearance(AppSettings settings)
     {
         var accent = ParseColor(settings.AccentColor) ?? ParseColor(AppSettings.DefaultAccentColor)!.Value;
         SetBrushColor("AccentBrush", accent);
         SetBrushColor("AccentDimBrush", Blend(accent, (Color)ColorConverter.ConvertFromString("#1B1B1F"), 0.24));
-        Resources["AppFontSize"] = 14.0 * settings.FontScalePercent / 100.0;
+        // The base body font stays 14; the root UI-scale transform applies the scale (so an inline
+        // FontSize scales the same as an inherited one, and there is no double-scaling).
+        Resources["AppFontSize"] = 14.0;
+        Resources["AppUiScale"] = settings.FontScalePercent / 100.0;
     }
 
     private void SetBrushColor(string key, Color color)

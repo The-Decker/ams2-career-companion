@@ -12,6 +12,11 @@
         Foreground="{StaticResource TextBrush}"
         FontSize="13">
     <DockPanel Margin="12,10">
+        <!-- root UI-scale transform (settings: font scale) keeps this pop-out in step with the
+             main window's text size. -->
+        <DockPanel.LayoutTransform>
+            <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
+        </DockPanel.LayoutTransform>
         <!-- header: round title + N of M set -->
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
             <Border DockPanel.Dock="Right" VerticalAlignment="Center">

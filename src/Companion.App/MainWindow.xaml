@@ -11,6 +11,11 @@
         TextOptions.TextFormattingMode="Display"
         PreviewKeyDown="OnPreviewKeyDown">
     <DockPanel>
+        <!-- root UI-scale (settings: font scale): a single LayoutTransform scales all text +
+             spacing uniformly, so inline font sizes and headings scale like body text does. -->
+        <DockPanel.LayoutTransform>
+            <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
+        </DockPanel.LayoutTransform>
         <!-- shell header: app identity + the settings gear (ux-round contract section 3) -->
         <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1">

@@ -82,9 +82,11 @@ internal static class WpfRenderHarness
             var theme = (ResourceDictionary)Application.LoadComponent(
                 new Uri("/AMS2CareerCompanion;component/Themes/Theme.xaml", UriKind.Relative));
             app.Resources.MergedDictionaries.Add(theme);
-            // App.xaml.cs seeds a numeric AppFontSize at startup (14 × scale); Theme.xaml declares
-            // the key but the DynamicResource consumers want a live value. Mirror the default.
+            // App.xaml.cs seeds AppFontSize (14, the base body font) + AppUiScale (the root UI-scale
+            // factor the window LayoutTransforms read; 1 = none) at startup; Theme.xaml declares both.
+            // Mirror the defaults so the DynamicResource consumers resolve to a live value.
             app.Resources["AppFontSize"] = 14.0;
+            app.Resources["AppUiScale"] = 1.0;
             _themeLoaded = true;
         }
     }

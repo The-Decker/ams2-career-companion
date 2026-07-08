@@ -26,9 +26,14 @@
     <SolidColorBrush x:Key="ErrorDimBrush" Color="#3A2226" />
     <SolidColorBrush x:Key="SelectionBrush" Color="#33415E" />
 
-    <!-- root font size (settings: font scale 90–130% of 14) — MainWindow binds via
-         DynamicResource; App.ApplyAppearance replaces the value on change -->
+    <!-- root font size (the base body font, 14) — MainWindow binds via DynamicResource. -->
     <sys:Double x:Key="AppFontSize">14</sys:Double>
+
+    <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
+         multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings
+         and the tear-off windows included, not just inherited body text. App.ApplyAppearance
+         replaces the value on change (live); 1 = no scaling. -->
+    <sys:Double x:Key="AppUiScale">1</sys:Double>
 
     <!-- ===== motion (tactile "game feel": controls physically respond to touch) =====
          Shared easing curves so every interaction springs with one consistent vocabulary.
