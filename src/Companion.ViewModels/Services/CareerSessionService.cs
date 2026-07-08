@@ -4,6 +4,7 @@ using System.IO;
 using Companion.Ams2;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
+using Companion.Ams2.Preflight;
 using Companion.Ams2.Scenarios;
 using Companion.Ams2.Skins;
 using Companion.Core.Career;
@@ -936,9 +937,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     {
         try
         {
-            // Already in the round's active pool (a qualifier, or a bubble car on a round it qualified)?
+            // Already in the round's LIVE active pool (a qualifier, or a bubble car on a round it
+            // qualified)? Only the model's active <model>.xml counts — a bubble car active in some OTHER
+            // round's variant file must NOT look "already active", or the graft wrongly skips it.
             var scan = _environment.ScanInstalledLiveries(installation);
-            if (scan.Liveries.Any(l => l.IsActive &&
+            if (scan.Liveries.Any(l => l.IsActive && IsLiveActiveFile(l) &&
                     string.Equals(l.Name, _playerLiveryName, StringComparison.Ordinal)))
                 return null;
 
@@ -996,6 +999,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return null;
         }
     }
+
+    /// <summary>True when a scanned livery lives in the model's LIVE active override file
+    /// (<c>&lt;model&gt;.xml</c>) rather than a per-round variant (<c>&lt;model&gt;_Round.xml</c>) or a
+    /// timestamped backup. The scanner reads EVERY file, but only the active file is the pool AMS2 shows;
+    /// without this filter a bubble car active in another round's variant looks "already active", so both
+    /// the graft and the smart binding wrongly skip / keep it.</summary>
+    private static bool IsLiveActiveFile(InstalledLivery livery) =>
+        string.Equals(Path.GetFileNameWithoutExtension(livery.SourceFile), livery.VehicleFolder,
+            StringComparison.OrdinalIgnoreCase);
 
     private ScenarioApplyResult? ApplyScenarioForRound(int round)
     {
@@ -1125,7 +1137,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 .Select(v => v.Dir)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
             var installedActive = skinScan.Liveries
-                .Where(l => l.IsActive && (classFolders.Count == 0 || classFolders.Contains(l.VehicleFolder)))
+                .Where(l => l.IsActive && IsLiveActiveFile(l) &&
+                            (classFolders.Count == 0 || classFolders.Contains(l.VehicleFolder)))
                 .Select(l => l.Name)
                 .ToHashSet(StringComparer.Ordinal);
 
