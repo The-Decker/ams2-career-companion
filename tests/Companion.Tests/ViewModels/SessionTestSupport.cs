@@ -231,6 +231,14 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public BriefingModel? Briefing { get; set; }
 
+    /// <summary>Real historical seasons keyed by year, surfaced through the
+    /// <see cref="ICareerSession.HistoricalSeason(int)"/> seam (empty by default = the default-null
+    /// seam behaviour). Lets a test drive the circuit lookup with different per-year data.</summary>
+    public Dictionary<int, HistoricalSeason> HistoryByYear { get; } = [];
+
+    public HistoricalSeason? HistoricalSeason(int seasonYear) =>
+        HistoryByYear.GetValueOrDefault(seasonYear);
+
     public Queue<StageOutcome> StageOutcomes { get; } = new();
 
     public List<ResultDraft> Applied { get; } = [];

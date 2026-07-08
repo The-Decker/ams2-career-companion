@@ -199,9 +199,13 @@ public sealed partial class BriefingViewModel : ObservableObject
             Title = BriefingComposer.ComposeTitle(briefing);
             VenueDisplayName = briefing.VenueDisplayName;
             TrackId = briefing.Round.Track.Id;
-            // The real circuit for this round (from the shipped history data, keyed by season year +
-            // round) drives the vector circuit map + caption on the race-setup screen. Absent => no map.
-            var circuit = _session.HistoricalSeason(_session.Summary.SeasonYear)?.Rounds
+            // The real circuit for this round (from the shipped history data) drives the vector circuit
+            // map + caption on the race-setup screen. Key it by the PACK's authored year, not the
+            // career's current season year: on a CARRYOVER season the same pinned pack (its calendar,
+            // its tracks) is reused for a later year, so Summary.SeasonYear runs ahead of the pack while
+            // the track you actually set up in AMS2 is still the pack's — the pack year is what matches
+            // the venue this round races (they're equal for every ordinary season). Absent => no map.
+            var circuit = _session.HistoricalSeason(_session.Pack.Season.Year)?.Rounds
                 .FirstOrDefault(r => r.Round == briefing.Round.Round)?.Circuit;
             CircuitLayoutId = circuit?.LayoutId ?? "";
             CircuitCaption = CircuitCaptions.Compose(circuit, includeName: false);
