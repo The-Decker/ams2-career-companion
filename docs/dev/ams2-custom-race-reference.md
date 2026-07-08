@@ -143,3 +143,33 @@ qualifying-always-timed, warmup, race-by-time, **refuelling flag**, fuel/tyre/da
 aggression, start type/formation lap, penalties/flags/FCY, LiveTrack starting grip, mandatory-tyre
 nuance. All of this is **sim-inert** in our app (a manual in-game checklist), so authoring it changes
 no career fold / no oracle — it only changes what the briefing tells the player to set.
+
+---
+
+## 8. Fuel & race length — the "ran out of fuel" problem (F-Vintage / 1967)
+
+- **AMS2 does not reliably auto-fuel you for the race.** The starting fuel load is a **setup value the
+  player owns** (Setup → Strategy / Fuel & Strategy page, also on the in-car MFD), capped at the car's
+  **tank capacity**. The default is frequently under-filled, and the fuel **mix defaults to Rich**
+  (inflates burn). Refuel requested at a stop is **added** to what's in the tank, not "fill to X".
+- **Gotcha:** if you never change a single setup value, the pit strategy may not apply — the default can
+  carry **zero refuel** so a planned stop adds nothing and you run dry. Changing any value (starting
+  fuel is easiest) forces the strategy to apply.
+- **F-Vintage Gen1 tank = 190 L ≈ 55–58 laps at 1× consumption** (two sources: ams2cars.info + the
+  Reiza forum fuel thread). **Most full-distance 1967 GPs exceed that**: Monza 68, Kyalami/Silverstone
+  80, Zandvoort/Mosport 90, Monaco 100, Watkins Glen 108 laps. So at full rich-map 1× the 190 L tank
+  does **not** cover the longest real distances — a genuine (mild, known-slightly-aggressive) modelling
+  quirk, but fixable at the setup/options level.
+- **1967 reality:** cars started with a full tank and finished the distance on it; **no scheduled
+  refuelling** (refuelling as strategy only arrived ~1982, banned 1984). So **RefuellingAllowed = No**
+  for 1967 is both faithful and what AMS2 may enforce for the vintage class anyway.
+- **No % race-distance scaling in a Single Race** — length is laps OR time only. Percentage scaling
+  ("Race Distance Scale") exists only in **Championship** mode.
+- **Companion-app guidance (authentic-first), what the briefing should tell the player:**
+  1. **Fuel to the distance** (up to the 190 L cap), not brim-by-habit; if the app knows/estimates
+     per-lap burn, surface a number, else "run 2–3 practice laps, read fuel-per-lap in the ICM, ×laps".
+  2. If the full distance needs **> 190 L**, **do NOT recommend refuelling** — recommend **fuel-saving**:
+     a leaner fuel map (ICM) + short-shift; the 190 L tank then covers the distance. (Escape hatches,
+     clearly non-authentic: lower Options→Gameplay **Fuel Usage** multiplier, or shorten the race.)
+  3. **Flag it per track**: a race whose laps exceed the ~55–58-lap one-tank range should show a note
+     ("Full distance exceeds the ~190 L tank at 1× — fill to max + run a lean map; 1967 cars don't refuel").
