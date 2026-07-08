@@ -16,6 +16,45 @@
                 </Border>
             </StackPanel>
 
+            <!-- Optional track-layout thumbnail: drop <trackId>.jpg/.png into data\ams2\track-art
+                 (the shared user-asset convention, keyed by the round's AMS2 track id). Collapses
+                 entirely when no image is present, so the briefing is unchanged without art. The
+                 x:Name lets the converter re-read when the round changes. -->
+            <Border x:Name="TrackArt" Margin="0,12,0,0" CornerRadius="7" MaxWidth="560" HorizontalAlignment="Left"
+                    BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    Visibility="{Binding ElementName=TrackArtImage, Path=Source, Converter={StaticResource NullCollapsed}}">
+                <Border CornerRadius="6" ClipToBounds="True">
+                    <Image x:Name="TrackArtImage" Stretch="Uniform" StretchDirection="DownOnly"
+                           Source="{Binding TrackId, Converter={StaticResource TrackImage}}"
+                           ToolTip="{Binding VenueDisplayName, StringFormat='{}{0} — track layout'}" />
+                </Border>
+            </Border>
+
+            <!-- Circuit map: the f1db-derived vector layout of the circuit this round is run on, with a
+                 one-line caption (name · length · turns · direction). Collapses when the round has no
+                 circuit data. Always shows (no user art needed) — the "very important visual per race". -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0" Padding="16" MaxWidth="720"
+                    HorizontalAlignment="Left"
+                    Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
+                <DockPanel>
+                    <Viewbox DockPanel.Dock="Left" Width="168" Height="168" Margin="0,0,20,0" VerticalAlignment="Top">
+                        <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                              Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                              StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                    </Viewbox>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="CIRCUIT" Style="{StaticResource Faint}" FontSize="11" />
+                        <TextBlock Text="{Binding VenueDisplayName}" FontWeight="SemiBold" FontSize="18"
+                                   TextWrapping="Wrap" Margin="0,3,0,0" />
+                        <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                   TextWrapping="Wrap" Margin="0,5,0,0" />
+                        <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}"
+                                   TextWrapping="Wrap" Margin="0,10,0,0"
+                                   Visibility="{Binding CircuitHistory, Converter={StaticResource StringVisible}}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
             <!-- season-complete state (Home normally swaps away before this shows) -->
             <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
                        Text="Season complete — there is no round left to brief."
@@ -75,40 +114,58 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <ItemsControl ItemsSource="{Binding Settings}">
+                    <!-- sectioned checklist: outer = Race-Day sections (Event / Practice /
+                         Qualifying / Race / Rules), inner = the tickable rows. Grouping is done in
+                         the viewmodel (Sections), so this is a plain nested ItemsControl with no
+                         grouping CollectionViewSource. (Render-test thread-safety comes from the
+                         harness's DisableTestParallelization, not from this structure.) -->
+                    <ItemsControl ItemsSource="{Binding Sections}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <!-- the whole row is the toggle hit-target -->
-                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
-                                          HorizontalContentAlignment="Stretch"
-                                          ToolTip="Click to tick this setting off (ticks reset each round)">
-                                    <Grid Margin="8,2,0,2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="180" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Label}"
-                                                   Style="{StaticResource Muted}" VerticalAlignment="Center" />
-                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
-                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
-                                                 IsReadOnly="True" IsTabStop="False"
-                                                 BorderThickness="0" Background="Transparent" Padding="0"
-                                                 FontFamily="Consolas" FontSize="19" FontWeight="SemiBold"
-                                                 VerticalAlignment="Center" TextWrapping="Wrap"
-                                                 ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
-                                            <TextBox.Style>
-                                                <Style TargetType="TextBox">
-                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
-                                                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBox.Style>
-                                        </TextBox>
-                                    </Grid>
-                                </CheckBox>
+                                <StackPanel>
+                                    <!-- section header; collapses for an ungrouped (empty-title) section -->
+                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
+                                               FontSize="12" FontWeight="SemiBold" Margin="0,12,0,3"
+                                               ToolTip="AMS2 custom-race screen section"
+                                               Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <!-- the whole row is the toggle hit-target -->
+                                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
+                                                          HorizontalContentAlignment="Stretch"
+                                                          ToolTip="Click to tick this setting off (ticks reset each round)">
+                                                    <Grid Margin="8,2,0,2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="180" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Label}"
+                                                                   Style="{StaticResource Muted}" VerticalAlignment="Center" />
+                                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
+                                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
+                                                                 IsReadOnly="True" IsTabStop="False"
+                                                                 BorderThickness="0" Background="Transparent" Padding="0"
+                                                                 FontFamily="Consolas" FontSize="19" FontWeight="SemiBold"
+                                                                 VerticalAlignment="Center" TextWrapping="Wrap"
+                                                                 ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
+                                                            <TextBox.Style>
+                                                                <Style TargetType="TextBox">
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBox.Style>
+                                                        </TextBox>
+                                                    </Grid>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -142,6 +199,35 @@
                            Text="{Binding DifficultyRecommendation}" />
             </Border>
 
+            <!-- fuel advisory: one-tank range vs race length + the AMS2 "set your own fuel" gotcha
+                 (not a tick row). Collapses when no per-class fuel profile applies. -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding FuelNote, Converter={StaticResource NullCollapsed}}">
+                <StackPanel>
+                    <TextBlock Text="Fuel" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding FuelNote}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's
+                 expected finish; only shown when the round leaves room to call something bolder. -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding CanGamble, Converter={StaticResource BoolCollapsed}}">
+                <StackPanel>
+                    <TextBlock Text="Setup Gamble — call your shot" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding CalledShotSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Bolder ◂" Command="{Binding CallBolderCommand}" MinWidth="90"
+                                ToolTip="Call a better finish (a lower position) — a bolder gamble stakes more reputation" />
+                        <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="8,0,0,0" MinWidth="90"
+                                ToolTip="Ease the call one place" />
+                        <Button Content="No bet" Command="{Binding ClearCallCommand}" Margin="8,0,0,0" MinWidth="80"
+                                Visibility="{Binding HasCalledShot, Converter={StaticResource BoolCollapsed}}"
+                                ToolTip="Withdraw the gamble for this round" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
             <!-- setup notes (placeholder distance note etc.) -->
             <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
                     Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">
@@ -154,12 +240,12 @@
             <!-- staging (confirmation popovers per the ux-round contract) -->
             <StackPanel Orientation="Horizontal" Margin="0,18,0,0"
                         Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
-                <Button x:Name="StageButton" Content="Stage grid into AMS2" Style="{StaticResource AccentButton}"
+                <Button x:Name="StageButton" Content="Set up this race in AMS2" Style="{StaticResource AccentButton}"
                         MinWidth="200" Click="OnStageClick"
-                        ToolTip="Writes the generated custom-AI grid into UserData\CustomAIDrivers — backup-first, always" />
-                <Button x:Name="ForceStageButton" Content="Stage anyway (backup first)" Margin="10,0,0,0"
+                        ToolTip="Writes this round's drivers and skins into AMS2 (backup-first) so the grid matches your career" />
+                <Button x:Name="ForceStageButton" Content="Overwrite anyway (backup first)" Margin="10,0,0,0"
                         Click="OnForceStageClick"
-                        ToolTip="Overrides the not-ours-file guard; a timestamped backup is still taken first">
+                        ToolTip="Your installed AI is a community file — this overwrites it; a timestamped backup is still taken first">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -208,9 +294,9 @@
                         <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
                                    Text="The app normally only overwrites AI files it wrote itself — it recognizes its own files by a marker it puts inside them. This file has no marker, so it is YOURS (hand-edited, or a community file like NAMeS) and normal staging refuses to touch it." />
                         <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}" Margin="0,8,0,0"
-                                   Text="Stage anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
+                                   Text="Overwrite anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <Button Content="Stage anyway (backup first)" Click="OnForceStageConfirm">
+                            <Button Content="Overwrite anyway (backup first)" Click="OnForceStageConfirm">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                         <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />

@@ -1,0 +1,169 @@
+{
+    "teams":  [
+                  {
+                      "id":  "team.renault",
+                      "name":  "Renault",
+                      "carVehicleIds":  [
+                                            "renault_r26"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.ferrari",
+                      "name":  "Ferrari",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.86,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.mclaren",
+                      "name":  "McLaren-Mercedes",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.80,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.honda",
+                      "name":  "Honda",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.78,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.bmw_sauber",
+                      "name":  "BMW Sauber",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.83,
+                      "prestige":  3,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.toyota",
+                      "name":  "Toyota",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.79,
+                      "prestige":  3,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.williams",
+                      "name":  "Williams-Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.66,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.red_bull",
+                      "name":  "Red Bull-Ferrari",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.70,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.toro_rosso",
+                      "name":  "Toro Rosso-Cosworth",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.70,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.midland",
+                      "name":  "Midland-Toyota",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.72,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.super_aguri",
+                      "name":  "Super Aguri-Honda",
+                      "carVehicleIds":  [
+                                            "formula_v8_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.60,
+                      "prestige":  2,
+                      "budgetTier":  1
+                  }
+              ]
+}

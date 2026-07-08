@@ -77,6 +77,68 @@ public sealed class PerkResolverTests
     }
 
     [Fact]
+    public void Resolve_WithActiveConditions_FiresOnlyTheMatchingConditionalEffects()
+    {
+        var rules = Rules();
+
+        // underdog_hero: lowTierBonus +0.25 @tierLte2, topTierMult −0.15 @tierGte4. With no round
+        // context BOTH are carried (dormant) and the base fields stay at identity.
+        var dormant = PerkResolver.Resolve(["underdog_hero"], rules);
+        Assert.Equal(0.0, dormant.UnderdogLowTierBonus);
+        Assert.Equal(1.0, dormant.TopTierRepMult);
+        Assert.Equal(2, dormant.Conditional.Count);
+
+        // In a tier≤2 seat the low-tier rep bonus FIRES; the tier≥4 drawback stays carried.
+        var lowTier = PerkResolver.Resolve(["underdog_hero"], rules, new HashSet<string> { "tierLte2" });
+        Assert.Equal(0.25, lowTier.UnderdogLowTierBonus, 6);
+        Assert.Equal(1.0, lowTier.TopTierRepMult);
+        Assert.Single(lowTier.Conditional); // only the tierGte4 effect remains carried
+
+        // In a tier≥4 seat the drawback FIRES instead.
+        var topTier = PerkResolver.Resolve(["underdog_hero"], rules, new HashSet<string> { "tierGte4" });
+        Assert.Equal(0.85, topTier.TopTierRepMult, 6); // 1.0 − 0.15
+        Assert.Equal(0.0, topTier.UnderdogLowTierBonus);
+
+        // stamina_freak: drag −0.010 @longRace fires on a long race; its always-on stamina delta is
+        // unaffected by the round context.
+        var longRace = PerkResolver.Resolve(["stamina_freak"], rules, new HashSet<string> { "longRace" });
+        Assert.Equal(-0.010, longRace.DragScalarDelta, 6);
+        Assert.Equal(0.12, longRace.TalentDelta("stamina"), 6);
+        var noContext = PerkResolver.Resolve(["stamina_freak"], rules);
+        Assert.Equal(0.0, noContext.DragScalarDelta); // conditional drag dormant without a round
+        Assert.Equal(0.12, noContext.TalentDelta("stamina"), 6);
+    }
+
+    [Fact]
+    public void Resolve_AgeWindowConditions_FireTheFront_OrBackLoadedHalf()
+    {
+        var rules = Rules();
+
+        // prodigy: raceSkill/qualifyingSkill +0.05 @ageLtPeak, raceSkill −0.02 @ageGtePeak. With no
+        // round context both halves are carried (dormant), the talent deltas stay at identity.
+        var dormant = PerkResolver.Resolve(["prodigy"], rules);
+        Assert.Equal(0.0, dormant.TalentDelta("raceSkill"));
+        Assert.Equal(3, dormant.Conditional.Count);
+
+        // Pre-peak (young): the fast-start bonus FIRES, the slump stays carried.
+        var young = PerkResolver.Resolve(["prodigy"], rules, new HashSet<string> { "ageLtPeak" });
+        Assert.Equal(0.05, young.TalentDelta("raceSkill"), 6);
+        Assert.Equal(0.05, young.TalentDelta("qualifyingSkill"), 6);
+        Assert.Single(young.Conditional); // only the ageGtePeak slump remains carried
+
+        // Past peak: the slump FIRES instead (−0.02 raceSkill), the youth bonus does not.
+        var veteran = PerkResolver.Resolve(["prodigy"], rules, new HashSet<string> { "ageGtePeak" });
+        Assert.Equal(-0.02, veteran.TalentDelta("raceSkill"), 6);
+        Assert.Equal(0.0, veteran.TalentDelta("qualifyingSkill"));
+
+        // wonderkid: xpRate ageWindow +0.40 @ageLtPeak / −0.25 @ageGtePeak — a blanket XP multiplier.
+        var wonderYoung = PerkResolver.Resolve(["wonderkid"], rules, new HashSet<string> { "ageLtPeak" });
+        Assert.Equal(1.40, wonderYoung.XpMult("ageWindow"), 6);
+        var wonderOld = PerkResolver.Resolve(["wonderkid"], rules, new HashSet<string> { "ageGtePeak" });
+        Assert.Equal(0.75, wonderOld.XpMult("ageWindow"), 6);
+    }
+
+    [Fact]
     public void Resolve_MultiplePerks_AccumulateAdditively()
     {
         // sunday_driver (raceSkill +0.06 / quali -0.06) + qualifying_specialist (quali +0.08 /

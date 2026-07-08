@@ -1,0 +1,2273 @@
+{
+  "year": 1985,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Retro_Gen3",
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "wholeSeason": 11
+    },
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Brazilian Grand Prix",
+      "date": "1985-04-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Aut\u00F3dromo Internacional Nelson Piquet",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-04-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Portuguese Grand Prix",
+      "date": "1985-04-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Aut\u00F3dromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 67,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-04-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships Estoril as Cascais_1988; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "San Marino Grand Prix",
+      "date": "1985-05-05",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 60,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-05-05",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Monaco Grand Prix",
+      "date": "1985-05-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_88",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-05-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Canadian Grand Prix",
+      "date": "1985-06-16",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-06-16",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Detroit Grand Prix",
+      "date": "1985-06-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Detroit Street Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "adelaide_historic"
+        ]
+      },
+      "laps": 80,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-06-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Detroit Street Circuit \u2014 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach preserves the era\u0027s American street-race character."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "French Grand Prix",
+      "date": "1985-07-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Paul Ricard",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "silverstone_1991"
+        ]
+      },
+      "laps": 74,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-07-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Paul Ricard \u2014 53 laps / 307.9 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "British Grand Prix",
+      "date": "1985-07-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1975",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_1991"
+        ]
+      },
+      "laps": 65,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-07-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1985 Silverstone layout in AMS2; the venue is real, so the historical lap count is kept on the era-closest 1975 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "German Grand Prix",
+      "date": "1985-08-04",
+      "championship": true,
+      "track": {
+        "realVenue": "N\u00FCrburgring",
+        "id": "nurb_gp_2020_veedol",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "nurb_gp_2020"
+        ]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-08-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for the 1984 N\u00FCrburgring GP-Strecke \u2014 67 laps / 304.3 km reproduced as 59 laps of the modern N\u00FCrburgring GP (Veedol). Same venue, later layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Austrian Grand Prix",
+      "date": "1985-08-18",
+      "championship": true,
+      "track": {
+        "realVenue": "\u00D6sterreichring",
+        "id": "spielberg_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 52,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-08-18",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the \u00D6sterreichring as Spielberg Historic; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Dutch Grand Prix",
+      "date": "1985-08-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Zandvoort",
+        "id": "Heusden",
+        "isPlaceholder": true,
+        "fallbacks": []
+      },
+      "laps": 74,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-08-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Zandvoort (not in AMS2) \u2014 70 laps / 297.6 km reproduced as 74 laps of Zolder, a period-correct Benelux road circuit that hosted 1980s Grands Prix."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Italian Grand Prix",
+      "date": "1985-09-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 51,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-09-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1985 Monza in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1991 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Belgian Grand Prix",
+      "date": "1985-09-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 43,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-09-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 1985 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "European Grand Prix",
+      "date": "1985-10-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Brands Hatch",
+        "id": "brandshatch_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-10-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Brands Hatch is real in AMS2 (modern GP layout); the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "South African Grand Prix",
+      "date": "1985-10-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Kyalami",
+        "id": "kyalami_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-10-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships Kyalami Classic as Kyalami Historic; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Australian Grand Prix",
+      "date": "1985-11-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 82,
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.alain_prost",
+          "driver.keke_rosberg",
+          "driver.michele_alboreto",
+          "driver.ayrton_senna",
+          "driver.nigel_mansell",
+          "driver.nelson_piquet",
+          "driver.niki_lauda",
+          "driver.elio_de_angelis",
+          "driver.stefan_johansson",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.derek_warwick",
+          "driver.jacques_laffite",
+          "driver.thierry_boutsen",
+          "driver.gerhard_berger",
+          "driver.andrea_de_cesaris",
+          "driver.riccardo_patrese",
+          "driver.eddie_cheever",
+          "driver.piercarlo_ghinzani",
+          "driver.martin_brundle",
+          "driver.manfred_winkelhock",
+          "driver.francois_hesnault",
+          "driver.philippe_alliot",
+          "driver.pierluigi_martini",
+          "driver.mauro_baldi"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1985-11-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ],
+  "driverForm": {
+    "1": {
+      "driver.alain_prost": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ayrton_senna": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.derek_warwick": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.francois_hesnault": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.manfred_winkelhock": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.niki_lauda": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.philippe_alliot": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "2": {
+      "driver.alain_prost": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.derek_warwick": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.francois_hesnault": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.manfred_winkelhock": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.niki_lauda": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.philippe_alliot": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.stefan_johansson": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "3": {
+      "driver.alain_prost": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.derek_warwick": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.manfred_winkelhock": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mauro_baldi": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.niki_lauda": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "4": {
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.derek_warwick": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.francois_hesnault": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.manfred_winkelhock": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "5": {
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ayrton_senna": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.derek_warwick": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.manfred_winkelhock": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "6": {
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.derek_warwick": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.keke_rosberg": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "7": {
+      "driver.ayrton_senna": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.niki_lauda": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "8": {
+      "driver.alain_prost": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ayrton_senna": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.manfred_winkelhock": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.pierluigi_martini": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.stefan_johansson": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "9": {
+      "driver.alain_prost": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.derek_warwick": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.francois_hesnault": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.manfred_winkelhock": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      }
+    },
+    "10": {
+      "driver.alain_prost": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.derek_warwick": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.nelson_piquet": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.niki_lauda": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "11": {
+      "driver.alain_prost": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ayrton_senna": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.philippe_alliot": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "12": {
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.philippe_alliot": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.pierluigi_martini": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      }
+    },
+    "13": {
+      "driver.alain_prost": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.ayrton_senna": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.derek_warwick": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_laffite": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.philippe_alliot": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "14": {
+      "driver.alain_prost": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.derek_warwick": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.philippe_alliot": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      }
+    },
+    "15": {
+      "driver.alain_prost": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ayrton_senna": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.niki_lauda": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      }
+    },
+    "16": {
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.eddie_cheever": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.pierluigi_martini": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    }
+  }
+}

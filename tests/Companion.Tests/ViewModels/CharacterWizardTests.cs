@@ -42,6 +42,16 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
+    public void Name_PreFillsFromTheSeatDriver_AndBuildProfileCarriesTheEditedName()
+    {
+        var vm = new CharacterViewModel(Rules(), "Denny Hulme");
+        Assert.Equal("Denny Hulme", vm.Name); // pre-filled with the seat's historical driver
+
+        vm.Name = "  Ayrton da Silva  ";
+        Assert.Equal("Ayrton da Silva", vm.BuildProfile().Name); // trimmed, the player's own identity
+    }
+
+    [Fact]
     public void TogglePerk_MovesTheNetCpSpend()
     {
         var vm = new CharacterViewModel(Rules());
@@ -70,6 +80,35 @@ public sealed class CharacterWizardTests : IDisposable
     }
 
     [Fact]
+    public void MaxingEveryStat_ExceedsTheTalentCap_AndIsInvalid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        foreach (var s in vm.Stats.Concat(vm.MetaStats))
+            s.Value = 0.85;
+
+        Assert.True(vm.StatTotal > vm.StatCap);
+        Assert.False(vm.StatsWithinCap);
+        Assert.False(vm.IsValid);
+        Assert.NotNull(vm.Invalidity);
+        Assert.Contains("talent", vm.Invalidity);
+    }
+
+    [Fact]
+    public void RedistributingTalentWithinTheCap_StaysValid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        // Floor everything, then pour the freed talent into two stats — a real specialist, under cap.
+        foreach (var s in vm.Stats.Concat(vm.MetaStats))
+            s.Value = 0.15;
+        vm.Stats.First(s => s.Id == "pace").Value = 0.85;
+        vm.Stats.First(s => s.Id == "oneLap").Value = 0.85;
+
+        Assert.True(vm.StatsWithinCap);
+        Assert.True(vm.IsValid); // the default archetype's perks are in budget
+        Assert.Equal(0.85, vm.BuildProfile().Stat("pace"), 6);
+    }
+
+    [Fact]
     public void OverspendingEveryPositivePerk_IsInvalid()
     {
         var vm = new CharacterViewModel(Rules());
@@ -79,6 +118,42 @@ public sealed class CharacterWizardTests : IDisposable
         Assert.True(vm.NetCpSpend > vm.Budget);
         Assert.False(vm.IsValid);
         Assert.NotNull(vm.Invalidity);
+    }
+
+    [Fact]
+    public void CarryingMorePerksThanTheCountCap_IsInvalid()
+    {
+        var vm = new CharacterViewModel(Rules());
+        Assert.NotNull(vm.MaxPerks); // the shipped rules cap the perk count
+
+        // Clear the preset, then select one MORE than the cap allows — using only zero-cost perks so
+        // the CP net stays in budget and ONLY the count cap can fail the build.
+        foreach (var selected in vm.Perks.Where(p => p.IsSelected).ToList())
+            vm.TogglePerkCommand.Execute(selected);
+        foreach (var perk in vm.Perks.Where(p => p.Cost == 0).Take(vm.MaxPerks!.Value + 1))
+            vm.TogglePerkCommand.Execute(perk);
+
+        Assert.Equal(vm.MaxPerks!.Value + 1, vm.SelectedPerkCount);
+        Assert.True(vm.PerksInBudget);      // net is in budget — only the COUNT cap fails
+        Assert.False(vm.PerksWithinCount);
+        Assert.False(vm.IsValid);
+        Assert.Contains("at most", vm.Invalidity);
+    }
+
+    [Fact]
+    public void BuildProfile_CarriesTheDriverAge_ClampedToTheCreationBand()
+    {
+        var vm = new CharacterViewModel(Rules());
+        Assert.Equal(CharacterViewModel.DefaultAge, vm.Age); // a sensible rookie default
+
+        vm.Age = 19;
+        Assert.Equal(19, vm.BuildProfile().Age);
+
+        vm.Age = 99; // out of the creation band
+        Assert.Equal(CharacterViewModel.MaxAge, vm.BuildProfile().Age);
+
+        vm.Age = 3;
+        Assert.Equal(CharacterViewModel.MinAge, vm.BuildProfile().Age);
     }
 
     [Fact]
@@ -128,10 +203,13 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.NextCommand.Execute(null);                 // -> Verification
         if (wizard.HasWarnings) wizard.ProceedAnyway = true;
         wizard.NextCommand.Execute(null);                 // -> SeatPick
-        wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
-        wizard.NextCommand.Execute(null);                 // -> Character
+        var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.SelectedSeat = seat;
+        wizard.NextCommand.Execute(null);                 // -> Grid (choose the field)
+        wizard.NextCommand.Execute(null);                 // -> Character (whole field by default)
         Assert.Equal(WizardStep.Character, wizard.Step);
         Assert.NotNull(wizard.Character);
+        Assert.Equal(seat.DriverName, wizard.Character!.Name); // driver name pre-filled from the seat
 
         wizard.NextCommand.Execute(null);                 // -> Confirm
         Assert.Equal(WizardStep.Confirm, wizard.Step);
@@ -139,11 +217,12 @@ public sealed class CharacterWizardTests : IDisposable
 
         var request = factory.LastRequest!;
         Assert.NotNull(request.Character);
+        Assert.Equal(seat.DriverName, request.Character!.Name); // the named driver reached creation
         // The default archetype's perks came through (profile lists them in perks.json order — a
         // deterministic order, so compared as a set here).
         Assert.Equal(
             wizard.Archetypes()[0].PerkIds.OrderBy(x => x, StringComparer.Ordinal),
-            request.Character!.PerkIds.OrderBy(x => x, StringComparer.Ordinal));
+            request.Character.PerkIds.OrderBy(x => x, StringComparer.Ordinal));
         Assert.Contains("pace", request.Character.Stats.Keys);
     }
 }

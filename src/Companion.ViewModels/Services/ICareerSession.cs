@@ -1,3 +1,5 @@
+using Companion.Ams2.Skins;
+using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Numerics;
 using Companion.Core.Packs;
@@ -25,10 +27,44 @@ public interface ICareerSession
     /// <summary>The current round's seats, in grid order, for the result-entry screen.</summary>
     IReadOnlyList<GridSeat> CurrentGrid();
 
+    /// <summary>The sim's expected finishing position for the player this round (1-based), computed
+    /// from the resolved grid exactly as the fold does — so the Setup Gamble briefing frames a call
+    /// against the same number the bet is later staked on. Null when the season is complete or the
+    /// player has no seat this round. Additive default so fakes without it compile. (Setup Gamble, 4b.)</summary>
+    int? CurrentExpectedFinish() => null;
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
     PackWeekend? CurrentWeekend() => null;
+
+    /// <summary>What skin every car on this round's grid will show in AMS2 — the read-only
+    /// resolution of the driver → <c>livery_name</c> → installed livery NAME → skin chain
+    /// (correlated against the installed skin overrides + NAMeS file + stock library). Powers
+    /// the briefing's Skins panel: the player's-own-car "pick this livery in-game" crib and the
+    /// per-AI-car skin picture. Pure read-only projection — writes nothing, never touches the
+    /// user's community files. Additive default: an empty plan, so existing fakes compile.</summary>
+    SkinAssignmentPlan CurrentSkinAssignments() => SkinAssignmentPlan.Empty;
+
+    /// <summary>Switches an installed-but-inactive livery (a "##" placeholder) ON for this class by
+    /// assigning it a real slot in the community override XML — the fix for "the skin is installed
+    /// but AMS2 doesn't show it" (e.g. 1985 Skoal #10). The one place the app writes a COMMUNITY skin
+    /// file: it snapshots the file first (timestamped backup) and makes a minimal in-place edit, only
+    /// on this explicit user action. Does NOT touch the career journal/fold, so the sim is unaffected.
+    /// Additive default: a clear "not supported" failure so existing fakes compile.</summary>
+    LiveryActivationResult ActivateLivery(string liveryName) =>
+        LiveryActivationResult.Failed("This career session cannot activate liveries.");
+
+    /// <summary>The grid editor's current per-seat COSMETIC overrides for this season, keyed by the
+    /// seat's original <c>ams2LiveryName</c>: a custom driver name and/or a rebound livery, applied
+    /// only to the staged custom-AI file (never the sim). Empty default so existing fakes compile.</summary>
+    IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
+        new Dictionary<string, SeatStagingOverride>(StringComparer.Ordinal);
+
+    /// <summary>Saves one seat's grid-editor override (rename / rebind livery), keyed by its original
+    /// livery; an empty override clears it. Persisted per season OUTSIDE the journal, so the sim/fold
+    /// stay byte-identical. Applied at the next stage. Additive default: a no-op so fakes compile.</summary>
+    void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) { }
 
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
     ConfirmModel Preview(ResultDraft draft);
@@ -57,6 +93,13 @@ public interface ICareerSession
     /// no new persistence. Additive default: sessions without the projection report an empty
     /// timeline, so existing fakes compile. (Increment 3.)</summary>
     CareerTimeline CareerTimeline() => Services.CareerTimeline.Empty;
+
+    /// <summary>The REAL historical results of a season (f1db-derived, CC BY 4.0) — "what really
+    /// happened" reference content the History tab shows ALONGSIDE the player's own (diverged) career
+    /// for the same year, clearly separated. Null when no history is shipped for that year. Pure
+    /// read-only reference: the sim/fold never scores it, so it can never affect a replayed result.
+    /// Additive default: sessions without it report null, so existing fakes compile.</summary>
+    HistoricalSeason? HistoricalSeason(int year) => null;
 
     /// <summary>The clickable-everywhere "Why?" inspector (career-hub-design.md §5, decisions 4 +
     /// 5): walks the append-only journal rows that produced a number the hub shows and returns them
@@ -114,7 +157,54 @@ public interface ICareerSession
     void StartNextSeason(string teamId) => throw new NotSupportedException(
         "This career session does not support era transitions.");
 
+    /// <summary>The player's driver id + chosen character name for this season, so screens that
+    /// render driver names (grid / result entry, standings, round matrix) show the character on the
+    /// player's row instead of the historical driver whose seat they took. Null when the career has
+    /// no named character (then the historical name shows, as before). Additive default: null.</summary>
+    (string DriverId, string DisplayName)? PlayerIdentity() => null;
+
+    /// <summary>The name of the team the player currently drives for (from the folded player state's
+    /// current team), or null when unknown. Additive default: null.</summary>
+    string? PlayerTeamName() => null;
+
+    /// <summary>The player's driver dossier (character depth 3): name, the seven stats, the chosen
+    /// perks with what they do, and progression (level + XP toward the next), projected from the
+    /// current folded player state + the character rules. Null for a career with no character (or no
+    /// character rules loaded) — so the hub shows the Driver tab only when there is a driver to show.
+    /// Pure read-only projection, re-derivable, no new persistence. Additive default: null, so every
+    /// existing fake compiles.</summary>
+    CharacterDossier? CharacterDossier() => null;
+
+    /// <summary>Character points the driver has available to spend on between-season development
+    /// (character depth 4): creation leftover + level grants − already spent, minus this season's
+    /// pending spends. 0 for a career with no character. Additive default: 0.</summary>
+    int AvailableCharacterCp() => 0;
+
+    /// <summary>Records a between-season development spend — raise a stat one step or add a perk,
+    /// journaled and applied at the next season's transition (re-derived identically on replay).
+    /// Additive default throws, so a session without character support says so.</summary>
+    void SpendCharacterPoint(CharacterSpend spend) => throw new NotSupportedException(
+        "This career session does not support character development.");
+
+    /// <summary>The perks the driver can BUY with banked points right now (character depth 4): each
+    /// positive-cost perk not already owned (or pending) that the player can currently afford, with
+    /// its real cost and plain-language benefits/drawbacks. Empty for a career with no character or no
+    /// points to spend. Additive default: empty.</summary>
+    IReadOnlyList<PurchasablePerk> PurchasablePerks() => [];
+
     SeasonPack Pack { get; }
+}
+
+/// <summary>One perk offered on the season-review development block: what it is, what it costs, and —
+/// in plain language — what it does, for a Buy button that spends banked points (character depth 4).</summary>
+public sealed record PurchasablePerk
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public required string Category { get; init; }
+    public required int Cost { get; init; }
+    public required IReadOnlyList<string> Benefits { get; init; }
+    public required IReadOnlyList<string> Drawbacks { get; init; }
 }
 
 /// <summary>The discovered next era pack for the season review's sign-and-continue block.</summary>
@@ -128,9 +218,16 @@ public sealed record NextSeasonInfo
 
     public required int SeasonYear { get; init; }
 
+    /// <summary>True when this is a CARRYOVER: no dedicated pack exists for <see cref="SeasonYear"/>,
+    /// so the career reuses the CURRENT car/liveries (the same pinned pack) for one more year — the
+    /// grid having aged, retired, and refilled at season end. False for a real era CHANGEOVER into a
+    /// later-year pack (<see cref="PackDirectory"/> then points at that pack on disk; for a carryover
+    /// it is empty, since the pinned pack is reused, not re-read).</summary>
+    public bool IsCarryover { get; init; }
+
     /// <summary>The years between the finished season and the next pack (ascending, empty
-    /// for consecutive years). v1 BRIDGES them: everyone ages through the gap — the review
-    /// shows the bridge note, e.g. "1968 has no pack — your career bridges through it".</summary>
+    /// for consecutive years). With year-by-year carryover this is always empty — every year is
+    /// played, either on a dedicated pack or as a carryover — so no year is silently bridged.</summary>
     public required IReadOnlyList<int> BridgedYears { get; init; }
 }
 
@@ -177,9 +274,21 @@ public sealed record BriefingModel
     /// <summary>The difficulty recommendation for this round (70–120 Opponent Skill percent),
     /// from the folded pace anchor. Null before the anchor calibrates.</summary>
     public int? RecommendedSlider { get; init; }
+
+    /// <summary>Advisory fuel-and-distance guidance for this round (the car's one-tank range vs the
+    /// race length, plus the AMS2 "set your own fuel" gotcha), shown as an advisory panel like the
+    /// difficulty recommendation — NOT a tick row. Null when no per-class fuel profile applies.</summary>
+    public string? FuelNote { get; init; }
 }
 
-public sealed record CopyableSetting(string Label, string Value);
+/// <summary>One in-game setting for the briefing checklist. <see cref="Section"/> groups the row
+/// under a Race-Day heading ("Event", "Practice", "Qualifying", "Race", "Rules"); empty = ungrouped.
+/// Display-only grouping — the checklist tick is keyed by (section, label) so identical labels in
+/// different sessions (e.g. "Weather slot 1") never collide.</summary>
+public sealed record CopyableSetting(string Label, string Value)
+{
+    public string Section { get; init; } = "";
+}
 
 /// <summary>One news-feed item (hub News tab / dock). A resolved period headline plus the
 /// plain-language "why" (the journal delta as a sentence, for the Why? chip) and the era it
@@ -406,6 +515,17 @@ public sealed record ResultDraft
     /// the result screen, prefilled with the last recommendation, editable 70–120). Stored in
     /// the round's raw-result envelope. Null falls back to the current recommendation.</summary>
     public double? SliderUsed { get; init; }
+
+    /// <summary>Whether the round was run in the wet (asked on the result screen). Feeds the
+    /// weather-conditional perks (Rain Man, Sunshine Specialist); defaults dry. Stored in the raw
+    /// envelope; a character-free career never reads it.</summary>
+    public bool IsWet { get; init; }
+
+    /// <summary>The Setup Gamble (called shot) the player committed to before the race — a finishing
+    /// position (1-based) they bet on beating. Null = no bet. Stored in the raw envelope; the fold
+    /// only resolves it when it is a real gamble (called better than the sim's expected finish), so a
+    /// round with no call — or a call no bolder than expected — folds exactly as before. (4b.)</summary>
+    public int? CalledShot { get; init; }
 
     /// <summary>The qualifying order for this round (driver ids, pole first), when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in

@@ -213,10 +213,13 @@ public static class ReplayService
 
         var previous = PreviousRoundState(db, seasonId, upTo, tx);
         var startTeams = StateStore.ReadTeamStates(db, seasonId, StateStore.StageStart, tx);
+        // The player's age THIS season = first-season age + year distance (the same rule the season
+        // end and replay use), so the age-window perk conditions fold identically on every path.
+        int playerAge = inputs.PlayerAge + (pack.Season.Year - CareerStore.ReadSeasons(db, tx)[0].Year);
         var outcome = ComputeRoundFold(
             pack, masterSeed, inputs, startTeams,
             ChampionshipResults(pack, upTo),
-            upTo[^1].ToEnvelope(), round, previous);
+            upTo[^1].ToEnvelope(), round, playerAge, previous);
 
         JournalStore.AppendMany(db, seasonId, round, outcome.Events, utc, tx);
         StateStore.InsertRoundPlayerState(db, seasonId, round, outcome.State, tx);
@@ -294,8 +297,11 @@ public static class ReplayService
         }
 
         int playerAge = inputs.PlayerAge + (season.Year - seasons[0].Year);
+        // The live season-end runs for the CURRENT season only, whose player driver id the caller
+        // already resolved into inputs — pass it straight through (the multi-season Resimulate path
+        // is the one that must re-resolve per season from the start-state livery).
         var context = BuildSeasonEndContext(
-            season.Year, playerAge, pack, masterSeed, inputs, rounds, player,
+            season.Year, playerAge, pack, masterSeed, inputs, inputs.PlayerDriverId, rounds, player,
             StateStore.ReadDriverStates(db, seasonId, StateStore.StageStart),
             StateStore.ReadTeamStates(db, seasonId, StateStore.StageStart));
         var result = SeasonEndPipeline.Run(context);
@@ -393,7 +399,8 @@ public static class ReplayService
                     .ToList(),
                 StateStore.ReadPlayerState(db, season.Id, StateStore.StageStart),
                 StateStore.ReadDriverStates(db, season.Id, StateStore.StageStart),
-                StateStore.ReadTeamStates(db, season.Id, StateStore.StageStart)))
+                StateStore.ReadTeamStates(db, season.Id, StateStore.StageStart),
+                ReadCharacterSpends(db, season.Id)))
             .ToList();
 
         int comparedRows = 0;
@@ -422,7 +429,8 @@ public static class ReplayService
                 if (samePack)
                 {
                     divergence = VerifyRolloverStartStates(
-                        previousSeason.Season, previousEnd, acceptedOffers, current);
+                        previousSeason.Season, previousEnd, acceptedOffers, current,
+                        previousSeason.Spends, inputs.CharacterRules);
                 }
                 else
                 {
@@ -430,7 +438,7 @@ public static class ReplayService
                     IReadOnlyList<JournalEvent> transitionRows;
                     (divergence, transitionRows) = VerifyTransitionStartStates(
                         previousSeason.Season, fromPack, pack, previousEnd,
-                        acceptedOffers, current, masterSeed, inputs);
+                        acceptedOffers, current, masterSeed, inputs, previousSeason.Spends);
                     // The transition's journal rows were stored under this season before any
                     // round — regenerate them at the head of the sequence for the byte-compare.
                     foreach (var row in transitionRows)
@@ -452,13 +460,14 @@ public static class ReplayService
             // live path (non-championship rounds are folded — player update, carried state —
             // but their classifications never enter the standings engine).
             var soFar = new List<RoundResult>();
+            int playerAgeThisSeason = inputs.PlayerAge + (season.Year - firstYear);
             foreach (var stored in current.Results)
             {
                 if (ChampionshipCalendar.IsChampionshipRound(pack, stored.Round))
                     soFar.Add(stored.ToRoundResult());
                 var outcome = ComputeRoundFold(
                     pack, masterSeed, inputs, current.StartTeams, soFar,
-                    stored.ToEnvelope(), stored.Round, previousState);
+                    stored.ToEnvelope(), stored.Round, playerAgeThisSeason, previousState);
                 foreach (var journalEvent in outcome.Events)
                     regenerated.Add((stored.Round, journalEvent));
                 StateStore.InsertRoundPlayerState(db, season.Id, stored.Round, outcome.State, transaction);
@@ -469,9 +478,10 @@ public static class ReplayService
             SeasonEndResult? seasonEnd = null;
             if (IsComplete(season))
             {
-                int playerAge = inputs.PlayerAge + (season.Year - firstYear);
+                string seasonPlayerDriverId = SeasonPlayerDriverId(
+                    pack, current.StartPlayer?.LiveryName, inputs.PlayerDriverId);
                 var context = BuildSeasonEndContext(
-                    season.Year, playerAge, pack, masterSeed, inputs, soFar,
+                    season.Year, playerAgeThisSeason, pack, masterSeed, inputs, seasonPlayerDriverId, soFar,
                     previousState.Player, current.StartDrivers, current.StartTeams);
                 seasonEnd = SeasonEndPipeline.Run(context);
                 foreach (var journalEvent in seasonEnd.Events)
@@ -550,6 +560,7 @@ public static class ReplayService
         IReadOnlyList<RoundResult> roundsSoFar,
         RoundResultEnvelope envelope,
         int round,
+        int playerAge,
         RoundPlayerState previous)
     {
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
@@ -559,14 +570,37 @@ public static class ReplayService
         // both sides (a pre-character career, or a build with no character rules) → the fold is the
         // exact shipped path, byte-identical. (Increment 4a.)
         var character = previous.Player.Character;
-        PlayerPerkModifiers? mods = character is not null && inputs.CharacterRules is not null
-            ? PerkResolver.Resolve(character.PerkIds, inputs.CharacterRules)
+        bool hasCharacter = character is not null && inputs.CharacterRules is not null;
+
+        // Round-level perk conditions the fold can evaluate BEFORE the grid (race length, weather, the
+        // age window). A character with no conditional perks (or an empty set) resolves to the exact
+        // unconditional modifier, so non-conditional and non-character careers stay byte-identical.
+        var gridConditions = new HashSet<string>(StringComparer.Ordinal);
+        if (hasCharacter)
+        {
+            if (RaceLengthToken(pack, round) is { } raceLength)
+                gridConditions.Add(raceLength);
+            // Weather (character depth #2): null = legacy/unknown → neither wetRound nor dryRound
+            // fires, so pre-v4 saves replay byte-identically; a captured wet/dry flag fires the perk.
+            if (envelope.IsWet is bool wet)
+                gridConditions.Add(wet ? "wetRound" : "dryRound");
+            // Age window (prodigy/wonderkid/late_bloomer): the player's age this season vs the era's
+            // peak-age start. Exactly one of the two fires per round, so a pre-peak youth and a
+            // past-peak veteran fold the front-/back-loaded halves of those perks — deterministic
+            // (age is a pure function of the season year offset), byte-identical without the perks.
+            if (inputs.AgingCurves.TryForYear(pack.Season.Year) is { } curve)
+                gridConditions.Add(playerAge < curve.PeakAgeStart ? "ageLtPeak" : "ageGtePeak");
+        }
+
+        PlayerPerkModifiers? gridMods = hasCharacter
+            ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, gridConditions)
             : null;
-        PlayerCharacterPatch? gridPatch = character is not null && inputs.CharacterRules is not null
-            ? new PlayerCharacterPatch { Profile = character, Modifiers = mods!, Rules = inputs.CharacterRules }
+        PlayerCharacterPatch? gridPatch = hasCharacter
+            ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
             : null;
 
-        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch);
+        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch,
+            previous.Player.GridSelection, previous.Player.FormAware);
         if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
@@ -580,11 +614,27 @@ public static class ReplayService
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
 
+        // Now the player's tier is known, add the tier-gated conditions for the per-race modifier.
+        var roundConditions = new HashSet<string>(gridConditions, StringComparer.Ordinal);
+        if (hasCharacter)
+        {
+            if (playerTeamTier <= 2) roundConditions.Add("tierLte2");
+            if (playerTeamTier >= 4) roundConditions.Add("tierGte4");
+        }
+
         // The round's scoring races (Increment 2e.2): usually one; a two-race weekend folds each
         // independently, THREADING the player state race → race, so OPI/rep/pace calibrate per race.
         // A single race runs the loop exactly once → the shipped fold, byte-identical.
         var raceSessions = envelope.Result.Sessions.Where(s => s.Kind == SessionKind.Race).ToList();
-        int? qualifyingPosition = PlayerQualifyingPosition(envelope, inputs.PlayerDriverId);
+
+        // Score the player under the driver id of the SEAT they occupy THIS season, resolved from
+        // their livery above — not a single career-global id. The two are identical in the first
+        // season (the player's livery IS that driver's seat), so every single-pack career and the
+        // oracle stay byte-identical; but after an era transition into a new team the player's seat
+        // driver id changes, and the global id would fail to find them in the new pack's results
+        // (dropping every player.* row). Keying off the resolved seat mirrors the live path.
+        string playerDriverId = playerSeat.DriverId;
+        int? qualifyingPosition = PlayerQualifyingPosition(envelope, playerDriverId);
 
         var player = previous.Player;
         int recommendedSlider = previous.RecommendedSlider;
@@ -594,11 +644,30 @@ public static class ReplayService
 
         for (int i = 0; i < raceSessions.Count; i++)
         {
-            var outcome = PlayerOutcomeIn(raceSessions[i], envelope, inputs.PlayerDriverId);
+            var outcome = PlayerOutcomeIn(raceSessions[i], envelope, playerDriverId);
             if (outcome is null)
                 continue; // the player is not in this race's classification
 
             var (finish, dnf) = outcome.Value;
+
+            // The per-race modifier adds the driver-error-DNF gate (round conditions are constant
+            // across a weekend; the DNF cause is per race). No character / no conditional perks →
+            // this equals the base modifier, so the fold stays byte-identical.
+            var raceConditions = roundConditions;
+            if (hasCharacter && dnf == DnfCause.DriverError)
+                raceConditions = new HashSet<string>(roundConditions, StringComparer.Ordinal) { "driverErrorDnf" };
+            var raceMods = hasCharacter
+                ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, raceConditions)
+                : null;
+
+            // A driver-error DNF banks the perErrorAdd injury contribution toward the season injury
+            // load (glass_cannon / hot_head). Isolate JUST the driverErrorDnf-gated add by subtracting
+            // the grid modifier's injury base — no injury effect is tier/length/weather/age gated, so
+            // gridMods.InjuryBaseAdd is exactly the unconditional injury base. 0 without such a perk.
+            double injuryLoadDelta = 0.0;
+            if (dnf == DnfCause.DriverError && raceMods is not null && gridMods is not null)
+                injuryLoadDelta = raceMods.InjuryBaseAdd - gridMods.InjuryBaseAdd;
+
             var update = RoundUpdate.Apply(new RoundUpdateContext
             {
                 Grid = grid,
@@ -612,11 +681,17 @@ public static class ReplayService
                 PointsPositions = PointsPositionsFor(pack, raceSessions[i], envelope.Result),
                 Streams = new StreamFactory(masterSeed),
                 Headlines = inputs.Headlines,
-                PlayerName = inputs.PlayerName,
+                // The character's chosen name is the identity the news uses; a character-free career
+                // (or an unnamed character) keeps the input name → byte-identical.
+                PlayerName = string.IsNullOrEmpty(character?.Name) ? inputs.PlayerName : character.Name,
                 // Qualifying calibrates ONCE per weekend (it sets the grid) — only the first race carries it.
                 PlayerQualifyingPosition = i == 0 ? qualifyingPosition : null,
-                Modifiers = mods,
+                Modifiers = raceMods,
                 CharacterRules = character is not null ? inputs.CharacterRules : null,
+                InjuryLoadDelta = injuryLoadDelta,
+                // The Setup Gamble is a per-round commitment resolved against the race — like the
+                // qualifying anchor, only the first race of a weekend carries it.
+                CalledShot = i == 0 ? envelope.CalledShot : null,
             });
 
             events.AddRange(update.Events);
@@ -655,7 +730,8 @@ public static class ReplayService
     /// no seat this round (no livery configured, or the entry's rounds range excludes it) —
     /// then the round folds with the player state carried over unchanged.</summary>
     private static GridPlan? ResolvePlayerGrid(
-        SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null)
+        SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null,
+        GridSelection? gridSelection = null, bool applyWeekendForm = false)
     {
         if (liveryName is null)
             return null;
@@ -664,15 +740,55 @@ public static class ReplayService
         // historically (a per-round grid excludes non-starters). Resolve directly with the player
         // seat — the resolver adds the player's covering entry back to the grid — and treat an
         // absent seat (the player's team is simply not entered this round) as "did not race".
+        // Ratings Phase 3: applyWeekendForm (a FormAware career) makes the scored grid react to the
+        // round's per-race form; false ⇒ byte-identical (existing careers + form-less packs).
         try
         {
             return RoundGridResolver.Resolve(
-                pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character });
+                pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
+                gridSelection, applyWeekendForm: applyWeekendForm);
         }
         catch (InvalidOperationException)
         {
             return null;
         }
+    }
+
+    /// <summary>Whether this round is a longer- or shorter-than-median race for the season (by lap
+    /// count) — "longRace" / "shortRace" — or null at the median or when laps are unknown. The split
+    /// is RELATIVE to this season's races, so it is deterministic and means the same across eras (an
+    /// 80-lap 1967 race and a 55-lap 2010s race can both be "long" for their own calendars).</summary>
+    private static string? RaceLengthToken(SeasonPack pack, int round)
+    {
+        var laps = pack.Season.Rounds.Select(r => r.Laps).Where(l => l > 0).OrderBy(l => l).ToList();
+        if (laps.Count == 0)
+            return null;
+        double median = laps.Count % 2 == 1
+            ? laps[laps.Count / 2]
+            : (laps[laps.Count / 2 - 1] + laps[laps.Count / 2]) / 2.0;
+        int thisLaps = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)?.Laps ?? 0;
+        if (thisLaps <= 0)
+            return null;
+        return thisLaps > median ? "longRace" : thisLaps < median ? "shortRace" : null;
+    }
+
+    /// <summary>The player's driver id THIS season, resolved from their start-state livery the same
+    /// way the round fold resolves the seat — so a career that changed teams at an era transition
+    /// scores its season end (reputation, champion headline) under the seat it actually occupies,
+    /// not a stale career-global id. Falls back to the input id when there is no livery (a legacy
+    /// start state) or no seat resolves.</summary>
+    private static string SeasonPlayerDriverId(SeasonPack pack, string? liveryName, string fallback)
+    {
+        if (!string.IsNullOrEmpty(liveryName))
+        {
+            foreach (var round in pack.Season.Rounds)
+            {
+                var grid = ResolvePlayerGrid(pack, round.Round, liveryName);
+                if (grid is not null)
+                    return grid.Seats[SeatStrengthModel.PlayerSeatIndex(grid)].DriverId;
+            }
+        }
+        return fallback;
     }
 
     /// <summary>The player's outcome in the round's race classification, or null when the
@@ -789,7 +905,8 @@ public static class ReplayService
         IReadOnlyList<JournalRow> StoredJournal,
         PlayerCareerState? StartPlayer,
         IReadOnlyList<DriverCareerState> StartDrivers,
-        IReadOnlyList<TeamCareerState> StartTeams);
+        IReadOnlyList<TeamCareerState> StartTeams,
+        IReadOnlyList<CharacterSpend> Spends);
 
     private static bool IsComplete(SeasonRecord season) =>
         string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
@@ -800,6 +917,7 @@ public static class ReplayService
         SeasonPack pack,
         ulong masterSeed,
         ReplaySimInputs inputs,
+        string playerDriverId,
         IReadOnlyList<RoundResult> rounds,
         PlayerCareerState player,
         IReadOnlyList<DriverCareerState> drivers,
@@ -809,7 +927,7 @@ public static class ReplayService
         Streams = new StreamFactory(masterSeed),
         Pack = pack,
         Rounds = rounds,
-        PlayerDriverId = inputs.PlayerDriverId,
+        PlayerDriverId = playerDriverId,
         PlayerAge = playerAge,
         Player = player,
         Drivers = drivers,
@@ -821,7 +939,9 @@ public static class ReplayService
         TeamArchetypeOverrides = inputs.TeamArchetypeOverrides,
         FreeAgents = inputs.FreeAgents,
         PlayerSalaryAskBu = inputs.PlayerSalaryAskBu,
-        PlayerName = inputs.PlayerName,
+        // Prefer the character's chosen name (the identity the digest/injury news use) over the input
+        // id, exactly as the round fold does — so "champion" reads the driver's name, not their id.
+        PlayerName = string.IsNullOrEmpty(player.Character?.Name) ? inputs.PlayerName : player.Character!.Name,
         CharacterRules = inputs.CharacterRules,
     };
 
@@ -834,7 +954,9 @@ public static class ReplayService
         SeasonRecord previousSeason,
         SeasonEndResult? previousEnd,
         IReadOnlyList<(long SeasonId, string TeamId)> acceptedOffers,
-        StoredSeason current)
+        StoredSeason current,
+        IReadOnlyList<CharacterSpend> spends,
+        CharacterRules? characterRules)
     {
         long seasonId = current.Season.Id;
         if (previousEnd is null)
@@ -861,7 +983,8 @@ public static class ReplayService
 
         var derived = SeasonRollover.Derive(
             previousEnd.Player, previousEnd.Drivers, previousEnd.Teams,
-            acceptedTeam, current.StartPlayer?.LiveryName);
+            acceptedTeam, current.StartPlayer?.LiveryName,
+            spends, characterRules);
 
         if (current.StartPlayer is null || derived.Player != current.StartPlayer)
         {
@@ -899,7 +1022,8 @@ public static class ReplayService
             IReadOnlyList<(long SeasonId, string TeamId)> acceptedOffers,
             StoredSeason current,
             ulong masterSeed,
-            ReplaySimInputs inputs)
+            ReplaySimInputs inputs,
+            IReadOnlyList<CharacterSpend> spends)
     {
         long seasonId = current.Season.Id;
         if (previousEnd is null)
@@ -938,9 +1062,15 @@ public static class ReplayService
             }, []);
         }
 
+        // Drive the transition off the SEASON-record years, not the packs' nominal years: after a
+        // carryover the FROM season's year runs ahead of the from-pack's year, and using the pack
+        // year would re-bridge (double-age) the carried year. For every non-carryover boundary the
+        // season year equals the pack year, so this is byte-identical for existing careers.
         var plan = EraTransition.Build(
             fromPack, toPack, previousEnd, previousEnd.Player, offer,
-            new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements);
+            new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements,
+            spends, inputs.CharacterRules,
+            fromYearOverride: previousSeason.Year, toYearOverride: current.Season.Year);
         if (plan.ValidationErrors.Count > 0)
         {
             // A stored career started a season the plan would refuse today — the file was
@@ -1023,6 +1153,15 @@ public static class ReplayService
                     "PinnedPackEnvelope.LoadSeasonPack / ReadPinnedPack).");
         }
     }
+
+    /// <summary>The between-season character-development spends journaled under a season (character
+    /// depth 4), in order — the round fold never regenerates them (they are provenance-excluded), so
+    /// they are read here and re-applied at the season's transition, live and on replay alike.</summary>
+    public static IReadOnlyList<CharacterSpend> ReadCharacterSpends(CareerDatabase db, long seasonId) =>
+        JournalStore.ReadSeason(db, seasonId)
+            .Where(r => string.Equals(r.Phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal))
+            .Select(r => DataJson.Deserialize<CharacterSpend>(r.DeltaJson))
+            .ToList();
 
     private static List<(long SeasonId, string TeamId)> ReadAcceptedOffers(CareerDatabase db)
     {

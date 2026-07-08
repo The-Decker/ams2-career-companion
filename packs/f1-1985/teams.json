@@ -1,0 +1,259 @@
+{
+  "teams": [
+    {
+      "id": "team.mclaren",
+      "name": "Marlboro McLaren International",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.72,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Scuderia Ferrari",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.66,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.williams",
+      "name": "Canon Williams Honda",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.lotus",
+      "name": "John Player Special Team Lotus",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.65,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.brabham",
+      "name": "Motor Racing Developments",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.renault",
+      "name": "Equipe Renault Elf",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.48,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ligier",
+      "name": "Equipe Ligier Gitanes",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.45,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell Racing Organisation",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.55,
+      "prestige": 3,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.arrows",
+      "name": "Barclay Arrows BMW",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.62,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.alfa",
+      "name": "Benetton Team Alfa Romeo",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.28,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.toleman",
+      "name": "Toleman Group Motorsport",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.3,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.haas",
+      "name": "Team Haas (USA) Ltd",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.zakspeed",
+      "name": "West Zakspeed Racing",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.15,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.minardi",
+      "name": "Minardi Team SpA",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.31,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.osella",
+      "name": "Osella Squadra Corse",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.5,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.ram",
+      "name": "Skoal Bandit Formula 1 Team",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.24,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.spirit",
+      "name": "Spirit Enterprises Ltd",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.09,
+      "prestige": 1,
+      "budgetTier": 1
+    }
+  ]
+}

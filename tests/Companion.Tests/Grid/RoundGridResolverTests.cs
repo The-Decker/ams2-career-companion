@@ -59,6 +59,42 @@ public class RoundGridResolverTests
         Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 6).Seats, s => s.DriverId == "driver.hubert_hahne");
     }
 
+    // ---------- the player races the FULL season, even when their historical driver sat out ----------
+
+    [Fact]
+    public void Resolve_PlayerSeat_RacesEveryRound_EvenWhenTheirHistoricalDriverSatOut()
+    {
+        var pack = GridTestData.LoadReferencePack("f1-1967");
+        // John Surtees ran rounds "1-4,6-7,9-11" — historically OUT for rounds 5 and 8.
+        var player = new PlayerSeat { Ams2LiveryName = "Honda #7 J. Surtees" };
+
+        // Round 4: Surtees raced, so the player takes his real seat (replacement, exactly as before).
+        var seat4 = Assert.Single(RoundGridResolver.Resolve(pack, 4, player).Seats, s => s.IsPlayer);
+        Assert.Equal("Honda #7 J. Surtees", seat4.Ams2LiveryName);
+
+        // Round 5: Surtees sat out — but the player still races, seated from their own livery entry,
+        // instead of being benched (the old behaviour returned no player seat).
+        var seat5 = Assert.Single(RoundGridResolver.Resolve(pack, 5, player).Seats, s => s.IsPlayer);
+        Assert.Equal("Honda #7 J. Surtees", seat5.Ams2LiveryName);
+        Assert.Equal("driver.john_surtees", seat5.DriverId);
+
+        // Without a player seat, round 5's historical field still excludes Surtees (unchanged).
+        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 5).Seats, s => s.DriverId == "driver.john_surtees");
+    }
+
+    [Fact]
+    public void Resolve_PlayerSeat_LiveryMatchingNoEntry_SeatsAnOwnEntrant()
+    {
+        // Player-as-own-entrant: a custom livery no pack driver holds seats the player as their own
+        // independent synthetic entrant (stable id) rather than throwing — so custom skins work.
+        var pack = GridTestData.LoadReferencePack("f1-1967");
+        var seat = Assert.Single(
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "My Custom Skin #99" }).Seats,
+            s => s.IsPlayer);
+        Assert.Equal("My Custom Skin #99", seat.Ams2LiveryName);
+        Assert.Equal(RoundGridResolver.SyntheticPlayerDriverId, seat.DriverId);
+    }
+
     // ---------- 1988 mid-season swap: Mansell out, Brundle in for round 11 ----------
 
     [Fact]
@@ -229,14 +265,15 @@ public class RoundGridResolverTests
 
         var plan = RoundGridResolver.Resolve(pack, 1);
 
-        // season.json round 1 patches jack_brabham: qualifyingSkill 0.98, consistency 0.9
-        // over a drivers.json baseline of 0.94 / 0.8; raceSkill stays at the 0.93 baseline.
+        // season.json round 1 (Kyalami) patches jack_brabham: qualifyingSkill 0.98, consistency 0.9
+        // over jusk's drivers.json baseline of 0.94 / (base consistency); raceSkill stays at the
+        // jusk baseline 0.93 (raceSkill is not overridden at Kyalami).
         var brabham = Assert.Single(plan.Seats, s => s.DriverId == "driver.jack_brabham");
         Assert.Equal(0.98, brabham.Ratings.QualifyingSkill);
         Assert.Equal(0.90, brabham.Ratings.Consistency);
         Assert.Equal(0.93, brabham.Ratings.RaceSkill);
 
-        // An unpatched driver keeps the baseline verbatim.
+        // An unpatched driver keeps jusk's baseline verbatim (Clark has no per-track override).
         var clark = Assert.Single(plan.Seats, s => s.DriverId == "driver.jim_clark");
         Assert.Equal(0.98, clark.Ratings.QualifyingSkill);
         Assert.Equal(0.94, clark.Ratings.RaceSkill);
@@ -275,26 +312,83 @@ public class RoundGridResolverTests
     }
 
     [Fact]
-    public void Resolve_PlayerSeat_UnknownLivery_ThrowsWithTheLiveryAndRound()
+    public void Resolve_PlayerSeat_DriverOutThisRound_SeatsThePlayerAnyway()
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");
 
-        // Bruce McLaren does not run round 1 (rounds "2-3,8-11") — his livery is a valid pack
-        // string but not part of THIS round's grid.
-        var ex = Assert.Throws<InvalidOperationException>(() =>
-            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "McLaren-BRM #14 B. McLaren" }));
-
-        Assert.Contains("McLaren-BRM #14 B. McLaren", ex.Message);
-        Assert.Contains("round-1", ex.Message);
+        // Bruce McLaren does not run round 1 (rounds "2-3,8-11"), but the player who took his seat
+        // still races round 1 — seated from McLaren's entry — rather than being benched. (The player
+        // races the full season regardless of the historical driver's schedule.)
+        var seat = Assert.Single(
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "McLaren-BRM #14 B. McLaren" }).Seats,
+            s => s.IsPlayer);
+        Assert.Equal("McLaren-BRM #14 B. McLaren", seat.Ams2LiveryName);
+        Assert.Equal("driver.bruce_mclaren", seat.DriverId);
     }
 
     [Fact]
-    public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive()
+    public void Resolve_1988Round1_PlayerOnADnqCar_IsSeated_HoldingTheHardcodedGridSize()
     {
-        var pack = GridTestData.LoadReferencePack("f1-1967");
+        // 1988 was a pre-qualifying year: ~30 cars for 26 slots, so 4-5 DNQ each round. Coloni's
+        // Tarquini (#31, entry "1-16") did NOT qualify for round 1 (Brazil) — his driver id is not in
+        // that round's starterDriverIds. A player who picked his car must still appear on the grid AMS2
+        // loads (the grid size is hardcoded), so the resolver seats the player and CapToGridSize drops
+        // the slowest qualifier — a peer backmarker, never a front-runner.
+        var pack = GridTestData.LoadReferencePack("f1-1988");
+        int size = pack.Season.Rounds.First(r => r.Round == 1).Grid!.Size;   // 26
+        const string tarquini = "driver.gabriele_tarquini";
+        string livery = pack.Entries.First(e => e.DriverId == tarquini).Ams2LiveryName;
 
-        Assert.Throws<InvalidOperationException>(() =>
-            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "LOTUS-FORD COSWORTH #5 J. CLARK" }));
+        var bare = RoundGridResolver.Resolve(pack, 1);
+        Assert.DoesNotContain(bare.Seats, s => s.DriverId == tarquini);   // DNQ => not in the bare field
+        Assert.Equal(size, bare.Seats.Count);
+
+        var withPlayer = RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = livery });
+        var player = Assert.Single(withPlayer.Seats, s => s.IsPlayer);
+        Assert.Equal(tarquini, player.DriverId);
+        Assert.Equal(size, withPlayer.Seats.Count);          // hardcoded grid size held (one qualifier dropped)
+
+        // Exactly one qualifier was replaced, and it is a peer (its raceSkill is <= every AI kept) —
+        // no higher-tier team was bumped to make room for the player.
+        var dropped = Assert.Single(bare.Seats.Select(s => s.DriverId)
+            .Except(withPlayer.Seats.Select(s => s.DriverId)));
+        double droppedSkill = bare.Seats.First(s => s.DriverId == dropped).Ratings.RaceSkill;
+        double slowestKeptAi = withPlayer.Seats.Where(s => !s.IsPlayer).Min(s => s.Ratings.RaceSkill);
+        Assert.True(droppedSkill <= slowestKeptAi,
+            $"dropped {dropped} ({droppedSkill}) should be no faster than the slowest kept AI ({slowestKeptAi}).");
+    }
+
+    [Fact]
+    public void Resolve_Uncapped_KeepsTheCarTheGridCapWouldDrop()
+    {
+        // The zero-stock staging pass resolves the full qualified field (capToGridSize:false) so it can
+        // name every active livery — including the peer the cap dropped to seat a DNQ player — instead of
+        // leaving AMS2 to stock-fill that slot. The sim always uses the capped grid.
+        var pack = GridTestData.LoadReferencePack("f1-1988");
+        var player = new PlayerSeat
+        {
+            Ams2LiveryName = pack.Entries.First(e => e.DriverId == "driver.gabriele_tarquini").Ams2LiveryName,
+        };
+
+        var capped = RoundGridResolver.Resolve(pack, 1, player);                     // 26 — one qualifier dropped
+        var full = RoundGridResolver.Resolve(pack, 1, player, capToGridSize: false); // nothing dropped
+
+        Assert.True(full.Seats.Count > capped.Seats.Count);
+        Assert.All(capped.Seats, s => Assert.Contains(full.Seats, f => f.DriverId == s.DriverId));
+        var dropped = full.Seats.Select(s => s.DriverId).Except(capped.Seats.Select(s => s.DriverId)).ToList();
+        Assert.NotEmpty(dropped); // the cap-dropped car the finalize will name
+    }
+
+    [Fact]
+    public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive_WrongCaseBecomesAnOwnEntrant()
+    {
+        // Binding stays exact/case-sensitive: an almost-right livery (wrong case) does NOT bind the real
+        // seat — it is treated as a custom livery and seats the player as their own entrant.
+        var pack = GridTestData.LoadReferencePack("f1-1967");
+        var seat = Assert.Single(
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = "LOTUS-FORD COSWORTH #5 J. CLARK" }).Seats,
+            s => s.IsPlayer);
+        Assert.Equal(RoundGridResolver.SyntheticPlayerDriverId, seat.DriverId); // NOT driver.jim_clark
     }
 
     // ---------- errors: unknown round, duplicate liveries ----------

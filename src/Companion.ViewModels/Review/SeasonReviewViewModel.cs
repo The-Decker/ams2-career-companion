@@ -1,26 +1,81 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Standings;
 
 namespace Companion.ViewModels.Review;
 
-/// <summary>One offer letter row of the review screen.</summary>
-public sealed partial class OfferLetterViewModel(SeasonOfferModel offer) : ObservableObject
+/// <summary>One offer letter of the review screen — the offer's facts plus a period-document
+/// rendering of it (telegram / fax / email by era), so signing feels like answering the paddock.</summary>
+public sealed partial class OfferLetterViewModel : ObservableObject
 {
-    public string TeamId { get; } = offer.TeamId;
+    public OfferLetterViewModel(SeasonOfferModel offer, OfferDocument document)
+    {
+        TeamId = offer.TeamId;
+        TeamName = offer.TeamName;
+        TierText = $"Tier {offer.Tier}";
+        SalaryText = $"{offer.SalaryBu:0.##} BU / season";
+        ScoreText = $"score {offer.Score:0.####}";
+        _isAccepted = offer.Accepted;
+        Document = document;
+    }
 
-    public string TeamName { get; } = offer.TeamName;
+    public string TeamId { get; }
 
-    public string TierText { get; } = $"Tier {offer.Tier}";
+    public string TeamName { get; }
 
-    public string SalaryText { get; } = $"{offer.SalaryBu:0.##} BU / season";
+    public string TierText { get; }
 
-    public string ScoreText { get; } = $"score {offer.Score:0.####}";
+    public string SalaryText { get; }
+
+    public string ScoreText { get; }
+
+    /// <summary>The period-document form of this offer (era medium, letterhead, dateline, body).</summary>
+    public OfferDocument Document { get; }
+
+    public string MediumLabel => Document.Era.Label;
+
+    public string AccentHex => Document.Era.AccentHex;
+
+    public string DocumentFontStack => Document.Era.DocumentFontStack;
+
+    public string Letterhead => Document.Letterhead;
+
+    public string Dateline => Document.Dateline;
+
+    public string BodyText => Document.Body;
 
     [ObservableProperty]
-    private bool _isAccepted = offer.Accepted;
+    private bool _isAccepted;
+}
+
+/// <summary>One raisable stat row of the review's development block: the stat's id (command
+/// parameter), its display label, and its current value.</summary>
+public sealed record DevStatViewModel(string Id, string Label, double Value)
+{
+    public string ValueText => $"{Value:0.00}";
+}
+
+/// <summary>One buyable perk row of the review's development block: what it is, what it costs, and —
+/// in plain language — what it does, for a Buy button that spends banked points.</summary>
+public sealed record PurchasablePerkViewModel(PurchasablePerk Perk)
+{
+    public string Id => Perk.Id;
+
+    public string Name => Perk.Name;
+
+    public string CategoryText => Perk.Category;
+
+    public string CostText => Perk.Cost == 1 ? "1 pt" : $"{Perk.Cost} pts";
+
+    public string BenefitText => string.Join("   ·   ", Perk.Benefits);
+
+    public string DrawbackText => string.Join("   ·   ", Perk.Drawbacks);
+
+    public bool HasDrawback => Perk.Drawbacks.Count > 0;
 }
 
 /// <summary>
@@ -41,14 +96,98 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(session);
         _session = session;
 
-        FinalStandings = new StandingsViewModel(session.AllSnapshots(), session.Pack);
+        FinalStandings = new StandingsViewModel(session.AllSnapshots(), session.Pack, session: session);
         Review = session.SeasonReview();
         Headlines = Review?.Headlines ?? [];
+
+        // Render each offer as a period document (telegram / fax / email) for the season's era,
+        // addressed to the driver by their character name.
+        int seasonYear = Review?.SeasonYear ?? session.Pack.Season.Year;
+        string driverName = session.PlayerIdentity()?.DisplayName ?? "";
         Offers = new ObservableCollection<OfferLetterViewModel>(
-            (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(o)));
+            (Review?.Offers ?? []).Select(o => new OfferLetterViewModel(
+                o, OfferDocument.Compose(seasonYear, o.TeamName, o.Tier, o.SalaryBu, driverName))));
         _acceptedTeamId = Review?.AcceptedTeamId;
         CanRestoreAiFile = session is IAiFileRestore;
         NextSeason = session.NextSeason();
+
+        RefreshDevelopment();
+    }
+
+    // ---------- character development (depth 4): spend banked points between seasons ----------
+
+    /// <summary>True when this career has a character to develop (the review shows the block).</summary>
+    public bool HasCharacter { get; private set; }
+
+    /// <summary>Character points available to spend now.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCp))]
+    private int _availableCp;
+
+    /// <summary>True while the driver still has a point to spend (gates the raise buttons).</summary>
+    public bool HasCp => AvailableCp > 0;
+
+    /// <summary>The driver's seven stats, each raisable one step for a point while any remain.</summary>
+    public ObservableCollection<DevStatViewModel> DevelopmentStats { get; } = [];
+
+    /// <summary>Perks the driver can afford to buy right now (cheapest first); empty when the pool
+    /// can't afford any unowned perk.</summary>
+    public ObservableCollection<PurchasablePerkViewModel> DevelopmentPerks { get; } = [];
+
+    /// <summary>True while there is at least one affordable perk to buy (shows the perk subsection).</summary>
+    public bool HasPurchasablePerks { get; private set; }
+
+    /// <summary>Raise one stat a step, spending a point (no-op when unaffordable or at the cap).</summary>
+    [RelayCommand]
+    private void RaiseStat(string? statId)
+    {
+        if (statId is null)
+            return;
+        try
+        {
+            _session.SpendCharacterPoint(CharacterSpend.Stat(statId, 1));
+        }
+        catch (InvalidOperationException)
+        {
+            return; // unaffordable or at the cap — the button just does nothing
+        }
+        RefreshDevelopment();
+    }
+
+    /// <summary>Buy a perk, spending its points (no-op when unaffordable or already owned).</summary>
+    [RelayCommand]
+    private void BuyPerk(string? perkId)
+    {
+        if (perkId is null)
+            return;
+        var row = DevelopmentPerks.FirstOrDefault(p => p.Id == perkId);
+        if (row is null)
+            return;
+        try
+        {
+            _session.SpendCharacterPoint(CharacterSpend.Perk(row.Id, row.Perk.Cost));
+        }
+        catch (InvalidOperationException)
+        {
+            return; // unaffordable / already owned — the button just does nothing
+        }
+        RefreshDevelopment();
+    }
+
+    private void RefreshDevelopment()
+    {
+        var dossier = _session.CharacterDossier();
+        HasCharacter = dossier is not null;
+        AvailableCp = _session.AvailableCharacterCp();
+        DevelopmentStats.Clear();
+        foreach (var stat in dossier?.Stats ?? [])
+            DevelopmentStats.Add(new DevStatViewModel(stat.Id, stat.Label, stat.Value));
+        DevelopmentPerks.Clear();
+        foreach (var perk in _session.PurchasablePerks())
+            DevelopmentPerks.Add(new PurchasablePerkViewModel(perk));
+        HasPurchasablePerks = DevelopmentPerks.Count > 0;
+        OnPropertyChanged(nameof(HasCharacter));
+        OnPropertyChanged(nameof(HasPurchasablePerks));
     }
 
     /// <summary>The final-standings block (drivers/constructors tabs + round matrix).</summary>
@@ -122,23 +261,27 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
 
     // ---------- era transition: sign & continue (M6) ----------
 
-    /// <summary>The discovered next era pack (v1 rule: the smallest season year greater than
-    /// this season's). Null when nothing later is installed — the block then explains what
-    /// season packs are and where they go.</summary>
+    /// <summary>Where the career goes next: a real era CHANGEOVER when a dedicated next-year pack is
+    /// installed, otherwise a CARRYOVER on the same car. Non-null once the season is complete — the
+    /// career never dead-ends.</summary>
     public NextSeasonInfo? NextSeason { get; }
 
     public bool HasNextSeason => NextSeason is not null;
 
-    /// <summary>What the era-transition block says: sign-and-continue guidance when a next
-    /// pack exists, otherwise the no-next-pack explainer (what packs are, where they go).</summary>
-    public string EraTransitionText => NextSeason is { } next
-        ? $"Your career continues: {next.PackName} is installed. Accept an offer above, then " +
-          $"sign to carry your age, reputation, form and every team lineage into {next.SeasonYear}."
-        : "This season is complete and no later season pack is installed, so the career pauses " +
-          "here. Season packs are plain JSON folders (pack.json, season.json, teams.json, " +
-          "drivers.json, entries.json) holding a year's calendar, entry list and ratings. Drop " +
-          "a later-year pack into Documents\\AMS2CareerCompanion\\Packs or the packs folder " +
-          "beside the app, reopen this career, and the \"Sign & start\" button appears right here.";
+    /// <summary>What the sign-and-continue block says: same-car carryover guidance when no
+    /// dedicated next-year pack exists, otherwise the era-changeover guidance for the next pack.</summary>
+    public string EraTransitionText => NextSeason switch
+    {
+        { IsCarryover: true } next =>
+            $"No {next.SeasonYear} season pack is installed, so your career carries on in the same car " +
+            $"and liveries — the grid ages, retires and refills around you. Accept an offer above, then " +
+            $"sign to take your age, reputation and form into {next.SeasonYear}. Drop a later-year pack " +
+            "in the packs folder and the car switches over when that season arrives.",
+        { } next =>
+            $"Your career continues: {next.PackName} is installed. Accept an offer above, then sign to " +
+            $"carry your age, reputation, form and every team lineage into {next.SeasonYear}.",
+        _ => "This season is complete.",
+    };
 
     /// <summary>The bridge note when the next pack skips years, e.g. "1968 has no pack — your
     /// career bridges through it." Null for consecutive seasons (or no next pack).</summary>

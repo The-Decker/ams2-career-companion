@@ -39,6 +39,33 @@ public class Ams2ContentLibraryTests : IDisposable
         """;
 
     [Fact]
+    public void Load_ReadsOfficialLiveries_WhenPresent()
+    {
+        File.WriteAllText(Path.Combine(_dir, "official-liveries.json"), """
+            { "source": "test", "classes": {
+                "F-Classic_Gen2": [
+                    { "name": "United Racing #3", "model": "Formula Classic Gen2", "slot": 50 },
+                    { "name": "United Racing #4", "model": "Formula Classic Gen2", "slot": 51 } ] } }
+            """);
+        var library = Load(VehiclesJson(("stock_corolla_23", "stock_corolla_23", 2023)));
+
+        Assert.True(library.OfficialLiveries.ContainsKey("F-Classic_Gen2"));
+        var liveries = library.OfficialLiveries["F-Classic_Gen2"];
+        Assert.Equal(2, liveries.Count);
+        Assert.Equal("United Racing #3", liveries[0].Name);
+        Assert.Equal(50, liveries[0].Slot);
+        Assert.Equal("Formula Classic Gen2", liveries[0].Model);
+    }
+
+    [Fact]
+    public void Load_OfficialLiveriesAbsent_IsEmptyNotAThrow()
+    {
+        // The file is OPTIONAL (older data dirs / test fixtures) — absent means an empty map.
+        var library = Load(VehiclesJson(("stock_corolla_23", "stock_corolla_23", 2023)));
+        Assert.Empty(library.OfficialLiveries);
+    }
+
+    [Fact]
     public void Load_DuplicateId_KeepsTheDirNamedEntry()
     {
         // The real-install shape: the leftover copy (dir != id) comes first in file order.

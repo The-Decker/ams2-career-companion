@@ -29,17 +29,26 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Argentine Grand Prix",
       "date": "1974-01-13",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Juan y Oscar Gálvez",
+        "realVenue": "Aut\u00F3dromo Juan y Oscar G\u00E1lvez",
         "id": "buenos_aires_15",
         "isPlaceholder": false,
         "fallbacks": [
@@ -50,30 +59,30 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.denny_hulme",
-          "driver.niki_lauda",
           "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
+          "driver.jody_scheckter",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
           "driver.mike_hailwood",
           "driver.jean_pierre_beltoise",
-          "driver.patrick_depailler",
-          "driver.carlos_reutemann",
-          "driver.howden_ganley",
-          "driver.henri_pescarolo",
-          "driver.emerson_fittipaldi",
-          "driver.guy_edwards",
-          "driver.john_watson",
-          "driver.ronnie_peterson",
-          "driver.graham_hill",
-          "driver.richard_robarts",
-          "driver.jacky_ickx",
-          "driver.hans_joachim_stuck",
-          "driver.francois_migault",
-          "driver.jody_scheckter",
-          "driver.carlos_pace",
-          "driver.arturo_merzario",
-          "driver.jochen_mass",
           "driver.peter_revson",
-          "driver.jean_pierre_jarier"
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
@@ -95,17 +104,26 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
       "date": "1974-01-27",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo José Carlos Pace",
+        "realVenue": "Aut\u00F3dromo Jos\u00E9 Carlos Pace",
         "id": "interlagos_historic",
         "isPlaceholder": false,
         "fallbacks": []
@@ -114,30 +132,30 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.emerson_fittipaldi",
           "driver.clay_regazzoni",
-          "driver.jacky_ickx",
-          "driver.carlos_pace",
-          "driver.mike_hailwood",
-          "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.jean_pierre_beltoise",
-          "driver.graham_hill",
-          "driver.denny_hulme",
+          "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
           "driver.jody_scheckter",
-          "driver.henri_pescarolo",
-          "driver.richard_robarts",
-          "driver.francois_migault",
-          "driver.jochen_mass",
-          "driver.john_watson",
-          "driver.hans_joachim_stuck",
-          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
           "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
           "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
           "driver.howden_ganley",
           "driver.guy_edwards",
-          "driver.niki_lauda"
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
@@ -159,10 +177,19 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "South African Grand Prix",
@@ -176,40 +203,37 @@
       },
       "laps": 78,
       "grid": {
-        "size": 27,
+        "size": 24,
         "starterDriverIds": [
-          "driver.carlos_reutemann",
-          "driver.jean_pierre_beltoise",
-          "driver.mike_hailwood",
-          "driver.patrick_depailler",
-          "driver.hans_joachim_stuck",
-          "driver.arturo_merzario",
-          "driver.emerson_fittipaldi",
-          "driver.jody_scheckter",
-          "driver.denny_hulme",
-          "driver.vittorio_brambilla",
-          "driver.carlos_pace",
-          "driver.graham_hill",
-          "driver.ian_scheckter",
-          "driver.eddie_keizan",
-          "driver.francois_migault",
-          "driver.niki_lauda",
-          "driver.richard_robarts",
-          "driver.henri_pescarolo",
-          "driver.dave_charlton",
           "driver.clay_regazzoni",
-          "driver.john_watson",
-          "driver.jacky_ickx",
-          "driver.james_hunt",
-          "driver.jochen_mass",
-          "driver.paddy_driver",
+          "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
+          "driver.jody_scheckter",
+          "driver.carlos_reutemann",
           "driver.ronnie_peterson",
-          "driver.tom_belso"
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 26,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-03-30",
           "weatherSlots": [
@@ -226,10 +250,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
@@ -245,38 +278,37 @@
       },
       "laps": 68,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.niki_lauda",
           "driver.clay_regazzoni",
           "driver.emerson_fittipaldi",
-          "driver.hans_joachim_stuck",
+          "driver.niki_lauda",
           "driver.jody_scheckter",
-          "driver.denny_hulme",
-          "driver.brian_redman",
-          "driver.patrick_depailler",
-          "driver.mike_hailwood",
-          "driver.james_hunt",
-          "driver.john_watson",
-          "driver.henri_pescarolo",
-          "driver.carlos_pace",
-          "driver.tim_schenken",
-          "driver.jean_pierre_jarier",
-          "driver.graham_hill",
-          "driver.arturo_merzario",
-          "driver.jochen_mass",
-          "driver.francois_migault",
-          "driver.jacky_ickx",
-          "driver.ronnie_peterson",
-          "driver.chris_amon",
-          "driver.rikky_von_opel",
           "driver.carlos_reutemann",
-          "driver.jean_pierre_beltoise"
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-04-28",
           "weatherSlots": [
@@ -293,10 +325,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -312,43 +353,37 @@
       },
       "laps": 46,
       "grid": {
-        "size": 29,
+        "size": 24,
         "starterDriverIds": [
+          "driver.clay_regazzoni",
           "driver.emerson_fittipaldi",
           "driver.niki_lauda",
           "driver.jody_scheckter",
-          "driver.clay_regazzoni",
-          "driver.jean_pierre_beltoise",
-          "driver.denny_hulme",
-          "driver.mike_hailwood",
-          "driver.graham_hill",
-          "driver.vittorio_brambilla",
-          "driver.tim_schenken",
-          "driver.john_watson",
-          "driver.guy_edwards",
-          "driver.jean_pierre_jarier",
-          "driver.vern_schuppan",
-          "driver.francois_migault",
-          "driver.teddy_pilette",
-          "driver.brian_redman",
-          "driver.jacky_ickx",
-          "driver.tom_pryce",
           "driver.carlos_reutemann",
           "driver.ronnie_peterson",
-          "driver.gerard_larrousse",
-          "driver.jochen_mass",
+          "driver.denny_hulme",
           "driver.patrick_depailler",
-          "driver.carlos_pace",
-          "driver.rikky_von_opel",
-          "driver.james_hunt",
+          "driver.jacky_ickx",
           "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
           "driver.henri_pescarolo",
-          "driver.hans_joachim_stuck"
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 28,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-05-12",
           "weatherSlots": [
@@ -365,10 +400,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -384,38 +428,37 @@
       },
       "laps": 78,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.ronnie_peterson",
-          "driver.jody_scheckter",
-          "driver.jean_pierre_jarier",
           "driver.clay_regazzoni",
           "driver.emerson_fittipaldi",
-          "driver.john_watson",
-          "driver.graham_hill",
-          "driver.guy_edwards",
-          "driver.patrick_depailler",
-          "driver.henri_pescarolo",
-          "driver.jacky_ickx",
           "driver.niki_lauda",
-          "driver.james_hunt",
-          "driver.mike_hailwood",
+          "driver.jody_scheckter",
           "driver.carlos_reutemann",
-          "driver.francois_migault",
-          "driver.vern_schuppan",
-          "driver.hans_joachim_stuck",
-          "driver.vittorio_brambilla",
-          "driver.jean_pierre_beltoise",
-          "driver.tim_schenken",
-          "driver.carlos_pace",
-          "driver.brian_redman",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
           "driver.arturo_merzario",
-          "driver.denny_hulme"
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-05-26",
           "weatherSlots": [
@@ -432,10 +475,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Swedish Grand Prix",
@@ -451,39 +503,37 @@
       },
       "laps": 47,
       "grid": {
-        "size": 26,
+        "size": 24,
         "starterDriverIds": [
-          "driver.jody_scheckter",
-          "driver.patrick_depailler",
-          "driver.james_hunt",
-          "driver.emerson_fittipaldi",
-          "driver.jean_pierre_jarier",
-          "driver.graham_hill",
-          "driver.guy_edwards",
-          "driver.tom_belso",
-          "driver.rikky_von_opel",
-          "driver.vittorio_brambilla",
-          "driver.john_watson",
-          "driver.niki_lauda",
-          "driver.reine_wisell",
-          "driver.denny_hulme",
-          "driver.jochen_mass",
-          "driver.carlos_reutemann",
-          "driver.jacky_ickx",
           "driver.clay_regazzoni",
-          "driver.carlos_pace",
-          "driver.leo_kinnunen",
+          "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
+          "driver.jody_scheckter",
+          "driver.carlos_reutemann",
           "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
           "driver.mike_hailwood",
           "driver.jean_pierre_beltoise",
-          "driver.bertil_roos",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
           "driver.henri_pescarolo",
-          "driver.vern_schuppan"
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-06-09",
           "weatherSlots": [
@@ -500,10 +550,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Dutch Grand Prix",
@@ -519,38 +578,37 @@
       },
       "laps": 67,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.niki_lauda",
           "driver.clay_regazzoni",
           "driver.emerson_fittipaldi",
-          "driver.mike_hailwood",
+          "driver.niki_lauda",
           "driver.jody_scheckter",
-          "driver.patrick_depailler",
-          "driver.john_watson",
-          "driver.ronnie_peterson",
-          "driver.rikky_von_opel",
-          "driver.vittorio_brambilla",
-          "driver.jacky_ickx",
           "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
           "driver.denny_hulme",
-          "driver.francois_migault",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
           "driver.arturo_merzario",
-          "driver.guy_edwards",
-          "driver.jean_pierre_jarier",
-          "driver.jean_pierre_beltoise",
-          "driver.graham_hill",
-          "driver.henri_pescarolo",
-          "driver.jochen_mass",
-          "driver.james_hunt",
           "driver.hans_joachim_stuck",
-          "driver.tom_pryce",
-          "driver.vern_schuppan"
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-06-23",
           "weatherSlots": [
@@ -567,10 +625,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -586,35 +653,37 @@
       },
       "laps": 60,
       "grid": {
-        "size": 22,
+        "size": 24,
         "starterDriverIds": [
-          "driver.ronnie_peterson",
-          "driver.niki_lauda",
           "driver.clay_regazzoni",
-          "driver.jody_scheckter",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.mike_hailwood",
-          "driver.patrick_depailler",
-          "driver.arturo_merzario",
-          "driver.jean_pierre_beltoise",
-          "driver.vittorio_brambilla",
-          "driver.jean_pierre_jarier",
-          "driver.graham_hill",
-          "driver.francois_migault",
-          "driver.guy_edwards",
-          "driver.john_watson",
           "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
+          "driver.jody_scheckter",
           "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
           "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
           "driver.henri_pescarolo",
-          "driver.tom_pryce",
-          "driver.james_hunt"
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 21,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-07-07",
           "weatherSlots": [
@@ -631,10 +700,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -648,38 +726,37 @@
       },
       "laps": 75,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.jody_scheckter",
-          "driver.emerson_fittipaldi",
-          "driver.jacky_ickx",
           "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
           "driver.niki_lauda",
+          "driver.jody_scheckter",
           "driver.carlos_reutemann",
-          "driver.denny_hulme",
-          "driver.tom_pryce",
-          "driver.carlos_pace",
           "driver.ronnie_peterson",
-          "driver.john_watson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
           "driver.jean_pierre_beltoise",
-          "driver.graham_hill",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
           "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
           "driver.henri_pescarolo",
           "driver.francois_migault",
-          "driver.mike_hailwood",
-          "driver.jean_pierre_jarier",
-          "driver.hans_joachim_stuck",
-          "driver.patrick_depailler",
-          "driver.arturo_merzario",
-          "driver.vittorio_brambilla",
-          "driver.tim_schenken",
-          "driver.james_hunt",
-          "driver.peter_gethin"
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-07-20",
           "weatherSlots": [
@@ -696,17 +773,26 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
       "date": "1974-08-04",
       "championship": true,
       "track": {
-        "realVenue": "Nürburgring Nordschleife",
+        "realVenue": "N\u00FCrburgring Nordschleife",
         "id": "nordschleife",
         "isPlaceholder": false,
         "fallbacks": [
@@ -715,39 +801,37 @@
       },
       "laps": 14,
       "grid": {
-        "size": 26,
+        "size": 24,
         "starterDriverIds": [
           "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
+          "driver.niki_lauda",
           "driver.jody_scheckter",
           "driver.carlos_reutemann",
           "driver.ronnie_peterson",
-          "driver.jacky_ickx",
-          "driver.tom_pryce",
-          "driver.hans_joachim_stuck",
-          "driver.jean_pierre_jarier",
-          "driver.graham_hill",
-          "driver.henri_pescarolo",
-          "driver.derek_bell",
-          "driver.carlos_pace",
-          "driver.vittorio_brambilla",
-          "driver.ian_ashley",
-          "driver.mike_hailwood",
-          "driver.james_hunt",
-          "driver.jochen_mass",
+          "driver.denny_hulme",
           "driver.patrick_depailler",
+          "driver.jacky_ickx",
           "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
           "driver.jean_pierre_beltoise",
-          "driver.vern_schuppan",
-          "driver.emerson_fittipaldi",
-          "driver.jacques_laffite",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
           "driver.john_watson",
-          "driver.niki_lauda",
-          "driver.denny_hulme"
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-08-04",
           "weatherSlots": [
@@ -764,17 +848,26 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Austrian Grand Prix",
       "date": "1974-08-18",
       "championship": true,
       "track": {
-        "realVenue": "Österreichring",
+        "realVenue": "\u00D6sterreichring",
         "id": "spielberg_vintage",
         "isPlaceholder": false,
         "fallbacks": [
@@ -783,38 +876,37 @@
       },
       "laps": 54,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.carlos_reutemann",
-          "driver.denny_hulme",
-          "driver.james_hunt",
-          "driver.john_watson",
           "driver.clay_regazzoni",
-          "driver.vittorio_brambilla",
-          "driver.david_hobbs",
-          "driver.jean_pierre_jarier",
-          "driver.dieter_quester",
-          "driver.tim_schenken",
-          "driver.hans_joachim_stuck",
-          "driver.graham_hill",
-          "driver.ian_ashley",
-          "driver.ronnie_peterson",
-          "driver.jacky_ickx",
-          "driver.patrick_depailler",
-          "driver.carlos_pace",
           "driver.emerson_fittipaldi",
-          "driver.jacques_laffite",
-          "driver.arturo_merzario",
-          "driver.jean_pierre_beltoise",
-          "driver.tom_pryce",
           "driver.niki_lauda",
-          "driver.rolf_stommelen",
-          "driver.jody_scheckter"
+          "driver.jody_scheckter",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-08-18",
           "weatherSlots": [
@@ -831,10 +923,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -848,38 +949,37 @@
       },
       "laps": 52,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.ronnie_peterson",
-          "driver.emerson_fittipaldi",
-          "driver.jody_scheckter",
-          "driver.arturo_merzario",
-          "driver.carlos_pace",
-          "driver.denny_hulme",
-          "driver.john_watson",
-          "driver.graham_hill",
-          "driver.david_hobbs",
-          "driver.tom_pryce",
-          "driver.patrick_depailler",
           "driver.clay_regazzoni",
+          "driver.emerson_fittipaldi",
           "driver.niki_lauda",
-          "driver.jacky_ickx",
-          "driver.rolf_stommelen",
-          "driver.jacques_laffite",
-          "driver.jean_pierre_jarier",
-          "driver.vittorio_brambilla",
-          "driver.tim_schenken",
+          "driver.jody_scheckter",
           "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
           "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
           "driver.henri_pescarolo",
-          "driver.james_hunt",
           "driver.francois_migault",
-          "driver.jean_pierre_beltoise"
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-09-08",
           "weatherSlots": [
@@ -896,10 +996,19 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -915,39 +1024,37 @@
       },
       "laps": 80,
       "grid": {
-        "size": 26,
+        "size": 24,
         "starterDriverIds": [
-          "driver.emerson_fittipaldi",
           "driver.clay_regazzoni",
-          "driver.ronnie_peterson",
-          "driver.james_hunt",
-          "driver.patrick_depailler",
-          "driver.denny_hulme",
-          "driver.mario_andretti",
-          "driver.carlos_pace",
-          "driver.carlos_reutemann",
-          "driver.helmuth_koinigg",
-          "driver.rolf_stommelen",
-          "driver.mark_donohue",
-          "driver.jacky_ickx",
-          "driver.graham_hill",
-          "driver.jacques_laffite",
-          "driver.jochen_mass",
-          "driver.chris_amon",
+          "driver.emerson_fittipaldi",
           "driver.niki_lauda",
-          "driver.tom_pryce",
-          "driver.john_watson",
-          "driver.jean_pierre_beltoise",
           "driver.jody_scheckter",
-          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
+          "driver.patrick_depailler",
+          "driver.jacky_ickx",
           "driver.arturo_merzario",
-          "driver.eppie_wietzes",
-          "driver.hans_joachim_stuck"
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
+          "driver.jochen_mass",
+          "driver.graham_hill",
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-09-22",
           "weatherSlots": [
@@ -964,10 +1071,19 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "United States Grand Prix",
@@ -983,39 +1099,37 @@
       },
       "laps": 59,
       "grid": {
-        "size": 26,
+        "size": 24,
         "starterDriverIds": [
-          "driver.carlos_reutemann",
-          "driver.carlos_pace",
-          "driver.james_hunt",
+          "driver.clay_regazzoni",
           "driver.emerson_fittipaldi",
-          "driver.john_watson",
+          "driver.niki_lauda",
+          "driver.jody_scheckter",
+          "driver.carlos_reutemann",
+          "driver.ronnie_peterson",
+          "driver.denny_hulme",
           "driver.patrick_depailler",
+          "driver.jacky_ickx",
+          "driver.arturo_merzario",
+          "driver.hans_joachim_stuck",
+          "driver.mike_hailwood",
+          "driver.jean_pierre_beltoise",
+          "driver.peter_revson",
+          "driver.jean_pierre_jarier",
+          "driver.john_watson",
+          "driver.carlos_pace",
           "driver.jochen_mass",
           "driver.graham_hill",
-          "driver.chris_amon",
-          "driver.jean_pierre_jarier",
-          "driver.clay_regazzoni",
-          "driver.rolf_stommelen",
-          "driver.ronnie_peterson",
-          "driver.mike_wilds",
-          "driver.tom_pryce",
-          "driver.jody_scheckter",
-          "driver.arturo_merzario",
-          "driver.niki_lauda",
-          "driver.jacques_laffite",
-          "driver.mark_donohue",
-          "driver.jose_dolhem",
-          "driver.vittorio_brambilla",
-          "driver.helmuth_koinigg",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.mario_andretti"
+          "driver.howden_ganley",
+          "driver.guy_edwards",
+          "driver.henri_pescarolo",
+          "driver.francois_migault",
+          "driver.richard_robarts"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1974-10-06",
           "weatherSlots": [
@@ -1029,5 +1143,880 @@
       "guestEntries": [],
       "aiOverrides": {}
     }
-  ]
+  ],
+  "driverForm": {
+    "1": {
+      "driver.clay_regazzoni": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.denny_hulme": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.graham_hill": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.howden_ganley": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.john_watson": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.richard_robarts": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "2": {
+      "driver.arturo_merzario": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.howden_ganley": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jochen_mass": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      }
+    },
+    "3": {
+      "driver.arturo_merzario": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_pace": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.clay_regazzoni": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.denny_hulme": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.francois_migault": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.graham_hill": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jody_scheckter": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "4": {
+      "driver.arturo_merzario": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_pace": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.clay_regazzoni": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.denny_hulme": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.guy_edwards": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jochen_mass": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.john_watson": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "5": {
+      "driver.arturo_merzario": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_pace": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.francois_migault": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.graham_hill": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.guy_edwards": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.jochen_mass": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.john_watson": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      }
+    },
+    "6": {
+      "driver.carlos_pace": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_reutemann": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.guy_edwards": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jody_scheckter": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.john_watson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      }
+    },
+    "7": {
+      "driver.arturo_merzario": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_pace": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.graham_hill": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.guy_edwards": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jochen_mass": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.richard_robarts": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      }
+    },
+    "8": {
+      "driver.arturo_merzario": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.denny_hulme": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.francois_migault": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.graham_hill": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.guy_edwards": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jochen_mass": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jody_scheckter": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    },
+    "9": {
+      "driver.arturo_merzario": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.carlos_pace": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_reutemann": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.guy_edwards": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jean_pierre_beltoise": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.patrick_depailler": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "10": {
+      "driver.arturo_merzario": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.carlos_pace": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.denny_hulme": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.francois_migault": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.graham_hill": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.guy_edwards": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.howden_ganley": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "11": {
+      "driver.arturo_merzario": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.carlos_pace": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.denny_hulme": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.francois_migault": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.graham_hill": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.guy_edwards": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.howden_ganley": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jochen_mass": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.mike_hailwood": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ronnie_peterson": {
+        "qualifyingSkill": -0.02
+      }
+    },
+    "12": {
+      "driver.arturo_merzario": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.carlos_pace": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.denny_hulme": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jody_scheckter": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.john_watson": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    },
+    "13": {
+      "driver.arturo_merzario": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.carlos_pace": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.denny_hulme": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.henri_pescarolo": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.john_watson": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "14": {
+      "driver.arturo_merzario": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.carlos_pace": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.clay_regazzoni": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.denny_hulme": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_beltoise": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jochen_mass": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jody_scheckter": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    },
+    "15": {
+      "driver.arturo_merzario": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.carlos_pace": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.carlos_reutemann": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.clay_regazzoni": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.denny_hulme": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.emerson_fittipaldi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.graham_hill": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.hans_joachim_stuck": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacky_ickx": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jean_pierre_beltoise": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_pierre_jarier": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jochen_mass": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.john_watson": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.niki_lauda": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.patrick_depailler": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ronnie_peterson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    }
+  }
 }

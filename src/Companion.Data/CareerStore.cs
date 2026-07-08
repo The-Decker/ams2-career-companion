@@ -250,6 +250,55 @@ public static class CareerStore
         return seasonId;
     }
 
+    /// <summary>
+    /// Season CARRYOVER: starts the next calendar year on the SAME pack (same car/liveries) when
+    /// no dedicated later-year pack exists yet. The next season reuses the already-pinned pack and
+    /// takes its start states straight from <see cref="Companion.Core.Career.SeasonRollover"/>
+    /// (season N's aged/retired/market-filled END states, player re-seated at the accepted team) —
+    /// exactly the same-pack rollover replay re-derives (<c>VerifyRolloverStartStates</c>), so a
+    /// carryover replays byte-identically. No era-transition journal rows: a rollover has none.
+    /// Refuses anything but a same-pack step forward from the career's completed last season.
+    /// </summary>
+    public static long StartCarryoverSeason(
+        CareerDatabase db,
+        Companion.Core.Career.SeasonStartStates startStates,
+        int year,
+        string packId,
+        string packVersion,
+        string utc)
+    {
+        ArgumentNullException.ThrowIfNull(startStates);
+        _ = utc; // a rollover writes no journal rows, so no timestamp is consumed (kept for call parity)
+
+        var seasons = ReadSeasons(db);
+        var previous = seasons.Count > 0 ? seasons[^1] : null;
+        if (previous is null)
+            throw new InvalidOperationException("A carryover needs a previous season to roll over from.");
+        if (!string.Equals(previous.Status, SeasonStatus.Complete, StringComparison.Ordinal))
+            throw new InvalidOperationException(
+                $"Season {previous.Id} ({previous.Year}) is still {previous.Status} — finish it before " +
+                "carrying the career into the next year.");
+        if (year <= previous.Year)
+            throw new InvalidOperationException(
+                $"A carryover must move forward in time: the last season is {previous.Year} and the " +
+                $"carryover targets {year}.");
+        if (!string.Equals(previous.PackId, packId, StringComparison.Ordinal) ||
+            !string.Equals(previous.PackVersion, packVersion, StringComparison.Ordinal))
+            throw new InvalidOperationException(
+                "A carryover reuses the SAME pack as the previous season (that is what makes it a " +
+                "rollover, not an era changeover).");
+
+        using var transaction = db.Connection.BeginTransaction();
+        // The pack is already pinned by the previous season (one pin serves every season that
+        // reuses it) — the carryover just adds a season row that references it.
+        long seasonId = StartSeason(db, year, packId, packVersion, transaction);
+        StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart, startStates.Player, transaction);
+        StateStore.UpsertDriverStates(db, seasonId, StateStore.StageStart, startStates.Drivers, transaction);
+        StateStore.UpsertTeamStates(db, seasonId, StateStore.StageStart, startStates.Teams, transaction);
+        transaction.Commit();
+        return seasonId;
+    }
+
     public static void CompleteSeason(
         CareerDatabase db, long seasonId, Microsoft.Data.Sqlite.SqliteTransaction? transaction = null) =>
         db.Execute(
@@ -259,10 +308,12 @@ public static class CareerStore
             ("@id", seasonId));
 
     /// <summary>All seasons in career order (season id order).</summary>
-    public static IReadOnlyList<SeasonRecord> ReadSeasons(CareerDatabase db)
+    public static IReadOnlyList<SeasonRecord> ReadSeasons(
+        CareerDatabase db, Microsoft.Data.Sqlite.SqliteTransaction? transaction = null)
     {
         using var command = db.Command(
-            "SELECT id, year, pack_id, pack_version, status FROM season ORDER BY id;");
+            "SELECT id, year, pack_id, pack_version, status FROM season ORDER BY id;",
+            transaction);
         using var reader = command.ExecuteReader();
         var seasons = new List<SeasonRecord>();
         while (reader.Read())

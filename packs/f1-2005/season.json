@@ -1,0 +1,2624 @@
+{
+  "year": 2005,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-V10_Gen3",
+  "pointsSystem": {
+    "racePoints": [
+      10,
+      8,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    },
+    "pointsAdjustments": []
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Australian Grand Prix",
+      "date": "2005-03-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Melbourne Grand Prix Circuit",
+        "id": "adelaide_modern",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "montrealmodern"
+        ]
+      },
+      "laps": 94,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-03-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Melbourne Grand Prix Circuit - 57 laps / 302.3 km reproduced as 94 laps of Adelaide Modern. Modern Adelaide keeps the Australian parkland-circuit character (same stand-in as the f1-2000 and f1-2006 packs)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Malaysian Grand Prix",
+      "date": "2005-03-20",
+      "championship": true,
+      "track": {
+        "realVenue": "Sepang International Circuit",
+        "id": "hockenheim_gp",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "barcelona_gp"
+        ]
+      },
+      "laps": 68,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-03-20",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Sepang International Circuit - 56 laps / 310.4 km reproduced as 68 laps of the modern Hockenheim GP. Both are Hermann Tilke designs; the redesigned Hockenheim GP keeps Sepang\u0027s long-straight-into-hairpin rhythm (same stand-in as the f1-2006 pack)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Bahrain Grand Prix",
+      "date": "2005-04-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Bahrain International Circuit",
+        "id": "hockenheim_gp",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "barcelona_gp"
+        ]
+      },
+      "laps": 67,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-04-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Bahrain International Circuit - 57 laps / 308.5 km reproduced as 67 laps of the modern Hockenheim GP. AMS2 has no Bahrain; the redesigned Tilke Hockenheim GP is a same-era, same-designer wide-modern-GP stand-in (same stand-in as the f1-2006 pack)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "San Marino Grand Prix",
+      "date": "2005-04-24",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_05",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "imola_01"
+        ]
+      },
+      "laps": 62,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-04-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2\u0027s Imola 2005 is the actual 2005 configuration; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Spanish Grand Prix",
+      "date": "2005-05-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Barcelona-Catalunya",
+        "id": "barcelona_gp_2001",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "barcelona_gp_1999"
+        ]
+      },
+      "laps": 66,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-05-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 2005 Barcelona layout in AMS2; the venue is real, so the historical lap count is kept on the era-close pre-2007 layout. BAR (Button/Sato) served the second of its two-race exclusion here, so the grid is two cars lighter."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Monaco Grand Prix",
+      "date": "2005-05-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit_88"
+        ]
+      },
+      "laps": 78,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-05-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2\u0027s modern Azure Circuit matches the 2005 (post-2004 reprofile) Monaco layout; the venue is real, so the historical lap count is kept. BAR (Button/Sato) was excluded from this round, so the grid is two cars lighter."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "European Grand Prix",
+      "date": "2005-05-29",
+      "championship": true,
+      "track": {
+        "realVenue": "N\u00FCrburgring",
+        "id": "nurb_gp_2020",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "nurb_gp_2025"
+        ]
+      },
+      "laps": 59,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-05-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The 2005 European GP ran the N\u00FCrburgring GP-Strecke; the venue is real, so the historical lap count is kept on the modern GP layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Canadian Grand Prix",
+      "date": "2005-06-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealmodern",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "montrealhistoric_1991"
+        ]
+      },
+      "laps": 70,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-06-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "2005 Montreal is the same venue as Montreal Modern, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "United States Grand Prix",
+      "date": "2005-06-19",
+      "championship": true,
+      "track": {
+        "realVenue": "Indianapolis Motor Speedway",
+        "id": "indianapolis_2001_rc",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "indianapolis_2022_rc"
+        ]
+      },
+      "laps": 73,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-06-19",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The 2005 US GP ran the Indianapolis road course; AMS2\u0027s Indianapolis 2001 road course is that same layout, so the historical lap count is kept. (The pack reproduces the scheduled 73-lap race; the actual event was reduced to a 6-car race after the Michelin-tyre withdrawal, which the pack does not model.)"
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "French Grand Prix",
+      "date": "2005-07-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Nevers Magny-Cours",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "barcelona_gp_1999"
+        ]
+      },
+      "laps": 74,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-07-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit de Nevers Magny-Cours - 70 laps / 308.8 km reproduced as 74 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (same stand-in as the f1-2000, f1-1988 and f1-2006 packs)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "British Grand Prix",
+      "date": "2005-07-10",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_2001",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_1991"
+        ]
+      },
+      "laps": 60,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-07-10",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 2005 Silverstone in AMS2; the venue is real, so the historical lap count is kept on the near-identical 2001 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "German Grand Prix",
+      "date": "2005-07-24",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_gp",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "hockenheim_2001"
+        ]
+      },
+      "laps": 67,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-07-24",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The 2005 German GP ran the modern (2002\u002B) Hockenheim GP; AMS2\u0027s Hockenheim GP is that same layout, so the historical lap count is kept. Friesacher\u0027s Minardi #20 seat passed to the unbindable Robert Doornbos from this round, so the grid is one car lighter."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Hungarian Grand Prix",
+      "date": "2005-07-31",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-07-31",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Turkish Grand Prix",
+      "date": "2005-08-21",
+      "championship": true,
+      "track": {
+        "realVenue": "Istanbul Park",
+        "id": "barcelona_gp",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "hockenheim_gp"
+        ]
+      },
+      "laps": 66,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-08-21",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Istanbul Park - 58 laps / 309.6 km reproduced as 66 laps of Barcelona GP. AMS2 has no Istanbul; the flowing Tilke-designed Barcelona GP is a same-era stand-in with a comparable high-speed-corner character (same stand-in as the f1-2006 pack)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Italian Grand Prix",
+      "date": "2005-09-04",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_2005",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "monza_1991"
+        ]
+      },
+      "laps": 53,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-09-04",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2\u0027s Monza 2005 is the 2005 layout; the venue is real, so the historical lap count is kept."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Belgian Grand Prix",
+      "date": "2005-09-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_2005",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "spa-francorchamps_1993"
+        ]
+      },
+      "laps": 44,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-09-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "AMS2 ships Spa-Francorchamps 2005 - the exact 2005 layout; the venue is real, so the historical lap count is kept. Heidfeld\u0027s Williams #8 seat passed to the unbindable Antonio Pizzonia from this round, so the grid is one car lighter."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 17,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Brazilian Grand Prix",
+      "date": "2005-09-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Aut\u00F3dromo Jos\u00E9 Carlos Pace",
+        "id": "interlagos_1993",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "interlagos_1991"
+        ]
+      },
+      "laps": 71,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-09-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "No 2005 Interlagos layout in AMS2; the venue is real, so the historical lap count is kept on the era-close 1993 layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 18,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Japanese Grand Prix",
+      "date": "2005-10-09",
+      "championship": true,
+      "track": {
+        "realVenue": "Suzuka Circuit",
+        "id": "kansai_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-10-09",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the GP layout."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 19,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
+        ]
+      },
+      "name": "Chinese Grand Prix",
+      "date": "2005-10-16",
+      "championship": true,
+      "track": {
+        "realVenue": "Shanghai International Circuit",
+        "id": "barcelona_gp",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "hockenheim_gp"
+        ]
+      },
+      "laps": 65,
+      "grid": {
+        "size": 20,
+        "starterDriverIds": [
+          "driver.fernando_alonso",
+          "driver.kimi_raikkonen",
+          "driver.michael_schumacher",
+          "driver.juan_pablo_montoya",
+          "driver.jenson_button",
+          "driver.giancarlo_fisichella",
+          "driver.rubens_barrichello",
+          "driver.ralf_schumacher",
+          "driver.jarno_trulli",
+          "driver.mark_webber",
+          "driver.nick_heidfeld",
+          "driver.david_coulthard",
+          "driver.felipe_massa",
+          "driver.jacques_villeneuve",
+          "driver.christian_klien",
+          "driver.takuma_sato",
+          "driver.christijan_albers",
+          "driver.tiago_monteiro",
+          "driver.narain_karthikeyan",
+          "driver.patrick_friesacher"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 19,
+          "startTime": "14:00",
+          "date": "2005-10-16",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Shanghai International Circuit - 56 laps / 305.3 km reproduced as 65 laps of Barcelona GP. AMS2 has no Shanghai; the Tilke-designed Barcelona GP is a same-era wide-modern-GP stand-in (same stand-in as the f1-2006 pack)."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ],
+  "driverForm": {
+    "1": {
+      "driver.christian_klien": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "2": {
+      "driver.christian_klien": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.christijan_albers": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.tiago_monteiro": {
+        "qualifyingSkill": -0.02
+      }
+    },
+    "3": {
+      "driver.christian_klien": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.christijan_albers": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.david_coulthard": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "4": {
+      "driver.christijan_albers": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.rubens_barrichello": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.tiago_monteiro": {
+        "qualifyingSkill": -0.02
+      }
+    },
+    "5": {
+      "driver.christijan_albers": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.jarno_trulli": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.juan_pablo_montoya": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "6": {
+      "driver.christijan_albers": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jarno_trulli": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.rubens_barrichello": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "7": {
+      "driver.christijan_albers": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "8": {
+      "driver.christian_klien": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.christijan_albers": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.tiago_monteiro": {
+        "qualifyingSkill": -0.02
+      }
+    },
+    "9": {
+      "driver.christian_klien": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.mark_webber": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "10": {
+      "driver.christian_klien": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.christijan_albers": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    },
+    "11": {
+      "driver.christian_klien": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.felipe_massa": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jarno_trulli": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_friesacher": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "12": {
+      "driver.christian_klien": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christijan_albers": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.felipe_massa": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.tiago_monteiro": {
+        "qualifyingSkill": -0.02
+      }
+    },
+    "13": {
+      "driver.david_coulthard": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.felipe_massa": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "14": {
+      "driver.christian_klien": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christijan_albers": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.nick_heidfeld": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "15": {
+      "driver.christian_klien": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.christijan_albers": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "16": {
+      "driver.christian_klien": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jenson_button": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    },
+    "17": {
+      "driver.christian_klien": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.rubens_barrichello": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.takuma_sato": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "18": {
+      "driver.christian_klien": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.christijan_albers": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.felipe_massa": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mark_webber": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ralf_schumacher": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.takuma_sato": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "19": {
+      "driver.christian_klien": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.david_coulthard": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.fernando_alonso": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.giancarlo_fisichella": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_villeneuve": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jarno_trulli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jenson_button": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.juan_pablo_montoya": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.kimi_raikkonen": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.mark_webber": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.narain_karthikeyan": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.rubens_barrichello": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.takuma_sato": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.tiago_monteiro": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    }
+  }
+}

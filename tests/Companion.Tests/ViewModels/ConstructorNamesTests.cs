@@ -148,6 +148,30 @@ public sealed class ConstructorNamesTests : IDisposable
         Assert.Equal("Brabham-Repco", row.DisplayName);
     }
 
+    // ---------- player character name on the standings + round matrix ----------
+
+    [Fact]
+    public void DriverStandingsAndMatrix_ShowThePlayerCharacterName_NotTheHistoricalDriver()
+    {
+        var session = new FakeCareerSession { Pack = NamedPack() };
+        session.Snapshots.Add(Snapshot(("team.brabham", 1, 9))); // the snapshot's driver is driver.brabham
+        session.Identity = ("driver.brabham", "Kobra Fleetworks"); // the player seated that livery
+
+        var vm = new StandingsViewModel(session.AllSnapshots(), session.Pack, session: session);
+
+        // Drivers tab: the player's row shows the character name, not "Jack Brabham".
+        Assert.Equal("Kobra Fleetworks",
+            vm.DriverRows.Single(r => r.CompetitorId == "driver.brabham").DisplayName);
+        // Round matrix: same override (both read the one driver-name map).
+        Assert.Equal("Kobra Fleetworks",
+            vm.MatrixRows.Single(r => r.DriverId == "driver.brabham").DisplayName);
+
+        // Without an identity (no character), the historical name is shown, exactly as before.
+        var plain = new StandingsViewModel(session.AllSnapshots(), session.Pack);
+        Assert.Equal("Jack Brabham",
+            plain.DriverRows.Single(r => r.CompetitorId == "driver.brabham").DisplayName);
+    }
+
     // ---------- snapshot fixture ----------
 
     private static StandingsSnapshot Snapshot(params (string TeamId, int Position, int Points)[] constructors) => new()

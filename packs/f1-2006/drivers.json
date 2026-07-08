@@ -1,0 +1,445 @@
+{
+  "drivers": [
+    {
+      "id": "driver.fernando_alonso",
+      "name": "Fernando Alonso",
+      "country": "ESP",
+      "born": 1981,
+      "ratings": {
+        "raceSkill": 0.99,
+        "qualifyingSkill": 0.99,
+        "aggression": 0.9,
+        "defending": 0.94,
+        "stamina": 0.96,
+        "consistency": 0.97,
+        "startReactions": 0.95,
+        "wetSkill": 0.92,
+        "tyreManagement": 0.97,
+        "fuelManagement": 0.93,
+        "blueFlagConceding": 0.8,
+        "avoidanceOfMistakes": 0.9,
+        "avoidanceOfForcedMistakes": 0.9
+      }
+    },
+    {
+      "id": "driver.giancarlo_fisichella",
+      "name": "Giancarlo Fisichella",
+      "country": "ITA",
+      "born": 1973,
+      "ratings": {
+        "raceSkill": 0.91,
+        "qualifyingSkill": 0.97,
+        "aggression": 0.6,
+        "defending": 0.66,
+        "stamina": 0.88,
+        "consistency": 0.86,
+        "startReactions": 0.86,
+        "wetSkill": 0.88,
+        "tyreManagement": 0.79,
+        "fuelManagement": 0.73,
+        "blueFlagConceding": 0.9,
+        "avoidanceOfMistakes": 0.66,
+        "avoidanceOfForcedMistakes": 0.66
+      }
+    },
+    {
+      "id": "driver.kimi_raikkonen",
+      "name": "Kimi R\u00E4ikk\u00F6nen",
+      "country": "FIN",
+      "born": 1979,
+      "ratings": {
+        "raceSkill": 0.91,
+        "qualifyingSkill": 0.96,
+        "aggression": 0.82,
+        "defending": 0.86,
+        "stamina": 0.94,
+        "consistency": 0.93,
+        "startReactions": 0.9,
+        "wetSkill": 0.9,
+        "tyreManagement": 0.9,
+        "fuelManagement": 0.86,
+        "blueFlagConceding": 0.82,
+        "avoidanceOfMistakes": 0.85,
+        "avoidanceOfForcedMistakes": 0.85
+      }
+    },
+    {
+      "id": "driver.juan_pablo_montoya",
+      "name": "Juan Pablo Montoya",
+      "country": "COL",
+      "born": 1975,
+      "ratings": {
+        "raceSkill": 0.85,
+        "qualifyingSkill": 0.94,
+        "aggression": 0.93,
+        "defending": 0.84,
+        "stamina": 0.86,
+        "consistency": 0.8,
+        "startReactions": 0.92,
+        "wetSkill": 0.85,
+        "tyreManagement": 0.68,
+        "fuelManagement": 0.72,
+        "blueFlagConceding": 0.72,
+        "avoidanceOfMistakes": 0.62,
+        "avoidanceOfForcedMistakes": 0.62
+      }
+    },
+    {
+      "id": "driver.michael_schumacher",
+      "name": "Michael Schumacher",
+      "country": "DEU",
+      "born": 1969,
+      "ratings": {
+        "raceSkill": 0.98,
+        "qualifyingSkill": 1,
+        "aggression": 0.96,
+        "defending": 0.94,
+        "stamina": 0.95,
+        "consistency": 0.96,
+        "startReactions": 0.96,
+        "wetSkill": 0.94,
+        "tyreManagement": 0.99,
+        "fuelManagement": 0.97,
+        "blueFlagConceding": 0.76,
+        "avoidanceOfMistakes": 0.9,
+        "avoidanceOfForcedMistakes": 0.9
+      }
+    },
+    {
+      "id": "driver.felipe_massa",
+      "name": "Felipe Massa",
+      "country": "BRA",
+      "born": 1981,
+      "ratings": {
+        "raceSkill": 0.92,
+        "qualifyingSkill": 0.96,
+        "aggression": 0.78,
+        "defending": 0.74,
+        "stamina": 0.88,
+        "consistency": 0.85,
+        "startReactions": 0.88,
+        "wetSkill": 0.72,
+        "tyreManagement": 0.8,
+        "fuelManagement": 0.78,
+        "blueFlagConceding": 0.82,
+        "avoidanceOfMistakes": 0.72,
+        "avoidanceOfForcedMistakes": 0.72
+      }
+    },
+    {
+      "id": "driver.ralf_schumacher",
+      "name": "Ralf Schumacher",
+      "country": "DEU",
+      "born": 1975,
+      "ratings": {
+        "raceSkill": 0.83,
+        "qualifyingSkill": 0.91,
+        "aggression": 0.72,
+        "defending": 0.7,
+        "stamina": 0.85,
+        "consistency": 0.84,
+        "startReactions": 0.85,
+        "wetSkill": 0.62,
+        "tyreManagement": 0.72,
+        "fuelManagement": 0.76,
+        "blueFlagConceding": 0.82,
+        "avoidanceOfMistakes": 0.64,
+        "avoidanceOfForcedMistakes": 0.64
+      }
+    },
+    {
+      "id": "driver.jarno_trulli",
+      "name": "Jarno Trulli",
+      "country": "ITA",
+      "born": 1974,
+      "ratings": {
+        "raceSkill": 0.82,
+        "qualifyingSkill": 0.88,
+        "aggression": 0.66,
+        "defending": 0.9,
+        "stamina": 0.86,
+        "consistency": 0.83,
+        "startReactions": 0.88,
+        "wetSkill": 0.68,
+        "tyreManagement": 0.72,
+        "fuelManagement": 0.78,
+        "blueFlagConceding": 0.88,
+        "avoidanceOfMistakes": 0.66,
+        "avoidanceOfForcedMistakes": 0.66
+      }
+    },
+    {
+      "id": "driver.mark_webber",
+      "name": "Mark Webber",
+      "country": "AUS",
+      "born": 1976,
+      "ratings": {
+        "raceSkill": 0.8,
+        "qualifyingSkill": 0.88,
+        "aggression": 0.8,
+        "defending": 0.8,
+        "stamina": 0.87,
+        "consistency": 0.82,
+        "startReactions": 0.84,
+        "wetSkill": 0.82,
+        "tyreManagement": 0.74,
+        "fuelManagement": 0.74,
+        "blueFlagConceding": 0.82,
+        "avoidanceOfMistakes": 0.7,
+        "avoidanceOfForcedMistakes": 0.7
+      }
+    },
+    {
+      "id": "driver.nico_rosberg",
+      "name": "Nico Rosberg",
+      "country": "DEU",
+      "born": 1985,
+      "ratings": {
+        "raceSkill": 0.79,
+        "qualifyingSkill": 0.85,
+        "aggression": 0.62,
+        "defending": 0.64,
+        "stamina": 0.8,
+        "consistency": 0.79,
+        "startReactions": 0.82,
+        "wetSkill": 0.72,
+        "tyreManagement": 0.72,
+        "fuelManagement": 0.7,
+        "blueFlagConceding": 0.9,
+        "avoidanceOfMistakes": 0.62,
+        "avoidanceOfForcedMistakes": 0.62
+      }
+    },
+    {
+      "id": "driver.rubens_barrichello",
+      "name": "Rubens Barrichello",
+      "country": "BRA",
+      "born": 1972,
+      "ratings": {
+        "raceSkill": 0.86,
+        "qualifyingSkill": 0.94,
+        "aggression": 0.72,
+        "defending": 0.8,
+        "stamina": 0.9,
+        "consistency": 0.89,
+        "startReactions": 0.9,
+        "wetSkill": 0.88,
+        "tyreManagement": 0.84,
+        "fuelManagement": 0.84,
+        "blueFlagConceding": 0.88,
+        "avoidanceOfMistakes": 0.86,
+        "avoidanceOfForcedMistakes": 0.86
+      }
+    },
+    {
+      "id": "driver.jenson_button",
+      "name": "Jenson Button",
+      "country": "GBR",
+      "born": 1980,
+      "ratings": {
+        "raceSkill": 0.88,
+        "qualifyingSkill": 0.94,
+        "aggression": 0.68,
+        "defending": 0.72,
+        "stamina": 0.86,
+        "consistency": 0.88,
+        "startReactions": 0.86,
+        "wetSkill": 0.95,
+        "tyreManagement": 0.86,
+        "fuelManagement": 0.82,
+        "blueFlagConceding": 0.86,
+        "avoidanceOfMistakes": 0.8,
+        "avoidanceOfForcedMistakes": 0.8
+      }
+    },
+    {
+      "id": "driver.david_coulthard",
+      "name": "David Coulthard",
+      "country": "GBR",
+      "born": 1971,
+      "ratings": {
+        "raceSkill": 0.78,
+        "qualifyingSkill": 0.82,
+        "aggression": 0.66,
+        "defending": 0.82,
+        "stamina": 0.86,
+        "consistency": 0.85,
+        "startReactions": 0.84,
+        "wetSkill": 0.78,
+        "tyreManagement": 0.78,
+        "fuelManagement": 0.8,
+        "blueFlagConceding": 0.86,
+        "avoidanceOfMistakes": 0.78,
+        "avoidanceOfForcedMistakes": 0.78
+      }
+    },
+    {
+      "id": "driver.christian_klien",
+      "name": "Christian Klien",
+      "country": "AUT",
+      "born": 1983,
+      "ratings": {
+        "raceSkill": 0.78,
+        "qualifyingSkill": 0.83,
+        "aggression": 0.5,
+        "defending": 0.55,
+        "stamina": 0.76,
+        "consistency": 0.75,
+        "startReactions": 0.76,
+        "wetSkill": 0.6,
+        "tyreManagement": 0.6,
+        "fuelManagement": 0.62,
+        "blueFlagConceding": 0.92,
+        "avoidanceOfMistakes": 0.58,
+        "avoidanceOfForcedMistakes": 0.58
+      }
+    },
+    {
+      "id": "driver.nick_heidfeld",
+      "name": "Nick Heidfeld",
+      "country": "DEU",
+      "born": 1977,
+      "ratings": {
+        "raceSkill": 0.82,
+        "qualifyingSkill": 0.88,
+        "aggression": 0.42,
+        "defending": 0.66,
+        "stamina": 0.83,
+        "consistency": 0.84,
+        "startReactions": 0.78,
+        "wetSkill": 0.74,
+        "tyreManagement": 0.72,
+        "fuelManagement": 0.74,
+        "blueFlagConceding": 0.9,
+        "avoidanceOfMistakes": 0.76,
+        "avoidanceOfForcedMistakes": 0.76
+      }
+    },
+    {
+      "id": "driver.jacques_villeneuve",
+      "name": "Jacques Villeneuve",
+      "country": "CAN",
+      "born": 1971,
+      "ratings": {
+        "raceSkill": 0.79,
+        "qualifyingSkill": 0.85,
+        "aggression": 0.74,
+        "defending": 0.68,
+        "stamina": 0.8,
+        "consistency": 0.78,
+        "startReactions": 0.82,
+        "wetSkill": 0.82,
+        "tyreManagement": 0.62,
+        "fuelManagement": 0.66,
+        "blueFlagConceding": 0.8,
+        "avoidanceOfMistakes": 0.62,
+        "avoidanceOfForcedMistakes": 0.62
+      }
+    },
+    {
+      "id": "driver.tiago_monteiro",
+      "name": "Tiago Monteiro",
+      "country": "PRT",
+      "born": 1976,
+      "ratings": {
+        "raceSkill": 0.72,
+        "qualifyingSkill": 0.73,
+        "aggression": 0.3,
+        "defending": 0.3,
+        "stamina": 0.72,
+        "consistency": 0.74,
+        "startReactions": 0.66,
+        "wetSkill": 0.4,
+        "tyreManagement": 0.5,
+        "fuelManagement": 0.52,
+        "blueFlagConceding": 0.98,
+        "avoidanceOfMistakes": 0.6,
+        "avoidanceOfForcedMistakes": 0.6
+      }
+    },
+    {
+      "id": "driver.christijan_albers",
+      "name": "Christijan Albers",
+      "country": "NLD",
+      "born": 1979,
+      "ratings": {
+        "raceSkill": 0.73,
+        "qualifyingSkill": 0.75,
+        "aggression": 0.42,
+        "defending": 0.4,
+        "stamina": 0.72,
+        "consistency": 0.7,
+        "startReactions": 0.7,
+        "wetSkill": 0.42,
+        "tyreManagement": 0.5,
+        "fuelManagement": 0.5,
+        "blueFlagConceding": 0.97,
+        "avoidanceOfMistakes": 0.52,
+        "avoidanceOfForcedMistakes": 0.52
+      }
+    },
+    {
+      "id": "driver.vitantonio_liuzzi",
+      "name": "Vitantonio Liuzzi",
+      "country": "ITA",
+      "born": 1980,
+      "ratings": {
+        "raceSkill": 0.75,
+        "qualifyingSkill": 0.78,
+        "aggression": 0.6,
+        "defending": 0.55,
+        "stamina": 0.75,
+        "consistency": 0.72,
+        "startReactions": 0.76,
+        "wetSkill": 0.6,
+        "tyreManagement": 0.58,
+        "fuelManagement": 0.58,
+        "blueFlagConceding": 0.94,
+        "avoidanceOfMistakes": 0.56,
+        "avoidanceOfForcedMistakes": 0.56
+      }
+    },
+    {
+      "id": "driver.scott_speed",
+      "name": "Scott Speed",
+      "country": "USA",
+      "born": 1983,
+      "ratings": {
+        "raceSkill": 0.74,
+        "qualifyingSkill": 0.76,
+        "aggression": 0.55,
+        "defending": 0.45,
+        "stamina": 0.72,
+        "consistency": 0.68,
+        "startReactions": 0.7,
+        "wetSkill": 0.5,
+        "tyreManagement": 0.5,
+        "fuelManagement": 0.5,
+        "blueFlagConceding": 0.96,
+        "avoidanceOfMistakes": 0.5,
+        "avoidanceOfForcedMistakes": 0.5
+      }
+    },
+    {
+      "id": "driver.takuma_sato",
+      "name": "Takuma Sato",
+      "country": "JPN",
+      "born": 1977,
+      "ratings": {
+        "raceSkill": 0.71,
+        "qualifyingSkill": 0.7,
+        "aggression": 0.82,
+        "defending": 0.5,
+        "stamina": 0.74,
+        "consistency": 0.66,
+        "startReactions": 0.78,
+        "wetSkill": 0.62,
+        "tyreManagement": 0.5,
+        "fuelManagement": 0.52,
+        "blueFlagConceding": 0.9,
+        "avoidanceOfMistakes": 0.44,
+        "avoidanceOfForcedMistakes": 0.44
+      }
+    }
+  ]
+}

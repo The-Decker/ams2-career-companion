@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Packs;
 
@@ -94,10 +95,15 @@ public static class EraTransition
         PlayerOffer acceptedOffer,
         StreamFactory streams,
         AgingCurveSet agingCurves,
-        IReadOnlyDictionary<string, int>? canonRetirements = null) =>
+        IReadOnlyDictionary<string, int>? canonRetirements = null,
+        IReadOnlyList<CharacterSpend>? spends = null,
+        CharacterRules? characterRules = null,
+        int? fromYearOverride = null,
+        int? toYearOverride = null) =>
         Build(
             fromPack, toPack, seasonEndResult.Drivers, seasonEndResult.Teams,
-            playerState, acceptedOffer, streams, agingCurves, canonRetirements);
+            playerState, acceptedOffer, streams, agingCurves, canonRetirements, spends, characterRules,
+            fromYearOverride, toYearOverride);
 
     /// <summary>State-list overload for callers that persisted the season's end states and
     /// no longer hold the <see cref="SeasonEndResult"/> (the app's sign-and-continue flow).</summary>
@@ -110,7 +116,11 @@ public static class EraTransition
         PlayerOffer acceptedOffer,
         StreamFactory streams,
         AgingCurveSet agingCurves,
-        IReadOnlyDictionary<string, int>? canonRetirements = null)
+        IReadOnlyDictionary<string, int>? canonRetirements = null,
+        IReadOnlyList<CharacterSpend>? spends = null,
+        CharacterRules? characterRules = null,
+        int? fromYearOverride = null,
+        int? toYearOverride = null)
     {
         ArgumentNullException.ThrowIfNull(fromPack);
         ArgumentNullException.ThrowIfNull(toPack);
@@ -119,8 +129,12 @@ public static class EraTransition
         ArgumentNullException.ThrowIfNull(streams);
         ArgumentNullException.ThrowIfNull(agingCurves);
 
-        int fromYear = fromPack.Season.Year;
-        int toYear = toPack.Season.Year;
+        // The SEASON years drive the transition, not the packs' nominal years: a carryover season
+        // (same car reused for a later year) makes the FROM season's year run ahead of the from-pack's
+        // year, so the caller passes the real season years. Default to the pack years — for every
+        // non-carryover career season year == pack year, so existing careers are byte-identical.
+        int fromYear = fromYearOverride ?? fromPack.Season.Year;
+        int toYear = toYearOverride ?? toPack.Season.Year;
         if (toYear <= fromYear)
             throw new InvalidOperationException(
                 $"Era transition must move the career forward in time: the finished season is " +
@@ -337,6 +351,14 @@ public static class EraTransition
             };
         }
 
+        // Between-season development (character depth 4): apply the player's spends to the carried
+        // character. These are journaled player.statSpend INPUTs, re-applied identically on replay so
+        // the evolving driver reproduces byte-for-byte. No spends (or no character) → unchanged.
+        if (spends is { Count: > 0 } && characterRules is not null && player.Character is { } devCharacter)
+        {
+            player = player with { Character = CharacterProgress.ApplyAll(devCharacter, spends, characterRules) };
+        }
+
         return new TransitionPlan
         {
             FromPackId = fromPack.Manifest.PackId,
@@ -354,6 +376,17 @@ public static class EraTransition
             DisplacedDriverId = seat?.DriverId,
             BudgetRescaleFactor = buRescaleFactor,
         };
+    }
+
+    /// <summary>The exact livery the player takes at <paramref name="teamId"/> in
+    /// <paramref name="pack"/> — the same seat <see cref="Build"/> resolves for an era changeover,
+    /// exposed for the SAME-PACK carryover path (which seats through
+    /// <see cref="SeasonRollover"/> rather than a transition plan). Null when the team has no
+    /// entries.</summary>
+    public static string? ResolveSeatLivery(SeasonPack pack, string teamId)
+    {
+        ArgumentNullException.ThrowIfNull(pack);
+        return ResolveSeat(pack, teamId)?.Ams2LiveryName;
     }
 
     /// <summary>The seat the player takes at the accepted team: the first entries.json entry

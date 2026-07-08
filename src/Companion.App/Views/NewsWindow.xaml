@@ -13,6 +13,13 @@
         Foreground="{StaticResource TextBrush}"
         FontFamily="Segoe UI" FontSize="13">
     <!-- the SAME NewsViewModel as the hub's News tab (set as DataContext on open), so the
-         torn-off window stays in sync as rounds apply. Read-only mirror → zero state cost. -->
-    <views:NewsView />
+         torn-off window stays in sync as rounds apply. Read-only mirror → zero state cost.
+         The root UI-scale transform (settings: font scale) keeps this pop-out in step with the
+         main window's text size. -->
+    <Grid>
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
+        </Grid.LayoutTransform>
+        <views:NewsView />
+    </Grid>
 </Window>

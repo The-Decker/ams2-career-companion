@@ -351,6 +351,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         return races[0] with
         {
             QualifyingOrder = _capturedQualifyingOrder,
+            // The Setup Gamble called at the briefing (pre-race) rides the round's raw envelope.
+            CalledShot = Briefing.CalledShot,
             AdditionalRaces = races.Count > 1
                 ? races.Skip(1).Select(r => new ExtraRaceResult
                 {
@@ -412,7 +414,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>Standings with the settings seam attached: column visibility and the
     /// selected tab persist across openings (and across sessions).</summary>
     private StandingsViewModel NewStandings() =>
-        new(_session.AllSnapshots(), _session.Pack, _settings);
+        new(_session.AllSnapshots(), _session.Pack, _settings, _session);
 
     /// <summary>Standings → back to whatever the round was doing (briefing, or the
     /// in-progress result entry); season review stays on the final standings.</summary>

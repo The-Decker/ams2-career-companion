@@ -21,6 +21,11 @@
             <MenuItem Header="Open containing folder" Click="OnRecentOpenFolder"
                       ToolTip="Show the .ams2career file in Explorer" />
             <Separator />
+            <MenuItem Header="Set card image…" Click="OnRecentSetImage"
+                      ToolTip="Pick a 16:9 image to show as this career's gallery card (your file stays where it is)" />
+            <MenuItem Header="Clear card image" Click="OnRecentClearImage"
+                      ToolTip="Remove the custom image — the card reverts to the era art for its year" />
+            <Separator />
             <MenuItem Header="Rename career…" Click="OnRecentRename"
                       ToolTip="Renames the career and its .ams2career file to match" />
             <MenuItem Header="Duplicate career" Click="OnRecentDuplicate"
@@ -106,13 +111,15 @@
                 <Border Style="{StaticResource Panel}" Padding="8"
                         Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolVisible}}">
                     <StackPanel>
-                        <!-- picture-rich career gallery: each card is coloured by its era (resolved
-                             from the career's STORED season year, name-parse fallback for legacy
-                             entries — see career-hub-design.md §11); the top band is the era-art slot
-                             — drop real historical images in later and they replace the placeholder. -->
+                        <!-- picture-rich career gallery: the YEAR PIC is the hero of each card (Mike:
+                             "the year pics should be what is selected") — a full 16:9 image driven by
+                             the career's STORED season year (name-parse fallback for legacy entries —
+                             see career-hub-design.md §11). Drop a 16:9 historical photo into
+                             data\ams2\era-art and it fills the card top uncropped; otherwise the
+                             coloured era placeholder shows through. -->
                         <ListBox ItemsSource="{Binding RecentCareers}"
                                  SelectedItem="{Binding SelectedCareer}"
-                                 MaxHeight="420" Background="Transparent" BorderThickness="0"
+                                 MaxHeight="640" Background="Transparent" BorderThickness="0"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -134,22 +141,37 @@
                                             BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
                                             ToolTip="{Binding Path}">
                                         <DockPanel>
-                                            <!-- era-art band: a real historical photo when one is dropped
-                                                 in data\ams2\era-art (resolved most-specific-first by the
-                                                 career's STORED year — see career-hub-design.md §11);
-                                                 otherwise the EraImage source is null and the coloured era
-                                                 placeholder underneath shows through. Bound to the whole
-                                                 RecentCareer so the converters read SeasonYear (name-parse
-                                                 fallback for legacy entries with no stored year). -->
-                                            <Grid DockPanel.Dock="Top" Height="88">
+                                            <!-- YEAR-PIC HERO band (16:9 for the 288-wide card → 162 tall):
+                                                 the year image is the thing you pick a career by (Mike:
+                                                 "the year pics should be what is selected"). A real
+                                                 historical photo dropped into data\ams2\era-art (resolved
+                                                 most-specific-first by the career's STORED year — see
+                                                 career-hub-design.md §11) fills it; a 16:9 source lands
+                                                 uncropped. The ImageBrush is painted INTO the rounded
+                                                 Border so its own corner radius clips the picture — no
+                                                 hard-coded clip Rect, no magic 288. When no image exists
+                                                 the brush is empty and the coloured era placeholder
+                                                 underneath shows through. Bound to the whole RecentCareer
+                                                 so the converters read SeasonYear (name-parse fallback
+                                                 for legacy entries with no stored year). -->
+                                            <Grid DockPanel.Dock="Top" Height="162">
                                                 <Border CornerRadius="6,6,0,0"
                                                         Background="{Binding Converter={StaticResource EraAccent}}" />
-                                                <Border CornerRadius="6,6,0,0" ClipToBounds="True">
-                                                    <Image Source="{Binding Converter={StaticResource EraImage}}"
-                                                           Stretch="UniformToFill" />
-                                                    <Border.Clip>
-                                                        <RectangleGeometry Rect="0,0,288,88" RadiusX="6" RadiusY="6" />
-                                                    </Border.Clip>
+                                                <Border CornerRadius="6,6,0,0">
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding Converter={StaticResource EraImage}}"
+                                                                    Stretch="UniformToFill" />
+                                                    </Border.Background>
+                                                </Border>
+                                                <!-- bottom scrim so the era label + the card seam stay
+                                                     legible over a bright photo -->
+                                                <Border CornerRadius="6,6,0,0" Height="56" VerticalAlignment="Bottom">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Offset="0" Color="#00000000" />
+                                                            <GradientStop Offset="1" Color="#96000000" />
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
                                                 </Border>
                                                 <TextBlock Text="{Binding Converter={StaticResource EraLabel}}"
                                                            Foreground="#F2FFFFFF" FontWeight="Bold" FontSize="12"
@@ -158,6 +180,7 @@
                                                            Visibility="{Binding DataContext.EraThemingEnabled, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource BoolVisible}}" />
                                                 <Button Content="&#xE711;" Style="{StaticResource IconButton}"
                                                         VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4"
+                                                        Foreground="#F2FFFFFF"
                                                         ToolTip="Remove from this list (the career file stays)"
                                                         AutomationProperties.Name="Remove from recent careers"
                                                         Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"

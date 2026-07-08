@@ -68,6 +68,26 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string _venueDisplayName = "";
 
+    /// <summary>The round's AMS2 track id (from the pack round's track ref), used to resolve the
+    /// optional track-layout thumbnail (data/ams2/track-art/&lt;trackId&gt;). Empty when no round.</summary>
+    [ObservableProperty]
+    private string _trackId = "";
+
+    /// <summary>The f1db circuit-layout id for this round (from the shipped history data), keying the
+    /// vector circuit map on the race-setup screen. Empty when unknown.</summary>
+    [ObservableProperty]
+    private string _circuitLayoutId = "";
+
+    /// <summary>Human circuit caption ("Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit")
+    /// shown under the venue heading — no circuit name (the heading already shows it). Empty when no
+    /// circuit info.</summary>
+    [ObservableProperty]
+    private string _circuitCaption = "";
+
+    /// <summary>A brief, data-grounded history of the circuit, shown on the race-setup preview.</summary>
+    [ObservableProperty]
+    private string _circuitHistory = "";
+
     [ObservableProperty]
     private bool _isPlaceholder;
 
@@ -80,11 +100,90 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string? _difficultyRecommendation;
 
+    /// <summary>Advisory fuel-and-distance guidance for this round (the car's one-tank range vs the
+    /// race length + the AMS2 "set your own fuel" gotcha). Null when no per-class fuel profile
+    /// applies — the view then hides the fuel panel.</summary>
+    [ObservableProperty]
+    private string? _fuelNote;
+
     /// <summary>True once every round has an applied result — there is nothing to brief.</summary>
     public bool SeasonComplete => Briefing is null;
 
-    /// <summary>The check-off rows, in in-game custom-race screen order.</summary>
+    // ---------- Setup Gamble: the pre-race called shot (4b) ----------
+
+    /// <summary>The sim's expected finish for this round (from the resolved grid), the yardstick the
+    /// gamble is called against. Null when the player has no seat this round — then no gamble.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanGamble), nameof(CalledShotSummary))]
+    private int? _expectedFinish;
+
+    /// <summary>The number of cars on this round's grid — the safe end of the call range.</summary>
+    private int _gridSize;
+
+    /// <summary>The finish the player has called (1-based), or null for no bet. Rides the round's raw
+    /// envelope when the result is applied and is resolved by the fold only when it is a real gamble
+    /// (bolder than <see cref="ExpectedFinish"/>). Reset each round.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCalledShot), nameof(CalledShotSummary))]
+    private int? _calledShot;
+
+    /// <summary>True when a gamble can be offered at all: the player has a seat and the expectation
+    /// leaves room to call something bolder (you cannot out-call an expected pole).</summary>
+    public bool CanGamble => !SeasonComplete && ExpectedFinish is > 1;
+
+    /// <summary>True when the player has committed a call this round.</summary>
+    public bool HasCalledShot => CalledShot is not null;
+
+    /// <summary>One legible line describing the current call and its reputation stake — what the view
+    /// shows so the gamble is never a silent no-op.</summary>
+    public string CalledShotSummary
+    {
+        get
+        {
+            if (ExpectedFinish is not { } expected)
+                return "";
+            if (CalledShot is not { } called)
+                return $"The sim expects you around P{expected}. Call a bolder finish to stake reputation on it.";
+            if (!Companion.Core.Career.CalledShotMath.IsGamble(called, expected))
+                return $"P{called} isn't a gamble — call better than P{expected} to put reputation on the line.";
+            double stake = Companion.Core.Career.CalledShotMath.Stake(called, expected);
+            return $"Called P{called}: staking {stake:0.#} reputation — hit it for +{stake:0.#}, miss for −{stake:0.#}.";
+        }
+    }
+
+    /// <summary>Call a bolder finish (a lower P number). From no call, starts one place better than
+    /// the expected finish — the least-ambitious real gamble. Clamped at P1.</summary>
+    [RelayCommand]
+    private void CallBolder()
+    {
+        if (ExpectedFinish is not { } expected || expected <= 1)
+            return;
+        CalledShot = CalledShot is { } c ? Math.Max(1, c - 1) : expected - 1;
+    }
+
+    /// <summary>Ease the call one place (a higher P number). Past the expected finish it stops being a
+    /// gamble; drop it entirely with <see cref="ClearCallCommand"/>.</summary>
+    [RelayCommand]
+    private void CallSafer()
+    {
+        if (CalledShot is not { } c)
+            return;
+        CalledShot = Math.Min(_gridSize > 0 ? _gridSize : c + 1, c + 1);
+    }
+
+    /// <summary>Withdraw the bet — no gamble this round.</summary>
+    [RelayCommand]
+    private void ClearCall() => CalledShot = null;
+
+    /// <summary>The check-off rows, flat, in in-game custom-race screen order. The source of truth
+    /// for ticks / progress / the copy summary; <see cref="Sections"/> re-groups these same
+    /// instances for the sectioned view.</summary>
     public ObservableCollection<BriefingChecklistItem> Settings { get; } = [];
+
+    /// <summary>The same rows grouped into their Race-Day sections (Event / Practice / Qualifying /
+    /// Race / Rules), in screen order, for the sectioned view. Holds the SAME item instances as
+    /// <see cref="Settings"/>, so a tick flows through both.</summary>
+    public ObservableCollection<BriefingSectionRow> Sections { get; } = [];
 
     /// <summary>Re-reads the current round's briefing from the session (call after Apply).
     /// Rebuilds the checklist and restores this round's ticks, if any.</summary>
@@ -95,59 +194,77 @@ public sealed partial class BriefingViewModel : ObservableObject
         foreach (var old in Settings)
             old.PropertyChanged -= OnChecklistItemChanged;
         Settings.Clear();
+        Sections.Clear();
 
         if (Briefing is { } briefing)
         {
             _currentRoundNumber = briefing.Round.Round;
             var ticked = _ticksByRound.GetValueOrDefault(_currentRoundNumber);
-            foreach (var setting in briefing.Settings.OrderBy(s => InGameOrderRank(s.Label)))
+            // The composer already emits rows in AMS2 custom-race screen order, grouped by section —
+            // preserve it (the sectioned view groups by first-appearance order).
+            foreach (var setting in briefing.Settings)
             {
-                var item = new BriefingChecklistItem(setting.Label, setting.Value)
-                {
-                    IsChecked = ticked?.Contains(setting.Label) == true,
-                };
+                var item = new BriefingChecklistItem(setting.Section, setting.Label, setting.Value);
+                item.IsChecked = ticked?.Contains(item.Key) == true;
                 item.PropertyChanged += OnChecklistItemChanged;
                 Settings.Add(item);
             }
 
+            // Re-group the SAME instances into ordered sections for the sectioned view (GroupBy keeps
+            // first-appearance order of both keys and items).
+            foreach (var group in Settings.GroupBy(i => i.Section))
+                Sections.Add(new BriefingSectionRow(group.Key, group.ToList()));
+
             Title = BriefingComposer.ComposeTitle(briefing);
             VenueDisplayName = briefing.VenueDisplayName;
+            TrackId = briefing.Round.Track.Id;
+            // The real circuit for this round (from the shipped history data) drives the vector circuit
+            // map + caption on the race-setup screen. Key it by the PACK's authored year, not the
+            // career's current season year: on a CARRYOVER season the same pinned pack (its calendar,
+            // its tracks) is reused for a later year, so Summary.SeasonYear runs ahead of the pack while
+            // the track you actually set up in AMS2 is still the pack's — the pack year is what matches
+            // the venue this round races (they're equal for every ordinary season). Absent => no map.
+            var circuit = _session.HistoricalSeason(_session.Pack.Season.Year)?.Rounds
+                .FirstOrDefault(r => r.Round == briefing.Round.Round)?.Circuit;
+            CircuitLayoutId = circuit?.LayoutId ?? "";
+            CircuitCaption = CircuitCaptions.Compose(circuit, includeName: false);
+            CircuitHistory = circuit?.History ?? "";
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
                 ? $"Recommended Opponent Skill: {slider}% — calibrated from your pace so far (never auto-applied)."
                 : null;
+            FuelNote = briefing.FuelNote;
+
+            // Setup Gamble: a fresh round starts with no bet; expose the expectation the call is made
+            // against (and the grid size that bounds a safe call).
+            ExpectedFinish = _session.CurrentExpectedFinish();
+            _gridSize = _session.CurrentGrid().Count;
+            CalledShot = null;
         }
         else
         {
             _currentRoundNumber = 0;
             Title = "";
             VenueDisplayName = "";
+            TrackId = "";
+            CircuitLayoutId = "";
+            CircuitCaption = "";
+            CircuitHistory = "";
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
+            FuelNote = null;
+            ExpectedFinish = null;
+            _gridSize = 0;
+            CalledShot = null;
             CompactChecklistOpen = false; // nothing left to tick — close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));
+        OnPropertyChanged(nameof(CanGamble));
+        OnPropertyChanged(nameof(CalledShotSummary));
         RaiseProgressChanged();
     }
-
-    /// <summary>The in-game custom-race screen flow (ux-round contract): track → class →
-    /// opponents → laps → date → start time → weather slots → time progression → pit rules.
-    /// The sort is stable, so "Weather slot 1..n" keep their relative order.</summary>
-    internal static int InGameOrderRank(string label) => label switch
-    {
-        "Track" => 0,
-        "Class" => 1,
-        "Opponents" => 2,
-        "Laps" => 3,
-        "Date" => 4,
-        "Start time" => 5,
-        _ when label.StartsWith("Weather slot", StringComparison.Ordinal) => 6,
-        "Time progression" => 7,
-        "Mandatory pit stop" => 8,
-        _ => 9,
-    };
 
     // ---------- checklist ticks & progress ----------
 
@@ -173,9 +290,9 @@ public sealed partial class BriefingViewModel : ObservableObject
         if (!_ticksByRound.TryGetValue(_currentRoundNumber, out var ticked))
             _ticksByRound[_currentRoundNumber] = ticked = new HashSet<string>(StringComparer.Ordinal);
         if (item.IsChecked)
-            ticked.Add(item.Label);
+            ticked.Add(item.Key);
         else
-            ticked.Remove(item.Label);
+            ticked.Remove(item.Key);
 
         RaiseProgressChanged();
     }
@@ -191,18 +308,36 @@ public sealed partial class BriefingViewModel : ObservableObject
     [RelayCommand]
     private void CopySummary() => CopyRequested?.Invoke(this, ComposeSummary());
 
-    /// <summary>Title + every "Label: Value" line in checklist order (+ setup notes).</summary>
+    /// <summary>Title + every "Label: Value" line in checklist order, under a "[Section]" header
+    /// per group so the copied text is unambiguous (each session's weather stays distinct), plus the
+    /// setup notes and the fuel advisory.</summary>
     public string ComposeSummary()
     {
         var text = new StringBuilder();
         if (Title.Length > 0)
             text.AppendLine(Title);
+
+        string? currentSection = null;
         foreach (var item in Settings)
+        {
+            if (item.Section.Length > 0 && item.Section != currentSection)
+            {
+                currentSection = item.Section;
+                text.AppendLine();
+                text.AppendLine($"[{currentSection}]");
+            }
             text.AppendLine($"{item.Label}: {item.Value}");
+        }
+
         if (SetupNotes is { Length: > 0 } notes)
         {
             text.AppendLine();
             text.AppendLine(notes);
+        }
+        if (FuelNote is { Length: > 0 } fuel)
+        {
+            text.AppendLine();
+            text.AppendLine(fuel);
         }
         return text.ToString().TrimEnd();
     }
@@ -306,24 +441,31 @@ public sealed partial class BriefingViewModel : ObservableObject
     private static string ComposeBanner(StageOutcome outcome)
     {
         if (outcome.BlockedByForceGate)
-            return outcome.Messages.Count > 0
-                ? outcome.Messages[^1] // the calm explanation — this is a choice, not a failure
-                : "Your installed AI file differs from this round's grid. " +
-                  "'Stage anyway' takes a timestamped backup first.";
+            // Not a failure — a deliberate safety pause. Tell the user exactly what to click and
+            // that nothing is at risk, so the community-file gate never reads as an error.
+            return "Your installed AI is a community file, so the app only overwrites it when you " +
+                   "confirm — click “Overwrite anyway (backup first)” to set up this race. A timestamped " +
+                   "backup is taken first, so nothing is lost.";
 
         if (!outcome.Success)
             return outcome.Messages.Count > 0
-                ? $"Staging failed — {outcome.Messages[^1]}"
-                : "Staging failed.";
-
-        string written = Path.GetFileName(outcome.WrittenPath) ?? outcome.WrittenPath ?? "";
+                ? $"Couldn't set up the race — {outcome.Messages[^1]}"
+                : "Couldn't set up the race.";
 
         if (outcome.NoOpAlreadyMatches)
-            return $"✔ Installed {written} already matches — nothing written (using your installed AI file)";
+            return "✔ AMS2 is already set up for this race — your installed drivers + skins match, nothing to change.";
 
-        return outcome.BackupPath is { Length: > 0 } backup
-            ? $"Staged {written} — previous file backed up to {backup}"
-            : $"Staged {written} — no previous file, nothing to back up";
+        // Surface WHAT was done (this race's drivers written, its skins activated, any bubble-car swap,
+        // the base-game fallback) so each reason is visible, then where it went + the backup + what next.
+        var lines = new List<string> { "✔ AMS2 is set up for this race." };
+        lines.AddRange(outcome.Messages);
+        if (outcome.WrittenPath is { Length: > 0 } written)
+            lines.Add($"Written into your live AMS2 file: {written}.");
+        lines.Add(outcome.BackupPath is { Length: > 0 } backup
+            ? $"Your previous file was backed up to {backup} — a safety copy AMS2 ignores; season-end can restore it."
+            : "No previous file existed, so nothing was backed up.");
+        lines.Add("Close AMS2 first if it's open, then launch and race.");
+        return string.Join("\n\n", lines);
     }
 
     private void OnWatchedFileChanged(object? sender, string path)

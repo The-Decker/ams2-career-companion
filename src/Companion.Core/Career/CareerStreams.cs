@@ -12,6 +12,11 @@ public static class CareerStreams
     public const string Events = "events";
     public const string Headlines = "headlines";
     public const string TierDrift = "tier-drift";
+
+    /// <summary>The opt-in season-end injury roll (character depth 6): drawn ONLY for a character
+    /// carrying an injury-stream perk, so a default career consumes zero new draws and stays
+    /// replay-compatible with pre-character saves. Keyed (injury, year, 0, "player").</summary>
+    public const string Injury = "injury";
 }
 
 /// <summary>Journal phase names emitted by the career sim. Part of the save format (the news
@@ -27,10 +32,33 @@ public static class JournalPhases
     /// while its data rides in the start player state. (Increment 4a.)</summary>
     public const string PlayerCharacter = "player.character";
 
+    /// <summary>The player's chosen season field (v0.6.0 "choose the entire grid"), written ONCE at
+    /// creation (round = null) — an INPUT the round fold never regenerates, so it is
+    /// provenance-excluded from the byte-compare while its data rides in the start player state.</summary>
+    public const string PlayerGridSelection = "player.gridSelection";
+
+    /// <summary>A between-season character-development spend (character depth 4): raise a stat or
+    /// add a perk. A player-choice INPUT (round = null) applied at the next season's transition and
+    /// re-applied identically on replay, so it is provenance-excluded from the byte-compare like
+    /// <see cref="PlayerCharacter"/>.</summary>
+    public const string PlayerStatSpend = "player.statSpend";
+
     /// <summary>The player's character XP update for the round — a DERIVED fold output (a pure
     /// function of the result), emitted only for a character career after the reputation row, so a
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>
     public const string PlayerXp = "player.xp";
+
+    /// <summary>A resolved Setup Gamble (called shot): a DERIVED row emitted only when the player
+    /// called a finish better than the sim expected (the call rides the raw result envelope). It
+    /// stakes reputation (and XP for a character) on hitting the call. Absent for every round without
+    /// a real gamble, so an ordinary career's journal sequence is unchanged. (Setup Gamble, 4b.)</summary>
+    public const string PlayerCall = "player.call";
+
+    /// <summary>A season-end injury (character depth 6): a DERIVED row emitted only when a
+    /// character carrying an injury-stream perk fails the season-end injury roll. OPI-neutral — a
+    /// setback to standing, never a finishing position. Absent for every other career, so their
+    /// journal sequence is unchanged.</summary>
+    public const string PlayerInjury = "player.injury";
 
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>

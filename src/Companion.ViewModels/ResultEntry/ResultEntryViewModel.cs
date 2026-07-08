@@ -1,3 +1,4 @@
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Core.Grid;
@@ -114,6 +115,12 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             SliderUsed = clamped;
     }
 
+    /// <summary>Whether the round was run in the WET — captured for the weather-conditional perks
+    /// (Rain Man, Sunshine Specialist). Defaults dry; stored in the raw envelope on Apply. Harmless
+    /// for a character-free career (the fold never reads it).</summary>
+    [ObservableProperty]
+    private bool isWet;
+
     [ObservableProperty]
     private string input = "";
 
@@ -207,6 +214,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
             .ToDictionary(s => s.DriverId, s => _dsqReasons[s.DriverId], StringComparer.Ordinal),
         SliderUsed = Math.Clamp(
             Math.Round(SliderUsed, MidpointRounding.AwayFromZero), MinSlider, MaxSlider),
+        IsWet = IsWet,
     };
 
     // ---------- commands (view maps Enter/Tab/Esc/F8/Ctrl+Z to these) ----------
@@ -449,11 +457,19 @@ public sealed partial class ResultEntryViewModel : ObservableObject
 
         if (token.Length >= 2 && token.All(char.IsLetter))
             return scope
-                .Where(s => Surname(s.DriverName).StartsWith(token, StringComparison.OrdinalIgnoreCase))
+                .Where(s => StartsWithLoose(Surname(s.DriverName), token))
                 .ToArray();
 
         return [];
     }
+
+    /// <summary>Case- AND accent-insensitive prefix test: a surname typed WITHOUT its diacritics
+    /// still matches (e.g. "perez" → "Pérez-Sala", "raik" → "Räikkönen", "hakk" → "Häkkinen"), since
+    /// most keyboards can't type the accent. IgnoreNonSpace folds combining marks; IgnoreCase folds
+    /// case. Typing the accent works too — the fold is symmetric.</summary>
+    private static bool StartsWithLoose(string source, string prefix) =>
+        CultureInfo.InvariantCulture.CompareInfo.IsPrefix(
+            source, prefix, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase);
 
     /// <summary>Splits "cla3" / "cla 3" / "1 2" into match text + target position. Without a
     /// space the match text must contain a non-digit, so a pure number like "12" is always a

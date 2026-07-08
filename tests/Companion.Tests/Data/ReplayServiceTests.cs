@@ -386,6 +386,48 @@ public class ReplayServiceTests
     }
 
     [Fact]
+    public void CarryoverViaStartCarryoverSeason_ReplaysByteIdentical()
+    {
+        using var tmp = new TempDb();
+        var db = CareerDatabase.Open(tmp.Path);
+        using var _1 = db;
+        var (season1, pack) = DataCareerFixture.SetupCareer(db);
+        DataCareerFixture.PlaySeason(db, season1, pack);
+        StateStore.SetOfferAccepted(db, season1, "team.mid");
+
+        var derived = SeasonRollover.Derive(
+            StateStore.ReadPlayerState(db, season1, StateStore.StageEnd)!,
+            StateStore.ReadDriverStates(db, season1, StateStore.StageEnd),
+            StateStore.ReadTeamStates(db, season1, StateStore.StageEnd),
+            acceptedTeamId: "team.mid",
+            playerLiveryName: DataCareerFixture.PlayerLivery);
+
+        // A CARRYOVER: reuse the SAME 1967 pack for the next calendar year (1968) via the new
+        // store method — the live path when no dedicated 1968 pack exists.
+        long season2 = CareerStore.StartCarryoverSeason(
+            db, derived, 1968, pack.Manifest.PackId, pack.Manifest.Version, DataCareerFixture.Utc);
+
+        // The season row carries year 1968 while pinned to the 1967 pack (the invariant the
+        // carryover deliberately relaxes).
+        var record = CareerStore.ReadSeasons(db).Single(s => s.Id == season2);
+        Assert.Equal(1968, record.Year);
+        Assert.Equal(pack.Manifest.PackId, record.PackId);
+        Assert.NotEqual(record.Year, pack.Season.Year);
+
+        var round = DataCareerFixture.Rounds()[0];
+        ReplayService.ImportAndFoldRound(
+            db, season2, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs(),
+            1, DataCareerFixture.Envelope(round), DataCareerFixture.Utc);
+
+        // Same-pack → replay routes through the rollover path and re-derives byte-identically.
+        var report = ReplayService.Resimulate(
+            db, pack, DataCareerFixture.MasterSeed, DataCareerFixture.Inputs());
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
+    [Fact]
     public void TamperedFollowOnStartStateIsAStartStateDivergenceWithZeroDataLoss()
     {
         using var tmp = new TempDb();

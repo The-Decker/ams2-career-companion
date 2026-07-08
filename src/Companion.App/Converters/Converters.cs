@@ -171,6 +171,30 @@ public sealed class EraAccentBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>A "#RRGGBB" hex string → a SolidColorBrush (e.g. an offer document's era accent, which
+/// the view-model already carries as hex). Transparent when the value is not a parseable hex.</summary>
+public sealed class HexBrushConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is string hex && !string.IsNullOrWhiteSpace(hex))
+        {
+            try
+            {
+                return new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+            }
+            catch (FormatException)
+            {
+                // fall through to transparent
+            }
+        }
+        return Brushes.Transparent;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era medium label
 /// ("TELEGRAM"/"FAX"/"EMAIL"), keyed off the stored season year for MRU entries; "" when no era
 /// resolves.</summary>
@@ -198,31 +222,191 @@ public sealed class EraImageConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        // A RecentCareer resolves by its STORED season year (name-parse fallback for legacy entries);
-        // a bare int/name keep the old contract so non-gallery callers are unaffected.
+        // 1) A user-chosen card image (picked with "Set card image…") wins, when the file still
+        //    exists — point-to-file, so a moved/deleted image just falls back to the era art below.
+        if (value is Companion.ViewModels.Services.RecentCareer { CustomImagePath: { Length: > 0 } custom }
+            && File.Exists(custom)
+            && LoadFrozen(custom) is { } chosen)
+        {
+            return chosen;
+        }
+
+        // 2) Otherwise the drop-in era art resolved by the career's STORED season year (name-parse
+        //    fallback for legacy entries); a bare int/name keep the old contract so non-gallery
+        //    callers are unaffected.
         if (EraCardYear.From(value) is not int resolvedYear)
             return null;
 
         string? path = Companion.ViewModels.Services.EraArtResolver.Resolve(EraArtDirectory, resolvedYear);
-        if (path is null)
-            return null;
+        return path is null ? null : LoadFrozen(path);
+    }
 
+    private static BitmapImage? LoadFrozen(string path) => FrozenImage.Load(path);
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Shared user-image loader for the gallery / track / story art converters. Loads a file
+/// fully now (<see cref="BitmapCacheOption.OnLoad"/>) and freezes it, so the file is never left
+/// locked (art can be swapped while the app runs) and the bitmap is cross-thread safe. A
+/// corrupt/unreadable file returns null — a view never crashes on bad art, it shows its placeholder.</summary>
+internal static class FrozenImage
+{
+    public static BitmapImage? Load(string path)
+    {
         try
         {
             var image = new BitmapImage();
             image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad; // read fully now → the file is never locked
+            image.CacheOption = BitmapCacheOption.OnLoad;
             image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             image.UriSource = new Uri(path, UriKind.Absolute);
             image.EndInit();
-            image.Freeze(); // cross-thread safe + immutable
+            image.Freeze();
             return image;
         }
-        catch (Exception ex) when (ex is NotSupportedException or IOException or UriFormatException)
+        catch (Exception ex) when (ex is NotSupportedException or IOException or UriFormatException or ArgumentException)
         {
-            // A corrupt or unreadable image must never crash the gallery — fall back to the placeholder.
             return null;
         }
+    }
+}
+
+/// <summary>A track id (string) → the drop-in track-layout thumbnail for that track, or null when
+/// none is present (the view then hides the image). User-managed art lives in
+/// <c>{BaseDirectory}\data\ams2\track-art\&lt;trackId&gt;.{jpg,jpeg,png}</c> — the shared
+/// "folder + key + resolver with fallback" convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>),
+/// keyed by the track id from data/ams2/tracks.json. Untracked, like era art.</summary>
+public sealed class TrackImageConverter : IValueConverter
+{
+    private static readonly string TrackArtDirectory =
+        Path.Combine(AppContext.BaseDirectory, "data", "ams2", "track-art");
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string trackId || string.IsNullOrWhiteSpace(trackId))
+            return null;
+        string? path = Companion.ViewModels.Services.UserImageResolver.ResolveByKey(TrackArtDirectory, trackId);
+        return path is null ? null : FrozenImage.Load(path);
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>bool IsExpanded → a Segoe MDL2 chevron glyph: ChevronDown (open) / ChevronRight
+/// (closed). For collapsible section headers.</summary>
+public sealed class ExpandGlyphConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is true ? "" : ""; // ChevronDown : ChevronRight
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>A key (string or int) → the drop-in user image for it, from the folder named by the
+/// <c>ConverterParameter</c> under <c>data/ams2/</c> — e.g. <c>ConverterParameter=history-art</c>
+/// resolves <c>data/ams2/history-art/&lt;key&gt;.{jpg,jpeg,png}</c>. The shared, reusable half of the
+/// user-asset convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>): one
+/// converter, any keyed image folder. Null when absent (the view hides the image); user art is
+/// untracked, like era art.</summary>
+public sealed class KeyedAssetImageConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is null || parameter is not string kind || string.IsNullOrWhiteSpace(kind))
+            return null;
+        string key = value as string ?? System.Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
+        string dir = Path.Combine(AppContext.BaseDirectory, "data", "ams2", kind);
+        string? path = Companion.ViewModels.Services.UserImageResolver.ResolveByKey(dir, key);
+        return path is null ? null : FrozenImage.Load(path);
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>A circuit-layout id (e.g. "monaco-5") → a frozen <see cref="Geometry"/> for the circuit
+/// map, from the shipped <c>data/ams2/circuits/&lt;layoutId&gt;.json</c> (f1db-derived path data,
+/// already normalized to WPF's path mini-language by the build tool). Rendered by a <c>Path</c> with
+/// <c>Stretch="Uniform"</c>. Parsed once per layout and cached (frozen → cross-thread safe); null when
+/// the file is missing or the path fails to parse (the view then shows no map).</summary>
+public sealed class CircuitGeometryConverter : IValueConverter
+{
+    private static readonly string CircuitsDirectory =
+        Path.Combine(AppContext.BaseDirectory, "data", "ams2", "circuits");
+    private static readonly Dictionary<string, Geometry?> Cache = new(StringComparer.Ordinal);
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string layoutId || string.IsNullOrWhiteSpace(layoutId))
+            return null;
+        lock (Cache)
+        {
+            if (Cache.TryGetValue(layoutId, out var cached))
+                return cached;
+            var geometry = LoadFrom(CircuitsDirectory, layoutId);
+            Cache[layoutId] = geometry;
+            return geometry;
+        }
+    }
+
+    /// <summary>Reads <c>&lt;directory&gt;/&lt;layoutId&gt;.json</c> and parses its normalized path data
+    /// into a frozen <see cref="Geometry"/> (null on missing/unreadable/unparseable). Public + directory
+    /// -parameterized so it can be tested against the real shipped circuit files.</summary>
+    public static Geometry? LoadFrom(string directory, string layoutId)
+    {
+        string file = Path.Combine(directory, layoutId + ".json");
+        if (!File.Exists(file))
+            return null;
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(file));
+            if (!doc.RootElement.TryGetProperty("paths", out var paths))
+                return null;
+            var group = new GeometryGroup { FillRule = FillRule.Nonzero };
+            foreach (var p in paths.EnumerateArray())
+            {
+                if (p.GetString() is { Length: > 0 } d)
+                    group.Children.Add(Geometry.Parse(d));
+            }
+            if (group.Children.Count == 0)
+                return null;
+            group.Freeze();
+            return group;
+        }
+        catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or FormatException or InvalidOperationException)
+        {
+            // A bad/unreadable circuit file must never crash a screen — just show no map.
+            return null;
+        }
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>An element's ActualWidth → a height at a fixed aspect ratio (ConverterParameter =
+/// height ÷ width, default 0.5625 = 16:9). Lets an image hero keep its aspect as its card stretches
+/// to fill a responsive grid (e.g. the season-pick cards, which flex to 4 columns of any width).
+/// Returns UnsetValue for a zero/unmeasured width so the element keeps its own MinHeight until the
+/// first real layout pass sets ActualWidth.</summary>
+public sealed class AspectRatioHeightConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double ratio = 0.5625; // 16:9
+        if (parameter is string s &&
+            double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed) &&
+            parsed > 0)
+        {
+            ratio = parsed;
+        }
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? width * ratio
+            : DependencyProperty.UnsetValue;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

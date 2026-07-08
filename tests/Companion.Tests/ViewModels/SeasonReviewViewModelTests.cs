@@ -54,10 +54,10 @@ public class SeasonReviewViewModelTests
         Assert.Equal(new[] { "Headline one", "Headline two" }, vm.Headlines);
         Assert.True(vm.HasHeadlines);
         Assert.False(vm.OfferAccepted);
-        // No next pack installed: the block explains what packs are and where they go.
+        // A null next season (this fake leaves it unset) collapses the block to a terminal note —
+        // the real session always offers a carryover or a changeover once the season is complete.
         Assert.False(vm.HasNextSeason);
-        Assert.Contains("season pack", vm.EraTransitionText, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("AMS2CareerCompanion\\Packs", vm.EraTransitionText);
+        Assert.Equal("This season is complete.", vm.EraTransitionText);
         Assert.Null(vm.BridgeNote);
         Assert.False(vm.SignAndContinueCommand.CanExecute(null));
         Assert.False(vm.CanRestoreAiFile);           // plain session: no restore surface
@@ -217,6 +217,120 @@ public class SeasonReviewViewModelTests
         vm.RestoreAiFileCommand.Execute(null);
         Assert.False(vm.RestoreSucceeded);
         Assert.Contains("No backup", vm.RestoreBanner);
+    }
+
+    // ---------- character development block (depth 4) ----------
+
+    private static Companion.Core.Character.CharacterDossier Dossier() => new()
+    {
+        Name = "Kobra",
+        Level = 3,
+        Xp = 500,
+        XpIntoLevel = 100,
+        XpForNextLevel = 300,
+        CpUnspent = 0,
+        Stats =
+        [
+            new Companion.Core.Character.DossierStat("pace", "Pace", 0.60, Talent: true),
+            new Companion.Core.Character.DossierStat("racecraft", "Racecraft", 0.55, Talent: true),
+        ],
+        Perks = [],
+    };
+
+    [Fact]
+    public void Development_HiddenWhenTheCareerHasNoCharacter()
+    {
+        var vm = new SeasonReviewViewModel(new FakeCareerSession { Review = Review() });
+
+        Assert.False(vm.HasCharacter);
+        Assert.Empty(vm.DevelopmentStats);
+        Assert.Equal(0, vm.AvailableCp);
+        Assert.False(vm.HasCp);
+    }
+
+    [Fact]
+    public void Development_ShowsPointsAndStats_AndRaisingSpendsThroughTheSeam()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 2 };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasCharacter);
+        Assert.Equal(2, vm.AvailableCp);
+        Assert.True(vm.HasCp);
+        Assert.Equal(2, vm.DevelopmentStats.Count);
+        Assert.Equal("Pace", vm.DevelopmentStats[0].Label);
+        Assert.Equal("0.60", vm.DevelopmentStats[0].ValueText);
+
+        // Raise pace: one stat spend goes through the seam, the pool drops, the shown value climbs.
+        vm.RaiseStatCommand.Execute("pace");
+        Assert.Single(session.Spends);
+        Assert.Equal("stat", session.Spends[0].Kind);
+        Assert.Equal("pace", session.Spends[0].Target);
+        Assert.Equal(1, vm.AvailableCp);
+        Assert.True(vm.HasCp);
+        Assert.Equal("0.62", vm.DevelopmentStats[0].ValueText);
+
+        // Spend the last point: the pool empties and the raise gate closes.
+        vm.RaiseStatCommand.Execute("pace");
+        Assert.Equal(0, vm.AvailableCp);
+        Assert.False(vm.HasCp);
+        Assert.Equal(2, session.Spends.Count);
+    }
+
+    [Fact]
+    public void Development_OffersAffordablePerks_AndBuyingSpendsThroughTheSeam()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 2 };
+        session.Buyable.Add(new PurchasablePerk
+        {
+            Id = "rain_man", Name = "Rain Man", Category = "weather", Cost = 1,
+            Benefits = ["Faster in the wet"], Drawbacks = [],
+        });
+        session.Buyable.Add(new PurchasablePerk
+        {
+            Id = "engineers_favorite", Name = "Engineer's Favorite", Category = "crew", Cost = 2,
+            Benefits = ["A stronger car"], Drawbacks = ["Costs two points"],
+        });
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasPurchasablePerks);
+        Assert.Equal(2, vm.DevelopmentPerks.Count);
+        Assert.Equal("1 pt", vm.DevelopmentPerks[0].CostText);
+        Assert.Equal("2 pts", vm.DevelopmentPerks[1].CostText);
+        Assert.True(vm.DevelopmentPerks[1].HasDrawback);
+
+        // Buy Rain Man: the spend goes through the seam and the pool drops to 1, which no longer
+        // affords the 2-point perk — so the offer list empties.
+        vm.BuyPerkCommand.Execute("rain_man");
+        Assert.Contains(session.Spends, s => s.Kind == "perk" && s.Target == "rain_man");
+        Assert.Equal(1, vm.AvailableCp);
+        Assert.Empty(vm.DevelopmentPerks);
+        Assert.False(vm.HasPurchasablePerks);
+    }
+
+    [Fact]
+    public void Development_NoPerksOfferedWhenNoneAreListed()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 2 };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasCharacter);
+        Assert.False(vm.HasPurchasablePerks);
+        Assert.Empty(vm.DevelopmentPerks);
+    }
+
+    [Fact]
+    public void Development_UnaffordableRaiseIsANoOp()
+    {
+        var session = new FakeCareerSession { Review = Review(), Dossier = Dossier(), Cp = 0 };
+        var vm = new SeasonReviewViewModel(session);
+
+        Assert.True(vm.HasCharacter);
+        Assert.False(vm.HasCp);
+
+        vm.RaiseStatCommand.Execute("pace");   // no points: the command swallows the throw
+        Assert.Empty(session.Spends);
+        Assert.Equal(0, vm.AvailableCp);
     }
 
     // ---------- the rest of the round wiring ----------

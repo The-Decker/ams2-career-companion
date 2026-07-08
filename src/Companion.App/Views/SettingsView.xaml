@@ -94,7 +94,7 @@
                                 <Slider Minimum="{Binding MinFontScalePercent}" Maximum="{Binding MaxFontScalePercent}"
                                         Value="{Binding FontScalePercent}" TickFrequency="5" IsSnapToTickEnabled="True"
                                         Margin="0,0,10,0"
-                                        ToolTip="UI text size, 90–130% (applies live to every screen)" />
+                                        ToolTip="UI text size, 90–130% — scales all text and spacing live across every screen and pop-out window (good for large / 4K monitors)" />
                             </DockPanel>
                         </Grid>
                     </StackPanel>

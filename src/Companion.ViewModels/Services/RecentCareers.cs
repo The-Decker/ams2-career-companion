@@ -16,6 +16,14 @@ public sealed record RecentCareer
     /// <see cref="EraArtResolver.YearForEntry"/>). Not <c>required</c> so JSON deserialization of an
     /// older <c>recent.json</c> (which omits the property) reads it as the 0 default, back-compat.</summary>
     public int SeasonYear { get; init; }
+
+    /// <summary>An optional user-chosen hero image for this career's gallery card (an absolute path
+    /// the user picked with "Set card image…"), which OVERRIDES the year-resolved era art. <c>null</c>
+    /// (the JSON default) means "no override — use the era art for the year". Not <c>required</c> so an
+    /// older <c>recent.json</c> that omits it reads as null. The image is point-to-file (never copied),
+    /// so a missing/moved file simply falls back to the era art — see
+    /// <see cref="UserImageResolver"/> for the shared user-asset convention.</summary>
+    public string? CustomImagePath { get; init; }
 }
 
 public interface IRecentCareersStore
@@ -25,10 +33,18 @@ public interface IRecentCareersStore
 
     /// <summary>Insert or move to the front (capped list), then persist. <paramref name="seasonYear"/>
     /// is the career's stored season year for the gallery's era art; pass <c>0</c> when it is unknown
-    /// (the gallery then falls back to parsing the name).</summary>
+    /// (the gallery then falls back to parsing the name). An existing entry's user-chosen
+    /// <see cref="RecentCareer.CustomImagePath"/> is CARRIED FORWARD (re-touching a career — Continue,
+    /// rename, re-open — never wipes the card image); set it with <see cref="SetCustomImage"/>.</summary>
     void Touch(string path, string careerName, int seasonYear = 0);
 
     void Remove(string path);
+
+    /// <summary>Sets (or, with a blank value, clears) the gallery card image for the career at
+    /// <paramref name="path"/>, in place — the MRU order is unchanged. A no-op when no such entry
+    /// exists. Default no-op so lightweight test doubles need not implement it; the real store
+    /// overrides it.</summary>
+    void SetCustomImage(string path, string? customImagePath) { }
 }
 
 /// <summary>
@@ -70,7 +86,11 @@ public sealed class RecentCareersStore : IRecentCareersStore
 
     public void Touch(string path, string careerName, int seasonYear = 0)
     {
-        var entries = ReadFile()
+        var all = ReadFile();
+        // Carry the user's chosen card image forward across a re-touch (Continue / rename / re-open):
+        // only the explicit "Set card image…" action changes it, never an ordinary front-insert.
+        string? customImagePath = all.FirstOrDefault(entry => PathsEqual(entry.Path, path))?.CustomImagePath;
+        var entries = all
             .Where(entry => !PathsEqual(entry.Path, path))
             .ToList();
         entries.Insert(0, new RecentCareer
@@ -79,8 +99,25 @@ public sealed class RecentCareersStore : IRecentCareersStore
             CareerName = careerName,
             LastOpenedUtc = _clock.GetUtcNow(),
             SeasonYear = seasonYear,
+            CustomImagePath = customImagePath,
         });
         WriteFile(entries.Take(Capacity).ToList());
+    }
+
+    public void SetCustomImage(string path, string? customImagePath)
+    {
+        string? normalized = string.IsNullOrWhiteSpace(customImagePath) ? null : customImagePath.Trim();
+        var entries = ReadFile();
+        bool changed = false;
+        for (int i = 0; i < entries.Count; i++)
+        {
+            if (!PathsEqual(entries[i].Path, path))
+                continue;
+            entries[i] = entries[i] with { CustomImagePath = normalized };
+            changed = true;
+        }
+        if (changed)
+            WriteFile(entries);
     }
 
     public void Remove(string path) =>

@@ -1,7 +1,12 @@
 {
-  "$comment": "Headline template bank for the career news feed (docs/dev/career-sim.md, News/headlines). Keys are 'journalPhase|cause'; each key holds era-flavored variant lists selected deterministically via the 'headlines' stream, with 'default' as the fallback era. Tokens: {player} {team} {race} {position} {year} for race results; {driver} {year} for retirement items; {champion} {year} for the season digest. 1960s copy is written in period wire-report/telegram voice. Parsed by Companion.Core.Career.HeadlineBank.",
+  "$comment": "Headline template bank for the career news feed (docs/dev/career-sim.md, News/headlines). Keys are 'journalPhase|cause'; each key holds era-flavored variant lists selected deterministically via the 'headlines' stream, with 'default' as the fallback era. Tokens: {player} {team} {race} {position} {year} for race results; {driver} {year} for retirement items; {champion} {year} for the season digest. 1960s copy is written in period wire-report/telegram voice; 1970s carries magazine feature warmth; 1980s is brash turbo-era swagger; 1990s is analytical/telemetry-minded; 2000s is live-timing broadcast; 2010s is live-blog immediacy. Parsed by Companion.Core.Career.HeadlineBank.",
   "eras": [
-    { "key": "1960s", "fromYear": 1946, "toYear": 1969 }
+    { "key": "1960s", "fromYear": 1946, "toYear": 1969 },
+    { "key": "1970s", "fromYear": 1970, "toYear": 1979 },
+    { "key": "1980s", "fromYear": 1980, "toYear": 1989 },
+    { "key": "1990s", "fromYear": 1990, "toYear": 1999 },
+    { "key": "2000s", "fromYear": 2000, "toYear": 2009 },
+    { "key": "2010s", "fromYear": 2010, "toYear": 2029 }
   ],
   "templates": {
     "race.result|win": {
@@ -12,12 +17,57 @@
         "CHEQUERED FLAG — {player} wins {race}, crowds salute new hero",
         "{race} falls to {player}; {team} garage in jubilation",
         "TELEGRAM FROM THE CIRCUIT: {player} WINS. STOP. MAGNIFICENT DRIVE. STOP.",
-        "{player} conquers {race} — the {year} season has its talking point"
+        "{player} conquers {race} — the {year} season has its talking point",
+        "{player} unbeatable at {race} — {team} hail a landmark {year} win",
+        "WIRE FLASH: {player} takes {race} by a distance for {team}"
+      ],
+      "1970s": [
+        "{player} wins {race} — and {team} have found something special this {year}",
+        "A vintage drive: {player} controls {race} from the front for {team}",
+        "{race} belongs to {player}, and the {team} pit wall can hardly believe the margin",
+        "Pure class from {player} at {race} — a win to remember in {year}",
+        "{player} makes {race} look easy; {team} celebrate long into the evening",
+        "The grandstands rise for {player} — a commanding {race} victory for {team}",
+        "{player} threads a faultless afternoon at {race} to win for {team}"
+      ],
+      "1980s": [
+        "BOOST TO BURN: {player} blasts to victory at {race} for {team}",
+        "{player} lights up {race} — {team}'s turbo simply devastating",
+        "FULL SEND: {player} wins {race}, {team} unleash the horsepower",
+        "{player} bullies the field at {race} — {team} on the top step again",
+        "Turbo thunder at {race}: {player} wins going away for {team}",
+        "{player} pins it and wins {race} — {team} own the {year} headlines"
+      ],
+      "1990s": [
+        "{player} converts pole to victory at {race} — {team}'s package the class of the field",
+        "Textbook execution: {player} wins {race} on strategy and pace for {team}",
+        "The data doesn't lie: {player} was fastest all weekend and wins {race} for {team}",
+        "{player} manages tyres and gaps to perfection, taking {race} for {team}",
+        "{team} nail the strategy and {player} delivers — {race} falls their way in {year}",
+        "Clinical from {player}: {race} won by a margin, {team} extend their {year} advantage"
+      ],
+      "2000s": [
+        "P1 confirmed: {player} takes {race} for {team}",
+        "{player} leads every sector that matters and wins {race} for {team}",
+        "The timing screen glows green for {player} — {race} victory, {team} delighted",
+        "Lights to flag: {player} wins {race}, {team} top the {year} board",
+        "{player} banks the win at {race} — {team} back in the winners' circle",
+        "Fastest in every stint: {player} converts it into a {race} win for {team}"
+      ],
+      "2010s": [
+        "LAP 1 to the flag — {player} wins {race} for {team}. What a drive.",
+        "It's a {race} win for {player}! {team} celebrate as the flag drops in {year}",
+        "BREAKING: {player} takes {race}, and {team} couldn't have scripted it better",
+        "{player} does it at {race} — {team}'s day, start to finish",
+        "That's how you win a Grand Prix: {player} untouchable at {race} for {team}",
+        "Flag out, job done: {player} wins {race}, {team} on cloud nine this {year}"
       ],
       "default": [
         "{player} wins {race}",
         "Victory for {player} at {race}",
-        "{player} delivers a flawless win for {team} at {race}"
+        "{player} delivers a flawless win for {team} at {race}",
+        "{player} wins {race} for {team} in {year}",
+        "A commanding {race} victory for {player}"
       ]
     },
     "race.result|podium": {
@@ -27,12 +77,56 @@
         "{player} splits the front-runners, {position} at {race}",
         "Rostrum champagne for {player} after {position} at {race}",
         "{team} celebrate as {player} claims {position} at {race}",
-        "PRESS ROOM NOTES: {player} quick all weekend, rewarded with {position}"
+        "PRESS ROOM NOTES: {player} quick all weekend, rewarded with {position}",
+        "{player} earns the rostrum at {race} — {position} for {team} in {year}",
+        "Fine work by {player}, {position} at {race}; {team} well pleased"
+      ],
+      "1970s": [
+        "{player} joins the podium party at {race} — {position} for {team}",
+        "A popular rostrum for {player}, {position} at {race} in {year}",
+        "{team} toast {player}'s fine {position} at {race}",
+        "Champagne and smiles: {player} takes {position} at {race}",
+        "{player} runs with the leaders all afternoon, {position} at {race} for {team}",
+        "Warm applause for {player} — {position} at {race} rewards a spirited drive"
+      ],
+      "1980s": [
+        "{player} muscles onto the podium at {race} — {position} for {team}",
+        "PODIUM POWER: {player} grabs {position} at {race}, {team} thrilled",
+        "{player} boosts into {position} at {race} — {team} on the rostrum",
+        "Turbo-fuelled charge nets {player} {position} at {race} for {team}",
+        "{player} strong-arms {position} at {race}; {team} back on the box",
+        "Big result for {team}: {player} takes {position} at {race} in {year}"
+      ],
+      "1990s": [
+        "{player} banks {position} at {race} — a strong points-and-podium day for {team}",
+        "Consistent and quick: {player} converts pace into {position} at {race}",
+        "{team}'s strategy delivers {player} to {position} at {race}",
+        "{player} manages the gaps and takes {position} at {race} for {team}",
+        "The numbers stack up: {player} claims {position} at {race} in {year}",
+        "Measured drive from {player} yields {position} at {race} for {team}"
+      ],
+      "2000s": [
+        "Podium confirmed: {player} takes {position} at {race} for {team}",
+        "{player} holds station for {position} at {race} — {team} on the podium",
+        "The timing board says {position}: {player} on the rostrum at {race}",
+        "{player} sees off the challengers to claim {position} at {race} for {team}",
+        "Solid podium for {team} as {player} finishes {position} at {race}",
+        "{player} converts qualifying into {position} at {race} in {year}"
+      ],
+      "2010s": [
+        "PODIUM! {player} finishes {position} at {race} for {team}",
+        "{player} grabs {position} at {race} — {team} back among the champagne in {year}",
+        "That's a rostrum for {player}: {position} at {race}, {team} buzzing",
+        "Great points and a podium — {player} {position} at {race} for {team}",
+        "{player} nails {position} at {race}; {team}'s weekend just got a lot better",
+        "Rostrum secured: {player} takes {position} at {race} for {team}"
       ],
       "default": [
         "{player} takes {position} at {race}",
         "Podium for {player} at {race}",
-        "{player} brings {team} home {position} at {race}"
+        "{player} brings {team} home {position} at {race}",
+        "{player} on the podium at {race} with {position}",
+        "A strong {position} for {player} at {race}"
       ]
     },
     "race.result|points": {
@@ -42,12 +136,56 @@
         "{team} timesheets show {player} {position} — points in the bag",
         "USEFUL AFTERNOON: {player} scores at {race}",
         "{player} brings the car home {position}; {team} ledger ticks over",
-        "Points finish for {player} keeps the {year} campaign moving"
+        "Points finish for {player} keeps the {year} campaign moving",
+        "{player} adds to the {team} tally, {position} at {race} in {year}",
+        "Points secured: {player} home {position} at {race}"
+      ],
+      "1970s": [
+        "{player} tucks into the points at {race} — {position} for {team}",
+        "A tidy afternoon: {player} scores {position} at {race} in {year}",
+        "{team} bank useful points as {player} takes {position} at {race}",
+        "No drama, just points — {player} home {position} at {race}",
+        "{player} keeps the {team} entry among the top runners, {position} at {race}",
+        "Quietly effective, {player} claims {position} and points at {race}"
+      ],
+      "1980s": [
+        "{player} muscles into the points at {race} — {position} for {team}",
+        "POINTS ON THE BOARD: {player} takes {position} at {race} for {team}",
+        "{player} boosts home {position} at {race}; {team} bank the score",
+        "Hard-charging {player} grabs {position} and points at {race}",
+        "{team} smile as {player} drags it to {position} at {race} in {year}",
+        "{player} fights for every place, {position} and points at {race}"
+      ],
+      "1990s": [
+        "{player} scores at {race} — {position}, and the {team} data looks healthy",
+        "Consistent points: {player} finishes {position} at {race} for {team}",
+        "{player} executes the plan to take {position} and points at {race}",
+        "Reliable as ever, {player} banks {position} at {race} for {team}",
+        "{team}'s ledger ticks over: {player} {position} at {race} in {year}",
+        "Measured drive nets {player} {position} and points at {race}"
+      ],
+      "2000s": [
+        "In the points: {player} finishes {position} at {race} for {team}",
+        "The board shows {position} — {player} scores at {race} for {team}",
+        "{player} holds position for {position} and points at {race}",
+        "Steady run to {position}: {player} banks points at {race} for {team}",
+        "{team} take the points as {player} finishes {position} at {race} in {year}",
+        "{player} converts a clean race into {position} at {race}"
+      ],
+      "2010s": [
+        "Points! {player} finishes {position} at {race} for {team}",
+        "{player} brings it home {position} at {race} — points in the bag for {team}",
+        "Solid points day: {player} {position} at {race}, {team} content in {year}",
+        "{player} scraps to {position} at {race}; {team} bank the score",
+        "Good points for {team} as {player} takes {position} at {race}",
+        "{player} scores at {race} — {position} and moving up the {year} table"
       ],
       "default": [
         "{player} scores points at {race}",
         "{player} finishes {position} at {race}",
-        "Solid points haul for {player} at {race}"
+        "Solid points haul for {player} at {race}",
+        "{player} takes points with {position} at {race}",
+        "{player} banks {position} at {race} for {team}"
       ]
     },
     "race.result|overperformed": {
@@ -57,12 +195,56 @@
         "Paddock abuzz: {player} makes the {team} car sing at {race}",
         "{player} punches above the car's weight — {position} at {race}",
         "SCOUTS' NOTEBOOKS OUT: {player} stars at {race}",
-        "The drive of the day belongs to {player}, {position} at {race}"
+        "The drive of the day belongs to {player}, {position} at {race}",
+        "{player} the toast of {race}, dragging {team} to {position} in {year}",
+        "A performance beyond the machinery — {player} {position} at {race}"
+      ],
+      "1970s": [
+        "Where did that come from? {player} drags the {team} car to {position} at {race}",
+        "A giant-killing drive: {player} takes {position} at {race} against the odds",
+        "{player} makes the {team} machine fly, {position} at {race} in {year}",
+        "The paddock talks of nothing else — {player} stars with {position} at {race}",
+        "Beyond the car's means: {player} hauls it to {position} at {race} for {team}",
+        "{player} punches well above his weight, {position} at {race}"
+      ],
+      "1980s": [
+        "STUNNER: {player} bullies the {team} car to {position} at {race}",
+        "{player} overachieves in style — {position} at {race}, {team} stunned",
+        "No business being there, but {player} takes {position} at {race} for {team}",
+        "{player} wrings the neck of the {team} machine, {position} at {race}",
+        "Against all odds: {player} muscles to {position} at {race} in {year}",
+        "{player} embarrasses faster cars, {position} at {race} for {team}"
+      ],
+      "1990s": [
+        "The numbers said midfield; {player} delivered {position} at {race} for {team}",
+        "Overachievement quantified: {player} takes {position} at {race} beyond the car's pace",
+        "{player} extracts more than the {team} package should allow, {position} at {race}",
+        "A drive that beats the data — {player} {position} at {race} in {year}",
+        "{player} outperforms the model, hauling {team} to {position} at {race}",
+        "Well above the form book: {player} claims {position} at {race} for {team}"
+      ],
+      "2000s": [
+        "The board shows {position} — and nobody expected {player} there for {team}",
+        "{player} beats the projections with {position} at {race} in {year}",
+        "Sector times flattered nobody but {player}: {position} at {race} for {team}",
+        "Overachiever of the day: {player} drags {team} to {position} at {race}",
+        "{player} defies the timing screens, {position} at {race}",
+        "Way above expectations: {player} takes {position} at {race} for {team}"
+      ],
+      "2010s": [
+        "DRIVE OF THE DAY: {player} hauls {team} to {position} at {race}",
+        "Nobody had {player} in {position} at {race} — {team} overachieve in {year}",
+        "{player} punches above the {team} car with {position} at {race}",
+        "Where did THAT come from? {player} takes {position} at {race} for {team}",
+        "Massive overachievement: {player} {position} at {race}, well beyond the form",
+        "{player} makes the {team} machine look a class quicker, {position} at {race}"
       ],
       "default": [
         "{player} overdelivers at {race} with {position}",
         "{player} outruns the car's pace at {race}",
-        "Eye-catching {position} for {player} at {race}"
+        "Eye-catching {position} for {player} at {race}",
+        "{player} exceeds the car's pace with {position} at {race}",
+        "A standout {position} for {player} at {race}"
       ]
     },
     "race.result|underperformed": {
@@ -72,12 +254,56 @@
         "A day to forget — {player} only {position} at {race}",
         "{team} puzzled as {player} fades to {position} at {race}",
         "PIT LANE WHISPERS: {player} short of pace at {race}",
-        "{player} misses the mark at {race}"
+        "{player} misses the mark at {race}",
+        "{player} out of sorts at {race}, only {position} for {team}",
+        "Little to show for the effort — {player} {position} at {race} in {year}"
+      ],
+      "1970s": [
+        "An afternoon to forget: {player} only {position} at {race} for {team}",
+        "{player} never got going at {race}, home a muted {position}",
+        "{team} left scratching heads as {player} fades to {position} at {race}",
+        "Off the boil — {player} labours to {position} at {race} in {year}",
+        "Not the {player} we know: a flat {position} at {race}",
+        "{player} short of sparkle at {race}, {position} the best on offer"
+      ],
+      "1980s": [
+        "MISFIRE: {player} struggles to {position} at {race} for {team}",
+        "No boost, no joy — {player} fades to {position} at {race}",
+        "{player} off the pace at {race}, a disappointing {position} for {team}",
+        "{team} expected more; {player} only {position} at {race} in {year}",
+        "Flat and frustrated: {player} home {position} at {race}",
+        "{player} can't find the power, {position} the result at {race}"
+      ],
+      "1990s": [
+        "The data disappoints: {player} underdelivers with {position} at {race}",
+        "{player} off the expected pace, only {position} at {race} for {team}",
+        "Below the form book — {player} {position} at {race}, {team} seek reasons",
+        "{team}'s telemetry can't explain it: {player} fades to {position} at {race}",
+        "A subdued run: {player} {position} at {race}, short of the numbers in {year}",
+        "{player} misses the mark at {race}, home {position}"
+      ],
+      "2000s": [
+        "The board flatters nobody at {team}: {player} only {position} at {race}",
+        "{player} slides down the timing screens to {position} at {race}",
+        "Underwhelming: {player} finishes {position} at {race} for {team}",
+        "Not the sectors they wanted — {player} {position} at {race} in {year}",
+        "{player} well adrift of the pace, {position} at {race} for {team}",
+        "A quiet, frustrating {position} for {player} at {race}"
+      ],
+      "2010s": [
+        "One to forget: {player} only {position} at {race} for {team}",
+        "{player} never in the fight at {race}, home {position} — {team} disappointed",
+        "Below par: {player} fades to {position} at {race} in {year}",
+        "Not their day — {player} {position} at {race}, {team} regroup",
+        "{player} short of pace all weekend, {position} at {race}",
+        "A flat afternoon for {player}: {position} at {race} for {team}"
       ],
       "default": [
         "{player} struggles to {position} at {race}",
         "Flat afternoon for {player} at {race}",
-        "{player} below par at {race}"
+        "{player} below par at {race}",
+        "{player} underperforms with {position} at {race}",
+        "A muted {position} for {player} at {race}"
       ]
     },
     "race.result|dnf-mechanical": {
@@ -87,12 +313,56 @@
         "{player} out of {race}; the car cried enough",
         "SMOKE AND SILENCE: {team} failure sidelines {player} at {race}",
         "The machinery betrays {player} at {race}",
-        "{player} retires at {race} — {team} spanners out in vain"
+        "{player} retires at {race} — {team} spanners out in vain",
+        "{player}'s {team} car expires at {race} — the driver blameless in {year}",
+        "Silent and stricken: {player} out of {race} for {team}"
+      ],
+      "1970s": [
+        "Cruel luck: {player}'s {team} car breaks at {race}, no fault of the driver",
+        "The machinery lets {player} down at {race} — a retirement that stings",
+        "{player} sidelined at {race} as the {team} car cries enough",
+        "Heartbreak for {player}: mechanical trouble ends a strong {race} in {year}",
+        "So near, so far — {player} out of {race} with {team} gremlins",
+        "{team} rue the reliability as {player} retires from {race}"
+      ],
+      "1980s": [
+        "TURBO BLOWS: {player}'s {team} engine lets go at {race}",
+        "Up in smoke — {player} out of {race}, the {team} boost gone",
+        "{player} parks the ailing {team} car at {race}, mechanical grief again",
+        "The horsepower deserts {player} at {race}; another {team} DNF in {year}",
+        "Grenaded: {player}'s {team} machine expires at {race}",
+        "{player} robbed by unreliability, out of {race} for {team}"
+      ],
+      "1990s": [
+        "Reliability, not pace, ends it: {player}'s {team} car fails at {race}",
+        "A component lets go and {player} is out of {race} — {team} to the data",
+        "{player} retires from {race} with a {team} technical failure in {year}",
+        "The telemetry flatlines: {player}'s {team} car breaks at {race}",
+        "No answer in the numbers — {player} out of {race}, {team} mechanical",
+        "{player} sidelined at {race} as the {team} package fails"
+      ],
+      "2000s": [
+        "OUT: {player}'s {team} car stops at {race} with a technical failure",
+        "The timing screen drops {player} — mechanical trouble at {race} for {team}",
+        "{player} coasts to a halt at {race}; the {team} car is done in {year}",
+        "Race over early for {player}: a {team} failure at {race}",
+        "{player} retires from {race}, {team} chasing a reliability answer",
+        "Terminal trouble for the {team} car — {player} out of {race}"
+      ],
+      "2010s": [
+        "RETIREMENT: {player}'s {team} car fails at {race}",
+        "{player} is out of {race} — the {team} car let go through no fault of his in {year}",
+        "Cruel: {player} pulls off at {race} with a {team} technical issue",
+        "That's the end of {player}'s {race} — {team} reliability strikes again",
+        "Mechanical heartbreak: {player} retires from {race} for {team}",
+        "{player} sidelined at {race}, the {team} garage heads down"
       ],
       "default": [
         "Mechanical failure ends {player}'s {race}",
         "{player} retires from {race} with car trouble",
-        "The car lets {player} down at {race}"
+        "The car lets {player} down at {race}",
+        "{player}'s {team} car fails at {race}",
+        "Mechanical trouble ends {player}'s {race} in {year}"
       ]
     },
     "race.result|dnf-driver-error": {
@@ -102,12 +372,56 @@
         "{player} overcooks it at {race}; {team} count the cost",
         "SPIN AND OUT: {player}'s {race} ends in error",
         "{player} shoulders the blame for {race} retirement",
-        "Costly slip — {player} out of {race} by his own hand"
+        "Costly slip — {player} out of {race} by his own hand",
+        "{player} loses the {team} car at {race} — out through his own error in {year}",
+        "A misjudgement too many: {player} out of {race}"
+      ],
+      "1970s": [
+        "A rare error: {player} spins the {team} car out of {race}",
+        "{player} overreaches at {race} and pays the price — into retirement",
+        "Costly mistake: {player} throws away {race} for {team} in {year}",
+        "The pressure told — {player} slides out of {race}, {team} counting the cost",
+        "{player} off and out at {race}; a moment he will want back",
+        "One corner too many — {player} ends {race} in the barrier for {team}"
+      ],
+      "1980s": [
+        "OFF! {player} bins the {team} car out of {race}",
+        "{player} overcooks it at {race} — retirement by his own hand",
+        "Too much boost, too little grip: {player} spins out of {race} for {team}",
+        "{player} throws {race} away in a big moment, {team} fuming in {year}",
+        "Into the wall: {player} ends {race} in error for {team}",
+        "{player} pushes past the limit at {race} and pays with a DNF"
+      ],
+      "1990s": [
+        "Driver error, plain and simple: {player} out of {race} for {team}",
+        "The data shows the slip — {player} loses {race} to a mistake in {year}",
+        "{player} misjudges it at {race}, ending a promising run for {team}",
+        "A costly lapse: {player} spins the {team} car out of {race}",
+        "{player} shoulders the blame for the {race} retirement, {team} disappointed",
+        "One error undoes the plan: {player} out of {race} for {team}"
+      ],
+      "2000s": [
+        "OUT — {player} drops it and ends {race} in the gravel for {team}",
+        "The timing screen freezes on {player}: driver error at {race}",
+        "{player} throws away a result at {race}, a mistake that costs {team} in {year}",
+        "Off the road and done: {player} retires from {race} by his own hand",
+        "{player} overdrives it at {race}, {team} left counting the cost",
+        "A moment's error ends {player}'s {race} for {team}"
+      ],
+      "2010s": [
+        "CRASH: {player} spins out of {race} — driver error, {team} deflated",
+        "{player} throws it away at {race}, a mistake he'll relive in {year}",
+        "Into the barriers: {player} ends {race} in error for {team}",
+        "That's a costly one — {player} out of {race}, {team} rue the moment",
+        "{player} overcooks it at {race} and it's game over for {team}",
+        "A rare slip from {player} ends {race} early for {team}"
       ],
       "default": [
         "{player} crashes out of {race}",
         "Driver error ends {player}'s {race}",
-        "{player} throws away a finish at {race}"
+        "{player} throws away a finish at {race}",
+        "{player} spins out of {race}",
+        "A driver error ends {player}'s {race} for {team}"
       ]
     },
     "race.result|midfield": {
@@ -117,12 +431,56 @@
         "{player} completes {race} in {position}; little to report",
         "WORKMANLIKE: {player} {position} at {race}",
         "{player} logs the miles at {race}",
-        "No fireworks — {player} {position} at {race}"
+        "No fireworks — {player} {position} at {race}",
+        "{player} completes {race} in {position} — an unremarkable day for {team}",
+        "Laps banked, {player} home {position} at {race} in {year}"
+      ],
+      "1970s": [
+        "A steady tour: {player} home {position} at {race} for {team}",
+        "{player} circulates to {position} at {race}, little of note in {year}",
+        "Midfield fare — {player} takes {position} at {race} for {team}",
+        "Nothing spectacular: {player} brings the {team} car home {position} at {race}",
+        "{player} logs the laps and finishes {position} at {race}",
+        "A quiet afternoon's work: {player} {position} at {race} for {team}"
+      ],
+      "1980s": [
+        "{player} scraps in the pack to {position} at {race} for {team}",
+        "Midfield muscle: {player} home {position} at {race} in {year}",
+        "{player} brings the {team} car home {position} at {race}, no fireworks",
+        "A hard, unglamorous {position} for {player} at {race}",
+        "{player} bangs wheels for {position} at {race}, {team} content enough",
+        "Nothing flashy — {player} takes {position} at {race} for {team}"
+      ],
+      "1990s": [
+        "{player} runs to {position} at {race} — a representative day for {team}",
+        "Right where the numbers said: {player} {position} at {race} in {year}",
+        "A par run: {player} finishes {position} at {race} for {team}",
+        "{player} holds midfield station, {position} at {race}",
+        "As expected, {player} home {position} at {race} for {team}",
+        "The data called it: {player} {position} at {race}, nothing more"
+      ],
+      "2000s": [
+        "The board shows {position}: a quiet run for {player} at {race}",
+        "{player} settles into {position} at {race} for {team} in {year}",
+        "Midfield anonymity — {player} finishes {position} at {race}",
+        "{player} brings it home {position} at {race}, little to report for {team}",
+        "A steady {position} for {player} at {race}",
+        "{player} runs the sectors to {position} at {race} for {team}"
+      ],
+      "2010s": [
+        "A quiet one: {player} finishes {position} at {race} for {team}",
+        "{player} lands {position} at {race} — solid, unspectacular in {year}",
+        "Midfield day for {player}: {position} at {race}, {team} plug away",
+        "{player} brings the {team} car home {position} at {race}",
+        "Nothing to write home about — {player} {position} at {race}",
+        "{player} logs {position} at {race} for {team}, eyes on next time"
       ],
       "default": [
         "{player} finishes {position} at {race}",
         "Quiet race for {player} at {race}",
-        "{player} runs to {position} at {race}"
+        "{player} runs to {position} at {race}",
+        "{player} runs to {position} at {race} for {team}",
+        "A quiet {position} for {player} at {race}"
       ]
     },
     "driver.retirement|canon": {
@@ -132,12 +490,56 @@
         "The paddock salutes {driver}, retiring as planned after {year}",
         "{driver} steps down; the record book keeps the rest",
         "FAREWELL TOUR COMPLETE: {driver} retires",
-        "{driver} calls time on a storied career"
+        "{driver} calls time on a storied career",
+        "{driver} lays down the helmet for good — an era passes in {year}",
+        "The old guard salutes {driver}, retiring with honour"
+      ],
+      "1970s": [
+        "{driver} bows out — the end of a much-loved era in {year}",
+        "After years at the sharp end, {driver} announces retirement",
+        "The paddock says farewell to {driver}, retiring as planned",
+        "{driver} hangs up the helmet, his place in the history books secure",
+        "A career for the ages closes as {driver} steps away in {year}",
+        "{driver} calls time, and the sport is poorer for it"
+      ],
+      "1980s": [
+        "{driver} QUITS — a giant of the turbo era steps down in {year}",
+        "End of an era: {driver} announces retirement",
+        "{driver} walks away on his own terms after a storied career",
+        "The grid loses a star as {driver} retires in {year}",
+        "{driver} hangs up the helmet, the record book heavy with his name",
+        "A legend departs: {driver} calls time on his racing days"
+      ],
+      "1990s": [
+        "{driver} announces retirement, closing a defining career in {year}",
+        "The numbers tell the story: {driver} steps away a proven great",
+        "{driver} retires as planned, his legacy beyond dispute",
+        "A calculated exit: {driver} calls time after {year}",
+        "{driver} leaves the sport with the record books rewritten",
+        "The paddock salutes {driver}, retiring at the top"
+      ],
+      "2000s": [
+        "CONFIRMED: {driver} to retire at the end of {year}",
+        "{driver} announces his final season — a career to celebrate",
+        "The grid prepares to say goodbye to {driver} in {year}",
+        "{driver} steps down, one of the modern greats hanging up the helmet",
+        "An era ends as {driver} confirms his retirement",
+        "{driver} calls time, his place among the legends assured"
+      ],
+      "2010s": [
+        "BREAKING: {driver} announces retirement after {year}",
+        "{driver} calls it a career — and what a career it's been",
+        "The paddock reacts as {driver} confirms he's stepping away in {year}",
+        "{driver} hangs up the helmet, leaving a legacy that will endure",
+        "It's official: {driver} retires, the sport losing one of its best",
+        "A fond farewell to {driver}, bowing out on his own terms in {year}"
       ],
       "default": [
         "{driver} retires from racing",
         "{driver} announces retirement after {year}",
-        "End of the road: {driver} steps away"
+        "End of the road: {driver} steps away",
+        "{driver} announces his retirement in {year}",
+        "A career closes: {driver} steps away from the sport"
       ]
     },
     "driver.retirement|age-performance": {
@@ -147,12 +549,56 @@
         "{driver} steps aside — the stopwatch was no longer kind",
         "After a fading season, {driver} announces retirement",
         "{driver} quits the cockpit; younger men circle the seat",
-        "The long goodbye ends — {driver} retires"
+        "The long goodbye ends — {driver} retires",
+        "{driver} yields to the years at last, retiring after {year}",
+        "The stopwatch has the final word — {driver} steps down"
+      ],
+      "1970s": [
+        "Time catches everyone — {driver} bows to the years and retires in {year}",
+        "The pace has ebbed, and {driver} steps away with dignity",
+        "{driver} accepts the calendar's verdict and retires after {year}",
+        "A fading season convinces {driver} to hang up the helmet",
+        "{driver} calls time as younger men set the pace in {year}",
+        "The long twilight ends: {driver} retires"
+      ],
+      "1980s": [
+        "{driver} steps aside as the young turbo chargers take over in {year}",
+        "Father Time wins: {driver} retires after a fading campaign",
+        "{driver} quits the cockpit, the stopwatch no longer kind in {year}",
+        "The pace has gone, and {driver} knows it — retirement announced",
+        "A hard truth: {driver} bows out as the years tell in {year}",
+        "{driver} makes way for the next generation and retires"
+      ],
+      "1990s": [
+        "The data is unforgiving: {driver} retires as the pace slips in {year}",
+        "{driver} reads the numbers and steps away after a fading season",
+        "Age catches up in the telemetry — {driver} calls it a career",
+        "{driver} accepts the decline and retires after {year}",
+        "A measured exit as the pace fades: {driver} steps down in {year}",
+        "The lap times don't lie; {driver} retires"
+      ],
+      "2000s": [
+        "The timing screens tell it: {driver} retires as the pace ebbs in {year}",
+        "{driver} steps away after a season the sectors couldn't flatter",
+        "Age shows on the board, and {driver} calls time in {year}",
+        "{driver} bows to the years, announcing retirement after a fading campaign",
+        "The next generation is quicker — {driver} retires in {year}",
+        "A dignified exit: {driver} steps down as the pace slips"
+      ],
+      "2010s": [
+        "{driver} bows to the years and retires after a fading {year}",
+        "The pace has gone — {driver} announces retirement, and few are surprised",
+        "Time catches all: {driver} steps away after a difficult {year}",
+        "{driver} reads the writing on the wall and calls it a career",
+        "A season the numbers couldn't save — {driver} retires in {year}",
+        "{driver} makes way for the youngsters and hangs up the helmet"
       ],
       "default": [
         "{driver} retires after a fading season",
         "{driver} calls it a career",
-        "Age wins: {driver} steps down after {year}"
+        "Age wins: {driver} steps down after {year}",
+        "{driver} retires as the pace fades after {year}",
+        "Age catches up: {driver} steps away from the sport"
       ]
     },
     "driver.retirement.foreshadow|considering-future": {
@@ -162,12 +608,56 @@
         "{driver} non-committal on {year} plans — friends sense a decision coming",
         "Whispers at the back of the garage: {driver} may stop",
         "{driver} spotted in long conversation with the team owner — future unclear",
-        "Insiders say {driver} is thinking hard about next season"
+        "Insiders say {driver} is thinking hard about next season",
+        "{driver} said to be turning over his future in his mind",
+        "The garages whisper that {driver} may not go on past {year}"
+      ],
+      "1970s": [
+        "Word in the paddock is that {driver} is weighing his future",
+        "{driver} said to be pondering whether to race on beyond {year}",
+        "Friends sense a decision brewing — {driver} non-committal on next season",
+        "Quiet talk of retirement follows {driver} through the {year} paddock",
+        "{driver} keeps his plans close, but the whispers grow louder",
+        "Is this {driver}'s last lap? The paddock isn't sure"
+      ],
+      "1980s": [
+        "PADDOCK BUZZ: {driver} rumoured to be considering his future",
+        "{driver} won't confirm a {year} return — speculation mounts",
+        "The rumour mill turns: {driver} weighing whether to carry on",
+        "{driver} plays it coy on next season; insiders sense the end near",
+        "Talk of retirement swirls around {driver} in the {year} paddock",
+        "{driver} keeps everyone guessing about his racing future"
+      ],
+      "1990s": [
+        "Sources suggest {driver} is reviewing his options for {year}",
+        "{driver} non-committal on the future — the paddock reads the signs",
+        "Speculation grows that {driver} may be assessing retirement",
+        "{driver} weighs the numbers and his future beyond {year}",
+        "A decision looms: {driver} keeps his {year} plans under wraps",
+        "The paddock senses {driver} is nearing a career choice"
+      ],
+      "2000s": [
+        "RUMOUR: {driver} said to be considering his future for {year}",
+        "{driver} sidesteps questions about next season — speculation builds",
+        "The paddock reads between the lines as {driver} stays coy on {year}",
+        "Whispers grow that {driver} is weighing retirement",
+        "{driver} keeps his options open, and the rumour mill spins",
+        "Is {driver} thinking about stepping away? Nobody's saying"
+      ],
+      "2010s": [
+        "SPECULATION: {driver} rumoured to be weighing his future beyond {year}",
+        "{driver} stays tight-lipped on {year} — the rumours won't quiet",
+        "The paddock is talking: is {driver} considering retirement?",
+        "{driver} won't confirm his plans, and speculation is running hot",
+        "Word is {driver} is mulling whether to race on past {year}",
+        "All eyes on {driver} as questions over his future swirl"
       ],
       "default": [
         "{driver} is considering their future",
         "Rumours swirl over {driver}'s plans",
-        "{driver} undecided about next season"
+        "{driver} undecided about next season",
+        "{driver} is weighing his future beyond {year}",
+        "Speculation grows over {driver}'s plans"
       ]
     },
     "team.tier|promoted": {
@@ -177,12 +667,56 @@
         "{team} expand the works; the money follows the results",
         "Fresh capital flows into {team}",
         "{team} promoted in the paddock's unwritten order",
-        "The garages whisper: {team} are coming good"
+        "The garages whisper: {team} are coming good",
+        "{team} coffers swell after a banner season, ready for {year}",
+        "The paddock notes {team} climbing — new backers aboard"
+      ],
+      "1970s": [
+        "{team} on the rise — fresh backing arrives for {year}",
+        "The sponsors are queuing at {team}'s door after a fine season",
+        "{team} expand the operation as the results draw the money",
+        "New investment flows into {team} for the {year} campaign",
+        "{team} climb the paddock order, and the budget follows",
+        "Better days at {team}: the coffers are filling in {year}"
+      ],
+      "1980s": [
+        "BIG MONEY: {team} land major sponsorship for {year}",
+        "{team} flush with new backing after a headline-grabbing season",
+        "The cash rolls in at {team} — expansion on the cards for {year}",
+        "{team} on the up, sponsors falling over themselves to sign",
+        "Fresh capital, fresh ambition: {team} bulk up for {year}",
+        "{team} ride the results to a fatter budget"
+      ],
+      "1990s": [
+        "{team} secure new commercial backing for the {year} season",
+        "Results attract investment: {team}'s budget grows for {year}",
+        "{team} move up the pit-lane order as the sponsors commit",
+        "A stronger balance sheet at {team} heading into {year}",
+        "{team} reward a solid campaign with expanded funding",
+        "The money follows the form — {team} on the rise in {year}"
+      ],
+      "2000s": [
+        "{team} confirm expanded backing for {year}",
+        "Sponsors sign on as {team} climb the constructors' order",
+        "{team}'s budget swells after a strong season — big plans for {year}",
+        "New partners boost {team} heading into {year}",
+        "{team} move up the grid pecking order with fresh investment",
+        "The results pay off: {team} land more funding for {year}"
+      ],
+      "2010s": [
+        "{team} announce major new backing for {year}",
+        "Investment flows into {team} after an eye-catching season",
+        "{team} on the up — sponsors queue as the budget grows for {year}",
+        "Fresh funding lifts {team} up the pit-lane order in {year}",
+        "{team} bank the rewards of a strong campaign with new backers",
+        "Momentum and money: {team} expand for {year}"
       ],
       "default": [
         "{team} budget grows after a strong season",
         "{team} attract new backing",
-        "{team} climb the paddock order"
+        "{team} climb the paddock order",
+        "{team} secure new backing for {year}",
+        "{team} climb the order as investment arrives"
       ]
     },
     "team.tier|relegated": {
@@ -192,12 +726,56 @@
         "Cutbacks at {team}; the transporter grows emptier",
         "{team} slide down the paddock's pecking order",
         "Creditors' letters pile up at {team}",
-        "The money men lose faith in {team}"
+        "The money men lose faith in {team}",
+        "{team} fortunes wane as backers drift away before {year}",
+        "Hard going at {team}: the money men lose their nerve"
+      ],
+      "1970s": [
+        "Lean times at {team} — the purse strings tighten for {year}",
+        "{team} lose key backers after a bruising season",
+        "Cutbacks loom at {team} as the money dries up for {year}",
+        "{team} slide down the paddock order, budget shrinking",
+        "A hard winter ahead for {team}: sponsors depart before {year}",
+        "The transporter grows emptier at {team}"
+      ],
+      "1980s": [
+        "MONEY TROUBLES: {team} lose backing ahead of {year}",
+        "{team} feel the squeeze as sponsors walk after a poor season",
+        "Belt-tightening at {team} — the {year} budget slashed",
+        "{team} slip down the order as the cash runs short",
+        "The good times end at {team}; creditors circle before {year}",
+        "{team} cut back, the big-spending days behind them"
+      ],
+      "1990s": [
+        "{team} lose commercial backing heading into {year}",
+        "A shrinking budget forces cutbacks at {team} for {year}",
+        "{team} slide down the constructors' order as sponsors exit",
+        "The balance sheet worsens at {team} before {year}",
+        "{team} pay for a poor campaign with reduced funding",
+        "The money leaves with the results — {team} on the slide in {year}"
+      ],
+      "2000s": [
+        "{team} confirm budget cuts for {year} after a difficult season",
+        "Sponsors depart as {team} slip down the order",
+        "{team}'s funding shrinks — tough decisions loom for {year}",
+        "A leaner {team} heads into {year} as backers walk",
+        "{team} feel the squeeze after a season to forget",
+        "The results cost them: {team} lose backing for {year}"
+      ],
+      "2010s": [
+        "{team} announce cutbacks for {year} as sponsors walk",
+        "Money troubles bite at {team} after a poor season",
+        "{team} slide down the pit-lane order, budget slashed for {year}",
+        "Backers depart and {team} tighten the belt heading into {year}",
+        "A difficult winter for {team}: funding dries up before {year}",
+        "The slide continues — {team} lose ground and money in {year}"
       ],
       "default": [
         "{team} budget shrinks after a poor season",
         "{team} lose sponsorship backing",
-        "{team} slip down the order"
+        "{team} slip down the order",
+        "{team} face budget cuts for {year}",
+        "{team} slip down the order as backing dries up"
       ]
     },
     "season.digest|season-complete": {
@@ -208,12 +786,56 @@
         "Final flag of {year}: {champion} takes the laurels",
         "SEASON REVIEW WIRE: {champion} champion; garages already building for next year",
         "{year} belongs to {champion}. The rest is for the history men.",
-        "Champagne for {champion} — the {year} title is settled"
+        "Champagne for {champion} — the {year} title is settled",
+        "{champion} takes the laurels as {year} enters the record books",
+        "The {year} crown belongs to {champion}; the winter talk begins"
+      ],
+      "1970s": [
+        "{champion} is champion — the {year} season signs off in style",
+        "A worthy king: {champion} takes the {year} crown",
+        "The {year} title goes to {champion}; the winter of speculation begins",
+        "{champion} crowned as {year} draws to a close",
+        "Season's end: {champion} stands atop the {year} standings",
+        "{champion} seals the {year} championship — a campaign to remember"
+      ],
+      "1980s": [
+        "{champion} IS CHAMPION — {year} belongs to a true great",
+        "The {year} title is settled: {champion} on top of the world",
+        "{champion} takes the crown as the {year} season roars to a close",
+        "Champagne and boost: {champion} wraps up {year}",
+        "{champion} rules {year} — the championship decided at last",
+        "A turbo-era classic ends with {champion} the {year} champion"
+      ],
+      "1990s": [
+        "{champion} clinches the {year} championship — the numbers add up",
+        "The {year} title falls to {champion} after a season-long campaign",
+        "{champion} closes out {year} as champion, the standings sealed",
+        "Consistency crowned: {champion} takes the {year} title",
+        "{champion} tops the final {year} table — a deserved champion",
+        "The {year} season ends with {champion} on top"
+      ],
+      "2000s": [
+        "CHAMPION: {champion} wraps up the {year} title",
+        "{champion} tops the final standings as {year} concludes",
+        "The board is settled: {champion} is the {year} champion",
+        "{champion} seals {year} — the title decided at the flag",
+        "A season-long fight ends with {champion} crowned in {year}",
+        "{champion} takes the {year} championship as the curtain falls"
+      ],
+      "2010s": [
+        "IT'S {champion}! The {year} championship is settled",
+        "{champion} is your {year} champion — season over, history made",
+        "The {year} title goes to {champion} as the final flag drops",
+        "{champion} wraps up {year} on top — a worthy champion",
+        "Season done: {champion} crowned {year} champion",
+        "{champion} seals the {year} crown — the standings are final"
       ],
       "default": [
         "{champion} is the {year} champion",
         "The {year} season closes with {champion} on top",
-        "{champion} takes the {year} title"
+        "{champion} takes the {year} title",
+        "{champion} is crowned champion for {year}",
+        "The {year} season ends with {champion} on top"
       ]
     }
   }

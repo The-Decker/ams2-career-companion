@@ -58,6 +58,9 @@ Locked product decisions this format encodes:
   "year": 1967,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-Vintage_Gen1",               // EXACT xmlName from data/ams2/classes.json
+  "refuellingAllowed": false,                  // OPTIONAL, SIM-INERT: AMS2 PitStopsAllowRefuelling for the
+                                               // season — false = disallowed (1967), true = allowed,
+                                               // omitted = not shown. Briefing display only.
   "pointsSystem": { /* same shape as a data/rules/f1-points-systems.json season entry:
                        racePoints, fastestLap, sharedDrivePolicy, driversBestN,
                        constructors, roundOverrides, pointsAdjustments ... */ },
@@ -74,6 +77,28 @@ Locked product decisions this format encodes:
         "fallbacks": ["kyalami_2019"]           // alternates when `id` itself is missing locally (DLC)
       },
       "laps": 80,                               // 100% historical race distance (see v1.1 for placeholders)
+      "weekend": {                              // OPTIONAL race-weekend shape; SIM-INERT display data
+        "practice": {                           //   AMS2 practice — ALWAYS time-limited (never laps)
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,                //   OPTIONAL: timed length in minutes
+          "weatherSlots": ["Clear","Clear","Clear","Clear"]  // OPTIONAL: up to 4 independent AMS2 slots
+        },
+        "qualifying": {                         //   AMS2 qualifying — ALWAYS time-limited
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": ["Clear","Clear","Clear","Clear"]
+        },
+        "races": [                              //   1 (era Grand Prix) or 2 (sprint + feature)
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": ["Clear","Clear","Clear","Clear"]  // OPTIONAL; race length stays `laps`
+          }
+        ]
+      },                                        // per-session weather SUPERSEDES setupGuide.session.weatherSlots
+                                                // for display; absent => the briefing falls back to it
       "setupGuide": {
         "session": {                            // exact in-game custom-race settings
           "opponents": 17,                      // grid minus player; preflight checks vs track AI cap

@@ -38,6 +38,65 @@ public sealed class XpMathTests
     }
 
     [Fact]
+    public void PerRound_XpRateMultipliers_ScaleTheMatchingCause()
+    {
+        var cfg = Round();
+        var win = new XpMath.RoundInputs(
+            ExpectedFinish: 5, EffectiveFinish: 1, FinishPosition: 1,
+            ScoredPoints: true, BeatTeammate: false, Dnf: null);
+
+        // Base: (5-1)*6 = 24 overperformance + win 40 = 64.
+        Assert.Equal(64, XpMath.PerRound(cfg, win));
+        // opportunist: win ×0.90 → 24 + 36 = 60 (only the win bonus scales).
+        Assert.Equal(60, XpMath.PerRound(cfg, win, Mods(("win", 0.90))));
+        // qualifying_specialist: finishVsExpected ×0.90 → 21.6 + 40 = 61.6 → 62.
+        Assert.Equal(62, XpMath.PerRound(cfg, win, Mods(("finishVsExpected", 0.90))));
+    }
+
+    [Fact]
+    public void PerRound_Midfield_ScalesOnlyOffPodiumOverperformance()
+    {
+        var cfg = Round();
+        // Expected P12, finished P8, scored points: (12-8)*6 = 24 + points 10 = 34.
+        var midfield = new XpMath.RoundInputs(
+            ExpectedFinish: 12, EffectiveFinish: 8, FinishPosition: 8,
+            ScoredPoints: true, BeatTeammate: false, Dnf: null);
+        Assert.Equal(34, XpMath.PerRound(cfg, midfield));
+        // student_of_the_craft: midfield ×1.5 scales the OFF-podium overperformance: 36 + 10 = 46.
+        Assert.Equal(46, XpMath.PerRound(cfg, midfield, Mods(("midfield", 1.5))));
+
+        // A podium finish is NOT boosted by midfield (position ≤ 3): (6-2)*6 = 24 + podium 20 = 44.
+        var podium = midfield with { ExpectedFinish = 6, EffectiveFinish = 2, FinishPosition = 2 };
+        Assert.Equal(44, XpMath.PerRound(cfg, podium));
+        Assert.Equal(44, XpMath.PerRound(cfg, podium, Mods(("midfield", 1.5))));
+    }
+
+    private static PlayerPerkModifiers Mods(params (string Cause, double Mult)[] xpMults) => new()
+    {
+        XpMults = xpMults.ToDictionary(x => x.Cause, x => x.Mult, StringComparer.Ordinal),
+    };
+
+    [Fact]
+    public void PerRound_BlanketMultipliers_ScaleTheWholeRound()
+    {
+        var cfg = Round();
+        // Expected P10, finished P4, scored points: (10-4)*6 = 36 + points 10 = 46 base.
+        var round = new XpMath.RoundInputs(
+            ExpectedFinish: 10, EffectiveFinish: 4, FinishPosition: 4,
+            ScoredPoints: true, BeatTeammate: false, Dnf: null);
+        Assert.Equal(46, XpMath.PerRound(cfg, round));
+
+        // adaptable: "all" ×0.85 scales the ENTIRE round (both the term and the bonus): 46*0.85 = 39.1 → 39.
+        Assert.Equal(39, XpMath.PerRound(cfg, round, Mods(("all", 0.85))));
+        // wonderkid young: "ageWindow" ×1.40 → 46*1.40 = 64.4 → 64.
+        Assert.Equal(64, XpMath.PerRound(cfg, round, Mods(("ageWindow", 1.40))));
+        // wonderkid at/past peak: "ageWindow" ×0.75 → 46*0.75 = 34.5 → 35 (away-from-zero).
+        Assert.Equal(35, XpMath.PerRound(cfg, round, Mods(("ageWindow", 0.75))));
+        // The two blanket multipliers compound: 46 * 0.85 * 1.40 = 54.74 → 55.
+        Assert.Equal(55, XpMath.PerRound(cfg, round, Mods(("all", 0.85), ("ageWindow", 1.40))));
+    }
+
+    [Fact]
     public void PerRound_OverperformanceTermIsClampedToTheCap()
     {
         // Expected last (P20), won (P1): (20-1)*6 = 114, clamped to the +60 cap, +win 40.

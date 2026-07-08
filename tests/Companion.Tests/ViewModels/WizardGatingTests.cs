@@ -151,6 +151,11 @@ public sealed class WizardGatingTests : IDisposable
         wizard.SelectedSeat = seat;
         wizard.NextCommand.Execute(null);
 
+        // choose the grid (v0.6.0): defaults to the whole field, so a single Next continues.
+        Assert.Equal(WizardStep.Grid, wizard.Step);
+        Assert.True(wizard.GridChoices.Count > 0 && wizard.GridChoices.All(c => c.IsIncluded));
+        wizard.NextCommand.Execute(null);
+
         // d: confirm — defaults and rules summary.
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         Assert.Equal("Test Championship 1967", wizard.CareerName);
@@ -178,6 +183,159 @@ public sealed class WizardGatingTests : IDisposable
         Assert.EndsWith(".ams2career", request.CareerFilePath);
         Assert.StartsWith(Path.Combine(_root, "careers"), request.CareerFilePath);
         Assert.NotEqual(0, defaultSeed); // Random(1234) never yields 0 here; documents the default was real
+    }
+
+    // ---------- choose the grid (v0.6.0) ----------
+
+    private NewCareerWizardViewModel WizardAtGrid(string folderName)
+    {
+        // A three-seat pack so excluding one leaves a valid field (player + one AI).
+        var basePack = TestPackBuilder.TwoRoundPack();
+        var pack3 = basePack with
+        {
+            Drivers = basePack.Drivers.Append(TestPackBuilder.Driver("driver.clark")).ToList(),
+            Entries = basePack.Entries
+                .Append(TestPackBuilder.Entry("team.brabham", "driver.clark", "3", "Stock Livery #3")).ToList(),
+        };
+        WritePack(folderName, pack3);
+        var wizard = Wizard();
+        SelectPack(wizard, folderName);
+        wizard.NextCommand.Execute(null); // -> Verification
+        wizard.ProceedAnyway = true;      // "Stock Livery #3" is unknown to the test library → a warning
+        wizard.NextCommand.Execute(null); // -> SeatPick
+        wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null); // -> Grid
+        return wizard;
+    }
+
+    private static void AdvanceToCreate(NewCareerWizardViewModel wizard)
+    {
+        while (wizard.Step != WizardStep.Confirm)
+            wizard.NextCommand.Execute(null);
+        wizard.CareerName = "Grid Test";
+        wizard.NextCommand.Execute(null); // Create
+    }
+
+    [Fact]
+    public void GridStep_ExcludingASeat_WritesTheChosenFieldIntoTheRequest()
+    {
+        var wizard = WizardAtGrid("grid-exclude");
+        Assert.Equal(WizardStep.Grid, wizard.Step);
+        Assert.Equal(3, wizard.GridChoices.Count);
+
+        var player = wizard.GridChoices.Single(c => c.LiveryName == TestPackBuilder.StockLivery2);
+        Assert.True(player is { IsLocked: true, IsIncluded: true }); // player is locked on
+
+        // The AI-opponent count is the field minus the player's own car — the exact number to type
+        // into AMS2, so the player never does the "minus one" themselves.
+        Assert.Equal(2, wizard.AiOpponentCount); // 3 cars in, minus the player
+
+        wizard.GridChoices.Single(c => c.LiveryName == "Stock Livery #3").IsIncluded = false;
+        Assert.Equal(2, wizard.IncludedCount);
+        Assert.Equal(1, wizard.AiOpponentCount); // 2 cars in, minus the player
+        Assert.True(wizard.CanGoNext);
+
+        AdvanceToCreate(wizard);
+
+        var selection = _factory.LastRequest!.GridSelection;
+        Assert.NotNull(selection);
+        Assert.Contains(TestPackBuilder.StockLivery2, selection!.IncludedLiveries!);
+        Assert.DoesNotContain("Stock Livery #3", selection.IncludedLiveries!);
+    }
+
+    private NewCareerWizardViewModel WizardAtGridWithSwapAndPerRaceGrid(string folderName)
+    {
+        // Car #3 changes drivers mid-season (two entries, SAME number, DIFFERENT liveries — the
+        // shape 1988's Williams #5 has); and every round has a per-race grid of only 2 cars, smaller
+        // than the 3-car roster (the pre-qualifying shape).
+        var basePack = TestPackBuilder.TwoRoundPack();
+        var pack = basePack with
+        {
+            Drivers = basePack.Drivers
+                .Append(TestPackBuilder.Driver("driver.clark"))
+                .Append(TestPackBuilder.Driver("driver.swap")).ToList(),
+            Entries = basePack.Entries
+                .Append(TestPackBuilder.Entry("team.brabham", "driver.clark", "3", "Stock Livery #3") with { Rounds = "1" })
+                .Append(TestPackBuilder.Entry("team.brabham", "driver.swap", "3", "Stock Livery #3 (swap)") with { Rounds = "2" })
+                .ToList(),
+            Season = basePack.Season with
+            {
+                Rounds = basePack.Season.Rounds.Select(r => r with
+                {
+                    Grid = new Companion.Core.Packs.PackRoundGrid
+                    {
+                        Size = 2,
+                        StarterDriverIds = ["driver.brabham", "driver.hulme"],
+                    },
+                }).ToList(),
+            },
+        };
+        WritePack(folderName, pack);
+        var wizard = Wizard();
+        SelectPack(wizard, folderName);
+        wizard.NextCommand.Execute(null); // -> Verification
+        wizard.ProceedAnyway = true;      // the extra liveries are unknown to the test library → warnings
+        wizard.NextCommand.Execute(null); // -> SeatPick
+        wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.NextCommand.Execute(null); // -> Grid
+        return wizard;
+    }
+
+    [Fact]
+    public void GridStep_GroupsMidSeasonSwapsIntoOneSeat_AndOpponentsUsePerRaceGridSize()
+    {
+        var wizard = WizardAtGridWithSwapAndPerRaceGrid("grid-swap");
+        Assert.Equal(WizardStep.Grid, wizard.Step);
+
+        // The swap seat (car #3) is ONE car across the year → ONE row, not two — so three seats, not
+        // four entries. (A pack whose livery names embed the driver used to list the seat twice.)
+        Assert.Equal(3, wizard.GridChoices.Count);
+        var swapSeat = wizard.GridChoices.Single(c => c.LiveryName == "Stock Livery #3");
+        Assert.Equal(2, swapSeat.Liveries.Count); // both drivers' liveries ride on the one seat
+
+        // The per-race grid is 2 cars, smaller than the 3-car roster — so the AMS2 opponent count is
+        // the on-track grid minus the player (1), NOT roster-minus-one (2).
+        Assert.Equal(3, wizard.IncludedCount);   // season roster
+        Assert.Equal(2, wizard.MaxRaceCars);     // on-track grid per race
+        Assert.Equal(1, wizard.AiOpponentCount); // grid(2) - the player's own car
+    }
+
+    [Fact]
+    public void GridStep_ExcludingASwapSeat_DropsAllItsLiveries()
+    {
+        var wizard = WizardAtGridWithSwapAndPerRaceGrid("grid-swap-exclude");
+        wizard.GridChoices.Single(c => c.LiveryName == "Stock Livery #3").IsIncluded = false;
+
+        AdvanceToCreate(wizard);
+
+        var selection = _factory.LastRequest!.GridSelection;
+        Assert.NotNull(selection);
+        // Both of the excluded seat's liveries are gone — not just the primary one.
+        Assert.DoesNotContain("Stock Livery #3", selection!.IncludedLiveries!);
+        Assert.DoesNotContain("Stock Livery #3 (swap)", selection.IncludedLiveries!);
+    }
+
+    [Fact]
+    public void GridStep_WholeFieldIncluded_LeavesTheRequestSelectionNull()
+    {
+        var wizard = WizardAtGrid("grid-all");
+        Assert.True(wizard.GridChoices.All(c => c.IsIncluded));
+
+        AdvanceToCreate(wizard);
+
+        Assert.Null(_factory.LastRequest!.GridSelection); // whole pack → identity, byte-identical
+    }
+
+    [Fact]
+    public void GridStep_BlocksNext_BelowTwoCars()
+    {
+        var wizard = WizardAtGrid("grid-block");
+        // Exclude everything except the locked player → 1 car → a race needs at least two.
+        foreach (var c in wizard.GridChoices.Where(c => !c.IsLocked))
+            c.IsIncluded = false;
+
+        Assert.Equal(1, wizard.IncludedCount);
+        Assert.False(wizard.CanGoNext);
     }
 
     // ---------- back navigation ----------

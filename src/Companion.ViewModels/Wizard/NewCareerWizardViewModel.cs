@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Packs;
+using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
@@ -72,7 +74,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         WizardStep.SeasonPick => SelectedPack is { LoadError: null },
         WizardStep.Verification => !HasErrors && (!HasWarnings || ProceedAnyway),
-        WizardStep.SeatPick => SelectedSeat is not null,
+        WizardStep.SeatPick => SelectedSeat is not null || IsOwnEntrant,
+        WizardStep.Grid => GridChoices.Count(c => c.IsIncluded) >= 2,
         WizardStep.Character => Character?.IsValid ?? true,
         WizardStep.Confirm => CanCreate,
         _ => false,
@@ -105,6 +108,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.SeatPick:
+                BuildGridChoices();
+                Step = WizardStep.Grid;
+                break;
+
+            case WizardStep.Grid:
                 if (HasCharacterStep)
                 {
                     PrepareCharacter();
@@ -133,10 +141,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (!CanGoBack)
             return;
-        // Confirm steps back over the (possibly skipped) character step.
+        // Confirm steps back over the (possibly skipped) character step to the grid step.
         Step = Step switch
         {
-            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
+            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.Grid,
             _ => Step - 1,
         };
     }
@@ -267,21 +275,48 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private SeatOption? _selectedSeat;
 
+    /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
+    /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path — a
+    /// stable synthetic driver, a neutral car, character-shaped ratings), added to the grid rather than
+    /// replacing a historical driver. When set it takes precedence over the seat selection; empty = the
+    /// ordinary "pick a pack seat" flow (byte-identical to a career created before this field).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
+    private string _customLiveryName = "";
+
+    /// <summary>True when the player typed a custom livery — they race as their own entrant instead of
+    /// taking a pack seat.</summary>
+    public bool IsOwnEntrant => !string.IsNullOrWhiteSpace(CustomLiveryName);
+
+    /// <summary>The livery the player will drive: the typed custom livery (own entrant) when present,
+    /// otherwise the selected pack seat's livery. Null only before either is chosen (the Next gate
+    /// blocks that).</summary>
+    private string? PlayerLivery => IsOwnEntrant ? CustomLiveryName.Trim() : SelectedSeat?.LiveryName;
+
     private void BuildSeats()
     {
         Seats.Clear();
         SelectedSeat = null;
+        CustomLiveryName = "";
 
         var pack = Pack!;
         var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
         var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
 
-        foreach (var entry in pack.Entries)
+        // The player picks a SEAT (a livery) and drives it the WHOLE season. When a historical seat
+        // changed drivers mid-year (e.g. Watson subbing for Lauda), the pack has two entries with the
+        // SAME livery — so group by livery and show ONE seat, represented by the driver who held it
+        // for the most rounds. Packs whose livery names embed the driver (e.g. "1988 Williams #5 -
+        // N. Mansell") never collide, so they are unaffected; team-only livery names (1985) no longer
+        // list the same seat twice. (Dangling team/driver refs are validation findings, skipped.)
+        foreach (var group in pack.Entries
+                     .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
+                     .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal))
         {
-            // A dangling reference is a validation finding, not a seat — skip defensively.
-            if (!teamsById.TryGetValue(entry.TeamId, out var team) ||
-                !driversById.TryGetValue(entry.DriverId, out var driver))
-                continue;
+            var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
+            var team = teamsById[entry.TeamId];
+            var driver = driversById[entry.DriverId];
 
             Seats.Add(new SeatOption
             {
@@ -301,6 +336,135 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         }
     }
 
+    /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
+    /// primary driver of a seat that changed hands mid-season.</summary>
+    private static int RoundsCovered(Companion.Core.Packs.SeasonPack pack, string rounds) =>
+        Companion.Core.Packs.RoundsRange.TryParse(rounds, out var range, out _)
+            ? pack.Season.Rounds.Count(r => range.Contains(r.Round))
+            : 0;
+
+    // ---------- step: choose the grid (v0.6.0) ----------
+
+    /// <summary>The season's seats (one per livery) the player can include/exclude for the field.
+    /// Every seat starts included (whole pack = the default, byte-identical); the player's own seat is
+    /// locked in.</summary>
+    public ObservableCollection<GridSeatChoice> GridChoices { get; } = [];
+
+    /// <summary>Total cars on the grid — every included seat, the player's own car included.</summary>
+    /// <summary>The largest per-round grid size in the pack (26 for 1988, where only 26 of ~30 qualify
+    /// each round). Cached when the choices are built. Zero for a pack with no grid blocks.</summary>
+    private int _maxRoundGridSize;
+
+    /// <summary>The season roster the player picked — every included seat (their own car included).
+    /// This is the pool of cars that CAN race; the per-race grid draws from it (see MaxRaceCars).</summary>
+    public int IncludedCount => GridChoices.Count(c => c.IsIncluded);
+
+    /// <summary>The most cars actually on track in a single round given the selection: the per-race
+    /// grid size, capped by how many seats are included. For a pre-qualifying season this is smaller
+    /// than the roster (1988: 30-car roster, 26 on the grid) — so it, not IncludedCount, is what the
+    /// player sees racing.</summary>
+    public int MaxRaceCars => _maxRoundGridSize <= 0
+        ? IncludedCount
+        : Math.Min(IncludedCount, _maxRoundGridSize);
+
+    /// <summary>The exact number to type into AMS2's "AI Opponents" — the on-track grid minus the
+    /// player's own car. Derived from MaxRaceCars, NOT the roster: a pre-qualifying season fields
+    /// fewer cars per round than the full field, so roster-minus-one would be too high.</summary>
+    public int AiOpponentCount => Math.Max(0, MaxRaceCars - 1);
+
+    private void BuildGridChoices()
+    {
+        foreach (var old in GridChoices)
+            old.PropertyChanged -= OnGridChoiceChanged;
+        GridChoices.Clear();
+
+        var pack = Pack!;
+        var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
+        var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
+        // An own entrant is no pack seat, so no pack row is locked as "You" — a synthetic locked row
+        // is added after the pack seats below.
+        string? playerLivery = IsOwnEntrant ? null : SelectedSeat?.LiveryName;
+
+        // The largest field the game actually puts on track in any round. With per-race grids
+        // (1988 pre-qualifying: ~30 cars for 26 slots) this is the round grid size, not the roster —
+        // it drives the AI-opponent guidance so the number matches what the player sees racing.
+        _maxRoundGridSize = pack.Season.Rounds.Select(r => r.Grid?.Size ?? 0).DefaultIfEmpty(0).Max();
+
+        // One choice per SEAT (car number), NOT per livery. A seat that changed drivers mid-season
+        // (Williams #5 = Mansell/Brundle/Schlesser) is ONE car across the year, so it is one row —
+        // otherwise a pack whose livery names embed the driver lists the same seat several times and
+        // over-counts the field (the "34 cars" bug). Represented by its longest-tenure driver; the
+        // choice carries every livery so excluding it drops them all.
+        foreach (var group in pack.Entries
+                     .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
+                     .GroupBy(e => e.Number, StringComparer.Ordinal))
+        {
+            var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
+            var liveries = group.Select(e => e.Ams2LiveryName).Distinct(StringComparer.Ordinal).ToList();
+            var choice = new GridSeatChoice
+            {
+                LiveryName = entry.Ams2LiveryName,
+                Liveries = liveries,
+                DriverName = driversById[entry.DriverId].Name,
+                TeamName = teamsById[entry.TeamId].Name,
+                IsLocked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal),
+                IsIncluded = true,
+            };
+            choice.PropertyChanged += OnGridChoiceChanged;
+            GridChoices.Add(choice);
+        }
+
+        // Own entrant: the player is not a pack seat, so add their independent car as a locked "You"
+        // row. Its Liveries are empty so it never joins the pack-field selection (the grid resolver
+        // adds the synthetic player seat itself); IsLocked keeps it on the grid and in the field count.
+        if (IsOwnEntrant)
+        {
+            var you = new GridSeatChoice
+            {
+                LiveryName = PlayerLivery!,
+                Liveries = [],
+                DriverName = "You — own entrant",
+                TeamName = "Independent",
+                IsLocked = true,
+            };
+            you.PropertyChanged += OnGridChoiceChanged;
+            GridChoices.Add(you);
+        }
+
+        OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(MaxRaceCars));
+        OnPropertyChanged(nameof(AiOpponentCount));
+    }
+
+    private void OnGridChoiceChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(GridSeatChoice.IsIncluded))
+            return;
+        OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(MaxRaceCars));
+        OnPropertyChanged(nameof(AiOpponentCount));
+        OnPropertyChanged(nameof(CanGoNext));
+        NextCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>The chosen field, or null when every seat is included (the whole pack — the identity
+    /// that keeps the career byte-identical to one made before this feature). The player's own seat is
+    /// always included.</summary>
+    private GridSelection? BuildGridSelection()
+    {
+        if (GridChoices.Count == 0)
+            return null;
+        // Whole field (no seat excluded) → null selection, so the career is byte-identical to one
+        // created before this feature existed.
+        if (GridChoices.All(c => c.IsIncluded || c.IsLocked))
+            return null;
+        var included = GridChoices
+            .Where(c => c.IsIncluded || c.IsLocked)
+            .SelectMany(c => c.Liveries)   // a seat contributes ALL its liveries (mid-season swaps)
+            .ToList();
+        return new GridSelection { IncludedLiveries = included };
+    }
+
     // ---------- step c2: character (Increment 4a) ----------
 
     [ObservableProperty]
@@ -314,7 +478,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
-        Character = new CharacterViewModel(_environment.Rules.Character);
+        // Pre-fill the driver name with the seat's historical driver as a starting point; an own
+        // entrant has no seat driver, so they name themselves (empty seed).
+        Character = new CharacterViewModel(
+            _environment.Rules.Character, IsOwnEntrant ? null : SelectedSeat?.DriverName);
         Character.PropertyChanged += OnCharacterChanged;
     }
 
@@ -346,7 +513,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     public bool CanCreate =>
         Pack is not null &&
-        SelectedSeat is not null &&
+        (SelectedSeat is not null || IsOwnEntrant) &&
         !string.IsNullOrWhiteSpace(CareerName) &&
         long.TryParse(MasterSeedText, out _);
 
@@ -454,10 +621,14 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CareerFilePath = UniqueCareerFilePath(),
             CareerName = CareerName.Trim(),
             MasterSeed = long.Parse(MasterSeedText),
-            PlayerLiveryName = SelectedSeat!.LiveryName,
+            PlayerLiveryName = PlayerLivery!,
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             Character = Character?.BuildProfile(),
+            GridSelection = BuildGridSelection(),
+            // Ratings Phase 3: every new career is form-reactive — the sim's field reacts to who is
+            // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
+            FormAware = true,
         };
 
         ICareerSession session;

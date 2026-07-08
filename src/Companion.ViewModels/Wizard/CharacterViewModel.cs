@@ -16,27 +16,17 @@ public sealed partial class CharacterViewModel : ObservableObject
 {
     private readonly CharacterRules _rules;
 
-    private static readonly IReadOnlyDictionary<string, string> StatLabels =
-        new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["pace"] = "Pace",
-            ["oneLap"] = "One-lap pace",
-            ["craft"] = "Craft",
-            ["racecraft"] = "Racecraft",
-            ["adaptability"] = "Adaptability",
-            ["marketability"] = "Marketability",
-            ["durability"] = "Durability",
-        };
-
-    public CharacterViewModel(CharacterRules rules)
+    public CharacterViewModel(CharacterRules rules, string? defaultName = null)
     {
         _rules = rules;
+        _name = defaultName?.Trim() ?? "";
 
         Stats = _rules.Stats.TalentStats.Select(s => new StatSlider(s.Id, Label(s.Id), Recompute)).ToList();
         MetaStats = _rules.Stats.MetaStats.Select(m => new StatSlider(m.Id, Label(m.Id), Recompute, m.Default)).ToList();
 
         Perks = _rules.Perks
-            .Select(p => new PerkOption(p.Id, p.Name, p.Category, p.Cost, p.Description))
+            .Select(p => new PerkOption(p.Id, p.Name, p.Category, p.Cost, p.Description,
+                PerkDescriber.Benefits(p), PerkDescriber.Drawbacks(p)))
             .ToList();
         // A perk toggled directly (the shelf checkbox binds IsSelected) recomputes the CP meter,
         // just like the command path.
@@ -69,6 +59,22 @@ public sealed partial class CharacterViewModel : ObservableObject
 
     public IReadOnlyList<Archetype> Archetypes { get; }
 
+    /// <summary>The player's driver name — the identity the whole app will use. Pre-filled with the
+    /// seat's historical driver as a starting point; the player makes it their own.</summary>
+    [ObservableProperty]
+    private string _name;
+
+    /// <summary>Youngest / oldest a created driver can be, and the default (a typical rookie).</summary>
+    public const int MinAge = 16;
+    public const int MaxAge = 45;
+    public const int DefaultAge = 23;
+
+    /// <summary>The driver's REAL age in their first season — the character's own age (16–45), which
+    /// drives the sim's season-end aging and the contract-offer age risk. A young driver has years of
+    /// growth ahead; a veteran is courted more warily. Independent of the historical seat.</summary>
+    [ObservableProperty]
+    private int _age = DefaultAge;
+
     [ObservableProperty]
     private Archetype? _selectedArchetype;
 
@@ -79,27 +85,57 @@ public sealed partial class CharacterViewModel : ObservableObject
         ApplyArchetype(value);
     }
 
-    /// <summary>The creation CP budget (10 by default).</summary>
+    /// <summary>The creation character-point budget for PERKS (data-driven; 6 in the shipped rules).</summary>
     public int Budget => _rules.CharacterPoints.CreationBudget;
+
+    /// <summary>The MOST perk points a build may spend — the budget plus the drawback refund headroom
+    /// (9 = 6 + 3 in the shipped rules): taking a drawback-heavy perk refunds points you can pour into
+    /// one premium upside. Displayed so the meter never reads a nonsensical "8 of 6".</summary>
+    public int MaxPerkPoints => _rules.CharacterPoints.MaxNetSpend;
 
     /// <summary>Net CP the selected perks cost (refund perks are negative).</summary>
     public int NetCpSpend => Perks.Where(p => p.IsSelected).Sum(p => p.Cost);
 
-    /// <summary>CP left over from the budget for stat growth (never negative for display).</summary>
+    /// <summary>Perk CP left over against the budget (never negative for display).</summary>
     public int RemainingCp => Math.Max(0, Budget - NetCpSpend);
 
-    /// <summary>A build is valid when its net perk spend lands in the audited window
-    /// [minBudgetAfterSpend, budget + maxRefundHeadroom] (0..16 by default).</summary>
-    public bool IsValid =>
+    /// <summary>How many perks are chosen right now (an archetype supplies its signature few).</summary>
+    public int SelectedPerkCount => Perks.Count(p => p.IsSelected);
+
+    /// <summary>The most perks a creation build may carry, or null for no count limit.</summary>
+    public int? MaxPerks => _rules.CharacterPoints.MaxPerks;
+
+    /// <summary>Perks fit the count cap — an archetype plus only a few more. No cap = always true.</summary>
+    public bool PerksWithinCount => MaxPerks is not int cap || SelectedPerkCount <= cap;
+
+    /// <summary>Perks fit the audited CP window [minBudgetAfterSpend, budget + maxRefundHeadroom].</summary>
+    public bool PerksInBudget =>
         NetCpSpend >= _rules.CharacterPoints.MinBudgetAfterSpend
         && NetCpSpend <= _rules.CharacterPoints.MaxNetSpend;
 
+    /// <summary>The most total talent a driver may carry across the seven stats. Redistribution is
+    /// free — being a 0.85 somewhere means being low elsewhere — but the SUM is capped, so no driver
+    /// is great at everything. Data-driven (perks.json).</summary>
+    public double StatCap => _rules.CharacterPoints.StatSumCap;
+
+    /// <summary>The current total across all seven stats.</summary>
+    public double StatTotal => Stats.Concat(MetaStats).Sum(s => s.Value);
+
+    public bool StatsWithinCap => StatTotal <= StatCap + 1e-9;
+
+    /// <summary>A build is valid when its perks fit the count cap AND the CP budget AND its stats
+    /// fit the talent cap.</summary>
+    public bool IsValid => PerksWithinCount && PerksInBudget && StatsWithinCap;
+
     /// <summary>The one-line reason the current build is invalid, for the wizard footer; null when valid.</summary>
-    public string? Invalidity => IsValid
-        ? null
-        : NetCpSpend < _rules.CharacterPoints.MinBudgetAfterSpend
-            ? $"This build refunds more CP than allowed — spend at least {_rules.CharacterPoints.MinBudgetAfterSpend}."
-            : $"This build costs {NetCpSpend} CP, over the {_rules.CharacterPoints.MaxNetSpend} maximum.";
+    public string? Invalidity => IsValid ? null
+        : !StatsWithinCap
+            ? $"Your stats total {StatTotal:0.00} of {StatCap:0.00} talent — lower one to raise another."
+            : !PerksWithinCount
+                ? $"You've picked {SelectedPerkCount} perks — a driver carries at most {MaxPerks}. Drop one."
+                : NetCpSpend < _rules.CharacterPoints.MinBudgetAfterSpend
+                    ? $"This build banks more perk points than allowed — spend at least {_rules.CharacterPoints.MinBudgetAfterSpend}."
+                    : $"These perks cost {NetCpSpend} of a {_rules.CharacterPoints.MaxNetSpend} maximum — drop one.";
 
     private bool _suppressRecompute;
 
@@ -136,6 +172,11 @@ public sealed partial class CharacterViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(NetCpSpend));
         OnPropertyChanged(nameof(RemainingCp));
+        OnPropertyChanged(nameof(SelectedPerkCount));
+        OnPropertyChanged(nameof(PerksWithinCount));
+        OnPropertyChanged(nameof(PerksInBudget));
+        OnPropertyChanged(nameof(StatTotal));
+        OnPropertyChanged(nameof(StatsWithinCap));
         OnPropertyChanged(nameof(IsValid));
         OnPropertyChanged(nameof(Invalidity));
     }
@@ -149,13 +190,15 @@ public sealed partial class CharacterViewModel : ObservableObject
 
         return new CharacterProfile
         {
+            Name = Name.Trim(),
+            Age = Math.Clamp(Age, MinAge, MaxAge),
             Stats = stats,
             PerkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList(),
             CpUnspent = RemainingCp,
         };
     }
 
-    private static string Label(string id) => StatLabels.GetValueOrDefault(id, id);
+    private static string Label(string id) => CharacterLabels.Stat(id);
 }
 
 /// <summary>One stat slider, clamped to the character-creation band (0.15–0.85 for talent stats,
@@ -202,7 +245,9 @@ public sealed partial class StatSlider : ObservableObject
 }
 
 /// <summary>One selectable perk on the shelf.</summary>
-public sealed partial class PerkOption(string id, string name, string category, int cost, string description)
+public sealed partial class PerkOption(
+    string id, string name, string category, int cost, string description,
+    IReadOnlyList<string> benefits, IReadOnlyList<string> drawbacks)
     : ObservableObject
 {
     public string Id { get; } = id;
@@ -210,6 +255,12 @@ public sealed partial class PerkOption(string id, string name, string category, 
     public string Category { get; } = category;
     public int Cost { get; } = cost;
     public string Description { get; } = description;
+
+    /// <summary>The good things this perk does, in plain language.</summary>
+    public IReadOnlyList<string> Benefits { get; } = benefits;
+
+    /// <summary>The costs this perk carries, in plain language.</summary>
+    public IReadOnlyList<string> Drawbacks { get; } = drawbacks;
 
     /// <summary>The perk cost shown with a sign ("+2", "0", "−1" for a refund).</summary>
     public string CostLabel => Cost > 0 ? $"+{Cost}" : Cost.ToString(System.Globalization.CultureInfo.InvariantCulture);

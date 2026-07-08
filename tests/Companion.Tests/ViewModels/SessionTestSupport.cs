@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Companion.Ams2;
 using Companion.Ams2.ContentLibrary;
+using Companion.Ams2.Skins;
+using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Json;
 using Companion.Core.Packs;
@@ -229,6 +231,14 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public BriefingModel? Briefing { get; set; }
 
+    /// <summary>Real historical seasons keyed by year, surfaced through the
+    /// <see cref="ICareerSession.HistoricalSeason(int)"/> seam (empty by default = the default-null
+    /// seam behaviour). Lets a test drive the circuit lookup with different per-year data.</summary>
+    public Dictionary<int, HistoricalSeason> HistoryByYear { get; } = [];
+
+    public HistoricalSeason? HistoricalSeason(int seasonYear) =>
+        HistoryByYear.GetValueOrDefault(seasonYear);
+
     public Queue<StageOutcome> StageOutcomes { get; } = new();
 
     public List<ResultDraft> Applied { get; } = [];
@@ -240,7 +250,15 @@ internal sealed class FakeCareerSession : ICareerSession
             ? StageOutcomes.Dequeue()
             : new StageOutcome { Success = false, Messages = ["no staged outcome queued"] };
 
-    public IReadOnlyList<GridSeat> CurrentGrid() => [];
+    /// <summary>The seats <see cref="CurrentGrid"/> returns (empty by default).</summary>
+    public IReadOnlyList<GridSeat> Grid { get; set; } = [];
+
+    public IReadOnlyList<GridSeat> CurrentGrid() => Grid;
+
+    /// <summary>The value <see cref="CurrentExpectedFinish"/> returns (null = no seat/gamble).</summary>
+    public int? ExpectedFinish { get; set; }
+
+    public int? CurrentExpectedFinish() => ExpectedFinish;
 
     public ConfirmModel Preview(ResultDraft draft) => new()
     {
@@ -285,6 +303,89 @@ internal sealed class FakeCareerSession : ICareerSession
         if (StartNextSeasonThrows is not null)
             throw StartNextSeasonThrows;
         SignedTeams.Add(teamId);
+    }
+
+    // ---------- character development (depth 4) ----------
+
+    /// <summary>The dossier surfaced to the Driver tab / review development block (null = no character).</summary>
+    public CharacterDossier? Dossier { get; set; }
+
+    /// <summary>Points the review's development block shows as available.</summary>
+    public int Cp { get; set; }
+
+    /// <summary>Development spends recorded through the seam, in order.</summary>
+    public List<CharacterSpend> Spends { get; } = [];
+
+    /// <summary>Perks the review's development block offers for purchase.</summary>
+    public List<PurchasablePerk> Buyable { get; } = [];
+
+    public CharacterDossier? CharacterDossier() => Dossier;
+
+    // ---------- skins (read-only lens) ----------
+
+    /// <summary>The skin picture the Skins lens projects (empty by default).</summary>
+    public SkinAssignmentPlan SkinPlan { get; set; } = SkinAssignmentPlan.Empty;
+
+    public SkinAssignmentPlan CurrentSkinAssignments() => SkinPlan;
+
+    /// <summary>Livery names activated through the seam, in order.</summary>
+    public List<string> ActivatedLiveries { get; } = [];
+
+    /// <summary>The result the activator returns (success by default).</summary>
+    public LiveryActivationResult ActivationResult { get; set; } =
+        new() { Success = true, Slot = 61, Message = "Activated as slot 61." };
+
+    public LiveryActivationResult ActivateLivery(string liveryName)
+    {
+        ActivatedLiveries.Add(liveryName);
+        return ActivationResult;
+    }
+
+    /// <summary>The grid-editor overrides this fake persists (rename / rebind), keyed by livery.</summary>
+    public Dictionary<string, SeatStagingOverride> Overrides { get; } = new(StringComparer.Ordinal);
+
+    public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() => Overrides;
+
+    public void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride)
+    {
+        if (seatOverride.IsEmpty)
+            Overrides.Remove(liveryKey);
+        else
+            Overrides[liveryKey] = seatOverride;
+    }
+
+    /// <summary>The player's driver id + character display name, surfaced to name-rendering screens.</summary>
+    public (string DriverId, string DisplayName)? Identity { get; set; }
+
+    public (string DriverId, string DisplayName)? PlayerIdentity() => Identity;
+
+    /// <summary>The team the player drives for, surfaced to the Driver dossier.</summary>
+    public string? TeamName { get; set; }
+
+    public string? PlayerTeamName() => TeamName;
+
+    public int AvailableCharacterCp() => Cp;
+
+    public IReadOnlyList<PurchasablePerk> PurchasablePerks() =>
+        Buyable.Where(p => p.Cost <= Cp).ToList();
+
+    public void SpendCharacterPoint(CharacterSpend spend)
+    {
+        if (spend.Cost > Cp)
+            throw new InvalidOperationException("unaffordable");
+        Spends.Add(spend);
+        Cp -= spend.Cost;
+        // Mirror the real session: a stat spend bumps the shown value a step so a re-read reflects it.
+        if (spend.Kind == "stat" && Dossier is { } dossier)
+        {
+            var raised = dossier.Stats
+                .Select(s => s.Id == spend.Target ? s with { Value = s.Value + 0.02 } : s)
+                .ToList();
+            Dossier = dossier with { Stats = raised };
+        }
+        // A bought perk is no longer on offer.
+        if (spend.Kind == "perk")
+            Buyable.RemoveAll(p => p.Id == spend.Target);
     }
 }
 

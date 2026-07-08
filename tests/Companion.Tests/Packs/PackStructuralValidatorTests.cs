@@ -575,4 +575,78 @@ public class PackStructuralValidatorTests
 
         AssertError(Validate(pack), "Entry #1 (driver.brabham)");
     }
+
+    // ---------- weekend: per-session weather + durations ----------
+
+    /// <summary>The valid pack with the given weekend block on round 1 (round 2 stays single-race).</summary>
+    private static SeasonPack PackWithWeekend(PackWeekend weekend)
+    {
+        var basePack = ValidPack();
+        var round1 = basePack.Season.Rounds[0] with { Weekend = weekend };
+        return basePack with
+        {
+            Season = basePack.Season with { Rounds = [round1, basePack.Season.Rounds[1]] },
+        };
+    }
+
+    private static PackWeekend Weekend(
+        PackWeekendSession? practice = null, PackWeekendSession? qualifying = null,
+        PackWeekendRace? race = null) => new()
+    {
+        Practice = practice,
+        Qualifying = qualifying,
+        Races = [race ?? new PackWeekendRace { Id = "race", Label = "Grand Prix" }],
+    };
+
+    [Fact]
+    public void Validate_WeekendSessionWithMoreThanFourWeatherSlots_IsAnError()
+    {
+        var pack = PackWithWeekend(Weekend(
+            practice: new PackWeekendSession { WeatherSlots = ["Clear", "Clear", "Clear", "Clear", "Clear"] }));
+
+        AssertError(Validate(pack), "at most 4");
+    }
+
+    [Fact]
+    public void Validate_WeekendRaceWithMoreThanFourWeatherSlots_IsAnError()
+    {
+        var pack = PackWithWeekend(Weekend(
+            race: new PackWeekendRace
+            {
+                Id = "race", Label = "Grand Prix",
+                WeatherSlots = ["Clear", "Clear", "Clear", "Clear", "Clear"],
+            }));
+
+        AssertError(Validate(pack), "at most 4");
+    }
+
+    [Fact]
+    public void Validate_WeekendSessionWithNonPositiveDuration_IsAnError()
+    {
+        var pack = PackWithWeekend(Weekend(
+            qualifying: new PackWeekendSession { DurationMinutes = 0 }));
+
+        AssertError(Validate(pack), "greater than 0");
+    }
+
+    [Fact]
+    public void Validate_WeekendWithBlankWeatherSlot_IsAWarning()
+    {
+        var pack = PackWithWeekend(Weekend(
+            practice: new PackWeekendSession { WeatherSlots = ["Clear", " "] }));
+
+        AssertWarning(Validate(pack), "blank weather slot");
+    }
+
+    [Fact]
+    public void Validate_WeekendWithFourSlotsAndPositiveDurations_IsClean()
+    {
+        string[] fourClear = ["Clear", "Clear", "Clear", "Clear"];
+        var pack = PackWithWeekend(Weekend(
+            practice: new PackWeekendSession { DurationMinutes = 60, WeatherSlots = fourClear },
+            qualifying: new PackWeekendSession { DurationMinutes = 60, WeatherSlots = fourClear },
+            race: new PackWeekendRace { Id = "race", Label = "Grand Prix", WeatherSlots = fourClear }));
+
+        AssertNoErrors(Validate(pack));
+    }
 }

@@ -54,7 +54,19 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="4 · Driver"
+                <TextBlock Text="4 · Grid">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="5 · Driver"
                            Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
@@ -67,7 +79,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="5 · Confirm">
+                <TextBlock Text="6 · Confirm">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
@@ -123,18 +135,71 @@
                 </StackPanel>
                 <Border Style="{StaticResource Panel}" Padding="8">
                     <Grid>
+                        <!-- season pick as a GRID of year-pic cards (like the career gallery): the era
+                             image is the hero; no version, no path. Selection gets an accent border.
+                             A UniformGrid lays the cards out in 4 responsive columns (Mike's ask) — the
+                             cards flex to fill the width at any screen size, and the year-pic hero keeps
+                             its 16:9 aspect via AspectHeight so it scales with the card. CanContentScroll
+                             is off so the taller cards scroll by pixel when they overflow the panel. -->
                         <ListBox ItemsSource="{Binding Packs}" SelectedItem="{Binding SelectedPack}"
+                                 Background="Transparent" BorderThickness="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 ScrollViewer.CanContentScroll="False"
                                  Visibility="{Binding Packs.Count, Converter={StaticResource CountVisible}}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="4" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <Setter Property="Margin" Value="6" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="15" />
-                                        <TextBlock Text="{Binding Directory}" Style="{StaticResource Faint}" Margin="0,2,0,0" />
-                                        <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12" Margin="0,2,0,0"
-                                                   TextWrapping="Wrap"
-                                                   Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
-                                                   Visibility="{Binding LoadError, Converter={StaticResource NullCollapsed}}" />
-                                    </StackPanel>
+                                    <Border CornerRadius="7" Background="{StaticResource SurfaceAltBrush}"
+                                            HorizontalAlignment="Stretch">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="BorderBrush" Value="{StaticResource EdgeBrush}" />
+                                                <Setter Property="BorderThickness" Value="1" />
+                                                <Style.Triggers>
+                                                    <!-- selected card: accent ring -->
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                        <Setter Property="BorderThickness" Value="2" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <!-- 16:9 year-pic hero (era art keyed by the season name;
+                                                 coloured era placeholder when no image is present). The
+                                                 height tracks the card's own width at 16:9 so the hero
+                                                 scales as the responsive column flexes. -->
+                                            <Grid MinHeight="120"
+                                                  Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource AspectHeight}, ConverterParameter=0.5625}">
+                                                <Border CornerRadius="6,6,0,0"
+                                                        Background="{Binding Title, Converter={StaticResource EraAccent}}" />
+                                                <Border CornerRadius="6,6,0,0">
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding Title, Converter={StaticResource EraImage}}"
+                                                                    Stretch="UniformToFill" />
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"
+                                                       Margin="12,9,12,12" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12"
+                                                       Margin="12,0,12,10" TextWrapping="Wrap"
+                                                       Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
+                                                       Visibility="{Binding LoadError, Converter={StaticResource NullCollapsed}}" />
+                                        </StackPanel>
+                                    </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -284,6 +349,21 @@
                 <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
+                <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
+                     over the seat above; leave blank for the ordinary seat pick. -->
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="— or race as your own entrant —" Style="{StaticResource Faint}" />
+                        <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,6" TextWrapping="Wrap"
+                                   Text="Type the exact name of a custom livery installed in AMS2 to race as an independent privateer — your own car, added to the grid instead of replacing a historical driver. Leave blank to take a seat above." />
+                        <TextBox Text="{Binding CustomLiveryName, UpdateSourceTrigger=PropertyChanged}" FontSize="14"
+                                 ToolTip="The AMS2 livery name for your own car — leave blank to take a pack seat instead" />
+                        <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   Text="Racing as your own entrant — the seat above is ignored."
+                                   Visibility="{Binding CustomLiveryName, Converter={StaticResource StringVisible}}" />
+                    </StackPanel>
+                </Border>
                 <Border Style="{StaticResource Panel}" Padding="8">
                     <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}">
                         <ListBox.ItemContainerStyle>
@@ -330,6 +410,36 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Border>
+            </DockPanel>
+
+            <!-- c1. choose the grid (v0.6.0) -->
+            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Grid}}">
+                <TextBlock DockPanel.Dock="Top" Text="Choose your grid" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
+                           Text="Your own car is always in — it's the row marked &quot;You&quot;. Uncheck any driver you don't want racing on the grid this season." />
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
+                    <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
+                </TextBlock>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Left">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,4">
+                                    <DockPanel>
+                                        <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
+                                                  IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
+                                                   Text="You" Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}" />
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </DockPanel>
 
             <!-- c2. character (Increment 4a) -->

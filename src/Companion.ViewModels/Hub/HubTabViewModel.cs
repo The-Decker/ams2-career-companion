@@ -26,6 +26,11 @@ public sealed partial class HubTabViewModel : ObservableObject
     /// <summary>Segoe MDL2 Assets glyph shown on the rail.</summary>
     public string Glyph { get; }
 
+    /// <summary>True when this tab can be torn off into an always-on-top companion window (the read-
+    /// only lenses — Standings, Driver, History, Skins). The Race tab IS the loop, so it never pops
+    /// out; News keeps its own in-view pop-out button, so the rail affordance skips it.</summary>
+    public bool CanPopOut => Key is not (HubViewModel.RaceTabKey or HubViewModel.NewsTabKey);
+
     /// <summary>The tab's content view-model (resolved to a view by the App DataTemplates).
     /// Settable so a read-only lens can be re-projected after an Apply.</summary>
     [ObservableProperty]

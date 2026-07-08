@@ -84,6 +84,64 @@ public sealed class HistoryInspectorRenderTests
         });
     }
 
+    [Fact]
+    public void WhatReallyHappened_Expanded_RendersTheRealHistoricalResults()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = new HistoryRenderFakeSession
+            {
+                Timeline = new CareerTimeline
+                {
+                    // A finished season so the champion + full result reveal (not a spoiler-free preview).
+                    Seasons = [new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 1, IsComplete = true }],
+                },
+                HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+                {
+                    [1967] = new HistoricalSeason
+                    {
+                        Year = 1967,
+                        Source = "Derived from f1db (CC BY 4.0)",
+                        DriversChampion = new HistoricalChampion { Driver = "Denny Hulme", Team = "Brabham", Points = "51" },
+                        Rounds =
+                        [
+                            new HistoricalRound
+                            {
+                                Round = 1, Name = "South African Grand Prix",
+                                Winner = "Pedro Rodríguez", WinnerTeam = "Cooper", FastestLap = "Denny Hulme",
+                                Results =
+                                [
+                                    new HistoricalResult { Pos = "1", Driver = "Pedro Rodríguez", Team = "Cooper" },
+                                    new HistoricalResult { Pos = "DNF", Driver = "Jim Clark", Team = "Lotus", Status = "Engine" },
+                                ],
+                            },
+                        ],
+                    },
+                },
+            };
+            var vm = new HistoryViewModel(session);
+
+            // Expand the season panel and the round so the full grid + the ExpandGlyph converter render.
+            var real = vm.Seasons[0].RealSeason!;
+            real.IsExpanded = true;
+            real.Rounds[0].IsExpanded = true;
+
+            var view = new HistoryView { DataContext = vm };
+            using var host = Host.Show(view);
+            host.Layout();
+
+            var texts = host.VisibleTexts();
+            Assert.Contains(texts, t => t.Contains("What really happened"));
+            Assert.Contains(texts, t => t.Contains("Denny Hulme"));   // champion line
+            Assert.Contains(texts, t => t.Contains("South African Grand Prix"));
+            Assert.Contains(texts, t => t.Contains("Jim Clark"));     // full-grid row
+            Assert.Contains(texts, t => t.Contains("Engine"));        // retirement status
+        });
+    }
+
     // ---------- a minimal off-screen host for one HistoryView ----------
 
     private sealed class Host : IDisposable
@@ -182,6 +240,11 @@ public sealed class HistoryInspectorRenderTests
         public JournalChain SeasonChain { get; init; } = JournalChain.Empty;
 
         public Companion.ViewModels.Services.CareerTimeline CareerTimeline() => Timeline;
+
+        public IReadOnlyDictionary<int, HistoricalSeason> HistoricalSeasons { get; init; } =
+            new Dictionary<int, HistoricalSeason>();
+
+        public HistoricalSeason? HistoricalSeason(int year) => HistoricalSeasons.GetValueOrDefault(year);
 
         public JournalChain JournalForSeason(string entity, int seasonYear, int? round = null) => SeasonChain;
 

@@ -1,0 +1,169 @@
+{
+  "teams": [
+    {
+      "id": "team.mercedes",
+      "name": "Mercedes",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.0,
+        "powerScalar": 1.0,
+        "dragScalar": 1.0
+      },
+      "reliability": 0.8,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.006,
+        "powerScalar": 0.988,
+        "dragScalar": 1.006
+      },
+      "reliability": 0.83,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.red-bull",
+      "name": "Red Bull Racing",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.004,
+        "powerScalar": 0.99,
+        "dragScalar": 1.004
+      },
+      "reliability": 0.66,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.008,
+        "powerScalar": 0.985,
+        "dragScalar": 1.016
+      },
+      "reliability": 0.86,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.force-india",
+      "name": "Force India",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.01,
+        "powerScalar": 0.983,
+        "dragScalar": 1.02
+      },
+      "reliability": 0.87,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.toro-rosso",
+      "name": "Toro Rosso",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.012,
+        "powerScalar": 0.978,
+        "dragScalar": 1.024
+      },
+      "reliability": 0.65,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.011,
+        "powerScalar": 0.98,
+        "dragScalar": 1.022
+      },
+      "reliability": 0.65,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.haas",
+      "name": "Haas",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.013,
+        "powerScalar": 0.976,
+        "dragScalar": 1.026
+      },
+      "reliability": 0.64,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.renault",
+      "name": "Renault",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.015,
+        "powerScalar": 0.974,
+        "dragScalar": 1.03
+      },
+      "reliability": 0.65,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.sauber",
+      "name": "Sauber",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.018,
+        "powerScalar": 0.97,
+        "dragScalar": 1.036
+      },
+      "reliability": 0.63,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.manor",
+      "name": "Manor Racing",
+      "carVehicleIds": [
+        "formula_ultimate_2016"
+      ],
+      "performance": {
+        "weightScalar": 1.02,
+        "powerScalar": 0.966,
+        "dragScalar": 1.04
+      },
+      "reliability": 0.44,
+      "prestige": 1,
+      "budgetTier": 1
+    }
+  ]
+}

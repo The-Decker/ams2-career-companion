@@ -1,8 +1,12 @@
 using System.Globalization;
 using System.Text.Json;
+using System.IO;
 using Companion.Ams2;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Grid;
+using Companion.Ams2.Preflight;
+using Companion.Ams2.Scenarios;
+using Companion.Ams2.Skins;
 using Companion.Core.Career;
 using Companion.Core.Character;
 using Companion.Core.Determinism;
@@ -31,7 +35,7 @@ namespace Companion.ViewModels.Services;
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
 /// </summary>
-public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFileRestore, IDisposable
+public sealed class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAiFileRestore, IDisposable
 {
     /// <summary><see cref="BaselineSource"/> value: the pinned baseline is pack-authored.</summary>
     public const string BaselineSourcePack = "pack";
@@ -43,6 +47,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     private readonly CareerDatabase _database;
     private readonly CareerEnvironment _environment;
     private readonly long _seasonId;
+    /// <summary>The CURRENT season's real calendar year (from its season record). Equals
+    /// <c>Pack.Season.Year</c> for every ordinary season, but runs ahead of it for a CARRYOVER
+    /// season — the same car reused for a later year — so this, not the pack's nominal year, is the
+    /// season's year for display and for computing the next year.</summary>
+    private readonly int _seasonYear;
+    private readonly int _firstSeasonYear;
     private readonly string _careerName;
     private readonly string _playerLiveryName;
     private readonly string _playerDriverId;
@@ -78,6 +88,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         Pack = pack;
         CareerFilePath = careerFilePath;
         _seasonId = seasonId;
+        // The season's real year (carryover-aware): the season row exists by now on both the
+        // create and open paths. Fall back to the pack year only if it is somehow absent. Capture
+        // the FIRST season's year too, so the driver's current age = created age + seasons since.
+        var allSeasons = CareerStore.ReadSeasons(database);
+        _seasonYear = allSeasons.FirstOrDefault(s => s.Id == seasonId)?.Year ?? pack.Season.Year;
+        _firstSeasonYear = allSeasons.Count > 0 ? allSeasons[0].Year : _seasonYear;
         _careerName = careerName;
         MasterSeed = masterSeed;
         _playerLiveryName = playerLiveryName;
@@ -191,13 +207,26 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                         ("@utc", nowUtc), ("@season", seasonId),
                         ("@phase", JournalPhases.PlayerCharacter),
                         ("@delta", JsonSerializer.Serialize(
-                            new { stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
+                            new { name = character.Name, stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
                             CoreJson.Options)));
+                }
+
+                // The chosen season field (v0.6.0): journal the creation INPUT row (provenance-excluded
+                // from replay; its data rides in the start state) when the player narrowed the grid.
+                if (request.GridSelection is { IncludesEverything: false } selection)
+                {
+                    Execute(database.Connection, transaction,
+                        "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
+                        "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'career-created');",
+                        ("@utc", nowUtc), ("@season", seasonId),
+                        ("@phase", JournalPhases.PlayerGridSelection),
+                        ("@delta", JsonSerializer.Serialize(
+                            new { includedLiveries = selection.IncludedLiveries }, CoreJson.Options)));
                 }
 
                 SeedStartStates(
                     database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
-                    request.Character, transaction);
+                    request.Character, request.GridSelection, request.FormAware, transaction);
 
                 transaction.Commit();
             }
@@ -205,7 +234,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             return new CareerSessionService(
                 database, environment, pack, request.CareerFilePath, seasonId,
                 request.CareerName, request.MasterSeed, request.PlayerLiveryName, playerDriverId,
-                PlayerAgeIn(pack, playerDriverId),
+                // A real character sets its OWN first-season age; without one (or a legacy character)
+                // the age falls back to the historical driver whose seat was taken.
+                request.Character?.Age ?? PlayerAgeIn(pack, playerDriverId),
                 import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile);
         }
         catch
@@ -255,6 +286,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             var delta = JsonSerializer.Deserialize<CareerCreatedDelta>(deltaJson, CoreJson.Options)
                 ?? throw new InvalidOperationException("Career-created journal row deserialized to null.");
 
+            // A real character carries its OWN first-season age (in the first season's start state);
+            // a legacy/no-character career has none and falls back to the seat driver's age below.
+            int? characterAge = StateStore.ReadPlayerState(database, first.Id, StateStore.StageStart)?.Character?.Age;
+
             string playerLiveryName;
             string playerDriverId;
             string baselineSource;
@@ -265,7 +300,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 playerLiveryName = delta.PlayerLiveryName;
                 playerDriverId = delta.PlayerDriverId;
                 baselineSource = delta.BaselineSource;
-                playerFirstSeasonAge = PlayerAgeIn(pack, playerDriverId);
+                playerFirstSeasonAge = characterAge ?? PlayerAgeIn(pack, playerDriverId);
             }
             else
             {
@@ -289,7 +324,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 // the first season's pinned pack and the wizard's seat pick.
                 var firstPack = PinnedPackEnvelope.LoadSeasonPack(
                     CareerStore.ReadPinnedPack(database, first.PackId, first.PackVersion).PackJson);
-                playerFirstSeasonAge = PlayerAgeIn(firstPack, delta.PlayerDriverId);
+                playerFirstSeasonAge = characterAge ?? PlayerAgeIn(firstPack, delta.PlayerDriverId);
             }
 
             return new CareerSessionService(
@@ -323,6 +358,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         string playerDriverId,
         string playerLiveryName,
         CharacterProfile? character,
+        Companion.Core.Grid.GridSelection? gridSelection,
+        bool formAware,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -354,6 +391,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             // character starts at level 1 with 0 XP.
             Character = character,
             Level = character is null ? 0 : 1,
+            // The chosen season field (null = whole pack → byte-identical). Carried forward each
+            // round; the fold resolves the grid to exactly this field.
+            GridSelection = gridSelection is { IncludesEverything: false } ? gridSelection : null,
+            // Ratings Phase 3: form-reactive fold, on for new careers (false = byte-identical). Carried
+            // forward each round via record `with`, so a multi-season career stays form-aware and its
+            // re-derived start states match — no rollover/transition change needed.
+            FormAware = formAware,
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
@@ -383,9 +427,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         if (guest is not null)
             return guest.DriverId;
 
-        throw new InvalidOperationException(
-            $"Player livery '{playerLiveryName}' is not an entry of pack {pack.Manifest.PackId} — " +
-            "the seat pick must offer pack entries only.");
+        // Player-as-own-entrant: a livery matching no pack entry is a custom/non-standard skin the player
+        // chose. Instead of refusing, give them a stable synthetic driver id — the resolver seats them as
+        // their own independent entrant, so a custom skin works and the career never dead-ends. Matches
+        // RoundGridResolver's synthetic-seat branch (same id) so creation, staging and the fold agree.
+        return RoundGridResolver.SyntheticPlayerDriverId;
     }
 
     // ---------- summary / round state ----------
@@ -400,7 +446,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             return new CareerSummary
             {
                 CareerName = _careerName,
-                SeasonYear = Pack.Season.Year,
+                SeasonYear = _seasonYear,
                 SeriesName = Pack.Season.SeriesName,
                 CurrentRound = complete ? RoundCount : CurrentRoundNumber,
                 RoundCount = RoundCount,
@@ -434,6 +480,161 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             last.Opi,
             previous is null ? null : last.Reputation - previous.Reputation,
             previous is null ? null : last.Opi - previous.Opi);
+    }
+
+    /// <summary>The latest folded player state (the most recent round's, or the season-start state
+    /// before any round) — the one source of the current character, level and XP.</summary>
+    private PlayerCareerState? CurrentPlayerState()
+    {
+        var states = StateStore.ReadRoundPlayerStates(_database, _seasonId);
+        return states.Count > 0
+            ? states[^1].State.Player
+            : StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart);
+    }
+
+    /// <summary>The Driver dossier projection (character depth 3), or null when the career has no
+    /// character or no character rules are loaded.</summary>
+    public Companion.Core.Character.CharacterDossier? CharacterDossier()
+    {
+        if (_environment.RulesDirectory is null)
+            return null;
+        var player = CurrentPlayerState();
+        if (player?.Character is not { } character)
+            return null;
+        // The driver's current age: their real created age advanced by the seasons played. Null for a
+        // legacy character with no authored age (we never present the borrowed historical age as theirs).
+        int? currentAge = character.Age is { } startAge
+            ? startAge + (_seasonYear - _firstSeasonYear)
+            : null;
+        var dossier = Companion.Core.Character.CharacterDossier.Build(
+            character, player.Level, player.Xp, _environment.Rules.Character, currentAge);
+        // Reflect spends made this season but not yet applied at a transition.
+        int pending = PendingSpends().Sum(s => s.Cost);
+        return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };
+    }
+
+    /// <summary>Between-season spends journaled this (not-yet-transitioned) season — pending until
+    /// sign-and-continue applies them to the next season's character.</summary>
+    private IReadOnlyList<CharacterSpend> PendingSpends() =>
+        ReplayService.ReadCharacterSpends(_database, _seasonId);
+
+    /// <summary>Character points available to spend right now: the folded pool minus this season's
+    /// pending spends. 0 when the career has no character.</summary>
+    public int AvailableCharacterCp()
+    {
+        var player = CurrentPlayerState();
+        if (_environment.RulesDirectory is null || player?.Character is not { } character)
+            return 0;
+        return CharacterProgress.AvailableCp(character, player.Level, _environment.Rules.Character)
+               - PendingSpends().Sum(s => s.Cost);
+    }
+
+    /// <summary>Records a between-season development spend (character depth 4): raise a stat one step
+    /// or add a perk, charged to the available pool and journaled (applied at the next season's
+    /// transition, re-derived identically on replay). Throws when there is no character, the spend is
+    /// unaffordable, or the perk is already held.</summary>
+    public void SpendCharacterPoint(CharacterSpend spend)
+    {
+        if (_environment.RulesDirectory is null)
+            throw new InvalidOperationException("No character rules are loaded.");
+        var player = CurrentPlayerState();
+        if (player?.Character is not { } character)
+            throw new InvalidOperationException("This career has no character to develop.");
+        var rules = _environment.Rules.Character;
+
+        // Derive the AUTHORITATIVE cost from the rules and never trust the caller's Cost. Otherwise a
+        // crafted spend could buy a costed perk for 0 (or mint points with a negative cost), and
+        // because the row is provenance-excluded it would replay byte-for-byte — baking the exploit
+        // permanently into the career. The journaled row carries the derived cost, not spend.Cost.
+        int cost;
+        if (spend.Kind == "stat")
+        {
+            if (!IsKnownStat(rules, spend.Target))
+                throw new InvalidOperationException($"Unknown stat '{spend.Target}'.");
+            double step = rules.Levels.LevelGrants.StatStepValue;
+            // A statPoints/softCap perk (iron_constitution) lowers the in-career raise ceiling.
+            double cap = rules.Levels.LevelGrants.StatCapPerRating
+                + PerkResolver.Resolve(character.PerkIds, rules).StatSoftCapDelta;
+            int pendingSteps = PendingSpends().Count(s => s.Kind == "stat"
+                && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
+            double current = character.Stat(spend.Target) + (pendingSteps * step);
+            if (current + step > cap + 1e-9)
+                throw new InvalidOperationException("That stat is already at its maximum.");
+            cost = rules.Levels.LevelGrants.StatStepCpCost;
+        }
+        else if (spend.Kind == "perk")
+        {
+            if (!rules.TryGetPerk(spend.Target, out var perk))
+                throw new InvalidOperationException($"Unknown perk '{spend.Target}'.");
+            // Between-season development is spend-only: a drawback (<=0-cost) perk is a creation-time
+            // identity choice, not something you buy mid-career (and letting one refund CP would break
+            // the earned-points model).
+            if (perk.Cost <= 0)
+                throw new InvalidOperationException("That perk can only be chosen at creation.");
+            bool owned = character.PerkIds.Contains(spend.Target, StringComparer.Ordinal)
+                || PendingSpends().Any(s => s.Kind == "perk"
+                    && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
+            if (owned)
+                throw new InvalidOperationException("Your driver already has that perk.");
+            cost = perk.Cost;
+        }
+        else
+        {
+            throw new InvalidOperationException($"Unknown development spend kind '{spend.Kind}'.");
+        }
+
+        if (cost > AvailableCharacterCp())
+            throw new InvalidOperationException(
+                $"That costs {cost} points, but only {AvailableCharacterCp()} are available.");
+
+        using var transaction = _database.Connection.BeginTransaction();
+        Execute(_database.Connection, transaction,
+            "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
+            "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'development');",
+            ("@utc", NowUtc()), ("@season", _seasonId),
+            ("@phase", JournalPhases.PlayerStatSpend),
+            ("@delta", JsonSerializer.Serialize(
+                new { kind = spend.Kind, target = spend.Target, cost }, CoreJson.Options)));
+        transaction.Commit();
+    }
+
+    /// <summary>True when the id names a real talent or meta stat (guards a development spend against
+    /// a crafted target that would otherwise inject a phantom entry into the stat map).</summary>
+    private static bool IsKnownStat(CharacterRules rules, string statId) =>
+        rules.Stats.TalentStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal))
+        || rules.Stats.MetaStats.Any(s => string.Equals(s.Id, statId, StringComparison.Ordinal));
+
+    /// <summary>The perks the driver can buy right now: positive-cost, not already owned or pending,
+    /// and affordable from the current pool — cheapest first. Empty with no character or no points.</summary>
+    public IReadOnlyList<PurchasablePerk> PurchasablePerks()
+    {
+        var player = CurrentPlayerState();
+        if (_environment.RulesDirectory is null || player?.Character is not { } character)
+            return [];
+        int available = AvailableCharacterCp();
+        if (available <= 0)
+            return [];
+
+        var rules = _environment.Rules.Character;
+        var owned = new HashSet<string>(character.PerkIds, StringComparer.Ordinal);
+        foreach (var spend in PendingSpends())
+            if (spend.Kind == "perk")
+                owned.Add(spend.Target);
+
+        return rules.Perks
+            .Where(p => p.Cost > 0 && p.Cost <= available && !owned.Contains(p.Id))
+            .OrderBy(p => p.Cost)
+            .ThenBy(p => p.Name, StringComparer.Ordinal)
+            .Select(p => new PurchasablePerk
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Category = p.Category,
+                Cost = p.Cost,
+                Benefits = PerkDescriber.Benefits(p),
+                Drawbacks = PerkDescriber.Drawbacks(p),
+            })
+            .ToList();
     }
 
     private int RoundCount => Pack.Season.Rounds.Count;
@@ -486,29 +687,204 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             return state.RecommendedSlider;
         if (state.Player.PaceAnchor > 0.0 && !SeasonComplete)
         {
-            var grid = ResolveGrid(CurrentRoundNumber);
+            // Form-on so the fallback advice matches the fold's field (the primary path returns the
+            // folded state.RecommendedSlider above; this legacy branch is edge-only).
+            var grid = ResolveGrid(CurrentRoundNumber, applyWeekendForm: CurrentFormAware());
             return DifficultyModel.RecommendSlider(
                 state.Player.PaceAnchor, PaceAnchorMath.MedianAiRaceSkill(grid));
         }
         return null;
     }
 
-    public IReadOnlyList<GridSeat> CurrentGrid() =>
-        SeasonComplete ? [] : ResolveGrid(CurrentRoundNumber).Seats;
+    public IReadOnlyList<GridSeat> CurrentGrid()
+    {
+        if (SeasonComplete)
+            return [];
+        var seats = ResolveGrid(CurrentRoundNumber).Seats;
+        // Show the player's chosen character name on their seat, not the historical driver they took
+        // over. Display only — the seat's DriverId (what results score under) and the staged AMS2 file
+        // (bound by livery) are untouched, so nothing about the sim or the AI file changes.
+        return CharacterName() is { } name
+            ? seats.Select(s => s.IsPlayer ? s with { DriverName = name } : s).ToList()
+            : seats;
+    }
+
+    /// <summary>The sim's expected finish for the player this round, resolved EXACTLY as the fold's
+    /// grid resolution (2-arg resolve with the player seat + character patch), so the Setup Gamble
+    /// briefing shows the same number the bet is staked against. Null when the season is complete or
+    /// the player has no seat this round.</summary>
+    public int? CurrentExpectedFinish()
+    {
+        if (SeasonComplete)
+            return null;
+        GridPlan grid;
+        try
+        {
+            grid = RoundGridResolver.Resolve(Pack, CurrentRoundNumber,
+                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+                CurrentGridSelection(), applyWeekendForm: CurrentFormAware());
+        }
+        catch (InvalidOperationException)
+        {
+            return null; // the player's livery matches no entry this round
+        }
+        int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
+        return playerIndex < 0 ? null : SeatStrengthModel.ExpectedFinish(grid, playerIndex);
+    }
+
+    /// <summary>What skin every car on the current round's grid will show — the read-only skin
+    /// picture the briefing's Skins panel renders (player-own-car crib + per-AI-car status). Reads
+    /// the resolved grid, the installed skin-override scan and the installed NAMeS file; writes
+    /// nothing. The player's seat shows the character name (matching <see cref="CurrentGrid"/>), so
+    /// the "your car" crib names the driver the player actually is. Empty when the season is complete,
+    /// the player's livery matches no entry this round, or no install is found.</summary>
+    public SkinAssignmentPlan CurrentSkinAssignments()
+    {
+        if (SeasonComplete)
+            return SkinAssignmentPlan.Empty;
+
+        GridPlan plan;
+        try
+        {
+            plan = ResolveGrid(CurrentRoundNumber);
+        }
+        catch (InvalidOperationException)
+        {
+            return SkinAssignmentPlan.Empty;
+        }
+
+        var installation = _environment.LocateInstall();
+        var scan = _environment.ScanInstalledLiveries(installation);
+        var aiNames = _environment.ScanInstalledAiNames(installation, plan.Ams2Class);
+
+        var result = SkinAssignmentResolver.Resolve(plan, scan.Liveries, _environment.ContentLibrary, aiNames);
+
+        // Show the player's chosen character name on their car (as CurrentGrid does) — display only,
+        // the livery NAME (the binding + what they pick in-game) is untouched.
+        if (CharacterName() is { } name && result.Assignments.Any(a => a.IsPlayer))
+        {
+            var patched = result.Assignments
+                .Select(a => a.IsPlayer ? a with { DriverName = name } : a)
+                .ToList();
+            result = result with { Assignments = patched };
+        }
+
+        return result;
+    }
+
+    /// <summary>Switches an inactive placeholder livery ON in its community override file. Finds the
+    /// installed placeholder for the name (preferring one in this class's vehicle folders), then
+    /// assigns it the next free slot via <see cref="LiveryOverrideWriter"/> (backup-first). Writes
+    /// only that community skin file; never the career DB — so the sim/fold/oracle are untouched.</summary>
+    public LiveryActivationResult ActivateLivery(string liveryName)
+    {
+        var installation = _environment.LocateInstall();
+        if (installation is null)
+            return LiveryActivationResult.Failed(
+                "No AMS2 installation was found — cannot locate the skin files to activate.");
+
+        var scan = _environment.ScanInstalledLiveries(installation);
+        var classFolders = _environment.ContentLibrary.Vehicles.Values
+            .Where(v => string.Equals(v.VehicleClass, Pack.Season.Ams2Class, StringComparison.Ordinal))
+            .Select(v => v.Dir)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var candidates = scan.Liveries
+            .Where(l => string.Equals(l.Name, liveryName, StringComparison.Ordinal) && !l.IsActive)
+            .ToList();
+        // Prefer a placeholder in THIS class's folder; fall back to any (the content library can be
+        // stale and not know a class's folders — the scan is the ground truth either way).
+        var chosen = candidates.FirstOrDefault(l => classFolders.Contains(l.VehicleFolder))
+            ?? candidates.FirstOrDefault();
+
+        if (chosen is null)
+            return LiveryActivationResult.Failed(
+                $"“{liveryName}” has no installed inactive placeholder to activate (it may already be active).");
+
+        // Cap the slot at the class's livery limit (custom slots run 51..(50+cap)) so we never write
+        // a slot AMS2 would silently ignore. Unknown cap → no ceiling (best effort).
+        int? maxSlot = _environment.ContentLibrary.LiveryCaps.TryGetValue(Pack.Season.Ams2Class, out int cap)
+            ? LiveryOverrideWriter.FirstCustomSlot + cap - 1
+            : null;
+
+        return LiveryOverrideWriter.ActivateInFile(
+            chosen.SourceFile, liveryName, _environment.Clock.GetUtcNow(), slot: null, maxSlot: maxSlot);
+    }
+
+    /// <summary>The grid editor's per-seat cosmetic overrides for this season (v4 staging_override
+    /// table). Read-only projection over a non-journaled table — the sim never sees it.</summary>
+    public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
+        StagingOverrideStore.Read(_database, _seasonId);
+
+    /// <summary>Persists one seat's rename/rebind (empty clears it). Applied at the next stage to the
+    /// custom-AI file only; the journal/fold are untouched, so replay stays byte-identical.</summary>
+    public void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) =>
+        StagingOverrideStore.Set(_database, _seasonId, liveryKey, seatOverride);
+
+    /// <summary>The player's driver id + character name for name-rendering screens, or null when the
+    /// career has no named character.</summary>
+    public (string DriverId, string DisplayName)? PlayerIdentity() =>
+        CharacterName() is { } name ? (_playerDriverId, name) : null;
+
+    /// <summary>The name of the team the player currently drives for, or null when unknown.</summary>
+    public string? PlayerTeamName()
+    {
+        string? teamId = CurrentPlayerState()?.CurrentTeamId;
+        if (string.IsNullOrEmpty(teamId))
+            return null;
+        return Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? teamId;
+    }
 
     /// <summary>Resolves the round grid, marking the player's seat when their entry covers
     /// this round (an entry's rounds range may exclude it — then the grid is all-AI). When the
     /// career carries a character, the player seat is patched from it here too — so the STAGED
     /// AMS2 file gets the perk car scalars and the briefing's expectation matches the fold (the
     /// fold applies the identical patch). A character-free career resolves an unchanged grid.</summary>
-    private GridPlan ResolveGrid(int round)
+    /// <param name="applyWeekendForm">Ratings Phase 3: overlay the round's per-race form (a FormAware
+    /// career). ONLY the "sim's view" resolves opt in (the shown expected finish + slider), so they
+    /// equal what the fold scored. STAGING keeps this false — <c>GridStager.Build</c> applies the same
+    /// nudge to the written AMS2 file, so applying it here too would double-count.</param>
+    private GridPlan ResolveGrid(int round, bool applyWeekendForm = false)
     {
-        var plan = RoundGridResolver.Resolve(Pack, round);
-        if (plan.Seats.Any(s => string.Equals(s.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal)))
-            plan = RoundGridResolver.Resolve(Pack, round,
-                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() });
-        return plan;
+        // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
+        // the fold scores. Null selection = whole pack (byte-identical).
+        // ALWAYS seat the player — even on a round their car did not qualify (1988 pre-qualifying: a
+        // driver like Coloni's Tarquini DNQs some rounds; the resolver seats them from their own entry
+        // and CapToGridSize drops the slowest peer to hold AMS2's hardcoded grid size), and even on a
+        // custom/non-standard livery that matches no pack entry (the resolver seats them as their own
+        // synthetic entrant). This mirrors the fold + CurrentExpectedFinish, which seat the player
+        // unconditionally, so the staged AMS2 file matches what the sim scores. Existing careers on a
+        // qualifying pack livery resolve byte-identically.
+        return RoundGridResolver.Resolve(Pack, round,
+            new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+            CurrentGridSelection(), applyWeekendForm: applyWeekendForm);
     }
+
+    private Companion.Core.Grid.GridSelection? _gridSelection;
+    private bool _gridSelectionResolved;
+
+    /// <summary>The career's chosen season field (v0.6.0), read once from the start state and cached.
+    /// Null for a whole-pack career (byte-identical). Both the display resolve and the fold read the
+    /// SAME selection, so the grid the player sees, stages, and scores are one and the same.</summary>
+    private Companion.Core.Grid.GridSelection? CurrentGridSelection()
+    {
+        if (_gridSelectionResolved)
+            return _gridSelection;
+        _gridSelectionResolved = true;
+        _gridSelection = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.GridSelection;
+        return _gridSelection;
+    }
+
+    private bool? _formAware;
+
+    /// <summary>Whether this career is form-reactive (Ratings Phase 3), read once from the start state
+    /// and cached (it never changes over a career). Drives the DISPLAY resolves that must equal what
+    /// the fold scored — the expected finish the Setup Gamble stakes against, and the recommended
+    /// slider — so the number shown matches the number folded. Staging keeps form OFF here because
+    /// <c>GridStager.Build</c> applies the same nudge to the written file (no double-apply); false for
+    /// a pre-Phase-3 career ⇒ byte-identical.</summary>
+    private bool CurrentFormAware() =>
+        _formAware ??= StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.FormAware ?? false;
 
     private PlayerCharacterPatch? _characterPatch;
     private bool _characterPatchResolved;
@@ -536,11 +912,176 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         return _characterPatch;
     }
 
+    /// <summary>The player's chosen character name for this season, or null when there is none — the
+    /// display identity the news/standings use instead of the historical driver they replaced.</summary>
+    private string? CharacterName()
+    {
+        string? name = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.Character?.Name;
+        return string.IsNullOrEmpty(name) ? null : name;
+    }
+
     // ---------- staging ----------
 
     public StageOutcome StageCurrentGrid() => StageCurrentGrid(force: false);
 
-    public StageOutcome StageCurrentGrid(bool force)
+    /// <summary>Explicit "apply this grid to AMS2": ALWAYS writes an app-marked file (backup-first),
+    /// bypassing the diff-aware no-op and the community-file gate — so a grid the user chose is
+    /// verifiable on disk (the AMS2 diagnosis found the default flow wrote 0 bytes, which is why
+    /// "nothing changes"). Binds every AI driver to a REAL base-game livery for the class so AMS2
+    /// accepts the file and shows the drivers (confirmed in-game). This is the "Apply grid to AMS2"
+    /// action.</summary>
+    public StageOutcome ApplyGridToAms2() =>
+        StageCurrentGrid(force: true, alwaysWrite: true, baseGameLiveries: true);
+
+    /// <summary>Activates the round's community liveries by replaying the pack's scenario .bat swaps —
+    /// the community skin packs rotate which liveries are on the grid PER RACE by copying a round
+    /// variant over each vehicle model's active override file. Discovers the .bat in the AMS2 root
+    /// (the one that manages this class's custom-AI file) and applies the round's swaps backup-first.
+    /// Skin files only — never the career DB, so the sim/fold/oracle are untouched. Null when there is
+    /// no install, no matching .bat, or the .bat has no entry for this round.</summary>
+    /// <summary>
+    /// When the player's chosen car is a "bubble" livery outside this round's active pool (1988 was a
+    /// pre-qualifying year, so a Coloni/Eurobrun DNQs some rounds), graft its skin into the SLOWEST
+    /// same-model qualifier's slot so the player can pick their own car in-game with its real paint. The
+    /// grid-seating already put the player on track; this only makes the SKIN show. Skin override files
+    /// only (backup-first, and the active model file is regenerated from the pack's per-round variant on
+    /// every stage), so the career DB / sim / oracle are never touched. Best-effort: any problem is a
+    /// silent no-op. Returns a status line when a graft happened, else null.
+    /// </summary>
+    private string? ActivatePlayerBubbleCar(Ams2Installation installation, GridPlan plan)
+    {
+        try
+        {
+            // Already in the round's LIVE active pool (a qualifier, or a bubble car on a round it
+            // qualified)? Only the model's active <model>.xml counts — a bubble car active in some OTHER
+            // round's variant file must NOT look "already active", or the graft wrongly skips it.
+            var scan = _environment.ScanInstalledLiveries(installation);
+            if (scan.Liveries.Any(l => l.IsActive && IsLiveActiveFile(l) &&
+                    string.Equals(l.Name, _playerLiveryName, StringComparison.Ordinal)))
+                return null;
+
+            // raceSkill by livery, from the pinned pack (every car, so the true slowest same-model peer
+            // is considered even if the grid cap dropped it from the seated field).
+            var driverSkill = Pack.Drivers.ToDictionary(d => d.Id, d => d.Ratings.RaceSkill, StringComparer.Ordinal);
+            var skillByLivery = Pack.Entries
+                .Where(e => driverSkill.ContainsKey(e.DriverId))
+                .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal)
+                .ToDictionary(g => g.Key, g => driverSkill[g.First().DriverId], StringComparer.Ordinal);
+
+            var modelDirs = _environment.ContentLibrary.Vehicles.Values
+                .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                .Select(v => v.Dir)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var dir in modelDirs)
+            {
+                string folder = Path.Combine(installation.InstallOverridesDirectory, dir);
+                string activePath = Path.Combine(folder, dir + ".xml");
+                if (!File.Exists(activePath))
+                    continue;
+
+                // A variant of THIS model that carries the player's car (so this is the player's model).
+                string? sourcePath = Directory.EnumerateFiles(folder, dir + "_*.xml")
+                    .FirstOrDefault(f => BubbleCarGraft.BlockGroups(File.ReadAllLines(f))
+                        .Any(g => string.Equals(g.Name, _playerLiveryName, StringComparison.Ordinal)));
+                if (sourcePath is null)
+                    continue;
+
+                string activeXml = File.ReadAllText(activePath);
+                // Displace the slowest SAME-MODEL active qualifier — a seated peer, never the player.
+                string? displace = BubbleCarGraft.ActiveNames(activeXml)
+                    .Where(n => skillByLivery.ContainsKey(n) &&
+                                !string.Equals(n, _playerLiveryName, StringComparison.Ordinal))
+                    .OrderBy(n => skillByLivery[n])
+                    .FirstOrDefault();
+                if (displace is null)
+                    continue;
+
+                string? grafted = BubbleCarGraft.Graft(
+                    activeXml, File.ReadAllText(sourcePath), _playerLiveryName, displace);
+                if (grafted is null)
+                    continue;
+
+                ScenarioApplier.BackUp(activePath, _environment.Clock.GetUtcNow());
+                File.WriteAllText(activePath, grafted);
+                return $"Your car ({_playerLiveryName}) took {displace}'s grid slot for this race — " +
+                       "its real skin is now active (pick it on the car-select screen).";
+            }
+            return null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>True when a scanned livery lives in the model's LIVE active override file
+    /// (<c>&lt;model&gt;.xml</c>) rather than a per-round variant (<c>&lt;model&gt;_Round.xml</c>) or a
+    /// timestamped backup. The scanner reads EVERY file, but only the active file is the pool AMS2 shows;
+    /// without this filter a bubble car active in another round's variant looks "already active", so both
+    /// the graft and the smart binding wrongly skip / keep it.</summary>
+    private static bool IsLiveActiveFile(InstalledLivery livery) =>
+        string.Equals(Path.GetFileNameWithoutExtension(livery.SourceFile), livery.VehicleFolder,
+            StringComparison.OrdinalIgnoreCase);
+
+    private ScenarioApplyResult? ApplyScenarioForRound(int round)
+    {
+        var installation = _environment.LocateInstall();
+        if (installation is null)
+            return null;
+        string root = installation.InstallDirectory;
+
+        string? batPath;
+        try
+        {
+            batPath = Directory.EnumerateFiles(root, "*.bat", SearchOption.TopDirectoryOnly)
+                .FirstOrDefault(f => BatManagesClass(f, Pack.Season.Ams2Class));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+        if (batPath is null)
+            return null;
+
+        try
+        {
+            var map = BatScenarioReader.Parse(File.ReadAllText(batPath));
+            return map.TryGetValue(round, out var swaps)
+                ? ScenarioApplier.Apply(root, swaps, _environment.Clock.GetUtcNow())
+                : null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>True when the batch file manages this vehicle class — it references the class's
+    /// custom-AI file name (e.g. "F-Classic_Gen2"), so it is the scenario selector for this class
+    /// regardless of its own arbitrary filename.</summary>
+    private static bool BatManagesClass(string batPath, string vehicleClass)
+    {
+        try
+        {
+            return File.ReadAllText(batPath).Contains(vehicleClass, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    // The per-round staging buttons (Briefing "Stage" / "Stage anyway") ALSO bind to real base-game
+    // liveries so the written file is guaranteed to load in AMS2 — same as the Skins-tab "Stage grid
+    // into AMS2" action. Without this, the per-round path wrote the pack's community-skin livery names
+    // (e.g. "1988 Lotus #1 - N. Piquet"); if the player has not installed those skins AMS2 silently
+    // reverts the whole class to stock and shows nothing. Cosmetic staging only; the resolved grid the
+    // sim scores is untouched, so the fold/oracle stay byte-identical. (A later refinement can prefer an
+    // INSTALLED community-skin name per seat and fall back to the base-game floor otherwise.)
+    public StageOutcome StageCurrentGrid(bool force) => StageCurrentGrid(force, alwaysWrite: false, baseGameLiveries: true);
+
+    public StageOutcome StageCurrentGrid(bool force, bool alwaysWrite, bool baseGameLiveries = false)
     {
         var messages = new List<string>();
 
@@ -560,8 +1101,106 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             return Failed(messages, ex.Message);
         }
 
+        // STAGING-ONLY per-race form overlay: nudge each driver's staged pace ratings toward that
+        // weekend's historical form (f1db-derived). Read only here (never the resolver/fold), so a
+        // career carrying form re-simulates byte-identically. Absent on a pack => null => no nudge.
+        var roundForm = Pack.Season.DriverForm?.GetValueOrDefault(roundNumber);
         var file = GridStager.Build(plan,
-            $"{Pack.Manifest.Name} | Round {roundNumber}: {packRound.Name} | seed {MasterSeed}");
+            $"{Pack.Manifest.Name} | Round {roundNumber}: {packRound.Name} | seed {MasterSeed}",
+            roundForm);
+
+        // Guaranteed-load binding: rebind each AI driver onto a REAL base-game livery for the class
+        // (the game ships these names — from official-liveries.json — so it accepts the file and
+        // shows the drivers) instead of the pack's community-skin names the install may not have.
+        // Cosmetic staging only; never touches the resolved grid the sim scores. Opt-in via the
+        // explicit "Apply grid to AMS2" action.
+        if (baseGameLiveries)
+        {
+            // First, activate THIS round's community liveries the way the pack's scenario .bat does:
+            // swap each vehicle model's active override file to the round's variant (backup-first). A
+            // pre-qualifying season rotates which liveries are on the grid per race; without this the
+            // app wrote the custom-AI file but AMS2's livery pool stayed on the wrong variant and
+            // stock-filled the cars our file didn't happen to match. After this the round's real skins
+            // are ACTIVE, so the smart binding below keeps them. No scenario .bat (other packs) → no-op.
+            var scenario = ApplyScenarioForRound(roundNumber);
+            if (scenario is { AnyApplied: true })
+                messages.Add(
+                    $"Activated this race's liveries — {scenario.Applied} vehicle model(s) switched to the " +
+                    "round's skins (your previous set was backed up).");
+
+            // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
+            // a Coloni/Eurobrun DNQs some rounds), graft its skin into the slowest same-model qualifier's
+            // slot so the player can pick THEIR car in-game with its real paint. The grid-seating already
+            // put them on track; this activates the skin. The scan below then keeps the now-active livery.
+            var bubbleInstall = _environment.LocateInstall();
+            if (bubbleInstall is not null)
+            {
+                string? bubble = ActivatePlayerBubbleCar(bubbleInstall, plan);
+                if (bubble is not null)
+                    messages.Add(bubble);
+            }
+
+            // Smart binding: keep a driver's real community livery where that skin is INSTALLED AND
+            // ACTIVE on disk (real historical paint) and floor every other car onto a base-game livery
+            // the game always ships (guaranteed load). So an installed 1988 skin pack shows its real
+            // liveries while a car whose skin the player has not installed still loads instead of
+            // reverting the whole class to stock. A class spans several vehicle models (e.g.
+            // formula_classic_g2m1/2/3 + mclaren_mp44), each with its own Overrides folder — union them.
+            var skinScan = _environment.ScanInstalledLiveries(_environment.LocateInstall());
+            var classFolders = _environment.ContentLibrary.Vehicles.Values
+                .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                .Select(v => v.Dir)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var installedActive = skinScan.Liveries
+                .Where(l => l.IsActive && IsLiveActiveFile(l) &&
+                            (classFolders.Count == 0 || classFolders.Contains(l.VehicleFolder)))
+                .Select(l => l.Name)
+                .ToHashSet(StringComparer.Ordinal);
+
+            int baseSeats = file.Drivers.Count(d => d.Tracks.Count == 0);
+            int keptCommunity = file.Drivers.Count(d => d.Tracks.Count == 0 && installedActive.Contains(d.LiveryName));
+            var rebound = BaseGameLiveryBinder.RebindToBaseGame(file, _environment.ContentLibrary, installedActive);
+            if (!ReferenceEquals(rebound, file))
+            {
+                file = rebound;
+                messages.Add(
+                    keptCommunity == 0
+                        ? $"Bound the grid to real base-game {file.VehicleClass} liveries so AMS2 loads it " +
+                          "and shows the drivers. Car paint is the game's default; install the matching " +
+                          "community skins to see historical liveries."
+                        : keptCommunity >= baseSeats
+                            ? $"All {baseSeats} cars are on installed community skins — AMS2 will show the real liveries."
+                            : $"Kept {keptCommunity} installed community skin(s) and bound the other " +
+                              $"{baseSeats - keptCommunity} to base-game {file.VehicleClass} liveries so every car loads.");
+            }
+
+            // Zero-stock: name every LIVE-active community livery. A car whose livery is active in the
+            // pool but which the grid CAP dropped (or a peer whose slot a bubble-car graft took) would
+            // otherwise leave AMS2 stock-filling that slot with a made-up driver. Add it from the full
+            // (uncapped) field so every visible car shows its real driver. Cosmetic — the sim always
+            // scores the capped grid; these extra names ride the AMS2 file only.
+            try
+            {
+                var fullField = RoundGridResolver.Resolve(Pack, roundNumber,
+                    new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+                    CurrentGridSelection(), capToGridSize: false);
+                var byLivery = fullField.Seats
+                    .GroupBy(s => s.Ams2LiveryName, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => GridStager.SeatToDriver(g.First()), StringComparer.Ordinal);
+                var have = file.Drivers.Select(d => d.LiveryName).ToHashSet(StringComparer.Ordinal);
+                var extra = installedActive
+                    .Where(n => !have.Contains(n) && byLivery.ContainsKey(n))
+                    .Select(n => byLivery[n]).ToList();
+                if (extra.Count > 0)
+                {
+                    file = file with { Drivers = file.Drivers.Concat(extra).ToList() };
+                    messages.Add(
+                        $"Named {extra.Count} more active livery{(extra.Count == 1 ? "" : "s")} so no car on " +
+                        "the grid shows a stock/made-up driver.");
+                }
+            }
+            catch (InvalidOperationException) { /* best-effort cosmetic pass — never blocks staging */ }
+        }
 
         Ams2Installation? installation = _environment.LocateInstall();
         if (installation is null)
@@ -598,17 +1237,21 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             // pack's own driver baseline) is applied over them.
             var result = GridStager.StageOrRefuse(
                 file, installation.CustomAiDriversDirectory, _environment.Clock.GetUtcNow(), force,
-                PackBaselineByLivery());
+                PackBaselineByLivery(),
+                // The grid editor's cosmetic per-seat overrides (rename / rebind livery), applied to
+                // the staged file only — never the resolved grid the sim scores.
+                StagingOverrideStore.Read(_database, _seasonId),
+                alwaysWrite);
 
             if (result.RequiresForce)
             {
                 // The community-file force gate is an EXPECTED choice, not a failure: the
                 // briefing renders this outcome as an informational (amber) banner with the
-                // existing "Stage anyway (backup first)" escape hatch.
+                // "Overwrite anyway (backup first)" escape hatch.
                 messages.Add(
                     $"Your installed {file.VehicleClass}.xml differs from this round's grid " +
                     "(community NAMeS file). Your installed names/AI are kept — only this round's " +
-                    "grid selection and your career changes are applied. 'Stage anyway' takes a " +
+                    "grid selection and your career changes are applied. 'Overwrite anyway' takes a " +
                     "timestamped backup first.");
                 return new StageOutcome
                 {
@@ -899,6 +1542,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
             SliderUsed = Math.Clamp(slider, DifficultyModel.MinSlider, DifficultyModel.MaxSlider),
             PlayerDnfCause = PlayerDnfCauseFrom(draft),
             QualifyingOrder = draft.QualifyingOrder,
+            IsWet = draft.IsWet,
+            CalledShot = draft.CalledShot,
         };
     }
 
@@ -975,7 +1620,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
         return new SeasonReviewModel
         {
-            SeasonYear = Pack.Season.Year,
+            SeasonYear = _seasonYear,
             PlayerPosition = standings?.Drivers
                 .FirstOrDefault(d => d.DriverId == _playerDriverId)?.Position,
             FinalReputation = finalPlayer?.Reputation ?? 0.0,
@@ -1019,27 +1664,45 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
     // ---------- era transition (M6 sign-and-continue) ----------
 
-    /// <summary>The next era pack per the v1 rule (see <see cref="ICareerSession.NextSeason"/>):
-    /// scans the environment's pack search roots and picks the readable pack with the
-    /// smallest season year strictly greater than the current season's. Null while the
-    /// season is incomplete or when nothing later exists.</summary>
+    /// <summary>The next season the career rolls into — ALWAYS the very next calendar year (the
+    /// career never dead-ends). If a dedicated pack exists for that exact year it is a real era
+    /// CHANGEOVER into that pack; otherwise it is a CARRYOVER that reuses the current car/liveries
+    /// for one more year (the same pinned pack), carrying on until a later pack's year is reached.
+    /// Null only while the season is still in progress.</summary>
     public NextSeasonInfo? NextSeason()
     {
         if (!SeasonComplete)
             return null;
 
-        var next = PackDiscovery.NextAfter(
-            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()), Pack.Season.Year);
-        if (next?.Manifest is null || next.SeasonYear is not { } year)
-            return null;
+        int nextYear = _seasonYear + 1;
+        var changeover = PackDiscovery.NextAfter(
+            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()), _seasonYear);
 
+        // A dedicated pack whose year is exactly next year = the real car changeover.
+        if (changeover?.Manifest is not null && changeover.SeasonYear == nextYear)
+        {
+            return new NextSeasonInfo
+            {
+                IsCarryover = false,
+                PackDirectory = changeover.Directory,
+                PackId = changeover.Manifest.PackId,
+                PackName = changeover.Manifest.Name,
+                SeasonYear = nextYear,
+                BridgedYears = [],
+            };
+        }
+
+        // Otherwise carry the current car forward one year: either a later pack exists but is still
+        // a few years off (we carry over until we reach it) or there is no later pack at all (the
+        // career runs on this car indefinitely).
         return new NextSeasonInfo
         {
-            PackDirectory = next.Directory,
-            PackId = next.Manifest.PackId,
-            PackName = next.Manifest.Name,
-            SeasonYear = year,
-            BridgedYears = Enumerable.Range(Pack.Season.Year + 1, year - Pack.Season.Year - 1).ToList(),
+            IsCarryover = true,
+            PackDirectory = "",
+            PackId = Pack.Manifest.PackId,
+            PackName = Pack.Manifest.Name,
+            SeasonYear = nextYear,
+            BridgedYears = [],
         };
     }
 
@@ -1068,20 +1731,41 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
         var next = NextSeason()
             ?? throw new InvalidOperationException(
-                "No next season pack was found — put a later-year season pack in the packs " +
-                "folder beside the app or in Documents\\AMS2CareerCompanion\\Packs, then sign again.");
-        var toPack = SeasonPackFiles.Read(next.PackDirectory).Parse();
+                "The season is not complete — finish it before signing on for next year.");
 
         var driversEnd = StateStore.ReadDriverStates(_database, _seasonId, StateStore.StageEnd);
         var teamsEnd = StateStore.ReadTeamStates(_database, _seasonId, StateStore.StageEnd);
         var playerEnd = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageEnd)
             ?? throw new InvalidOperationException(
                 "The season-end player state is missing — the season-end pipeline never ran.");
+        var simInputs = SimInputs();
+        // The spends journaled this season develop the character as it rolls into next year —
+        // applied identically on the live and replay paths so the evolving driver re-derives.
+        var spends = ReplayService.ReadCharacterSpends(_database, _seasonId);
 
+        if (next.IsCarryover)
+        {
+            // Same car, next year: seat the player at the accepted team's seat in THIS pack, then
+            // roll the (already aged / retired / market-filled) end states forward. Same-pack, so
+            // replay re-derives through SeasonRollover — byte-identical by construction.
+            string? livery = EraTransition.ResolveSeatLivery(Pack, teamId) ?? playerEnd.LiveryName;
+            var startStates = SeasonRollover.Derive(
+                playerEnd, driversEnd, teamsEnd, teamId, livery, spends, simInputs.CharacterRules);
+            CareerStore.StartCarryoverSeason(
+                _database, startStates, next.SeasonYear,
+                Pack.Manifest.PackId, Pack.Manifest.Version, NowUtc());
+            return;
+        }
+
+        // A real era changeover into a later-year pack.
+        var toPack = SeasonPackFiles.Read(next.PackDirectory).Parse();
         var plan = EraTransition.Build(
             Pack, toPack, driversEnd, teamsEnd, playerEnd, accepted.Terms,
             new StreamFactory(MasterSeedU), _environment.Rules.AgingCurves,
-            SimInputs().CanonRetirements);
+            simInputs.CanonRetirements, spends, simInputs.CharacterRules,
+            // Drive the boundary off the real SEASON years: after a carryover the finished season's
+            // year runs ahead of this pack's nominal year, and the transition must start from it.
+            fromYearOverride: _seasonYear, toYearOverride: next.SeasonYear);
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
 
@@ -1149,11 +1833,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
                 var facts = NewsFactsFor(round, resultRow, rawByRound, snapshotsByOrdinal);
                 body = NewsArticleComposer.Compose(articles, facts, MasterSeedU) ?? "";
             }
+            else if (string.Equals(row.Entity, "season", StringComparison.Ordinal)
+                     && string.Equals(row.Cause, "season-digest", StringComparison.Ordinal))
+            {
+                // The season-in-review article: the season-digest headline (round-less) hangs a
+                // period-voiced "champion crowned / final standing" body. Read-side only — the body
+                // is derived deterministically from the seed + final standings, nothing is folded.
+                snapshotsByOrdinal ??= AllSnapshots().ToDictionary(s => s.AfterRound);
+                articles ??= _environment.Rules.NewsArticles;
+                if (SeasonDigestFacts(snapshotsByOrdinal) is { } seasonFacts)
+                    body = NewsArticleComposer.Compose(articles, seasonFacts, MasterSeedU, "season") ?? "";
+            }
 
             dispatches.Add(new NewsDispatch
             {
                 Headline = text,
-                SeasonYear = Pack.Season.Year,
+                SeasonYear = _seasonYear,
                 Round = row.Round,
                 Kind = row.Round is null ? "season" : "race",
                 WhyText = why,
@@ -1251,10 +1946,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
         {
             Phase = resultRow.Phase,
             Cause = resultRow.Cause,
-            Year = Pack.Season.Year,
+            Year = _seasonYear,
             Round = round,
             RaceName = packRound?.Name ?? grid.RoundName,
-            PlayerName = playerSeat?.DriverName ?? _playerDriverId,
+            PlayerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId,
             TeamName = playerSeat?.TeamName ?? "",
             PlayerFinish = actual,
             ExpectedFinish = expected,
@@ -1270,6 +1965,46 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
     /// <summary>Display name for a driver id in a resolved grid, falling back to the pack's
     /// driver table then the raw id — so a name is always available for {winner}/{champLeader}.</summary>
+    /// <summary>Projects the season's closing facts for the <c>season.digest</c> article from the
+    /// final standings snapshot: who took the title, and where the player finished the year. The
+    /// cause splits the corpus into a celebratory <c>player-champion</c> body and a reflective
+    /// <c>season-complete</c> one. Only the season-neutral tokens are populated
+    /// ({player} {team} {year} {champLeader} {champPosition}); race-only slots stay null so a
+    /// season template that never names them still fills cleanly. Null when there is no scored
+    /// standing yet (an unraced season carries no digest).</summary>
+    private NewsFacts? SeasonDigestFacts(IReadOnlyDictionary<int, StandingsSnapshot> snapshotsByOrdinal)
+    {
+        if (snapshotsByOrdinal.Count == 0)
+            return null;
+        var final = snapshotsByOrdinal[snapshotsByOrdinal.Keys.Max()];
+        var champion = final.Drivers.FirstOrDefault(d => d.Position == 1);
+        if (champion is null)
+            return null;
+
+        var grid = ResolveGrid(Pack.Season.Rounds.Max(r => r.Round));
+        var playerSeat = grid.Seats.FirstOrDefault(s =>
+            string.Equals(s.DriverId, _playerDriverId, StringComparison.Ordinal));
+        bool playerIsChampion = string.Equals(champion.DriverId, _playerDriverId, StringComparison.Ordinal);
+        string playerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId;
+        int? playerPosition = final.Drivers
+            .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal))
+            ?.Position;
+
+        return new NewsFacts
+        {
+            Phase = "season.digest",
+            Cause = playerIsChampion ? "player-champion" : "season-complete",
+            Year = _seasonYear,
+            Round = 0,
+            PlayerName = playerName,
+            TeamName = playerSeat?.TeamName ?? "",
+            // {champLeader} is the crowned champion; when the player wins, it is the player's own name.
+            ChampionshipLeaderName = playerIsChampion ? playerName : DriverDisplayName(grid, champion.DriverId),
+            ChampionshipPosition = playerPosition,
+            PlayerLeadsChampionship = playerIsChampion,
+        };
+    }
+
     private string DriverDisplayName(GridPlan grid, string driverId) =>
         grid.Seats.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal))?.DriverName
         ?? Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, driverId, StringComparison.Ordinal))?.Name
@@ -1701,6 +2436,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     /// re-derivable byte-identically. A multi-season career (M6 era transitions) walks every
     /// <c>season</c> row in career order, resolving each season's pinned pack, player seat,
     /// standings and headlines independently.</summary>
+    private IHistoricalSeasonStore? _historicalSeasons;
+
+    /// <summary>The real historical results for a season (f1db-derived, CC BY 4.0), loaded on demand
+    /// from the app-shipped <c>data/history/&lt;year&gt;.json</c> and cached. Read-only reference
+    /// content the History tab shows next to the player's own career — the sim/fold never reads it.</summary>
+    public HistoricalSeason? HistoricalSeason(int year) =>
+        (_historicalSeasons ??= new HistoricalSeasonStore(_environment.HistoryDirectory)).ForYear(year);
+
     public CareerTimeline CareerTimeline()
     {
         var seasons = CareerStore.ReadSeasons(_database);
@@ -1897,7 +2640,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
     private RoundResult ToRoundResult(ResultDraft draft, int roundNumber, PackRound packRound)
     {
         var rules = RoundRuleResolver.Resolve(Pack.Season.PointsSystem, packRound);
-        var teamByDriver = RoundGridResolver.Resolve(Pack, roundNumber).Seats
+        var teamByDriver = ResolveGrid(roundNumber).Seats
             .ToDictionary(s => s.DriverId, s => s.TeamId, StringComparer.Ordinal);
 
         // Race 0 is the draft's own classification; a two-race weekend adds the rest (Increment 2).
@@ -1982,7 +2725,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IAiFil
 
     private void ValidateDraft(ResultDraft draft, int roundNumber)
     {
-        var gridDrivers = RoundGridResolver.Resolve(Pack, roundNumber).Seats
+        var gridDrivers = ResolveGrid(roundNumber).Seats
             .Select(s => s.DriverId)
             .ToHashSet(StringComparer.Ordinal);
 

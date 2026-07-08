@@ -18,10 +18,18 @@ namespace Companion.Core.Grid;
 /// present (they take a real seat even if the driver they replaced was a non-starter that round),
 /// and a final safety cap trims to grid.size keeping the player and the highest-rated AI. A round
 /// with no grid block keeps the pre-grid behaviour: every covering entry fills the grid.
+///
+/// <para>Ratings Phase 3: when <c>applyWeekendForm</c> is set (a FormAware career), the round's
+/// per-race <see cref="Companion.Core.Packs.SeasonDefinition.DriverForm"/> is overlaid onto the AI
+/// seats' pace ratings AFTER the cap — the same additive, clamped nudge the staged AMS2 file gets —
+/// so the field the sim scores reacts to who is hot that weekend. Default off, so a pre-Phase-3 (or
+/// form-less) career resolves a byte-identical grid.</para>
 /// </summary>
 public static class RoundGridResolver
 {
-    public static GridPlan Resolve(SeasonPack pack, int round, PlayerSeat? playerSeat = null)
+    public static GridPlan Resolve(
+        SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null,
+        bool capToGridSize = true, bool applyWeekendForm = false)
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
@@ -54,6 +62,13 @@ public static class RoundGridResolver
             }
         }
 
+        // "Choose the entire grid": when the career carries a field selection, only its chosen
+        // liveries seat — EXCEPT the player's own livery, which is always kept so a chosen field can
+        // never bench the player. Null selection = the whole pack field (byte-identical identity).
+        bool Selected(string livery) =>
+            selection is null || selection.Includes(livery) ||
+            (playerSeat is not null && string.Equals(livery, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
+
         var seats = new List<GridSeat>();
 
         foreach (var entry in pack.Entries)
@@ -61,6 +76,8 @@ public static class RoundGridResolver
             if (!ParseRounds(entry).Contains(round))
                 continue;
             if (starters is not null && !starters.Contains(entry.DriverId))
+                continue;
+            if (!Selected(entry.Ams2LiveryName))
                 continue;
 
             seats.Add(BuildSeat(
@@ -72,6 +89,9 @@ public static class RoundGridResolver
 
         foreach (var guest in packRound.GuestEntries)
         {
+            if (!Selected(guest.Ams2LiveryName))
+                continue;
+
             seats.Add(BuildSeat(
                 pack, packRound,
                 LookupDriver(driversById, guest.DriverId, pack, packRound),
@@ -84,8 +104,17 @@ public static class RoundGridResolver
         if (playerSeat is not null)
             seats = ApplyPlayerSeat(pack, packRound, seats, playerSeat);
 
-        if (packRound.Grid is { } capGrid)
+        // The cap trims the field to the track's grid size for the SIM. Staging can opt out
+        // (capToGridSize:false) to enumerate the whole qualified field — used only to name every
+        // live-active livery so AMS2 never stock-fills a slot (cosmetic; the fold always caps).
+        if (capToGridSize && packRound.Grid is { } capGrid)
             seats = CapToGridSize(seats, capGrid.Size);
+
+        // Ratings Phase 3 (FormAware careers only): overlay the round's per-race form onto the AI
+        // seats' pace ratings AFTER the cap, so form perturbs strength/pace but never grid
+        // MEMBERSHIP. Default off ⇒ existing callers + form-less packs resolve a byte-identical grid.
+        if (applyWeekendForm)
+            seats = ApplyWeekendForm(seats, pack.Season.DriverForm?.GetValueOrDefault(round));
 
         return new GridPlan
         {
@@ -122,6 +151,43 @@ public static class RoundGridResolver
 
         return kept;
     }
+
+    // ---------- Ratings Phase 3: per-race form overlay ----------
+
+    /// <summary>Overlays the round's per-race form deltas onto the AI seats' pace ratings — the SAME
+    /// additive, 0..1-clamped nudge the staged AMS2 file gets (<c>GridStager.Nudge</c>), so the grid
+    /// the sim scores equals the grid AMS2 shows. The PLAYER seat is deliberately excluded: the player
+    /// is not the historical driver they replaced (their ability is tracked by OPI / pace anchor), so a
+    /// hot weekend must move only the FIELD around them, never their own strength term. Null/empty
+    /// form, a zero delta, or a driver id absent from the round map ⇒ the seat is returned verbatim, so
+    /// a form-less pack (or a non-FormAware career, which never calls this) resolves byte-identically.</summary>
+    private static List<GridSeat> ApplyWeekendForm(
+        List<GridSeat> seats, IReadOnlyDictionary<string, PackDriverForm>? roundForm)
+    {
+        if (roundForm is null || roundForm.Count == 0)
+            return seats;
+
+        return seats
+            .Select(seat =>
+            {
+                if (seat.IsPlayer || !roundForm.TryGetValue(seat.DriverId, out var form))
+                    return seat;
+                return seat with
+                {
+                    Ratings = seat.Ratings with
+                    {
+                        RaceSkill = NudgeForm(seat.Ratings.RaceSkill, form.RaceSkill),
+                        QualifyingSkill = NudgeForm(seat.Ratings.QualifyingSkill, form.QualifyingSkill),
+                    },
+                };
+            })
+            .ToList();
+    }
+
+    /// <summary>Additive form delta, clamped to 0..1 — mirrors <c>GridStager.Nudge</c> exactly so a
+    /// scored AI rating equals the staged AMS2 file's. A zero delta returns the base verbatim.</summary>
+    private static double NudgeForm(double baseValue, double delta) =>
+        delta != 0.0 ? Math.Clamp(baseValue + delta, 0.0, 1.0) : baseValue;
 
     // ---------- seat construction ----------
 
@@ -203,10 +269,38 @@ public static class RoundGridResolver
 
         if (index < 0)
         {
-            throw new InvalidOperationException(
-                $"Player livery '{playerSeat.Ams2LiveryName}' is not in the round-{round.Round} grid of " +
-                $"{pack.Manifest.PackId} ({round.Name}). The binding is exact (case-sensitive); " +
-                $"this round's liveries are: {string.Join(", ", seats.Select(s => $"'{s.Ams2LiveryName}'"))}.");
+            // The player takes over a real historical seat by livery, but the driver they replaced may
+            // not have been entered EVERY round (they left or retired mid-season historically). The
+            // player races the WHOLE season regardless: seat them from their livery's own entry — which
+            // exists in the pack even when its rounds range excludes this round — so a mid-season
+            // historical exit never benches the player. The final CapToGridSize keeps the player and
+            // trims the slowest AI, so the field stays at grid.size. Only a livery that matches NO entry
+            // at all is a genuine misconfiguration and still errors.
+            var playerEntry = pack.Entries.FirstOrDefault(e =>
+                string.Equals(e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
+            if (playerEntry is null)
+            {
+                // Player-as-own-entrant: the chosen livery matches NO pack entry (a non-standard / custom
+                // skin the player picked). Seat them as their OWN full-season synthetic entrant — a stable
+                // synthetic driver id, a neutral independent team, and baseline ratings the character patch
+                // then shapes — so a custom skin works AND the career never dead-ends on a livery no
+                // historical driver holds. Existing careers pick a pack-entry livery, so they never reach
+                // this branch (byte-identical). CapToGridSize keeps the player and trims the slowest AI.
+                seats.Add(ApplyCharacter(
+                    SyntheticPlayerSeat(playerSeat.Ams2LiveryName) with { IsPlayer = true },
+                    playerSeat.Character));
+                return seats;
+            }
+
+            var driversById = IndexById(pack.Drivers, d => d.Id, pack, "drivers.json");
+            var teamsById = IndexById(pack.Teams, t => t.Id, pack, "teams.json");
+            var addedSeat = BuildSeat(
+                pack, round,
+                LookupDriver(driversById, playerEntry.DriverId, pack, round),
+                LookupTeam(teamsById, playerEntry.TeamId, pack, round),
+                playerEntry.Number, playerEntry.Ams2LiveryName, isGuest: false);
+            seats.Add(ApplyCharacter(addedSeat with { IsPlayer = true }, playerSeat.Character));
+            return seats;
         }
 
         // Mark the player seat, then patch it from the character (last in the merge chain:
@@ -232,6 +326,51 @@ public static class RoundGridResolver
             DragScalar = seat.DragScalar + mods.DragScalarDelta,
         };
     }
+
+    // ---------- player-as-own-entrant ----------
+
+    /// <summary>Stable driver id for a player racing their OWN entrant (a non-pack / custom livery). One
+    /// player ⇒ one id, so it never collides with a pack driver ("driver.&lt;name&gt;") and stays fixed
+    /// across the whole career — the fold's player-identity key.</summary>
+    public const string SyntheticPlayerDriverId = "driver.player-entrant";
+
+    /// <summary>A neutral independent seat for the player-as-own-entrant path: mid-field baseline ratings
+    /// (the character patch then shapes them), a neutral team (no physics scalars), on the player's chosen
+    /// livery. The display name is a placeholder — the app shows the character's name via PlayerIdentity.</summary>
+    private static GridSeat SyntheticPlayerSeat(string livery) => new()
+    {
+        DriverId = SyntheticPlayerDriverId,
+        DriverName = "Privateer",
+        Country = "",
+        TeamId = "team.independent",
+        TeamName = "Independent",
+        Number = null,
+        Ams2LiveryName = livery,
+        Ratings = NeutralRatings,
+        Reliability = 0.85,
+        WeightScalar = 1.0,
+        PowerScalar = 1.0,
+        DragScalar = 1.0,
+        IsGuest = false,
+    };
+
+    private static readonly PackDriverRatings NeutralRatings = new()
+    {
+        RaceSkill = 0.80,
+        QualifyingSkill = 0.78,
+        Aggression = 0.5,
+        Defending = 0.5,
+        Stamina = 0.8,
+        Consistency = 0.8,
+        StartReactions = 0.5,
+        WetSkill = 0.5,
+        TyreManagement = 0.7,
+        FuelManagement = 0.7,
+        BlueFlagConceding = 0.5,
+        WeatherTyreChanges = 0.5,
+        AvoidanceOfMistakes = 0.5,
+        AvoidanceOfForcedMistakes = 0.5,
+    };
 
     // ---------- validation ----------
 

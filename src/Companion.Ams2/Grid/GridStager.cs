@@ -2,6 +2,7 @@ using Companion.Ams2.ContentLibrary;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Preflight;
 using Companion.Core.Grid;
+using Companion.Core.Packs;
 
 namespace Companion.Ams2.Grid;
 
@@ -46,23 +47,41 @@ public static class GridStager
 
     // ---------- build ----------
 
-    public static CustomAiFile Build(GridPlan plan, string? headerComment = null) => new()
+    /// <param name="roundForm">STAGING-ONLY per-race form nudge for this round, keyed by driver id
+    /// (additive pace delta, clamped 0..1). Applied to the written AMS2 file ONLY — the resolved
+    /// <see cref="GridPlan"/> the sim scores is never touched, so a career carrying form re-simulates
+    /// byte-identically. Null/absent => no nudge (byte-identical output).</param>
+    public static CustomAiFile Build(
+        GridPlan plan,
+        string? headerComment = null,
+        IReadOnlyDictionary<string, PackDriverForm>? roundForm = null) => new()
     {
         VehicleClass = plan.Ams2Class,
-        Drivers = plan.Seats.Select(ToCustomAiDriver).ToList(),
+        Drivers = plan.Seats.Select(seat => ToCustomAiDriver(seat, FormFor(roundForm, seat))).ToList(),
         HeaderComment = headerComment is { Length: > 0 }
             ? $" {GeneratedMarker} | {headerComment} "
             : $" {GeneratedMarker} ",
     };
 
-    private static CustomAiDriver ToCustomAiDriver(GridSeat seat) => new()
+    /// <summary>Public seat→driver conversion for the zero-stock staging pass: names a livery that is
+    /// active in the pool but absent from the capped grid (a car the cap dropped, or a graft-displaced
+    /// peer), so AMS2 never stock-fills its slot. Cosmetic — never affects the sim's resolved grid.</summary>
+    public static CustomAiDriver SeatToDriver(GridSeat seat) => ToCustomAiDriver(seat, null);
+
+    private static PackDriverForm? FormFor(
+        IReadOnlyDictionary<string, PackDriverForm>? roundForm, GridSeat seat) =>
+        roundForm is not null && roundForm.TryGetValue(seat.DriverId, out var f) ? f : null;
+
+    private static CustomAiDriver ToCustomAiDriver(GridSeat seat, PackDriverForm? form = null) => new()
     {
         LiveryName = seat.Ams2LiveryName,
         Name = seat.DriverName,
         Country = seat.Country,
 
-        RaceSkill = seat.Ratings.RaceSkill,
-        QualifyingSkill = seat.Ratings.QualifyingSkill,
+        // Form is a STAGING-ONLY additive nudge on the two pace ratings, clamped to 0..1. It rides
+        // the written file, never the resolved seat the sim scores (sim-inert).
+        RaceSkill = Nudge(seat.Ratings.RaceSkill, form?.RaceSkill),
+        QualifyingSkill = Nudge(seat.Ratings.QualifyingSkill, form?.QualifyingSkill),
         Aggression = seat.Ratings.Aggression,
         Defending = seat.Ratings.Defending,
         Stamina = seat.Ratings.Stamina,
@@ -85,6 +104,47 @@ public static class GridStager
     };
 
     private static double? ScalarOrNull(double scalar) => scalar == 1.0 ? null : scalar;
+
+    /// <summary>Applies an additive form delta to a base rating, clamped to 0..1. Null delta (or
+    /// zero) returns the base verbatim.</summary>
+    private static double Nudge(double baseValue, double? delta) =>
+        delta is { } d && d != 0.0 ? Math.Clamp(baseValue + d, 0.0, 1.0) : baseValue;
+
+    // ---------- grid editor: cosmetic per-seat staging overrides ----------
+
+    /// <summary>
+    /// Applies the Skins grid editor's per-seat overrides to a built <see cref="CustomAiFile"/>:
+    /// for each driver whose (original) <c>livery_name</c> is a key in <paramref name="overrides"/>,
+    /// swaps in the custom driver name and/or rebinds the livery. The map is keyed by the seat's
+    /// ORIGINAL livery, so it is applied AFTER the NAMeS-primary merge (which keys on the same
+    /// original livery) — the player's explicit edit is the final authority over the installed
+    /// community name. Null/empty overrides return the file unchanged (byte-identical), so a career
+    /// with no edits stages exactly as before. Cosmetic only: this never touches the resolved grid
+    /// the sim scores.
+    /// </summary>
+    public static CustomAiFile ApplyStagingOverrides(
+        CustomAiFile file, IReadOnlyDictionary<string, SeatStagingOverride>? overrides)
+    {
+        if (overrides is null || overrides.Count == 0)
+            return file;
+
+        bool changed = false;
+        var drivers = file.Drivers.Select(driver =>
+        {
+            if (!overrides.TryGetValue(driver.LiveryName, out var seat) || seat.IsEmpty)
+                return driver;
+            changed = true;
+            return driver with
+            {
+                Name = seat.DriverName is { Length: > 0 } ? seat.DriverName : driver.Name,
+                LiveryName = seat.LiveryName is { Length: > 0 } ? seat.LiveryName : driver.LiveryName,
+            };
+        }).ToList();
+
+        // Nothing actually matched a seat — return the original file so a no-edit stage stays a
+        // byte-identical no-op.
+        return changed ? file with { Drivers = drivers } : file;
+    }
 
     // ---------- NAMeS-primary merge ("found before overwritten") ----------
 
@@ -240,9 +300,11 @@ public static class GridStager
         string customAiDriversDirectory,
         DateTimeOffset now,
         bool force = false,
-        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null)
+        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null,
+        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null,
+        bool alwaysWrite = false)
     {
-        var result = StageOrRefuse(file, customAiDriversDirectory, now, force, packBaselineByLivery);
+        var result = StageOrRefuse(file, customAiDriversDirectory, now, force, packBaselineByLivery, overrides, alwaysWrite);
         return result.RequiresForce
             ? throw new InvalidOperationException(result.Report)
             : result;
@@ -258,7 +320,9 @@ public static class GridStager
         string customAiDriversDirectory,
         DateTimeOffset now,
         bool force = false,
-        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null)
+        IReadOnlyDictionary<string, CustomAiDriver>? packBaselineByLivery = null,
+        IReadOnlyDictionary<string, SeatStagingOverride>? overrides = null,
+        bool alwaysWrite = false)
     {
         string target = Path.Combine(customAiDriversDirectory, file.VehicleClass + ".xml");
 
@@ -276,9 +340,16 @@ public static class GridStager
             ? MergeInstalledPrimary(file, installed, packBaselineByLivery)
             : file;
 
+        // The grid editor's per-seat cosmetic overrides are applied LAST — after the NAMeS-primary
+        // merge — so the player's explicit rename/rebind wins over the installed community value.
+        toWrite = ApplyStagingOverrides(toWrite, overrides);
+
         // Diff-aware no-op: when the merged file matches the installed file, nothing is
-        // written — the user's curated file stays in place.
-        if (installed is not null && CustomAiEquivalence.Compare(toWrite, installed).Matches)
+        // written — the user's curated file stays in place. SKIPPED for an explicit "apply this
+        // grid" (alwaysWrite): the user chose this grid, so we ALWAYS write an app-marked file
+        // (backup-first) even when the content is diff-equal, so the write is verifiable on disk
+        // (the AMS2-diagnosis "why nothing changes": in the default flow the app wrote 0 bytes).
+        if (!alwaysWrite && installed is not null && CustomAiEquivalence.Compare(toWrite, installed).Matches)
         {
             return new StageResult
             {
@@ -291,7 +362,9 @@ public static class GridStager
             };
         }
 
-        if (!force && File.Exists(target) && !LooksGenerated(target))
+        // The community-file gate is bypassed by an explicit apply (alwaysWrite implies the user
+        // confirmed) — a timestamped backup is still taken first.
+        if (!force && !alwaysWrite && File.Exists(target) && !LooksGenerated(target))
         {
             return new StageResult
             {

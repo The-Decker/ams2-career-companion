@@ -20,6 +20,12 @@ public sealed record DiscoveredPack
     public string DisplayName => Manifest is null
         ? System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(Directory))
         : $"{Manifest.Name} ({Manifest.Version})";
+
+    /// <summary>The season name WITHOUT the pack version ("Formula One 1988") — for the season-pick
+    /// cards. Falls back to the folder name when the manifest is unreadable.</summary>
+    public string Title => Manifest?.Name is { Length: > 0 } name
+        ? name
+        : System.IO.Path.GetFileName(System.IO.Path.TrimEndingDirectorySeparator(Directory));
 }
 
 /// <summary>

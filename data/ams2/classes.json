@@ -1,5 +1,5 @@
 {
-  "extractedFrom": "AMS2 build 23820506, 2026-07-02 (all .crd files incl. engine/track-config variants)",
+  "extractedFrom": "AMS2 build 24053735, 2026-07-07 (all .crd files incl. engine/track-config variants)",
   "classes": [
     {
       "xmlName": "ARC_Cam",
@@ -1322,7 +1322,7 @@
     },
     {
       "xmlName": "GT1_05",
-      "vehicleCount": 7,
+      "vehicleCount": 8,
       "years": [
         2005,
         2005
@@ -1332,14 +1332,15 @@
         "chevrolet_corvette_c5r",
         "dodge_viper_gts_r",
         "lamborghini_murcielago_r_gt",
-        "lister_storm",
+        "lister_storm_gtm",
         "maserati_mc12_gt1",
-        "milano_55gt"
+        "milano_55gt",
+        "saleen_s7r_gt1"
       ]
     },
     {
       "xmlName": "GT1_05_LD",
-      "vehicleCount": 7,
+      "vehicleCount": 8,
       "years": [
         2005,
         2005
@@ -1349,9 +1350,10 @@
         "chevrolet_corvette_c5r_ld",
         "dodge_viper_gts_r_ld",
         "lamborghini_murcielago_r_gt_ld",
-        "lister_storm_ld",
+        "lister_storm_gtm_ld",
         "maserati_mc12_gt1_ld",
-        "milano_55gt_ld"
+        "milano_55gt_ld",
+        "saleen_s7r_gt1_ld"
       ]
     },
     {
@@ -1370,26 +1372,32 @@
     },
     {
       "xmlName": "GT2_05",
-      "vehicleCount": 2,
+      "vehicleCount": 5,
       "years": [
         2005,
         2005
       ],
       "vehicles": [
         "milano_gt36",
-        "porsche_996_gt3rsr"
+        "panoz_esperante_gtlm",
+        "porsche_996_gt3rsr",
+        "spyker_c8_spyder_gt2r",
+        "tvr_tuscan_t400r_gt2"
       ]
     },
     {
       "xmlName": "GT2_05_LD",
-      "vehicleCount": 2,
+      "vehicleCount": 5,
       "years": [
         2005,
         2005
       ],
       "vehicles": [
         "milano_gt36_ld",
-        "porsche_996_gt3rsr_ld"
+        "panoz_esperante_gtlm_ld",
+        "porsche_996_gt3rsr_ld",
+        "spyker_c8_spyder_gt2r_ld",
+        "tvr_tuscan_t400r_gt2_ld"
       ]
     },
     {
@@ -1564,24 +1572,26 @@
     },
     {
       "xmlName": "GTR_04",
-      "vehicleCount": 1,
+      "vehicleCount": 2,
       "years": [
         2001,
-        2001
+        2005
       ],
       "vehicles": [
-        "bmw_m3_gtr"
+        "bmw_m3_gtr",
+        "gillet_vertigo_streiff_gt2"
       ]
     },
     {
       "xmlName": "GTR_04_LD",
-      "vehicleCount": 1,
+      "vehicleCount": 2,
       "years": [
         2001,
-        2001
+        2005
       ],
       "vehicles": [
-        "bmw_m3_gtr_ld"
+        "bmw_m3_gtr_ld",
+        "gillet_vertigo_streiff_gt2_ld"
       ]
     },
     {
@@ -2477,6 +2487,17 @@
         "vw_polo_gts",
         "vw_virtus",
         "vw_virtus_gts"
+      ]
+    },
+    {
+      "xmlName": "Trofeo_2005",
+      "vehicleCount": 1,
+      "years": [
+        2005,
+        2005
+      ],
+      "vehicles": [
+        "maserati_gransport_trofeo"
       ]
     }
   ]

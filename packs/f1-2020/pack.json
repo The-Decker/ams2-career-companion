@@ -1,0 +1,31 @@
+﻿{
+    "packId":  "f1-2020",
+    "name":  "Formula One 2020",
+    "version":  "1.0.0",
+    "formatVersion":  1,
+    "gameVersionTested":  "1.6.9.82",
+    "license":  "CC BY 4.0",
+    "attribution":  [
+                        "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+                        "AI driver identities AND AI ratings from the community NAMeS F-Ultimate.xml custom-AI set, matching the 2020 F-Ultimate skinpack"
+                    ],
+    "requires":  {
+                     "dlc":  [
+
+                             ],
+                     "skinPacks":  [
+                                       {
+                                           "name":  "F1 2020 Season (F-Ultimate liveries)",
+                                           "overridesFolder":  "F1_Season_2020"
+                                       }
+                                   ]
+                 },
+    "notes":  [
+                  "Class: F-Ultimate (F-Ultimate.xml), which maps to the single vehicle model formula_ultimate_2019; every team is bound to that chassis.",
+                  "AI ratings (race_skill, qualifying_skill and all supporting stats) are EXTRACTED verbatim from the installed NAMeS F-Ultimate.xml, not authored. The XML carries per-track (tracks=\"...\") rating variants of each car; only the base per-car entry is carried here (variants deduped to one entry per driver).",
+                  "Coverage: all 20 primary 2020 seats plus the four substitute drives the NAMeS set ships liveries for - Hulkenberg (Racing Point, rounds 4-5 \u0026 11), Fittipaldi (Haas, rounds 16-17), Russell (Mercedes, Sakhir round 16) and Aitken (Williams, Sakhir round 16). Russell has two entries: his season Williams #63 seat (rounds 1-15,17) and his one-off Mercedes #63 stand-in (round 16).",
+                  "Points system copied verbatim from the 2020 entry of the oracle catalog (data/rules/f1-points-systems.json): 25-18-15-... top ten, +1 fastest-lap point (classified top ten, counts for constructors), and the Racing Point -15 constructors brake-duct penalty.",
+                  "Placeholder rounds (format v1): venues AMS2 does not ship (Mugello, Sochi, Portimao, Istanbul, Bahrain GP \u0026 Outer, Yas Marina) are reproduced on the nearest same-era AMS2 GP track with laps recomputed to preserve the historical race DISTANCE (realVenue set, isPlaceholder=true).",
+                  "grid.size on every round is that round\u0027s covered f1db starters (20 cars each race); setupGuide opponents = grid.size - 1. Every mapped track\u0027s Max AI participants (\u003e=29) comfortably exceeds the 20-car field."
+              ]
+}

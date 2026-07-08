@@ -73,4 +73,40 @@ public static class LenientXml
             .Where(v => v.Length > 0)
             .ToList();
     }
+
+    /// <summary>
+    /// Last-resort extraction of a PAIR of attributes from every <paramref name="elementName"/>
+    /// start tag (regex scrape, for markup no XML parser survives). For each element the value
+    /// of <paramref name="requiredAttribute"/> must be present and non-empty (else the element is
+    /// skipped); <paramref name="optionalAttribute"/> is captured when present, else "". Attribute
+    /// order within the tag does not matter. In document order. Used to read
+    /// <c>LIVERY_OVERRIDE</c>'s NAME (required) + LIVERY slot (optional — a "##" placeholder or
+    /// missing slot is not active) together, so a livery's active/inactive state survives even a
+    /// broken skin-pack file.
+    /// </summary>
+    public static IReadOnlyList<(string Optional, string Required)> ExtractElementAttributePairs(
+        string text, string elementName, string optionalAttribute, string requiredAttribute)
+    {
+        var tag = new Regex(
+            $@"<\s*{Regex.Escape(elementName)}\b([^>]*)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        var optionalRx = AttributeRegex(optionalAttribute);
+        var requiredRx = AttributeRegex(requiredAttribute);
+
+        var pairs = new List<(string, string)>();
+        foreach (Match m in tag.Matches(text))
+        {
+            string inner = m.Groups[1].Value;
+            var required = requiredRx.Match(inner);
+            if (!required.Success || required.Groups[1].Value.Length == 0)
+                continue;
+            var optional = optionalRx.Match(inner);
+            pairs.Add((optional.Success ? optional.Groups[1].Value : "", required.Groups[1].Value));
+        }
+        return pairs;
+    }
+
+    private static Regex AttributeRegex(string attributeName) => new(
+        $@"\b{Regex.Escape(attributeName)}\s*=\s*""([^""]*)""",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 }

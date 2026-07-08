@@ -1,7 +1,7 @@
 {
   "packId": "f1-1967",
   "name": "Formula One 1967",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "formatVersion": 1,
   "gameVersionTested": "1.6.9.82",
   "license": "CC BY 4.0",
@@ -54,6 +54,7 @@
     "Coverage: f1db 1967 entrant Giancarlo Baghetti (lotus+ford, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "Coverage: f1db 1967 entrant Moisés Solana (lotus+ford, rounds 10-11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "Coverage: f1db 1967 entrant Tom Jones (cooper+climax, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
-    "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. Entries authored against layouts this calendar does not drive (Azure_Circuit_2021, Watkins_Glen_S, Spa_Francorchamps_1993, Nordschleife_2020/_24hr) are mapped to the calendar round at the same venue (Monaco, Watkins Glen, Spa, Nurburgring)."
+    "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. Entries authored against layouts this calendar does not drive (Azure_Circuit_2021, Watkins_Glen_S, Spa_Francorchamps_1993, Nordschleife_2020/_24hr) are mapped to the calendar round at the same venue (Monaco, Watkins Glen, Spa, Nurburgring).",
+    "v1.2.0: jusk's F-Vintage_Gen1.xml is the ratings SOURCE OF TRUTH. All 13 base rating dims per driver are taken from the XML's base blocks (superseding the earlier f1db-derived raceSkill/qualifyingSkill, which had narrowed the field's spread); every per-track override block is carried into its venue's round as an absolute aiOverrides patch, filtered to that round's actual starters (so orphan overrides for non-racing drivers are dropped). The earlier f1db-derived per-round driverForm overlay was removed in favour of jusk's hand-tuned per-track form, which encodes real 1967 results (Rodriguez at Kyalami, Hulme at Monaco, Gurney at Spa, Ickx on the Nordschleife, Hill at Watkins Glen, the Monza slipstream compression). Rebuilt via tools/import_jusk_ai.cs."
   ]
 }

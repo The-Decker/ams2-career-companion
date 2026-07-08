@@ -14,6 +14,77 @@
             </Border>
         </DataTemplate>
 
+        <!-- one REAL historical race. Before the player has raced it (IsRevealed=false) it is a RACE
+             PREVIEW — circuit map + track detail, NO result spoiler. Once raced it becomes the
+             HISTORICAL DOCUMENT — winner + the full classified grid. Declared BEFORE SeasonCardTemplate,
+             which references it via StaticResource (no forward refs). -->
+        <DataTemplate x:Key="HistoricalRoundTemplate">
+            <StackPanel Margin="0,1">
+                <Button Style="{StaticResource SubtleButton}" HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left" Padding="4,3"
+                        Command="{Binding ToggleCommand}" ToolTip="Preview the circuit / show the result">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextMutedBrush}" Width="34" VerticalAlignment="Center" />
+                        <!-- revealed: the winner; preview: a spoiler-free "preview" tag -->
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding WinnerText}"
+                                   Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}" />
+                        <TextBlock DockPanel.Dock="Right" Text="preview" Style="{StaticResource Faint}"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsRevealed, Converter={StaticResource BoolCollapsed}}" />
+                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Button>
+                <StackPanel Margin="34,2,0,8"
+                            Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                    <!-- circuit map + detail: the "what the track is like" preview, shown either way -->
+                    <DockPanel Margin="0,0,0,6" Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
+                        <Viewbox DockPanel.Dock="Left" Width="96" Height="96" Margin="0,0,14,0" VerticalAlignment="Top">
+                            <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                                  Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        </Viewbox>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Muted}"
+                                       TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+                        </StackPanel>
+                    </DockPanel>
+                    <!-- REVEALED: the historical document (fastest lap + full classified result) -->
+                    <StackPanel Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="{Binding FastestLapText}" Style="{StaticResource Faint}" Margin="0,0,0,4"
+                                   Visibility="{Binding HasFastestLap, Converter={StaticResource BoolVisible}}" />
+                        <ItemsControl ItemsSource="{Binding Results}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,1">
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Pos}" FontFamily="Consolas"
+                                                   Width="40" Foreground="{StaticResource TextMutedBrush}" />
+                                        <TextBlock DockPanel.Dock="Right" Text="{Binding Team}" Style="{StaticResource Faint}"
+                                                   Margin="8,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Driver}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Status}" Style="{StaticResource Faint}" Margin="6,0,0,0"
+                                                       VerticalAlignment="Center"
+                                                       Visibility="{Binding HasStatus, Converter={StaticResource BoolVisible}}" />
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                    <!-- PREVIEW (not yet raced): the result stays sealed -->
+                    <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap"
+                               Visibility="{Binding IsRevealed, Converter={StaticResource BoolCollapsed}}"
+                               Text="The real result unlocks once you finish this race in your career." />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
         <!-- one season's scrapbook card, with a timeline node down the left -->
         <DataTemplate x:Key="SeasonCardTemplate">
             <DockPanel Margin="0,0,0,14">
@@ -69,6 +140,76 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+
+                        <!-- WHAT REALLY HAPPENED: the real f1db results of this year, clearly separated
+                             from the player's OWN (diverged) season above by a divider + label. Read-only
+                             reference — collapsed by default, expands per season and per race. -->
+                        <Border Margin="0,12,0,0" Padding="0,10,0,0" BorderBrush="{StaticResource EdgeBrush}"
+                                BorderThickness="0,1,0,0"
+                                Visibility="{Binding HasRealSeason, Converter={StaticResource BoolVisible}}"
+                                DataContext="{Binding RealSeason}">
+                            <StackPanel>
+                                <Button Style="{StaticResource SubtleButton}" HorizontalAlignment="Left"
+                                        HorizontalContentAlignment="Left" Padding="0"
+                                        Command="{Binding ToggleCommand}"
+                                        ToolTip="What really happened in F1 this year — the real results, separate from your career">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE81C;" FontSize="12"
+                                                   VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}"
+                                                   Margin="0,0,8,0" />
+                                        <TextBlock Text="What really happened" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Year, StringFormat=' in {0}'}"
+                                                   Style="{StaticResource Muted}" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding IsExpanded, Converter={StaticResource ExpandGlyph}}"
+                                                   FontFamily="Segoe MDL2 Assets" FontSize="10" Margin="8,0,0,0"
+                                                   VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}" />
+                                    </StackPanel>
+                                </Button>
+                                <StackPanel Margin="0,8,0,0"
+                                            Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                                    <!-- Optional story image for the season: drop <year>.jpg/.png into
+                                         data\ams2\history-art and it appears here (shared user-asset
+                                         convention, keyed by year). Collapses when no art is present. -->
+                                    <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10" MaxWidth="620"
+                                            HorizontalAlignment="Left" BorderBrush="{StaticResource EdgeBrush}"
+                                            BorderThickness="1"
+                                            Visibility="{Binding ElementName=SeasonStoryImage, Path=Source, Converter={StaticResource NullCollapsed}}">
+                                        <Image x:Name="SeasonStoryImage" Stretch="Uniform" StretchDirection="DownOnly"
+                                               Source="{Binding Year, Converter={StaticResource AssetImage}, ConverterParameter=history-art}" />
+                                    </Border>
+                                    <!-- Season SPOILERS (champions + summary): revealed only once the
+                                         player has finished the whole season in their career. -->
+                                    <StackPanel Visibility="{Binding IsSeasonComplete, Converter={StaticResource BoolVisible}}">
+                                        <TextBlock Text="{Binding SummaryText}" Style="{StaticResource Body}"
+                                                   TextWrapping="Wrap" Margin="0,0,0,8"
+                                                   Visibility="{Binding HasSummary, Converter={StaticResource BoolVisible}}" />
+                                        <DockPanel Margin="0,0,0,2"
+                                                   Visibility="{Binding HasDriversChampion, Converter={StaticResource BoolVisible}}">
+                                            <TextBlock DockPanel.Dock="Left" Text="Champion" Style="{StaticResource Faint}"
+                                                       Width="92" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding DriversChampionText}" TextWrapping="Wrap" />
+                                        </DockPanel>
+                                        <DockPanel Margin="0,0,0,8"
+                                                   Visibility="{Binding HasConstructorsChampion, Converter={StaticResource BoolVisible}}">
+                                            <TextBlock DockPanel.Dock="Left" Text="Constructors" Style="{StaticResource Faint}"
+                                                       Width="92" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding ConstructorsChampionText}" TextWrapping="Wrap" />
+                                        </DockPanel>
+                                    </StackPanel>
+                                    <!-- In-progress season: explain the reveal rule (no champion spoiler). -->
+                                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="10,7"
+                                            Margin="0,0,0,8"
+                                            Visibility="{Binding IsSeasonComplete, Converter={StaticResource BoolCollapsed}}">
+                                        <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
+                                                   Text="Results unlock as you race; the champion stays sealed until season's end." />
+                                    </Border>
+                                    <ItemsControl ItemsSource="{Binding Rounds}"
+                                                  ItemTemplate="{StaticResource HistoricalRoundTemplate}" />
+                                    <TextBlock Text="{Binding Source}" Style="{StaticResource Faint}" FontSize="10"
+                                               Margin="0,8,0,0" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Border>
             </DockPanel>
@@ -103,6 +244,35 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
             <StackPanel Margin="24,4,24,24" MaxWidth="820" HorizontalAlignment="Left">
+                <!-- NEXT RACE preview: the current season's upcoming round — circuit map + track detail,
+                     no result spoiler. The History screen's "what's coming next". -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,18"
+                        Visibility="{Binding HasNextRacePreview, Converter={StaticResource BoolVisible}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Faint}">
+                            <Run Text="NEXT RACE" /><Run Text="{Binding NextRaceYear, StringFormat=' · {0}', Mode=OneWay}" />
+                        </TextBlock>
+                        <DockPanel Margin="0,8,0,0" DataContext="{Binding NextRacePreview}">
+                            <Viewbox DockPanel.Dock="Left" Width="180" Height="180" Margin="0,0,18,0" VerticalAlignment="Top"
+                                     Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
+                                <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                                      Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                      StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                            </Viewbox>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Name}" FontSize="19" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0" />
+                                <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}" TextWrapping="Wrap"
+                                           Margin="0,8,0,0"
+                                           Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+                                <TextBlock Style="{StaticResource Faint}" Margin="0,8,0,0" TextWrapping="Wrap"
+                                           Text="Race it in your career to see how it really unfolded." />
+                            </StackPanel>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
                 <!-- records book -->
                 <TextBlock Text="Records" Style="{StaticResource H2}" Margin="0,0,0,10" />
                 <ItemsControl ItemsSource="{Binding Records.Rows}"

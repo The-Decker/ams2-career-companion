@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Companion.Core.Character;
 
 /// <summary>
@@ -15,9 +17,30 @@ public sealed record CharacterProfile
 
     public required IReadOnlyList<string> PerkIds { get; init; }
 
-    /// <summary>Character Points not yet spent (leftover at creation + level grants), spendable
-    /// between seasons.</summary>
+    /// <summary>The player's chosen driver name — the identity the whole app uses (news, standings,
+    /// dossier), rather than the historical driver whose seat they took. Empty for a legacy
+    /// character created before naming existed (then the app falls back to the seat's driver).</summary>
+    public string Name { get; init; } = "";
+
+    /// <summary>The driver's REAL age in their first season — the character's own age, set at
+    /// creation, not borrowed from the historical driver whose seat they took. Drives the season-end
+    /// aging curve and the contract-offer age risk (a 19-year-old rookie and a 34-year-old veteran
+    /// age and get courted very differently). Null for a legacy character created before ages existed
+    /// (then the app falls back to the seat driver's age, exactly as before) — omitted from the JSON
+    /// when null, so a legacy character serialises byte-for-byte unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int? Age { get; init; }
+
+    /// <summary>Character Points left over at CREATION (immutable) — the starting bank. The pool
+    /// available to spend later is this plus level grants minus <see cref="CpSpent"/>
+    /// (<see cref="CharacterProgress.AvailableCp"/>).</summary>
     public int CpUnspent { get; init; }
+
+    /// <summary>Total character points SPENT between seasons so far (raising stats, adding perks).
+    /// Accumulates as the driver develops; 0 for a character that has never spent. Omitted from the
+    /// state blob when 0, so a never-spent character serialises exactly as before.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int CpSpent { get; init; }
 
     public double Stat(string id) => Stats.GetValueOrDefault(id);
 
@@ -34,6 +57,9 @@ public sealed record CharacterProfile
         if (ReferenceEquals(this, other))
             return true;
         return CpUnspent == other.CpUnspent
+            && CpSpent == other.CpSpent
+            && Age == other.Age
+            && string.Equals(Name, other.Name, StringComparison.Ordinal)
             && PerkIds.SequenceEqual(other.PerkIds)
             && StatsEqual(Stats, other.Stats);
     }
@@ -42,6 +68,9 @@ public sealed record CharacterProfile
     {
         var hash = new HashCode();
         hash.Add(CpUnspent);
+        hash.Add(CpSpent);
+        hash.Add(Age);
+        hash.Add(Name);
         foreach (string id in PerkIds)
             hash.Add(id);
         foreach (var (key, value) in Stats.OrderBy(kv => kv.Key, StringComparer.Ordinal))

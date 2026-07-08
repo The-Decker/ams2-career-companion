@@ -1,0 +1,32 @@
+{
+    "packId":  "f1-2008",
+    "name":  "Formula One 2008",
+    "version":  "1.0.0",
+    "formatVersion":  1,
+    "gameVersionTested":  "1.6.9.82",
+    "license":  "CC BY 4.0",
+    "attribution":  [
+                        "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+                        "AI driver identities from the community NAMeS F-V8_Gen2.xml custom-AI set (NAMeS: Real Drivers for AMS2 by John B. Ellis), matching the F-V8_Gen2 / MP4/23-era skinpack"
+                    ],
+    "requires":  {
+                     "dlc":  [
+
+                             ],
+                     "skinPacks":  [
+                                       {
+                                           "name":  "F1 2008 Season (F-V8_Gen2 NAMeS liveries)",
+                                           "overridesFolder":  "F1_Season_2008"
+                                       }
+                                   ]
+                 },
+    "notes":  [
+                  "Full-grid coverage: all 22 primary seats of the 2008 F1 season (10 continuing teams x 2 cars) are bound to liveries in the installed NAMeS F-V8_Gen2.xml set. Super Aguri (Sato #18, Davidson #19) contested only rounds 1-4 before the team folded; both carry the NAMeS #18/#19 liveries and race the real 1-4 window.",
+                  "Class: F-V8_Gen2 (F-V8_Gen2.xml), which ships exactly three car models. Most teams are bound to the generic formula_v8_g2 chassis; McLaren (Hamilton #22, Kovalainen #23) uses the real-chassis mclaren_mp423 model and Renault (Alonso #5, Piquet Jr. #6) uses the renault_r28 model, mirroring the NAMeS set's real-chassis liveries (\"McLaren MP4/23 #22\", \"Renault R28 #5\").",
+                  "The installed NAMeS XML carries only driver identity (name / country / livery_name) with no AI skill fields, so per-driver raceSkill / qualifyingSkill and the supporting stats in drivers.json are authored from 2008 championship form (title fight Hamilton vs. Massa; Raikkonen, Kubica, Alonso, Vettel's wet Monza win, etc.), not read from the XML.",
+                  "Authored team reliability is a coarse estimate of 2008 mechanical finishing rate by team tier; it is not a per-team f1db mechanical-DNF derivation in this version.",
+                  "Points system copied verbatim from the era-correct 2008 entry of the oracle catalog (data/rules/f1-points-systems.json): 10-8-6-5-4-3-2-1 to the top eight, no fastest-lap point, no half-point rounds.",
+                  "Placeholder rounds (format v1): venues AMS2 does not ship (Australia/Melbourne, Malaysia/Sepang, Bahrain, Turkey/Istanbul Park, France/Magny-Cours, Europe/Valencia, Singapore/Marina Bay, China/Shanghai) are reproduced on the nearest same-era AMS2 track, each keeping its real venue identity (realVenue set, isPlaceholder=true) with laps recomputed to preserve the historical race DISTANCE. Tilke-designed 2008 circuits are stood in by other Tilke / modern-GP layouts (Bahrain & China -> Circuit of the Americas; Turkey -> Nurburgring GP); the two street rounds (Valencia -> Imola, Singapore -> Azure/Monaco) keep a street-to-street or technical-modern character.",
+                  "grid.size on every round is the smaller of that round's covered f1db starters and the mapped track's Max AI participants; setupGuide opponents = grid.size - 1. The 2008 field is 22 cars (20 from round 5 after Super Aguri's withdrawal), within every mapped track's AI cap, so grids run 20-22 depending on that round's starters."
+              ]
+}

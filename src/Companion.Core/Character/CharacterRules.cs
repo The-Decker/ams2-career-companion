@@ -95,6 +95,17 @@ public sealed record CharacterPointsRules
     public int MinBudgetAfterSpend { get; init; }
     public int MaxRefundHeadroom { get; init; }
 
+    /// <summary>The most perks a character may carry at creation — an archetype is the identity
+    /// (its signature perks) and creation should add only a few more. Null (file omits it) = no
+    /// count limit (only the CP budget binds). The CP budget alone can't cap the count because a
+    /// drawback-funded build refunds its way to many cheap perks; this is the hard ceiling.</summary>
+    public int? MaxPerks { get; init; }
+
+    /// <summary>The most total talent (sum of the seven stats) a driver may carry at creation.
+    /// Redistribution below it is free; the cap is what stops a max-everything build. Defaults to
+    /// 4.2 (neutral is 3.5) when the file omits it.</summary>
+    public double StatSumCap { get; init; } = 4.2;
+
     /// <summary>The inclusive net-spend window a valid creation build must land in:
     /// [minBudgetAfterSpend, creationBudget + maxRefundHeadroom].</summary>
     public int MaxNetSpend => CreationBudget + MaxRefundHeadroom;
@@ -255,4 +266,8 @@ public sealed record PerkEffect
     public string? Condition { get; init; }
 
     public double CpEquivalent { get; init; }
+
+    /// <summary>The authored human note for this effect, if any — a fallback description when the
+    /// UI describer has no friendlier phrase for the lever.</summary>
+    public string? Note { get; init; }
 }

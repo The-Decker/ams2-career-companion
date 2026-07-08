@@ -16,7 +16,7 @@ public class BriefingBannerToneTests
 
     private const string GateMessage =
         "Your installed F-Vintage_Gen1.xml differs from this round's grid (community NAMeS " +
-        "file). 'Stage anyway' takes a timestamped backup first.";
+        "file). 'Overwrite anyway' takes a timestamped backup first.";
 
     /// <summary>A force-capable session (like the real <see cref="CareerSessionService"/>):
     /// queued outcomes serve normal and forced staging alike, recording the force flag.</summary>
@@ -88,7 +88,10 @@ public class BriefingBannerToneTests
         vm.StageGridCommand.Execute(null);
 
         Assert.Equal(StageBannerTone.Info, vm.BannerTone);
-        Assert.Equal(GateMessage, vm.StageBanner);
+        // The banner is a clear, directive prompt (names the button, promises a backup) — not the
+        // raw gate message, and never reads as a failure.
+        Assert.Contains("Overwrite anyway", vm.StageBanner);
+        Assert.Contains("backup", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("failed", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("aborted", vm.StageBanner, StringComparison.OrdinalIgnoreCase);
 
@@ -116,7 +119,7 @@ public class BriefingBannerToneTests
         });
 
         Assert.Equal(StageBannerTone.Success, vm.BannerTone);
-        Assert.StartsWith("Staged", vm.StageBanner);
+        Assert.StartsWith("✔ AMS2 is set up", vm.StageBanner);
         Assert.Equal(InstalledPath, watcher.Watching);
     }
 
@@ -132,7 +135,7 @@ public class BriefingBannerToneTests
         });
 
         Assert.Equal(StageBannerTone.Success, vm.BannerTone);
-        Assert.Contains("already matches", vm.StageBanner);
+        Assert.Contains("already set up", vm.StageBanner);
         Assert.Equal(InstalledPath, watcher.Watching);
     }
 
@@ -150,7 +153,7 @@ public class BriefingBannerToneTests
         });
 
         Assert.Equal(StageBannerTone.Error, vm.BannerTone);
-        Assert.StartsWith("Staging failed", vm.StageBanner);
+        Assert.StartsWith("Couldn't set up", vm.StageBanner);
         Assert.Null(watcher.Watching);
     }
 

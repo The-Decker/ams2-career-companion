@@ -6,11 +6,31 @@
          control is keyboard-operable: the archetype list (arrows), the stat sliders (arrows), and
          the perk checkboxes (Space) — decision 8 parity. -->
     <DockPanel>
+        <!-- driver name: the identity the whole app uses -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+            <TextBlock DockPanel.Dock="Left" Text="Driver name" FontWeight="SemiBold" FontSize="15"
+                       VerticalAlignment="Center" Margin="0,0,12,0" />
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" FontSize="15"
+                     MaxLength="40" AutomationProperties.Name="Driver name" />
+        </DockPanel>
+
+        <!-- driver age: the character's REAL first-season age — drives aging + contract offers -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+            <TextBlock DockPanel.Dock="Left" Text="Age" FontWeight="SemiBold" FontSize="15"
+                       VerticalAlignment="Center" Margin="0,0,12,0" />
+            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="12,0,0,0" MinWidth="24"
+                       FontSize="15" FontWeight="SemiBold" TextAlignment="Right"
+                       Text="{Binding Age, Mode=OneWay}" />
+            <Slider Minimum="16" Maximum="45" Value="{Binding Age}" IsSnapToTickEnabled="True"
+                    TickFrequency="1" VerticalAlignment="Center"
+                    AutomationProperties.Name="Driver age" />
+        </DockPanel>
+
         <!-- character-points meter (always in view at the bottom) -->
         <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Padding="12,8" Margin="0,12,0,0">
             <StackPanel>
                 <TextBlock>
-                    <Run Text="Character points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=" spent · " /><Run Text="{Binding RemainingCp, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" left for stat growth" />
+                    <Run Text="Talent: " /><Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text=" allocated   ·   Perks: " /><Run Text="{Binding SelectedPerkCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerks, Mode=OneWay}" /><Run Text="   ·   Perk points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerkPoints, Mode=OneWay}" /><Run Text=" (budget " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=")" />
                 </TextBlock>
                 <TextBlock Foreground="{StaticResource ErrorBrush}" Margin="0,4,0,0" TextWrapping="Wrap"
                            Text="{Binding Invalidity}">
@@ -100,8 +120,28 @@
                                     <ItemsControl ItemsSource="{Binding Perks}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="4,2"
-                                                          ToolTip="{Binding Description}">
+                                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="4,2">
+                                                    <CheckBox.ToolTip>
+                                                        <StackPanel MaxWidth="320">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                                                                       Margin="0,2,0,0" Opacity="0.85" />
+                                                            <ItemsControl ItemsSource="{Binding Benefits}" Margin="0,6,0,0">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock TextWrapping="Wrap"><Run Text="+  " FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                            <ItemsControl ItemsSource="{Binding Drawbacks}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock TextWrapping="Wrap" Opacity="0.85"><Run Text="−  " FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </StackPanel>
+                                                    </CheckBox.ToolTip>
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text="{Binding Name}" />
                                                         <TextBlock Text="{Binding CostLabel}" Style="{StaticResource Faint}"

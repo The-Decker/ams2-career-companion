@@ -19,9 +19,11 @@ public sealed class CharacterRulesTests
         Assert.Equal(2, rules.Version);
         Assert.Equal(42, rules.Perks.Count);
         Assert.Equal(13, rules.Creation.Archetypes.Count);
-        Assert.Equal(10, rules.CharacterPoints.CreationBudget);
-        Assert.Equal(6, rules.CharacterPoints.MaxRefundHeadroom);
-        Assert.Equal(16, rules.CharacterPoints.MaxNetSpend);
+        Assert.Equal(6, rules.CharacterPoints.CreationBudget);
+        Assert.Equal(3, rules.CharacterPoints.MaxRefundHeadroom);
+        Assert.Equal(9, rules.CharacterPoints.MaxNetSpend);
+        Assert.Equal(5, rules.CharacterPoints.MaxPerks);
+        Assert.Equal(3, rules.Levels.LevelGrants.CharacterPointsPerLevel);
         Assert.Equal(5, rules.Stats.TalentStats.Count);
         Assert.Equal(2, rules.Stats.MetaStats.Count);
     }

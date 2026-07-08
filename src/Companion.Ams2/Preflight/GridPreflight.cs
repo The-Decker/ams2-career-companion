@@ -50,6 +50,7 @@ public static class GridPreflight
         var issues = new List<PreflightIssue>();
 
         CheckClassName(file, library, issues);
+        CheckLiveryNameHygiene(file, issues);
         CheckLiveryNames(file, library, installedLiveries, installedAiNames, issues);
         CheckTrackReferences(file, library, issues);
         CheckGridSize(library, trackId, gridSize ?? file.Drivers.Count(d => d.Tracks.Count == 0), issues);
@@ -182,6 +183,35 @@ public static class GridPreflight
                 Message = $"No livery reference data for class {file.VehicleClass} (no installed AI file, no installed " +
                           "overrides scanned, no stock library entry) — livery bindings cannot be verified.",
             });
+        }
+    }
+
+    /// <summary>
+    /// Livery-name HYGIENE (AMS2 diagnosis #7): the binding is byte-exact, so a leading/trailing
+    /// space or a non-ASCII byte in the <c>livery_name</c> (Reiza dev "hook issues") silently breaks
+    /// the match — and a mismatch reverts the WHOLE class to stock names, not just one car. These are
+    /// invisible in a UI, so flag them explicitly as warnings (we never auto-mutate the name — the
+    /// real in-game livery might genuinely carry the odd byte).
+    /// </summary>
+    private static void CheckLiveryNameHygiene(CustomAiFile file, List<PreflightIssue> issues)
+    {
+        foreach (var livery in file.Drivers.Select(d => d.LiveryName).Distinct(StringComparer.Ordinal))
+        {
+            if (livery.Length != livery.Trim().Length)
+                issues.Add(new PreflightIssue
+                {
+                    Severity = PreflightSeverity.Warning,
+                    Message = $"Livery name '{livery}' has leading/trailing whitespace — the binding is byte-exact, " +
+                              "so this likely won't match the in-game livery and can revert the whole class to stock names.",
+                });
+
+            if (livery.Any(c => c > 127))
+                issues.Add(new PreflightIssue
+                {
+                    Severity = PreflightSeverity.Warning,
+                    Message = $"Livery name '{livery}' contains non-ASCII characters — a known AMS2 match ('hook') issue; " +
+                              "if this class shows stock names in-game, the accented byte is the likely cause.",
+                });
         }
     }
 

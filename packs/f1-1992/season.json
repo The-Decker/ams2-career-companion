@@ -21,10 +21,19 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "South African Grand Prix",
@@ -40,39 +49,45 @@
       },
       "laps": 72,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.eric_van_de_poele",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
-          "driver.mauricio_gugelmin"
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
+          "driver.stefano_modena",
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-03-01",
           "weatherSlots": [
@@ -81,7 +96,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Kyalami 2019 is the modern layout of the same venue as the 'new' Kyalami that hosted the 1992 race; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s Kyalami 2019 is the modern layout of the same venue as the \u0027new\u0027 Kyalami that hosted the 1992 race; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -89,17 +104,26 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Mexican Grand Prix",
       "date": "1992-03-22",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Hermanos Rodríguez",
+        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
         "id": "jacarepagua_historic",
         "isPlaceholder": true,
         "fallbacks": [
@@ -109,39 +133,45 @@
       },
       "laps": 61,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.andrea_chiesa",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-03-22",
           "weatherSlots": [
@@ -150,7 +180,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 69 laps / 305 km reproduced as 61 laps of Jacarepagua Historic. Jacarepaguá keeps the era's flat, long-straight Latin American GP character (Brazilian GP host 1981-1989); the base-era Interlagos suggestion doubles as this season's Brazilian GP venue."
+        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 69 laps / 305 km reproduced as 61 laps of Jacarepagua Historic. Jacarepagu\u00E1 keeps the era\u0027s flat, long-straight Latin American GP character (Brazilian GP host 1981-1989); the base-era Interlagos suggestion doubles as this season\u0027s Brazilian GP venue."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -158,56 +188,70 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
       "date": "1992-04-05",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo José Carlos Pace",
+        "realVenue": "Aut\u00F3dromo Jos\u00E9 Carlos Pace",
         "id": "interlagos_1991",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 71,
       "grid": {
-        "size": 26,
+        "size": 31,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 30,
           "startTime": "14:00",
           "date": "1992-04-05",
           "weatherSlots": [
@@ -224,10 +268,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
@@ -243,39 +296,44 @@
       },
       "laps": 65,
       "grid": {
-        "size": 26,
+        "size": 31,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.andrea_chiesa",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.paul_belmondo",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
-          "driver.mauricio_gugelmin"
+          "driver.michael_schumacher",
+          "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
+          "driver.stefano_modena",
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 30,
           "startTime": "14:00",
           "date": "1992-05-03",
           "weatherSlots": [
@@ -292,10 +350,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "San Marino Grand Prix",
@@ -312,31 +379,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.paul_belmondo",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki"
         ]
       },
       "setupGuide": {
@@ -358,10 +424,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -377,39 +452,42 @@
       },
       "laps": 78,
       "grid": {
-        "size": 26,
+        "size": 29,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
+          "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
+          "driver.martin_brundle",
           "driver.mauricio_gugelmin",
-          "driver.roberto_moreno"
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 28,
           "startTime": "14:00",
           "date": "1992-05-31",
           "weatherSlots": [
@@ -426,10 +504,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -445,39 +532,45 @@
       },
       "laps": 69,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.paul_belmondo",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-06-14",
           "weatherSlots": [
@@ -494,10 +587,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -514,39 +616,44 @@
       },
       "laps": 70,
       "grid": {
-        "size": 26,
+        "size": 31,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.andrea_chiesa",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 30,
           "startTime": "14:00",
           "date": "1992-07-05",
           "weatherSlots": [
@@ -555,7 +662,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit de Nevers Magny-Cours — 69 laps / 293.3 km reproduced as 70 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (the f1-1988 pack's Paul Ricard convention); the 90s-Barcelona suggestion doubles as this season's Spanish GP venue."
+        "notes": "Placeholder for Circuit de Nevers Magny-Cours \u2014 69 laps / 293.3 km reproduced as 70 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue (the f1-1988 pack\u0027s Paul Ricard convention); the 90s-Barcelona suggestion doubles as this season\u0027s Spanish GP venue."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -563,10 +670,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -582,39 +698,45 @@
       },
       "laps": 59,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.damon_hill",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-07-12",
           "weatherSlots": [
@@ -631,10 +753,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
@@ -648,39 +779,45 @@
       },
       "laps": 45,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.paul_belmondo",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.alex_zanardi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
-          "driver.mauricio_gugelmin"
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
+          "driver.stefano_modena",
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-07-26",
           "weatherSlots": [
@@ -697,10 +834,19 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Hungarian Grand Prix",
@@ -714,39 +860,45 @@
       },
       "laps": 77,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.damon_hill",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.eric_van_de_poele",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.paul_belmondo",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.pierluigi_martini",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-08-16",
           "weatherSlots": [
@@ -763,10 +915,19 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -780,39 +941,42 @@
       },
       "laps": 44,
       "grid": {
-        "size": 26,
+        "size": 29,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.eric_van_de_poele",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.emanuele_naspetti",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 28,
           "startTime": "14:00",
           "date": "1992-08-30",
           "weatherSlots": [
@@ -829,10 +993,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -846,39 +1019,44 @@
       },
       "laps": 53,
       "grid": {
-        "size": 26,
+        "size": 31,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.eric_van_de_poele",
-          "driver.gabriele_tarquini",
-          "driver.karl_wendlinger",
-          "driver.emanuele_naspetti",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
-          "driver.mauricio_gugelmin"
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
+          "driver.stefano_modena",
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 30,
           "startTime": "14:00",
           "date": "1992-09-13",
           "weatherSlots": [
@@ -895,56 +1073,68 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Portuguese Grand Prix",
       "date": "1992-09-27",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo do Estoril",
+        "realVenue": "Aut\u00F3dromo do Estoril",
         "id": "estoril_1988",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 71,
       "grid": {
-        "size": 26,
+        "size": 29,
         "starterDriverIds": [
           "driver.ayrton_senna",
-          "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
-          "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.karl_wendlinger",
-          "driver.emanuele_naspetti",
-          "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
-          "driver.pierluigi_martini",
-          "driver.christian_fittipaldi",
-          "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
           "driver.jean_alesi",
           "driver.ivan_capelli",
+          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.bertrand_gachot",
+          "driver.michael_schumacher",
           "driver.ukyo_katayama",
+          "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
+          "driver.christian_fittipaldi",
+          "driver.gianni_morbidelli",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 28,
           "startTime": "14:00",
           "date": "1992-09-27",
           "weatherSlots": [
@@ -961,10 +1151,19 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Japanese Grand Prix",
@@ -980,39 +1179,45 @@
       },
       "laps": 53,
       "grid": {
-        "size": 26,
+        "size": 32,
         "starterDriverIds": [
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.ivan_capelli",
           "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
           "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.jan_lammers",
-          "driver.emanuele_naspetti",
+          "driver.bertrand_gachot",
           "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
+          "driver.ukyo_katayama",
           "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
           "driver.christian_fittipaldi",
           "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
-          "driver.jean_alesi",
-          "driver.nicola_larini",
-          "driver.bertrand_gachot",
-          "driver.ukyo_katayama",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki",
+          "driver.olivier_grouillard",
+          "driver.paul_belmondo",
+          "driver.eric_van_de_poele",
+          "driver.giovanna_amati",
+          "driver.andrea_chiesa",
+          "driver.alex_caffi",
+          "driver.enrico_bertaggia"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 25,
+          "opponents": 31,
           "startTime": "14:00",
           "date": "1992-10-25",
           "weatherSlots": [
@@ -1029,10 +1234,19 @@
     {
       "round": 16,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Australian Grand Prix",
@@ -1049,31 +1263,30 @@
         "size": 25,
         "starterDriverIds": [
           "driver.ayrton_senna",
+          "driver.jean_alesi",
+          "driver.ivan_capelli",
           "driver.gerhard_berger",
-          "driver.olivier_grouillard",
-          "driver.andrea_de_cesaris",
           "driver.nigel_mansell",
-          "driver.riccardo_patrese",
-          "driver.michele_alboreto",
-          "driver.aguri_suzuki",
-          "driver.mika_hakkinen",
-          "driver.johnny_herbert",
-          "driver.jan_lammers",
-          "driver.emanuele_naspetti",
+          "driver.bertrand_gachot",
           "driver.michael_schumacher",
-          "driver.martin_brundle",
-          "driver.jj_lehto",
+          "driver.ukyo_katayama",
           "driver.pierluigi_martini",
+          "driver.riccardo_patrese",
+          "driver.jj_lehto",
           "driver.christian_fittipaldi",
           "driver.gianni_morbidelli",
-          "driver.thierry_boutsen",
-          "driver.erik_comas",
-          "driver.jean_alesi",
-          "driver.nicola_larini",
-          "driver.bertrand_gachot",
-          "driver.ukyo_katayama",
           "driver.stefano_modena",
-          "driver.mauricio_gugelmin"
+          "driver.martin_brundle",
+          "driver.mauricio_gugelmin",
+          "driver.andrea_de_cesaris",
+          "driver.mika_hakkinen",
+          "driver.erik_comas",
+          "driver.thierry_boutsen",
+          "driver.johnny_herbert",
+          "driver.karl_wendlinger",
+          "driver.michele_alboreto",
+          "driver.gabriele_tarquini",
+          "driver.aguri_suzuki"
         ]
       },
       "setupGuide": {
@@ -1092,5 +1305,1226 @@
       "guestEntries": [],
       "aiOverrides": {}
     }
-  ]
+  ],
+  "driverForm": {
+    "1": {
+      "driver.aguri_suzuki": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.gerhard_berger": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.jean_alesi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jj_lehto": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.michael_schumacher": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.riccardo_patrese": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      }
+    },
+    "2": {
+      "driver.aguri_suzuki": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.andrea_chiesa": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.erik_comas": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.gianni_morbidelli": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_alesi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.stefano_modena": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      }
+    },
+    "3": {
+      "driver.aguri_suzuki": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.olivier_grouillard": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.stefano_modena": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      }
+    },
+    "4": {
+      "driver.andrea_chiesa": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.martin_brundle": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.michele_alboreto": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.riccardo_patrese": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "5": {
+      "driver.aguri_suzuki": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.gianni_morbidelli": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.martin_brundle": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.olivier_grouillard": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      }
+    },
+    "6": {
+      "driver.andrea_chiesa": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.erik_comas": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jean_alesi": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jj_lehto": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michael_schumacher": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "7": {
+      "driver.aguri_suzuki": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.andrea_chiesa": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.erik_comas": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.jj_lehto": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.michele_alboreto": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.stefano_modena": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "8": {
+      "driver.aguri_suzuki": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.stefano_modena": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      }
+    },
+    "9": {
+      "driver.aguri_suzuki": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.andrea_chiesa": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.martin_brundle": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.olivier_grouillard": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "10": {
+      "driver.aguri_suzuki": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.andrea_chiesa": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ivan_capelli": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.jean_alesi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jj_lehto": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.michael_schumacher": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "11": {
+      "driver.aguri_suzuki": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_alesi": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.jj_lehto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.martin_brundle": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.paul_belmondo": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.riccardo_patrese": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "12": {
+      "driver.aguri_suzuki": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.eric_van_de_poele": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gerhard_berger": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.ivan_capelli": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.jean_alesi": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.michael_schumacher": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.riccardo_patrese": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.stefano_modena": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "13": {
+      "driver.andrea_de_cesaris": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.eric_van_de_poele": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.gabriele_tarquini": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jean_alesi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jj_lehto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.karl_wendlinger": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michael_schumacher": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.riccardo_patrese": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      }
+    },
+    "14": {
+      "driver.aguri_suzuki": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.gianni_morbidelli": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.ivan_capelli": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jean_alesi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.karl_wendlinger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.martin_brundle": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.stefano_modena": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      }
+    },
+    "15": {
+      "driver.aguri_suzuki": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jean_alesi": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jj_lehto": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.johnny_herbert": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mauricio_gugelmin": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.stefano_modena": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      }
+    },
+    "16": {
+      "driver.andrea_de_cesaris": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.bertrand_gachot": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.christian_fittipaldi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.erik_comas": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gianni_morbidelli": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.jj_lehto": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.mika_hakkinen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.olivier_grouillard": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.pierluigi_martini": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.stefano_modena": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.ukyo_katayama": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      }
+    }
+  }
 }

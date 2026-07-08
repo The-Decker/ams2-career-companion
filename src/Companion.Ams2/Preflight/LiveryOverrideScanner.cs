@@ -16,6 +16,19 @@ public sealed record InstalledLivery
     public required string VehicleFolder { get; init; }
 
     public required string SourceFile { get; init; }
+
+    /// <summary>The raw LIVERY slot attribute (e.g. "53", or "##"/"" for a placeholder). AMS2 only
+    /// loads a livery whose slot is a real number — a "##" placeholder is shipped on disk but NOT
+    /// switched on in-game until a selector assigns it a real slot. This is why a skin pack can
+    /// list a livery the game never shows.</summary>
+    public string Slot { get; init; } = "";
+
+    /// <summary>True when this override is ACTIVE in-game: its <see cref="Slot"/> is a real
+    /// positive number (not a "##" placeholder / catalog-only entry). Only active liveries appear
+    /// on the vehicle-selection screen and bind an AI's livery_name to a skin.</summary>
+    public bool IsActive =>
+        int.TryParse(Slot, System.Globalization.NumberStyles.Integer,
+            CultureInfo.InvariantCulture, out int slot) && slot > 0;
 }
 
 /// <summary>Structured outcome of one livery-override scan: the liveries plus the aggregate
@@ -68,6 +81,7 @@ public static class LiveryOverrideScanner
 
     private const string OverrideElement = "LIVERY_OVERRIDE";
     private const string NameAttribute = "NAME";
+    private const string LiveryAttribute = "LIVERY";
 
     public static IReadOnlyList<string> CandidateOverrideRoots(string gameInstallDirectory, string documentsDirectory) =>
     [
@@ -115,32 +129,39 @@ public static class LiveryOverrideScanner
                     continue;
                 }
 
-                var names = TryStrict(text);
-                if (names is null)
+                var entries = TryStrict(text);
+                if (entries is null)
                 {
-                    names = TryLenient(text);
-                    if (names is null)
+                    entries = TryLenient(text);
+                    if (entries is null)
                     {
-                        var scraped = LenientXml.ExtractAttributeValues(text, OverrideElement, NameAttribute);
+                        // Strip <!-- --> spans BEFORE scraping: AMS2 ignores commented
+                        // LIVERY_OVERRIDE entries (the "##" placeholder examples + Reiza's _dist
+                        // template live entirely inside comments), so they must never be reported as
+                        // installed liveries. The strict/lenient passes already skip comments; the
+                        // regex fallback must too.
+                        var scraped = LenientXml.ExtractElementAttributePairs(
+                            LenientXml.StripComments(text), OverrideElement, LiveryAttribute, NameAttribute);
                         if (scraped.Count == 0)
                         {
                             unreadable.Add(
                                 $"{file}: not readable as XML, and no {OverrideElement} {NameAttribute} attributes found.");
                             continue;
                         }
-                        names = scraped.ToList();
+                        entries = scraped.Select(p => (p.Optional, p.Required)).ToList();
                     }
                     recovered++;
                 }
 
                 string vehicleFolder = VehicleFolderOf(root, file);
-                foreach (var name in names)
+                foreach (var (slot, name) in entries)
                 {
                     liveries.Add(new InstalledLivery
                     {
                         Name = name,
                         VehicleFolder = vehicleFolder,
                         SourceFile = file,
+                        Slot = slot,
                     });
                 }
             }
@@ -161,10 +182,12 @@ public static class LiveryOverrideScanner
         return relative.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)[0];
     }
 
-    /// <summary>Strict streaming parse; null when the markup is not well-formed XML.</summary>
-    private static List<string>? TryStrict(string text)
+    /// <summary>Strict streaming parse; null when the markup is not well-formed XML. Captures the
+    /// LIVERY slot alongside NAME so the caller can tell an active (numeric slot) livery from a
+    /// "##" placeholder.</summary>
+    private static List<(string Slot, string Name)>? TryStrict(string text)
     {
-        var names = new List<string>();
+        var entries = new List<(string, string)>();
         try
         {
             using var reader = XmlReader.Create(new StringReader(text), new XmlReaderSettings
@@ -181,19 +204,19 @@ public static class LiveryOverrideScanner
                     continue;
 
                 if (reader.GetAttribute(NameAttribute) is { Length: > 0 } name)
-                    names.Add(name);
+                    entries.Add((reader.GetAttribute(LiveryAttribute) ?? "", name));
             }
         }
         catch (XmlException)
         {
             return null; // partial finds are discarded — the lenient pass re-reads everything
         }
-        return names;
+        return entries;
     }
 
     /// <summary>Comment-stripped, ampersand-repaired parse; null when the markup is broken
     /// beyond what cleaning fixes (mismatched tags, multiple roots, stray declarations).</summary>
-    private static List<string>? TryLenient(string text)
+    private static List<(string Slot, string Name)>? TryLenient(string text)
     {
         XDocument document;
         try
@@ -207,11 +230,16 @@ public static class LiveryOverrideScanner
 
         return document.Descendants()
             .Where(e => e.Name.LocalName.Equals(OverrideElement, StringComparison.OrdinalIgnoreCase))
-            .Select(e => e.Attributes()
-                .FirstOrDefault(a => a.Name.LocalName.Equals(NameAttribute, StringComparison.OrdinalIgnoreCase))
-                ?.Value)
-            .Where(name => name is { Length: > 0 })
-            .Select(name => name!)
+            .Select(e => (
+                Name: Attribute(e, NameAttribute),
+                Slot: Attribute(e, LiveryAttribute)))
+            .Where(pair => pair.Name is { Length: > 0 })
+            .Select(pair => (pair.Slot ?? "", pair.Name!))
             .ToList();
     }
+
+    private static string? Attribute(XElement element, string localName) =>
+        element.Attributes()
+            .FirstOrDefault(a => a.Name.LocalName.Equals(localName, StringComparison.OrdinalIgnoreCase))
+            ?.Value;
 }

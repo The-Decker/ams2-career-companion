@@ -45,8 +45,8 @@ public class MigrationsV2Tests
 
         using var db = CareerDatabase.Open(tmp.Path);
 
-        Assert.Equal(3, Migrations.CurrentVersion);
-        Assert.Equal(3, db.SchemaVersion);
+        Assert.Equal(4, Migrations.CurrentVersion);
+        Assert.Equal(4, db.SchemaVersion);
 
         // Every v1 row survived the upgrade untouched.
         var career = CareerStore.ReadCareer(db);
@@ -96,7 +96,7 @@ public class MigrationsV2Tests
         }
 
         using var db = CareerDatabase.Open(tmp.Path);
-        Assert.Equal(3, db.SchemaVersion);
+        Assert.Equal(4, db.SchemaVersion);
         Assert.Equal(35.0, StateStore.ReadPlayerState(db, 1, StateStore.StageStart)!.Reputation);
 
         StateStore.InsertRoundPlayerState(db, 1, 1, new RoundPlayerState
@@ -117,9 +117,9 @@ public class MigrationsV2Tests
         CreateV1File(tmp.Path);
 
         using (var first = CareerDatabase.Open(tmp.Path))
-            Assert.Equal(3, first.SchemaVersion);
+            Assert.Equal(4, first.SchemaVersion);
         using var second = CareerDatabase.Open(tmp.Path);
-        Assert.Equal(3, second.SchemaVersion);
+        Assert.Equal(4, second.SchemaVersion);
         Assert.Equal("Mike", CareerStore.ReadCareer(second).Name);
     }
 

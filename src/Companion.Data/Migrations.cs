@@ -128,6 +128,21 @@ public static class Migrations
             PRIMARY KEY (season_id, round)
         );
         """,
+
+        // v4 — grid staging overrides (the Skins grid editor). Per-season, per-seat COSMETIC
+        // overrides applied ONLY to the staged custom-AI file: a custom driver name and/or a
+        // rebound livery (skin) for the seat identified by its original ams2LiveryName. This is
+        // NOT sim state — the fold/replay never reads it, so re-simulation stays byte-identical and
+        // WipeDerived leaves it untouched (it is user input, like a preference, not derived data).
+        """
+        CREATE TABLE staging_override (
+            season_id    INTEGER NOT NULL REFERENCES season (id),
+            livery_key   TEXT NOT NULL,
+            driver_name  TEXT,
+            livery_name  TEXT,
+            PRIMARY KEY (season_id, livery_key)
+        );
+        """,
     ];
 
     public static int CurrentVersion => Scripts.Length;

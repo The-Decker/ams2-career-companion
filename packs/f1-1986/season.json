@@ -24,17 +24,26 @@
     {
       "round": 1,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Brazilian Grand Prix",
       "date": "1986-03-23",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Internacional Nelson Piquet",
+        "realVenue": "Aut\u00F3dromo Internacional Nelson Piquet",
         "id": "jacarepagua_historic",
         "isPlaceholder": false,
         "fallbacks": []
@@ -43,30 +52,30 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
-          "driver.elio_de_angelis",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.marc_surer",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
-          "driver.christian_danner",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite"
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
@@ -88,10 +97,19 @@
     {
       "round": 2,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Spanish Grand Prix",
@@ -107,30 +125,30 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
-          "driver.elio_de_angelis",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.marc_surer",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
-          "driver.christian_danner",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite"
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
@@ -144,7 +162,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Jerez 1988 is the same original layout Jerez opened with; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s Jerez 1988 is the same original layout Jerez opened with; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -152,10 +170,19 @@
     {
       "round": 3,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "San Marino Grand Prix",
@@ -171,30 +198,30 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
-          "driver.elio_de_angelis",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.marc_surer",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
+          "driver.alessandro_nannini",
           "driver.piercarlo_ghinzani",
-          "driver.christian_danner",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite"
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
@@ -208,7 +235,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Imola 1988 is the same pre-1995 layout driven in 1986; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s Imola 1988 is the same pre-1995 layout driven in 1986; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -216,10 +243,19 @@
     {
       "round": 4,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Monaco Grand Prix",
@@ -235,33 +271,37 @@
       },
       "laps": 78,
       "grid": {
-        "size": 20,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
-          "driver.elio_de_angelis",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.johnny_dumfries",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.marc_surer",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite"
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
+          "driver.alessandro_nannini",
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 19,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-05-11",
           "weatherSlots": [
@@ -278,10 +318,19 @@
     {
       "round": 5,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Belgian Grand Prix",
@@ -297,30 +346,30 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.marc_surer",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
-          "driver.christian_danner",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite"
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
@@ -342,10 +391,19 @@
     {
       "round": 6,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Canadian Grand Prix",
@@ -359,36 +417,37 @@
       },
       "laps": 69,
       "grid": {
-        "size": 23,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
-          "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
-          "driver.alan_jones",
-          "driver.thierry_boutsen",
-          "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
-          "driver.christian_danner",
-          "driver.alessandro_nannini",
-          "driver.rene_arnoux",
           "driver.jacques_laffite",
-          "driver.derek_warwick"
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.johnny_dumfries",
+          "driver.alan_jones",
+          "driver.patrick_tambay",
+          "driver.elio_de_angelis",
+          "driver.teo_fabi",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
+          "driver.alessandro_nannini",
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 22,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-06-15",
           "weatherSlots": [
@@ -397,7 +456,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's historic Montreal is the 1988-spec layout; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s historic Montreal is the 1988-spec layout; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -405,10 +464,19 @@
     {
       "round": 7,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Detroit Grand Prix",
@@ -424,36 +492,37 @@
       },
       "laps": 80,
       "grid": {
-        "size": 23,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
-          "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.alan_jones",
-          "driver.thierry_boutsen",
-          "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
-          "driver.alessandro_nannini",
-          "driver.rene_arnoux",
           "driver.jacques_laffite",
-          "driver.derek_warwick",
-          "driver.christian_danner",
-          "driver.eddie_cheever"
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.johnny_dumfries",
+          "driver.alan_jones",
+          "driver.patrick_tambay",
+          "driver.elio_de_angelis",
+          "driver.teo_fabi",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
+          "driver.alessandro_nannini",
+          "driver.piercarlo_ghinzani",
+          "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 22,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-06-22",
           "weatherSlots": [
@@ -462,7 +531,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Detroit Street Circuit — 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 — the era's US street-race character."
+        "notes": "Placeholder for Detroit Street Circuit \u2014 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 \u2014 the era\u0027s US street-race character."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -470,10 +539,19 @@
     {
       "round": 8,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "French Grand Prix",
@@ -492,29 +570,29 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite",
-          "driver.derek_warwick",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
@@ -529,7 +607,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit Paul Ricard — 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+        "notes": "Placeholder for Circuit Paul Ricard \u2014 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -537,10 +615,19 @@
     {
       "round": 9,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "British Grand Prix",
@@ -556,29 +643,29 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.jacques_laffite",
-          "driver.derek_warwick",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
@@ -593,7 +680,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Brands Hatch GP is the modern layout of the same venue; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s Brands Hatch GP is the modern layout of the same venue; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -601,10 +688,19 @@
     {
       "round": 10,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "German Grand Prix",
@@ -620,29 +716,29 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.derek_warwick",
-          "driver.philippe_alliot",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
@@ -657,7 +753,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Hockenheim 1988 is the same configuration driven in 1986; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s Hockenheim 1988 is the same configuration driven in 1986; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -665,10 +761,19 @@
     {
       "round": 11,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Hungarian Grand Prix",
@@ -684,29 +789,29 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.derek_warwick",
-          "driver.philippe_alliot",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
@@ -729,10 +834,19 @@
     {
       "round": 12,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Austrian Grand Prix",
@@ -748,36 +862,37 @@
       },
       "laps": 52,
       "grid": {
-        "size": 23,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.philippe_alliot",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 22,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-08-17",
           "weatherSlots": [
@@ -786,7 +901,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "The 1986 Austrian GP ran the Österreichring — AMS2's Spielberg Historic, the 1977 layout with the Hella-Licht chicane still driven in 1986; the venue is real, so the historical lap count is kept."
+        "notes": "The 1986 Austrian GP ran the \u00D6sterreichring \u2014 AMS2\u0027s Spielberg Historic, the 1977 layout with the Hella-Licht chicane still driven in 1986; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -794,10 +909,19 @@
     {
       "round": 13,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Italian Grand Prix",
@@ -811,38 +935,37 @@
       },
       "laps": 51,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.ivan_capelli",
-          "driver.derek_warwick",
-          "driver.philippe_alliot",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-09-07",
           "weatherSlots": [
@@ -859,55 +982,63 @@
     {
       "round": 14,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Portuguese Grand Prix",
       "date": "1986-09-21",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo do Estoril",
+        "realVenue": "Aut\u00F3dromo do Estoril",
         "id": "estoril_1988",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 70,
       "grid": {
-        "size": 25,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.ivan_capelli",
-          "driver.derek_warwick",
-          "driver.philippe_alliot",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-09-21",
           "weatherSlots": [
@@ -916,7 +1047,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "AMS2's Cascais 1988 (Estoril) is the same layout driven in 1986; the venue is real, so the historical lap count is kept."
+        "notes": "AMS2\u0027s Cascais 1988 (Estoril) is the same layout driven in 1986; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -924,17 +1055,26 @@
     {
       "round": 15,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Mexican Grand Prix",
       "date": "1986-10-12",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Hermanos Rodríguez",
+        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
         "id": "interlagos_1991",
         "isPlaceholder": true,
         "fallbacks": [
@@ -943,35 +1083,37 @@
       },
       "laps": 70,
       "grid": {
-        "size": 22,
+        "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
-          "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.alan_jones",
-          "driver.thierry_boutsen",
-          "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
-          "driver.alessandro_nannini",
+          "driver.jacques_laffite",
           "driver.rene_arnoux",
-          "driver.derek_warwick",
-          "driver.philippe_alliot",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
+          "driver.johnny_dumfries",
+          "driver.alan_jones",
+          "driver.patrick_tambay",
+          "driver.elio_de_angelis",
+          "driver.teo_fabi",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
+          "driver.alessandro_nannini",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 21,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1986-10-12",
           "weatherSlots": [
@@ -980,7 +1122,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 68 laps / 300.6 km reproduced as 70 laps of Interlagos 1991. Interlagos 1991 keeps the period Latin-American venue character."
+        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 68 laps / 300.6 km reproduced as 70 laps of Interlagos 1991. Interlagos 1991 keeps the period Latin-American venue character."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -988,10 +1130,19 @@
     {
       "round": 16,
       "weekend": {
-        "practice": { "present": true, "label": "Practice" },
-        "qualifying": { "present": true, "label": "Qualifying" },
+        "practice": {
+          "present": true,
+          "label": "Practice"
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying"
+        },
         "races": [
-          { "id": "race", "label": "Grand Prix" }
+          {
+            "id": "race",
+            "label": "Grand Prix"
+          }
         ]
       },
       "name": "Australian Grand Prix",
@@ -1007,29 +1158,29 @@
       "grid": {
         "size": 24,
         "starterDriverIds": [
-          "driver.alain_prost",
-          "driver.keke_rosberg",
-          "driver.martin_brundle",
-          "driver.philippe_streiff",
           "driver.nigel_mansell",
           "driver.nelson_piquet",
-          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.ayrton_senna",
+          "driver.keke_rosberg",
           "driver.michele_alboreto",
           "driver.stefan_johansson",
+          "driver.jacques_laffite",
+          "driver.rene_arnoux",
+          "driver.gerhard_berger",
+          "driver.riccardo_patrese",
+          "driver.martin_brundle",
           "driver.johnny_dumfries",
-          "driver.ayrton_senna",
-          "driver.jonathan_palmer",
-          "driver.huub_rothengatter",
           "driver.alan_jones",
           "driver.patrick_tambay",
-          "driver.thierry_boutsen",
+          "driver.elio_de_angelis",
           "driver.teo_fabi",
-          "driver.gerhard_berger",
-          "driver.piercarlo_ghinzani",
+          "driver.thierry_boutsen",
+          "driver.philippe_streiff",
+          "driver.marc_surer",
+          "driver.jonathan_palmer",
           "driver.alessandro_nannini",
-          "driver.rene_arnoux",
-          "driver.derek_warwick",
-          "driver.philippe_alliot",
+          "driver.piercarlo_ghinzani",
           "driver.christian_danner"
         ]
       },
@@ -1049,5 +1200,1017 @@
       "guestEntries": [],
       "aiOverrides": {}
     }
-  ]
+  ],
+  "driverForm": {
+    "1": {
+      "driver.alain_prost": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.alan_jones": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christian_danner": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.teo_fabi": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      }
+    },
+    "2": {
+      "driver.alessandro_nannini": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christian_danner": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.marc_surer": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      }
+    },
+    "3": {
+      "driver.alan_jones": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christian_danner": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.marc_surer": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "4": {
+      "driver.alain_prost": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.alan_jones": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.christian_danner": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.elio_de_angelis": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jonathan_palmer": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.marc_surer": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.teo_fabi": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      }
+    },
+    "5": {
+      "driver.alain_prost": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.christian_danner": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.marc_surer": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.teo_fabi": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      }
+    },
+    "6": {
+      "driver.alan_jones": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.christian_danner": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.michele_alboreto": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.patrick_tambay": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.philippe_streiff": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.teo_fabi": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "7": {
+      "driver.alain_prost": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.alan_jones": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christian_danner": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.michele_alboreto": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.teo_fabi": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "8": {
+      "driver.alan_jones": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christian_danner": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.philippe_streiff": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.piercarlo_ghinzani": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.stefan_johansson": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "9": {
+      "driver.alain_prost": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.alan_jones": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.christian_danner": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jacques_laffite": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.martin_brundle": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.teo_fabi": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "10": {
+      "driver.alain_prost": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.alan_jones": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.christian_danner": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.nelson_piquet": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.piercarlo_ghinzani": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "11": {
+      "driver.alain_prost": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.alan_jones": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.rene_arnoux": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.teo_fabi": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "12": {
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.piercarlo_ghinzani": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.teo_fabi": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      }
+    },
+    "13": {
+      "driver.alain_prost": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.alan_jones": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.christian_danner": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.piercarlo_ghinzani": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.teo_fabi": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.05
+      }
+    },
+    "14": {
+      "driver.alain_prost": {
+        "qualifyingSkill": 0.02
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.martin_brundle": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.patrick_tambay": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": 0.04,
+        "qualifyingSkill": 0.04
+      },
+      "driver.teo_fabi": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "15": {
+      "driver.alain_prost": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.02
+      },
+      "driver.alan_jones": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.ayrton_senna": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.christian_danner": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.gerhard_berger": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.03
+      },
+      "driver.johnny_dumfries": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.jonathan_palmer": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.keke_rosberg": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.michele_alboreto": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.03
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": 0.05,
+        "qualifyingSkill": 0.06
+      },
+      "driver.piercarlo_ghinzani": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.stefan_johansson": {
+        "raceSkill": -0.03,
+        "qualifyingSkill": -0.04
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.06
+      }
+    },
+    "16": {
+      "driver.alan_jones": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.alessandro_nannini": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.christian_danner": {
+        "raceSkill": -0.02,
+        "qualifyingSkill": -0.03
+      },
+      "driver.nelson_piquet": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.02
+      },
+      "driver.nigel_mansell": {
+        "raceSkill": 0.02,
+        "qualifyingSkill": 0.03
+      },
+      "driver.patrick_tambay": {
+        "raceSkill": -0.05,
+        "qualifyingSkill": -0.06
+      },
+      "driver.philippe_streiff": {
+        "raceSkill": 0.06,
+        "qualifyingSkill": 0.06
+      },
+      "driver.piercarlo_ghinzani": {
+        "qualifyingSkill": -0.02
+      },
+      "driver.rene_arnoux": {
+        "raceSkill": 0.03,
+        "qualifyingSkill": 0.04
+      },
+      "driver.riccardo_patrese": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      },
+      "driver.teo_fabi": {
+        "raceSkill": -0.04,
+        "qualifyingSkill": -0.05
+      },
+      "driver.thierry_boutsen": {
+        "raceSkill": -0.06,
+        "qualifyingSkill": -0.06
+      }
+    }
+  }
 }

@@ -97,9 +97,39 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public long Xp { get; init; }
 
+    /// <summary>Within-season injury load banked from the driver-error-DNF injury perks (glass_cannon /
+    /// hot_head <c>perErrorAdd</c>): each driver-error DNF adds its perk's per-error contribution, and
+    /// the season-end injury roll reads the total ON TOP of the base hazard, then resets it to 0 so it
+    /// never compounds across seasons. 0 for any career without a perErrorAdd injury perk ⇒ the
+    /// player_state blob is byte-identical (WhenWritingDefault omits it). (Task #18.)</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public double SeasonInjuryLoad { get; init; }
+
     /// <summary>True once a character has been created for this career.</summary>
     [JsonIgnore]
     public bool HasCharacter => Character is not null;
+
+    // ---- Chosen grid (v0.6.0 "choose the entire grid") ----
+
+    /// <summary>The season field the player chose at creation (the liveries on the grid), or null
+    /// for the whole-pack field. A creation-time deterministic INPUT seeded into the season start
+    /// state and carried forward each round; the fold resolves the grid to exactly this field so the
+    /// sim scores the chosen grid, not the canonical one. Omitted when null (WhenWritingDefault), so
+    /// a career that chose the whole field is byte-identical to one made before this feature.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public Companion.Core.Grid.GridSelection? GridSelection { get; init; }
+
+    // ---- Form-reactive sim (Ratings Phase 3) ----
+
+    /// <summary>True for a career created with Ratings Phase 3: the FOLD's grid resolution reacts to
+    /// the pack's per-race <see cref="Companion.Core.Packs.SeasonDefinition.DriverForm"/>, so the
+    /// player's expected finish / OPI / pace anchor shift when a RIVAL is hot that weekend. A
+    /// creation-time deterministic capability seeded into the season start state and carried forward
+    /// each round (record <c>with</c>); the form VALUES come only from the pinned pack, never the save.
+    /// Omitted when false (WhenWritingDefault) so a pre-Phase-3 career — including existing careers on
+    /// packs that already ship DriverForm — is byte-identical and folds form-inert forever.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool FormAware { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller

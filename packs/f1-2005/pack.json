@@ -1,0 +1,34 @@
+{
+    "packId":  "f1-2005",
+    "name":  "Formula One 2005",
+    "version":  "1.0.0",
+    "formatVersion":  1,
+    "gameVersionTested":  "1.6.9.82",
+    "license":  "CC BY 4.0",
+    "attribution":  [
+                        "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+                        "Driver-to-livery bindings from the community F-V10_Gen3.xml NAMeS custom-AI set (NAMeS: Real Drivers for AMS2 by John B. Ellis), matching the 2005 F1 grid for the F-V10_Gen3 class"
+                    ],
+    "requires":  {
+                     "dlc":  [
+
+                             ],
+                     "skinPacks":  [
+                                       {
+                                           "name":  "2005 F1 Season (F-V10_Gen3 community skinpack)",
+                                           "overridesFolder":  "F1_Season_2005"
+                                       }
+                                   ]
+                 },
+    "notes":  [
+                  "Class: F-V10_Gen3 (F-V10_Gen3.xml NAMeS set). McLaren is bound to the mclaren_mp420 model and Renault to the renault_r25 model; the other eight teams use the formula_v10_g3 model. These are the four vehicles the F-V10_Gen3 class ships (formula_v10_g3, formula_v10_g3_b, mclaren_mp420, renault_r25).",
+                  "AUTHORED DRIVER RATINGS: every driver in drivers.json carries authored raceSkill + qualifyingSkill (plus the full stat block matching the f1-2006 shape), hand-set from 2005 championship form. Title contenders Alonso (champion) and Raikkonen (fastest car) sit at 0.94-0.95; Michael Schumacher 0.92 (Ferrari's off-year on Bridgestone tyres); Montoya/Fisichella/Button/Trulli/R.Schumacher/Barrichello/Webber 0.83-0.90 midfield-plus; Heidfeld/Coulthard/Massa/Villeneuve 0.78-0.83; backmarkers Klien/Sato/Monteiro/Karthikeyan/Albers/Friesacher 0.60-0.76. No ratings are left empty.",
+                  "Livery coverage: the installed F-V10_Gen3.xml NAMeS file carries exactly 20 drivers (the 10 teams x 2 season-primary seats). Every one is bound VERBATIM by its pseudo-team / chassis + number livery_name. Pseudo-team + chassis map: Renault R25 = Renault, Scuderia Forza = Ferrari, McLaren MP4/20 = McLaren, TAB Racing = BAR-Honda, Didcot Racing = Williams-BMW, Zir-Win Motorsport = Sauber, energyX Racing = Red Bull, TECH-J Racing = Toyota, Paddy G.P. = Jordan, Scuderia Faenza Girardi = Minardi. Numbers follow the real 2005 grid (Ferrari carried #1/#2 as reigning champions; Renault #5/#6; McLaren #9/#10).",
+                  "Uncovered f1db entrants (no livery in the installed NAMeS set, so NOT included as bindable entries): the mid-season / injury replacement seats - Pedro de la Rosa (McLaren #10 round 3) and Alexander Wurz (McLaren #10 round 4) covering Montoya's tennis-injury absence; Vitantonio Liuzzi (Red Bull #15 rounds 4-7) sharing the seat with Klien; Anthony Davidson (BAR #4 round 2); Ricardo Zonta (Toyota #17 round 9); Robert Doornbos (Minardi #20 rounds 12-19, replacing Friesacher); and Antonio Pizzonia (Williams #8 rounds 16-19, replacing Heidfeld). Season-primary seats vacated by these swaps therefore shrink the grid on the affected rounds rather than being filled by an unbindable stand-in.",
+                  "Grid sizes: grid.size on every round is the count of that round's livery-bound f1db starters. The base field is 20 cars (10 teams x 2). It drops to 19 at round 3 (Montoya injured), 18 at round 4 (Montoya + Klien's seat to Liuzzi), 17 at rounds 5-6 (BAR excluded from those two races AND Montoya still out at R5 / Liuzzi at R6), back to 19-20 rounds 7-11, 19 rounds 12-15 (Friesacher's seat to Doornbos from R12; Klien back), and 18 rounds 16-19 (Heidfeld's seat to Pizzonia from R16). Every mapped track's Max AI cap (25-47) comfortably exceeds the 20-car field, so no round required trimming. setupGuide.opponents = grid.size - 1 on every round.",
+                  "Placeholder rounds (isPlaceholder=true, real venue kept, laps recomputed to preserve race distance): Australia/Melbourne -> Adelaide Modern (adelaide_modern); Malaysia/Sepang and Bahrain/Sakhir -> modern Hockenheim GP (hockenheim_gp); France/Magny-Cours -> Le Mans Circuit Bugatti (le_mans_bugatti); Turkey/Istanbul Park and China/Shanghai -> Barcelona GP (barcelona_gp). AMS2 ships no Melbourne, Sepang, Bahrain, Magny-Cours, Istanbul or Shanghai; the stand-ins reuse the same-era / same-designer choices established by the f1-2000 and f1-2006 packs. 6 placeholder rounds in total.",
+                  "Real-venue era stand-ins (isPlaceholder=false, historical lap count kept): San Marino/Imola -> imola_05 (the actual 2005 layout); Spain/Catalunya -> barcelona_gp_2001; Monaco -> azure_circuit (post-2004 reprofile); Europe/Nurburgring -> nurb_gp_2020; Canada/Montreal -> montrealmodern; USA/Indianapolis road course -> indianapolis_2001_rc; Britain/Silverstone -> silverstone_2001; Germany/Hockenheim -> hockenheim_gp (the actual 2002+ modern layout raced in 2005); Hungary/Hungaroring -> hungaroring_gp_2025; Italy/Monza -> monza_2005 (the 2005 layout); Belgium/Spa -> spa-francorchamps_2005 (the exact 2005 layout AMS2 ships); Japan/Suzuka -> kansai_gp; Brazil/Interlagos -> interlagos_1993.",
+                  "Round 9 (United States GP, Indianapolis) reproduces the SCHEDULED 73-lap, full-grid race. The historical event was the notorious Michelin-tyre debacle in which only the six Bridgestone-shod cars started; the pack does not model that withdrawal (all bound starters take the grid) so the standings replay differs from the real 2005 US GP result.",
+                  "Points: 2005 top-8 system [10,8,6,5,4,3,2,1], copied verbatim from the oracle points catalog (data/rules/f1-points-systems.json, 2005 entry). sharedDrivePolicy zero; constructors score every car (bestCarOnly=false); no points adjustments in 2005."
+              ]
+}

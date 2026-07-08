@@ -188,7 +188,8 @@ public sealed class EraSignAndContinueTests : IDisposable
 
     /// <summary>Creates the career on the 1967 pack (written into the packs root) and plays
     /// every round through the REAL Apply path (grid order = finishing order).</summary>
-    private CareerSessionService CreateAndPlaySeason()
+    private CareerSessionService CreateAndPlaySeason(
+        Companion.Core.Character.CharacterProfile? character = null)
     {
         var fromPack = FromPack1967();
         string fromDirectory = Path.Combine(PacksRoot, fromPack.Manifest.PackId);
@@ -201,6 +202,7 @@ public sealed class EraSignAndContinueTests : IDisposable
             CareerName = "Era Career",
             MasterSeed = 20260703,
             PlayerLiveryName = PlayerLivery,
+            Character = character,
         }, Environment());
 
         while (!session.Summary.SeasonComplete)
@@ -217,42 +219,309 @@ public sealed class EraSignAndContinueTests : IDisposable
         return session;
     }
 
+    // ---------- character development across the season boundary (depth 4) ----------
+
+    [Fact]
+    public void SpendingBetweenSeasons_EvolvesTheCharacterIntoTheNewSeason()
+    {
+        var character = new Companion.Core.Character.CharacterProfile
+        {
+            Name = "Dev Driver",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+            },
+            PerkIds = ["sunday_driver"],
+            CpUnspent = 3,
+        };
+
+        string acceptedTeam;
+        using (var session = CreateAndPlaySeason(character))
+        {
+            // Spend a development point on pace + bank a new perk before signing.
+            int before = session.AvailableCharacterCp();
+            Assert.True(before >= 2);
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("pace", 1));
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("rain_man", 1));
+            Assert.Equal(before - 2, session.AvailableCharacterCp()); // pending spends reduce the pool now
+
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            acceptedTeam = review!.Offers[0].TeamId;
+            // A dedicated NEXT-YEAR (1968) pack → a real era changeover carries the spends across.
+            TestPackBuilder.Write(
+                ToPack(1968, "era-test-1968", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1968"));
+
+            var vm = new SeasonReviewViewModel(session);
+            vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+
+        // Reopen into season 2: the spends applied at the transition — pace raised a step and the
+        // banked perk is now on the driver.
+        using var reopened = CareerSessionService.OpenCareer(CareerPath, Environment());
+        var dossier = reopened.CharacterDossier();
+        Assert.NotNull(dossier);
+        Assert.Equal("Dev Driver", dossier!.Name);
+        Assert.Equal(0.55, dossier.Stats.First(s => s.Id == "pace").Value, 6); // 0.50 + one step
+        Assert.Contains(dossier.Perks, p => p.Id == "rain_man");
+    }
+
+    private static Companion.Core.Character.CharacterProfile DevCharacter() => new()
+    {
+        Name = "Dev Driver",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+        },
+        PerkIds = ["sunday_driver"],
+        CpUnspent = 3,
+    };
+
+    [Fact]
+    public void Spend_DerivesTheCostFromTheRules_IgnoringACraftedCheapCost()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int before = session.AvailableCharacterCp();
+
+        // A crafted spend claims rain_man is free (real cost 1). The service must ignore the claim,
+        // charge the real cost, and journal the real cost — otherwise the exploit replays byte-for-byte.
+        session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("rain_man", 0));
+        Assert.Equal(before - 1, session.AvailableCharacterCp());
+    }
+
+    [Fact]
+    public void Spend_RejectsADrawbackPerk_AndDoesNotChargeOrMintPoints()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int before = session.AvailableCharacterCp();
+
+        // glass_cannon costs -2: taking it must not refund/mint spendable points mid-career.
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("glass_cannon", -2)));
+        Assert.Equal(before, session.AvailableCharacterCp());
+    }
+
+    [Fact]
+    public void Spend_RejectsAnUnknownStatOrPerk()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int before = session.AvailableCharacterCp();
+
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("notAStat", 1)));
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("notAPerk", 1)));
+        Assert.Equal(before, session.AvailableCharacterCp());
+    }
+
+    [Fact]
+    public void Spend_SoftCapPerk_CapsInCareerStatRaisesLower()
+    {
+        var softCapped = new Companion.Core.Character.CharacterProfile
+        {
+            Name = "Iron Man",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.85, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.55,
+            },
+            PerkIds = ["iron_constitution"], // statPoints softCap −0.10 → in-career ceiling 0.89
+            CpUnspent = 3,
+        };
+        using var session = CreateAndPlaySeason(softCapped);
+        Assert.True(session.AvailableCharacterCp() >= 1);
+
+        // pace is at 0.85; a step (0.90) would exceed the perk's 0.89 ceiling → rejected.
+        Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("pace", 1)));
+        // a low stat is still raisable (well under the ceiling).
+        session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("craft", 1));
+    }
+
+    [Fact]
+    public void PurchasablePerks_AreAffordableUnownedPositiveCost_CheapestFirst()
+    {
+        using var session = CreateAndPlaySeason(DevCharacter());
+        int available = session.AvailableCharacterCp();
+        Assert.True(available >= 2);
+
+        var offered = ((ICareerSession)session).PurchasablePerks();
+        Assert.NotEmpty(offered);
+        Assert.All(offered, p => Assert.InRange(p.Cost, 1, available));   // affordable + positive
+        Assert.DoesNotContain(offered, p => p.Id == "sunday_driver");     // already owned
+        Assert.DoesNotContain(offered, p => p.Id == "glass_cannon");      // drawback (<=0 cost) perk
+        var costs = offered.Select(p => p.Cost).ToList();
+        Assert.Equal(costs.OrderBy(c => c).ToList(), costs);              // cheapest first
+
+        // Buy one: it drops off the offer list, and a now-unaffordable perk is filtered out.
+        string bought = offered[0].Id;
+        session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk(bought, offered[0].Cost));
+        var after = ((ICareerSession)session).PurchasablePerks();
+        Assert.DoesNotContain(after, p => p.Id == bought);
+        int remaining = session.AvailableCharacterCp();
+        Assert.All(after, p => Assert.True(p.Cost <= remaining));
+    }
+
+    [Fact]
+    public void CharacterAge_IsTheDriversOwn_ShownInTheDossier_AndDrivesTheSim()
+    {
+        // driver.p (the seat) is really 27 in 1967 (Born 1940). The character is a 41-year-old
+        // veteran — a REAL age, unlike the historical driver's — so if the age is used at all it
+        // MUST be 41, never the borrowed 27.
+        var veteran = new Companion.Core.Character.CharacterProfile
+        {
+            Name = "Old Hand",
+            Age = 41,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+            },
+            PerkIds = [],
+            CpUnspent = 0,
+        };
+
+        using (var session = CreateAndPlaySeason(veteran))
+        {
+            var dossier = ((ICareerSession)session).CharacterDossier();
+            Assert.NotNull(dossier);
+            Assert.Equal(41, dossier!.Age); // the driver's OWN age, shown — not the seat's 27
+        }
+
+        // Reopen: the age persists and still reads as the driver's own.
+        using (var reopened = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            Assert.Equal(41, reopened.CharacterDossier()!.Age);
+        }
+
+        // It is the age the SIM ran on, not the historical 27: re-simulating with 41 is byte-identical;
+        // with the seat driver's 27 it diverges — proof the character's age really drives the career.
+        using var db = CareerDatabase.Open(CareerPath);
+        var rules = Environment().Rules;
+        ReplaySimInputs Inputs(int age) => new()
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.p",
+            PlayerAge = age,
+            CharacterRules = rules.Character,
+        };
+        Assert.True(ReplayService.Resimulate(db, unchecked((ulong)20260703), Inputs(41)).Identical,
+            "the career must re-simulate on the character's real age (41)");
+        Assert.False(ReplayService.Resimulate(db, unchecked((ulong)20260703), Inputs(27)).Identical,
+            "using the historical driver's age (27) must diverge — the character age is what counts");
+    }
+
+    [Fact]
+    public void SeatChangeAcrossTransition_ResimulatesByteIdentically()
+    {
+        // The player is driver.p (livery "Mid #4") in 1967 and, on signing the accepted team, takes
+        // the driver.next seat (livery "Next69 #4") in the next-year 1968 pack — the seat driver id
+        // CHANGES across the changeover. The multi-pack Resimulate must find the player per season
+        // from their livery (fold + season end), not a single career-global id, or it falsely diverges.
+        string acceptedTeam;
+        using (var session = CreateAndPlaySeason())
+        {
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            acceptedTeam = review!.Offers[0].TeamId;
+            TestPackBuilder.Write(
+                ToPack(1968, "era-test-1968", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1968"));
+
+            var vm = new SeasonReviewViewModel(session);
+            vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+
+        // Play 1968 to completion.
+        using (var s2 = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            Assert.Equal(1968, s2.Summary.SeasonYear);
+            while (!s2.Summary.SeasonComplete)
+            {
+                var grid = s2.CurrentGrid();
+                Assert.NotEmpty(grid);
+                // The player's new seat really is driver.next — the seat change we are exercising.
+                Assert.Contains(grid, seat => seat.IsPlayer && seat.DriverId == "driver.next");
+                s2.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(seat => seat.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+        }
+
+        // Re-simulate the whole two-pack career from raw results. PlayerDriverId here is the season-1
+        // id and now only a fallback — the fold and season end re-resolve the seat per season, so the
+        // 1969 rows reproduce byte-for-byte instead of dropping every player.* row.
+        using var db = CareerDatabase.Open(CareerPath);
+        var rules = Environment().Rules;
+        var report = ReplayService.Resimulate(db, unchecked((ulong)20260703), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.p",
+            PlayerAge = 1967 - 1940, // driver.p Born 1940, first season 1967
+            CharacterRules = rules.Character,
+        });
+
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} season={report.FirstDivergence?.SeasonId} " +
+            $"stored={report.FirstDivergence?.StoredDeltaJson} regen={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.Null(report.FirstDivergence);
+    }
+
     // ---------- the tests ----------
 
     [Fact]
-    public void SignAndContinue_HappyPath_BridgesTheGapYear_AndReopensIntoTheNewSeason()
+    public void SignAndContinue_ChangesOverToANextYearPack_AndReopensIntoIt()
     {
         string acceptedTeam;
         using (var session = CreateAndPlaySeason())
         {
-            // Discovery needs a completed season AND a later pack: nothing yet.
-            Assert.Null(((ICareerSession)session).NextSeason());
-
             var review = session.SeasonReview();
             Assert.NotNull(review);
             Assert.NotEmpty(review.Offers);
             acceptedTeam = review.Offers[0].TeamId;
 
-            // Two later packs installed: the v1 rule picks the SMALLEST later year (1969,
-            // not 1974), and the skipped 1968 shows up as a bridged year.
+            // With no dedicated next-year pack yet, the career would CARRY OVER on the same car
+            // (it never dead-ends) — into 1968.
+            var carry = ((ICareerSession)session).NextSeason();
+            Assert.NotNull(carry);
+            Assert.True(carry.IsCarryover);
+            Assert.Equal(1968, carry.SeasonYear);
+
+            // Install a real 1968 pack: next year now has its own car → a real CHANGEOVER. A later
+            // 1974 pack is ignored — the career advances ONE year at a time to the next-year pack.
             TestPackBuilder.Write(
-                ToPack(1969, "era-test-1969", acceptedTeam, "team.fresh"),
-                Path.Combine(PacksRoot, "era-test-1969"));
+                ToPack(1968, "era-test-1968", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1968"));
             TestPackBuilder.Write(
                 ToPack(1974, "era-test-1974", acceptedTeam, "team.fresh"),
                 Path.Combine(PacksRoot, "era-test-1974"));
 
             var next = ((ICareerSession)session).NextSeason();
             Assert.NotNull(next);
-            Assert.Equal("era-test-1969", next.PackId);
-            Assert.Equal(1969, next.SeasonYear);
-            Assert.Equal(new[] { 1968 }, next.BridgedYears);
+            Assert.False(next.IsCarryover);
+            Assert.Equal("era-test-1968", next.PackId);
+            Assert.Equal(1968, next.SeasonYear);
+            Assert.Empty(next.BridgedYears);
 
             // The review screen drives the whole flow: accept, then sign.
             var vm = new SeasonReviewViewModel(session);
             Assert.True(vm.HasNextSeason);
-            Assert.Equal("Sign & start 1969", vm.SignButtonText);
-            Assert.Equal("1968 has no pack — your career bridges through it.", vm.BridgeNote);
+            Assert.Equal("Sign & start 1968", vm.SignButtonText);
+            Assert.Null(vm.BridgeNote); // year-by-year — nothing is bridged
             Assert.False(vm.SignAndContinueCommand.CanExecute(null)); // no acceptance yet
 
             vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
@@ -272,20 +541,20 @@ public sealed class EraSignAndContinueTests : IDisposable
             Assert.Equal(2, seasons.Count);
             Assert.Equal(1967, seasons[0].Year);
             Assert.Equal(SeasonStatus.Complete, seasons[0].Status);
-            Assert.Equal(1969, seasons[1].Year);
+            Assert.Equal(1968, seasons[1].Year);
             Assert.Equal(SeasonStatus.Active, seasons[1].Status);
 
             var journal = JournalStore.ReadSeason(db, seasons[1].Id);
             Assert.Contains(journal, r => r.Phase == DataJournalPhases.EraTransition);
-            var bridge = journal.Single(r => r.Phase == JournalPhases.EraBridge);
-            Assert.Contains("1968", bridge.DeltaJson); // the gap year aged through
+            // A consecutive-year changeover bridges nothing.
+            Assert.DoesNotContain(journal, r => r.Phase == JournalPhases.EraBridge);
         }
 
         // Reopen = the MRU/continue path: the career opens into the LATEST season, at its
-        // round 1 briefing, with the player in the seat the transition resolved.
+        // round 1 briefing, with the player in the seat the changeover resolved.
         using var reopened = CareerSessionService.OpenCareer(CareerPath, Environment());
         var summary = reopened.Summary;
-        Assert.Equal(1969, summary.SeasonYear);
+        Assert.Equal(1968, summary.SeasonYear);
         Assert.Equal("Era Test Series Mk2", summary.SeriesName);
         Assert.False(summary.SeasonComplete);
         Assert.Equal(1, summary.CurrentRound);
@@ -301,7 +570,7 @@ public sealed class EraSignAndContinueTests : IDisposable
         // headlines the year.
         using var home = new HomeViewModel(reopened);
         Assert.True(home.IsBriefingState);
-        Assert.Equal("1969", home.SeasonYearText);
+        Assert.Equal("1968", home.SeasonYearText);
         Assert.Equal("Round 1 of 2", home.RoundText);
 
         // The transitioned season plays through the SAME fold as season 1.
@@ -328,8 +597,8 @@ public sealed class EraSignAndContinueTests : IDisposable
             acceptedTeam = review.Offers[0].TeamId;
 
             TestPackBuilder.Write(
-                ToPack(1969, "era-test-1969", acceptedTeam, "team.fresh"),
-                Path.Combine(PacksRoot, "era-test-1969"));
+                ToPack(1968, "era-test-1968", acceptedTeam, "team.fresh"),
+                Path.Combine(PacksRoot, "era-test-1968"));
 
             var vm = new SeasonReviewViewModel(session);
             vm.AcceptOfferCommand.Execute(vm.Offers.First(o => o.TeamId == acceptedTeam));
@@ -337,10 +606,10 @@ public sealed class EraSignAndContinueTests : IDisposable
             Assert.Null(vm.TransitionError);
         }
 
-        // Reopen: the session now points at the CURRENT (1969) season — 1967 is a finished
+        // Reopen: the session now points at the CURRENT (1968) season — 1967 is a finished
         // earlier season living in the same career file, keyed by its own season id.
         using var reopened = CareerSessionService.OpenCareer(CareerPath, Environment());
-        Assert.Equal(1969, reopened.Summary.SeasonYear);
+        Assert.Equal(1968, reopened.Summary.SeasonYear);
         ICareerSession seam = reopened;
 
         // The season-scoped seam reaches the FINISHED 1967 season's player journal (the gap the
@@ -368,8 +637,8 @@ public sealed class EraSignAndContinueTests : IDisposable
         Assert.Contains("Round 1", round1.Title);
 
         // Season-scoped for the CURRENT year equals the current-season walk (byte-identical once a
-        // round is applied) — here both are empty because 1969 has no applied round.
-        Assert.True(seam.JournalForSeason("player", 1969).IsEmpty);
+        // round is applied) — here both are empty because 1968 has no applied round.
+        Assert.True(seam.JournalForSeason("player", 1968).IsEmpty);
 
         // A year with no season row in the career is a graceful no-op, never a throw.
         Assert.True(seam.JournalForSeason("player", 1955).IsEmpty);
@@ -391,10 +660,10 @@ public sealed class EraSignAndContinueTests : IDisposable
             string acceptedTeam = review.Offers[0].TeamId;
             session.AcceptOffer(acceptedTeam);
 
-            // The next pack deliberately lacks the accepted team's lineage.
+            // The next-year (1968) pack deliberately lacks the accepted team's lineage.
             TestPackBuilder.Write(
-                ToPack(1969, "era-test-1969", "team.somebody_else"),
-                Path.Combine(PacksRoot, "era-test-1969"));
+                ToPack(1968, "era-test-1968", "team.somebody_else"),
+                Path.Combine(PacksRoot, "era-test-1968"));
 
             var vm = new SeasonReviewViewModel(session);
             Assert.True(vm.HasNextSeason);
@@ -419,27 +688,80 @@ public sealed class EraSignAndContinueTests : IDisposable
     }
 
     [Fact]
-    public void NoNextPack_ReviewExplainsWhatPacksAreAndWhereTheyGo()
+    public void NoNextYearPack_CarriesOverOnTheSameCar_AndResimulatesByteIdentical()
     {
-        using var session = CreateAndPlaySeason();
-        var review = session.SeasonReview();
-        Assert.NotNull(review);
-        session.AcceptOffer(review.Offers[0].TeamId);
+        using (var session = CreateAndPlaySeason())
+        {
+            var review = session.SeasonReview();
+            Assert.NotNull(review);
+            session.AcceptOffer(review!.Offers[0].TeamId);
 
-        Assert.Null(((ICareerSession)session).NextSeason()); // the packs root only has 1967
+            // The packs root only has the 1967 car, so the career carries it into 1968 — a
+            // carryover, never a dead-end.
+            var next = ((ICareerSession)session).NextSeason();
+            Assert.NotNull(next);
+            Assert.True(next.IsCarryover);
+            Assert.Equal(1968, next.SeasonYear);
+            Assert.Equal(session.Pack.Manifest.PackId, next.PackId); // the same car
 
-        var vm = new SeasonReviewViewModel(session);
-        Assert.False(vm.HasNextSeason);
-        Assert.True(vm.OfferAccepted);
-        Assert.False(vm.CanSign);
-        Assert.False(vm.SignAndContinueCommand.CanExecute(null));
-        Assert.Null(vm.BridgeNote);
-        Assert.Contains("season pack", vm.EraTransitionText, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("AMS2CareerCompanion\\Packs", vm.EraTransitionText);
+            var vm = new SeasonReviewViewModel(session);
+            Assert.True(vm.HasNextSeason);
+            Assert.True(vm.OfferAccepted);
+            Assert.True(vm.CanSign);
+            Assert.Equal("Sign & start 1968", vm.SignButtonText);
+            Assert.Null(vm.BridgeNote);
+            Assert.Contains("same car", vm.EraTransitionText, StringComparison.OrdinalIgnoreCase);
 
-        // The session-level guard matches the screen's state.
-        var ex = Assert.Throws<InvalidOperationException>(
-            () => ((ICareerSession)session).StartNextSeason(review.Offers[0].TeamId));
-        Assert.Contains("No next season pack", ex.Message);
+            vm.SignAndContinueCommand.Execute(null);
+            Assert.Null(vm.TransitionError);
+        }
+
+        // The carryover is a second season on the SAME pinned pack, one year later, and writes no
+        // era-transition journal rows (a rollover has none).
+        using (var db = CareerDatabase.Open(CareerPath))
+        {
+            var seasons = CareerStore.ReadSeasons(db);
+            Assert.Equal(2, seasons.Count);
+            Assert.Equal(1967, seasons[0].Year);
+            Assert.Equal(1968, seasons[1].Year);
+            Assert.Equal(seasons[0].PackId, seasons[1].PackId);
+            Assert.DoesNotContain(
+                JournalStore.ReadSeason(db, seasons[1].Id),
+                r => r.Phase == DataJournalPhases.EraTransition);
+        }
+
+        // Reopen into 1968 on the same car and play it out.
+        using (var s2 = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            Assert.Equal(1968, s2.Summary.SeasonYear);
+            Assert.Equal("Era Test Series", s2.Summary.SeriesName); // the SAME 1967 pack's series
+            while (!s2.Summary.SeasonComplete)
+            {
+                var grid = s2.CurrentGrid();
+                Assert.NotEmpty(grid);
+                s2.Apply(new ResultDraft
+                {
+                    Classified = grid.Select(seat => seat.DriverId).ToList(),
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+        }
+
+        // The whole carried-over career re-simulates byte-identically (same-pack rollover path).
+        using var replayDb = CareerDatabase.Open(CareerPath);
+        var rules = Environment().Rules;
+        var report = ReplayService.Resimulate(replayDb, unchecked((ulong)20260703), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.p",
+            PlayerAge = 1967 - 1940, // driver.p Born 1940, first season 1967
+            CharacterRules = rules.Character,
+        });
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} season={report.FirstDivergence?.SeasonId} " +
+            $"stored={report.FirstDivergence?.StoredDeltaJson} regen={report.FirstDivergence?.RegeneratedDeltaJson}");
     }
 }

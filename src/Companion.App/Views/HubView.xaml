@@ -95,26 +95,40 @@
                 <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Tabs}" Margin="8,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Margin="0,2" Padding="12,9" HorizontalContentAlignment="Left"
-                                    AutomationProperties.Name="{Binding Title}"
-                                    ToolTip="{Binding Title}"
-                                    Command="{Binding DataContext.SelectTabCommand,
-                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                                <TextBlock Text="{Binding Title}" FontSize="14" />
-                            </Button>
+                            <!-- the row = a full-width select button, with a small tear-off ⧉ on the
+                                 read-only lenses (Standings/Driver/History/Skins) that pops the tab
+                                 into an always-on-top companion window over AMS2. -->
+                            <Grid Margin="0,2">
+                                <Button Padding="12,9" HorizontalContentAlignment="Left"
+                                        AutomationProperties.Name="{Binding Title}"
+                                        ToolTip="{Binding Title}"
+                                        Command="{Binding DataContext.SelectTabCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <TextBlock Text="{Binding Title}" FontSize="14" Margin="0,0,20,0" />
+                                </Button>
+                                <!-- tear-off affordance: a Button OVER the row button (WPF routes the
+                                     click to the inner Button, so it never also selects the tab) -->
+                                <Button Content="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                        HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                                        Padding="6,4" Background="Transparent" BorderBrush="Transparent"
+                                        Click="OnPopOutTab"
+                                        AutomationProperties.Name="Pop out this tab"
+                                        ToolTip="Pop this tab into an always-on-top window (keep it over AMS2 on a second screen)"
+                                        Visibility="{Binding CanPopOut, Converter={StaticResource BoolVisible}}" />
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

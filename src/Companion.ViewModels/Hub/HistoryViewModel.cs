@@ -61,6 +61,21 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     /// empty state independently of the season cards).</summary>
     public bool HasArticles => ArchivedArticles.Count > 0;
 
+    /// <summary>The upcoming race of the CURRENT season — a spoiler-free Race Preview (circuit map +
+    /// track detail) shown prominently at the top of the History tab. Null when the current season is
+    /// finished or no history is shipped for its year.</summary>
+    [ObservableProperty]
+    private HistoricalRoundViewModel? _nextRacePreview;
+
+    /// <summary>The current season's year, for the "Next race — 1988" header.</summary>
+    [ObservableProperty]
+    private int _nextRaceYear;
+
+    public bool HasNextRacePreview => NextRacePreview is not null;
+
+    partial void OnNextRacePreviewChanged(HistoricalRoundViewModel? value) =>
+        OnPropertyChanged(nameof(HasNextRacePreview));
+
     /// <summary>Re-project the whole scrapbook off current session state (on open and after
     /// every Apply). Idempotent: rebuilds every collection from scratch.</summary>
     public void Refresh()
@@ -69,15 +84,30 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
 
         Seasons.Clear();
         // Newest season first reads best as a scrapbook (this season at the top), while the
-        // records book aggregates the whole lineage regardless of order.
+        // records book aggregates the whole lineage regardless of order. Each card also carries the
+        // REAL historical results of its year (f1db-derived, read-only) so the player can see "what
+        // really happened" next to their own diverged season — null when none is shipped for the year.
         foreach (var card in timeline.Seasons.Reverse())
-            Seasons.Add(new SeasonCardViewModel(card));
+            Seasons.Add(new SeasonCardViewModel(card, _session.HistoricalSeason(card.SeasonYear)));
 
         Records = new RecordsBookViewModel(timeline.Records);
 
         ArchivedArticles.Clear();
         foreach (var dispatch in _session.ReadFeed())
             ArchivedArticles.Add(new NewsItemViewModel(dispatch));
+
+        // The current season (newest card) surfaces its next unraced round as a prominent preview.
+        var current = Seasons.FirstOrDefault();
+        if (current?.RealSeason is { IsSeasonComplete: false } real)
+        {
+            NextRacePreview = real.Rounds.FirstOrDefault(r => !r.IsRevealed);
+            NextRaceYear = real.Year;
+        }
+        else
+        {
+            NextRacePreview = null;
+            NextRaceYear = 0;
+        }
 
         OnPropertyChanged(nameof(IsEmpty));
         OnPropertyChanged(nameof(HasArticles));
@@ -90,11 +120,20 @@ public sealed class SeasonCardViewModel
 {
     private readonly CareerSeasonCard _card;
 
-    public SeasonCardViewModel(CareerSeasonCard card)
+    public SeasonCardViewModel(CareerSeasonCard card, HistoricalSeason? realSeason = null)
     {
         ArgumentNullException.ThrowIfNull(card);
         _card = card;
+        RealSeason = realSeason is not null
+            ? new HistoricalSeasonViewModel(realSeason, card.RoundsApplied, card.IsComplete)
+            : null;
     }
+
+    /// <summary>The REAL historical results of this card's year ("what really happened"), or null
+    /// when none is shipped. Rendered as a clearly-separated panel below the player's own numbers.</summary>
+    public HistoricalSeasonViewModel? RealSeason { get; }
+
+    public bool HasRealSeason => RealSeason is not null;
 
     public int SeasonYear => _card.SeasonYear;
 
@@ -178,3 +217,184 @@ public sealed class RecordsBookViewModel
 
 /// <summary>One labelled record ("Best finish" → "P2").</summary>
 public sealed record RecordRow(string Label, string Value);
+
+/// <summary>"What really happened" — a season's REAL historical results (f1db-derived, CC BY 4.0),
+/// shown alongside the player's own diverged career. Display-only projection of
+/// <see cref="HistoricalSeason"/>; collapsed by default (opt-in per season so a multi-season
+/// scrapbook stays compact).</summary>
+public sealed partial class HistoricalSeasonViewModel : ObservableObject
+{
+    /// <summary>Whether the "what really happened" panel is expanded for this season (default off).</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    [RelayCommand]
+    private void Toggle() => IsExpanded = !IsExpanded;
+
+    public HistoricalSeasonViewModel(HistoricalSeason season, int roundsApplied, bool isSeasonComplete)
+    {
+        ArgumentNullException.ThrowIfNull(season);
+        Year = season.Year;
+        Source = season.Source ?? "";
+        // The season-level spoilers (champions + summary) reveal only once the player has finished the
+        // season in their career — before that, each race is a preview, not a result.
+        IsSeasonComplete = isSeasonComplete;
+
+        if (season.DriversChampion is { } champ)
+        {
+            string team = champ.Team is { Length: > 0 } t ? $" · {t}" : "";
+            string points = champ.Points is { Length: > 0 } p ? $" · {p} pts" : "";
+            DriversChampionText = $"{champ.Driver}{team}{points}";
+        }
+        if (season.ConstructorsChampion is { } cons)
+        {
+            string points = cons.Points is { Length: > 0 } p ? $" · {p} pts" : "";
+            ConstructorsChampionText = $"{cons.Team}{points}";
+        }
+
+        // Each round reveals its real result only after the player has completed that round (round
+        // number <= rounds applied). Until then it is a Race Preview (circuit + detail, no spoiler).
+        Rounds = season.Rounds
+            .Select(r => new HistoricalRoundViewModel(r, isRevealed: r.Round <= roundsApplied))
+            .ToList();
+        SummaryText = ComposeSummary(season);
+    }
+
+    /// <summary>The number of races in the season whose real result the player has unlocked (raced).</summary>
+    public int RevealedCount => Rounds.Count(r => r.IsRevealed);
+
+    /// <summary>True once the whole season is done in the player's career — gates the champion +
+    /// summary spoilers.</summary>
+    public bool IsSeasonComplete { get; }
+
+    /// <summary>A one-line, DATA-GROUNDED season summary (no invented facts): champion + win count +
+    /// title margin over the runner-up, then the dominant constructor. Every number is counted from
+    /// the baked f1db results, so it is accurate by construction. Empty when there is no champion.</summary>
+    private static string ComposeSummary(HistoricalSeason season)
+    {
+        if (season.DriversChampion is not { } champ)
+            return "";
+
+        int raceCount = season.Rounds.Count;
+        int champWins = season.Rounds.Count(r => string.Equals(r.Winner, champ.Driver, StringComparison.Ordinal));
+
+        string wins = champWins > 0 ? $" with {champWins} {(champWins == 1 ? "win" : "wins")}" : "";
+        string versus = "";
+        if (season.RunnerUp is { } runnerUp)
+        {
+            string margin = TitleMargin(champ.Points, runnerUp.Points);
+            versus = margin.Length > 0 ? $", {margin} ahead of {runnerUp.Driver}" : $" ahead of {runnerUp.Driver}";
+        }
+        string summary = $"{champ.Driver} took the {season.Year} title{wins}{versus}.";
+
+        if (season.ConstructorsChampion is { } cons)
+        {
+            int teamWins = season.Rounds.Count(r => string.Equals(r.WinnerTeam, cons.Team, StringComparison.Ordinal));
+            string teamWinsText = teamWins > 0 && raceCount > 0
+                ? $", winning {teamWins} of {raceCount} {(raceCount == 1 ? "race" : "races")}"
+                : "";
+            summary += $" {cons.Team} led the constructors{teamWinsText}.";
+        }
+        return summary;
+    }
+
+    /// <summary>The points gap between champion and runner-up as "N point(s)", or "" when it cannot
+    /// be computed (missing/non-numeric points, or a non-positive gap).</summary>
+    private static string TitleMargin(string? championPoints, string? runnerUpPoints)
+    {
+        if (decimal.TryParse(championPoints, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out var c) &&
+            decimal.TryParse(runnerUpPoints, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out var r) &&
+            c > r)
+        {
+            decimal margin = c - r;
+            return margin == 1m
+                ? "1 point"
+                : $"{margin.ToString("0.##", CultureInfo.InvariantCulture)} points";
+        }
+        return "";
+    }
+
+    public int Year { get; }
+
+    /// <summary>CC BY 4.0 attribution line.</summary>
+    public string Source { get; }
+
+    /// <summary>"Denny Hulme · Brabham · 51 pts" — empty when unknown.</summary>
+    public string DriversChampionText { get; } = "";
+
+    public bool HasDriversChampion => DriversChampionText.Length > 0;
+
+    public string ConstructorsChampionText { get; } = "";
+
+    public bool HasConstructorsChampion => ConstructorsChampionText.Length > 0;
+
+    /// <summary>A one-line, data-grounded summary of the season ("X took the title with 8 wins, 3
+    /// points ahead of Y. Z led the constructors, winning 15 of 16 races.").</summary>
+    public string SummaryText { get; } = "";
+
+    public bool HasSummary => SummaryText.Length > 0;
+
+    /// <summary>Every real race of the season, in calendar order, each expandable to its full grid.</summary>
+    public IReadOnlyList<HistoricalRoundViewModel> Rounds { get; }
+}
+
+/// <summary>One real historical race. Before the player has raced this round it is a RACE PREVIEW
+/// (circuit map + track detail, no result spoiler); once raced (<see cref="IsRevealed"/>) it becomes a
+/// HISTORICAL DOCUMENT (winner, fastest lap, and the full classified grid behind an expander).</summary>
+public sealed partial class HistoricalRoundViewModel : ObservableObject
+{
+    /// <summary>Whether this round's detail is expanded (default off — the summary line always shows).</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    [RelayCommand]
+    private void Toggle() => IsExpanded = !IsExpanded;
+
+    public HistoricalRoundViewModel(HistoricalRound round, bool isRevealed)
+    {
+        ArgumentNullException.ThrowIfNull(round);
+        IsRevealed = isRevealed;
+        RoundLabel = $"R{round.Round}";
+        Name = round.Name;
+        WinnerText = round.Winner is { Length: > 0 } w
+            ? (round.WinnerTeam is { Length: > 0 } team ? $"{w} · {team}" : w)
+            : "—";
+        FastestLapText = round.FastestLap is { Length: > 0 } fl ? $"Fastest lap: {fl}" : "";
+        Results = round.Results
+            .Select(x => new HistoricalResultRow(x.Pos, x.Driver, x.Team, x.Status ?? ""))
+            .ToList();
+
+        CircuitLayoutId = round.Circuit?.LayoutId ?? "";
+        CircuitCaption = CircuitCaptions.Compose(round.Circuit);
+        CircuitHistory = round.Circuit?.History ?? "";
+    }
+
+    /// <summary>True once the player has raced this round — the real result is unlocked. False = a
+    /// spoiler-free Race Preview.</summary>
+    public bool IsRevealed { get; }
+
+    public string RoundLabel { get; }
+    public string Name { get; }
+
+    /// <summary>The circuit-layout id for the map (empty when unknown).</summary>
+    public string CircuitLayoutId { get; }
+    public bool HasCircuit => CircuitLayoutId.Length > 0;
+    /// <summary>"Imola · 4.96 km · 22 turns · anti-clockwise circuit" — the preview detail.</summary>
+    public string CircuitCaption { get; }
+    /// <summary>A brief, data-grounded circuit history for the preview.</summary>
+    public string CircuitHistory { get; } = "";
+    public bool HasCircuitHistory => CircuitHistory.Length > 0;
+
+    /// <summary>The winner line, but only once revealed — a preview never leaks it.</summary>
+    public string WinnerText { get; }
+    public string FastestLapText { get; }
+    public bool HasFastestLap => FastestLapText.Length > 0;
+    public IReadOnlyList<HistoricalResultRow> Results { get; }
+    public bool HasResults => Results.Count > 0;
+}
+
+/// <summary>One row of a historical race's full classified result.</summary>
+public sealed record HistoricalResultRow(string Pos, string Driver, string Team, string Status)
+{
+    public bool HasStatus => Status.Length > 0;
+}

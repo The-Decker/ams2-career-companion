@@ -134,6 +134,226 @@ public sealed class HistoryViewModelTests
 
     /// <summary>A session that only implements what the History lens reads — the additive
     /// default seam members keep this minimal and prove the lens couples to nothing else.</summary>
+    [Fact]
+    public void Season_card_carries_the_real_historical_results_for_its_year()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons =
+                [
+                    new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 11 },
+                    new CareerSeasonCard { SeasonYear = 1968, RoundsApplied = 1, RoundCount = 12 },
+                ],
+            },
+            HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+            {
+                [1967] = new HistoricalSeason
+                {
+                    Year = 1967,
+                    Source = "Derived from f1db (CC BY 4.0)",
+                    DriversChampion = new HistoricalChampion { Driver = "Denny Hulme", Team = "Brabham", Points = "51" },
+                    ConstructorsChampion = new HistoricalTeamChampion { Team = "Brabham", Points = "63" },
+                    Rounds =
+                    [
+                        new HistoricalRound
+                        {
+                            Round = 1, Name = "South African Grand Prix",
+                            Winner = "Pedro Rodríguez", WinnerTeam = "Cooper", FastestLap = "Denny Hulme",
+                            Results =
+                            [
+                                new HistoricalResult { Pos = "1", Driver = "Pedro Rodríguez", Team = "Cooper" },
+                                new HistoricalResult { Pos = "DNF", Driver = "Jim Clark", Team = "Lotus", Status = "Engine" },
+                            ],
+                        },
+                    ],
+                },
+                // 1968 deliberately has NO shipped history → that card carries none.
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+
+        var card1968 = history.Seasons[0]; // newest first
+        var card1967 = history.Seasons[1];
+
+        Assert.False(card1968.HasRealSeason);
+        Assert.True(card1967.HasRealSeason);
+
+        var real = card1967.RealSeason!;
+        Assert.Equal(1967, real.Year);
+        Assert.False(real.IsExpanded); // collapsed by default
+        Assert.Contains("Denny Hulme", real.DriversChampionText);
+        Assert.Contains("Brabham", real.DriversChampionText);
+        Assert.True(real.HasConstructorsChampion);
+
+        // The data-grounded summary names the champion + the dominant constructor (Hulme did not win
+        // the single fixture round — Pedro did — so no win count is claimed here).
+        Assert.True(real.HasSummary);
+        Assert.Contains("Denny Hulme took the 1967 title", real.SummaryText);
+        Assert.Contains("Brabham led the constructors", real.SummaryText);
+
+        var round = Assert.Single(real.Rounds);
+        Assert.Equal("R1", round.RoundLabel);
+        Assert.Contains("Pedro Rodríguez", round.WinnerText);
+        Assert.Contains("Cooper", round.WinnerText);
+        Assert.True(round.HasFastestLap);
+        Assert.Equal(2, round.Results.Count);
+
+        var dnf = round.Results[1];
+        Assert.Equal("DNF", dnf.Pos);
+        Assert.True(dnf.HasStatus);
+        Assert.Equal("Engine", dnf.Status);
+    }
+
+    [Fact]
+    public void Season_summary_counts_wins_and_the_title_margin_from_the_results()
+    {
+        // Champion wins 2 of the 3 races; runner-up 3 points back; the champion's team wins all 3.
+        var season = new HistoricalSeason
+        {
+            Year = 1988,
+            DriversChampion = new HistoricalChampion { Driver = "Ayrton Senna", Team = "McLaren", Points = "90" },
+            RunnerUp = new HistoricalChampion { Driver = "Alain Prost", Points = "87" },
+            ConstructorsChampion = new HistoricalTeamChampion { Team = "McLaren", Points = "199" },
+            Rounds =
+            [
+                new HistoricalRound { Round = 1, Name = "R1", Winner = "Ayrton Senna", WinnerTeam = "McLaren" },
+                new HistoricalRound { Round = 2, Name = "R2", Winner = "Alain Prost", WinnerTeam = "McLaren" },
+                new HistoricalRound { Round = 3, Name = "R3", Winner = "Ayrton Senna", WinnerTeam = "McLaren" },
+            ],
+        };
+
+        var vm = new HistoricalSeasonViewModel(season, roundsApplied: 3, isSeasonComplete: true);
+
+        Assert.Equal(
+            "Ayrton Senna took the 1988 title with 2 wins, 3 points ahead of Alain Prost. " +
+            "McLaren led the constructors, winning 3 of 3 races.",
+            vm.SummaryText);
+    }
+
+    [Fact]
+    public void Season_summary_singularizes_one_point_and_one_win()
+    {
+        var season = new HistoricalSeason
+        {
+            Year = 1976,
+            DriversChampion = new HistoricalChampion { Driver = "James Hunt", Points = "69" },
+            RunnerUp = new HistoricalChampion { Driver = "Niki Lauda", Points = "68" },
+            Rounds = [new HistoricalRound { Round = 1, Name = "R1", Winner = "James Hunt" }],
+        };
+
+        var vm = new HistoricalSeasonViewModel(season, roundsApplied: 1, isSeasonComplete: true);
+
+        Assert.Equal("James Hunt took the 1976 title with 1 win, 1 point ahead of Niki Lauda.", vm.SummaryText);
+    }
+
+    [Fact]
+    public void Rounds_reveal_only_after_racing_them_and_the_next_race_is_previewed()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons =
+                [
+                    new CareerSeasonCard { SeasonYear = 1988, RoundsApplied = 1, RoundCount = 3, IsComplete = false },
+                ],
+            },
+            HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+            {
+                [1988] = new HistoricalSeason
+                {
+                    Year = 1988,
+                    DriversChampion = new HistoricalChampion { Driver = "Ayrton Senna" },
+                    Rounds =
+                    [
+                        new HistoricalRound { Round = 1, Name = "Brazil", Winner = "Alain Prost",
+                            Circuit = new HistoricalCircuit { LayoutId = "jacarepagua-1", Name = "Nelson Piquet" } },
+                        new HistoricalRound { Round = 2, Name = "San Marino", Winner = "Ayrton Senna",
+                            Circuit = new HistoricalCircuit { LayoutId = "imola-3", Name = "Imola" } },
+                        new HistoricalRound { Round = 3, Name = "Monaco", Winner = "Alain Prost",
+                            Circuit = new HistoricalCircuit { LayoutId = "monaco-5" } },
+                    ],
+                },
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+        var real = history.Seasons[0].RealSeason!;
+
+        // The season champion + summary stay sealed until the season is finished.
+        Assert.False(real.IsSeasonComplete);
+        // Round 1 raced -> revealed (historical document); rounds 2-3 are spoiler-free previews.
+        Assert.True(real.Rounds[0].IsRevealed);
+        Assert.False(real.Rounds[1].IsRevealed);
+        Assert.False(real.Rounds[2].IsRevealed);
+        Assert.Equal(1, real.RevealedCount);
+        // The circuit preview detail is available on an unraced round (that's not a spoiler).
+        Assert.True(real.Rounds[1].HasCircuit);
+        Assert.Equal("imola-3", real.Rounds[1].CircuitLayoutId);
+
+        // The next unraced round is surfaced as the prominent preview at the top.
+        Assert.True(history.HasNextRacePreview);
+        Assert.Equal(1988, history.NextRaceYear);
+        Assert.Equal("San Marino", history.NextRacePreview!.Name);
+        Assert.False(history.NextRacePreview.IsRevealed);
+    }
+
+    [Fact]
+    public void A_completed_season_reveals_everything_and_has_no_next_race()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons =
+                [
+                    new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 2, RoundCount = 2, IsComplete = true },
+                ],
+            },
+            HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+            {
+                [1967] = new HistoricalSeason
+                {
+                    Year = 1967,
+                    DriversChampion = new HistoricalChampion { Driver = "Denny Hulme" },
+                    Rounds =
+                    [
+                        new HistoricalRound { Round = 1, Name = "R1", Winner = "Pedro Rodríguez" },
+                        new HistoricalRound { Round = 2, Name = "R2", Winner = "Denny Hulme" },
+                    ],
+                },
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+        var real = history.Seasons[0].RealSeason!;
+
+        Assert.True(real.IsSeasonComplete);
+        Assert.All(real.Rounds, r => Assert.True(r.IsRevealed));
+        Assert.False(history.HasNextRacePreview); // season done -> no upcoming preview
+    }
+
+    [Fact]
+    public void Circuit_caption_drops_the_name_when_it_is_already_the_heading()
+    {
+        var circuit = new HistoricalCircuit
+        {
+            Name = "Nelson Piquet", Place = "Rio de Janeiro", LengthKm = "5.03", Turns = 11,
+            Direction = "ANTI_CLOCKWISE", Type = "RACE",
+        };
+
+        Assert.Equal(
+            "Nelson Piquet · Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit",
+            CircuitCaptions.Compose(circuit));
+        // Briefing form (venue is the heading) — no duplicated circuit name.
+        Assert.Equal(
+            "Rio de Janeiro · 5.03 km · 11 turns · anti-clockwise circuit",
+            CircuitCaptions.Compose(circuit, includeName: false));
+    }
+
     private sealed class HistoryFakeSession : ICareerSession
     {
         public Companion.ViewModels.Services.CareerTimeline Timeline { get; init; } =
@@ -142,6 +362,12 @@ public sealed class HistoryViewModelTests
         public IReadOnlyList<NewsDispatch> Feed { get; init; } = [];
 
         public Companion.ViewModels.Services.CareerTimeline CareerTimeline() => Timeline;
+
+        public IReadOnlyDictionary<int, HistoricalSeason> HistoricalSeasons { get; init; } =
+            new Dictionary<int, HistoricalSeason>();
+
+        public HistoricalSeason? HistoricalSeason(int year) =>
+            HistoricalSeasons.GetValueOrDefault(year);
 
         public IReadOnlyList<NewsDispatch> ReadFeed() => Feed;
 

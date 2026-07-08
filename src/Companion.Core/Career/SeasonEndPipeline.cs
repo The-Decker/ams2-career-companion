@@ -94,6 +94,18 @@ public sealed record SeasonEndResult
 /// </summary>
 public static class SeasonEndPipeline
 {
+    /// <summary>The player's age-risk term for offer scoring: years past their (perk-shifted) peak,
+    /// scaled by the aging-decline multiplier. Identity/null mods reproduce the exact shipped value
+    /// (Math.Max(0, age+1−peakEnd)); a veteran-aging perk (agingCurve peakShift / declineAccelMult)
+    /// starts the age penalty LATER and grows it more gently — the real, felt cost of age lives here in
+    /// the offer market, NOT in on-track ratings (the sim's self-balancer makes lower talent an easier
+    /// rep bar, so a rating decline would not penalize the player).</summary>
+    public static double PlayerAgeRisk(int playerAge, int peakAgeEnd, PlayerPerkModifiers? mods)
+    {
+        double peakEnd = peakAgeEnd + (mods?.PeakShift ?? 0.0);
+        return Math.Max(0.0, playerAge + 1 - peakEnd) * (mods?.DeclineAccelMult ?? 1.0);
+    }
+
     public static SeasonEndResult Run(SeasonEndContext context)
     {
         var events = new List<JournalEvent>();
@@ -197,10 +209,99 @@ public static class SeasonEndPipeline
             Cause = "season-final",
         });
 
+        // ---- character season XP (progression you feel): the big end-of-season reward ---------
+        // A character career banks the best championship-placement bonus plus the season-completed
+        // grant (pure XpMath.PerSeason — no stream). A pre-character career (or one without rules)
+        // emits no row and leaves Xp/Level at their defaults, so its journal + player-state blob are
+        // byte-identical and the f1db oracle is untouched.
+        long seasonEndXp = player.Xp;
+        int seasonEndLevel = player.Level;
+        if (player.Character is not null && context.CharacterRules is { } xpRules)
+        {
+            int seasonXp = XpMath.PerSeason(
+                xpRules.Levels.XpSources.PerSeason, playerPosition, seasonCompleted: true);
+            seasonEndXp = Math.Max(0, player.Xp + seasonXp);
+            seasonEndLevel = xpRules.Levels.XpCurve.LevelForTotalXp(seasonEndXp);
+            events.Add(new JournalEvent
+            {
+                Phase = JournalPhases.PlayerXp,
+                Entity = "player",
+                DeltaJson = CareerJson.Serialize(new
+                {
+                    from = player.Xp,
+                    to = seasonEndXp,
+                    season = seasonXp,
+                    level = seasonEndLevel,
+                }),
+                Cause = "season-final",
+            });
+
+            // A level-up from the season's XP is worth a line in the news (progression made felt).
+            if (seasonEndLevel > player.Level)
+            {
+                string who = string.IsNullOrEmpty(player.Character.Name) ? "The driver" : player.Character.Name;
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.Headline,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new { text = $"{who} reaches Level {seasonEndLevel}" }),
+                    Cause = "level-up",
+                });
+            }
+        }
+
+        // ---- injury (character depth 6): a fragile driver risks a season-end injury ----------
+        // Only a character carrying an injury-stream perk rolls, so a default career (or a character
+        // with no injury perk) consumes no new draws and stays byte-identical. A hit sets reputation
+        // back (which feeds the offers below) but never touches a finishing position.
+        if (characterMods is not null && player.Character is { } injuryChar
+            && context.CharacterRules is { } injuryRules
+            && InjuryModel.HasInjuryPerk(injuryChar, injuryRules))
+        {
+            double hazard = InjuryModel.Hazard(
+                injuryChar.Stat("durability"), characterMods, player.SeasonInjuryLoad);
+            double roll = context.Streams.CreateStream(CareerStreams.Injury, context.Year, 0, "player").NextDouble();
+            if (roll < hazard)
+            {
+                double afterInjury = ReputationMath.Apply(finalRep, -InjuryModel.RepPenalty);
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.PlayerInjury,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        from = Round4(finalRep),
+                        to = Round4(afterInjury),
+                        delta = Round4(-InjuryModel.RepPenalty),
+                        hazard = Round4(hazard),
+                    }),
+                    Cause = "injury",
+                });
+                // Surface the injury in the news feed (depth 6: the stake is felt, not silent).
+                string who = string.IsNullOrEmpty(injuryChar.Name) ? "The driver" : injuryChar.Name;
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.Headline,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        text = $"{who} sidelined by an off-season injury — reputation takes a knock",
+                    }),
+                    Cause = "injury",
+                });
+                finalRep = afterInjury;
+            }
+        }
+
         player = player with
         {
             Reputation = finalRep,
             SeasonsCompleted = player.SeasonsCompleted + 1,
+            Xp = seasonEndXp,
+            Level = seasonEndLevel,
+            // The per-error injury load is a WITHIN-season tally: consumed by the roll above, it resets
+            // so it never carries into next season's start state (SeasonRollover copies the end state).
+            SeasonInjuryLoad = 0.0,
         };
 
         // ---- step 3: aging -------------------------------------------------------------
@@ -388,12 +489,17 @@ public static class SeasonEndPipeline
 
         // ---- step 6: player offers ------------------------------------------------------
         double salaryAsk = context.PlayerSalaryAskBu ?? Math.Max(1.0, finalRep / 10.0);
-        double ageRisk = Math.Max(0, context.PlayerAge + 1 - curve.PeakAgeEnd);
+        double ageRisk = PlayerAgeRisk(context.PlayerAge, curve.PeakAgeEnd, characterMods);
 
+        // A veteran perk can relax the reputation floors so more (higher-tier) teams will talk to a
+        // modestly-reputed driver (offerWeight/repFloorRelax). Null/identity mods = 0 tiers of relax
+        // = the exact shipped gate, so non-character and no-perk careers stay byte-identical; RepFloor
+        // is monotonic in tier (a tested invariant), so relaxing lowers the bar.
+        int repFloorRelax = characterMods?.RepFloorRelaxTiers ?? 0;
         var scored = new List<PlayerOffer>();
         foreach (var team in teams.OrderBy(t => t.TeamId, StringComparer.Ordinal))
         {
-            if (finalRep < context.Archetypes.RepFloor(team.Tier))
+            if (finalRep < context.Archetypes.RepFloor(team.Tier - repFloorRelax))
                 continue;
 
             var archetype = context.Archetypes.ForTeam(team.Tier, ArchetypeOverride(context, team.TeamId));

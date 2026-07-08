@@ -3,10 +3,12 @@
   "version": 2,
 
   "characterPoints": {
-    "creationBudget": 10,
+    "creationBudget": 6,
     "minBudgetAfterSpend": 0,
-    "maxRefundHeadroom": 6,
-    "$comment": "Start with 10 CP. Positive-cost perks spend; negative-cost (drawback-heavy) perks refund up to +6 over budget so a fragile/greedy build can afford premium upsides. Net spend must land in [0, budget+maxRefundHeadroom]. Leftover CP buy +0.05 stat steps at creation and each level grants more."
+    "maxRefundHeadroom": 3,
+    "maxPerks": 5,
+    "statSumCap": 4.2,
+    "$comment": "PERKS: an archetype IS your identity (3 signature perks); creation should add only a FEW more. TWO limits enforce that: (1) maxPerks = at most 5 perks total, so archetype + about two picks; (2) a 6 CP budget - positive-cost perks spend it, negative-cost (drawback-heavy) perks refund up to +3 over budget so a fragile/greedy build can still afford one premium upside. Net perk spend must land in [0, budget+maxRefundHeadroom]. STATS: the seven stats may sum to at most statSumCap (neutral is 7*0.5=3.5); redistribution below the cap is free AT CREATION, so a driver can be great somewhere by being weak elsewhere, but NO driver is great at everything. IN-CAREER you only RAISE stats with earned points - never trade one rating for another. The 13 archetype presets all sum <= the cap; maxing all seven (5.95) is impossible. Between-season level grants add CP to spend on new perks or +0.05 stat steps."
   },
 
   "stats": {
@@ -55,13 +57,13 @@
       }
     },
     "levelGrants": {
-      "characterPointsPerLevel": 2,
+      "characterPointsPerLevel": 3,
       "statStepValue": 0.05,
       "statStepCpCost": 1,
       "statCapPerRating": 0.99,
       "milestoneEveryLevels": 5,
       "milestoneGrant": "respecToken",
-      "$comment": "Each level -> 2 CP (raisable by consummate_pro). 1 CP = one +0.05 stat step OR banked toward a perk. Every 5th level grants a respec token. Spending is journaled (player.level / player.statSpend); the sim never auto-spends."
+      "$comment": "LEVELING is the main way stats grow. Each level -> 3 CP (raisable by consummate_pro). 1 CP = one +0.05 stat step (RAISE only, up to statCapPerRating 0.99 - ABOVE the creation band, so a driver grows past where they started) OR banked toward a perk. Every 5th level grants a respec token. Spending is journaled (player.level / player.statSpend); the sim never auto-spends."
     },
     "softCapByEra": {
       "$comment": "Ties the reachable level ceiling to the era so a 1967 career and a 2022 career reach comparable ceilings; author-editable, never compiled. Absent era => maxLevel applies.",
@@ -79,7 +81,7 @@
     "statPointsBankable": true,
     "statPointsLockedOnSpend": true,
     "respecTokenGrantsPerMilestone": 1,
-    "respecTokenScope": "one perk swap (for a perk of EQUAL OR LOWER cost, difference refunded as CP) OR one rating's grown points refunded",
+    "respecTokenScope": "one perk swap ONLY (for a perk of EQUAL OR LOWER cost, difference refunded as CP). In-career you never trade stat points between ratings - grown stats are locked (statPointsLockedOnSpend) and only ever RAISED with earned points.",
     "respecForbidsCreationBudgetChange": true,
     "$comment": "Long-arc integrity: choices matter (perks semi-permanent) without punishing lock-in. Equal-or-lower-cost swap rule blocks token-laundering into a strictly-stronger build, keeping the creation-time balance audit valid for the whole career. Journaled 'player.respec'."
   },

@@ -71,6 +71,11 @@ public sealed record PlayerPerkModifiers
 
     public int StatPointsPerLevelBonus { get; init; }
 
+    /// <summary>A (negative) delta on the in-career stat-raise ceiling (statPoints softCap): a perk
+    /// that trades a long plateau for a lower peak caps how high leveling can push a rating (e.g.
+    /// −0.10 = no rating above 0.89). 0 = the full statCapPerRating.</summary>
+    public double StatSoftCapDelta { get; init; }
+
     /// <summary>Round-conditional effects the fold applies only when the round meets the condition
     /// (wetRound, longRace, driverErrorDnf, …), so they can't be min-maxed into an unconditional
     /// expectation gain.</summary>

@@ -33,6 +33,18 @@ public sealed record CareerCreationRequest
     /// the start player state; the sim derives the rating writes + perk modifier from it
     /// deterministically. (Increment 4a.)</summary>
     public CharacterProfile? Character { get; init; }
+
+    /// <summary>The season field the player chose (the liveries on the grid), or null for the whole
+    /// pack. A creation-time deterministic INPUT seeded into the season start state; the sim folds
+    /// exactly this field and the staged custom-AI file carries exactly these drivers. (v0.6.0.)</summary>
+    public Companion.Core.Grid.GridSelection? GridSelection { get; init; }
+
+    /// <summary>Ratings Phase 3: when true, the sim FOLD reacts to the pack's per-race form (a hot
+    /// rival shifts the player's expected finish / OPI / pace anchor). Seeded into the season start
+    /// state (<see cref="Companion.Core.Career.PlayerCareerState.FormAware"/>) and carried forward.
+    /// Default false so existing creation callers (and every test that does not opt in) fold exactly
+    /// as before — byte-identical. The new-career wizard sets it true for all new careers.</summary>
+    public bool FormAware { get; init; }
 }
 
 /// <summary>
@@ -65,4 +77,16 @@ public sealed class CareerSessionFactory(CareerEnvironment environment) : ICaree
 public interface IForceStaging
 {
     StageOutcome StageCurrentGrid(bool force);
+}
+
+/// <summary>
+/// The explicit "apply this grid to AMS2" action: ALWAYS writes an app-marked custom-AI file
+/// (backup-first), bypassing the diff-aware no-op and the community-file gate, so a grid the user
+/// deliberately chose lands on disk and is verifiable there. The AMS2 diagnosis (2026-07-07) found
+/// the ordinary staging flow frequently wrote 0 bytes (NAMeS-primary no-op + force-gate) — which is
+/// why the user's edits never reached the game. This path guarantees a real write.
+/// </summary>
+public interface IExplicitGridApply
+{
+    StageOutcome ApplyGridToAms2();
 }

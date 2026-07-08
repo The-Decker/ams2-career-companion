@@ -304,9 +304,10 @@ public class GridStagerTests
         Assert.DoesNotContain("1988 Williams #5 - N. Mansell", liveries);
         // Every livery is unique — the duplicate-livery gate held.
         Assert.Equal(liveries.Count, liveries.Distinct(StringComparer.Ordinal).Count());
-        // The grid-cap fix: Pérez-Sala DNQ'd the 1988 Belgian GP, so he is NOT on round 11's grid
-        // even though his entry covers the round — only historical starters seat.
-        Assert.DoesNotContain("1988 Minardi #24 - L. Pérez-Sala", liveries);
+        // The grid-cap fix: Martini (Minardi #23) DNQ'd the 1988 Belgian GP in the preset-matched
+        // grids, so he is NOT on round 11's grid even though his entry covers the round — only the
+        // round's listed starters seat.
+        Assert.DoesNotContain("1988 Minardi #23 - P. Martini", liveries);
     }
 
     [Fact]
@@ -329,6 +330,42 @@ public class GridStagerTests
     }
 
     // ---------- helpers ----------
+
+    // ---------- Build: staging-only per-race form nudge ----------
+
+    [Fact]
+    public void Build_AppliesRoundFormAsAStagingOnlyNudge_Clamped()
+    {
+        var seat = Seat() with
+        {
+            Ratings = new PackDriverRatings { RaceSkill = 0.80, QualifyingSkill = 0.75 },
+        };
+
+        // No form => baseline verbatim (byte-identical to the no-form path).
+        var plain = Assert.Single(GridStager.Build(Plan(seat), "t").Drivers);
+        Assert.Equal(0.80, plain.RaceSkill!.Value, 6);
+        Assert.Equal(0.75, plain.QualifyingSkill!.Value, 6);
+
+        // A positive form nudges race up, negative nudges quali down (additive on the two pace fields).
+        var form = new Dictionary<string, PackDriverForm>
+        {
+            ["driver.one"] = new() { RaceSkill = 0.06, QualifyingSkill = -0.05 },
+        };
+        var nudged = Assert.Single(GridStager.Build(Plan(seat), "t", form).Drivers);
+        Assert.Equal(0.86, nudged.RaceSkill!.Value, 6);
+        Assert.Equal(0.70, nudged.QualifyingSkill!.Value, 6);
+
+        // The nudge clamps into 0..1; a driver absent from the map is untouched.
+        var edge = seat with { Ratings = new PackDriverRatings { RaceSkill = 0.98, QualifyingSkill = 0.05 } };
+        var edgeForm = new Dictionary<string, PackDriverForm>
+        {
+            ["driver.one"] = new() { RaceSkill = 0.10, QualifyingSkill = -0.20 },
+            ["driver.absent"] = new() { RaceSkill = 0.5, QualifyingSkill = 0.5 },
+        };
+        var clamped = Assert.Single(GridStager.Build(Plan(edge), "t", edgeForm).Drivers);
+        Assert.Equal(1.0, clamped.RaceSkill!.Value, 6);    // 0.98 + 0.10 -> clamp 1.0
+        Assert.Equal(0.0, clamped.QualifyingSkill!.Value, 6); // 0.05 - 0.20 -> clamp 0.0
+    }
 
     private static GridSeat Seat() => new()
     {
