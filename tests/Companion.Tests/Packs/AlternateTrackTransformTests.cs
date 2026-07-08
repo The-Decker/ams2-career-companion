@@ -15,10 +15,12 @@ public class AlternateTrackTransformTests
      "rounds":[
        {"round":1,"name":"Belgian GP","date":"1978-05-21","laps":72,
         "track":{"realVenue":"Zolder","id":"spa_1993","isPlaceholder":true,
-                 "alternate":{"id":"Heusden","laps":74,"isRealVenue":true}}},
+                 "alternate":{"id":"Heusden","laps":74,"isRealVenue":true}},
+        "setupGuide":{"session":{"opponents":20},"notes":"Placeholder for Zolder reproduced as 72 laps of Spa."}},
        {"round":2,"name":"French GP","date":"1978-07-02","laps":54,
         "track":{"realVenue":"Dijon-Prenois","id":"estoril_1988","isPlaceholder":true,
-                 "alternate":{"id":"moravia","laps":49,"isRealVenue":false}}},
+                 "alternate":{"id":"moravia","laps":49,"isRealVenue":false}},
+        "setupGuide":{"session":{"opponents":20},"notes":"Placeholder for Dijon reproduced as 54 laps of Estoril."}},
        {"round":3,"name":"British GP","date":"1978-07-16","laps":76,
         "track":{"realVenue":"Brands Hatch","id":"brandshatch_gp","isPlaceholder":false}}
      ]}
@@ -37,6 +39,12 @@ public class AlternateTrackTransformTests
         Assert.Equal(74, round.Laps);
         Assert.False(round.Track.IsPlaceholder); // the authentic venue is no longer a stand-in
         Assert.Equal("Zolder", round.Track.RealVenue); // venue name preserved
+
+        // Note regenerated to match the swap — no longer the stale "Placeholder … of Spa".
+        Assert.Contains("authentic Zolder", round.SetupGuide!.Notes);
+        Assert.Contains("Heusden", round.SetupGuide.Notes);
+        Assert.DoesNotContain("Spa", round.SetupGuide.Notes);
+        Assert.DoesNotContain("Placeholder", round.SetupGuide.Notes);
     }
 
     [Fact]
@@ -47,6 +55,12 @@ public class AlternateTrackTransformTests
         Assert.Equal("moravia", round.Track.Id);
         Assert.Equal(49, round.Laps);
         Assert.True(round.Track.IsPlaceholder); // a filler stand-in is still a labelled placeholder
+
+        // Note regenerated for the filler: names the real venue + the mod stand-in + new laps.
+        Assert.Contains("Dijon-Prenois", round.SetupGuide!.Notes);
+        Assert.Contains("moravia", round.SetupGuide.Notes);
+        Assert.Contains("49 laps", round.SetupGuide.Notes);
+        Assert.DoesNotContain("Estoril", round.SetupGuide.Notes);
     }
 
     [Fact]

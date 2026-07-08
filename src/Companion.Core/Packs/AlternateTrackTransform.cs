@@ -36,12 +36,26 @@ public static class AlternateTrackTransform
             if (track["alternate"] is not JsonObject alt)
                 continue;
 
-            track["id"] = (string)alt["id"]!;
-            round["laps"] = (int)alt["laps"]!;
+            string altId = (string)alt["id"]!;
+            int altLaps = (int)alt["laps"]!;
+            bool isRealVenue = (bool?)alt["isRealVenue"] ?? false;
+
+            track["id"] = altId;
+            round["laps"] = altLaps;
             // A real-venue alternate IS the authentic circuit → no longer a placeholder; a filler
             // stand-in stays a labelled placeholder so the briefing keeps naming it honestly.
-            bool isRealVenue = (bool?)alt["isRealVenue"] ?? false;
             track["isPlaceholder"] = !isRealVenue;
+
+            // Rewrite the round's setup note so the briefing matches the swapped track + laps — the
+            // authored note describes the ORIGINAL base stand-in, which would otherwise contradict the
+            // new venue/distance/placeholder state (display-only, but the player reads it).
+            if (round["setupGuide"] is JsonObject guide)
+            {
+                string venue = (string?)track["realVenue"] is { Length: > 0 } v ? v : altId;
+                guide["notes"] = isRealVenue
+                    ? $"Racing the authentic {venue}, available in AMS2 as the mod track \"{altId}\" — its historical {altLaps} laps."
+                    : $"Alternate track for {venue} (not in AMS2 base): reproduced on the mod track \"{altId}\" at {altLaps} laps.";
+            }
         }
 
         return doc.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
