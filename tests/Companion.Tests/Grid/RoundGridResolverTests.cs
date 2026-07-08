@@ -323,6 +323,38 @@ public class RoundGridResolverTests
     }
 
     [Fact]
+    public void Resolve_1988Round1_PlayerOnADnqCar_IsSeated_HoldingTheHardcodedGridSize()
+    {
+        // 1988 was a pre-qualifying year: ~30 cars for 26 slots, so 4-5 DNQ each round. Coloni's
+        // Tarquini (#31, entry "1-16") did NOT qualify for round 1 (Brazil) — his driver id is not in
+        // that round's starterDriverIds. A player who picked his car must still appear on the grid AMS2
+        // loads (the grid size is hardcoded), so the resolver seats the player and CapToGridSize drops
+        // the slowest qualifier — a peer backmarker, never a front-runner.
+        var pack = GridTestData.LoadReferencePack("f1-1988");
+        int size = pack.Season.Rounds.First(r => r.Round == 1).Grid!.Size;   // 26
+        const string tarquini = "driver.gabriele_tarquini";
+        string livery = pack.Entries.First(e => e.DriverId == tarquini).Ams2LiveryName;
+
+        var bare = RoundGridResolver.Resolve(pack, 1);
+        Assert.DoesNotContain(bare.Seats, s => s.DriverId == tarquini);   // DNQ => not in the bare field
+        Assert.Equal(size, bare.Seats.Count);
+
+        var withPlayer = RoundGridResolver.Resolve(pack, 1, new PlayerSeat { Ams2LiveryName = livery });
+        var player = Assert.Single(withPlayer.Seats, s => s.IsPlayer);
+        Assert.Equal(tarquini, player.DriverId);
+        Assert.Equal(size, withPlayer.Seats.Count);          // hardcoded grid size held (one qualifier dropped)
+
+        // Exactly one qualifier was replaced, and it is a peer (its raceSkill is <= every AI kept) —
+        // no higher-tier team was bumped to make room for the player.
+        var dropped = Assert.Single(bare.Seats.Select(s => s.DriverId)
+            .Except(withPlayer.Seats.Select(s => s.DriverId)));
+        double droppedSkill = bare.Seats.First(s => s.DriverId == dropped).Ratings.RaceSkill;
+        double slowestKeptAi = withPlayer.Seats.Where(s => !s.IsPlayer).Min(s => s.Ratings.RaceSkill);
+        Assert.True(droppedSkill <= slowestKeptAi,
+            $"dropped {dropped} ({droppedSkill}) should be no faster than the slowest kept AI ({slowestKeptAi}).");
+    }
+
+    [Fact]
     public void Resolve_PlayerSeat_LiveryMatchIsCaseSensitive()
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");

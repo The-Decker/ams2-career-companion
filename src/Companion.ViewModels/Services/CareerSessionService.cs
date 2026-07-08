@@ -833,15 +833,26 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private GridPlan ResolveGrid(int round)
     {
         // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
-        // the fold scores. Null selection = whole pack (byte-identical). The player's own seat is
-        // always kept by the resolver, so the field can never bench them.
+        // the fold scores. Null selection = whole pack (byte-identical).
         var selection = CurrentGridSelection();
-        var plan = RoundGridResolver.Resolve(Pack, round, playerSeat: null, selection);
-        if (plan.Seats.Any(s => string.Equals(s.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal)))
-            plan = RoundGridResolver.Resolve(Pack, round,
-                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
-                selection);
-        return plan;
+
+        // Seat the player whenever their livery is a real pack entry — EVEN on a round their car did
+        // not qualify / start historically (1988 was a pre-qualifying year: ~30 cars for 26 slots, so
+        // a driver like Coloni's Tarquini DNQs some rounds). AMS2's grid size is hardcoded, so the
+        // resolver seats the player from their own entry and CapToGridSize drops the SLOWEST qualifier
+        // (lowest raceSkill — a peer backmarker, never a front-runner) to hold the size. This mirrors
+        // the fold + CurrentExpectedFinish, which already seat the player unconditionally, so the
+        // STAGED AMS2 file finally matches what the sim scores — the player is always on the grid.
+        // Only a livery that matches NO pack entry (a non-standard skin, unsupported today) has no seat
+        // to build, so it resolves the all-AI field instead of throwing.
+        bool playerIsPackEntry = Pack.Entries.Any(e =>
+            string.Equals(e.Ams2LiveryName, _playerLiveryName, StringComparison.Ordinal));
+        if (!playerIsPackEntry)
+            return RoundGridResolver.Resolve(Pack, round, playerSeat: null, selection);
+
+        return RoundGridResolver.Resolve(Pack, round,
+            new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+            selection);
     }
 
     private Companion.Core.Grid.GridSelection? _gridSelection;
