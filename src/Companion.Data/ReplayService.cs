@@ -599,7 +599,8 @@ public static class ReplayService
             ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
             : null;
 
-        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch, previous.Player.GridSelection);
+        var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch,
+            previous.Player.GridSelection, previous.Player.FormAware);
         if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
@@ -730,7 +731,7 @@ public static class ReplayService
     /// then the round folds with the player state carried over unchanged.</summary>
     private static GridPlan? ResolvePlayerGrid(
         SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null,
-        GridSelection? gridSelection = null)
+        GridSelection? gridSelection = null, bool applyWeekendForm = false)
     {
         if (liveryName is null)
             return null;
@@ -739,11 +740,13 @@ public static class ReplayService
         // historically (a per-round grid excludes non-starters). Resolve directly with the player
         // seat — the resolver adds the player's covering entry back to the grid — and treat an
         // absent seat (the player's team is simply not entered this round) as "did not race".
+        // Ratings Phase 3: applyWeekendForm (a FormAware career) makes the scored grid react to the
+        // round's per-race form; false ⇒ byte-identical (existing careers + form-less packs).
         try
         {
             return RoundGridResolver.Resolve(
                 pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
-                gridSelection);
+                gridSelection, applyWeekendForm: applyWeekendForm);
         }
         catch (InvalidOperationException)
         {

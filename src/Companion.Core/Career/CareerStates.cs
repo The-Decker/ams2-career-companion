@@ -118,6 +118,18 @@ public sealed record PlayerCareerState
     /// a career that chose the whole field is byte-identical to one made before this feature.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public Companion.Core.Grid.GridSelection? GridSelection { get; init; }
+
+    // ---- Form-reactive sim (Ratings Phase 3) ----
+
+    /// <summary>True for a career created with Ratings Phase 3: the FOLD's grid resolution reacts to
+    /// the pack's per-race <see cref="Companion.Core.Packs.SeasonDefinition.DriverForm"/>, so the
+    /// player's expected finish / OPI / pace anchor shift when a RIVAL is hot that weekend. A
+    /// creation-time deterministic capability seeded into the season start state and carried forward
+    /// each round (record <c>with</c>); the form VALUES come only from the pinned pack, never the save.
+    /// Omitted when false (WhenWritingDefault) so a pre-Phase-3 career — including existing careers on
+    /// packs that already ship DriverForm — is byte-identical and folds form-inert forever.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool FormAware { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller

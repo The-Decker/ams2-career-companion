@@ -38,6 +38,13 @@ public sealed record CareerCreationRequest
     /// pack. A creation-time deterministic INPUT seeded into the season start state; the sim folds
     /// exactly this field and the staged custom-AI file carries exactly these drivers. (v0.6.0.)</summary>
     public Companion.Core.Grid.GridSelection? GridSelection { get; init; }
+
+    /// <summary>Ratings Phase 3: when true, the sim FOLD reacts to the pack's per-race form (a hot
+    /// rival shifts the player's expected finish / OPI / pace anchor). Seeded into the season start
+    /// state (<see cref="Companion.Core.Career.PlayerCareerState.FormAware"/>) and carried forward.
+    /// Default false so existing creation callers (and every test that does not opt in) fold exactly
+    /// as before — byte-identical. The new-career wizard sets it true for all new careers.</summary>
+    public bool FormAware { get; init; }
 }
 
 /// <summary>

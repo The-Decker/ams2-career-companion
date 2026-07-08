@@ -18,12 +18,18 @@ namespace Companion.Core.Grid;
 /// present (they take a real seat even if the driver they replaced was a non-starter that round),
 /// and a final safety cap trims to grid.size keeping the player and the highest-rated AI. A round
 /// with no grid block keeps the pre-grid behaviour: every covering entry fills the grid.
+///
+/// <para>Ratings Phase 3: when <c>applyWeekendForm</c> is set (a FormAware career), the round's
+/// per-race <see cref="Companion.Core.Packs.SeasonDefinition.DriverForm"/> is overlaid onto the AI
+/// seats' pace ratings AFTER the cap — the same additive, clamped nudge the staged AMS2 file gets —
+/// so the field the sim scores reacts to who is hot that weekend. Default off, so a pre-Phase-3 (or
+/// form-less) career resolves a byte-identical grid.</para>
 /// </summary>
 public static class RoundGridResolver
 {
     public static GridPlan Resolve(
         SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null,
-        bool capToGridSize = true)
+        bool capToGridSize = true, bool applyWeekendForm = false)
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
@@ -104,6 +110,12 @@ public static class RoundGridResolver
         if (capToGridSize && packRound.Grid is { } capGrid)
             seats = CapToGridSize(seats, capGrid.Size);
 
+        // Ratings Phase 3 (FormAware careers only): overlay the round's per-race form onto the AI
+        // seats' pace ratings AFTER the cap, so form perturbs strength/pace but never grid
+        // MEMBERSHIP. Default off ⇒ existing callers + form-less packs resolve a byte-identical grid.
+        if (applyWeekendForm)
+            seats = ApplyWeekendForm(seats, pack.Season.DriverForm?.GetValueOrDefault(round));
+
         return new GridPlan
         {
             PackId = pack.Manifest.PackId,
@@ -139,6 +151,43 @@ public static class RoundGridResolver
 
         return kept;
     }
+
+    // ---------- Ratings Phase 3: per-race form overlay ----------
+
+    /// <summary>Overlays the round's per-race form deltas onto the AI seats' pace ratings — the SAME
+    /// additive, 0..1-clamped nudge the staged AMS2 file gets (<c>GridStager.Nudge</c>), so the grid
+    /// the sim scores equals the grid AMS2 shows. The PLAYER seat is deliberately excluded: the player
+    /// is not the historical driver they replaced (their ability is tracked by OPI / pace anchor), so a
+    /// hot weekend must move only the FIELD around them, never their own strength term. Null/empty
+    /// form, a zero delta, or a driver id absent from the round map ⇒ the seat is returned verbatim, so
+    /// a form-less pack (or a non-FormAware career, which never calls this) resolves byte-identically.</summary>
+    private static List<GridSeat> ApplyWeekendForm(
+        List<GridSeat> seats, IReadOnlyDictionary<string, PackDriverForm>? roundForm)
+    {
+        if (roundForm is null || roundForm.Count == 0)
+            return seats;
+
+        return seats
+            .Select(seat =>
+            {
+                if (seat.IsPlayer || !roundForm.TryGetValue(seat.DriverId, out var form))
+                    return seat;
+                return seat with
+                {
+                    Ratings = seat.Ratings with
+                    {
+                        RaceSkill = NudgeForm(seat.Ratings.RaceSkill, form.RaceSkill),
+                        QualifyingSkill = NudgeForm(seat.Ratings.QualifyingSkill, form.QualifyingSkill),
+                    },
+                };
+            })
+            .ToList();
+    }
+
+    /// <summary>Additive form delta, clamped to 0..1 — mirrors <c>GridStager.Nudge</c> exactly so a
+    /// scored AI rating equals the staged AMS2 file's. A zero delta returns the base verbatim.</summary>
+    private static double NudgeForm(double baseValue, double delta) =>
+        delta != 0.0 ? Math.Clamp(baseValue + delta, 0.0, 1.0) : baseValue;
 
     // ---------- seat construction ----------
 

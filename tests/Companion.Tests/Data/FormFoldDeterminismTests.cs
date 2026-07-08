@@ -8,12 +8,14 @@ using Companion.ViewModels.Services;
 namespace Companion.Tests.Data;
 
 /// <summary>
-/// Determinism gate for the STAGING-ONLY per-race form overlay (<see cref="SeasonDefinition.DriverForm"/>):
-/// a career on a pack that carries per-round form deltas re-simulates BYTE-IDENTICALLY. Form is read
-/// only when the app writes the AMS2 custom-AI file (<c>GridStager.Build</c>); the resolver, fold,
-/// scoring engine and f1db oracle never touch it, so it can never move a replayed result. This proves
-/// the "sim-inert" contract: adding form to a pack changes what AMS2 shows on track, nothing the sim
-/// scores.
+/// OFF-path determinism gate for per-race form (<see cref="SeasonDefinition.DriverForm"/>): a
+/// PRE-Phase-3 career — one that is NOT <see cref="Companion.Core.Career.PlayerCareerState.FormAware"/>
+/// (the default; the request here does not opt in) — folds form-inert and re-simulates BYTE-IDENTICALLY,
+/// even on a pack that ships form deltas. The fold never reads DriverForm for such a career, so it can
+/// never move a replayed result; form only changes what AMS2 shows on track (via <c>GridStager.Build</c>).
+/// This is what keeps EXISTING careers on the form-carrying bundled packs byte-identical. The sibling
+/// <see cref="FormReactiveFoldDeterminismTests"/> proves the ON path (a FormAware career reacts + still
+/// replays byte-identically).
 /// </summary>
 public sealed class FormFoldDeterminismTests : IDisposable
 {

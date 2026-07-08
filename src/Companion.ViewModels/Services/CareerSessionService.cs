@@ -226,7 +226,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
                 SeedStartStates(
                     database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
-                    request.Character, request.GridSelection, transaction);
+                    request.Character, request.GridSelection, request.FormAware, transaction);
 
                 transaction.Commit();
             }
@@ -359,6 +359,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         string playerLiveryName,
         CharacterProfile? character,
         Companion.Core.Grid.GridSelection? gridSelection,
+        bool formAware,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -393,6 +394,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // The chosen season field (null = whole pack → byte-identical). Carried forward each
             // round; the fold resolves the grid to exactly this field.
             GridSelection = gridSelection is { IncludesEverything: false } ? gridSelection : null,
+            // Ratings Phase 3: form-reactive fold, on for new careers (false = byte-identical). Carried
+            // forward each round via record `with`, so a multi-season career stays form-aware and its
+            // re-derived start states match — no rollover/transition change needed.
+            FormAware = formAware,
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
@@ -682,7 +687,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return state.RecommendedSlider;
         if (state.Player.PaceAnchor > 0.0 && !SeasonComplete)
         {
-            var grid = ResolveGrid(CurrentRoundNumber);
+            // Form-on so the fallback advice matches the fold's field (the primary path returns the
+            // folded state.RecommendedSlider above; this legacy branch is edge-only).
+            var grid = ResolveGrid(CurrentRoundNumber, applyWeekendForm: CurrentFormAware());
             return DifficultyModel.RecommendSlider(
                 state.Player.PaceAnchor, PaceAnchorMath.MedianAiRaceSkill(grid));
         }
@@ -715,7 +722,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         {
             grid = RoundGridResolver.Resolve(Pack, CurrentRoundNumber,
                 new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
-                CurrentGridSelection());
+                CurrentGridSelection(), applyWeekendForm: CurrentFormAware());
         }
         catch (InvalidOperationException)
         {
@@ -833,7 +840,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// career carries a character, the player seat is patched from it here too — so the STAGED
     /// AMS2 file gets the perk car scalars and the briefing's expectation matches the fold (the
     /// fold applies the identical patch). A character-free career resolves an unchanged grid.</summary>
-    private GridPlan ResolveGrid(int round)
+    /// <param name="applyWeekendForm">Ratings Phase 3: overlay the round's per-race form (a FormAware
+    /// career). ONLY the "sim's view" resolves opt in (the shown expected finish + slider), so they
+    /// equal what the fold scored. STAGING keeps this false — <c>GridStager.Build</c> applies the same
+    /// nudge to the written AMS2 file, so applying it here too would double-count.</param>
+    private GridPlan ResolveGrid(int round, bool applyWeekendForm = false)
     {
         // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
         // the fold scores. Null selection = whole pack (byte-identical).
@@ -846,7 +857,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // qualifying pack livery resolve byte-identically.
         return RoundGridResolver.Resolve(Pack, round,
             new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
-            CurrentGridSelection());
+            CurrentGridSelection(), applyWeekendForm: applyWeekendForm);
     }
 
     private Companion.Core.Grid.GridSelection? _gridSelection;
@@ -863,6 +874,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         _gridSelection = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.GridSelection;
         return _gridSelection;
     }
+
+    private bool? _formAware;
+
+    /// <summary>Whether this career is form-reactive (Ratings Phase 3), read once from the start state
+    /// and cached (it never changes over a career). Drives the DISPLAY resolves that must equal what
+    /// the fold scored — the expected finish the Setup Gamble stakes against, and the recommended
+    /// slider — so the number shown matches the number folded. Staging keeps form OFF here because
+    /// <c>GridStager.Build</c> applies the same nudge to the written file (no double-apply); false for
+    /// a pre-Phase-3 career ⇒ byte-identical.</summary>
+    private bool CurrentFormAware() =>
+        _formAware ??= StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.FormAware ?? false;
 
     private PlayerCharacterPatch? _characterPatch;
     private bool _characterPatchResolved;

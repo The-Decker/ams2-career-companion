@@ -584,6 +584,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             Character = Character?.BuildProfile(),
             GridSelection = BuildGridSelection(),
+            // Ratings Phase 3: every new career is form-reactive — the sim's field reacts to who is
+            // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
+            FormAware = true,
         };
 
         ICareerSession session;
