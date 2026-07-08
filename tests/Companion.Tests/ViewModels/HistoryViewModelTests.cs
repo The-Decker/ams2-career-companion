@@ -225,7 +225,7 @@ public sealed class HistoryViewModelTests
             ],
         };
 
-        var vm = new HistoricalSeasonViewModel(season);
+        var vm = new HistoricalSeasonViewModel(season, roundsApplied: 3, isSeasonComplete: true);
 
         Assert.Equal(
             "Ayrton Senna took the 1988 title with 2 wins, 3 points ahead of Alain Prost. " +
@@ -244,9 +244,96 @@ public sealed class HistoryViewModelTests
             Rounds = [new HistoricalRound { Round = 1, Name = "R1", Winner = "James Hunt" }],
         };
 
-        var vm = new HistoricalSeasonViewModel(season);
+        var vm = new HistoricalSeasonViewModel(season, roundsApplied: 1, isSeasonComplete: true);
 
         Assert.Equal("James Hunt took the 1976 title with 1 win, 1 point ahead of Niki Lauda.", vm.SummaryText);
+    }
+
+    [Fact]
+    public void Rounds_reveal_only_after_racing_them_and_the_next_race_is_previewed()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons =
+                [
+                    new CareerSeasonCard { SeasonYear = 1988, RoundsApplied = 1, RoundCount = 3, IsComplete = false },
+                ],
+            },
+            HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+            {
+                [1988] = new HistoricalSeason
+                {
+                    Year = 1988,
+                    DriversChampion = new HistoricalChampion { Driver = "Ayrton Senna" },
+                    Rounds =
+                    [
+                        new HistoricalRound { Round = 1, Name = "Brazil", Winner = "Alain Prost",
+                            Circuit = new HistoricalCircuit { LayoutId = "jacarepagua-1", Name = "Nelson Piquet" } },
+                        new HistoricalRound { Round = 2, Name = "San Marino", Winner = "Ayrton Senna",
+                            Circuit = new HistoricalCircuit { LayoutId = "imola-3", Name = "Imola" } },
+                        new HistoricalRound { Round = 3, Name = "Monaco", Winner = "Alain Prost",
+                            Circuit = new HistoricalCircuit { LayoutId = "monaco-5" } },
+                    ],
+                },
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+        var real = history.Seasons[0].RealSeason!;
+
+        // The season champion + summary stay sealed until the season is finished.
+        Assert.False(real.IsSeasonComplete);
+        // Round 1 raced -> revealed (historical document); rounds 2-3 are spoiler-free previews.
+        Assert.True(real.Rounds[0].IsRevealed);
+        Assert.False(real.Rounds[1].IsRevealed);
+        Assert.False(real.Rounds[2].IsRevealed);
+        Assert.Equal(1, real.RevealedCount);
+        // The circuit preview detail is available on an unraced round (that's not a spoiler).
+        Assert.True(real.Rounds[1].HasCircuit);
+        Assert.Equal("imola-3", real.Rounds[1].CircuitLayoutId);
+
+        // The next unraced round is surfaced as the prominent preview at the top.
+        Assert.True(history.HasNextRacePreview);
+        Assert.Equal(1988, history.NextRaceYear);
+        Assert.Equal("San Marino", history.NextRacePreview!.Name);
+        Assert.False(history.NextRacePreview.IsRevealed);
+    }
+
+    [Fact]
+    public void A_completed_season_reveals_everything_and_has_no_next_race()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons =
+                [
+                    new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 2, RoundCount = 2, IsComplete = true },
+                ],
+            },
+            HistoricalSeasons = new Dictionary<int, HistoricalSeason>
+            {
+                [1967] = new HistoricalSeason
+                {
+                    Year = 1967,
+                    DriversChampion = new HistoricalChampion { Driver = "Denny Hulme" },
+                    Rounds =
+                    [
+                        new HistoricalRound { Round = 1, Name = "R1", Winner = "Pedro Rodríguez" },
+                        new HistoricalRound { Round = 2, Name = "R2", Winner = "Denny Hulme" },
+                    ],
+                },
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+        var real = history.Seasons[0].RealSeason!;
+
+        Assert.True(real.IsSeasonComplete);
+        Assert.All(real.Rounds, r => Assert.True(r.IsRevealed));
+        Assert.False(history.HasNextRacePreview); // season done -> no upcoming preview
     }
 
     private sealed class HistoryFakeSession : ICareerSession

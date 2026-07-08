@@ -96,7 +96,8 @@ public sealed class HistoryInspectorRenderTests
             {
                 Timeline = new CareerTimeline
                 {
-                    Seasons = [new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 1 }],
+                    // A finished season so the champion + full result reveal (not a spoiler-free preview).
+                    Seasons = [new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 1, IsComplete = true }],
                 },
                 HistoricalSeasons = new Dictionary<int, HistoricalSeason>
                 {

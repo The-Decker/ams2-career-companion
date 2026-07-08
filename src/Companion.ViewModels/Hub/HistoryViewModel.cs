@@ -61,6 +61,21 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     /// empty state independently of the season cards).</summary>
     public bool HasArticles => ArchivedArticles.Count > 0;
 
+    /// <summary>The upcoming race of the CURRENT season — a spoiler-free Race Preview (circuit map +
+    /// track detail) shown prominently at the top of the History tab. Null when the current season is
+    /// finished or no history is shipped for its year.</summary>
+    [ObservableProperty]
+    private HistoricalRoundViewModel? _nextRacePreview;
+
+    /// <summary>The current season's year, for the "Next race — 1988" header.</summary>
+    [ObservableProperty]
+    private int _nextRaceYear;
+
+    public bool HasNextRacePreview => NextRacePreview is not null;
+
+    partial void OnNextRacePreviewChanged(HistoricalRoundViewModel? value) =>
+        OnPropertyChanged(nameof(HasNextRacePreview));
+
     /// <summary>Re-project the whole scrapbook off current session state (on open and after
     /// every Apply). Idempotent: rebuilds every collection from scratch.</summary>
     public void Refresh()
@@ -81,6 +96,19 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
         foreach (var dispatch in _session.ReadFeed())
             ArchivedArticles.Add(new NewsItemViewModel(dispatch));
 
+        // The current season (newest card) surfaces its next unraced round as a prominent preview.
+        var current = Seasons.FirstOrDefault();
+        if (current?.RealSeason is { IsSeasonComplete: false } real)
+        {
+            NextRacePreview = real.Rounds.FirstOrDefault(r => !r.IsRevealed);
+            NextRaceYear = real.Year;
+        }
+        else
+        {
+            NextRacePreview = null;
+            NextRaceYear = 0;
+        }
+
         OnPropertyChanged(nameof(IsEmpty));
         OnPropertyChanged(nameof(HasArticles));
     }
@@ -96,7 +124,9 @@ public sealed class SeasonCardViewModel
     {
         ArgumentNullException.ThrowIfNull(card);
         _card = card;
-        RealSeason = realSeason is not null ? new HistoricalSeasonViewModel(realSeason) : null;
+        RealSeason = realSeason is not null
+            ? new HistoricalSeasonViewModel(realSeason, card.RoundsApplied, card.IsComplete)
+            : null;
     }
 
     /// <summary>The REAL historical results of this card's year ("what really happened"), or null
@@ -201,11 +231,14 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
     [RelayCommand]
     private void Toggle() => IsExpanded = !IsExpanded;
 
-    public HistoricalSeasonViewModel(HistoricalSeason season)
+    public HistoricalSeasonViewModel(HistoricalSeason season, int roundsApplied, bool isSeasonComplete)
     {
         ArgumentNullException.ThrowIfNull(season);
         Year = season.Year;
         Source = season.Source ?? "";
+        // The season-level spoilers (champions + summary) reveal only once the player has finished the
+        // season in their career — before that, each race is a preview, not a result.
+        IsSeasonComplete = isSeasonComplete;
 
         if (season.DriversChampion is { } champ)
         {
@@ -219,9 +252,20 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
             ConstructorsChampionText = $"{cons.Team}{points}";
         }
 
-        Rounds = season.Rounds.Select(r => new HistoricalRoundViewModel(r)).ToList();
+        // Each round reveals its real result only after the player has completed that round (round
+        // number <= rounds applied). Until then it is a Race Preview (circuit + detail, no spoiler).
+        Rounds = season.Rounds
+            .Select(r => new HistoricalRoundViewModel(r, isRevealed: r.Round <= roundsApplied))
+            .ToList();
         SummaryText = ComposeSummary(season);
     }
+
+    /// <summary>The number of races in the season whose real result the player has unlocked (raced).</summary>
+    public int RevealedCount => Rounds.Count(r => r.IsRevealed);
+
+    /// <summary>True once the whole season is done in the player's career — gates the champion +
+    /// summary spoilers.</summary>
+    public bool IsSeasonComplete { get; }
 
     /// <summary>A one-line, DATA-GROUNDED season summary (no invented facts): champion + win count +
     /// title margin over the runner-up, then the dominant constructor. Every number is counted from
@@ -294,21 +338,22 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
     public IReadOnlyList<HistoricalRoundViewModel> Rounds { get; }
 }
 
-/// <summary>One real historical race: a one-line summary (winner + fastest lap) and the full
-/// classified result behind an expander (collapsed by default).</summary>
+/// <summary>One real historical race. Before the player has raced this round it is a RACE PREVIEW
+/// (circuit map + track detail, no result spoiler); once raced (<see cref="IsRevealed"/>) it becomes a
+/// HISTORICAL DOCUMENT (winner, fastest lap, and the full classified grid behind an expander).</summary>
 public sealed partial class HistoricalRoundViewModel : ObservableObject
 {
-    /// <summary>Whether this round's full classified result is shown (default off — the summary
-    /// line always shows; the grid expands on demand).</summary>
+    /// <summary>Whether this round's detail is expanded (default off — the summary line always shows).</summary>
     [ObservableProperty]
     private bool _isExpanded;
 
     [RelayCommand]
     private void Toggle() => IsExpanded = !IsExpanded;
 
-    public HistoricalRoundViewModel(HistoricalRound round)
+    public HistoricalRoundViewModel(HistoricalRound round, bool isRevealed)
     {
         ArgumentNullException.ThrowIfNull(round);
+        IsRevealed = isRevealed;
         RoundLabel = $"R{round.Round}";
         Name = round.Name;
         WinnerText = round.Winner is { Length: > 0 } w
@@ -318,11 +363,25 @@ public sealed partial class HistoricalRoundViewModel : ObservableObject
         Results = round.Results
             .Select(x => new HistoricalResultRow(x.Pos, x.Driver, x.Team, x.Status ?? ""))
             .ToList();
+
+        CircuitLayoutId = round.Circuit?.LayoutId ?? "";
+        CircuitCaption = CircuitCaptions.Compose(round.Circuit);
     }
+
+    /// <summary>True once the player has raced this round — the real result is unlocked. False = a
+    /// spoiler-free Race Preview.</summary>
+    public bool IsRevealed { get; }
 
     public string RoundLabel { get; }
     public string Name { get; }
-    /// <summary>"Pedro Rodríguez · Cooper", or "—" when unknown.</summary>
+
+    /// <summary>The circuit-layout id for the map (empty when unknown).</summary>
+    public string CircuitLayoutId { get; }
+    public bool HasCircuit => CircuitLayoutId.Length > 0;
+    /// <summary>"Imola · 4.96 km · 22 turns · anti-clockwise circuit" — the preview detail.</summary>
+    public string CircuitCaption { get; }
+
+    /// <summary>The winner line, but only once revealed — a preview never leaks it.</summary>
     public string WinnerText { get; }
     public string FastestLapText { get; }
     public bool HasFastestLap => FastestLapText.Length > 0;
