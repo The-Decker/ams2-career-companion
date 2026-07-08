@@ -262,16 +262,17 @@ public class RoundGridResolverTests
         var plan = RoundGridResolver.Resolve(pack, 1);
 
         // season.json round 1 patches jack_brabham: qualifyingSkill 0.98, consistency 0.9
-        // over a drivers.json baseline of 0.94 / 0.8; raceSkill stays at the 0.93 baseline.
+        // over a drivers.json baseline of 0.97 / 0.8; raceSkill stays at the 0.96 baseline
+        // (f1db-derived static ratings).
         var brabham = Assert.Single(plan.Seats, s => s.DriverId == "driver.jack_brabham");
         Assert.Equal(0.98, brabham.Ratings.QualifyingSkill);
         Assert.Equal(0.90, brabham.Ratings.Consistency);
-        Assert.Equal(0.93, brabham.Ratings.RaceSkill);
+        Assert.Equal(0.96, brabham.Ratings.RaceSkill);
 
         // An unpatched driver keeps the baseline verbatim.
         var clark = Assert.Single(plan.Seats, s => s.DriverId == "driver.jim_clark");
-        Assert.Equal(0.98, clark.Ratings.QualifyingSkill);
-        Assert.Equal(0.94, clark.Ratings.RaceSkill);
+        Assert.Equal(1.00, clark.Ratings.QualifyingSkill);
+        Assert.Equal(0.96, clark.Ratings.RaceSkill);
     }
 
     // ---------- player seat: replace a historical driver by livery ----------
