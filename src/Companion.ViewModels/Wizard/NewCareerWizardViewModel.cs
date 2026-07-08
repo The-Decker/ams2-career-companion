@@ -294,13 +294,15 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             if (total == 0)
                 return "This season has no alternate tracks.";
             int missing = AlternateModTracks.Count(t => !t.Installed);
+            string tracks = total == 1 ? "track" : "tracks";
             if (!UseAlternateTracks)
-                return $"{total} alternate mod track(s) available — tick to use them (checks they're installed).";
-            return missing == 0
-                ? $"✔ All {total} alternate mod track(s) installed — the season will use them."
-                : $"⚠ {missing} of {total} required mod track(s) not installed — alternates will NOT be " +
-                  "applied; the season stays on its default AMS2 tracks. Install the missing mods and re-tick, " +
-                  "or race the defaults.";
+                return $"{total} alternate mod {tracks} available for this season.";
+            if (missing == 0)
+                return total == 1
+                    ? "✔ The alternate mod track is installed — this season will use it."
+                    : $"✔ All {total} alternate mod tracks installed — this season will use them.";
+            return $"⚠ {missing} of {total} required mod {tracks} not installed — alternates won't be applied; " +
+                   "the season stays on its default AMS2 tracks. Install the missing mods and re-tick, or race the defaults.";
         }
     }
 
