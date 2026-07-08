@@ -139,6 +139,10 @@
                                 </Button>
                                 <StackPanel Margin="0,8,0,0"
                                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                                    <!-- data-grounded season summary (counted from the results, so accurate) -->
+                                    <TextBlock Text="{Binding SummaryText}" Style="{StaticResource Body}"
+                                               TextWrapping="Wrap" Margin="0,0,0,8"
+                                               Visibility="{Binding HasSummary, Converter={StaticResource BoolVisible}}" />
                                     <DockPanel Margin="0,0,0,2"
                                                Visibility="{Binding HasDriversChampion, Converter={StaticResource BoolVisible}}">
                                         <TextBlock DockPanel.Dock="Left" Text="Champion" Style="{StaticResource Faint}"

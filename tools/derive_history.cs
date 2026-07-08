@@ -66,6 +66,14 @@ for (int year = startYear; year <= endYear; year++)
     if (consChamp.Count == 1)
         root["constructorsChampion"] = new JsonObject { ["team"] = consChamp[0][0], ["points"] = TrimPoints(consChamp[0][1]) };
 
+    // The championship runner-up (for a factual, data-grounded season summary the History panel
+    // composes — "X took the title, N pts ahead of Y").
+    var runnerUp = Rows(conn,
+        "SELECT d.name, sds.points FROM season_driver_standing sds JOIN driver d ON sds.driver_id = d.id " +
+        "WHERE sds.year = $y AND sds.position_number = 2 LIMIT 1;", ("$y", year));
+    if (runnerUp.Count == 1)
+        root["runnerUp"] = new JsonObject { ["driver"] = runnerUp[0][0], ["points"] = TrimPoints(runnerUp[0][1]) };
+
     var roundsArray = new JsonArray();
     foreach (var round in rounds)
     {

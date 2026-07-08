@@ -15,6 +15,10 @@ public sealed record HistoricalSeason
 
     public HistoricalChampion? DriversChampion { get; init; }
 
+    /// <summary>The championship runner-up (driver + points; no team) — used to compose the season's
+    /// title-margin summary. Null when unknown.</summary>
+    public HistoricalChampion? RunnerUp { get; init; }
+
     public HistoricalTeamChampion? ConstructorsChampion { get; init; }
 
     public IReadOnlyList<HistoricalRound> Rounds { get; init; } = [];

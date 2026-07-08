@@ -188,6 +188,12 @@ public sealed class HistoryViewModelTests
         Assert.Contains("Brabham", real.DriversChampionText);
         Assert.True(real.HasConstructorsChampion);
 
+        // The data-grounded summary names the champion + the dominant constructor (Hulme did not win
+        // the single fixture round — Pedro did — so no win count is claimed here).
+        Assert.True(real.HasSummary);
+        Assert.Contains("Denny Hulme took the 1967 title", real.SummaryText);
+        Assert.Contains("Brabham led the constructors", real.SummaryText);
+
         var round = Assert.Single(real.Rounds);
         Assert.Equal("R1", round.RoundLabel);
         Assert.Contains("Pedro Rodríguez", round.WinnerText);
@@ -199,6 +205,48 @@ public sealed class HistoryViewModelTests
         Assert.Equal("DNF", dnf.Pos);
         Assert.True(dnf.HasStatus);
         Assert.Equal("Engine", dnf.Status);
+    }
+
+    [Fact]
+    public void Season_summary_counts_wins_and_the_title_margin_from_the_results()
+    {
+        // Champion wins 2 of the 3 races; runner-up 3 points back; the champion's team wins all 3.
+        var season = new HistoricalSeason
+        {
+            Year = 1988,
+            DriversChampion = new HistoricalChampion { Driver = "Ayrton Senna", Team = "McLaren", Points = "90" },
+            RunnerUp = new HistoricalChampion { Driver = "Alain Prost", Points = "87" },
+            ConstructorsChampion = new HistoricalTeamChampion { Team = "McLaren", Points = "199" },
+            Rounds =
+            [
+                new HistoricalRound { Round = 1, Name = "R1", Winner = "Ayrton Senna", WinnerTeam = "McLaren" },
+                new HistoricalRound { Round = 2, Name = "R2", Winner = "Alain Prost", WinnerTeam = "McLaren" },
+                new HistoricalRound { Round = 3, Name = "R3", Winner = "Ayrton Senna", WinnerTeam = "McLaren" },
+            ],
+        };
+
+        var vm = new HistoricalSeasonViewModel(season);
+
+        Assert.Equal(
+            "Ayrton Senna took the 1988 title with 2 wins, 3 points ahead of Alain Prost. " +
+            "McLaren led the constructors, winning 3 of 3 races.",
+            vm.SummaryText);
+    }
+
+    [Fact]
+    public void Season_summary_singularizes_one_point_and_one_win()
+    {
+        var season = new HistoricalSeason
+        {
+            Year = 1976,
+            DriversChampion = new HistoricalChampion { Driver = "James Hunt", Points = "69" },
+            RunnerUp = new HistoricalChampion { Driver = "Niki Lauda", Points = "68" },
+            Rounds = [new HistoricalRound { Round = 1, Name = "R1", Winner = "James Hunt" }],
+        };
+
+        var vm = new HistoricalSeasonViewModel(season);
+
+        Assert.Equal("James Hunt took the 1976 title with 1 win, 1 point ahead of Niki Lauda.", vm.SummaryText);
     }
 
     private sealed class HistoryFakeSession : ICareerSession

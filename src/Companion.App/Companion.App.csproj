@@ -31,7 +31,7 @@
     <None Include="..\..\data\rules\*.json" Link="data\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Real historical results (f1db-derived, CC BY 4.0) the History tab shows as reference — shipped
          beside the exe, read-only (the sim never scores them). Regenerate with tools/derive_history.cs
-         (dotnet run tools/derive_history.cs -- tools/_f1db/f1db.db data/history). -->
+         (dotnet run, passing tools/_f1db/f1db.db and data/history as the two args). -->
     <None Include="..\..\data\history\*.json" Link="data\history\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\data\rules\news\*.json" Link="data\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\packs\**\*.*" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

@@ -220,6 +220,54 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
         }
 
         Rounds = season.Rounds.Select(r => new HistoricalRoundViewModel(r)).ToList();
+        SummaryText = ComposeSummary(season);
+    }
+
+    /// <summary>A one-line, DATA-GROUNDED season summary (no invented facts): champion + win count +
+    /// title margin over the runner-up, then the dominant constructor. Every number is counted from
+    /// the baked f1db results, so it is accurate by construction. Empty when there is no champion.</summary>
+    private static string ComposeSummary(HistoricalSeason season)
+    {
+        if (season.DriversChampion is not { } champ)
+            return "";
+
+        int raceCount = season.Rounds.Count;
+        int champWins = season.Rounds.Count(r => string.Equals(r.Winner, champ.Driver, StringComparison.Ordinal));
+
+        string wins = champWins > 0 ? $" with {champWins} {(champWins == 1 ? "win" : "wins")}" : "";
+        string versus = "";
+        if (season.RunnerUp is { } runnerUp)
+        {
+            string margin = TitleMargin(champ.Points, runnerUp.Points);
+            versus = margin.Length > 0 ? $", {margin} ahead of {runnerUp.Driver}" : $" ahead of {runnerUp.Driver}";
+        }
+        string summary = $"{champ.Driver} took the {season.Year} title{wins}{versus}.";
+
+        if (season.ConstructorsChampion is { } cons)
+        {
+            int teamWins = season.Rounds.Count(r => string.Equals(r.WinnerTeam, cons.Team, StringComparison.Ordinal));
+            string teamWinsText = teamWins > 0 && raceCount > 0
+                ? $", winning {teamWins} of {raceCount} {(raceCount == 1 ? "race" : "races")}"
+                : "";
+            summary += $" {cons.Team} led the constructors{teamWinsText}.";
+        }
+        return summary;
+    }
+
+    /// <summary>The points gap between champion and runner-up as "N point(s)", or "" when it cannot
+    /// be computed (missing/non-numeric points, or a non-positive gap).</summary>
+    private static string TitleMargin(string? championPoints, string? runnerUpPoints)
+    {
+        if (decimal.TryParse(championPoints, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out var c) &&
+            decimal.TryParse(runnerUpPoints, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out var r) &&
+            c > r)
+        {
+            decimal margin = c - r;
+            return margin == 1m
+                ? "1 point"
+                : $"{margin.ToString("0.##", CultureInfo.InvariantCulture)} points";
+        }
+        return "";
     }
 
     public int Year { get; }
@@ -235,6 +283,12 @@ public sealed partial class HistoricalSeasonViewModel : ObservableObject
     public string ConstructorsChampionText { get; } = "";
 
     public bool HasConstructorsChampion => ConstructorsChampionText.Length > 0;
+
+    /// <summary>A one-line, data-grounded summary of the season ("X took the title with 8 wins, 3
+    /// points ahead of Y. Z led the constructors, winning 15 of 16 races.").</summary>
+    public string SummaryText { get; } = "";
+
+    public bool HasSummary => SummaryText.Length > 0;
 
     /// <summary>Every real race of the season, in calendar order, each expandable to its full grid.</summary>
     public IReadOnlyList<HistoricalRoundViewModel> Rounds { get; }
