@@ -93,6 +93,36 @@ public partial class StartView : UserControl
             vm.RenameRecent(career, dialog.NewName);
     }
 
+    /// <summary>Right-click MRU → Set card image…: pick an image for this career's gallery card. The
+    /// dialog is view-layer only; the VM records the chosen path (point-to-file, never copied). Any
+    /// image is accepted — a 16:9 source fills the hero band uncropped.</summary>
+    private void OnRecentSetImage(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            DataContext is not StartViewModel vm)
+            return;
+
+        var dialog = new OpenFileDialog
+        {
+            Title = $"Card image for '{career.CareerName}'",
+            Filter = "Images (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png|All files (*.*)|*.*",
+            CheckFileExists = true,
+        };
+        if (dialog.ShowDialog(Window.GetWindow(this)) == true)
+            vm.SetCareerImage(career, dialog.FileName);
+    }
+
+    /// <summary>Right-click MRU → Clear card image: drop the custom image so the card reverts to the
+    /// era art resolved from the career's year.</summary>
+    private void OnRecentClearImage(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: RecentCareer career } &&
+            DataContext is StartViewModel vm)
+        {
+            vm.SetCareerImage(career, null);
+        }
+    }
+
     /// <summary>Right-click MRU → Duplicate career (non-destructive, no confirmation).</summary>
     private void OnRecentDuplicate(object sender, RoutedEventArgs e)
     {

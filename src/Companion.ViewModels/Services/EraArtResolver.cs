@@ -39,18 +39,8 @@ public static class EraArtResolver
     /// as a full path; <c>null</c> when the directory is missing or holds none of the candidates
     /// (the caller then shows the coloured era placeholder). <paramref name="eraArtDirectory"/> is
     /// the folder that holds the images (e.g. <c>{BaseDirectory}\data\ams2\era-art</c>).</summary>
-    public static string? Resolve(string eraArtDirectory, int year)
-    {
-        if (string.IsNullOrEmpty(eraArtDirectory))
-            return null;
-        foreach (var name in CandidateFileNames(year))
-        {
-            string full = Path.Combine(eraArtDirectory, name);
-            if (File.Exists(full))
-                return full;
-        }
-        return null;
-    }
+    public static string? Resolve(string eraArtDirectory, int year) =>
+        UserImageResolver.FirstExisting(eraArtDirectory, CandidateFileNames(year));
 
     /// <summary>Resolves era-art for a career whose year is read out of its name (e.g. "Formula One
     /// 1967"), the same way the gallery colours a card without opening the career file. Returns

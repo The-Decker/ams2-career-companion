@@ -296,4 +296,18 @@ public sealed partial class StartViewModel : ObservableObject
         _store.Touch(path, careerName, seasonYear);
         Refresh();
     }
+
+    /// <summary>"Set card image…" / "Clear card image": records (a non-blank <paramref name="imagePath"/>)
+    /// or clears (a blank one) the user-chosen gallery image for a career. The VIEW picks the file
+    /// (dialogs are view-layer, same contract as the open picker); this method is the already-chosen
+    /// action so it stays unit-testable. Point-to-file — the image is referenced, not copied — so a
+    /// moved/deleted file simply reverts the card to the year's era art.</summary>
+    public void SetCareerImage(RecentCareer? career, string? imagePath)
+    {
+        if (career is null)
+            return;
+        GalleryError = null;
+        _store.SetCustomImage(career.Path, imagePath);
+        Refresh();
+    }
 }

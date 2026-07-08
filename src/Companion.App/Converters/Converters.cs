@@ -222,29 +222,44 @@ public sealed class EraImageConverter : IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        // A RecentCareer resolves by its STORED season year (name-parse fallback for legacy entries);
-        // a bare int/name keep the old contract so non-gallery callers are unaffected.
+        // 1) A user-chosen card image (picked with "Set card image…") wins, when the file still
+        //    exists — point-to-file, so a moved/deleted image just falls back to the era art below.
+        if (value is Companion.ViewModels.Services.RecentCareer { CustomImagePath: { Length: > 0 } custom }
+            && File.Exists(custom)
+            && LoadFrozen(custom) is { } chosen)
+        {
+            return chosen;
+        }
+
+        // 2) Otherwise the drop-in era art resolved by the career's STORED season year (name-parse
+        //    fallback for legacy entries); a bare int/name keep the old contract so non-gallery
+        //    callers are unaffected.
         if (EraCardYear.From(value) is not int resolvedYear)
             return null;
 
         string? path = Companion.ViewModels.Services.EraArtResolver.Resolve(EraArtDirectory, resolvedYear);
-        if (path is null)
-            return null;
+        return path is null ? null : LoadFrozen(path);
+    }
 
+    /// <summary>Loads an image fully now (<see cref="BitmapCacheOption.OnLoad"/>) and freezes it, so
+    /// the file is never left locked (art can be swapped while the app runs) and the bitmap is
+    /// cross-thread safe. A corrupt/unreadable file returns null — the gallery never crashes on bad
+    /// art, it just shows the coloured placeholder.</summary>
+    private static BitmapImage? LoadFrozen(string path)
+    {
         try
         {
             var image = new BitmapImage();
             image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad; // read fully now → the file is never locked
+            image.CacheOption = BitmapCacheOption.OnLoad;
             image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
             image.UriSource = new Uri(path, UriKind.Absolute);
             image.EndInit();
-            image.Freeze(); // cross-thread safe + immutable
+            image.Freeze();
             return image;
         }
-        catch (Exception ex) when (ex is NotSupportedException or IOException or UriFormatException)
+        catch (Exception ex) when (ex is NotSupportedException or IOException or UriFormatException or ArgumentException)
         {
-            // A corrupt or unreadable image must never crash the gallery — fall back to the placeholder.
             return null;
         }
     }

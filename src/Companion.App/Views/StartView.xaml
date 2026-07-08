@@ -21,6 +21,11 @@
             <MenuItem Header="Open containing folder" Click="OnRecentOpenFolder"
                       ToolTip="Show the .ams2career file in Explorer" />
             <Separator />
+            <MenuItem Header="Set card image…" Click="OnRecentSetImage"
+                      ToolTip="Pick a 16:9 image to show as this career's gallery card (your file stays where it is)" />
+            <MenuItem Header="Clear card image" Click="OnRecentClearImage"
+                      ToolTip="Remove the custom image — the card reverts to the era art for its year" />
+            <Separator />
             <MenuItem Header="Rename career…" Click="OnRecentRename"
                       ToolTip="Renames the career and its .ams2career file to match" />
             <MenuItem Header="Duplicate career" Click="OnRecentDuplicate"

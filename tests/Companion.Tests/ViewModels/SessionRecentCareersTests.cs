@@ -94,6 +94,60 @@ public sealed class SessionRecentCareersTests : IDisposable
         Assert.Equal([@"C:\b.ams2career"], store.Load().Select(c => c.Path));
     }
 
+    // ---------- custom card image (shared user-asset system) ----------
+
+    [Fact]
+    public void SetCustomImage_StoresAndClearsThePath_WithoutReordering()
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+        store.Touch(@"C:\b.ams2career", "B"); // b is at the front
+
+        store.SetCustomImage(@"C:\a.ams2career", @"C:\pics\a.jpg");
+
+        var loaded = store.Load();
+        // Setting an image on 'a' must not move it to the front — b stays first.
+        Assert.Equal(@"C:\b.ams2career", loaded[0].Path);
+        Assert.Equal(@"C:\pics\a.jpg", loaded.Single(c => c.Path == @"C:\a.ams2career").CustomImagePath);
+
+        store.SetCustomImage(@"C:\a.ams2career", null);
+        Assert.Null(store.Load().Single(c => c.Path == @"C:\a.ams2career").CustomImagePath);
+    }
+
+    [Fact]
+    public void SetCustomImage_TreatsBlankAsClear()
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+        store.SetCustomImage(@"C:\a.ams2career", "   ");
+
+        Assert.Null(store.Load()[0].CustomImagePath);
+    }
+
+    [Fact]
+    public void Touch_CarriesTheCustomImageForward_SoContinueNeverWipesIt()
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A", seasonYear: 1967);
+        store.SetCustomImage(@"C:\a.ams2career", @"C:\pics\a.jpg");
+
+        // Re-touching (Continue / rename / re-open) must preserve the chosen image.
+        store.Touch(@"C:\a.ams2career", "A", seasonYear: 1967);
+
+        Assert.Equal(@"C:\pics\a.jpg", store.Load()[0].CustomImagePath);
+    }
+
+    [Fact]
+    public void SetCustomImage_IsANoOpForAnUnknownPath()
+    {
+        var store = Store();
+        store.Touch(@"C:\a.ams2career", "A");
+
+        store.SetCustomImage(@"C:\not-listed.ams2career", @"C:\pics\x.jpg");
+
+        Assert.Null(store.Load()[0].CustomImagePath);
+    }
+
     // ---------- stored season year (Part A) ----------
 
     [Fact]
