@@ -1505,7 +1505,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "imola"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 62,
       "grid": {

@@ -349,7 +349,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 79,
+          "isRealVenue": false
+        }
       },
       "laps": 46,
       "grid": {
@@ -649,7 +654,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 49,
+          "isRealVenue": false
+        }
       },
       "laps": 60,
       "grid": {

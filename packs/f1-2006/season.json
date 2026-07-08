@@ -48,7 +48,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 67,
       "grid": {

@@ -628,7 +628,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "imola"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": true
+        }
       },
       "laps": 60,
       "grid": {
@@ -983,7 +988,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "circuit_of_the_americas_gp",
+          "laps": 56,
+          "isRealVenue": false
+        }
       },
       "laps": 60,
       "grid": {
@@ -1054,7 +1064,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurb_gp_2020"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 66,
       "grid": {
@@ -1196,7 +1211,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "estoril_2019"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 65,
       "grid": {

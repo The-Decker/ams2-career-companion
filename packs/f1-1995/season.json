@@ -1108,7 +1108,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "donington_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "sugo",
+          "laps": 79,
+          "isRealVenue": false
+        }
       },
       "laps": 73,
       "grid": {

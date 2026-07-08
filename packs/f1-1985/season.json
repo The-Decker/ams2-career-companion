@@ -796,7 +796,12 @@
         "realVenue": "Circuit Zandvoort",
         "id": "Heusden",
         "isPlaceholder": true,
-        "fallbacks": []
+        "fallbacks": [],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 74,
+          "isRealVenue": false
+        }
       },
       "laps": 74,
       "grid": {

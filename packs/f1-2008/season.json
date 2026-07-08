@@ -194,7 +194,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "hockenheim_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 56,
       "grid": {
@@ -340,7 +345,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "circuit_of_the_americas_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 60,
       "grid": {
@@ -1212,7 +1222,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurb_gp_2020"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 55,
       "grid": {
