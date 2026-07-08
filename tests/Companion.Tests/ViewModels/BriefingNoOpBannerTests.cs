@@ -66,8 +66,8 @@ public class BriefingNoOpBannerTests
         vm.StageGridCommand.Execute(null);
 
         Assert.True(vm.StageSucceeded);
-        Assert.Contains("already matches", vm.StageBanner);
-        Assert.Contains("nothing written", vm.StageBanner);
+        Assert.Contains("already set up", vm.StageBanner);
+        Assert.Contains("nothing to change", vm.StageBanner);
         Assert.Contains("✔", vm.StageBanner);
         // Distinguishable from the staged banner: no backup wording.
         Assert.DoesNotContain("backed up", vm.StageBanner);
@@ -93,7 +93,7 @@ public class BriefingNoOpBannerTests
         vm.StageGridCommand.Execute(null);
 
         Assert.True(vm.StageSucceeded);
-        Assert.StartsWith("Staged", vm.StageBanner);
+        Assert.StartsWith("✔ AMS2 is set up", vm.StageBanner);
         Assert.Contains("backed up to", vm.StageBanner);
         Assert.DoesNotContain("already matches", vm.StageBanner);
     }
@@ -115,7 +115,7 @@ public class BriefingNoOpBannerTests
         vm.StageGridCommand.Execute(null);
 
         Assert.False(vm.StageSucceeded);
-        Assert.StartsWith("Staging failed", vm.StageBanner);
+        Assert.StartsWith("Couldn't set up", vm.StageBanner);
         Assert.Contains("aborted", vm.StageBanner);
         Assert.Null(watcher.Watching);
     }

@@ -173,12 +173,12 @@
             <!-- staging (confirmation popovers per the ux-round contract) -->
             <StackPanel Orientation="Horizontal" Margin="0,18,0,0"
                         Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
-                <Button x:Name="StageButton" Content="Stage grid into AMS2" Style="{StaticResource AccentButton}"
+                <Button x:Name="StageButton" Content="Set up this race in AMS2" Style="{StaticResource AccentButton}"
                         MinWidth="200" Click="OnStageClick"
-                        ToolTip="Writes the generated custom-AI grid into UserData\CustomAIDrivers — backup-first, always" />
-                <Button x:Name="ForceStageButton" Content="Stage anyway (backup first)" Margin="10,0,0,0"
+                        ToolTip="Writes this round's drivers and skins into AMS2 (backup-first) so the grid matches your career" />
+                <Button x:Name="ForceStageButton" Content="Overwrite anyway (backup first)" Margin="10,0,0,0"
                         Click="OnForceStageClick"
-                        ToolTip="Overrides the not-ours-file guard; a timestamped backup is still taken first">
+                        ToolTip="Your installed AI is a community file — this overwrites it; a timestamped backup is still taken first">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -227,9 +227,9 @@
                         <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
                                    Text="The app normally only overwrites AI files it wrote itself — it recognizes its own files by a marker it puts inside them. This file has no marker, so it is YOURS (hand-edited, or a community file like NAMeS) and normal staging refuses to touch it." />
                         <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}" Margin="0,8,0,0"
-                                   Text="Stage anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
+                                   Text="Overwrite anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <Button Content="Stage anyway (backup first)" Click="OnForceStageConfirm">
+                            <Button Content="Overwrite anyway (backup first)" Click="OnForceStageConfirm">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                         <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />

@@ -181,7 +181,7 @@ public class BriefingViewModelTests
         vm.StageGridCommand.Execute(null);
 
         Assert.False(vm.StageSucceeded);
-        Assert.StartsWith("Staging failed", vm.StageBanner);
+        Assert.StartsWith("Couldn't set up", vm.StageBanner);
         Assert.Contains("Staging aborted", vm.StageBanner);
         Assert.Null(watcher.Watching);
         Assert.Equal(2, vm.StageMessages.Count);

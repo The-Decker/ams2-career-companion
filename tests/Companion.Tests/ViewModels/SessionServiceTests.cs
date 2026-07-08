@@ -567,7 +567,7 @@ public sealed class SessionServiceTests : IDisposable
         Assert.True(refused.BlockedByForceGate);
         Assert.Contains(refused.Messages, m =>
             m.Contains("Your installed F-Vintage_Gen1.xml differs from this round's grid") &&
-            m.Contains("'Stage anyway' takes a timestamped backup first"));
+            m.Contains("'Overwrite anyway' takes a timestamped backup first"));
         Assert.Equal(communityFile, File.ReadAllText(StagedFilePath)); // untouched
 
         var forced = ((IForceStaging)session).StageCurrentGrid(force: true);

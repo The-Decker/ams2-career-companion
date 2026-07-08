@@ -296,7 +296,7 @@ public sealed class SkinsViewModelTests
         vm.StageGridCommand.Execute(null);
 
         Assert.True(vm.StageSucceeded);
-        Assert.Contains("Pushed the grid", vm.StageBanner);
+        Assert.Contains("set up for this race", vm.StageBanner);
     }
 
     [Fact]
@@ -313,7 +313,7 @@ public sealed class SkinsViewModelTests
 
         Assert.True(vm.StageBlocked);
         Assert.False(vm.StageSucceeded);
-        Assert.Contains("Stage anyway", vm.StageBanner);
+        Assert.Contains("Overwrite anyway", vm.StageBanner);
     }
 
     private static FakeCareerSession Session(string livery, string driver, string[]? active = null) => new()

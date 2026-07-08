@@ -1205,11 +1205,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             {
                 // The community-file force gate is an EXPECTED choice, not a failure: the
                 // briefing renders this outcome as an informational (amber) banner with the
-                // existing "Stage anyway (backup first)" escape hatch.
+                // "Overwrite anyway (backup first)" escape hatch.
                 messages.Add(
                     $"Your installed {file.VehicleClass}.xml differs from this round's grid " +
                     "(community NAMeS file). Your installed names/AI are kept — only this round's " +
-                    "grid selection and your career changes are applied. 'Stage anyway' takes a " +
+                    "grid selection and your career changes are applied. 'Overwrite anyway' takes a " +
                     "timestamped backup first.");
                 return new StageOutcome
                 {

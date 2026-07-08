@@ -324,20 +324,27 @@ public sealed partial class SkinsViewModel : ObservableObject
         StageBanner = ComposeStageBanner(outcome);
     }
 
-    private static string ComposeStageBanner(StageOutcome outcome)
+    private string ComposeStageBanner(StageOutcome outcome)
     {
         if (outcome.BlockedByForceGate)
-            return "Ready to push — click “Stage anyway (backup first)” to write the grid (with your edits) " +
-                   "into AMS2. Your installed AI is a community file, so the app only writes it when you " +
-                   "confirm; a timestamped backup is taken first.";
+            return "Your installed AI file is a community file, so the app only overwrites it when you " +
+                   "confirm — click “Overwrite anyway (backup first)” to set up this race. A timestamped " +
+                   "backup is taken first, and season-end offers one-click restore.";
         if (!outcome.Success)
-            return outcome.Messages.Count > 0 ? $"Couldn't stage — {outcome.Messages[^1]}" : "Couldn't stage.";
+            return outcome.Messages.Count > 0 ? $"Couldn't set up the race — {outcome.Messages[^1]}" : "Couldn't set up the race.";
         if (outcome.NoOpAlreadyMatches)
-            return "✔ Your installed AI file already matches this grid — nothing to write.";
-        string written = outcome.WrittenPath is { Length: > 0 } p ? $" Written to: {p}." : "";
-        string backupNote = outcome.BackupPath is { Length: > 0 } backup
-            ? $" (previous file backed up to {System.IO.Path.GetFileName(backup)})" : "";
-        return $"✔ Pushed the grid into AMS2{backupNote}.{written} Close AMS2 before staging, then launch fresh and set up your race.";
+            return "✔ AMS2 is already set up for this race — your installed drivers + skins match, nothing to change.";
+
+        // Surface WHAT happened (the drivers written, this race's skins activated, any bubble-car swap,
+        // the base-game fallback) so the reason for each is visible — then the one thing to do in-game.
+        var lines = new List<string> { "✔ AMS2 is set up for this race." };
+        lines.AddRange(outcome.Messages);
+        if (PlayerLiveryName is { Length: > 0 } pick)
+            lines.Add($"► Your car: pick “{pick}” on the AMS2 car-select screen.");
+        if (outcome.BackupPath is { Length: > 0 } backup)
+            lines.Add($"Your previous file was backed up ({System.IO.Path.GetFileName(backup)}); season-end can restore it.");
+        lines.Add("Close AMS2 first if it's open, then launch and race.");
+        return string.Join("\n\n", lines);
     }
 
     /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the

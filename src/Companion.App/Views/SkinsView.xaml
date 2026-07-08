@@ -138,12 +138,12 @@
                         Visibility="{Binding Editors.Count, Converter={StaticResource CountVisible}}">
                 <TextBlock Text="Edit the grid" Style="{StaticResource H2}" Margin="0,0,0,4" />
                 <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,8"
-                           Text="Rename any driver, or rebind a car to a different active livery. Edits are written to the AI file when you push the grid below — they never touch results or standings. Your car's own livery is still the one you pick in-game." />
+                           Text="Rename any driver, or rebind a car to a different active livery — cosmetic only, never touches results or standings. &quot;Set up this race in AMS2&quot; below writes this round's drivers and skins into the game (with your edits, backup-first) so the grid you race matches your career — including swapping a pre-qualifying car's skin into the pool when you drive one. Your own car's livery is the one you pick on the AMS2 car-select screen; the crib above tells you which." />
 
                 <!-- push the grid (with edits) into AMS2 — the "apply" action -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <Button Content="Stage grid into AMS2" MinWidth="160" Command="{Binding StageGridCommand}" />
-                    <Button Content="Stage anyway (backup first)" MinWidth="150" Margin="8,0,0,0"
+                    <Button Content="Set up this race in AMS2" MinWidth="180" Command="{Binding StageGridCommand}" />
+                    <Button Content="Overwrite anyway (backup first)" MinWidth="170" Margin="8,0,0,0"
                             Command="{Binding ForceStageGridCommand}"
                             Visibility="{Binding StageBlocked, Converter={StaticResource BoolVisible}}" />
                 </StackPanel>

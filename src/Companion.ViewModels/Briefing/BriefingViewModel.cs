@@ -385,25 +385,29 @@ public sealed partial class BriefingViewModel : ObservableObject
         if (outcome.BlockedByForceGate)
             // Not a failure — a deliberate safety pause. Tell the user exactly what to click and
             // that nothing is at risk, so the community-file gate never reads as an error.
-            return "Ready to stage — click “Stage anyway (backup first)” to write this round's " +
-                   "grid into AMS2. Your installed names/AI is a community file, so the app only writes " +
-                   "it when you confirm; a timestamped backup is taken first, so nothing is lost.";
+            return "Your installed AI is a community file, so the app only overwrites it when you " +
+                   "confirm — click “Overwrite anyway (backup first)” to set up this race. A timestamped " +
+                   "backup is taken first, so nothing is lost.";
 
         if (!outcome.Success)
             return outcome.Messages.Count > 0
-                ? $"Staging failed — {outcome.Messages[^1]}"
-                : "Staging failed.";
-
-        string written = Path.GetFileName(outcome.WrittenPath) ?? outcome.WrittenPath ?? "";
+                ? $"Couldn't set up the race — {outcome.Messages[^1]}"
+                : "Couldn't set up the race.";
 
         if (outcome.NoOpAlreadyMatches)
-            return $"✔ Installed {written} already matches — nothing written (using your installed AI file)";
+            return "✔ AMS2 is already set up for this race — your installed drivers + skins match, nothing to change.";
 
-        return outcome.BackupPath is { Length: > 0 } backup
-            ? $"Staged {written} — written into your LIVE AMS2 file at {outcome.WrittenPath} (the file AMS2 reads). " +
-              $"Your previous copy was backed up to {backup} — a safety copy in the _companion-backups subfolder, which AMS2 ignores."
-            : $"Staged {written} — written into your LIVE AMS2 file at {outcome.WrittenPath} (the file AMS2 reads). " +
-              "No previous file existed, so nothing was backed up.";
+        // Surface WHAT was done (this race's drivers written, its skins activated, any bubble-car swap,
+        // the base-game fallback) so each reason is visible, then where it went + the backup + what next.
+        var lines = new List<string> { "✔ AMS2 is set up for this race." };
+        lines.AddRange(outcome.Messages);
+        if (outcome.WrittenPath is { Length: > 0 } written)
+            lines.Add($"Written into your live AMS2 file: {written}.");
+        lines.Add(outcome.BackupPath is { Length: > 0 } backup
+            ? $"Your previous file was backed up to {backup} — a safety copy AMS2 ignores; season-end can restore it."
+            : "No previous file existed, so nothing was backed up.");
+        lines.Add("Close AMS2 first if it's open, then launch and race.");
+        return string.Join("\n\n", lines);
     }
 
     private void OnWatchedFileChanged(object? sender, string path)
