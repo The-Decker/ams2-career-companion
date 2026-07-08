@@ -388,6 +388,31 @@ public sealed class CircuitGeometryConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>An element's ActualWidth → a height at a fixed aspect ratio (ConverterParameter =
+/// height ÷ width, default 0.5625 = 16:9). Lets an image hero keep its aspect as its card stretches
+/// to fill a responsive grid (e.g. the season-pick cards, which flex to 4 columns of any width).
+/// Returns UnsetValue for a zero/unmeasured width so the element keeps its own MinHeight until the
+/// first real layout pass sets ActualWidth.</summary>
+public sealed class AspectRatioHeightConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double ratio = 0.5625; // 16:9
+        if (parameter is string s &&
+            double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed) &&
+            parsed > 0)
+        {
+            ratio = parsed;
+        }
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? width * ratio
+            : DependencyProperty.UnsetValue;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {

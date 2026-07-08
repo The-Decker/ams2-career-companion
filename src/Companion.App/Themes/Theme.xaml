@@ -67,6 +67,7 @@
     <conv:ExpandGlyphConverter x:Key="ExpandGlyph" />
     <conv:KeyedAssetImageConverter x:Key="AssetImage" />
     <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
+    <conv:AspectRatioHeightConverter x:Key="AspectHeight" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">
