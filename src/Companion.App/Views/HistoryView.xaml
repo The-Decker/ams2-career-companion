@@ -139,6 +139,16 @@
                                 </Button>
                                 <StackPanel Margin="0,8,0,0"
                                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                                    <!-- Optional story image for the season: drop <year>.jpg/.png into
+                                         data\ams2\history-art and it appears here (shared user-asset
+                                         convention, keyed by year). Collapses when no art is present. -->
+                                    <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10" MaxWidth="620"
+                                            HorizontalAlignment="Left" BorderBrush="{StaticResource EdgeBrush}"
+                                            BorderThickness="1"
+                                            Visibility="{Binding ElementName=SeasonStoryImage, Path=Source, Converter={StaticResource NullCollapsed}}">
+                                        <Image x:Name="SeasonStoryImage" Stretch="Uniform" StretchDirection="DownOnly"
+                                               Source="{Binding Year, Converter={StaticResource AssetImage}, ConverterParameter=history-art}" />
+                                    </Border>
                                     <!-- data-grounded season summary (counted from the results, so accurate) -->
                                     <TextBlock Text="{Binding SummaryText}" Style="{StaticResource Body}"
                                                TextWrapping="Wrap" Margin="0,0,0,8"

@@ -28,6 +28,9 @@
     <!-- Drop-in track-layout thumbnails (shared user-asset convention, keyed by track id): user art
          is untracked; the README documents the naming. Copied beside the exe under data\ams2\track-art\. -->
     <None Include="..\..\data\ams2\track-art\**\*.*" Link="data\ams2\track-art\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Drop-in story art for the History tab's "what really happened" panel (keyed by season year):
+         untracked user art; the README documents the naming. Copied beside the exe. -->
+    <None Include="..\..\data\ams2\history-art\**\*.*" Link="data\ams2\history-art\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\data\rules\*.json" Link="data\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Real historical results (f1db-derived, CC BY 4.0) the History tab shows as reference — shipped
          beside the exe, read-only (the sim never scores them). Regenerate with tools/derive_history.cs

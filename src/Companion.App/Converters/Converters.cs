@@ -306,6 +306,28 @@ public sealed class ExpandGlyphConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>A key (string or int) → the drop-in user image for it, from the folder named by the
+/// <c>ConverterParameter</c> under <c>data/ams2/</c> — e.g. <c>ConverterParameter=history-art</c>
+/// resolves <c>data/ams2/history-art/&lt;key&gt;.{jpg,jpeg,png}</c>. The shared, reusable half of the
+/// user-asset convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>): one
+/// converter, any keyed image folder. Null when absent (the view hides the image); user art is
+/// untracked, like era art.</summary>
+public sealed class KeyedAssetImageConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is null || parameter is not string kind || string.IsNullOrWhiteSpace(kind))
+            return null;
+        string key = value as string ?? System.Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
+        string dir = Path.Combine(AppContext.BaseDirectory, "data", "ams2", kind);
+        string? path = Companion.ViewModels.Services.UserImageResolver.ResolveByKey(dir, key);
+        return path is null ? null : FrozenImage.Load(path);
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {

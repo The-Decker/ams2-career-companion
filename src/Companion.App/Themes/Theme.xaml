@@ -65,6 +65,7 @@
     <conv:EraImageConverter x:Key="EraImage" />
     <conv:TrackImageConverter x:Key="TrackImage" />
     <conv:ExpandGlyphConverter x:Key="ExpandGlyph" />
+    <conv:KeyedAssetImageConverter x:Key="AssetImage" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">
