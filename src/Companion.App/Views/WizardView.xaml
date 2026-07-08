@@ -349,6 +349,21 @@
                 <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
+                <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
+                     over the seat above; leave blank for the ordinary seat pick. -->
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="— or race as your own entrant —" Style="{StaticResource Faint}" />
+                        <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,6" TextWrapping="Wrap"
+                                   Text="Type the exact name of a custom livery installed in AMS2 to race as an independent privateer — your own car, added to the grid instead of replacing a historical driver. Leave blank to take a seat above." />
+                        <TextBox Text="{Binding CustomLiveryName, UpdateSourceTrigger=PropertyChanged}" FontSize="14"
+                                 ToolTip="The AMS2 livery name for your own car — leave blank to take a pack seat instead" />
+                        <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   Text="Racing as your own entrant — the seat above is ignored."
+                                   Visibility="{Binding CustomLiveryName, Converter={StaticResource StringVisible}}" />
+                    </StackPanel>
+                </Border>
                 <Border Style="{StaticResource Panel}" Padding="8">
                     <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}">
                         <ListBox.ItemContainerStyle>

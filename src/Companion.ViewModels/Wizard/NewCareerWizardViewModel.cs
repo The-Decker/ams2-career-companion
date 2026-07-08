@@ -74,7 +74,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         WizardStep.SeasonPick => SelectedPack is { LoadError: null },
         WizardStep.Verification => !HasErrors && (!HasWarnings || ProceedAnyway),
-        WizardStep.SeatPick => SelectedSeat is not null,
+        WizardStep.SeatPick => SelectedSeat is not null || IsOwnEntrant,
         WizardStep.Grid => GridChoices.Count(c => c.IsIncluded) >= 2,
         WizardStep.Character => Character?.IsValid ?? true,
         WizardStep.Confirm => CanCreate,
@@ -275,10 +275,30 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private SeatOption? _selectedSeat;
 
+    /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
+    /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path — a
+    /// stable synthetic driver, a neutral car, character-shaped ratings), added to the grid rather than
+    /// replacing a historical driver. When set it takes precedence over the seat selection; empty = the
+    /// ordinary "pick a pack seat" flow (byte-identical to a career created before this field).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyCanExecuteChangedFor(nameof(NextCommand))]
+    private string _customLiveryName = "";
+
+    /// <summary>True when the player typed a custom livery — they race as their own entrant instead of
+    /// taking a pack seat.</summary>
+    public bool IsOwnEntrant => !string.IsNullOrWhiteSpace(CustomLiveryName);
+
+    /// <summary>The livery the player will drive: the typed custom livery (own entrant) when present,
+    /// otherwise the selected pack seat's livery. Null only before either is chosen (the Next gate
+    /// blocks that).</summary>
+    private string? PlayerLivery => IsOwnEntrant ? CustomLiveryName.Trim() : SelectedSeat?.LiveryName;
+
     private void BuildSeats()
     {
         Seats.Clear();
         SelectedSeat = null;
+        CustomLiveryName = "";
 
         var pack = Pack!;
         var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
@@ -361,7 +381,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         var pack = Pack!;
         var teamsById = pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
         var driversById = pack.Drivers.ToDictionary(d => d.Id, StringComparer.Ordinal);
-        string? playerLivery = SelectedSeat?.LiveryName;
+        // An own entrant is no pack seat, so no pack row is locked as "You" — a synthetic locked row
+        // is added after the pack seats below.
+        string? playerLivery = IsOwnEntrant ? null : SelectedSeat?.LiveryName;
 
         // The largest field the game actually puts on track in any round. With per-race grids
         // (1988 pre-qualifying: ~30 cars for 26 slots) this is the round grid size, not the roster —
@@ -391,6 +413,24 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             choice.PropertyChanged += OnGridChoiceChanged;
             GridChoices.Add(choice);
         }
+
+        // Own entrant: the player is not a pack seat, so add their independent car as a locked "You"
+        // row. Its Liveries are empty so it never joins the pack-field selection (the grid resolver
+        // adds the synthetic player seat itself); IsLocked keeps it on the grid and in the field count.
+        if (IsOwnEntrant)
+        {
+            var you = new GridSeatChoice
+            {
+                LiveryName = PlayerLivery!,
+                Liveries = [],
+                DriverName = "You — own entrant",
+                TeamName = "Independent",
+                IsLocked = true,
+            };
+            you.PropertyChanged += OnGridChoiceChanged;
+            GridChoices.Add(you);
+        }
+
         OnPropertyChanged(nameof(IncludedCount));
         OnPropertyChanged(nameof(MaxRaceCars));
         OnPropertyChanged(nameof(AiOpponentCount));
@@ -438,8 +478,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
-        // Pre-fill the driver name with the seat's historical driver as a starting point.
-        Character = new CharacterViewModel(_environment.Rules.Character, SelectedSeat?.DriverName);
+        // Pre-fill the driver name with the seat's historical driver as a starting point; an own
+        // entrant has no seat driver, so they name themselves (empty seed).
+        Character = new CharacterViewModel(
+            _environment.Rules.Character, IsOwnEntrant ? null : SelectedSeat?.DriverName);
         Character.PropertyChanged += OnCharacterChanged;
     }
 
@@ -471,7 +513,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     public bool CanCreate =>
         Pack is not null &&
-        SelectedSeat is not null &&
+        (SelectedSeat is not null || IsOwnEntrant) &&
         !string.IsNullOrWhiteSpace(CareerName) &&
         long.TryParse(MasterSeedText, out _);
 
@@ -579,7 +621,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CareerFilePath = UniqueCareerFilePath(),
             CareerName = CareerName.Trim(),
             MasterSeed = long.Parse(MasterSeedText),
-            PlayerLiveryName = SelectedSeat!.LiveryName,
+            PlayerLiveryName = PlayerLivery!,
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             Character = Character?.BuildProfile(),
