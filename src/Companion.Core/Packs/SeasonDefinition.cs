@@ -33,6 +33,15 @@ public sealed record SeasonDefinition
     /// byte-identically.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyDictionary<int, IReadOnlyDictionary<string, PackDriverForm>>? DriverForm { get; init; }
+
+    /// <summary>Whether the season's rules allow in-race refuelling (AMS2's
+    /// <c>PitStopsAllowRefuelling</c>). <c>false</c> = disallowed (1967 cars ran the distance on one
+    /// tank; refuelling only arrived ~1982); <c>true</c> = allowed; <c>null</c> = not shown/unknown.
+    /// Season-wide. SIM-INERT: shown on the Race-Day briefing only — the career fold and the f1db
+    /// oracle never read it, so a pack that sets it folds byte-identically. Guarded with
+    /// WhenWritingNull so a pack that omits it round-trips unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? RefuellingAllowed { get; init; }
 }
 
 /// <summary>A single driver's per-round form nudge: an ADDITIVE delta on the two pace ratings,
@@ -105,7 +114,8 @@ public sealed record PackWeekend
     public required IReadOnlyList<PackWeekendRace> Races { get; init; }
 }
 
-/// <summary>A non-scoring weekend session (practice/qualifying): whether it runs and its label.</summary>
+/// <summary>A non-scoring weekend session (practice/qualifying): whether it runs, its label, and
+/// (additive, SIM-INERT display-only) its AMS2 timed length + per-session weather slots.</summary>
 public sealed record PackWeekendSession
 {
     public bool Present { get; init; } = true;
@@ -113,6 +123,19 @@ public sealed record PackWeekendSession
     /// <summary>Era-correct display label ("Practice", "Qualifying", "Time Trial"). Null = the
     /// session's default name.</summary>
     public string? Label { get; init; }
+
+    /// <summary>The session's timed length in minutes (AMS2 practice + qualifying are ALWAYS
+    /// time-limited, never lap-based). Null = not authored / not shown. Briefing display only —
+    /// never a fold input. Guarded with WhenWritingNull so an un-migrated pack round-trips unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? DurationMinutes { get; init; }
+
+    /// <summary>This session's AMS2 weather, up to 4 independent slots (game display labels:
+    /// "Clear", "Light Cloud", "Rain", …). Null = not authored — the briefing then falls back to the
+    /// round-level <see cref="PackSessionSettings.WeatherSlots"/>. Briefing display only — never a
+    /// fold input. Guarded with WhenWritingNull so an un-migrated pack round-trips unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? WeatherSlots { get; init; }
 }
 
 /// <summary>One scoring race in a weekend.</summary>
@@ -133,6 +156,13 @@ public sealed record PackWeekendRace
     /// <summary>How this race's grid is formed: <c>null</c>/"qualifying" = the qualifying order,
     /// "race1Reverse" = reversed race-1 finish, etc. Consumed by later slices; parsed now.</summary>
     public string? GridFrom { get; init; }
+
+    /// <summary>The race session's AMS2 weather, up to 4 independent slots (game display labels).
+    /// Null = not authored — the briefing then falls back to the round-level
+    /// <see cref="PackSessionSettings.WeatherSlots"/>. Briefing display only — never a fold input.
+    /// Guarded with WhenWritingNull so an un-migrated pack round-trips unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? WeatherSlots { get; init; }
 }
 
 /// <summary>The drivers who actually started one round historically, mapped from f1db to this

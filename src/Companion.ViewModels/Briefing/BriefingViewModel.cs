@@ -100,6 +100,12 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string? _difficultyRecommendation;
 
+    /// <summary>Advisory fuel-and-distance guidance for this round (the car's one-tank range vs the
+    /// race length + the AMS2 "set your own fuel" gotcha). Null when no per-class fuel profile
+    /// applies — the view then hides the fuel panel.</summary>
+    [ObservableProperty]
+    private string? _fuelNote;
+
     /// <summary>True once every round has an applied result — there is nothing to brief.</summary>
     public bool SeasonComplete => Briefing is null;
 
@@ -169,8 +175,15 @@ public sealed partial class BriefingViewModel : ObservableObject
     [RelayCommand]
     private void ClearCall() => CalledShot = null;
 
-    /// <summary>The check-off rows, in in-game custom-race screen order.</summary>
+    /// <summary>The check-off rows, flat, in in-game custom-race screen order. The source of truth
+    /// for ticks / progress / the copy summary; <see cref="Sections"/> re-groups these same
+    /// instances for the sectioned view.</summary>
     public ObservableCollection<BriefingChecklistItem> Settings { get; } = [];
+
+    /// <summary>The same rows grouped into their Race-Day sections (Event / Practice / Qualifying /
+    /// Race / Rules), in screen order, for the sectioned view. Holds the SAME item instances as
+    /// <see cref="Settings"/>, so a tick flows through both.</summary>
+    public ObservableCollection<BriefingSectionRow> Sections { get; } = [];
 
     /// <summary>Re-reads the current round's briefing from the session (call after Apply).
     /// Rebuilds the checklist and restores this round's ticks, if any.</summary>
@@ -181,20 +194,26 @@ public sealed partial class BriefingViewModel : ObservableObject
         foreach (var old in Settings)
             old.PropertyChanged -= OnChecklistItemChanged;
         Settings.Clear();
+        Sections.Clear();
 
         if (Briefing is { } briefing)
         {
             _currentRoundNumber = briefing.Round.Round;
             var ticked = _ticksByRound.GetValueOrDefault(_currentRoundNumber);
-            foreach (var setting in briefing.Settings.OrderBy(s => InGameOrderRank(s.Label)))
+            // The composer already emits rows in AMS2 custom-race screen order, grouped by section —
+            // preserve it (the sectioned view groups by first-appearance order).
+            foreach (var setting in briefing.Settings)
             {
-                var item = new BriefingChecklistItem(setting.Label, setting.Value)
-                {
-                    IsChecked = ticked?.Contains(setting.Label) == true,
-                };
+                var item = new BriefingChecklistItem(setting.Section, setting.Label, setting.Value);
+                item.IsChecked = ticked?.Contains(item.Key) == true;
                 item.PropertyChanged += OnChecklistItemChanged;
                 Settings.Add(item);
             }
+
+            // Re-group the SAME instances into ordered sections for the sectioned view (GroupBy keeps
+            // first-appearance order of both keys and items).
+            foreach (var group in Settings.GroupBy(i => i.Section))
+                Sections.Add(new BriefingSectionRow(group.Key, group.ToList()));
 
             Title = BriefingComposer.ComposeTitle(briefing);
             VenueDisplayName = briefing.VenueDisplayName;
@@ -215,6 +234,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
                 ? $"Recommended Opponent Skill: {slider}% — calibrated from your pace so far (never auto-applied)."
                 : null;
+            FuelNote = briefing.FuelNote;
 
             // Setup Gamble: a fresh round starts with no bet; expose the expectation the call is made
             // against (and the grid size that bounds a safe call).
@@ -234,6 +254,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
+            FuelNote = null;
             ExpectedFinish = null;
             _gridSize = 0;
             CalledShot = null;
@@ -244,23 +265,6 @@ public sealed partial class BriefingViewModel : ObservableObject
         OnPropertyChanged(nameof(CalledShotSummary));
         RaiseProgressChanged();
     }
-
-    /// <summary>The in-game custom-race screen flow (ux-round contract): track → class →
-    /// opponents → laps → date → start time → weather slots → time progression → pit rules.
-    /// The sort is stable, so "Weather slot 1..n" keep their relative order.</summary>
-    internal static int InGameOrderRank(string label) => label switch
-    {
-        "Track" => 0,
-        "Class" => 1,
-        "Opponents" => 2,
-        "Laps" => 3,
-        "Date" => 4,
-        "Start time" => 5,
-        _ when label.StartsWith("Weather slot", StringComparison.Ordinal) => 6,
-        "Time progression" => 7,
-        "Mandatory pit stop" => 8,
-        _ => 9,
-    };
 
     // ---------- checklist ticks & progress ----------
 
@@ -286,9 +290,9 @@ public sealed partial class BriefingViewModel : ObservableObject
         if (!_ticksByRound.TryGetValue(_currentRoundNumber, out var ticked))
             _ticksByRound[_currentRoundNumber] = ticked = new HashSet<string>(StringComparer.Ordinal);
         if (item.IsChecked)
-            ticked.Add(item.Label);
+            ticked.Add(item.Key);
         else
-            ticked.Remove(item.Label);
+            ticked.Remove(item.Key);
 
         RaiseProgressChanged();
     }
@@ -304,18 +308,36 @@ public sealed partial class BriefingViewModel : ObservableObject
     [RelayCommand]
     private void CopySummary() => CopyRequested?.Invoke(this, ComposeSummary());
 
-    /// <summary>Title + every "Label: Value" line in checklist order (+ setup notes).</summary>
+    /// <summary>Title + every "Label: Value" line in checklist order, under a "[Section]" header
+    /// per group so the copied text is unambiguous (each session's weather stays distinct), plus the
+    /// setup notes and the fuel advisory.</summary>
     public string ComposeSummary()
     {
         var text = new StringBuilder();
         if (Title.Length > 0)
             text.AppendLine(Title);
+
+        string? currentSection = null;
         foreach (var item in Settings)
+        {
+            if (item.Section.Length > 0 && item.Section != currentSection)
+            {
+                currentSection = item.Section;
+                text.AppendLine();
+                text.AppendLine($"[{currentSection}]");
+            }
             text.AppendLine($"{item.Label}: {item.Value}");
+        }
+
         if (SetupNotes is { Length: > 0 } notes)
         {
             text.AppendLine();
             text.AppendLine(notes);
+        }
+        if (FuelNote is { Length: > 0 } fuel)
+        {
+            text.AppendLine();
+            text.AppendLine(fuel);
         }
         return text.ToString().TrimEnd();
     }

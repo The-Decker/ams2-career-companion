@@ -54,6 +54,74 @@ public sealed class WeekendModelTests
     }
 
     [Fact]
+    public void Weekend_session_parses_per_session_durations_and_weather_slots()
+    {
+        const string json = """
+        {"round":1,"name":"South African Grand Prix","date":"1967-01-02",
+         "track":{"id":"kyalami"},"laps":80,
+         "weekend":{
+           "practice":{"present":true,"label":"Practice","durationMinutes":60,
+                       "weatherSlots":["Clear","Light Cloud","Rain","Clear"]},
+           "qualifying":{"present":true,"label":"Qualifying","durationMinutes":60,"weatherSlots":["Clear"]},
+           "races":[{"id":"race","label":"Grand Prix","weatherSlots":["Clear","Clear"]}]
+         }}
+        """;
+
+        var round = JsonSerializer.Deserialize<PackRound>(json, CoreJson.Options)!;
+
+        Assert.Equal(60, round.Weekend!.Practice!.DurationMinutes);
+        Assert.Equal(["Clear", "Light Cloud", "Rain", "Clear"], round.Weekend.Practice.WeatherSlots);
+        Assert.Equal(60, round.Weekend.Qualifying!.DurationMinutes);
+        Assert.Equal(["Clear", "Clear"], round.Weekend.Races[0].WeatherSlots);
+    }
+
+    [Fact]
+    public void Session_and_race_without_the_new_fields_omit_them_when_serialized()
+    {
+        // WhenWritingNull: CoreJson does NOT globally ignore nulls, so an un-migrated weekend must
+        // still serialize WITHOUT the new keys — the byte-identical round-trip guarantee.
+        var round = new PackRound
+        {
+            Round = 1,
+            Name = "Monaco Grand Prix",
+            Date = "1967-05-07",
+            Track = new PackTrackRef { Id = "monaco" },
+            Laps = 100,
+            Weekend = new PackWeekend
+            {
+                Practice = new PackWeekendSession { Label = "Practice" },
+                Races = [new PackWeekendRace { Id = "race", Label = "Grand Prix" }],
+            },
+        };
+
+        string json = JsonSerializer.Serialize(round, CoreJson.Options);
+
+        Assert.DoesNotContain("durationMinutes", json);
+        Assert.DoesNotContain("weatherSlots", json);
+    }
+
+    [Fact]
+    public void Season_refuelling_flag_parses_and_is_omitted_when_null()
+    {
+        var season = new SeasonDefinition
+        {
+            Year = 1967,
+            SeriesName = "Formula One World Championship",
+            Ams2Class = "F-Vintage_Gen1",
+            PointsSystem = new Companion.Core.Scoring.CatalogSeason { RacePoints = [new(9)] },
+            Rounds = [],
+        };
+
+        // Omitted when unset (byte-identical round-trip for a pack that doesn't author it).
+        Assert.DoesNotContain("refuellingAllowed", JsonSerializer.Serialize(season, CoreJson.Options));
+
+        // Present + faithfully round-tripped when set to false (1967).
+        string json = JsonSerializer.Serialize(season with { RefuellingAllowed = false }, CoreJson.Options);
+        Assert.Contains("\"refuellingAllowed\": false", json);
+        Assert.False(JsonSerializer.Deserialize<SeasonDefinition>(json, CoreJson.Options)!.RefuellingAllowed);
+    }
+
+    [Fact]
     public void Single_race_weekend_round_trips_through_json()
     {
         var round = new PackRound

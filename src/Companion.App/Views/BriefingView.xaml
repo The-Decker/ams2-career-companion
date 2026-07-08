@@ -114,40 +114,58 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <ItemsControl ItemsSource="{Binding Settings}">
+                    <!-- sectioned checklist: outer = Race-Day sections (Event / Practice /
+                         Qualifying / Race / Rules), inner = the tickable rows. Grouping is done in
+                         the viewmodel (Sections), so this is a plain nested ItemsControl with no
+                         grouping CollectionViewSource. (Render-test thread-safety comes from the
+                         harness's DisableTestParallelization, not from this structure.) -->
+                    <ItemsControl ItemsSource="{Binding Sections}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <!-- the whole row is the toggle hit-target -->
-                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
-                                          HorizontalContentAlignment="Stretch"
-                                          ToolTip="Click to tick this setting off (ticks reset each round)">
-                                    <Grid Margin="8,2,0,2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="180" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Label}"
-                                                   Style="{StaticResource Muted}" VerticalAlignment="Center" />
-                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
-                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
-                                                 IsReadOnly="True" IsTabStop="False"
-                                                 BorderThickness="0" Background="Transparent" Padding="0"
-                                                 FontFamily="Consolas" FontSize="19" FontWeight="SemiBold"
-                                                 VerticalAlignment="Center" TextWrapping="Wrap"
-                                                 ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
-                                            <TextBox.Style>
-                                                <Style TargetType="TextBox">
-                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
-                                                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBox.Style>
-                                        </TextBox>
-                                    </Grid>
-                                </CheckBox>
+                                <StackPanel>
+                                    <!-- section header; collapses for an ungrouped (empty-title) section -->
+                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
+                                               FontSize="12" FontWeight="SemiBold" Margin="0,12,0,3"
+                                               ToolTip="AMS2 custom-race screen section"
+                                               Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <!-- the whole row is the toggle hit-target -->
+                                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
+                                                          HorizontalContentAlignment="Stretch"
+                                                          ToolTip="Click to tick this setting off (ticks reset each round)">
+                                                    <Grid Margin="8,2,0,2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="180" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding Label}"
+                                                                   Style="{StaticResource Muted}" VerticalAlignment="Center" />
+                                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
+                                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
+                                                                 IsReadOnly="True" IsTabStop="False"
+                                                                 BorderThickness="0" Background="Transparent" Padding="0"
+                                                                 FontFamily="Consolas" FontSize="19" FontWeight="SemiBold"
+                                                                 VerticalAlignment="Center" TextWrapping="Wrap"
+                                                                 ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
+                                                            <TextBox.Style>
+                                                                <Style TargetType="TextBox">
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBox.Style>
+                                                        </TextBox>
+                                                    </Grid>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -179,6 +197,16 @@
                     Visibility="{Binding DifficultyRecommendation, Converter={StaticResource NullCollapsed}}">
                 <TextBlock Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
                            Text="{Binding DifficultyRecommendation}" />
+            </Border>
+
+            <!-- fuel advisory: one-tank range vs race length + the AMS2 "set your own fuel" gotcha
+                 (not a tick row). Collapses when no per-class fuel profile applies. -->
+            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                    Visibility="{Binding FuelNote, Converter={StaticResource NullCollapsed}}">
+                <StackPanel>
+                    <TextBlock Text="Fuel" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding FuelNote}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                </StackPanel>
             </Border>
 
             <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's

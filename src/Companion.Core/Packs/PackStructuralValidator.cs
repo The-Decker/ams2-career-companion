@@ -24,6 +24,7 @@ public static class PackStructuralValidator
         CheckPointsSystem(pack.Season, issues);
         CheckDriverRatings(pack.Drivers, issues);
         CheckAiOverrides(rounds, driverIds, issues);
+        CheckWeekend(rounds, issues);
         CheckReferences(pack, teamIds, driverIds, issues);
 
         var entryRanges = ResolveEntryRanges(pack.Entries, rounds.Count, issues);
@@ -215,6 +216,57 @@ public static class PackStructuralValidator
                 }
             }
         }
+    }
+
+    // ---------- weekend (per-session weather + durations) ----------
+
+    /// <summary>Additive weekend-block sanity for the per-session weather + durations
+    /// (SIM-INERT display data): each session/race declares at most 4 weather slots (AMS2's cap),
+    /// and a declared duration is positive. Everything is optional, so a round without a weekend —
+    /// or a weekend without these fields — is not flagged, and the other bundled packs validate
+    /// unchanged.</summary>
+    private static void CheckWeekend(IReadOnlyList<PackRound> rounds, List<PackIssue> issues)
+    {
+        foreach (var round in rounds)
+        {
+            if (round.Weekend is not { } weekend)
+                continue;
+
+            CheckWeekendSession(round, "practice", weekend.Practice, issues);
+            CheckWeekendSession(round, "qualifying", weekend.Qualifying, issues);
+            foreach (var race in weekend.Races)
+                CheckWeatherSlots(round, $"race '{race.Id}'", race.WeatherSlots, issues);
+        }
+    }
+
+    private static void CheckWeekendSession(
+        PackRound round, string which, PackWeekendSession? session, List<PackIssue> issues)
+    {
+        if (session is null)
+            return;
+
+        if (session.DurationMinutes is { } minutes && minutes <= 0)
+            issues.Add(Error(
+                $"Round {round.Round} ({round.Name}) {which} durationMinutes is {minutes}; " +
+                "a declared session length must be greater than 0."));
+
+        CheckWeatherSlots(round, which, session.WeatherSlots, issues);
+    }
+
+    private static void CheckWeatherSlots(
+        PackRound round, string which, IReadOnlyList<string>? slots, List<PackIssue> issues)
+    {
+        if (slots is null)
+            return;
+
+        if (slots.Count > 4)
+            issues.Add(Error(
+                $"Round {round.Round} ({round.Name}) {which} declares {slots.Count} weather slots; " +
+                "AMS2 allows at most 4 per session."));
+
+        if (slots.Any(string.IsNullOrWhiteSpace))
+            issues.Add(Warning(
+                $"Round {round.Round} ({round.Name}) {which} has a blank weather slot."));
     }
 
     // ---------- entries: rounds ranges, coverage, livery binding ----------

@@ -33,53 +33,96 @@ public class BriefingChecklistTests
         return (new FakeCareerSession { Briefing = b1 }, b1, b2);
     }
 
-    // ---------- in-game screen order ----------
+    // ---------- in-game screen order, sectioned ----------
 
     [Fact]
-    public void Checklist_IsInInGameScreenOrder_OpponentsRightAfterClass()
+    public void Checklist_IsSectionedInInGameScreenOrder_WithPerSessionWeather()
     {
         var vm = RealRound3Vm(out _);
 
-        Assert.Equal(
-        [
-            "Track",
-            "Class",
-            "Opponents",
-            "Laps",
-            "Date",
-            "Start time",
-            "Weather slot 1",
-            "Time progression",
-            "Mandatory pit stop",
-        ], vm.Settings.Select(s => s.Label));
+        string[] Labels(string section) =>
+            vm.Settings.Where(s => s.Section == section).Select(s => s.Label).ToArray();
 
-        // The values ride along unchanged from the composer.
+        // Sections appear in AMS2 custom-race screen order (first-appearance order is grouping order).
+        Assert.Equal(
+            ["Event", "Practice", "Qualifying", "Race", "Rules"],
+            vm.Settings.Select(s => s.Section).Distinct());
+
+        // Event leads with track/class/opponents — opponents right after class, the contract order.
+        Assert.Equal(["Track", "Class", "Opponents"], Labels("Event"));
+
+        // Practice + qualifying are each a 60-min timed session with four independent weather slots.
+        foreach (var session in new[] { "Practice", "Qualifying" })
+            Assert.Equal(
+                ["Duration", "Weather slot 1", "Weather slot 2", "Weather slot 3", "Weather slot 4"],
+                Labels(session));
+
+        // Race: laps + four weather slots + the shared date/start/time-progression.
+        Assert.Equal(
+            ["Laps", "Weather slot 1", "Weather slot 2", "Weather slot 3", "Weather slot 4",
+             "Date", "Start time", "Time progression"],
+            Labels("Race"));
+
+        // Rules: mandatory pit stop + the season refuelling flag.
+        Assert.Equal(["Mandatory pit stop", "Refuelling"], Labels("Rules"));
+
+        // Values ride along unchanged from the composer.
         Assert.Equal("Spielberg_Vintage", vm.Settings[0].Value);
-        Assert.Equal("13", vm.Settings[2].Value); // Opponents = grid.size 14 - 1 (player seat)
-        Assert.Equal("64", vm.Settings[3].Value); // Laps
+        Assert.Equal("13", vm.Settings.Single(s => s.Label == "Opponents").Value); // grid.size 14 - 1
+        Assert.Equal("64", vm.Settings.Single(s => s.Section == "Race" && s.Label == "Laps").Value);
+        Assert.Equal("60 min", vm.Settings.First(s => s.Section == "Practice" && s.Label == "Duration").Value);
+        Assert.Equal("No", vm.Settings.Single(s => s.Label == "Refuelling").Value);
     }
 
     // ---------- tick / progress ----------
+
+    // Every 1967 round is authored with 23 checklist rows: Event(3) + Practice(5) + Qualifying(5) +
+    // Race(8) + Rules(2).
+    private const int Round3RowCount = 23;
 
     [Fact]
     public void Progress_CountsTicks_AllSetWhenEveryRowIsChecked()
     {
         var vm = RealRound3Vm(out _);
-        Assert.Equal("0 of 9 set", vm.ChecklistProgressText);
+        Assert.Equal(Round3RowCount, vm.Settings.Count);
+        Assert.Equal($"0 of {Round3RowCount} set", vm.ChecklistProgressText);
         Assert.False(vm.AllSet);
 
         vm.Settings[0].IsChecked = true;
         vm.Settings[3].IsChecked = true;
-        Assert.Equal("2 of 9 set", vm.ChecklistProgressText);
+        Assert.Equal($"2 of {Round3RowCount} set", vm.ChecklistProgressText);
 
         foreach (var item in vm.Settings)
             item.IsChecked = true;
-        Assert.Equal("9 of 9 set", vm.ChecklistProgressText);
+        Assert.Equal($"{Round3RowCount} of {Round3RowCount} set", vm.ChecklistProgressText);
         Assert.True(vm.AllSet);
 
         vm.Settings[4].IsChecked = false; // untick works too
-        Assert.Equal("8 of 9 set", vm.ChecklistProgressText);
+        Assert.Equal($"{Round3RowCount - 1} of {Round3RowCount} set", vm.ChecklistProgressText);
         Assert.False(vm.AllSet);
+    }
+
+    // ---------- per-session weather ticks are independent (composite key, not label) ----------
+
+    [Fact]
+    public void Ticks_ForSameLabelInDifferentSessions_DoNotCollide_AcrossRefresh()
+    {
+        var vm = RealRound3Vm(out _);
+
+        // Tick only the Practice weather-slot-1 row.
+        vm.Settings.First(s => s.Section == "Practice" && s.Label == "Weather slot 1").IsChecked = true;
+
+        // Refresh re-reads the SAME round and RESTORES ticks by the (section, label) composite Key —
+        // the ONLY path that reads BriefingChecklistItem.Key, so the only one that can prove the
+        // sessions don't cross-tick. Under a label-only key, restore would re-check ALL three
+        // "Weather slot 1" rows (Practice + Qualifying + Race) → "3 of 23 set" and the asserts below
+        // fail. So this genuinely guards the composite key, not object identity.
+        vm.Refresh();
+
+        Assert.True(vm.Settings.First(s => s.Section == "Practice" && s.Label == "Weather slot 1").IsChecked);
+        Assert.False(vm.Settings.First(s => s.Section == "Qualifying" && s.Label == "Weather slot 1").IsChecked);
+        Assert.False(vm.Settings.First(s => s.Section == "Race" && s.Label == "Weather slot 1").IsChecked);
+        Assert.Equal("1 of 23 set", vm.ChecklistProgressText);
     }
 
     [Fact]

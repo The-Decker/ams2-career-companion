@@ -11,15 +11,25 @@ namespace Companion.ViewModels.Briefing;
 /// </summary>
 public sealed partial class BriefingChecklistItem : ObservableObject
 {
-    public BriefingChecklistItem(string label, string value)
+    public BriefingChecklistItem(string section, string label, string value)
     {
+        Section = section;
         Label = label;
         Value = value;
     }
 
+    /// <summary>The Race-Day section this row is grouped under ("Event", "Practice", "Qualifying",
+    /// "Race", "Rules"); empty = ungrouped. Immutable, so it never triggers a regroup.</summary>
+    public string Section { get; }
+
     public string Label { get; }
 
     public string Value { get; }
+
+    /// <summary>The stable per-round tick key: (section, label). Distinct sessions reuse labels like
+    /// "Weather slot 1" / "Duration", so keying ticks on the label alone would cross-tick them —
+    /// the section prefix keeps each row independent.</summary>
+    public string Key => Section.Length > 0 ? $"{Section}{Label}" : Label;
 
     [ObservableProperty]
     private bool isChecked;

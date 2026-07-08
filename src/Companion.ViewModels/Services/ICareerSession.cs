@@ -274,9 +274,21 @@ public sealed record BriefingModel
     /// <summary>The difficulty recommendation for this round (70–120 Opponent Skill percent),
     /// from the folded pace anchor. Null before the anchor calibrates.</summary>
     public int? RecommendedSlider { get; init; }
+
+    /// <summary>Advisory fuel-and-distance guidance for this round (the car's one-tank range vs the
+    /// race length, plus the AMS2 "set your own fuel" gotcha), shown as an advisory panel like the
+    /// difficulty recommendation — NOT a tick row. Null when no per-class fuel profile applies.</summary>
+    public string? FuelNote { get; init; }
 }
 
-public sealed record CopyableSetting(string Label, string Value);
+/// <summary>One in-game setting for the briefing checklist. <see cref="Section"/> groups the row
+/// under a Race-Day heading ("Event", "Practice", "Qualifying", "Race", "Rules"); empty = ungrouped.
+/// Display-only grouping — the checklist tick is keyed by (section, label) so identical labels in
+/// different sessions (e.g. "Weather slot 1") never collide.</summary>
+public sealed record CopyableSetting(string Label, string Value)
+{
+    public string Section { get; init; } = "";
+}
 
 /// <summary>One news-feed item (hub News tab / dock). A resolved period headline plus the
 /// plain-language "why" (the journal delta as a sentence, for the Why? chip) and the era it
