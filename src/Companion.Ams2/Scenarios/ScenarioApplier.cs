@@ -68,7 +68,9 @@ public static class ScenarioApplier
         };
     }
 
-    private static string BackUp(string target, DateTimeOffset now)
+    /// <summary>Timestamped backup of an active override file into its sibling
+    /// <c>_companion-backups\</c> folder; returns the backup path. Shared with the bubble-car graft.</summary>
+    public static string BackUp(string target, DateTimeOffset now)
     {
         string dir = Path.Combine(Path.GetDirectoryName(target)!, BackupFolder);
         Directory.CreateDirectory(dir);

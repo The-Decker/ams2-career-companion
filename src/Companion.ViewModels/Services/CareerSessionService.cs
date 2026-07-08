@@ -923,6 +923,80 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// (the one that manages this class's custom-AI file) and applies the round's swaps backup-first.
     /// Skin files only — never the career DB, so the sim/fold/oracle are untouched. Null when there is
     /// no install, no matching .bat, or the .bat has no entry for this round.</summary>
+    /// <summary>
+    /// When the player's chosen car is a "bubble" livery outside this round's active pool (1988 was a
+    /// pre-qualifying year, so a Coloni/Eurobrun DNQs some rounds), graft its skin into the SLOWEST
+    /// same-model qualifier's slot so the player can pick their own car in-game with its real paint. The
+    /// grid-seating already put the player on track; this only makes the SKIN show. Skin override files
+    /// only (backup-first, and the active model file is regenerated from the pack's per-round variant on
+    /// every stage), so the career DB / sim / oracle are never touched. Best-effort: any problem is a
+    /// silent no-op. Returns a status line when a graft happened, else null.
+    /// </summary>
+    private string? ActivatePlayerBubbleCar(Ams2Installation installation, GridPlan plan)
+    {
+        try
+        {
+            // Already in the round's active pool (a qualifier, or a bubble car on a round it qualified)?
+            var scan = _environment.ScanInstalledLiveries(installation);
+            if (scan.Liveries.Any(l => l.IsActive &&
+                    string.Equals(l.Name, _playerLiveryName, StringComparison.Ordinal)))
+                return null;
+
+            // raceSkill by livery, from the pinned pack (every car, so the true slowest same-model peer
+            // is considered even if the grid cap dropped it from the seated field).
+            var driverSkill = Pack.Drivers.ToDictionary(d => d.Id, d => d.Ratings.RaceSkill, StringComparer.Ordinal);
+            var skillByLivery = Pack.Entries
+                .Where(e => driverSkill.ContainsKey(e.DriverId))
+                .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal)
+                .ToDictionary(g => g.Key, g => driverSkill[g.First().DriverId], StringComparer.Ordinal);
+
+            var modelDirs = _environment.ContentLibrary.Vehicles.Values
+                .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                .Select(v => v.Dir)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var dir in modelDirs)
+            {
+                string folder = Path.Combine(installation.InstallOverridesDirectory, dir);
+                string activePath = Path.Combine(folder, dir + ".xml");
+                if (!File.Exists(activePath))
+                    continue;
+
+                // A variant of THIS model that carries the player's car (so this is the player's model).
+                string? sourcePath = Directory.EnumerateFiles(folder, dir + "_*.xml")
+                    .FirstOrDefault(f => BubbleCarGraft.BlockGroups(File.ReadAllLines(f))
+                        .Any(g => string.Equals(g.Name, _playerLiveryName, StringComparison.Ordinal)));
+                if (sourcePath is null)
+                    continue;
+
+                string activeXml = File.ReadAllText(activePath);
+                // Displace the slowest SAME-MODEL active qualifier — a seated peer, never the player.
+                string? displace = BubbleCarGraft.ActiveNames(activeXml)
+                    .Where(n => skillByLivery.ContainsKey(n) &&
+                                !string.Equals(n, _playerLiveryName, StringComparison.Ordinal))
+                    .OrderBy(n => skillByLivery[n])
+                    .FirstOrDefault();
+                if (displace is null)
+                    continue;
+
+                string? grafted = BubbleCarGraft.Graft(
+                    activeXml, File.ReadAllText(sourcePath), _playerLiveryName, displace);
+                if (grafted is null)
+                    continue;
+
+                ScenarioApplier.BackUp(activePath, _environment.Clock.GetUtcNow());
+                File.WriteAllText(activePath, grafted);
+                return $"Your car ({_playerLiveryName}) took {displace}'s grid slot for this race — " +
+                       "its real skin is now active (pick it on the car-select screen).";
+            }
+            return null;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
     private ScenarioApplyResult? ApplyScenarioForRound(int round)
     {
         var installation = _environment.LocateInstall();
@@ -1026,6 +1100,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 messages.Add(
                     $"Activated this race's liveries — {scenario.Applied} vehicle model(s) switched to the " +
                     "round's skins (your previous set was backed up).");
+
+            // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
+            // a Coloni/Eurobrun DNQs some rounds), graft its skin into the slowest same-model qualifier's
+            // slot so the player can pick THEIR car in-game with its real paint. The grid-seating already
+            // put them on track; this activates the skin. The scan below then keeps the now-active livery.
+            var bubbleInstall = _environment.LocateInstall();
+            if (bubbleInstall is not null)
+            {
+                string? bubble = ActivatePlayerBubbleCar(bubbleInstall, plan);
+                if (bubble is not null)
+                    messages.Add(bubble);
+            }
 
             // Smart binding: keep a driver's real community livery where that skin is INSTALLED AND
             // ACTIVE on disk (real historical paint) and floor every other car onto a base-game livery
