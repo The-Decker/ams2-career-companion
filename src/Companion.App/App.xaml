@@ -36,6 +36,9 @@
             <DataTemplate DataType="{x:Type hub:HistoryViewModel}">
                 <views:HistoryView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type hub:CalendarViewModel}">
+                <views:CalendarView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type hub:DossierViewModel}">
                 <views:DossierView />
             </DataTemplate>

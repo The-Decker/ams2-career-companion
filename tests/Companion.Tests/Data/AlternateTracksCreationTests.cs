@@ -99,6 +99,11 @@ public sealed class AlternateTracksCreationTests : IDisposable
         Assert.Equal(ModTag, round1.Track.Id);
         Assert.Equal(42, round1.Laps);
         Assert.True(round1.Track.IsPlaceholder); // filler stays a placeholder
+
+        // Calendar lens reflects the applied alternate (no unused-alternate note).
+        var schedule = session.SeasonSchedule()[0];
+        Assert.Equal(SeasonTrackKind.Alternate, schedule.Kind);
+        Assert.Null(schedule.UnusedAlternateName);
     }
 
     [Fact]
@@ -117,6 +122,11 @@ public sealed class AlternateTracksCreationTests : IDisposable
         using var session = Create(useAlternates: false, modInstalled: true);
 
         Assert.Equal(BaseDefault, session.Pack.Season.Rounds[0].Track.Id);
+
+        // Calendar lens shows the alternate as AVAILABLE-but-unused (so the player knows it exists).
+        var schedule = session.SeasonSchedule()[0];
+        Assert.NotEqual(SeasonTrackKind.Alternate, schedule.Kind);
+        Assert.Equal("Mod Track", schedule.UnusedAlternateName);
     }
 
     [Fact]

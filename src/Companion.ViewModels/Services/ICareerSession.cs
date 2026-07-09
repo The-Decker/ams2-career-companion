@@ -192,7 +192,47 @@ public interface ICareerSession
     /// points to spend. Additive default: empty.</summary>
     IReadOnlyList<PurchasablePerk> PurchasablePerks() => [];
 
+    /// <summary>The whole season's TRACK schedule, up front and spoiler-free (the Calendar lens): one
+    /// entry per round with its real venue, the ACTUAL AMS2 track that will be driven (after any opt-in
+    /// alternate swap, since the pinned pack carries it), and whether that track is the real venue, a
+    /// base stand-in, or an applied mod alternate — plus, when an alternate exists that was NOT enabled,
+    /// its name so the player sees what they could have raced. Pure read-only projection of the pinned
+    /// pack + content library; no results, so nothing is hidden. Additive default: empty.</summary>
+    IReadOnlyList<SeasonScheduleEntry> SeasonSchedule() => [];
+
     SeasonPack Pack { get; }
+}
+
+/// <summary>How a round's driven AMS2 track relates to its real historical venue.</summary>
+public enum SeasonTrackKind
+{
+    /// <summary>The AMS2 track IS the round's real venue.</summary>
+    RealVenue,
+
+    /// <summary>A base/DLC stand-in (the real venue isn't in AMS2) — a labelled placeholder.</summary>
+    StandIn,
+
+    /// <summary>An opt-in community MOD alternate the player enabled at career creation.</summary>
+    Alternate,
+}
+
+/// <summary>One round of the season's track schedule (the Calendar lens) — spoiler-free, all known
+/// from the pinned pack the moment the career starts.</summary>
+public sealed record SeasonScheduleEntry
+{
+    public required int Round { get; init; }
+    public required string Name { get; init; }
+    public required string Date { get; init; }
+    /// <summary>The historical venue's name (always on record, even for a stand-in).</summary>
+    public required string RealVenue { get; init; }
+    /// <summary>The AMS2 track actually driven this round (its library display name).</summary>
+    public required string Ams2TrackName { get; init; }
+    public required int Laps { get; init; }
+    public required SeasonTrackKind Kind { get; init; }
+    /// <summary>When the round has an alternate that is NOT the driven track (the player didn't enable
+    /// alternates, or a required mod was missing) — the alternate's display name, so the schedule can
+    /// note "alternate available: …". Null when no unused alternate.</summary>
+    public string? UnusedAlternateName { get; init; }
 }
 
 /// <summary>One perk offered on the season-review development block: what it is, what it costs, and —

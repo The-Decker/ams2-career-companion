@@ -355,8 +355,9 @@ public sealed class ShellNavigationTests
             hub.Tabs,
             t => Assert.Equal(HubViewModel.RaceTabKey, t.Key),
             t => Assert.Equal(HubViewModel.StandingsTabKey, t.Key),
+            t => Assert.Equal(HubViewModel.CalendarTabKey, t.Key), // Calendar sits after Standings
             t => Assert.Equal(HubViewModel.SkinsTabKey, t.Key),
-            t => Assert.Equal(HubViewModel.HistoryTabKey, t.Key), // History sits between Skins and News
+            t => Assert.Equal(HubViewModel.HistoryTabKey, t.Key),
             t => Assert.Equal(HubViewModel.NewsTabKey, t.Key));
     }
 
@@ -381,12 +382,15 @@ public sealed class ShellNavigationTests
         using var hub = new HubViewModel(new FakeSession());
 
         Assert.True(hub.SelectTabByNumber(3));
-        Assert.Equal(HubViewModel.SkinsTabKey, hub.SelectedTab?.Key);
+        Assert.Equal(HubViewModel.CalendarTabKey, hub.SelectedTab?.Key);
 
         Assert.True(hub.SelectTabByNumber(4));
-        Assert.Equal(HubViewModel.HistoryTabKey, hub.SelectedTab?.Key);
+        Assert.Equal(HubViewModel.SkinsTabKey, hub.SelectedTab?.Key);
 
         Assert.True(hub.SelectTabByNumber(5));
+        Assert.Equal(HubViewModel.HistoryTabKey, hub.SelectedTab?.Key);
+
+        Assert.True(hub.SelectTabByNumber(6));
         Assert.Equal(HubViewModel.NewsTabKey, hub.SelectedTab?.Key);
 
         Assert.False(hub.SelectTabByNumber(9)); // out of range → falls through, selection unchanged

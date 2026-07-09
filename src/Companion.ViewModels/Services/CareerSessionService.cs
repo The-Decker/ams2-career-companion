@@ -683,6 +683,42 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return briefing with { RecommendedSlider = CurrentSliderRecommendation() };
     }
 
+    /// <summary>The whole season's spoiler-free track schedule (Calendar lens) from the pinned pack +
+    /// library: each round's driven AMS2 track (after any applied alternate — the pinned pack carries
+    /// it), whether it is the real venue / a base stand-in / an applied mod alternate, and any alternate
+    /// that exists but was not enabled.</summary>
+    public IReadOnlyList<SeasonScheduleEntry> SeasonSchedule()
+    {
+        var tracks = _environment.ContentLibrary.Tracks;
+        string TrackName(string id) => tracks.TryGetValue(id, out var t) && t.TrackName is { Length: > 0 } n ? n : id;
+
+        var schedule = new List<SeasonScheduleEntry>(Pack.Season.Rounds.Count);
+        foreach (var round in Pack.Season.Rounds)
+        {
+            var track = round.Track;
+            bool alternateApplied = track.Alternate is { } appliedAlt && string.Equals(track.Id, appliedAlt.Id, StringComparison.Ordinal);
+            var kind = alternateApplied ? SeasonTrackKind.Alternate
+                : track.IsPlaceholder ? SeasonTrackKind.StandIn
+                : SeasonTrackKind.RealVenue;
+
+            // An alternate that exists but is NOT the driven track (tick off / mod missing at creation).
+            string? unusedAlternate = track.Alternate is { } alt && !alternateApplied ? TrackName(alt.Id) : null;
+
+            schedule.Add(new SeasonScheduleEntry
+            {
+                Round = round.Round,
+                Name = round.Name,
+                Date = round.Date,
+                RealVenue = track.RealVenue is { Length: > 0 } venue ? venue : TrackName(track.Id),
+                Ams2TrackName = TrackName(track.Id),
+                Laps = round.Laps,
+                Kind = kind,
+                UnusedAlternateName = unusedAlternate,
+            });
+        }
+        return schedule;
+    }
+
     /// <summary>The difficulty recommendation for the current round: the last folded round's
     /// recommendation; when that round predates calibration, the anchor re-projected onto the
     /// current grid. Null before any round folds or before the anchor calibrates.</summary>

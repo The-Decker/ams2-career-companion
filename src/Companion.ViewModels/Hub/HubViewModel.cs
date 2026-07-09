@@ -22,6 +22,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 {
     public const string RaceTabKey = "race";
     public const string StandingsTabKey = "standings";
+    public const string CalendarTabKey = "calendar";
     public const string DriverTabKey = "driver";
     public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
@@ -50,6 +51,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 
         News = new NewsViewModel(session, settings?.Current.NewsDetail ?? NewsDetailLevel.Articles);
         History = new HistoryViewModel(session);
+        Calendar = new CalendarViewModel(session);
         Dossier = new DossierViewModel(session);
         Skins = new SkinsViewModel(session);
 
@@ -57,6 +59,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         [
             new HubTabViewModel(RaceTabKey, "Race", "", Home),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
+            new HubTabViewModel(CalendarTabKey, "Calendar", "", Calendar),
             new HubTabViewModel(SkinsTabKey, "Skins", "", Skins),
             new HubTabViewModel(HistoryTabKey, "History", "", History),
             new HubTabViewModel(NewsTabKey, "News", "", News),
@@ -78,6 +81,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// <summary>The History / Scrapbook lens (per-season cards, lineage timeline, records
     /// book, archived articles) — refreshed in place after every Apply like the other lenses.</summary>
     public HistoryViewModel History { get; }
+
+    /// <summary>The Calendar lens: the season's full track schedule (venues + AMS2 tracks + applied
+    /// alternate swaps), visible up front. Refreshed in place after every Apply.</summary>
+    public CalendarViewModel Calendar { get; }
 
     /// <summary>The Driver dossier lens — the player's character, stats, perks and level/XP as the
     /// career unfolds. Present as a tab only when the career has a character (depth 3).</summary>
@@ -172,6 +179,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             standings.Content = NewStandings();
         News.Refresh();
         History.Refresh();
+        Calendar.Refresh();
         Dossier.Refresh();
         Skins.Refresh();
 

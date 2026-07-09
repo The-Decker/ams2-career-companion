@@ -229,6 +229,11 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public SeasonPack Pack { get; set; } = TestPackBuilder.TwoRoundPack();
 
+    /// <summary>The season track schedule surfaced to the Calendar lens (empty by default).</summary>
+    public List<SeasonScheduleEntry> ScheduleEntries { get; } = [];
+
+    public IReadOnlyList<SeasonScheduleEntry> SeasonSchedule() => ScheduleEntries;
+
     public BriefingModel? Briefing { get; set; }
 
     /// <summary>Real historical seasons keyed by year, surfaced through the

@@ -1,0 +1,81 @@
+<UserControl x:Class="Companion.App.Views.CalendarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <StackPanel MaxWidth="900" HorizontalAlignment="Left" Margin="0,0,0,16">
+
+            <TextBlock Text="Season calendar" Style="{StaticResource H2}" />
+            <TextBlock Text="{Binding HeaderNote}" Style="{StaticResource Muted}" Margin="0,4,0,0" />
+            <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,2,0,0"
+                       Text="Every circuit you'll race this season — the actual AMS2 track, and where a stand-in or a mod alternate replaces a venue AMS2 doesn't have. No spoilers: results stay hidden until you race (see History)." />
+
+            <!-- empty state -->
+            <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0" Text="No calendar to show yet."
+                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
+
+            <!-- alternate-available hint (only when a round has an alternate that wasn't enabled) -->
+            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="10,7" Margin="0,10,0,0"
+                    Visibility="{Binding HasUnusedAlternates, Converter={StaticResource BoolVisible}}">
+                <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                           Text="Some rounds offer optional community-mod alternate circuits — tick “Use alternate tracks” when you start a career to race them." />
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Rounds}" Margin="0,12,0,0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Panel}" Margin="0,0,0,8" Padding="14,10">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" Style="{StaticResource Faint}"
+                                           FontWeight="SemiBold" Width="42" VerticalAlignment="Top" Margin="0,2,0,0" />
+
+                                <!-- kind badge: Real venue / Stand-in / Alternate -->
+                                <Border DockPanel.Dock="Right" CornerRadius="4" Padding="8,3" Margin="10,0,0,0"
+                                        VerticalAlignment="Top">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAlternate}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsStandIn}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding BadgeText}" FontSize="12" FontWeight="SemiBold">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsAlternate}" Value="True">
+                                                        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsStandIn}" Value="True">
+                                                        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding TrackLine}" Style="{StaticResource Body}"
+                                               TextWrapping="Wrap" Margin="0,2,0,0" />
+                                    <TextBlock Text="{Binding UnusedAlternateNote}" Style="{StaticResource Faint}"
+                                               TextWrapping="Wrap" Margin="0,3,0,0"
+                                               Visibility="{Binding HasUnusedAlternate, Converter={StaticResource BoolVisible}}" />
+                                    <TextBlock Style="{StaticResource Faint}" Margin="0,3,0,0"><Run Text="{Binding DateText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding LapsText, Mode=OneWay}" /></TextBlock>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
