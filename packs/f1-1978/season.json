@@ -1036,10 +1036,10 @@
           "label": "Qualifying",
           "durationMinutes": 60,
           "weatherSlots": [
-            "Clear",
-            "Clear",
-            "Clear",
-            "Clear"
+            "Medium Cloud",
+            "Medium Cloud",
+            "Medium Cloud",
+            "Medium Cloud"
           ]
         },
         "races": [
@@ -1047,10 +1047,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Overcast",
+              "Storm",
+              "Light Rain",
+              "Medium Cloud"
             ]
           }
         ]

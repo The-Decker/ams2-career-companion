@@ -253,9 +253,9 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
+              "Rain",
+              "Light Rain",
+              "Medium Cloud",
               "Clear"
             ]
           }
@@ -1010,10 +1010,10 @@
           "label": "Qualifying",
           "durationMinutes": 60,
           "weatherSlots": [
-            "Clear",
-            "Clear",
-            "Clear",
-            "Clear"
+            "Rain",
+            "Light Rain",
+            "Medium Cloud",
+            "Rain"
           ]
         },
         "races": [
@@ -1021,10 +1021,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Heavy Cloud",
+              "Rain",
+              "Medium Cloud",
+              "Heavy Rain"
             ]
           }
         ]
@@ -1292,10 +1292,10 @@
           "label": "Qualifying",
           "durationMinutes": 60,
           "weatherSlots": [
-            "Clear",
-            "Clear",
-            "Clear",
-            "Clear"
+            "Overcast",
+            "Light Rain",
+            "Rain",
+            "Rain"
           ]
         },
         "races": [
@@ -1303,9 +1303,9 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
+              "Light Rain",
+              "Overcast",
+              "Medium Cloud",
               "Clear"
             ]
           }
@@ -1498,10 +1498,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Light Rain",
+              "Medium Cloud",
+              "Light Rain",
+              "Rain"
             ]
           }
         ]

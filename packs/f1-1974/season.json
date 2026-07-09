@@ -143,8 +143,8 @@
           "weatherSlots": [
             "Clear",
             "Clear",
-            "Clear",
-            "Clear"
+            "Light Cloud",
+            "Light Cloud"
           ]
         },
         "races": [
@@ -152,10 +152,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Light Cloud",
+              "Light Cloud",
+              "Heavy Cloud",
+              "Storm"
             ]
           }
         ]
@@ -338,10 +338,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Rain",
+              "Medium Cloud",
+              "Medium Cloud",
+              "Light Cloud"
             ]
           }
         ]
@@ -1026,10 +1026,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Overcast",
+              "Light Rain",
+              "Overcast",
+              "Light Rain"
             ]
           }
         ]

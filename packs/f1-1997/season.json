@@ -429,10 +429,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Rain",
+              "Heavy Rain",
+              "Rain",
+              "Rain"
             ]
           }
         ]
@@ -709,9 +709,9 @@
             "label": "Grand Prix",
             "weatherSlots": [
               "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Light Cloud",
+              "Heavy Cloud",
+              "Light Rain"
             ]
           }
         ]
@@ -1084,9 +1084,9 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
+              "Rain",
+              "Medium Cloud",
+              "Light Cloud",
               "Clear"
             ]
           }

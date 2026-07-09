@@ -248,10 +248,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Light Rain",
+              "Overcast",
+              "Medium Cloud",
+              "Light Cloud"
             ]
           }
         ]
@@ -1075,8 +1075,8 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
+              "Light Rain",
+              "Light Cloud",
               "Clear",
               "Clear"
             ]
@@ -1251,10 +1251,10 @@
           "label": "Qualifying",
           "durationMinutes": 60,
           "weatherSlots": [
-            "Clear",
-            "Clear",
-            "Clear",
-            "Clear"
+            "Heavy Rain",
+            "Rain",
+            "Rain",
+            "Light Rain"
           ]
         },
         "races": [
@@ -1262,10 +1262,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Rain",
+              "Light Rain",
+              "Overcast",
+              "Overcast"
             ]
           }
         ]
