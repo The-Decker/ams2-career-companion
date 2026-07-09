@@ -1,0 +1,16 @@
+<Window x:Class="Companion.App.Views.PhotoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="960" Height="680" MinWidth="320" MinHeight="240"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource TextBrush}">
+    <!-- The image fills the window and scales with it (Stretch=Uniform): resize the window, the photo
+         resizes with it. Whole-window UI-scale transform keeps it in step with the app's text size. -->
+    <Grid>
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
+        </Grid.LayoutTransform>
+        <Image x:Name="Photo" Stretch="Uniform" Margin="10" RenderOptions.BitmapScalingMode="HighQuality" />
+    </Grid>
+</Window>

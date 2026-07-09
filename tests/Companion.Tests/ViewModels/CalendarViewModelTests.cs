@@ -78,4 +78,31 @@ public class CalendarViewModelTests
         Assert.False(vm.HasUnusedAlternates);
         Assert.Equal("", vm.HeaderNote);
     }
+
+    [Fact]
+    public void Round_TogglesExpanded_AndExposesTheOriginalCircuit()
+    {
+        var session = new FakeCareerSession();
+        session.ScheduleEntries.Add(new SeasonScheduleEntry
+        {
+            Round = 1, Name = "Dutch GP", Date = "1978-08-27", RealVenue = "Circuit Zandvoort",
+            Ams2TrackName = "Hockenheim 1988", Laps = 44, Kind = SeasonTrackKind.StandIn,
+            CircuitLayoutId = "zandvoort", CircuitCaption = "Zandvoort · 4.25 km · 14 turns",
+            CircuitHistory = "Zandvoort hosted the Dutch GP from 1952.",
+        });
+        var round = new CalendarViewModel(session).Rounds[0];
+
+        // The ORIGINAL circuit (Zandvoort), not the stand-in (Hockenheim), is what's exposed.
+        Assert.True(round.HasCircuit);
+        Assert.Equal("zandvoort", round.CircuitLayoutId);
+        Assert.True(round.HasCircuitCaption);
+        Assert.True(round.HasCircuitHistory);
+        Assert.Contains("Zandvoort", round.CircuitHistory);
+
+        Assert.False(round.IsExpanded);
+        round.ToggleCommand.Execute(null);
+        Assert.True(round.IsExpanded);
+        round.ToggleCommand.Execute(null);
+        Assert.False(round.IsExpanded);
+    }
 }

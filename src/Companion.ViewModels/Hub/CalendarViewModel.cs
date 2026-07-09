@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
 
 namespace Companion.ViewModels.Hub;
@@ -61,8 +62,9 @@ public sealed partial class CalendarViewModel : ObservableObject
 }
 
 /// <summary>One round of the season calendar: the driven AMS2 track, its real venue, and how they
-/// relate (real venue / stand-in / applied mod alternate).</summary>
-public sealed class CalendarRoundViewModel
+/// relate (real venue / stand-in / applied mod alternate). Expands to the ORIGINAL circuit's map,
+/// facts and history (the historical venue, not the stand-in) + an optional venue photo.</summary>
+public sealed partial class CalendarRoundViewModel : ObservableObject
 {
     public CalendarRoundViewModel(SeasonScheduleEntry entry)
     {
@@ -75,6 +77,9 @@ public sealed class CalendarRoundViewModel
         LapsText = $"{entry.Laps.ToString(CultureInfo.InvariantCulture)} laps";
         Kind = entry.Kind;
         UnusedAlternateName = entry.UnusedAlternateName;
+        CircuitLayoutId = entry.CircuitLayoutId;
+        CircuitCaption = entry.CircuitCaption;
+        CircuitHistory = entry.CircuitHistory;
 
         (BadgeText, TrackLine) = entry.Kind switch
         {
@@ -112,4 +117,26 @@ public sealed class CalendarRoundViewModel
 
     /// <summary>The "alternate available — enable at creation" hint (empty when none).</summary>
     public string UnusedAlternateNote { get; }
+
+    // ---------- expandable detail: the ORIGINAL circuit (not the stand-in) ----------
+
+    /// <summary>Whether the card is expanded to show the original circuit's map + facts + history.</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    [RelayCommand]
+    private void Toggle() => IsExpanded = !IsExpanded;
+
+    /// <summary>The ORIGINAL (historical) circuit's map layout id — keys the SVG map + the venue photo.
+    /// Empty when no circuit data is shipped for the round.</summary>
+    public string CircuitLayoutId { get; }
+    public bool HasCircuit => CircuitLayoutId.Length > 0;
+
+    /// <summary>The original circuit's caption (name · place · km · turns · direction).</summary>
+    public string CircuitCaption { get; }
+    public bool HasCircuitCaption => CircuitCaption.Length > 0;
+
+    /// <summary>A brief, data-grounded history of the original circuit.</summary>
+    public string CircuitHistory { get; }
+    public bool HasCircuitHistory => CircuitHistory.Length > 0;
 }

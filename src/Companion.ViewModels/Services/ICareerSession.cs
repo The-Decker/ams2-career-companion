@@ -233,6 +233,17 @@ public sealed record SeasonScheduleEntry
     /// alternates, or a required mod was missing) — the alternate's display name, so the schedule can
     /// note "alternate available: …". Null when no unused alternate.</summary>
     public string? UnusedAlternateName { get; init; }
+
+    /// <summary>The REAL (historical) circuit's map layout id — the ORIGINAL venue's shape, NOT the
+    /// stand-in track's. Keys the shipped circuit-map SVG. Empty when no history is shipped for the
+    /// year. (The expandable calendar card shows the original circuit + facts.)</summary>
+    public string CircuitLayoutId { get; init; } = "";
+
+    /// <summary>The original circuit's one-line caption (name · place · km · turns · direction).</summary>
+    public string CircuitCaption { get; init; } = "";
+
+    /// <summary>A brief, data-grounded history of the original circuit. Empty when unknown.</summary>
+    public string CircuitHistory { get; init; } = "";
 }
 
 /// <summary>One perk offered on the season-review development block: what it is, what it costs, and —

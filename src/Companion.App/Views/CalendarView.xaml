@@ -24,54 +24,113 @@
             <ItemsControl ItemsSource="{Binding Rounds}" Margin="0,12,0,0">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Style="{StaticResource Panel}" Margin="0,0,0,8" Padding="14,10">
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" Style="{StaticResource Faint}"
-                                           FontWeight="SemiBold" Width="42" VerticalAlignment="Top" Margin="0,2,0,0" />
-
-                                <!-- kind badge: Real venue / Stand-in / Alternate -->
-                                <Border DockPanel.Dock="Right" CornerRadius="4" Padding="8,3" Margin="10,0,0,0"
-                                        VerticalAlignment="Top">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsAlternate}" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsStandIn}" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
+                        <Border Style="{StaticResource Panel}" Margin="0,0,0,8" Padding="0">
+                            <StackPanel>
+                                <!-- clickable header: click to expand the original circuit -->
+                                <Button Command="{Binding ToggleCommand}" HorizontalContentAlignment="Stretch"
+                                        Padding="14,10" Cursor="Hand"
+                                        ToolTip="Show the original circuit — map, facts, history">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="BorderThickness" Value="0" />
                                         </Style>
-                                    </Border.Style>
-                                    <TextBlock Text="{Binding BadgeText}" FontSize="12" FontWeight="SemiBold">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                                <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsAlternate}" Value="True">
-                                                        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsStandIn}" Value="True">
-                                                        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Border>
+                                    </Button.Style>
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" Style="{StaticResource Faint}"
+                                                   FontWeight="SemiBold" Width="42" VerticalAlignment="Top" Margin="0,2,0,0" />
 
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
-                                    <TextBlock Text="{Binding TrackLine}" Style="{StaticResource Body}"
-                                               TextWrapping="Wrap" Margin="0,2,0,0" />
-                                    <TextBlock Text="{Binding UnusedAlternateNote}" Style="{StaticResource Faint}"
-                                               TextWrapping="Wrap" Margin="0,3,0,0"
-                                               Visibility="{Binding HasUnusedAlternate, Converter={StaticResource BoolVisible}}" />
-                                    <TextBlock Style="{StaticResource Faint}" Margin="0,3,0,0"><Run Text="{Binding DateText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding LapsText, Mode=OneWay}" /></TextBlock>
+                                        <!-- expand chevron -->
+                                        <TextBlock DockPanel.Dock="Right" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                                   VerticalAlignment="Top" Margin="10,3,0,0"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   Text="{Binding IsExpanded, Converter={StaticResource ExpandGlyph}}" />
+
+                                        <!-- kind badge -->
+                                        <Border DockPanel.Dock="Right" CornerRadius="4" Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Top">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsAlternate}" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsStandIn}" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding BadgeText}" FontSize="12" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsAlternate}" Value="True">
+                                                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsStandIn}" Value="True">
+                                                                <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding TrackLine}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                                            <TextBlock Text="{Binding UnusedAlternateNote}" Style="{StaticResource Faint}" TextWrapping="Wrap"
+                                                       Margin="0,3,0,0"
+                                                       Visibility="{Binding HasUnusedAlternate, Converter={StaticResource BoolVisible}}" />
+                                            <TextBlock Style="{StaticResource Faint}" Margin="0,3,0,0"><Run Text="{Binding DateText, Mode=OneWay}" /><Run Text="   ·   " /><Run Text="{Binding LapsText, Mode=OneWay}" /></TextBlock>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Button>
+
+                                <!-- expanded: the ORIGINAL circuit (map + facts + history + venue photo) -->
+                                <StackPanel Margin="14,0,14,14"
+                                            Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                                    <Border Height="1" Background="{StaticResource EdgeBrush}" Margin="0,0,0,12" />
+                                    <TextBlock Text="ORIGINAL CIRCUIT" Style="{StaticResource Faint}" FontSize="11" Margin="0,0,0,8" />
+
+                                    <DockPanel Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
+                                        <Viewbox DockPanel.Dock="Left" Width="168" Height="168" Margin="0,0,20,0" VerticalAlignment="Top">
+                                            <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                                                  Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                        </Viewbox>
+                                        <StackPanel VerticalAlignment="Top">
+                                            <TextBlock Text="{Binding RealVenue}" FontWeight="SemiBold" FontSize="17" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                                       TextWrapping="Wrap" Margin="0,4,0,0"
+                                                       Visibility="{Binding HasCircuitCaption, Converter={StaticResource BoolVisible}}" />
+                                            <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}" TextWrapping="Wrap"
+                                                       Margin="0,10,0,0"
+                                                       Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+                                        </StackPanel>
+                                    </DockPanel>
+
+                                    <!-- no shipped circuit data -->
+                                    <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
+                                               Text="No circuit reference is shipped for this round yet."
+                                               Visibility="{Binding HasCircuit, Converter={StaticResource BoolCollapsed}}" />
+
+                                    <!-- optional venue PHOTO (user art at data\ams2\venue-photos\&lt;layoutId&gt;.jpg);
+                                         scales with the panel (Stretch=Uniform); click to open the resizable photo window -->
+                                    <Border Margin="0,12,0,0" CornerRadius="8" MaxWidth="720" HorizontalAlignment="Left"
+                                            BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                                            Visibility="{Binding ElementName=VenuePhoto, Path=Source, Converter={StaticResource NullCollapsed}}">
+                                        <Border CornerRadius="7" ClipToBounds="True">
+                                            <Image x:Name="VenuePhoto" Stretch="Uniform" StretchDirection="DownOnly"
+                                                   MouseLeftButtonUp="OnVenuePhotoClick" Cursor="Hand"
+                                                   ToolTip="Click to view full size (resizable window)"
+                                                   Source="{Binding CircuitLayoutId, Converter={StaticResource AssetImage}, ConverterParameter=venue-photos}" />
+                                        </Border>
+                                    </Border>
                                 </StackPanel>
-                            </DockPanel>
+                            </StackPanel>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

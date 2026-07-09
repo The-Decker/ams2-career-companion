@@ -27,7 +27,9 @@ public sealed class CalendarRenderTests
             new() { Round = 1, Name = "Monaco GP", Date = "1978-05-07", RealVenue = "Monaco",
                     Ams2TrackName = "Monaco", Laps = 78, Kind = SeasonTrackKind.RealVenue },
             new() { Round = 2, Name = "Belgian GP", Date = "1978-05-21", RealVenue = "Circuit Zolder",
-                    Ams2TrackName = "Zolder", Laps = 74, Kind = SeasonTrackKind.Alternate },
+                    Ams2TrackName = "Zolder", Laps = 74, Kind = SeasonTrackKind.Alternate,
+                    CircuitLayoutId = "zolder", CircuitCaption = "Zolder · 4.01 km · 10 turns",
+                    CircuitHistory = "Zolder hosted the Belgian GP 1973-1984." },
             new() { Round = 3, Name = "Dutch GP", Date = "1978-08-27", RealVenue = "Circuit Zandvoort",
                     Ams2TrackName = "Hockenheim 1988", Laps = 44, Kind = SeasonTrackKind.StandIn,
                     UnusedAlternateName = "Zolder" },
@@ -68,6 +70,10 @@ public sealed class CalendarRenderTests
             var vm = new CalendarViewModel(new CalendarSession());
             Assert.Equal(3, vm.Rounds.Count);
             Assert.True(vm.HasUnusedAlternates);
+
+            // Expand the round with circuit data so the original-circuit map + facts + history render.
+            vm.Rounds[1].ToggleCommand.Execute(null);
+            Assert.True(vm.Rounds[1].IsExpanded);
 
             var view = new CalendarView { DataContext = vm };
             view.Measure(new Size(1000, 900));
