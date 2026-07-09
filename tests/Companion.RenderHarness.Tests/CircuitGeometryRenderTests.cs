@@ -39,6 +39,52 @@ public sealed class CircuitGeometryRenderTests
         });
     }
 
+    /// <summary>The auto-leveling (tilted-map fix): a strongly elongated circuit authored in a tilted
+    /// geographic orientation must come out of LoadFrom with its long axis horizontal — Watkins Glen
+    /// and Montreal are the two Mike reported rendering near-vertical.</summary>
+    [Theory]
+    [InlineData("watkins-glen-1")]
+    [InlineData("montreal-2")]
+    public void ElongatedTiltedCircuits_AreLeveledToHorizontal(string layoutId)
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        string? circuitsDir = FindCircuitsDirectory();
+        if (circuitsDir is null || !File.Exists(Path.Combine(circuitsDir, layoutId + ".json")))
+            return; // layout id drift in the shipped set — the synthetic test below still guards the math
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var geometry = CircuitGeometryConverter.LoadFrom(circuitsDir, layoutId)!;
+            var bounds = geometry.Bounds;
+            Assert.True(bounds.Width > bounds.Height,
+                $"{layoutId}: expected level (wide) after auto-leveling, got {bounds.Width:0}x{bounds.Height:0}");
+        });
+    }
+
+    [Fact]
+    public void LevelToHorizontal_RotatesATiltedOblong_AndLeavesARoundShapeAlone()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            // A 300x60 oblong tilted 45° → leveling must bring its long axis horizontal.
+            var oblong = new System.Windows.Media.RectangleGeometry(
+                new System.Windows.Rect(0, 0, 300, 60), 0, 0,
+                new System.Windows.Media.RotateTransform(45, 150, 30));
+            var leveled = CircuitGeometryConverter.LevelToHorizontal(oblong);
+            Assert.True(leveled.Bounds.Width > leveled.Bounds.Height * 2,
+                $"expected the oblong leveled, got {leveled.Bounds.Width:0}x{leveled.Bounds.Height:0}");
+
+            // A circle has no dominant axis — leveling must not touch it.
+            var circle = new System.Windows.Media.EllipseGeometry(new System.Windows.Point(100, 100), 80, 80);
+            Assert.Same(circle, CircuitGeometryConverter.LevelToHorizontal(circle));
+        });
+    }
+
     [Fact]
     public void LoadFrom_IsNullForAMissingLayout()
     {

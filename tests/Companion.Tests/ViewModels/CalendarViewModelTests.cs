@@ -35,7 +35,7 @@ public class CalendarViewModelTests
         var real = vm.Rounds[0];
         Assert.True(real.IsRealVenue);
         Assert.Equal("Real venue", real.BadgeText);
-        Assert.Contains("actual Monaco", real.TrackLine);
+        Assert.Equal("Monaco", real.TrackLine); // just the track — no "the actual …" tail
         Assert.False(real.HasUnusedAlternate);
 
         var alt = vm.Rounds[1];

@@ -374,14 +374,81 @@ public sealed class CircuitGeometryConverter : IValueConverter
             }
             if (group.Children.Count == 0)
                 return null;
-            group.Freeze();
-            return group;
+            Geometry leveled = LevelToHorizontal(group);
+            leveled.Freeze();
+            return leveled;
         }
         catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or FormatException or InvalidOperationException)
         {
             // A bad/unreadable circuit file must never crash a screen — just show no map.
             return null;
         }
+    }
+
+    /// <summary>Auto-levels a circuit map: f1db paths are drawn in geographic orientation, so a circuit
+    /// that runs diagonally looks tilted (Watkins Glen / Montreal render near-vertical). Flatten the
+    /// outline, find its principal axis (PCA of the point cloud), and rotate the geometry so that
+    /// longest axis is horizontal — a consistent, level look across every map. Two guards: a circuit
+    /// that is already near-level keeps its authored orientation, and a near-round shape (no dominant
+    /// axis — principal spread ratio under ~1.25) is left alone because its PCA angle is unstable.
+    /// Pure geometry at load time, cached by the caller, no data regen. Public like
+    /// <see cref="LoadFrom"/> so the render harness can prove the leveling on real shipped data.</summary>
+    public static Geometry LevelToHorizontal(Geometry geometry)
+    {
+        var points = new List<Point>();
+        foreach (var figure in geometry.GetFlattenedPathGeometry().Figures)
+        {
+            points.Add(figure.StartPoint);
+            foreach (var segment in figure.Segments)
+            {
+                if (segment is PolyLineSegment poly)
+                    points.AddRange(poly.Points);
+                else if (segment is LineSegment line)
+                    points.Add(line.Point);
+            }
+        }
+        if (points.Count < 3)
+            return geometry;
+
+        double mx = points.Average(p => p.X), my = points.Average(p => p.Y);
+        double sxx = 0, syy = 0, sxy = 0;
+        foreach (var p in points)
+        {
+            double dx = p.X - mx, dy = p.Y - my;
+            sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
+        }
+
+        // Eigenvalues of the 2×2 covariance = the spread along/across the principal axis. A shape
+        // without a dominant axis (ratio < ~1.25) has no stable "level", so keep it as authored.
+        double trace = sxx + syy;
+        double root = Math.Sqrt((sxx - syy) * (sxx - syy) + 4 * sxy * sxy);
+        double major = (trace + root) / 2, minor = (trace - root) / 2;
+        if (minor <= 0 || major / minor < 1.25)
+            return geometry;
+
+        // Principal-axis angle; rotating by its negative brings that axis to horizontal.
+        double angleDeg = 0.5 * Math.Atan2(2 * sxy, sxx - syy) * 180.0 / Math.PI;
+        if (Math.Abs(angleDeg) < 3.0)
+            return geometry; // already level enough — keep the authored orientation
+
+        var rotated = geometry.Clone();
+        var bounds = geometry.Bounds; // includes any existing transform
+        var level = new RotateTransform(
+            -angleDeg, bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+        // COMPOSE with an existing transform (assigning would silently replace it — the shipped
+        // circuit paths carry none, but the utility must be correct for any geometry).
+        if (rotated.Transform is { } existing && !existing.Value.IsIdentity)
+        {
+            var group = new TransformGroup();
+            group.Children.Add(existing);
+            group.Children.Add(level);
+            rotated.Transform = group;
+        }
+        else
+        {
+            rotated.Transform = level;
+        }
+        return rotated;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

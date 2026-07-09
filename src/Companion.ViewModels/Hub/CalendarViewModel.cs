@@ -83,9 +83,9 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
 
         (BadgeText, TrackLine) = entry.Kind switch
         {
-            SeasonTrackKind.RealVenue => ("Real venue", $"{Ams2TrackName} — the actual {RealVenue}."),
-            SeasonTrackKind.Alternate => ("Alternate", $"{Ams2TrackName} — mod alternate standing in for {RealVenue}."),
-            _ => ("Stand-in", $"{Ams2TrackName} — base stand-in for {RealVenue} (not in AMS2)."),
+            SeasonTrackKind.RealVenue => ("Real venue", Ams2TrackName),
+            SeasonTrackKind.Alternate => ("Alternate", $"{Ams2TrackName} — mod alternate for {RealVenue}"),
+            _ => ("Stand-in", $"{Ams2TrackName} — stand-in for {RealVenue}"),
         };
 
         UnusedAlternateNote = UnusedAlternateName is { Length: > 0 } alt
