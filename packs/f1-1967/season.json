@@ -270,7 +270,12 @@
           "spielberg_historic",
           "silverstone_1975",
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 52,
+          "isRealVenue": false
+        }
       },
       "laps": 64,
       "grid": {
@@ -990,7 +995,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "monza_1971"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 60,
+          "isRealVenue": false
+        }
       },
       "laps": 41,
       "grid": {

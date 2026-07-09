@@ -43,7 +43,7 @@
       "date": "1988-04-03",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Internacional Nelson Piquet",
+        "realVenue": "Aut\u00F3dromo Internacional Nelson Piquet",
         "id": "jacarepagua_historic",
         "isPlaceholder": false,
         "fallbacks": []
@@ -269,12 +269,17 @@
       "date": "1988-05-29",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo Hermanos Rodríguez",
+        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
         "id": "interlagos_1991",
         "isPlaceholder": true,
         "fallbacks": [
           "interlagos_historic"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 56,
+          "isRealVenue": false
+        }
       },
       "laps": 68,
       "grid": {
@@ -319,7 +324,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Autódromo Hermanos Rodríguez — 67 laps / 296.2 km reproduced as 68 laps of Interlagos 1991. Interlagos 1991 keeps the period Latin-American venue character."
+        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 67 laps / 296.2 km reproduced as 68 laps of Interlagos 1991. Interlagos 1991 keeps the period Latin-American venue character."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -471,7 +476,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Detroit Street Circuit — 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 — the era's US street-race character."
+        "notes": "Placeholder for Detroit Street Circuit \u2014 63 laps / 253.4 km reproduced as 80 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 \u2014 the era\u0027s US street-race character."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -504,7 +509,12 @@
         "fallbacks": [
           "hockenheim_1988",
           "silverstone_1991"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 78,
+          "isRealVenue": false
+        }
       },
       "laps": 73,
       "grid": {
@@ -549,7 +559,7 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Circuit Paul Ricard — 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
+        "notes": "Placeholder for Circuit Paul Ricard \u2014 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French GP at a French Grand Prix venue."
       },
       "guestEntries": [],
       "aiOverrides": {}
@@ -953,7 +963,7 @@
       "date": "1988-09-25",
       "championship": true,
       "track": {
-        "realVenue": "Autódromo do Estoril",
+        "realVenue": "Aut\u00F3dromo do Estoril",
         "id": "estoril_1988",
         "isPlaceholder": false,
         "fallbacks": []

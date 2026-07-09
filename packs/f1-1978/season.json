@@ -464,7 +464,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "estoril_1988"
-        ]
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 64,
+          "isRealVenue": false
+        }
       },
       "laps": 61,
       "grid": {
@@ -533,7 +538,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "hockenheim_1977"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 72,
+          "isRealVenue": false
+        }
       },
       "laps": 60,
       "grid": {
@@ -603,7 +613,12 @@
         "fallbacks": [
           "hockenheim_1988",
           "silverstone_1991"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 60,
+          "isRealVenue": false
+        }
       },
       "laps": 75,
       "grid": {
@@ -878,7 +893,12 @@
         "fallbacks": [
           "silverstone_1975",
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 54,
       "grid": {

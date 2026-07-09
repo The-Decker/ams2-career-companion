@@ -274,7 +274,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "estoril_1988"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 39,
+          "isRealVenue": false
+        }
       },
       "laps": 68,
       "grid": {
@@ -504,7 +509,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "silverstone_1975"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 47,
       "grid": {
@@ -579,7 +589,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 79,
+          "isRealVenue": false
+        }
       },
       "laps": 67,
       "grid": {

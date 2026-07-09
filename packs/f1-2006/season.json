@@ -125,7 +125,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 68,
       "grid": {
@@ -197,7 +202,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "montrealmodern"
-        ]
+        ],
+        "alternate": {
+          "id": "lakeville_raceway_gp",
+          "laps": 75,
+          "isRealVenue": false
+        }
       },
       "laps": 94,
       "grid": {
@@ -773,7 +783,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp_1999"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 74,
       "grid": {
@@ -987,7 +1002,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "hockenheim_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 66,
       "grid": {
@@ -1131,7 +1151,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "hockenheim_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 78,
+          "isRealVenue": false
+        }
       },
       "laps": 65,
       "grid": {

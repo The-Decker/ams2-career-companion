@@ -456,7 +456,12 @@
         "fallbacks": [
           "interlagos_1991",
           "interlagos_historic"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 76,
+          "isRealVenue": false
+        }
       },
       "laps": 59,
       "grid": {
@@ -542,7 +547,12 @@
         "fallbacks": [
           "brandshatch_gp",
           "barcelona_gp_1999"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 73,
       "grid": {

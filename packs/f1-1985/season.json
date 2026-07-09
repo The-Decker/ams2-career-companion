@@ -496,7 +496,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "silverstone_1991"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 74,
       "grid": {
@@ -648,7 +653,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurb_gp_2020"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 56,
+          "isRealVenue": false
+        }
       },
       "laps": 59,
       "grid": {

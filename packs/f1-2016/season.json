@@ -49,7 +49,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "interlagos"
-        ]
+        ],
+        "alternate": {
+          "id": "lakeville_raceway_gp",
+          "laps": 75,
+          "isRealVenue": false
+        }
       },
       "laps": 94,
       "grid": {
@@ -122,7 +127,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "imola"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 70,
       "grid": {
@@ -195,7 +205,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "circuit_of_the_americas_gp",
+          "laps": 55,
+          "isRealVenue": false
+        }
       },
       "laps": 59,
       "grid": {
@@ -268,7 +283,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "jerez_2019"
-        ]
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 77,
+          "isRealVenue": false
+        }
       },
       "laps": 74,
       "grid": {
@@ -560,7 +580,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "azure_circuit_2021"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 78,
+          "isRealVenue": false
+        }
       },
       "laps": 97,
       "grid": {
@@ -1142,7 +1167,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurburgring_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 70,
       "grid": {
@@ -1364,7 +1394,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "interlagos"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 71,
       "grid": {

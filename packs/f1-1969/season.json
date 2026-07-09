@@ -118,7 +118,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "adelaide_historic"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 47,
+          "isRealVenue": false
+        }
       },
       "laps": 87,
       "grid": {
@@ -259,7 +264,12 @@
           "spielberg_historic",
           "silverstone_1975",
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 70,
+          "isRealVenue": false
+        }
       },
       "laps": 64,
       "grid": {
@@ -325,7 +335,12 @@
         "fallbacks": [
           "rouen_short",
           "le_mans_bugatti"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 42,
+          "isRealVenue": false
+        }
       },
       "laps": 47,
       "grid": {
@@ -725,7 +740,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "monza_1971"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 83,
+          "isRealVenue": false
+        }
       },
       "laps": 41,
       "grid": {

@@ -1084,7 +1084,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "interlagos_historic"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 56,
+          "isRealVenue": false
+        }
       },
       "laps": 70,
       "grid": {
