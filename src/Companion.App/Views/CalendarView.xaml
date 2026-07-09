@@ -109,6 +109,19 @@
                                             <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}" TextWrapping="Wrap"
                                                        Margin="0,10,0,0"
                                                        Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+
+                                            <!-- era-capped fun facts (data-grounded, spoiler-free by construction) -->
+                                            <StackPanel Margin="0,10,0,0"
+                                                        Visibility="{Binding HasCircuitFacts, Converter={StaticResource BoolVisible}}">
+                                                <TextBlock Text="FUN FACTS" Style="{StaticResource Faint}" FontSize="11" Margin="0,0,0,4" />
+                                                <ItemsControl ItemsSource="{Binding CircuitFacts}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,2"><Run Text="•  " /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
                                         </StackPanel>
                                     </DockPanel>
 

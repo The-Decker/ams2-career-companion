@@ -723,6 +723,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 CircuitLayoutId = circuit?.LayoutId ?? "",
                 CircuitCaption = CircuitCaptions.Compose(circuit),
                 CircuitHistory = circuit?.History ?? "",
+                CircuitFacts = circuit?.Facts ?? [],
             });
         }
         return schedule;

@@ -31,7 +31,8 @@ internal static class ViewModelTestData
     public static CareerEnvironment Environment(
         string documentsDirectory,
         string? installDirectory = null,
-        Ams2ContentLibrary? library = null) => new()
+        Ams2ContentLibrary? library = null,
+        string? historyDirectory = null) => new()
     {
         ContentLibrary = library ?? RealLibrary.Value,
         LocateInstall = () => installDirectory is null
@@ -39,6 +40,7 @@ internal static class ViewModelTestData
             : new Ams2Installation { InstallDirectory = installDirectory },
         DocumentsDirectory = documentsDirectory,
         RulesDirectory = RulesDirectory,
+        HistoryDirectory = historyDirectory,
     };
 
     /// <summary>A library that knows nothing — every class/track/vehicle check fails.</summary>

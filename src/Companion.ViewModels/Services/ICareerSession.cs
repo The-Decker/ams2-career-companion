@@ -244,6 +244,10 @@ public sealed record SeasonScheduleEntry
 
     /// <summary>A brief, data-grounded history of the original circuit. Empty when unknown.</summary>
     public string CircuitHistory { get; init; } = "";
+
+    /// <summary>Era-capped fun facts about the original circuit (data-grounded, spoiler-free).
+    /// Empty when none are shipped.</summary>
+    public IReadOnlyList<string> CircuitFacts { get; init; } = [];
 }
 
 /// <summary>One perk offered on the season-review development block: what it is, what it costs, and —

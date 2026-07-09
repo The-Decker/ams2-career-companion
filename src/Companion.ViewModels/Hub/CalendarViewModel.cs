@@ -80,6 +80,7 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
         CircuitLayoutId = entry.CircuitLayoutId;
         CircuitCaption = entry.CircuitCaption;
         CircuitHistory = entry.CircuitHistory;
+        CircuitFacts = entry.CircuitFacts;
 
         (BadgeText, TrackLine) = entry.Kind switch
         {
@@ -139,4 +140,8 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     /// <summary>A brief, data-grounded history of the original circuit.</summary>
     public string CircuitHistory { get; }
     public bool HasCircuitHistory => CircuitHistory.Length > 0;
+
+    /// <summary>Era-capped fun facts about the original circuit — spoiler-free by construction.</summary>
+    public IReadOnlyList<string> CircuitFacts { get; }
+    public bool HasCircuitFacts => CircuitFacts.Count > 0;
 }

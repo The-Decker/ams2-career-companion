@@ -88,6 +88,14 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string _circuitHistory = "";
 
+    /// <summary>Era-capped fun facts about this round's circuit (data-grounded, spoiler-free) —
+    /// same reference data the Calendar expander shows.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCircuitFacts))]
+    private IReadOnlyList<string> _circuitFacts = [];
+
+    public bool HasCircuitFacts => CircuitFacts.Count > 0;
+
     [ObservableProperty]
     private bool _isPlaceholder;
 
@@ -229,6 +237,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             CircuitLayoutId = circuit?.LayoutId ?? "";
             CircuitCaption = CircuitCaptions.Compose(circuit, includeName: false);
             CircuitHistory = circuit?.History ?? "";
+            CircuitFacts = circuit?.Facts ?? [];
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
@@ -251,6 +260,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             CircuitLayoutId = "";
             CircuitCaption = "";
             CircuitHistory = "";
+            CircuitFacts = [];
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
