@@ -225,6 +225,32 @@ public static class VariantOverrideBinder
         return new string(chars.ToArray());
     }
 
+    /// <summary>Whether <paramref name="variantXml"/> shares at least one active
+    /// <c>LIVERY_OVERRIDE NAME</c> with <paramref name="seasonBaseXml"/> — the test for a variant
+    /// BELONGING to the active season (a change-point off its base) versus a foreign season's file
+    /// squatting in a shared car-model folder. Comment-stripped so placeholder examples never
+    /// count; an unreadable variant (empty text) shares nothing → treated as not-ours.</summary>
+    internal static bool SharesAnyLiveryName(string seasonBaseXml, string variantXml)
+    {
+        var baseNames = LiveryNames(seasonBaseXml);
+        return baseNames.Count > 0 && LiveryNames(variantXml).Overlaps(baseNames);
+    }
+
+    private static HashSet<string> LiveryNames(string xml)
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (_, name) in Companion.Ams2.CustomAi.LenientXml.ExtractElementAttributePairs(
+            Companion.Ams2.CustomAi.LenientXml.StripComments(xml), "LIVERY_OVERRIDE", "LIVERY", "NAME"))
+            names.Add(name);
+        return names;
+    }
+
+    private static string SafeRead(string path)
+    {
+        try { return File.ReadAllText(path); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return ""; }
+    }
+
     /// <summary>Stable-named base snapshot (distinct from the timestamped backups) taken before
     /// the FIRST variant swap so a variant-less round can restore the pack's base pointer even
     /// without a skin-season library entry.</summary>
@@ -269,8 +295,23 @@ public static class VariantOverrideBinder
                 if (variants.Count == 0)
                     continue; // this model ships no per-race variants — nothing to manage
 
+                // Ownership guard: when the ACTIVE season's base for this model is known, a variant
+                // that shares NONE of the base's livery NAMEs belongs to a DIFFERENT season that
+                // happens to share the same car-model folder. smgp and F1-1990 both skin
+                // formula_classic_g3m*, and the smgp round names (San Marino, Japan, Australia…)
+                // alias 1990's own calendar tokens — so 1990's change-point variants would otherwise
+                // anchor onto, and hijack, the smgp grid. A legitimate change-point only renames a
+                // handful of the ~26 cars, so it always shares the unchanged names; a foreign
+                // season's file shares none. Only the forward MATCH is filtered — the restore
+                // recognition below still sees every variant, so a stray foreign file that somehow
+                // went active is still recognized and restored off.
+                var ownedVariants = seasonBaseByModel is not null &&
+                    seasonBaseByModel.TryGetValue(model, out var seasonBaseXml)
+                    ? variants.Where(f => SharesAnyLiveryName(seasonBaseXml, SafeRead(f))).ToList()
+                    : variants;
+
                 // The change-point in force at this round: the largest anchor ≤ round.
-                string? match = variants
+                string? match = ownedVariants
                     .Select(f => (Path: f, Anchor: AnchorRound(
                         Path.GetFileNameWithoutExtension(f)[(model.Length + 1)..], rounds, seasonYear)))
                     .Where(v => v.Anchor is { } a && a <= roundNumber)

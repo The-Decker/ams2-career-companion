@@ -251,4 +251,71 @@ public sealed class VariantOverrideBinderTests : IDisposable
         Assert.False(round1.AnyChanged);
         Assert.Contains("Base set", Active(folder));
     }
+
+    // ---------- ownership guard: a foreign season's variant sharing the folder never binds ----------
+
+    /// <summary>The smgp↔F1-1990 collision, reproduced: both seasons skin the same car model, and
+    /// the smgp round names (San Marino, Japan, Australia…) alias 1990's calendar tokens, so a
+    /// 1990 change-point variant anchors cleanly onto the smgp calendar. When the ACTIVE season's
+    /// base is known and the variant shares NONE of its livery names, it is a foreign file and must
+    /// not bind — the whole point of the roster fix.</summary>
+    [Fact]
+    public void BindRound_WithKnownSeasonBase_NeverBindsAForeignSeasonsVariant()
+    {
+        const string model = "formula_classic_g3m1";
+        string folder = Path.Combine(_root, model);
+        Directory.CreateDirectory(folder);
+        // The active season (smgp) base — fictional SMGP liveries.
+        const string smgpBase =
+            "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Madonna #1 A. Senna\" />" +
+            "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Madonna #2 A. Asselin\" /></USER_OVERRIDES>";
+        File.WriteAllText(Path.Combine(folder, model + ".xml"), smgpBase);
+        // A 1990 real-season change-point variant that anchors to smgp R2 ("Brazil") by its token —
+        // its livery NAMEs are the real 1990 grid, sharing nothing with the smgp base.
+        File.WriteAllText(Path.Combine(folder, model + "_02Brazil.xml"),
+            "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Senna #27\" />" +
+            "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Berger #28\" /></USER_OVERRIDES>");
+
+        IReadOnlyList<CalendarRound> smgp =
+        [
+            new(1, "San Marino", "Autodromo Enzo e Dino Ferrari"),
+            new(2, "Brazil", "Autódromo Internacional do Rio de Janeiro"),
+        ];
+        var seasonBase = new Dictionary<string, string> { [model] = smgpBase };
+
+        var result = BindRound(_root, [model], 2, smgp, 1990, seasonBase, Now);
+
+        Assert.False(result.AnyChanged);
+        Assert.Contains("A. Senna", Active(folder)); // smgp base still active — foreign variant ignored
+    }
+
+    /// <summary>The guard is not over-eager: a LEGITIMATE change-point variant of the active
+    /// season (renames a few cars, keeps the rest) shares the unchanged names, so it still binds.</summary>
+    [Fact]
+    public void BindRound_WithKnownSeasonBase_StillBindsItsOwnChangePoint()
+    {
+        const string model = "formula_v10_g1";
+        string folder = Path.Combine(_root, model);
+        Directory.CreateDirectory(folder);
+        const string ownBase =
+            "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Ferrari #1\" />" +
+            "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Williams #5\" /></USER_OVERRIDES>";
+        File.WriteAllText(Path.Combine(folder, model + ".xml"), ownBase);
+        // A real change-point: Williams keeps its car, Ferrari swaps driver — shares "Williams #5".
+        File.WriteAllText(Path.Combine(folder, model + "_02Brazil.xml"),
+            "<USER_OVERRIDES><LIVERY_OVERRIDE LIVERY=\"51\" NAME=\"Ferrari #2\" />" +
+            "<LIVERY_OVERRIDE LIVERY=\"52\" NAME=\"Williams #5\" /></USER_OVERRIDES>");
+
+        IReadOnlyList<CalendarRound> season =
+        [
+            new(1, "United States Grand Prix", "Phoenix"),
+            new(2, "Brazilian Grand Prix", "Interlagos"),
+        ];
+        var seasonBase = new Dictionary<string, string> { [model] = ownBase };
+
+        var result = BindRound(_root, [model], 2, season, 1997, seasonBase, Now);
+
+        Assert.Equal(1, result.Swapped);
+        Assert.Contains("Ferrari #2", Active(folder)); // its own change-point bound normally
+    }
 }

@@ -59,6 +59,33 @@ public sealed class LiveryOverrideWriterTests
         Assert.Null(LiveryOverrideWriter.Activate(SkoalXml, "Skoal Bandit Formula 1 Team #9", 61));
     }
 
+    // The SMGP skinpack marks inactive entries with a LETTER-prefixed placeholder ("X1"/"X3"/"XX")
+    // rather than "##" — Lares #23 and Feet #24 ship this way. Any NON-numeric slot is a
+    // placeholder, so the same activator turns them on (the staging auto-activate pass depends on
+    // this — those two are the SMGP field's cap-completing cars).
+    private const string SmgpXml =
+        "<USER_OVERRIDES>\n" +
+        "  <LIVERY_OVERRIDE LIVERY=\"53\" NAME=\"Comet #29 E. Tornio\" BASELIVERY=\"Default\"></LIVERY_OVERRIDE>\n" +
+        "  <LIVERY_OVERRIDE LIVERY=\"X3\" NAME=\"Lares #23 P. Arai\" BASELIVERY=\"Default\"></LIVERY_OVERRIDE>\n" +
+        "</USER_OVERRIDES>\n";
+
+    [Fact]
+    public void Activate_HandlesTheSmgpLetterPlaceholder()
+    {
+        // "X3" is not numeric → a placeholder → NextFreeSlot ignores it, so it stays free to fill.
+        Assert.True(LiveryOverrideWriter.SlotIsFree(SmgpXml, 51));
+        Assert.Equal(51, LiveryOverrideWriter.NextFreeSlot(SmgpXml)); // 53 used; 51/52 free
+
+        string? edited = LiveryOverrideWriter.Activate(SmgpXml, "Lares #23 P. Arai", 57);
+
+        Assert.NotNull(edited);
+        Assert.Contains("LIVERY=\"57\" NAME=\"Lares #23 P. Arai\"", edited);
+        Assert.DoesNotContain("LIVERY=\"X3\"", edited);
+        Assert.Contains("LIVERY=\"53\" NAME=\"Comet #29 E. Tornio\"", edited); // the active car untouched
+        // Already active now → a second activation is a no-op (returns null).
+        Assert.Null(LiveryOverrideWriter.Activate(edited!, "Lares #23 P. Arai", 58));
+    }
+
     [Fact]
     public void Activate_PicksTheFirstPlaceholder_WhenTwoShareAName()
     {
