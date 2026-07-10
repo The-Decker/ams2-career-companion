@@ -39,6 +39,14 @@ public sealed record PackManifest
     /// (the pack's skins own their models outright). Staging-side only — the sim never reads it.</summary>
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? SkinSeason { get; init; }
+
+    /// <summary>Career style (v1.3, optional, additive): a replica-mode key gating special career
+    /// mechanics — <c>"smgp"</c> = the Super Monaco GP mode (rival battles, two-wins seat swaps,
+    /// the Ceara title defense). Null/unknown = a normal historical season; a pack with a style
+    /// the app does not implement still plays as a normal season (the mode machinery is additive
+    /// and determinism-gated per career).</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? CareerStyle { get; init; }
 }
 
 public sealed record PackRequirements

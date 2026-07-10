@@ -184,19 +184,28 @@ public class PackLoaderTests
     }
 
     [Fact]
-    public void Parse_Manifest_ReadsTheOptionalSkinSeason()
+    public void Parse_Manifest_ReadsTheOptionalSkinSeason_AndCareerStyle()
     {
         var manifest = PackLoader.ParseManifest("""
             {
-              "packId": "f1-1985",
-              "name": "Formula One 1985",
+              "packId": "smgp-1",
+              "name": "Super Monaco GP",
               "version": "1.0.0",
               "formatVersion": 1,
-              "skinSeason": "f1-1985"
+              "skinSeason": "smgp",
+              "careerStyle": "smgp"
             }
             """);
 
-        Assert.Equal("f1-1985", manifest.SkinSeason);
+        Assert.Equal("smgp", manifest.SkinSeason);
+        Assert.Equal("smgp", manifest.CareerStyle);
+        // Absent on a normal pack → null, and never invented on re-serialize.
+        var plain = PackLoader.ParseManifest("""
+            { "packId": "f1-1985", "name": "Formula One 1985", "version": "1.0.0", "formatVersion": 1 }
+            """);
+        Assert.Null(plain.CareerStyle);
+        Assert.DoesNotContain("careerStyle",
+            JsonSerializer.Serialize(plain, CoreJson.Options));
     }
 
     [Fact]
