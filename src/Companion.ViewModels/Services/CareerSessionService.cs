@@ -1456,48 +1456,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                         "slots swapped from the pack's alternates list (previous files backed up).");
             }
 
-            // REQUIRED-LIVERY activation: a skinpack can ship an entry livery as an INACTIVE
-            // placeholder (LIVERY="X1"/"##") rather than a numbered slot — the SMGP field's
-            // Lares #23 and Feet #24 ship this way (24 numbered + those 2 = the class's 26-livery
-            // cap exactly). AMS2 never loads a placeholder, so those cars pool-fill with random
-            // drivers. Activate every grid livery present-but-inactive in its model's override
-            // file, cap-safe + backup-first — exactly the Skins-tab manual activator, at staging.
-            // Idempotent: an already-active (numbered) or absent name is a no-op, so re-staging
-            // never double-activates. Runs BEFORE the smart binding below so the now-active
-            // community livery is kept, not floored onto a base-game name.
-            if (_environment.LocateInstall() is { } requiredInstall)
-            {
-                int? requiredMaxSlot =
-                    _environment.ContentLibrary.LiveryCaps.TryGetValue(plan.Ams2Class, out int requiredCap)
-                        ? LiveryOverrideWriter.FirstCustomSlot + requiredCap - 1
-                        : null;
-                var requiredModelDirs = _environment.ContentLibrary.Vehicles.Values
-                    .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
-                    .Select(v => v.Dir)
-                    .Distinct(StringComparer.OrdinalIgnoreCase);
-                var requiredNames = plan.Seats.Select(s => s.Ams2LiveryName)
-                    .Distinct(StringComparer.Ordinal)
-                    .ToList();
-                int activatedRequired = 0;
-                foreach (var dir in requiredModelDirs)
-                {
-                    string requiredPath = Path.Combine(
-                        requiredInstall.InstallOverridesDirectory, dir, dir + ".xml");
-                    if (!File.Exists(requiredPath))
-                        continue;
-                    foreach (var name in requiredNames)
-                    {
-                        var res = LiveryOverrideWriter.ActivateInFile(
-                            requiredPath, name, _environment.Clock.GetUtcNow(), maxSlot: requiredMaxSlot);
-                        if (res.Success)
-                            activatedRequired++;
-                    }
-                }
-                if (activatedRequired > 0)
-                    messages.Add(
-                        $"Activated {activatedRequired} grid livery(ies) that shipped inactive in the skinpack — " +
-                        "those cars will now show their real skins (previous files backed up).");
-            }
+            // NOTE — no auto-activation of inactive skins here (Mike's rule): a livery that ships
+            // as an INACTIVE placeholder (LIVERY="X1"/"##", e.g. the SMGP field's Lares #23 and
+            // Feet #24) must NOT be put on the grid until it READS active. Silently activating it
+            // at staging only writes a slot AMS2 has not loaded (it needs a restart), so the car
+            // still pool-fills that session while a base-game livery would have loaded cleanly.
+            // Instead the smart binding below floors any not-active livery onto a guaranteed
+            // base-game one; the player activates a skin deliberately in the Skins tab (which then
+            // reads active on the next stage and is kept). The activator lives in
+            // LiveryOverrideWriter for that user-driven path.
 
             // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
             // a Coloni/Eurobrun DNQs some rounds), graft its skin into the slowest same-model qualifier's
