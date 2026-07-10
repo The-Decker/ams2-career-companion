@@ -285,6 +285,42 @@ public sealed class LiveryOverrideScannerTests : IDisposable
     }
 
     [Fact]
+    public void Giant1985AlternatesComment_ActiveBlocksFound_CommentedAlternatesInvisible()
+    {
+        // Miniature of the real F1_1985 formula_retro_g3.xml: active blocks, then ONE giant
+        // comment holding the manual swap instructions AND ~20 alternate "##" blocks. The dash
+        // runs make strict parsing fail; after the lenient comment-strip only the ACTIVE blocks
+        // remain — the alternates must not be reported (AMS2 never loads them).
+        Write("formula_retro_g3", "formula_retro_g3.xml", """
+            <?xml version="1.0" encoding="utf-8" ?>
+            <USER_OVERRIDES>
+            	<LIVERY_OVERRIDE LIVERY="51" NAME="Tyrrell Racing Organisation #3" BASELIVERY="Default">
+            		<TEXTURE NAME="BODY" PATH="F1_1985\body3.dds" />
+            	</LIVERY_OVERRIDE>
+            	<LIVERY_OVERRIDE LIVERY="53" NAME="Skoal Bandit Formula 1 Team #9" BASELIVERY="Default">
+            		<TEXTURE NAME="BODY" PATH="F1_1985\body9.dds" />
+            	</LIVERY_OVERRIDE>
+            <!-- ---------------ALTERNATE LIVERY OPTIONS ------------------
+            3. Replace the "##" with the LIVERY number of the one you are replacing (51 to 60).
+            ----------------------------------------------------------------
+            	<LIVERY_OVERRIDE LIVERY="##" NAME="Skoal Bandit Formula 1 Team #10" BASELIVERY="Default">
+            		<TEXTURE NAME="BODY" PATH="F1_1985\body10.dds" />
+            	</LIVERY_OVERRIDE>
+            -->
+            </USER_OVERRIDES>
+            """);
+
+        var result = Scan();
+
+        Assert.Equal(
+            ["Tyrrell Racing Organisation #3", "Skoal Bandit Formula 1 Team #9"],
+            result.Liveries.Select(l => l.Name));
+        Assert.All(result.Liveries, l => Assert.True(l.IsActive));
+        Assert.Equal(1, result.FilesRecoveredLeniently);
+        Assert.Empty(result.UnreadableFiles);
+    }
+
+    [Fact]
     public void ExtractElementAttributePairs_ScrapesSlotAndName_OrderIndependent()
     {
         // The regex fallback (for markup no parser survives) must still pair slot + name.

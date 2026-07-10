@@ -51,6 +51,38 @@ public static class LenientXml
     public static string RepairBareAmpersands(string text) =>
         BareAmpersand.Replace(text, "&amp;");
 
+    /// <summary>The <c>&lt;!-- --&gt;</c> spans in <paramref name="text"/> (start inclusive, end
+    /// exclusive), by the same literal scan as <see cref="StripComments"/> — for callers that must
+    /// KEEP the text intact (in-place editors) but still know which regions AMS2 never parses
+    /// (e.g. the 1985 pack keeps ~20 alternate LIVERY_OVERRIDE blocks inside one giant comment).
+    /// An unterminated comment runs to end-of-text.</summary>
+    public static IReadOnlyList<(int Start, int End)> CommentSpans(string text)
+    {
+        var spans = new List<(int, int)>();
+        int i = 0;
+        while (true)
+        {
+            int start = text.IndexOf("<!--", i, StringComparison.Ordinal);
+            if (start < 0)
+                break;
+            int end = text.IndexOf("-->", start + 4, StringComparison.Ordinal);
+            if (end < 0) { spans.Add((start, text.Length)); break; }
+            spans.Add((start, end + 3));
+            i = end + 3;
+        }
+        return spans;
+    }
+
+    /// <summary>Whether <paramref name="index"/> falls inside any of <paramref name="spans"/>
+    /// (as returned by <see cref="CommentSpans"/>).</summary>
+    public static bool IsInComment(int index, IReadOnlyList<(int Start, int End)> spans)
+    {
+        foreach (var (start, end) in spans)
+            if (index >= start && index < end)
+                return true;
+        return false;
+    }
+
     private static readonly Regex BareAmpersand =
         new(@"&(?!(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#x[0-9A-Fa-f]+);)", RegexOptions.Compiled);
 

@@ -86,34 +86,13 @@ public static class LiveryOverrideWriter
         return true;
     }
 
-    /// <summary>The <c>&lt;!-- --&gt;</c> spans in <paramref name="xml"/> (start inclusive, end
-    /// exclusive) — used to refuse editing a LIVERY_OVERRIDE that lives inside a comment (AMS2 never
-    /// parses commented entries, so activating one would be a silent no-op that only corrupts the
-    /// file). An unterminated comment runs to end-of-text.</summary>
-    private static List<(int Start, int End)> CommentSpans(string xml)
-    {
-        var spans = new List<(int, int)>();
-        int i = 0;
-        while (true)
-        {
-            int start = xml.IndexOf("<!--", i, StringComparison.Ordinal);
-            if (start < 0)
-                break;
-            int end = xml.IndexOf("-->", start + 4, StringComparison.Ordinal);
-            if (end < 0) { spans.Add((start, xml.Length)); break; }
-            spans.Add((start, end + 3));
-            i = end + 3;
-        }
-        return spans;
-    }
+    // Comment awareness (refusing to edit a LIVERY_OVERRIDE inside <!-- -->) is shared with every
+    // other community-XML reader/editor via LenientXml.CommentSpans/IsInComment.
+    private static IReadOnlyList<(int Start, int End)> CommentSpans(string xml) =>
+        LenientXml.CommentSpans(xml);
 
-    private static bool IsInComment(int index, List<(int Start, int End)> spans)
-    {
-        foreach (var (start, end) in spans)
-            if (index >= start && index < end)
-                return true;
-        return false;
-    }
+    private static bool IsInComment(int index, IReadOnlyList<(int Start, int End)> spans) =>
+        LenientXml.IsInComment(index, spans);
 
     /// <summary>
     /// Activates the FIRST placeholder <c>LIVERY_OVERRIDE</c> whose NAME matches
