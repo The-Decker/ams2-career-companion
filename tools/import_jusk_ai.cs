@@ -65,7 +65,10 @@ foreach (var d in doc.Descendants("driver"))
     string? tracks = (string?)d.Attribute("tracks");
     if (tracks is null)
         baseByLivery[livery] = vals; // base block (last one wins if duplicated)
-    else
+    else if (vals.Count > 0)
+        // A per-track block whose only content is fields the pack doesn't model (juppo's
+        // drag/power/weight scalars, setup fields) maps to an EMPTY patch — skip it rather
+        // than writing meaningless {} aiOverrides entries.
         overridesByLivery.Add((livery, tracks.Split(',').Select(t => t.Trim()).ToArray(), vals));
 }
 

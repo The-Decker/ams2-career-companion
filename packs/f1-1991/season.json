@@ -128,7 +128,20 @@
         "notes": "Placeholder for Phoenix Street Circuit \u2014 81 laps / 301.4 km reproduced as 95 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 \u2014 the era\u0027s US street-race character; Adelaide already hosts this season\u0027s Australian GP."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.mika_hakkinen": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.88
+        },
+        "driver.nigel_mansell": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.9
+        },
+        "driver.riccardo_patrese": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.92
+        }
+      }
     },
     {
       "round": 2,
@@ -228,7 +241,20 @@
         "notes": "AMS2\u0027s Interlagos 1991 is the same rebuilt layout the 1991 Brazilian GP ran (4.325 km); the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.aguri_suzuki": {
+          "raceSkill": 0.71,
+          "qualifyingSkill": 0.76
+        },
+        "driver.nigel_mansell": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.9
+        },
+        "driver.riccardo_patrese": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.92
+        }
+      }
     },
     {
       "round": 3,
@@ -322,7 +348,24 @@
         "notes": "AMS2\u0027s Imola 1988 is the same Enzo e Dino Ferrari circuit the 1991 San Marino GP ran; the venue is real, so the historical lap count is kept on the era-matching layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.gianni_morbidelli": {
+          "raceSkill": 0.78,
+          "qualifyingSkill": 0.82
+        },
+        "driver.nigel_mansell": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.9
+        },
+        "driver.pierluigi_martini": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.8
+        },
+        "driver.riccardo_patrese": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.92
+        }
+      }
     },
     {
       "round": 4,
@@ -422,7 +465,24 @@
         "notes": "AMS2\u0027s Azure Circuit is Monaco; the venue is real, so the historical lap count is kept on the period-correct 1988 layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.ayrton_senna": {
+          "avoidanceOfMistakes": 0.98,
+          "avoidanceOfForcedMistakes": 0.95
+        },
+        "driver.nigel_mansell": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.9
+        },
+        "driver.riccardo_patrese": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.92
+        },
+        "driver.stefano_modena": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.93
+        }
+      }
     },
     {
       "round": 5,
@@ -527,7 +587,16 @@
         "notes": "AMS2\u0027s Montreal 1991 is the same Circuit Gilles Villeneuve the 1991 Canadian GP ran; the venue is real, so the historical lap count is kept on the period-correct layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.nigel_mansell": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.9
+        },
+        "driver.riccardo_patrese": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.92
+        }
+      }
     },
     {
       "round": 6,
@@ -851,7 +920,12 @@
         "notes": "AMS2\u0027s Silverstone 1991 is the exact layout the 1991 British GP ran; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.nigel_mansell": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.99
+        }
+      }
     },
     {
       "round": 9,
@@ -1453,7 +1527,12 @@
         "notes": "AMS2\u0027s Barcelona 1991 is the exact layout the inaugural 1991 Spanish GP at Catalunya ran; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.gerhard_berger": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.97
+        }
+      }
     },
     {
       "round": 15,
@@ -1556,7 +1635,12 @@
         "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the modern GP layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.gerhard_berger": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.95
+        }
+      }
     },
     {
       "round": 16,
@@ -1650,1172 +1734,12 @@
         "notes": "AMS2\u0027s Adelaide 1988 is the same street circuit the 1991 Australian GP ran; the venue is real, so the historical lap count is kept \u2014 the 1991 race was famously stopped after 14 laps in torrential rain."
       },
       "guestEntries": [],
-      "aiOverrides": {}
-    }
-  ],
-  "driverForm": {
-    "1": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.alain_prost": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.eric_bernard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.erik_comas": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jj_lehto": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.julian_bailey": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.martin_brundle": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.nicola_larini": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.pierluigi_martini": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "2": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.alain_prost": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.eric_bernard": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.jj_lehto": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.julian_bailey": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.martin_brundle": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.04
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      }
-    },
-    "3": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.alain_prost": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.alex_caffi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.andrea_de_cesaris": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.eric_bernard": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.eric_van_de_poele": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.erik_comas": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.julian_bailey": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.06
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.stefano_modena": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "4": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.alain_prost": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.andrea_de_cesaris": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jean_alesi": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jj_lehto": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.04
-      },
-      "driver.martin_brundle": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.nigel_mansell": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.stefano_modena": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "5": {
-      "driver.andrea_de_cesaris": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.eric_bernard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.erik_comas": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.gianni_morbidelli": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.ivan_capelli": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.jj_lehto": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.martin_brundle": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.riccardo_patrese": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.stefan_johansson": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "6": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.alain_prost": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.andrea_de_cesaris": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.eric_bernard": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.erik_comas": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jean_alesi": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.martin_brundle": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.olivier_grouillard": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.pierluigi_martini": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.riccardo_patrese": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.stefano_modena": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "7": {
-      "driver.alain_prost": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.eric_bernard": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.erik_comas": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jj_lehto": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mark_blundell": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.martin_brundle": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.riccardo_patrese": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.stefan_johansson": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "8": {
-      "driver.emanuele_pirro": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.erik_comas": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.jj_lehto": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.martin_brundle": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.nigel_mansell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      }
-    },
-    "9": {
-      "driver.andrea_de_cesaris": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.eric_bernard": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.eric_van_de_poele": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.erik_comas": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.jj_lehto": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.martin_brundle": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.nigel_mansell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.riccardo_patrese": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.stefano_modena": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "10": {
-      "driver.andrea_de_cesaris": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.erik_comas": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jj_lehto": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.martin_brundle": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.olivier_grouillard": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.stefano_modena": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "11": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.alain_prost": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.alex_caffi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.eric_van_de_poele": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.erik_comas": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.ivan_capelli": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.martin_brundle": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.nicola_larini": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.olivier_grouillard": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "12": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.andrea_de_cesaris": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.eric_bernard": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.erik_comas": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.jj_lehto": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.nicola_larini": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.olivier_grouillard": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.riccardo_patrese": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.stefano_modena": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      }
-    },
-    "13": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.andrea_de_cesaris": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.eric_bernard": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.eric_van_de_poele": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jj_lehto": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.michele_alboreto": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.nicola_larini": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.riccardo_patrese": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.stefano_modena": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "14": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.alain_prost": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.andrea_de_cesaris": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.eric_bernard": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.eric_van_de_poele": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.erik_comas": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.ivan_capelli": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.martin_brundle": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.michele_alboreto": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.nicola_larini": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.riccardo_patrese": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.stefano_modena": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "15": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.andrea_de_cesaris": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.emanuele_pirro": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.erik_comas": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.gabriele_tarquini": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jj_lehto": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mauricio_gugelmin": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.nicola_larini": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.riccardo_patrese": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.stefano_modena": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.thierry_boutsen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "16": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.alex_caffi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.erik_comas": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jj_lehto": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mark_blundell": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.martin_brundle": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.michele_alboreto": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.nelson_piquet": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.nicola_larini": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.pierluigi_martini": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.riccardo_patrese": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.satoru_nakajima": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
+      "aiOverrides": {
+        "driver.gerhard_berger": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.95
+        }
       }
     }
-  }
+  ]
 }
