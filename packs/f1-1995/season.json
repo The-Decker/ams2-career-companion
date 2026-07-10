@@ -82,38 +82,39 @@
       },
       "laps": 71,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.aguri_suzuki",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.karl_wendlinger",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-03-26",
           "weatherSlots": [
@@ -125,7 +126,156 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.aguri_suzuki": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.79,
+          "defending": 0.61,
+          "stamina": 0.9,
+          "consistency": 0.92
+        },
+        "driver.andrea_montermini": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.68,
+          "defending": 0.63,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": 0.21
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": -0.32
+        },
+        "driver.david_coulthard": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.97,
+          "defending": 0.95,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.84
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.91,
+          "vehicleReliability": -0.27
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.95,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.84
+        },
+        "driver.gianni_morbidelli": {
+          "qualifyingSkill": 0.82,
+          "vehicleReliability": -0.25
+        },
+        "driver.heinz_harald_frentzen": {
+          "qualifyingSkill": 0.81,
+          "vehicleReliability": 0.23
+        },
+        "driver.jean_alesi": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.93,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.81
+        },
+        "driver.johnny_herbert": {
+          "qualifyingSkill": 0.96,
+          "aggression": 0.92,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.08
+        },
+        "driver.karl_wendlinger": {
+          "qualifyingSkill": 0.72,
+          "vehicleReliability": -0.16
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.74,
+          "vehicleReliability": -0.31
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.89,
+          "defending": 0.96,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.99,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.81
+        },
+        "driver.mika_hakkinen": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.92,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.84,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.olivier_panis": {
+          "qualifyingSkill": 0.88,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.07,
+          "avoidanceOfForcedMistakes": 0.06
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.64,
+          "defending": 0.57,
+          "stamina": 0.92,
+          "consistency": 0.91
+        },
+        "driver.pierluigi_martini": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -0.11
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.67,
+          "aggression": 0.93,
+          "avoidanceOfMistakes": 0.2,
+          "avoidanceOfForcedMistakes": 0.06
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -0.29
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.39
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.85,
+          "aggression": 0.95,
+          "avoidanceOfMistakes": 0.07,
+          "avoidanceOfForcedMistakes": 0.1
+        }
+      }
     },
     {
       "round": 2,
@@ -178,38 +328,39 @@
       },
       "laps": 72,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.aguri_suzuki",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.karl_wendlinger",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-04-09",
           "weatherSlots": [
@@ -221,7 +372,166 @@
         "notes": "AMS2 ships the Buenos Aires No.6 layout used for the 1995 Argentine GP; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.aguri_suzuki": {
+          "qualifyingSkill": 0.72,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.11
+        },
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.68,
+          "aggression": 0.96,
+          "avoidanceOfMistakes": 0.17,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.67,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.09
+        },
+        "driver.damon_hill": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.99,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.86
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": -0.16
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.96,
+          "vehicleReliability": -0.16
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.91,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.gianni_morbidelli": {
+          "qualifyingSkill": 0.84,
+          "vehicleReliability": -0.61
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.89,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.85,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.jean_alesi": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.93,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.82
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.85,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.93,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.karl_wendlinger": {
+          "qualifyingSkill": 0.69,
+          "aggression": 0.97,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.82,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.16,
+          "avoidanceOfForcedMistakes": 0.14
+        },
+        "driver.mark_blundell": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -0.55
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.97,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.92,
+          "avoidanceOfForcedMistakes": 0.91
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.95,
+          "aggression": 0.92,
+          "avoidanceOfMistakes": 0.07,
+          "avoidanceOfForcedMistakes": 0.19
+        },
+        "driver.mika_salo": {
+          "qualifyingSkill": 0.92,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.19
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.74,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.93,
+          "avoidanceOfForcedMistakes": 0.81
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.64,
+          "defending": 0.59,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.pierluigi_martini": {
+          "qualifyingSkill": 0.78,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.15,
+          "avoidanceOfForcedMistakes": 0.16
+        },
+        "driver.roberto_moreno": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.65,
+          "defending": 0.58,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.88,
+          "vehicleReliability": 0.11
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.62,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.17,
+          "avoidanceOfForcedMistakes": 0.18
+        },
+        "driver.ukyo_katayama": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.79,
+          "defending": 0.6,
+          "stamina": 0.92,
+          "consistency": 0.91
+        }
+      }
     },
     {
       "round": 3,
@@ -272,38 +582,39 @@
       },
       "laps": 63,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.mika_hakkinen",
-          "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.aguri_suzuki",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.karl_wendlinger",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-04-30",
           "weatherSlots": [
@@ -315,7 +626,153 @@
         "notes": "No 1995 Imola layout in AMS2; the venue is real, so the historical lap count is kept on the era-adjacent 1988 layout. Imola 1988\u0027s AI cap is 25, so the 26-car San Marino entry is capped at 24 opponents plus the player here."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.aguri_suzuki": {
+          "qualifyingSkill": 0.78
+        },
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.65,
+          "vehicleReliability": -0.27
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.68,
+          "vehicleReliability": 0.08
+        },
+        "driver.damon_hill": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.96,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.97,
+          "vehicleReliability": -0.21
+        },
+        "driver.eddie_irvine": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.92,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.83
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.99,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.83
+        },
+        "driver.gianni_morbidelli": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.85,
+          "defending": 0.59,
+          "stamina": 0.9,
+          "consistency": 0.89
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.81,
+          "defending": 0.57,
+          "stamina": 0.91,
+          "consistency": 0.91
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": -0.12
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.91,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.88
+        },
+        "driver.karl_wendlinger": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.69,
+          "defending": 0.64,
+          "stamina": 0.91,
+          "consistency": 0.89
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": -0.25
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.91
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.93,
+          "vehicleReliability": 0.24
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.82,
+          "defending": 0.61,
+          "stamina": 0.89,
+          "consistency": 0.91
+        },
+        "driver.nigel_mansell": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": 0.03
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.84,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.75
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.62,
+          "vehicleReliability": -0.47
+        },
+        "driver.pierluigi_martini": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.74,
+          "defending": 0.6,
+          "stamina": 0.9,
+          "consistency": 0.91
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.64,
+          "vehicleReliability": 0.12
+        },
+        "driver.rubens_barrichello": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.88,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.83
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.72,
+          "vehicleReliability": -0.49
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.79,
+          "vehicleReliability": -0.57
+        }
+      }
     },
     {
       "round": 4,
@@ -368,38 +825,39 @@
       },
       "laps": 65,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
+          "driver.nigel_mansell",
           "driver.mika_hakkinen",
-          "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.karl_wendlinger",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-05-14",
           "weatherSlots": [
@@ -411,7 +869,157 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.67,
+          "vehicleReliability": 0.07
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.65,
+          "vehicleReliability": -0.61
+        },
+        "driver.damon_hill": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.95,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.91
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.96,
+          "vehicleReliability": 0.23
+        },
+        "driver.eddie_irvine": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.93,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.97,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.86
+        },
+        "driver.gianni_morbidelli": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.81,
+          "defending": 0.57,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.84,
+          "defending": 0.62,
+          "stamina": 0.9,
+          "consistency": 0.92
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.99,
+          "vehicleReliability": -0.02
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.92,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.karl_wendlinger": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.71,
+          "defending": 0.65,
+          "stamina": 0.9,
+          "consistency": 0.9
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.27
+        },
+        "driver.martin_brundle": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.85,
+          "defending": 0.56,
+          "stamina": 0.92,
+          "consistency": 0.91
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.94
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -0.08
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.82,
+          "defending": 0.56,
+          "stamina": 0.92,
+          "consistency": 0.9
+        },
+        "driver.nigel_mansell": {
+          "qualifyingSkill": 0.88,
+          "vehicleReliability": -0.13
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.79,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.81
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.62,
+          "vehicleReliability": -0.13
+        },
+        "driver.pierluigi_martini": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.72,
+          "defending": 0.58,
+          "stamina": 0.91,
+          "consistency": 0.91
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.64,
+          "vehicleReliability": -0.36
+        },
+        "driver.rubens_barrichello": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.91,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.92,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.74,
+          "vehicleReliability": -0.55
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": 0.03
+        }
+      }
     },
     {
       "round": 5,
@@ -464,38 +1072,39 @@
       },
       "laps": 78,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-05-28",
           "weatherSlots": [
@@ -507,7 +1116,156 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.64,
+          "vehicleReliability": 0
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.6
+        },
+        "driver.damon_hill": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 1,
+          "defending": 0.99,
+          "stamina": 0.97,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.76
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.97,
+          "vehicleReliability": -0.45
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": 0.17
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.96,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.76
+        },
+        "driver.gianni_morbidelli": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.82,
+          "defending": 0.65,
+          "stamina": 0.89,
+          "consistency": 0.9
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.81,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.86
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.95,
+          "aggression": 0.93,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.14
+        },
+        "driver.jean_christophe_boullion": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.72,
+          "defending": 0.62,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.92,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -0.35
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.88,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.martin_brundle": {
+          "qualifyingSkill": 0.91,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.09,
+          "avoidanceOfForcedMistakes": 0.08
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.99,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.93,
+          "vehicleReliability": -0.11
+        },
+        "driver.mika_salo": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": 0.18
+        },
+        "driver.olivier_panis": {
+          "qualifyingSkill": 0.84,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.68,
+          "defending": 0.56,
+          "stamina": 0.89,
+          "consistency": 0.91
+        },
+        "driver.pierluigi_martini": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.74,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.65,
+          "vehicleReliability": 0.07
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.85,
+          "vehicleReliability": -0.24
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.62,
+          "vehicleReliability": -0.64
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.12,
+          "avoidanceOfForcedMistakes": 0.12
+        }
+      }
     },
     {
       "round": 6,
@@ -560,38 +1318,39 @@
       },
       "laps": 68,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-06-11",
           "weatherSlots": [
@@ -603,7 +1362,157 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.03
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": -0.14
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 0.99,
+          "vehicleReliability": 0.06
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.97,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.09,
+          "avoidanceOfForcedMistakes": 0.11
+        },
+        "driver.eddie_irvine": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.91,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.9
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 0.96,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.16,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.gianni_morbidelli": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.82,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.heinz_harald_frentzen": {
+          "qualifyingSkill": 0.84,
+          "vehicleReliability": -0.07
+        },
+        "driver.jean_alesi": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.95,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.93,
+          "avoidanceOfForcedMistakes": 0.91
+        },
+        "driver.jean_christophe_boullion": {
+          "qualifyingSkill": 0.74,
+          "aggression": 0.96,
+          "avoidanceOfMistakes": 0.18,
+          "avoidanceOfForcedMistakes": 0.06
+        },
+        "driver.johnny_herbert": {
+          "qualifyingSkill": 0.93,
+          "aggression": 0.97,
+          "avoidanceOfMistakes": 0.13,
+          "avoidanceOfForcedMistakes": 0.13
+        },
+        "driver.luca_badoer": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.72,
+          "defending": 0.55,
+          "stamina": 0.9,
+          "consistency": 0.91
+        },
+        "driver.mark_blundell": {
+          "qualifyingSkill": 0.88,
+          "vehicleReliability": 0.16
+        },
+        "driver.martin_brundle": {
+          "qualifyingSkill": 0.81,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.2,
+          "avoidanceOfForcedMistakes": 0.19
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 1,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.92,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.09,
+          "avoidanceOfForcedMistakes": 0.14
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.79,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.85,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.65,
+          "vehicleReliability": -0.08
+        },
+        "driver.pierluigi_martini": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -0.23
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.67,
+          "vehicleReliability": -0.49
+        },
+        "driver.rubens_barrichello": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.89,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.taki_inoue": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.68,
+          "defending": 0.57,
+          "stamina": 0.9,
+          "consistency": 0.89
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -0.46
+        }
+      }
     },
     {
       "round": 7,
@@ -662,38 +1571,39 @@
       },
       "laps": 73,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-07-02",
           "weatherSlots": [
@@ -758,38 +1668,39 @@
       },
       "laps": 61,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-07-16",
           "weatherSlots": [
@@ -801,7 +1712,163 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.65,
+          "aggression": 0.97,
+          "avoidanceOfMistakes": 0.17,
+          "avoidanceOfForcedMistakes": 0.08
+        },
+        "driver.bertrand_gachot": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.69,
+          "defending": 0.6,
+          "stamina": 0.9,
+          "consistency": 0.9
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 1,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.07,
+          "avoidanceOfForcedMistakes": 0.12
+        },
+        "driver.david_coulthard": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.97,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.94
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.92,
+          "vehicleReliability": -0.6
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 0.96,
+          "vehicleReliability": -0.41
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.84,
+          "defending": 0.96,
+          "stamina": 0.97,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.77
+        },
+        "driver.jean_alesi": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.93,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.jean_christophe_boullion": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.78,
+          "defending": 0.58,
+          "stamina": 0.89,
+          "consistency": 0.89
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.95,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.luca_badoer": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.74,
+          "defending": 0.6,
+          "stamina": 0.89,
+          "consistency": 0.92
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.88,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.79
+        },
+        "driver.martin_brundle": {
+          "qualifyingSkill": 0.85,
+          "aggression": 0.93,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.13
+        },
+        "driver.max_papis": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -0.31
+        },
+        "driver.michael_schumacher": {
+          "qualifyingSkill": 0.99,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.17
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.91,
+          "vehicleReliability": 0.12
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.67,
+          "defending": 0.55,
+          "stamina": 0.89,
+          "consistency": 0.92
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.82,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": 0.1
+        },
+        "driver.pierluigi_martini": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.79,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.88
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.68,
+          "vehicleReliability": -0.38
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.89,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.09,
+          "avoidanceOfForcedMistakes": 0.05
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.72,
+          "aggression": 1,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.18
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.81,
+          "vehicleReliability": -0.35
+        }
+      }
     },
     {
       "round": 9,
@@ -852,38 +1919,39 @@
       },
       "laps": 45,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.giovanni_lavaggi",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pierluigi_martini",
+          "driver.luca_badoer",
+          "driver.aguri_suzuki",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-07-30",
           "weatherSlots": [
@@ -895,7 +1963,144 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.aguri_suzuki": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.74,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.andrea_montermini": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.67,
+          "defending": 0.65,
+          "stamina": 0.9,
+          "consistency": 0.89
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 1,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.06,
+          "avoidanceOfForcedMistakes": 0.08
+        },
+        "driver.david_coulthard": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.97,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.93,
+          "vehicleReliability": -0.43
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.96,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.giovanni_lavaggi": {
+          "qualifyingSkill": 0.65,
+          "vehicleReliability": 0.15
+        },
+        "driver.heinz_harald_frentzen": {
+          "qualifyingSkill": 0.85,
+          "vehicleReliability": -0.16
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.88,
+          "vehicleReliability": 0.22
+        },
+        "driver.jean_christophe_boullion": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.81,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.76
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.89,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.83
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": 0.02
+        },
+        "driver.mark_blundell": {
+          "qualifyingSkill": 0.91,
+          "vehicleReliability": -0.44
+        },
+        "driver.max_papis": {
+          "qualifyingSkill": 0.79,
+          "vehicleReliability": -0.47
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.99,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.92,
+          "vehicleReliability": -0.58
+        },
+        "driver.mika_salo": {
+          "qualifyingSkill": 0.82,
+          "vehicleReliability": -0.34
+        },
+        "driver.olivier_panis": {
+          "qualifyingSkill": 0.84,
+          "vehicleReliability": 0.1
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.07
+        },
+        "driver.pierluigi_martini": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": -0.47
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.68,
+          "vehicleReliability": -0.58
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": 0.24
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.72,
+          "vehicleReliability": 0.01
+        },
+        "driver.ukyo_katayama": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.75,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.86,
+          "avoidanceOfForcedMistakes": 0.94
+        }
+      }
     },
     {
       "round": 10,
@@ -946,38 +2151,39 @@
       },
       "laps": 77,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.giovanni_lavaggi",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-08-13",
           "weatherSlots": [
@@ -989,7 +2195,155 @@
         "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.68,
+          "defending": 0.57,
+          "stamina": 0.9,
+          "consistency": 0.91
+        },
+        "driver.damon_hill": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.79
+        },
+        "driver.david_coulthard": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.99,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.78
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.92,
+          "vehicleReliability": 0.03
+        },
+        "driver.gerhard_berger": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.96,
+          "defending": 0.97,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.76
+        },
+        "driver.giovanni_lavaggi": {
+          "qualifyingSkill": 0.65,
+          "aggression": 0.96,
+          "avoidanceOfMistakes": 0.17,
+          "avoidanceOfForcedMistakes": 0.11
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.85,
+          "defending": 0.96,
+          "stamina": 0.97,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.93,
+          "vehicleReliability": -0.49
+        },
+        "driver.jean_christophe_boullion": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.72,
+          "defending": 0.63,
+          "stamina": 0.89,
+          "consistency": 0.9
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.89,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.luca_badoer": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.84,
+          "defending": 0.57,
+          "stamina": 0.91,
+          "consistency": 0.91
+        },
+        "driver.mark_blundell": {
+          "qualifyingSkill": 0.82,
+          "vehicleReliability": 0.14
+        },
+        "driver.martin_brundle": {
+          "qualifyingSkill": 0.91,
+          "vehicleReliability": -0.46
+        },
+        "driver.max_papis": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": -0.36
+        },
+        "driver.michael_schumacher": {
+          "qualifyingSkill": 0.97,
+          "vehicleReliability": -0.43
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": -0.26
+        },
+        "driver.mika_salo": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -0.16
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.88,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.9
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.67,
+          "vehicleReliability": -0.27
+        },
+        "driver.pedro_lamy": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.79,
+          "defending": 0.57,
+          "stamina": 0.91,
+          "consistency": 0.91
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.21
+        },
+        "driver.rubens_barrichello": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.81,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.74,
+          "vehicleReliability": -0.52
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.75,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.18,
+          "avoidanceOfForcedMistakes": 0.09
+        }
+      }
     },
     {
       "round": 11,
@@ -1040,38 +2394,39 @@
       },
       "laps": 44,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.giovanni_lavaggi",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-08-27",
           "weatherSlots": [
@@ -1083,7 +2438,168 @@
         "notes": "No 1995 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1993 layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.44
+        },
+        "driver.damon_hill": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.91,
+          "defending": 0.97,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.92,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": -0.36
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.92,
+          "vehicleReliability": 0.21
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": -0.35
+        },
+        "driver.giovanni_lavaggi": {
+          "qualifyingSkill": 0.67,
+          "vehicleReliability": 0
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.88,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.78
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.99,
+          "vehicleReliability": -0.12
+        },
+        "driver.jean_christophe_boullion": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.81,
+          "defending": 0.62,
+          "stamina": 0.89,
+          "consistency": 0.89
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.96,
+          "defending": 0.99,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.88
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.72,
+          "aggression": 0.95,
+          "avoidanceOfMistakes": 0.17,
+          "avoidanceOfForcedMistakes": 0.18
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.93,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.martin_brundle": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.82,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.max_papis": {
+          "qualifyingSkill": 0.71,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.78,
+          "defending": 0.99,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.85,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.97,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.11,
+          "avoidanceOfForcedMistakes": 0.09
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.85,
+          "defending": 0.59,
+          "stamina": 0.91,
+          "consistency": 0.92
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.89,
+          "defending": 0.65,
+          "stamina": 0.92,
+          "consistency": 0.9
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.65,
+          "defending": 0.65,
+          "stamina": 0.9,
+          "consistency": 0.9
+        },
+        "driver.pedro_lamy": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.75,
+          "defending": 0.64,
+          "stamina": 0.9,
+          "consistency": 0.9
+        },
+        "driver.roberto_moreno": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.68,
+          "defending": 0.55,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.rubens_barrichello": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.84,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.86
+        },
+        "driver.taki_inoue": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.74,
+          "defending": 0.63,
+          "stamina": 0.89,
+          "consistency": 0.9
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.15,
+          "avoidanceOfForcedMistakes": 0.09
+        }
+      }
     },
     {
       "round": 12,
@@ -1134,38 +2650,39 @@
       },
       "laps": 53,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.giovanni_lavaggi",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-09-10",
           "weatherSlots": [
@@ -1177,7 +2694,162 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.69,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.09,
+          "avoidanceOfForcedMistakes": 0.09
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 0.96,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.16,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": 0.06
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.84,
+          "vehicleReliability": -0.34
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 0.97,
+          "vehicleReliability": -0.4
+        },
+        "driver.giovanni_lavaggi": {
+          "qualifyingSkill": 0.65,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.17,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.88,
+          "defending": 0.99,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.92,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": -0.04
+        },
+        "driver.jean_christophe_boullion": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.81,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.8
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.91,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.93,
+          "avoidanceOfForcedMistakes": 0.84
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.74,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.12
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.89,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.martin_brundle": {
+          "qualifyingSkill": 0.85,
+          "vehicleReliability": -0.57
+        },
+        "driver.max_papis": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.79,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.michael_schumacher": {
+          "qualifyingSkill": 0.99,
+          "aggression": 0.96,
+          "avoidanceOfMistakes": 0.07,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.mika_hakkinen": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.92,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.78,
+          "defending": 0.98,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.olivier_panis": {
+          "qualifyingSkill": 0.82,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.15,
+          "avoidanceOfForcedMistakes": 0.13
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.67,
+          "defending": 0.6,
+          "stamina": 0.9,
+          "consistency": 0.91
+        },
+        "driver.pedro_lamy": {
+          "qualifyingSkill": 0.72,
+          "vehicleReliability": 0.13
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.68,
+          "aggression": 0.93,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.93,
+          "vehicleReliability": -0.58
+        },
+        "driver.taki_inoue": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.71,
+          "defending": 0.58,
+          "stamina": 0.91,
+          "consistency": 0.91
+        },
+        "driver.ukyo_katayama": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.75,
+          "defending": 0.55,
+          "stamina": 0.89,
+          "consistency": 0.9
+        }
+      }
     },
     {
       "round": 13,
@@ -1228,38 +2900,39 @@
       },
       "laps": 71,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.jean_denis_deletraz",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-09-24",
           "weatherSlots": [
@@ -1322,38 +2995,39 @@
       },
       "laps": 67,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.gabriele_tarquini",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
-          "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
+          "driver.mika_hakkinen",
+          "driver.max_papis",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.jean_denis_deletraz",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-10-01",
           "weatherSlots": [
@@ -1365,7 +3039,175 @@
         "notes": "AMS2 ships the modern N\u00FCrburgring GP-Strecke; the venue is real and the GP layout is largely as raced in 1995, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.71,
+          "vehicleReliability": -0.05
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 0.99,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.11,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.david_coulthard": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 1,
+          "defending": 0.98,
+          "stamina": 0.99,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.eddie_irvine": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.95,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.gabriele_tarquini": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.72,
+          "defending": 0.59,
+          "stamina": 0.91,
+          "consistency": 0.92
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 0.96,
+          "vehicleReliability": -0.51
+        },
+        "driver.heinz_harald_frentzen": {
+          "qualifyingSkill": 0.91,
+          "aggression": 0.92,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.09
+        },
+        "driver.jean_alesi": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.93,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.76
+        },
+        "driver.jean_christophe_boullion": {
+          "qualifyingSkill": 0.82,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.11
+        },
+        "driver.jean_denis_deletraz": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.65,
+          "defending": 0.38,
+          "stamina": 0.84,
+          "consistency": 0.84,
+          "avoidanceOfMistakes": 0.6,
+          "avoidanceOfForcedMistakes": 0.41
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.92,
+          "defending": 0.96,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.75
+        },
+        "driver.luca_badoer": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.74,
+          "defending": 0.56,
+          "stamina": 0.91,
+          "consistency": 0.91
+        },
+        "driver.mark_blundell": {
+          "qualifyingSkill": 0.88,
+          "aggression": 0.9,
+          "avoidanceOfMistakes": 0.18,
+          "avoidanceOfForcedMistakes": 0.16
+        },
+        "driver.martin_brundle": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.84,
+          "defending": 0.96,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.94
+        },
+        "driver.max_papis": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.75,
+          "defending": 0.59,
+          "stamina": 0.89,
+          "consistency": 0.9
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.97,
+          "defending": 0.99,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.83
+        },
+        "driver.mika_hakkinen": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.89,
+          "defending": 0.62,
+          "stamina": 0.89,
+          "consistency": 0.92
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.79,
+          "defending": 0.59,
+          "stamina": 0.9,
+          "consistency": 0.91
+        },
+        "driver.olivier_panis": {
+          "qualifyingSkill": 0.81,
+          "aggression": 0.96,
+          "avoidanceOfMistakes": 0.11,
+          "avoidanceOfForcedMistakes": 0.18
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.68,
+          "defending": 0.59,
+          "stamina": 0.89,
+          "consistency": 0.9
+        },
+        "driver.pedro_lamy": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.78,
+          "defending": 0.65,
+          "stamina": 0.91,
+          "consistency": 0.92
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.67,
+          "vehicleReliability": -0.1
+        },
+        "driver.rubens_barrichello": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.85,
+          "defending": 0.99,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.87
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.69,
+          "vehicleReliability": -0.46
+        }
+      }
     },
     {
       "round": 15,
@@ -1423,38 +3265,39 @@
       },
       "laps": 73,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.jan_magnussen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.aguri_suzuki",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.jean_christophe_boullion",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-10-22",
           "weatherSlots": [
@@ -1519,38 +3362,39 @@
       },
       "laps": 53,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.aguri_suzuki",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.karl_wendlinger",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-10-29",
           "weatherSlots": [
@@ -1562,7 +3406,170 @@
         "notes": "Suzuka appears in AMS2 as Kansai; the venue is real, so the historical lap count is kept on the classic (pre-2003) layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.aguri_suzuki": {
+          "qualifyingSkill": 0.82,
+          "aggression": 0.97,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.14
+        },
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.71,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.16
+        },
+        "driver.bertrand_gachot": {
+          "qualifyingSkill": 0.67,
+          "vehicleReliability": 0.01
+        },
+        "driver.damon_hill": {
+          "qualifyingSkill": 0.96,
+          "aggression": 0.97,
+          "avoidanceOfMistakes": 0.1,
+          "avoidanceOfForcedMistakes": 0.09
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.93,
+          "aggression": 0.94,
+          "avoidanceOfMistakes": 0.19,
+          "avoidanceOfForcedMistakes": 0.07
+        },
+        "driver.eddie_irvine": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.92,
+          "defending": 0.95,
+          "stamina": 0.98,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.95,
+          "avoidanceOfForcedMistakes": 0.88
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": -0.29
+        },
+        "driver.gianni_morbidelli": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.2,
+          "avoidanceOfForcedMistakes": 0.18
+        },
+        "driver.heinz_harald_frentzen": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.91,
+          "defending": 0.64,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.99,
+          "vehicleReliability": -0.54
+        },
+        "driver.johnny_herbert": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.89,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.77
+        },
+        "driver.karl_wendlinger": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.78,
+          "defending": 0.59,
+          "stamina": 0.9,
+          "consistency": 0.9
+        },
+        "driver.luca_badoer": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.74,
+          "defending": 0.56,
+          "stamina": 0.9,
+          "consistency": 0.91
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.65,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.92,
+          "avoidanceOfForcedMistakes": 0.91
+        },
+        "driver.michael_schumacher": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1,
+          "defending": 0.98,
+          "stamina": 0.97,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.83
+        },
+        "driver.mika_hakkinen": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.97,
+          "defending": 0.99,
+          "stamina": 0.97,
+          "consistency": 0.99,
+          "avoidanceOfMistakes": 0.89,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.84,
+          "defending": 0.97,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.84
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.85,
+          "defending": 0.95,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.82
+        },
+        "driver.pedro_diniz": {
+          "qualifyingSkill": 0.69,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.11,
+          "avoidanceOfForcedMistakes": 0.1
+        },
+        "driver.pedro_lamy": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.75,
+          "defending": 0.58,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.68,
+          "vehicleReliability": -0.48
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.88,
+          "aggression": 0.96,
+          "avoidanceOfMistakes": 0.08,
+          "avoidanceOfForcedMistakes": 0.06
+        },
+        "driver.taki_inoue": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.72,
+          "defending": 0.58,
+          "stamina": 0.91,
+          "consistency": 0.9
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.81,
+          "aggression": 0.92,
+          "avoidanceOfMistakes": 0.09,
+          "avoidanceOfForcedMistakes": 0.12
+        }
+      }
     },
     {
       "round": 17,
@@ -1613,38 +3620,39 @@
       },
       "laps": 81,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.michael_schumacher",
+          "driver.johnny_herbert",
+          "driver.ukyo_katayama",
+          "driver.mika_salo",
           "driver.damon_hill",
           "driver.david_coulthard",
-          "driver.jean_alesi",
-          "driver.johnny_herbert",
-          "driver.gerhard_berger",
-          "driver.mika_hakkinen",
           "driver.mark_blundell",
-          "driver.eddie_irvine",
-          "driver.olivier_panis",
-          "driver.heinz_harald_frentzen",
-          "driver.rubens_barrichello",
-          "driver.aguri_suzuki",
-          "driver.mika_salo",
+          "driver.mika_hakkinen",
           "driver.gianni_morbidelli",
-          "driver.ukyo_katayama",
-          "driver.andrea_montermini",
-          "driver.bertrand_gachot",
-          "driver.luca_badoer",
           "driver.taki_inoue",
-          "driver.jos_verstappen",
-          "driver.pedro_diniz",
-          "driver.karl_wendlinger",
           "driver.domenico_schiattarella",
-          "driver.roberto_moreno"
+          "driver.jos_verstappen",
+          "driver.rubens_barrichello",
+          "driver.eddie_irvine",
+          "driver.bertrand_gachot",
+          "driver.andrea_montermini",
+          "driver.pedro_diniz",
+          "driver.roberto_moreno",
+          "driver.pedro_lamy",
+          "driver.luca_badoer",
+          "driver.martin_brundle",
+          "driver.olivier_panis",
+          "driver.jean_alesi",
+          "driver.gerhard_berger",
+          "driver.karl_wendlinger",
+          "driver.heinz_harald_frentzen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1995-11-12",
           "weatherSlots": [
@@ -1656,881 +3664,158 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
-    }
-  ],
-  "driverForm": {
-    "1": {
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.domenico_schiattarella": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.jos_verstappen": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.olivier_panis": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "2": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.david_coulthard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.domenico_schiattarella": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jos_verstappen": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.karl_wendlinger": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.luca_badoer": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.olivier_panis": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.taki_inoue": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "3": {
-      "driver.andrea_montermini": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.damon_hill": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.eddie_irvine": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jos_verstappen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.karl_wendlinger": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.luca_badoer": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.michael_schumacher": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.taki_inoue": {
-        "qualifyingSkill": 0.02
-      }
-    },
-    "4": {
-      "driver.bertrand_gachot": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.damon_hill": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.david_coulthard": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.gerhard_berger": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jean_alesi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.jos_verstappen": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.04
-      },
-      "driver.luca_badoer": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.michael_schumacher": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.olivier_panis": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.taki_inoue": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "5": {
-      "driver.andrea_montermini": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.bertrand_gachot": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.domenico_schiattarella": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jos_verstappen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.luca_badoer": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mika_salo": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.taki_inoue": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "6": {
-      "driver.andrea_montermini": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.luca_badoer": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.michael_schumacher": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.pedro_diniz": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.taki_inoue": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      }
-    },
-    "7": {
-      "driver.andrea_montermini": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.04
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jean_alesi": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.olivier_panis": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.taki_inoue": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      }
-    },
-    "8": {
-      "driver.andrea_montermini": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.bertrand_gachot": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.eddie_irvine": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_salo": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.olivier_panis": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.taki_inoue": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "9": {
-      "driver.aguri_suzuki": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.jean_alesi": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.luca_badoer": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.taki_inoue": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "10": {
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.luca_badoer": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.mika_salo": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.olivier_panis": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.taki_inoue": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "11": {
-      "driver.andrea_montermini": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.damon_hill": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.david_coulthard": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.eddie_irvine": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.gerhard_berger": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.jean_alesi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.luca_badoer": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.michael_schumacher": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.olivier_panis": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.pedro_diniz": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.taki_inoue": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "12": {
-      "driver.andrea_montermini": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.damon_hill": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.david_coulthard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.gerhard_berger": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mika_salo": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.olivier_panis": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "13": {
-      "driver.andrea_montermini": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.david_coulthard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jean_alesi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.taki_inoue": {
-        "qualifyingSkill": 0.02
-      }
-    },
-    "14": {
-      "driver.andrea_montermini": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.david_coulthard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_hakkinen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.olivier_panis": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "15": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.bertrand_gachot": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.david_coulthard": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.eddie_irvine": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.gianni_morbidelli": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.jean_alesi": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.luca_badoer": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_salo": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.olivier_panis": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "16": {
-      "driver.aguri_suzuki": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.andrea_montermini": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.damon_hill": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.david_coulthard": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.eddie_irvine": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.gianni_morbidelli": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.jean_alesi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.johnny_herbert": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.karl_wendlinger": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.mark_blundell": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.michael_schumacher": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.mika_salo": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.taki_inoue": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.ukyo_katayama": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      }
-    },
-    "17": {
-      "driver.damon_hill": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.heinz_harald_frentzen": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.karl_wendlinger": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.luca_badoer": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mark_blundell": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.mika_hakkinen": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.pedro_diniz": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.roberto_moreno": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.rubens_barrichello": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.taki_inoue": {
-        "qualifyingSkill": 0.02
+      "aiOverrides": {
+        "driver.andrea_montermini": {
+          "qualifyingSkill": 0.68,
+          "vehicleReliability": 0.09
+        },
+        "driver.bertrand_gachot": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.67,
+          "defending": 0.56,
+          "stamina": 0.9,
+          "consistency": 0.9
+        },
+        "driver.damon_hill": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.88,
+          "avoidanceOfForcedMistakes": 0.88
+        },
+        "driver.david_coulthard": {
+          "qualifyingSkill": 0.99,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.11,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.eddie_irvine": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -0.64
+        },
+        "driver.gerhard_berger": {
+          "qualifyingSkill": 0.96,
+          "vehicleReliability": -0.1
+        },
+        "driver.gianni_morbidelli": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.82,
+          "defending": 0.99,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.9,
+          "avoidanceOfForcedMistakes": 0.93
+        },
+        "driver.heinz_harald_frentzen": {
+          "qualifyingSkill": 0.93,
+          "vehicleReliability": -0.16
+        },
+        "driver.jean_alesi": {
+          "qualifyingSkill": 0.95,
+          "aggression": 0.91,
+          "avoidanceOfMistakes": 0.2,
+          "avoidanceOfForcedMistakes": 0.1
+        },
+        "driver.johnny_herbert": {
+          "qualifyingSkill": 0.91,
+          "vehicleReliability": -0.04
+        },
+        "driver.karl_wendlinger": {
+          "qualifyingSkill": 0.74,
+          "vehicleReliability": -0.36
+        },
+        "driver.luca_badoer": {
+          "qualifyingSkill": 0.79,
+          "vehicleReliability": -0.4
+        },
+        "driver.mark_blundell": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.88,
+          "defending": 0.97,
+          "stamina": 0.97,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.92,
+          "avoidanceOfForcedMistakes": 0.82
+        },
+        "driver.martin_brundle": {
+          "qualifyingSkill": 0.85,
+          "aggression": 0.98,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.17
+        },
+        "driver.michael_schumacher": {
+          "qualifyingSkill": 0.97,
+          "aggression": 0.97,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.1
+        },
+        "driver.mika_hakkinen": {
+          "qualifyingSkill": 0.65,
+          "aggression": 0.95,
+          "avoidanceOfMistakes": 0.18,
+          "avoidanceOfForcedMistakes": 0.17
+        },
+        "driver.mika_salo": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.81,
+          "defending": 0.97,
+          "stamina": 0.98,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.94,
+          "avoidanceOfForcedMistakes": 0.89
+        },
+        "driver.olivier_panis": {
+          "raceSkill": 0.99,
+          "qualifyingSkill": 0.84,
+          "defending": 0.95,
+          "stamina": 0.99,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.91,
+          "avoidanceOfForcedMistakes": 0.88
+        },
+        "driver.pedro_diniz": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.69,
+          "defending": 0.98,
+          "stamina": 0.98,
+          "consistency": 0.98,
+          "avoidanceOfMistakes": 0.87,
+          "avoidanceOfForcedMistakes": 0.85
+        },
+        "driver.pedro_lamy": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.75,
+          "defending": 0.97,
+          "stamina": 0.99,
+          "consistency": 0.97,
+          "avoidanceOfMistakes": 0.93,
+          "avoidanceOfForcedMistakes": 0.92
+        },
+        "driver.roberto_moreno": {
+          "qualifyingSkill": 0.71,
+          "aggression": 0.99,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.1
+        },
+        "driver.rubens_barrichello": {
+          "qualifyingSkill": 0.92,
+          "aggression": 0.93,
+          "avoidanceOfMistakes": 0.07,
+          "avoidanceOfForcedMistakes": 0.05
+        },
+        "driver.taki_inoue": {
+          "qualifyingSkill": 0.72,
+          "aggression": 0.95,
+          "avoidanceOfMistakes": 0.14,
+          "avoidanceOfForcedMistakes": 0.11
+        },
+        "driver.ukyo_katayama": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -0.34
+        }
       }
     }
-  }
+  ]
 }
