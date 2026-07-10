@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Focusable="False">
     <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <StackPanel MaxWidth="900" HorizontalAlignment="Left" Margin="0,0,0,16">
+        <!-- proportional page cap (was a hard 900): expanded cards breathe at 2560 -->
+        <StackPanel HorizontalAlignment="Left" Margin="0,0,0,16"
+                    MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.7|900|1400}">
 
             <TextBlock Text="Season calendar" Style="{StaticResource H2}" />
             <TextBlock Text="{Binding HeaderNote}" Style="{StaticResource Muted}" Margin="0,4,0,0" />
@@ -96,7 +99,12 @@
                                     <TextBlock Text="ORIGINAL CIRCUIT" Style="{StaticResource Faint}" FontSize="11" Margin="0,0,0,8" />
 
                                     <DockPanel Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
-                                        <Viewbox DockPanel.Dock="Left" Width="168" Height="168" Margin="0,0,20,0" VerticalAlignment="Top">
+                                        <!-- the hero visual of the expanded card scales with it (150–300 square) -->
+                                        <Viewbox DockPanel.Dock="Left" Margin="0,0,20,0" VerticalAlignment="Top"
+                                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                                         Converter={StaticResource WidthFraction}, ConverterParameter=0.2|150|300}"
+                                                 Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
+                                                          Converter={StaticResource AspectHeight}, ConverterParameter=1}">
                                             <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                                                   Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
                                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
@@ -132,7 +140,9 @@
 
                                     <!-- optional venue PHOTO (user art at data\ams2\venue-photos\&lt;layoutId&gt;.jpg);
                                          scales with the panel (Stretch=Uniform); click to open the resizable photo window -->
-                                    <Border Margin="0,12,0,0" CornerRadius="8" MaxWidth="720" HorizontalAlignment="Left"
+                                    <Border Margin="0,12,0,0" CornerRadius="8" HorizontalAlignment="Left"
+                                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                                       Converter={StaticResource WidthFraction}, ConverterParameter=0.6|720}"
                                             BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
                                             Visibility="{Binding ElementName=VenuePhoto, Path=Source, Converter={StaticResource NullCollapsed}}">
                                         <Border CornerRadius="7" ClipToBounds="True">

@@ -41,7 +41,12 @@
                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
                     <!-- circuit map + detail: the "what the track is like" preview, shown either way -->
                     <DockPanel Margin="0,0,0,6" Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
-                        <Viewbox DockPanel.Dock="Left" Width="96" Height="96" Margin="0,0,14,0" VerticalAlignment="Top">
+                        <!-- per-round mini map scales with the scrapbook column (96–200 square) -->
+                        <Viewbox DockPanel.Dock="Left" Margin="0,0,14,0" VerticalAlignment="Top"
+                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                         Converter={StaticResource WidthFraction}, ConverterParameter=0.12|96|200}"
+                                 Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
+                                          Converter={StaticResource AspectHeight}, ConverterParameter=1}">
                             <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                                   Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
@@ -170,7 +175,9 @@
                                     <!-- Optional story image for the season: drop <year>.jpg/.png into
                                          data\ams2\history-art and it appears here (shared user-asset
                                          convention, keyed by year). Collapses when no art is present. -->
-                                    <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10" MaxWidth="620"
+                                    <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10"
+                                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                                       Converter={StaticResource WidthFraction}, ConverterParameter=0.55|620}"
                                             HorizontalAlignment="Left" BorderBrush="{StaticResource EdgeBrush}"
                                             BorderThickness="1"
                                             Visibility="{Binding ElementName=SeasonStoryImage, Path=Source, Converter={StaticResource NullCollapsed}}">
@@ -243,7 +250,10 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
-            <StackPanel Margin="24,4,24,24" MaxWidth="820" HorizontalAlignment="Left">
+            <!-- proportional scrapbook cap (was a hard 820) -->
+            <StackPanel Margin="24,4,24,24" HorizontalAlignment="Left"
+                        MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                   Converter={StaticResource WidthFraction}, ConverterParameter=0.7|820|1300}">
                 <!-- NEXT RACE preview: the current season's upcoming round — circuit map + track detail,
                      no result spoiler. The History screen's "what's coming next". -->
                 <Border Style="{StaticResource Panel}" Margin="0,0,0,18"
@@ -253,7 +263,12 @@
                             <Run Text="NEXT RACE" /><Run Text="{Binding NextRaceYear, StringFormat=' · {0}', Mode=OneWay}" />
                         </TextBlock>
                         <DockPanel Margin="0,8,0,0" DataContext="{Binding NextRacePreview}">
-                            <Viewbox DockPanel.Dock="Left" Width="180" Height="180" Margin="0,0,18,0" VerticalAlignment="Top"
+                            <!-- the NEXT RACE hero map scales with the column (160–280 square) -->
+                            <Viewbox DockPanel.Dock="Left" Margin="0,0,18,0" VerticalAlignment="Top"
+                                     Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                             Converter={StaticResource WidthFraction}, ConverterParameter=0.22|160|280}"
+                                     Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
+                                              Converter={StaticResource AspectHeight}, ConverterParameter=1}"
                                      Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
                                 <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                                       Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
@@ -334,12 +349,17 @@
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5), mirroring StandingsView.
              Shown while an inspector is open; the scrim + Close button (mouse) and the ESC key
              binding (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border Background="#99000000"
+        <Border x:Name="InspectorScrim" Background="#99000000"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
             </Border.InputBindings>
-            <Border MaxWidth="520" MaxHeight="440" Margin="24" Padding="18"
+            <!-- proportional modal (was a fixed 520x440) — same fix as StandingsView's inspector -->
+            <Border Margin="24" Padding="18"
+                    MaxWidth="{Binding ActualWidth, ElementName=InspectorScrim,
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.5|520}"
+                    MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
+                                Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Background="{StaticResource SurfaceBrush}" CornerRadius="6"
                     BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"

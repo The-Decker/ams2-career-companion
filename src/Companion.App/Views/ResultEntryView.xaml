@@ -221,23 +221,42 @@
         <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,1,0,0"
                 Padding="14,10" Margin="0,12,0,0" CornerRadius="6">
-            <DockPanel>
-                <!-- primary action: "Set the grid" on the qualifying step, "Confirm result" on the
-                     race step (Increment 2b.3). Content binds to the hosting HomeView; the render
-                     harness shows this view standalone, so the FallbackValue keeps its text. -->
-                <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}"
-                        Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='Confirm result  ⏎'}"
-                        Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
-                        ToolTip="Score the round and review points + standings movement before applying (or lock the qualifying grid and start the race)" />
+            <!-- star grid instead of a docked chain: the hint column absorbs (and trims away) any
+                 width squeeze, so progress/wet/slider/confirm never crowd each other at 920 or at
+                 130% UI scale -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold" FontSize="16" />
+                    <TextBlock Text="{Binding ElapsedText}" Style="{StaticResource Mono}" FontSize="16"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="18,0,0,0" />
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" Style="{StaticResource Faint}" Margin="24,0,12,0"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           ToolTip="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo — or drag drivers; right-click any row for more"
+                           Text="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo — or drag drivers; right-click any row for more" />
+
+                <!-- weather: mark a wet round for the weather-conditional perks (Rain Man, etc.) -->
+                <CheckBox Grid.Column="2" Content="Wet race" VerticalAlignment="Center"
+                          Margin="0,0,18,0" IsChecked="{Binding IsWet}" Focusable="False"
+                          ToolTip="Tick if you raced in the wet — it feeds weather perks like Rain Man, and is saved with the result." />
 
                 <!-- the slider prompt: the in-game Opponent Skill this round was DRIVEN at
                      (prefilled with the pace-anchor recommendation, stored in the envelope) -->
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center"
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center"
                             Margin="0,0,18,0"
                             ToolTip="The in-game Opponent Skill you actually raced at — prefilled with the recommendation, saved with the result (it calibrates your pace anchor)">
                     <TextBlock Text="Opponent Skill raced at" Style="{StaticResource Muted}"
                                VerticalAlignment="Center" />
-                    <Slider Width="130" Margin="10,0,8,0" VerticalAlignment="Center" Focusable="False"
+                    <Slider Width="150" Margin="10,0,8,0" VerticalAlignment="Center" Focusable="False"
                             Minimum="70" Maximum="120" SmallChange="1" LargeChange="5"
                             TickFrequency="1" IsSnapToTickEnabled="True"
                             Value="{Binding SliderUsed}" />
@@ -245,28 +264,22 @@
                                FontSize="15" VerticalAlignment="Center" MinWidth="44" />
                 </StackPanel>
 
-                <!-- weather: mark a wet round for the weather-conditional perks (Rain Man, etc.) -->
-                <CheckBox DockPanel.Dock="Right" Content="Wet race" VerticalAlignment="Center"
-                          Margin="0,0,18,0" IsChecked="{Binding IsWet}" Focusable="False"
-                          ToolTip="Tick if you raced in the wet — it feeds weather perks like Rain Man, and is saved with the result." />
-
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold" FontSize="16" />
-                    <TextBlock Text="{Binding ElapsedText}" Style="{StaticResource Mono}" FontSize="16"
-                               Foreground="{StaticResource TextMutedBrush}" Margin="18,0,0,0" />
-                    <TextBlock Style="{StaticResource Faint}" Margin="24,0,12,0" VerticalAlignment="Center"
-                               TextWrapping="Wrap"
-                               Text="Enter assign · Tab cycle · «name pos» penalty · trailing q DSQ · F8 DNF · Ctrl+Z undo — or drag drivers; right-click any row for more" />
-                </StackPanel>
-            </DockPanel>
+                <!-- primary action: "Set the grid" on the qualifying step, "Confirm result" on the
+                     race step (Increment 2b.3). Content binds to the hosting HomeView; the render
+                     harness shows this view standalone, so the FallbackValue keeps its text. -->
+                <Button Grid.Column="4" Style="{StaticResource AccentButton}" VerticalAlignment="Center"
+                        Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='Confirm result  ⏎'}"
+                        Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
+                        ToolTip="Score the round and review points + standings movement before applying (or lock the qualifying grid and start the race)" />
+            </Grid>
         </Border>
 
         <!-- ===== center: Remaining | Finishing order | Out (DNF + DSQ zones) ===== -->
         <Grid Margin="0,14,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" MinWidth="220" />
+                <ColumnDefinition Width="*" MinWidth="220" />
+                <ColumnDefinition Width="*" MinWidth="220" />
             </Grid.ColumnDefinitions>
 
             <!-- remaining, grid order; drag source + unmark drop target -->
