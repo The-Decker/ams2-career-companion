@@ -20,7 +20,7 @@ nothing folded, so corpus growth changes display copy only and needs no determin
 | 1960s | 9–11 (was 7–10) | 7 | wire-report voice, **rivalLine (new)** | **deepened 2026-07-10** |
 | 1970s | 9–11 (was 7–8) | 9 | sponsorLine, techNote (wings/ground-effect), **rivalLine (new)** | **deepened 2026-07-10** |
 | 1980s | 7–9 | 8 | boostLine (turbo), mediaLine | healthy |
-| 1990s | 7–8 | 8 | techNote, rivalLine | healthy |
+| 1990s | 9–11 (was 7–8) | 8 | techNote, rivalLine | **deepened 2026-07-10** |
 | 2000s | 8–9 | 7 | sectorNote | healthy; defaults thin (1 per body key) |
 | 2010s | 10–11 (was 6–8) | 9 | techNote, punditTake, **sillySeason (new)** | **deepened 2026-07-10** |
 
@@ -34,6 +34,9 @@ expectationBeat/champLine/techNote/punditTake/seasonClose.
 1960s pass added: brought every body key to 10–11 (from 7–10) and both digests to 9, plus a
 wire-report `rivalLine` pool — same treatment as 1970s, in the telegram/STOP voice.
 
+1990s pass added: every body key to 10–11 (from 8) and both digests to 9, in the telemetry/
+professional-era voice (existing techNote + rivalLine pools reused, no new pool).
+
 ## Known coarse-grain (accepted)
 
 - Era windows are DECADE-wide: the 2010s file (2010–2029) voices DRS/hybrid from 2010 though
@@ -45,9 +48,8 @@ wire-report `rivalLine` pool — same treatment as 1970s, in the telegram/STOP v
 
 ## The grind queue (one slice per session, commit each)
 
-1. **1990s deepen** — now the thinnest (bodies 7–8, digests 7). Add ~3 variants per cause in the
-   established voice.
-2. **1980s / 2000s** — same treatment, thinnest first. (1960s + 1970s done 2026-07-10.)
+1. **1980s / 2000s deepen** — the last two at 7–9 bodies. Same treatment, thinnest first.
+   (1960s + 1970s + 1990s done 2026-07-10; the 2010s were done earlier that day.)
 3. **New article TYPE: title watch** (the megaprompt's championship-permutation beat). Wiring:
    read-side in `CareerSessionService.ReadFeed` — when late-season facts qualify (player top-2,
    tight gap), compose a second body via a distinct stream discriminator (`"title"`, precedent:
