@@ -97,6 +97,26 @@ public sealed record PackRound
     /// until a pack opts in. This is the parsed data model; the engine + result-entry wiring land
     /// in later Increment-2 slices.</summary>
     public PackWeekend? Weekend { get; init; }
+
+    /// <summary>Optional ORIGINAL-CIRCUIT pointer (v1.3, additive, DISPLAY-ONLY — the sim never
+    /// reads it): the season+round of the shipped <c>data/history</c> reference whose real event
+    /// this pack round's venue models. Needed by packs whose calendar does not run a real
+    /// season's order — the SMGP replica races the GAME's round order over circuits modelled on
+    /// the 1989 season — where the default same-numbered-round join shows the wrong circuit's
+    /// map, caption and facts on the Calendar/briefing. Null = the pack year's same-numbered
+    /// round (every historical pack, byte-identical).</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public PackRoundHistoryRef? History { get; init; }
+}
+
+/// <summary>A <see cref="PackRound.History"/> pointer into the shipped historical reference:
+/// season <see cref="Year"/>'s round <see cref="Round"/> is the real event whose circuit this
+/// pack round presents as its ORIGINAL venue.</summary>
+public sealed record PackRoundHistoryRef
+{
+    public required int Year { get; init; }
+
+    public required int Round { get; init; }
 }
 
 /// <summary>A round's weekend shape: an optional practice + qualifying session and 1–2 races.

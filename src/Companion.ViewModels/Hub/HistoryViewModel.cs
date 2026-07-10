@@ -87,8 +87,13 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
         // records book aggregates the whole lineage regardless of order. Each card also carries the
         // REAL historical results of its year (f1db-derived, read-only) so the player can see "what
         // really happened" next to their own diverged season — null when none is shipped for the year.
+        // A REPLICA-mode pack (SMGP) is a fictional world: revealing the real season's races round
+        // by round would be nonsense there, so its cards carry no historical documents at all.
+        bool fictionalSeason = string.Equals(
+            _session.Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
         foreach (var card in timeline.Seasons.Reverse())
-            Seasons.Add(new SeasonCardViewModel(card, _session.HistoricalSeason(card.SeasonYear)));
+            Seasons.Add(new SeasonCardViewModel(
+                card, fictionalSeason ? null : _session.HistoricalSeason(card.SeasonYear)));
 
         Records = new RecordsBookViewModel(timeline.Records);
 

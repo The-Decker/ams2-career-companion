@@ -701,15 +701,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var tracks = _environment.ContentLibrary.Tracks;
         string TrackName(string id) => tracks.TryGetValue(id, out var t) && t.TrackName is { Length: > 0 } n ? n : id;
 
-        // The REAL (historical) circuit per round — keyed by the PACK year (carryover-stable, like the
-        // briefing) so the calendar shows the ORIGINAL venue's map + facts, never the stand-in's.
-        var historyRounds = HistoricalSeason(Pack.Season.Year)?.Rounds
-            .ToDictionary(r => r.Round, r => r.Circuit);
-
         var schedule = new List<SeasonScheduleEntry>(Pack.Season.Rounds.Count);
         foreach (var round in Pack.Season.Rounds)
         {
-            HistoricalCircuit? circuit = historyRounds?.GetValueOrDefault(round.Round);
+            // The REAL (historical) circuit per round — the shared lookup rule (authored
+            // per-round history pointer, else pack year + same round; carryover-stable), so the
+            // calendar shows the ORIGINAL venue's map + facts, never the stand-in's, even on a
+            // pack whose calendar runs a non-historical order (the SMGP replica).
+            HistoricalCircuit? circuit = HistoricalCircuitLookup.ForRound(Pack, round.Round, HistoricalSeason);
             var track = round.Track;
             bool alternateApplied = track.Alternate is { } appliedAlt && string.Equals(track.Id, appliedAlt.Id, StringComparison.Ordinal);
             var kind = alternateApplied ? SeasonTrackKind.Alternate
