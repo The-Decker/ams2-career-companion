@@ -396,13 +396,12 @@
                 <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
-                <!-- SMGP: the game starts rookies in the lower divisions — the list above is
-                     already filtered to LEVEL C / LEVEL D cars, Minarae pre-selected. -->
+                <!-- SMGP: rookies start at the bottom — the list is filtered to LEVEL D cars. -->
                 <Border DockPanel.Dock="Top" Background="{StaticResource AccentDimBrush}" CornerRadius="6"
                         Padding="10,7" Margin="0,0,0,10"
                         Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
                     <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
-                               Text="SUPER MONACO GP starts you in the lower divisions — LEVEL C and LEVEL D cars only. The game assigns MINARAE (pre-selected); earn better seats by beating rivals." />
+                               Text="SUPER MONACO GP starts you at the bottom — LEVEL D cars only. Beat the same rival twice to take his seat and climb the ladder." />
                 </Border>
                 <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
                      over the seat above; leave blank for the ordinary seat pick. Hidden for the SMGP
@@ -486,12 +485,17 @@
                 </Border>
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <!-- adaptive multi-column grid (Mike's ask — one long column wasted the screen):
-                         ~340px per card ⇒ 6-7 columns at 2560, 5 at 1920, 2 at the 920 minimum -->
+                         ~340px per card ⇒ 6-7 columns at 2560, 5 at 1920, 2 at the 920 minimum.
+                         VerticalAlignment=Top stops the UniformGrid stretching rows to fill the
+                         viewport (the giant-empty-cards report). Each card carries a drop-in
+                         driver PORTRAIT slot: data/ams2/portraits/<driverId>.jpg — hidden when
+                         no art is present, so text-only cards stay compact. -->
                     <ItemsControl ItemsSource="{Binding GridChoices}" HorizontalAlignment="Stretch"
-                                  IsEnabled="{Binding GridPickEnabled}">
+                                  VerticalAlignment="Top" IsEnabled="{Binding GridPickEnabled}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Columns="{Binding ActualWidth,
+                                <UniformGrid VerticalAlignment="Top"
+                                             Columns="{Binding ActualWidth,
                                                        RelativeSource={RelativeSource AncestorType=ItemsControl},
                                                        Converter={StaticResource WidthToColumns},
                                                        ConverterParameter=340}" />
@@ -499,17 +503,24 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,6,6">
-                                    <DockPanel>
-                                        <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
-                                                  IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                                                   Text="You" Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}" />
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
-                                            <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}" />
-                                        </StackPanel>
-                                    </DockPanel>
+                                <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,6,6" VerticalAlignment="Top">
+                                    <StackPanel>
+                                        <Border CornerRadius="6,6,0,0" ClipToBounds="True">
+                                            <Image x:Name="PortraitImage" Stretch="UniformToFill" MaxHeight="150"
+                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                        </Border>
+                                        <DockPanel Margin="12,8">
+                                            <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
+                                                      IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
+                                                       Text="You" Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}" />
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </StackPanel>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

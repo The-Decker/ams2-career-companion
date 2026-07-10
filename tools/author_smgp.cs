@@ -1,24 +1,30 @@
 #:property JsonSerializerIsReflectionEnabledByDefault=true
 // Authors packs/smgp-1 — the SUPER MONACO GP replica season pack — from the SMGP skinpack's own
-// CustomAIDrivers XML + the verified design (docs/dev/smgp-design.md, manual-sourced):
+// CustomAIDrivers XML + the verified design (docs/dev/smgp-design.md, manual-sourced).
 //
-//   drivers.json  <- all 32 fictional drivers (SMGP1 + SMGP II union) with the XML's full rating
-//                    set; per-driver vehicle_reliability lands in the v1.3 car block. Name
-//                    corrections applied (Elsser->Elssler, Kilnger->Klinger) — LIVERY strings stay
-//                    verbatim as the pack paints them.
-//   teams.json    <- the 16 one-driver teams in the game's LEVEL A-D tiers.
-//   entries.json  <- the SMGP1 season-1 sixteen. B. Miller drives BULLETS (design correction; the
-//                    car is painted "Bullets #17 G. Ceara" — the staged AI file names Miller).
-//                    MINARAE is the player's team (default persona: E. Sambena, the pack author's
-//                    designated player-slot invention). G. Ceara is reserved for the title-defense
-//                    event (M3 mode logic).
+// v2 (the 32-skin integration): the season fields TWENTY-SIX cars — the F-Classic_Gen3 class
+// livery cap — covering ALL 22 teams the skinpack paints (SMGP1's sixteen + SMGP II's Joke,
+// Lares, Feet, Serga, Cool, Moon) plus the four strongest second cars (Madonna #1 A. Senna,
+// Firenze #4 I. Germi, Millions #5 N. Jones, Losel #14 W. Dehehe). Everyone drives THEIR OWN
+// painted car now: G. Ceara RACES at Bullets #17 from round 1 (and remains the title-defense
+// challenger), B. Miller drives Minarae #20, E. Sambena drives Serga #25. The six weakest
+// second cars stay authored in drivers.json as RESERVES with no season entry (Blume #8,
+// White #10, Gould #12, Alfven #19, Nono #21, Chardin #27 — all shipped slot-inactive anyway).
+// Data contract: each team's LADDER/champion car is authored FIRST in its entries block, and
+// ZEROFORCE is the last authored team (the mode's career-over floor).
+//
+//   drivers.json  <- all 32 fictional drivers with the XML's full rating set; per-driver
+//                    vehicle_reliability lands in the v1.3 car block. Name corrections applied
+//                    (Elsser->Elssler, Kilnger->Klinger) — LIVERY strings stay verbatim.
+//   teams.json    <- the 22 teams in the game's LEVEL A-D tiers (new teams slotted by their
+//                    drivers' pack ratings); carVehicleIds = the models their fielded cars use.
+//   entries.json  <- the 26 fielded cars.
 //   season.json   <- 16 country-named rounds in the GAME's order (San Marino -> Monaco finale),
-//                    modelled on the 1989 F1 circuits via the same track choices our 1990/1991
-//                    packs use; points 9-6-4-3-2-1, no drops; weekend = Warm Up + "PreLIMINARY
-//                    RACE" qualifying + Grand Prix, always Clear (verified); no refuelling.
-//   pack.json     <- manifest with skinSeason "smgp" (the Skin Season Manager swaps the
-//                    F-Classic_Gen3 pointers vs the 1990 pack) and careerStyle "smgp" (the M3
-//                    mode gate; inert until the mode ships).
+//                    modelled on the 1989 F1 circuits (per-round history pointers to the 1989
+//                    reference); per-round grid.size = min(26, the track's Max AI cap) read from
+//                    data/ams2/tracks.json; points 9-6-4-3-2-1, no drops; Warm Up + "Preliminary
+//                    Race" qualifying + Grand Prix, always Clear; no refuelling.
+//   pack.json     <- manifest with skinSeason "smgp" + careerStyle "smgp" (the mode gate).
 //
 // Usage: dotnet run tools/author_smgp.cs   (writes packs/smgp-1/*, idempotent)
 
@@ -34,6 +40,11 @@ string repo = AppContext.BaseDirectory.Contains("tools")
 string xmlPath = Path.Combine(repo, "scratchpad", "skins-study", "smgp", "F-Classic_Gen3.xml");
 string outDir = Path.Combine(repo, "packs", "smgp-1");
 Directory.CreateDirectory(outDir);
+
+// The class livery cap: AMS2's F-Classic_Gen3 supports at most 26 DISTINCT custom liveries on a
+// grid (data/ams2/livery-caps.json) — the field size. 24 skinpack liveries ship slot-active;
+// fielding Lares #23 + Feet #24 needs their slots activated (Skins tab, cap-safe) = exactly 26.
+const int FieldSize = 26;
 
 // ---------------- drivers.json (from the skinpack's own AI XML) ----------------
 var RATING = new (string Xml, string Json)[]
@@ -81,26 +92,42 @@ foreach (var d in doc.Descendants("driver"))
 WriteJson(Path.Combine(outDir, "drivers.json"), new JsonObject { ["drivers"] = drivers });
 Console.WriteLine($"drivers.json: {drivers.Count} drivers");
 
-// ---------------- teams.json (LEVEL A-D) ----------------
-// (team, display, tier, car model, seat number, season-1 driver, seat livery)
-var TEAMS = new (string Team, string Display, char Tier, string Model, string Number, string Driver, string Livery)[]
+// ---------------- teams.json + entries.json (the 26-car field, 22 teams) ----------------
+// Teams in LADDER order: the design doc's canon tier listing with the SMGP II teams appended to
+// their rating-appropriate tiers; ZEROFORCE stays LAST (the career-over floor). Each team's
+// cars in LADDER order — champion/primary car FIRST (Madonna's #1 title plate leads).
+var TEAMS = new (string Team, string Display, char Tier, (string Number, string Driver, string Livery, string Model)[] Cars)[]
 {
-    ("madonna",   "Madonna",   'A', "formula_classic_g3m1", "2",  "driver.alain_asselin",      "Madonna #2 A. Asselin"),
-    ("firenze",   "Firenze",   'A', "formula_classic_g3m1", "3",  "driver.felipe_elssler",     "Firenze #3 F. Elsser"),
-    ("millions",  "Millions",  'A', "formula_classic_g3m3", "6",  "driver.giorgio_alberti",    "Millions #6 G. Alberti"),
-    ("bestowal",  "Bestowal",  'A', "formula_classic_g3m1", "7",  "driver.alex_picos",         "Bestowal #7 A. Picos"),
-    ("blanche",   "Blanche",   'B', "formula_classic_g3m1", "9",  "driver.jean_herbin",        "Blanche #9 J. Herbin"),
-    ("tyrant",    "Tyrant",    'B', "formula_classic_g3m4", "11", "driver.miyagi_hamano",      "Tyrant #11 M. Hamano"),
-    ("losel",     "Losel",     'B', "formula_classic_g3m4", "13", "driver.esteban_pacheco",    "Losel #13 E. Pacheco"),
-    ("may",       "May",       'B', "formula_classic_g3m4", "15", "driver.george_turner",      "May #15 G. Turner"),
-    ("bullets",   "Bullets",   'C', "formula_classic_g3m4", "17", "driver.bernie_miller",      "Bullets #17 G. Ceara"),
-    ("dardan",    "Dardan",    'C', "formula_classic_g3m4", "18", "driver.eddie_bellini",      "Dardan #18 E. Bellini"),
-    ("linden",    "Linden",    'C', "formula_classic_g3m2", "22", "driver.marcel_moreau",      "Linden #22 M. Moreau"),
-    ("minarae",   "Minarae",   'C', "formula_classic_g3m2", "20", "driver.eric_sambena",       "Minarae #20 B. Miller"),
-    ("rigel",     "Rigel",     'D', "formula_classic_g3m2", "26", "driver.ryan_cotman",        "Rigel #26 R. Cotman"),
-    ("comet",     "Comet",     'D', "formula_classic_g3m2", "29", "driver.ethan_tornio",       "Comet #29 E. Tornio"),
-    ("orchis",    "Orchis",    'D', "formula_classic_g3m2", "31", "driver.christopher_tegner", "Orchis #31 C. Tegner"),
-    ("zeroforce", "Zeroforce", 'D', "formula_classic_g3m2", "32", "driver.paul_klinger",       "Zeroforce #32 P. Kilnger"),
+    // LEVEL A
+    ("madonna",   "Madonna",   'A', [("1",  "driver.ayrton_senna",       "Madonna #1 A. Senna",   "formula_classic_g3m1"),
+                                     ("2",  "driver.alain_asselin",      "Madonna #2 A. Asselin", "formula_classic_g3m1")]),
+    ("firenze",   "Firenze",   'A', [("3",  "driver.felipe_elssler",     "Firenze #3 F. Elsser",  "formula_classic_g3m1"),
+                                     ("4",  "driver.ivanazzio_germi",    "Firenze #4 I. Germi",   "formula_classic_g3m1")]),
+    ("millions",  "Millions",  'A', [("6",  "driver.giorgio_alberti",    "Millions #6 G. Alberti", "formula_classic_g3m3"),
+                                     ("5",  "driver.nigel_jones",        "Millions #5 N. Jones",  "formula_classic_g3m3")]),
+    ("bestowal",  "Bestowal",  'A', [("7",  "driver.alex_picos",         "Bestowal #7 A. Picos",  "formula_classic_g3m1")]),
+    // LEVEL B
+    ("blanche",   "Blanche",   'B', [("9",  "driver.jean_herbin",        "Blanche #9 J. Herbin",  "formula_classic_g3m1")]),
+    ("tyrant",    "Tyrant",    'B', [("11", "driver.miyagi_hamano",      "Tyrant #11 M. Hamano",  "formula_classic_g3m4")]),
+    ("losel",     "Losel",     'B', [("13", "driver.esteban_pacheco",    "Losel #13 E. Pacheco",  "formula_classic_g3m4"),
+                                     ("14", "driver.willian_dehehe",     "Losel #14 W. Dehehe",   "formula_classic_g3m4")]),
+    ("may",       "May",       'B', [("15", "driver.george_turner",      "May #15 G. Turner",     "formula_classic_g3m4")]),
+    ("joke",      "Joke",      'B', [("16", "driver.luca_dufay",         "Joke #16 L. Dufay",     "formula_classic_g3m4")]),
+    // LEVEL C
+    ("bullets",   "Bullets",   'C', [("17", "driver.gilberto_ceara",     "Bullets #17 G. Ceara",  "formula_classic_g3m4")]),
+    ("dardan",    "Dardan",    'C', [("18", "driver.eddie_bellini",      "Dardan #18 E. Bellini", "formula_classic_g3m4")]),
+    ("linden",    "Linden",    'C', [("22", "driver.marcel_moreau",      "Linden #22 M. Moreau",  "formula_classic_g3m2")]),
+    ("minarae",   "Minarae",   'C', [("20", "driver.bernie_miller",      "Minarae #20 B. Miller", "formula_classic_g3m2")]),
+    ("lares",     "Lares",     'C', [("23", "driver.park_arai",          "Lares #23 P. Arai",     "formula_classic_g3m2")]),
+    ("feet",      "Feet",      'C', [("24", "driver.jean_rampal",        "Feet #24 J. Rampal",    "formula_classic_g3m4")]),
+    ("serga",     "Serga",     'C', [("25", "driver.eric_sambena",       "Serga #25 E. Sambena",  "formula_classic_g3m4")]),
+    // LEVEL D (the player's rookie tier; Zeroforce is the floor — keep it LAST)
+    ("rigel",     "Rigel",     'D', [("26", "driver.ryan_cotman",        "Rigel #26 R. Cotman",   "formula_classic_g3m2")]),
+    ("cool",      "Cool",      'D', [("28", "driver.alef_delvaux",       "Cool #28 A. Delvaux",   "formula_classic_g3m4")]),
+    ("comet",     "Comet",     'D', [("29", "driver.ethan_tornio",       "Comet #29 E. Tornio",   "formula_classic_g3m2")]),
+    ("orchis",    "Orchis",    'D', [("31", "driver.christopher_tegner", "Orchis #31 C. Tegner",  "formula_classic_g3m2")]),
+    ("moon",      "Moon",      'D', [("30", "driver.kevin_yepes",        "Moon #30 K. Yepes",     "formula_classic_g3m4")]),
+    ("zeroforce", "Zeroforce", 'D', [("32", "driver.paul_klinger",       "Zeroforce #32 P. Kilnger", "formula_classic_g3m2")]),
 };
 
 var teams = new JsonArray();
@@ -113,11 +140,14 @@ foreach (var t in TEAMS)
         'C' => (0.84, 3),
         _ => (0.80, 2),
     };
+    var models = new JsonArray();
+    foreach (var model in t.Cars.Select(c => c.Model).Distinct())
+        models.Add(model);
     teams.Add(new JsonObject
     {
         ["id"] = "team." + t.Team,
         ["name"] = t.Display,
-        ["carVehicleIds"] = new JsonArray(t.Model),
+        ["carVehicleIds"] = models,
         ["performance"] = new JsonObject { ["weightScalar"] = 1, ["powerScalar"] = 1, ["dragScalar"] = 1 },
         ["reliability"] = reliability,
         ["prestige"] = prestige,
@@ -127,49 +157,57 @@ foreach (var t in TEAMS)
 WriteJson(Path.Combine(outDir, "teams.json"), new JsonObject { ["teams"] = teams });
 Console.WriteLine($"teams.json: {teams.Count} teams");
 
-// ---------------- entries.json (the SMGP1 sixteen) ----------------
 var entries = new JsonArray();
 foreach (var t in TEAMS)
-    entries.Add(new JsonObject
-    {
-        ["teamId"] = "team." + t.Team,
-        ["driverId"] = t.Driver,
-        ["number"] = t.Number,
-        ["rounds"] = "1-16",
-        ["ams2LiveryName"] = t.Livery,
-    });
+    foreach (var car in t.Cars)
+        entries.Add(new JsonObject
+        {
+            ["teamId"] = "team." + t.Team,
+            ["driverId"] = car.Driver,
+            ["number"] = car.Number,
+            ["rounds"] = "1-16",
+            ["ams2LiveryName"] = car.Livery,
+        });
+if (entries.Count != FieldSize)
+    throw new InvalidOperationException($"field is {entries.Count} cars, expected {FieldSize}");
 WriteJson(Path.Combine(outDir, "entries.json"), new JsonObject { ["entries"] = entries });
 Console.WriteLine($"entries.json: {entries.Count} entries");
 
 // ---------------- season.json (the game's 16-round order) ----------------
-// (name, trackId, realVenue, isPlaceholder, laps, fallbacks) — track choices mirror our
-// 1990/1991 packs (the courses model the 1989 F1 circuits).
-var ROUNDS = new (string Name, string TrackId, string Venue, bool Placeholder, int Laps, string[] Fallbacks)[]
+// (name, trackId, realVenue, isPlaceholder, laps, fallbacks, historyRound) — track choices
+// mirror our 1990/1991 packs; the courses model the 1989 F1 circuits, so each round carries a
+// history pointer at the 1989 event its venue models (the Calendar/briefing ORIGINAL CIRCUIT).
+var ROUNDS = new (string Name, string TrackId, string Venue, bool Placeholder, int Laps, string[] Fallbacks, int HistoryRound)[]
 {
-    ("San Marino",    "imola_88",               "Autodromo Internazionale Enzo e Dino Ferrari", false, 61, []),
-    ("Brazil",        "jacarepagua_historic",   "Autódromo Internacional do Rio de Janeiro (Jacarepaguá)", false, 61, []),
-    ("France",        "le_mans_bugatti",        "Circuit Paul Ricard", true, 73, []),
-    ("Hungary",       "hungaroring_gp_2025",    "Hungaroring", false, 77, []),
-    ("West Germany",  "hockenheim_1988",        "Hockenheimring", false, 45, []),
-    ("U.S.A.",        "long_beach",             "Phoenix Street Circuit", true, 86, ["adelaide_historic"]),
-    ("Canada",        "montrealhistoric",       "Circuit Gilles Villeneuve", false, 70, []),
-    ("Great Britain", "silverstone_1991",       "Silverstone Circuit", false, 64, []),
-    ("Italy",         "monza_1991",             "Autodromo Nazionale Monza", false, 53, []),
-    ("Portugal",      "estoril_1988",           "Autódromo do Estoril", false, 61, []),
-    ("Spain",         "jerez_1988",             "Circuito de Jerez", false, 73, []),
-    ("Mexico",        "jacarepagua_historic",   "Autódromo Hermanos Rodríguez", true, 61, []),
-    ("Japan",         "kansai_gp",              "Suzuka Circuit", false, 53, []),
-    ("Belgium",       "spa-francorchamps_1993", "Circuit de Spa-Francorchamps", false, 44, []),
-    ("Australia",     "adelaide_historic",      "Adelaide Street Circuit", false, 81, []),
-    ("Monaco",        "azure_circuit_88",       "Circuit de Monaco", false, 78, []),
+    ("San Marino",    "imola_88",               "Autodromo Internazionale Enzo e Dino Ferrari", false, 61, [], 2),
+    ("Brazil",        "jacarepagua_historic",   "Autódromo Internacional do Rio de Janeiro (Jacarepaguá)", false, 61, [], 1),
+    ("France",        "le_mans_bugatti",        "Circuit Paul Ricard", true, 73, [], 7),
+    ("Hungary",       "hungaroring_gp_2025",    "Hungaroring", false, 77, [], 10),
+    ("West Germany",  "hockenheim_1988",        "Hockenheimring", false, 45, [], 9),
+    ("U.S.A.",        "long_beach",             "Phoenix Street Circuit", true, 86, ["adelaide_historic"], 5),
+    ("Canada",        "montrealhistoric",       "Circuit Gilles Villeneuve", false, 70, [], 6),
+    ("Great Britain", "silverstone_1991",       "Silverstone Circuit", false, 64, [], 8),
+    ("Italy",         "monza_1991",             "Autodromo Nazionale Monza", false, 53, [], 12),
+    ("Portugal",      "estoril_1988",           "Autódromo do Estoril", false, 61, [], 13),
+    ("Spain",         "jerez_1988",             "Circuito de Jerez", false, 73, [], 14),
+    ("Mexico",        "interlagos_1991",        "Autódromo Hermanos Rodríguez", true, 71, [], 4),
+    ("Japan",         "kansai_gp",              "Suzuka Circuit", false, 53, [], 15),
+    ("Belgium",       "spa-francorchamps_1993", "Circuit de Spa-Francorchamps", false, 44, [], 11),
+    ("Australia",     "adelaide_historic",      "Adelaide Street Circuit", false, 81, [], 16),
+    ("Monaco",        "azure_circuit_2021",     "Circuit de Monaco", false, 78, [], 3),
 };
+
+// Per-track Max AI caps from the extracted library — the per-round grid is min(FieldSize, cap).
+var trackCaps = new Dictionary<string, int>(StringComparer.Ordinal);
+var tracksJson = JsonNode.Parse(File.ReadAllText(Path.Combine(repo, "data", "ams2", "tracks.json")))!;
+foreach (var track in tracksJson["tracks"]!.AsArray())
+    if (track!["id"] is { } id && track["maxAiParticipants"] is { } cap)
+        trackCaps[id.GetValue<string>()] = cap.GetValue<int>();
 
 JsonArray Weather() => new("Clear", "Clear", "Clear", "Clear");
 
 var rounds = new JsonArray();
 var start = new DateTime(1990, 3, 11);
-var starterIds = new JsonArray();
-foreach (var t in TEAMS) starterIds.Add(t.Driver);
 
 for (int i = 0; i < ROUNDS.Length; i++)
 {
@@ -183,18 +221,26 @@ for (int i = 0; i < ROUNDS.Length; i++)
         ["fallbacks"] = new JsonArray(r.Fallbacks.Select(f => (JsonNode)JsonValue.Create(f)!).ToArray()),
     };
     // Placeholder notes follow the pack contract ('<historical> laps / <km> km reproduced as
-    // <laps> laps of <track>'), mirroring the 1990 pack's identical stand-ins — the SMGP courses
-    // model the 1989 F1 circuits, so the 1989/1990-era distances are the reference.
+    // <laps> laps') — the SMGP courses model the 1989 F1 circuits, so 1989/1990-era distances
+    // are the reference.
     string? note = r.Name switch
     {
         "San Marino" => "The game runs 5-lap sprints; full Grand Prix distance is authored here — race shorter in AMS2 for the arcade feel.",
         "France" => "Placeholder for Circuit Paul Ricard - 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French round at a French Grand Prix venue.",
         "U.S.A." => "Placeholder for Phoenix Street Circuit - 72 laps / 273.6 km reproduced as 86 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 - the era's US street-race character; Adelaide already hosts this season's Australian round.",
-        "Mexico" => "Placeholder for Autódromo Hermanos Rodríguez - 69 laps / 305 km reproduced as 61 laps of Jacarepagua Historic. Jacarepaguá keeps the era's Latin-American venue character; the game's Brazilian round runs there too, exactly as Super Monaco GP reuses course scenery.",
+        "Mexico" => "Placeholder for Autódromo Hermanos Rodríguez - 69 laps / 305 km reproduced as 71 laps of Interlagos 1991. The era-correct Latin-American venue AMS2 actually has — Jacarepaguá stays unique to the Brazilian round.",
         _ => null,
     };
+
+    if (!trackCaps.TryGetValue(r.TrackId, out int cap))
+        throw new InvalidOperationException($"{r.TrackId} not in tracks.json");
+    int gridSize = Math.Min(FieldSize, cap);
+
     var starterCopy = new JsonArray();
-    foreach (var t in TEAMS) starterCopy.Add(t.Driver);
+    foreach (var t in TEAMS)
+        foreach (var car in t.Cars)
+            starterCopy.Add(car.Driver);
+
     rounds.Add(new JsonObject
     {
         ["round"] = i + 1,
@@ -226,12 +272,13 @@ for (int i = 0; i < ROUNDS.Length; i++)
         ["championship"] = true,
         ["track"] = track,
         ["laps"] = r.Laps,
-        ["grid"] = new JsonObject { ["size"] = 16, ["starterDriverIds"] = starterCopy },
+        ["history"] = new JsonObject { ["year"] = 1989, ["round"] = r.HistoryRound },
+        ["grid"] = new JsonObject { ["size"] = gridSize, ["starterDriverIds"] = starterCopy },
         ["setupGuide"] = new JsonObject
         {
             ["session"] = new JsonObject
             {
-                ["opponents"] = 15,
+                ["opponents"] = gridSize - 1,
                 ["startTime"] = "14:00",
                 ["date"] = date,
                 ["weatherSlots"] = new JsonArray("Clear"),
@@ -267,7 +314,7 @@ var pack = new JsonObject
 {
     ["packId"] = "smgp-1",
     ["name"] = "Super Monaco GP",
-    ["version"] = "1.0.0",
+    ["version"] = "2.0.0",
     ["formatVersion"] = 1,
     ["skinSeason"] = "smgp",
     ["careerStyle"] = "smgp",
@@ -286,13 +333,17 @@ var pack = new JsonObject
         }),
     },
     ["notes"] = new JsonArray(
-        "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits.",
+        "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
         "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
         "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
-        "B. Miller drives BULLETS in season 1 (design correction) — the car is painted \"Bullets #17 G. Ceara\"; the staged AI file names Miller. G. Ceara himself is reserved for the title-defense event.",
-        "MINARAE is the player's team (the game assigns you there, Level C). Its default persona E. Sambena is the skinpack author's designated player-slot invention (non-canon).",
+        "The season fields 26 cars — the F-Classic_Gen3 class livery cap — covering ALL 22 painted teams (SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool and Moon) and the four strongest second cars (Madonna #1 A. Senna, Firenze #4 I. Germi, Millions #5 N. Jones, Losel #14 W. Dehehe).",
+        "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
+        "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game; 24+2 lands exactly on the class cap of 26.",
+        "Reserves (authored drivers, no season entry — shipped slot-inactive second cars): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27.",
+        "Per-round grids run the full 26 wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
+        "New careers start in a LEVEL D car only (Rigel, Cool, Comet, Orchis, Moon, Zeroforce) — climb via the rival ladder.",
         "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
-        "careerStyle \"smgp\" gates the replica mode (rival battles, seat swaps, the Ceara title defense); until that ships the pack plays as a normal 16-round season."),
+        "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, Zeroforce career-over)."),
 };
 WriteJson(Path.Combine(outDir, "pack.json"), pack);
 Console.WriteLine("pack.json written");

@@ -474,7 +474,7 @@
                                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                     <DockPanel>
                                         <Image DockPanel.Dock="Right" MaxHeight="84" MaxWidth="84" Stretch="Uniform" Margin="8,0,0,0"
-                                               Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/portraits}"
+                                               Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
                                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                         <StackPanel>
                                             <TextBlock FontWeight="Bold" FontSize="15">

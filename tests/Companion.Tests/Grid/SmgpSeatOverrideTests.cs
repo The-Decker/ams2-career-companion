@@ -102,6 +102,54 @@ public sealed class SmgpSeatOverrideTests
     }
 
     [Fact]
+    public void TheRoundCap_NeverTrimsACarTheSwapsTouch()
+    {
+        // A 3-car round cap on a 4-car field would trim the slowest car — Seat D's 0.5-rated
+        // driver — which is exactly where the swap chain moved the player. Override-involved
+        // cars are cap-protected (like the player seat), so the chain survives and an
+        // UNINVOLVED car sits out instead. (Unprotected, the trim starved the closure check and
+        // the whole swap set silently refused — the player raced the wrong car all round.)
+        var basePack = LadderPack();
+        var pack = basePack with
+        {
+            Drivers =
+            [
+                .. basePack.Drivers.Where(d => d.Id != "driver.d"),
+                TestPackBuilder.Driver("driver.d") with
+                {
+                    Ratings = TestPackBuilder.Driver("driver.d").Ratings with { RaceSkill = 0.5 },
+                },
+            ],
+            Season = basePack.Season with
+            {
+                Rounds =
+                [
+                    basePack.Season.Rounds[0] with
+                    {
+                        Grid = new PackRoundGrid
+                        {
+                            Size = 3,
+                            StarterDriverIds = ["driver.a", "driver.b", "driver.c", "driver.d"],
+                        },
+                    },
+                    basePack.Season.Rounds[1],
+                ],
+            },
+        };
+
+        var grid = RoundGridResolver.Resolve(
+            pack, 1, new PlayerSeat { Ams2LiveryName = SeatC },
+            seatOverrides: new Dictionary<string, string> { ["driver.d"] = SeatC },
+            playerSeatOverride: SeatD);
+
+        Assert.Equal(3, grid.Seats.Count);
+        var player = grid.Seats.Single(s => s.IsPlayer);
+        Assert.Equal(SeatD, player.Ams2LiveryName);                            // the earned car survived
+        Assert.Equal(SeatC, grid.Seats.Single(s => s.DriverId == "driver.d").Ams2LiveryName);
+        Assert.DoesNotContain(grid.Seats, s => s.DriverId == "driver.b");      // an uninvolved car sat out
+    }
+
+    [Fact]
     public void DefaultArguments_ResolveByteIdentically()
     {
         var pack = LadderPack();

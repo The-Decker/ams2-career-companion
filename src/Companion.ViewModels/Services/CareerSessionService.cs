@@ -997,11 +997,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var packRound = Pack.Season.Rounds.FirstOrDefault(r => r.Round == round);
         var seats = ResolveGrid(round).Seats;
         var teamsById = Pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
+        // Your own TEAMMATE is never a namable rival (a two-car team's sister seat): beating him
+        // twice would "offer" you your own team, and losing would forfeit your car to him.
+        string? playerTeamId = seats.FirstOrDefault(s => s.IsPlayer)?.TeamId;
 
         var rivals = new List<SmgpRivalOption>();
         foreach (var seat in seats)
         {
-            if (seat.IsPlayer)
+            if (seat.IsPlayer ||
+                string.Equals(seat.TeamId, playerTeamId, StringComparison.Ordinal))
                 continue;
             teamsById.TryGetValue(seat.TeamId, out var team);
             string? vehicle = team?.CarVehicleIds.FirstOrDefault();

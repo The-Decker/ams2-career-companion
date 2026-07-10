@@ -84,8 +84,9 @@ ladder (0.99 → 0.70) and G. Ceara at 0.99.
 - **User-art slots (SHIPPED, M3 slice 5)** — drop-in images beside the exe, never committed,
   resolved by the shared keyed-asset convention (`.jpg`/`.jpeg`/`.png`, first found wins; absent
   = the UI hides the slot):
-  - `data/ams2/smgp/portraits/<driverId>.jpg` — rival portrait on the briefing dossier card
-    (e.g. `driver.gilberto_ceara.jpg`; driver ids from `packs/smgp-1/drivers.json`).
+  - `data/ams2/portraits/<driverId>.jpg` — DRIVER PORTRAITS (universal, every pack): shown on
+    the briefing dossier card AND the wizard's grid-choice cards (e.g.
+    `driver.gilberto_ceara.jpg`; driver ids from `packs/smgp-1/drivers.json`).
   - `data/ams2/smgp/banners/<teamId>.jpg` — team banner atop the dossier card (`team.madonna.jpg`).
   - `data/ams2/smgp/rounds/<round>.jpg` — round card art under the round header (`1.jpg` … `16.jpg`).
   - `data/ams2/smgp/hero.jpg` — the mode hero image (reserved for the main-menu/mode screens, M4).

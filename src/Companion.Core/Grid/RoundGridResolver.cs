@@ -108,8 +108,12 @@ public static class RoundGridResolver
         // The cap trims the field to the track's grid size for the SIM. Staging can opt out
         // (capToGridSize:false) to enumerate the whole qualified field — used only to name every
         // live-active livery so AMS2 never stock-fills a slot (cosmetic; the fold always caps).
+        // SMGP seat movements are cap-PROTECTED: every car a pending override touches (targets,
+        // the movers' current cars, the player's earned car) survives the trim like the player
+        // seat, else a small-track round would starve ApplySeatOverrides' closure check and the
+        // whole swap set would silently refuse. Null without overrides ⇒ byte-identical.
         if (capToGridSize && packRound.Grid is { } capGrid)
-            seats = CapToGridSize(seats, capGrid.Size);
+            seats = CapToGridSize(seats, capGrid.Size, ProtectedLiveries(seats, seatOverrides, playerSeatOverride));
 
         // SMGP seat swaps (M3 slice 3): reseat drivers onto other cars AFTER the cap — driver
         // identity/ratings move, the cars (team, livery, scalars) stay put, membership never
@@ -152,9 +156,11 @@ public static class RoundGridResolver
     /// <summary>Safety cap: the intersection can still exceed grid.size when the historical grid
     /// itself was capped below the starter count by the track's Max AI participants (e.g. 1988
     /// Australia: 26 starters, Adelaide caps at 25). Trim to <paramref name="size"/> keeping the
-    /// player seat unconditionally and, among the rest, the highest raceSkill (stable by original
-    /// order on ties) — the field's slowest tail is what the game would drop anyway.</summary>
-    private static List<GridSeat> CapToGridSize(List<GridSeat> seats, int size)
+    /// player seat (and any override-protected cars) unconditionally and, among the rest, the
+    /// highest raceSkill (stable by original order on ties) — the field's slowest tail is what
+    /// the game would drop anyway.</summary>
+    private static List<GridSeat> CapToGridSize(
+        List<GridSeat> seats, int size, IReadOnlyCollection<string>? protectedLiveries = null)
     {
         if (size < 1 || seats.Count <= size)
             return seats;
@@ -162,6 +168,7 @@ public static class RoundGridResolver
         var kept = seats
             .Select((seat, index) => (seat, index))
             .OrderByDescending(x => x.seat.IsPlayer)
+            .ThenByDescending(x => protectedLiveries?.Contains(x.seat.Ams2LiveryName) == true)
             .ThenByDescending(x => x.seat.Ratings.RaceSkill)
             .ThenBy(x => x.index)
             .Take(size)
@@ -170,6 +177,32 @@ public static class RoundGridResolver
             .ToList();
 
         return kept;
+    }
+
+    /// <summary>The cars a pending SMGP seat-movement set touches — every override TARGET, every
+    /// overridden driver's CURRENT car (his block must exist on the grid to move), and the
+    /// player's earned car. Null when no overrides ride this resolve, so the cap's ordering (and
+    /// every non-smgp career's grid) is byte-identical.</summary>
+    private static HashSet<string>? ProtectedLiveries(
+        List<GridSeat> seats, IReadOnlyDictionary<string, string>? seatOverrides, string? playerSeatOverride)
+    {
+        if (seatOverrides is not { Count: > 0 } && playerSeatOverride is null)
+            return null;
+
+        var protectedSet = new HashSet<string>(StringComparer.Ordinal);
+        if (playerSeatOverride is not null)
+            protectedSet.Add(playerSeatOverride);
+        if (seatOverrides is not null)
+        {
+            foreach (var (driverId, livery) in seatOverrides)
+            {
+                protectedSet.Add(livery);
+                if (seats.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal))
+                    is { } mover)
+                    protectedSet.Add(mover.Ams2LiveryName);
+            }
+        }
+        return protectedSet;
     }
 
     // ---------- SMGP seat overrides (M3) ----------

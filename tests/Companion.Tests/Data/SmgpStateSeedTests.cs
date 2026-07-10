@@ -28,9 +28,29 @@ public sealed class SmgpStateSeedTests : IDisposable
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
     }
 
-    private static SeasonPack SmgpPack() => TestPackBuilder.TwoRoundPack() is var basePack
-        ? basePack with { Manifest = basePack.Manifest with { CareerStyle = SmgpRules.CareerStyle } }
-        : throw new InvalidOperationException();
+    /// <summary>The two-round pack, smgp-styled, with the player's seat on its OWN team — the
+    /// briefing's rival list excludes teammates, so a one-team pack would offer no rivals.</summary>
+    private static SeasonPack SmgpPack()
+    {
+        var basePack = TestPackBuilder.TwoRoundPack(secondTeamId: "team.hulme");
+        return basePack with
+        {
+            Manifest = basePack.Manifest with { CareerStyle = SmgpRules.CareerStyle },
+            Teams =
+            [
+                .. basePack.Teams,
+                new Companion.Core.Packs.PackTeam
+                {
+                    Id = "team.hulme",
+                    Name = "Hulme Racing",
+                    CarVehicleIds = [TestPackBuilder.VintageCar],
+                    Reliability = 0.9,
+                    Prestige = 2,
+                    BudgetTier = 2,
+                },
+            ],
+        };
+    }
 
     [Fact]
     public void SmgpCareer_SeedsState_CarriesItForward_AndReplaysByteIdentically()

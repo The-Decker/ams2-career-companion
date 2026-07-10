@@ -99,6 +99,12 @@ public static class SmgpBattleFold
                     displacedDriver is null ? null : challengerSeat));
                 return new SmgpBattleFoldResult { State = state, Events = events };
             }
+
+            // The verdict stands even when the seat chain cannot resolve (no demotion target /
+            // no challenger seat) — journal the LOSS honestly; only the seats stay put.
+            events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
+                SmgpTrigger.None, state.CareerOver, cause: "defense-lost"));
+            return new SmgpBattleFoldResult { State = state, Events = events };
         }
 
         events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
@@ -182,8 +188,10 @@ public static class SmgpBattleFold
             string.Equals(rivalSeat, playerSeat, StringComparison.Ordinal))
             return state;
 
+        // The floor check is TEAM-level: losing at ANY of the floor team's cars is the game-over
+        // state (a two-car floor team must not have an invincible second car).
         bool atFloorTeam = ladder.Count > 0 &&
-            string.Equals(ladder[^1].Livery, playerSeat, StringComparison.Ordinal);
+            string.Equals(ladder[^1].TeamId, TeamOf(ladder, playerSeat), StringComparison.Ordinal);
         if (SmgpRules.IsCareerOver(SmgpTrigger.PlayerSeatForfeit, tier, atFloorTeam))
             return state with { CareerOver = true };
 
@@ -227,23 +235,29 @@ public static class SmgpBattleFold
 
     // ---------- the authored ladder + seat occupancy ----------
 
-    /// <summary>One team's car on the ladder, in the pack's authored team order (the design
-    /// doc's tier listing — the LAST entry is the floor team). One-driver teams per the mode;
-    /// a team's seat is its first authored entry.</summary>
+    /// <summary>One CAR on the ladder, in the pack's authored team order (the design doc's tier
+    /// listing — the LAST team is the floor team) with each team's cars in their authored entry
+    /// order (data contract: a team's LADDER/champion car is authored FIRST in its block). Every
+    /// entry is a ladder seat, so two-car teams (the 32-car skinpack field) swap and demote per
+    /// CAR while team-level rules (the floor check) key the TeamId.</summary>
     internal sealed record LadderSeat(string TeamId, char Tier, string Livery, string DefaultDriverId);
 
     internal static List<LadderSeat> Ladder(SeasonPack pack)
     {
-        var ladder = new List<LadderSeat>(pack.Teams.Count);
+        var ladder = new List<LadderSeat>(pack.Entries.Count);
         foreach (var team in pack.Teams)
         {
-            var entry = pack.Entries.FirstOrDefault(e =>
-                string.Equals(e.TeamId, team.Id, StringComparison.Ordinal));
-            if (entry is not null)
-                ladder.Add(new LadderSeat(team.Id, SmgpRules.Tier(team.Prestige), entry.Ams2LiveryName, entry.DriverId));
+            foreach (var entry in pack.Entries)
+            {
+                if (string.Equals(entry.TeamId, team.Id, StringComparison.Ordinal))
+                    ladder.Add(new LadderSeat(team.Id, SmgpRules.Tier(team.Prestige), entry.Ams2LiveryName, entry.DriverId));
+            }
         }
         return ladder;
     }
+
+    internal static string? TeamOf(IReadOnlyList<LadderSeat> ladder, string livery) =>
+        ladder.FirstOrDefault(s => string.Equals(s.Livery, livery, StringComparison.Ordinal))?.TeamId;
 
     internal static char? TierOf(IReadOnlyList<LadderSeat> ladder, string livery) =>
         ladder.FirstOrDefault(s => string.Equals(s.Livery, livery, StringComparison.Ordinal))?.Tier;
@@ -257,7 +271,8 @@ public static class SmgpBattleFold
             !string.Equals(s.Livery, excludeSeat2, StringComparison.Ordinal))?.Livery;
 
     /// <summary>The next authored seat below the player's WITHIN the floor tier (Rigel → Comet →
-    /// Orchis → Zeroforce): the one honest reading of "demoted one tier" when no tier is left.</summary>
+    /// Orchis → Zeroforce): the one honest reading of "demoted one tier" when no tier is left.
+    /// A DIFFERENT team's car only — moving into your own teammate's seat is not a demotion.</summary>
     private static string? NextSeatDownWithin(
         IReadOnlyList<LadderSeat> ladder, char tier, string playerSeat, string rivalSeat)
     {
@@ -265,9 +280,11 @@ public static class SmgpBattleFold
         {
             if (!string.Equals(ladder[i].Livery, playerSeat, StringComparison.Ordinal))
                 continue;
+            string playerTeam = ladder[i].TeamId;
             for (int j = i + 1; j < ladder.Count; j++)
             {
                 if (ladder[j].Tier == tier &&
+                    !string.Equals(ladder[j].TeamId, playerTeam, StringComparison.Ordinal) &&
                     !string.Equals(ladder[j].Livery, rivalSeat, StringComparison.Ordinal))
                     return ladder[j].Livery;
             }
@@ -277,13 +294,20 @@ public static class SmgpBattleFold
     }
 
     /// <summary>The car <paramref name="driverId"/> currently drives: his seat override when a
-    /// swap moved him, else his authored pack seat. Null = he does not race (no authored entry).</summary>
+    /// swap moved him, else his authored pack seat — UNLESS someone else holds that car (the
+    /// player took it at creation, or a swap/introduction moved another driver in), which means
+    /// he lost the ride without receiving one: he does not race. Null = no current car.</summary>
     internal static string? CurrentSeatOf(SeasonPack pack, SmgpState state, string driverId)
     {
         if (state.AiSeatOverrides.TryGetValue(driverId, out var overridden))
             return overridden;
-        return pack.Entries.FirstOrDefault(e =>
+        string? authored = pack.Entries.FirstOrDefault(e =>
             string.Equals(e.DriverId, driverId, StringComparison.Ordinal))?.Ams2LiveryName;
+        if (authored is null ||
+            string.Equals(authored, state.CurrentSeatLivery, StringComparison.Ordinal) ||
+            state.AiSeatOverrides.Values.Contains(authored, StringComparer.Ordinal))
+            return null;
+        return authored;
     }
 
     /// <summary>Who currently occupies <paramref name="livery"/>: the player (null — callers

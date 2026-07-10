@@ -121,6 +121,21 @@
       "budgetTier": 4
     },
     {
+      "id": "team.joke",
+      "name": "Joke",
+      "carVehicleIds": [
+        "formula_classic_g3m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.88,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
       "id": "team.bullets",
       "name": "Bullets",
       "carVehicleIds": [
@@ -181,10 +196,70 @@
       "budgetTier": 3
     },
     {
+      "id": "team.lares",
+      "name": "Lares",
+      "carVehicleIds": [
+        "formula_classic_g3m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.84,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.feet",
+      "name": "Feet",
+      "carVehicleIds": [
+        "formula_classic_g3m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.84,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.serga",
+      "name": "Serga",
+      "carVehicleIds": [
+        "formula_classic_g3m4"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.84,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
       "id": "team.rigel",
       "name": "Rigel",
       "carVehicleIds": [
         "formula_classic_g3m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.8,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.cool",
+      "name": "Cool",
+      "carVehicleIds": [
+        "formula_classic_g3m4"
       ],
       "performance": {
         "weightScalar": 1,
@@ -215,6 +290,21 @@
       "name": "Orchis",
       "carVehicleIds": [
         "formula_classic_g3m2"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.8,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.moon",
+      "name": "Moon",
+      "carVehicleIds": [
+        "formula_classic_g3m4"
       ],
       "performance": {
         "weightScalar": 1,

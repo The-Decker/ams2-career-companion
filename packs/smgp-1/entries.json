@@ -2,6 +2,13 @@
   "entries": [
     {
       "teamId": "team.madonna",
+      "driverId": "driver.ayrton_senna",
+      "number": "1",
+      "rounds": "1-16",
+      "ams2LiveryName": "Madonna #1 A. Senna"
+    },
+    {
+      "teamId": "team.madonna",
       "driverId": "driver.alain_asselin",
       "number": "2",
       "rounds": "1-16",
@@ -15,11 +22,25 @@
       "ams2LiveryName": "Firenze #3 F. Elsser"
     },
     {
+      "teamId": "team.firenze",
+      "driverId": "driver.ivanazzio_germi",
+      "number": "4",
+      "rounds": "1-16",
+      "ams2LiveryName": "Firenze #4 I. Germi"
+    },
+    {
       "teamId": "team.millions",
       "driverId": "driver.giorgio_alberti",
       "number": "6",
       "rounds": "1-16",
       "ams2LiveryName": "Millions #6 G. Alberti"
+    },
+    {
+      "teamId": "team.millions",
+      "driverId": "driver.nigel_jones",
+      "number": "5",
+      "rounds": "1-16",
+      "ams2LiveryName": "Millions #5 N. Jones"
     },
     {
       "teamId": "team.bestowal",
@@ -50,6 +71,13 @@
       "ams2LiveryName": "Losel #13 E. Pacheco"
     },
     {
+      "teamId": "team.losel",
+      "driverId": "driver.willian_dehehe",
+      "number": "14",
+      "rounds": "1-16",
+      "ams2LiveryName": "Losel #14 W. Dehehe"
+    },
+    {
       "teamId": "team.may",
       "driverId": "driver.george_turner",
       "number": "15",
@@ -57,8 +85,15 @@
       "ams2LiveryName": "May #15 G. Turner"
     },
     {
+      "teamId": "team.joke",
+      "driverId": "driver.luca_dufay",
+      "number": "16",
+      "rounds": "1-16",
+      "ams2LiveryName": "Joke #16 L. Dufay"
+    },
+    {
       "teamId": "team.bullets",
-      "driverId": "driver.bernie_miller",
+      "driverId": "driver.gilberto_ceara",
       "number": "17",
       "rounds": "1-16",
       "ams2LiveryName": "Bullets #17 G. Ceara"
@@ -79,10 +114,31 @@
     },
     {
       "teamId": "team.minarae",
-      "driverId": "driver.eric_sambena",
+      "driverId": "driver.bernie_miller",
       "number": "20",
       "rounds": "1-16",
       "ams2LiveryName": "Minarae #20 B. Miller"
+    },
+    {
+      "teamId": "team.lares",
+      "driverId": "driver.park_arai",
+      "number": "23",
+      "rounds": "1-16",
+      "ams2LiveryName": "Lares #23 P. Arai"
+    },
+    {
+      "teamId": "team.feet",
+      "driverId": "driver.jean_rampal",
+      "number": "24",
+      "rounds": "1-16",
+      "ams2LiveryName": "Feet #24 J. Rampal"
+    },
+    {
+      "teamId": "team.serga",
+      "driverId": "driver.eric_sambena",
+      "number": "25",
+      "rounds": "1-16",
+      "ams2LiveryName": "Serga #25 E. Sambena"
     },
     {
       "teamId": "team.rigel",
@@ -90,6 +146,13 @@
       "number": "26",
       "rounds": "1-16",
       "ams2LiveryName": "Rigel #26 R. Cotman"
+    },
+    {
+      "teamId": "team.cool",
+      "driverId": "driver.alef_delvaux",
+      "number": "28",
+      "rounds": "1-16",
+      "ams2LiveryName": "Cool #28 A. Delvaux"
     },
     {
       "teamId": "team.comet",
@@ -104,6 +167,13 @@
       "number": "31",
       "rounds": "1-16",
       "ams2LiveryName": "Orchis #31 C. Tegner"
+    },
+    {
+      "teamId": "team.moon",
+      "driverId": "driver.kevin_yepes",
+      "number": "30",
+      "rounds": "1-16",
+      "ams2LiveryName": "Moon #30 K. Yepes"
     },
     {
       "teamId": "team.zeroforce",

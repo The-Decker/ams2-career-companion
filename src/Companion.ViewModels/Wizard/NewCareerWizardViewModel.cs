@@ -388,9 +388,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         // for the most rounds. Packs whose livery names embed the driver (e.g. "1988 Williams #5 -
         // N. Mansell") never collide, so they are unaffected; team-only livery names (1985) no longer
         // list the same seat twice. (Dangling team/driver refs are validation findings, skipped.)
-        // The SMGP replica assigns rookies to the lower divisions (docs/dev/smgp-design.md: the
-        // game seats you at MINARAE, Level C) — only LEVEL C and LEVEL D cars are offered, and
-        // Minarae starts selected as the game's own assignment.
+        // The SMGP replica starts rookies at the BOTTOM (Mike's rule): only LEVEL D cars are
+        // offered — you earn everything above through the rival ladder.
         bool smgp = IsSmgpPack;
 
         foreach (var group in pack.Entries
@@ -400,7 +399,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
             var team = teamsById[entry.TeamId];
             var driver = driversById[entry.DriverId];
-            if (smgp && Companion.Core.Smgp.SmgpRules.Tier(team.Prestige) is not ('C' or 'D'))
+            if (smgp && Companion.Core.Smgp.SmgpRules.Tier(team.Prestige) != 'D')
                 continue;
 
             Seats.Add(new SeatOption
@@ -421,11 +420,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         }
 
         if (smgp)
-        {
-            SelectedSeat = Seats.FirstOrDefault(s => string.Equals(
-                    s.TeamId, Companion.Core.Smgp.SmgpSchedule.MinaraeTeamId, StringComparison.Ordinal))
-                ?? Seats.FirstOrDefault();
-        }
+            SelectedSeat = Seats.FirstOrDefault();
     }
 
     /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
@@ -499,6 +494,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 Liveries = liveries,
                 DriverName = driversById[entry.DriverId].Name,
                 TeamName = teamsById[entry.TeamId].Name,
+                DriverId = entry.DriverId,
                 IsLocked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal),
                 IsIncluded = true,
             };

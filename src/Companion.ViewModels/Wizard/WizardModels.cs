@@ -33,6 +33,11 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
     public required string DriverName { get; init; }
     public required string TeamName { get; init; }
 
+    /// <summary>The seat's primary driver id — keys the optional drop-in portrait
+    /// (<c>data/ams2/portraits/&lt;driverId&gt;.jpg</c>) on the grid card. Empty (the own-entrant
+    /// row) = no portrait slot.</summary>
+    public string DriverId { get; init; } = "";
+
     /// <summary>The player's own seat — always on the grid, its checkbox disabled.</summary>
     public bool IsLocked { get; init; }
 

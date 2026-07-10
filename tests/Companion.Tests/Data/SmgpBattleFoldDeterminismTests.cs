@@ -173,6 +173,86 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void TheFloorTeamsSecondCar_IsNotInvincible_TeamLevelCareerOver()
+    {
+        // Two-car floor team (the 26-car field shape): the player starts in team.d's SECOND car.
+        // Losing the rival battle twice must still end the career — the floor check is
+        // TEAM-level, not a compare against the last ladder car's livery.
+        const string SeatE = "Stock Livery #5";
+        var basePack = LadderPack();
+        var pack = basePack with
+        {
+            Drivers = [.. basePack.Drivers, TestPackBuilder.Driver("driver.e")],
+            Entries = [.. basePack.Entries, TestPackBuilder.Entry("team.d", "driver.e", "5", SeatE) with { Rounds = "1-3" }],
+        };
+
+        string packDirectory = Path.Combine(_root, "packs", "floor-second-car");
+        TestPackBuilder.Write(pack, packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "floor-second-car"),
+            library: FiveSeatLibrary());
+        string careerPath = Path.Combine(_root, "careers", "floor-second-car.ams2career");
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "floor-second-car",
+                       MasterSeed = Seed,
+                       PlayerLiveryName = SeatE,
+                       SmgpMode = true,
+                   },
+                   environment))
+        {
+            ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.a" });
+            ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.a" });
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
+        Assert.True(smgp.CareerOver);
+        Assert.Equal(SeatE, smgp.CurrentSeatLivery); // nothing moved — the game-over screen
+    }
+
+    private static void ApplyPlayerLast(ICareerSession session, SmgpRivalCall rival)
+    {
+        var others = session.CurrentGrid()
+            .Select(s => s.DriverId)
+            .Where(id => !string.Equals(id, session.Summary.PlayerDriverId, StringComparison.Ordinal))
+            .ToList();
+        session.Apply(new ResultDraft
+        {
+            Classified = others.Append(session.Summary.PlayerDriverId).ToList(),
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+            SmgpRival = rival,
+        });
+    }
+
+    private static Companion.Ams2.ContentLibrary.Ams2ContentLibrary FiveSeatLibrary()
+    {
+        var library = TestPackBuilder.Library();
+        return new()
+        {
+            ExtractedFrom = library.ExtractedFrom,
+            Classes = library.Classes,
+            Vehicles = library.Vehicles,
+            Tracks = library.Tracks,
+            Liveries = new Dictionary<string, Companion.Ams2.ContentLibrary.Ams2LiveryClassEntry>(StringComparer.Ordinal)
+            {
+                [TestPackBuilder.VintageClass] = new()
+                {
+                    Name = TestPackBuilder.VintageClass,
+                    StockLib1563 = [SeatA, SeatB, SeatC, SeatD, "Stock Livery #5"],
+                },
+            },
+        };
+    }
+
+    [Fact]
     public void RoundsWithoutARivalCall_FoldNoBattleRows()
     {
         // The off path: an smgp career whose envelopes never stored a rival call folds exactly
