@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Focusable="False">
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-        <!-- proportional page cap (was a hard 900): expanded cards breathe at 2560 -->
-        <StackPanel HorizontalAlignment="Left" Margin="0,0,0,16"
+        <!-- proportional page cap (was a hard 900): expanded cards breathe at 2560. CENTERED with
+             side padding — left-anchored, the cards (and their circuit maps) pressed against the
+             window's left edge on a wide screen while the right half sat empty. -->
+        <StackPanel HorizontalAlignment="Center" Margin="16,0,16,16"
                     MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
                                Converter={StaticResource WidthFraction}, ConverterParameter=0.7|900|1400}">
 
@@ -105,8 +107,11 @@
                                                          Converter={StaticResource WidthFraction}, ConverterParameter=0.2|150|300}"
                                                  Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
                                                           Converter={StaticResource AspectHeight}, ConverterParameter=1}">
+                                            <!-- the Margin keeps the scaled stroke inside the box: the Viewbox fits
+                                                 the GEOMETRY bounds, so half the stroke otherwise bleeds (and clips)
+                                                 past every edge — the "map runs off the card" report -->
                                             <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
-                                                  Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                                  Stroke="{StaticResource AccentBrush}" StrokeThickness="10" Margin="8"
                                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                                         </Viewbox>
                                         <StackPanel VerticalAlignment="Top">

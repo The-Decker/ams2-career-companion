@@ -180,6 +180,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             var files = SeasonPackFiles.Read(SelectedPack!.Directory);
             Pack = files.Parse();
             _packDirectory = SelectedPack.Directory;
+            OnPropertyChanged(nameof(IsSmgpPack));
+            OnPropertyChanged(nameof(GridPickEnabled));
             return true;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
@@ -187,9 +189,21 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             Pack = null;
             _packDirectory = null;
             PackLoadError = ex.Message;
+            OnPropertyChanged(nameof(IsSmgpPack));
+            OnPropertyChanged(nameof(GridPickEnabled));
             return false;
         }
     }
+
+    /// <summary>True when the selected pack is the SMGP replica: the wizard reshapes — seats
+    /// restrict to the lower divisions (the game starts rookies there), the season field is the
+    /// whole pack (the ladder needs every car), and own-entrant is unavailable (a custom livery
+    /// holds no ladder seat).</summary>
+    public bool IsSmgpPack => string.Equals(
+        Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
+
+    /// <summary>The grid step's checkboxes lock for the SMGP replica — the field is fixed.</summary>
+    public bool GridPickEnabled => !IsSmgpPack;
 
     // ---------- step b: verification ----------
 
@@ -349,7 +363,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     /// <summary>True when the player typed a custom livery — they race as their own entrant instead of
     /// taking a pack seat.</summary>
-    public bool IsOwnEntrant => !string.IsNullOrWhiteSpace(CustomLiveryName);
+    /// <summary>Own-entrant never applies to the SMGP replica — a custom livery holds no seat on
+    /// the ladder, so the mode's swaps and the title defense could never reach it.</summary>
+    public bool IsOwnEntrant => !IsSmgpPack && !string.IsNullOrWhiteSpace(CustomLiveryName);
 
     /// <summary>The livery the player will drive: the typed custom livery (own entrant) when present,
     /// otherwise the selected pack seat's livery. Null only before either is chosen (the Next gate
@@ -372,6 +388,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         // for the most rounds. Packs whose livery names embed the driver (e.g. "1988 Williams #5 -
         // N. Mansell") never collide, so they are unaffected; team-only livery names (1985) no longer
         // list the same seat twice. (Dangling team/driver refs are validation findings, skipped.)
+        // The SMGP replica assigns rookies to the lower divisions (docs/dev/smgp-design.md: the
+        // game seats you at MINARAE, Level C) — only LEVEL C and LEVEL D cars are offered, and
+        // Minarae starts selected as the game's own assignment.
+        bool smgp = IsSmgpPack;
+
         foreach (var group in pack.Entries
                      .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
                      .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal))
@@ -379,6 +400,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
             var team = teamsById[entry.TeamId];
             var driver = driversById[entry.DriverId];
+            if (smgp && Companion.Core.Smgp.SmgpRules.Tier(team.Prestige) is not ('C' or 'D'))
+                continue;
 
             Seats.Add(new SeatOption
             {
@@ -395,6 +418,13 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 Prestige = team.Prestige,
                 Reliability = team.Reliability,
             });
+        }
+
+        if (smgp)
+        {
+            SelectedSeat = Seats.FirstOrDefault(s => string.Equals(
+                    s.TeamId, Companion.Core.Smgp.SmgpSchedule.MinaraeTeamId, StringComparison.Ordinal))
+                ?? Seats.FirstOrDefault();
         }
     }
 

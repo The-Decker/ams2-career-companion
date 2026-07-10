@@ -15,6 +15,7 @@ public static class SmgpSchedule
     public const string MadonnaTeamId = "team.madonna";
     public const string DardanTeamId = "team.dardan";
     public const string BulletsTeamId = "team.bullets";
+    public const string MinaraeTeamId = "team.minarae";
     public const string CearaDriverId = "driver.gilberto_ceara";
 
     /// <summary>Whether this round's challenge is FORCED by the title defense (rounds 1 + 2 of

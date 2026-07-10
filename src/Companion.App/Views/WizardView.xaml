@@ -396,9 +396,19 @@
                 <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
+                <!-- SMGP: the game starts rookies in the lower divisions — the list above is
+                     already filtered to LEVEL C / LEVEL D cars, Minarae pre-selected. -->
+                <Border DockPanel.Dock="Top" Background="{StaticResource AccentDimBrush}" CornerRadius="6"
+                        Padding="10,7" Margin="0,0,0,10"
+                        Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
+                    <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                               Text="SUPER MONACO GP starts you in the lower divisions — LEVEL C and LEVEL D cars only. The game assigns MINARAE (pre-selected); earn better seats by beating rivals." />
+                </Border>
                 <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
-                     over the seat above; leave blank for the ordinary seat pick. -->
-                <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12">
+                     over the seat above; leave blank for the ordinary seat pick. Hidden for the SMGP
+                     replica — a custom livery holds no seat on the mode's ladder. -->
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12"
+                        Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolCollapsed}}">
                     <StackPanel>
                         <TextBlock Text="— or race as your own entrant —" Style="{StaticResource Faint}" />
                         <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,6" TextWrapping="Wrap"
@@ -467,11 +477,29 @@
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
                     <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
+                <!-- SMGP: the ladder needs the whole field — the pick is display-only. -->
+                <Border DockPanel.Dock="Top" Background="{StaticResource AccentDimBrush}" CornerRadius="6"
+                        Padding="10,7" Margin="0,0,0,10"
+                        Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
+                    <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                               Text="SUPER MONACO GP races the whole field — all sixteen cars are in (the rival ladder needs every seat)." />
+                </Border>
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Center">
+                    <!-- adaptive multi-column grid (Mike's ask — one long column wasted the screen):
+                         ~340px per card ⇒ 6-7 columns at 2560, 5 at 1920, 2 at the 920 minimum -->
+                    <ItemsControl ItemsSource="{Binding GridChoices}" HorizontalAlignment="Stretch"
+                                  IsEnabled="{Binding GridPickEnabled}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{Binding ActualWidth,
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                                       Converter={StaticResource WidthToColumns},
+                                                       ConverterParameter=340}" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,4">
+                                <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,6,6">
                                     <DockPanel>
                                         <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
                                                   IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
