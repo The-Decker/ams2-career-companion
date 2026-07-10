@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- SMGP McLaren MP4/5B - two teams: Iris #33 (purple) / Azalea #34 (pink). Body-only (uses default helmet/suit). -->
+<!-- Created by KobraFleetworks. SEGA Super Monaco GP tribute liveries. -->
+
+<USER_OVERRIDES>
+
+    <LIVERY_OVERRIDE LIVERY="51" NAME="Iris #33 B. Salgado" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="skins\preview_car1.dds" />
+        <TEXTURE NAME="BODY" PATH="skins\car1_body.dds" />
+    </LIVERY_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="52" NAME="Azalea #34 M. Larssen" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="skins\preview_car2.dds" />
+        <TEXTURE NAME="BODY" PATH="skins\car2_body.dds" />
+    </LIVERY_OVERRIDE>
+
+</USER_OVERRIDES>

@@ -41,6 +41,9 @@
     <!-- The 1989 historical reference: smgp-1's per-round history pointers resolve against it
          (the replica's circuits model the 1989 season) — validated by SmgpHistoryMappingTests. -->
     <None Include="..\..\data\history\1989.json" Link="Fixtures\history\1989.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The smgp skin-season pointer set: smgp-1's entries bind against these override NAMEs
+         verbatim — validated by SmgpRosterDriftTests. -->
+    <None Include="..\..\data\ams2\skin-seasons\smgp\*.xml" Link="Fixtures\ams2\skin-seasons\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

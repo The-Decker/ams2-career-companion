@@ -123,10 +123,11 @@ ladder (0.99 → 0.70) and G. Ceara at 0.99.
   - `data/ams2/smgp/banners/<teamId>.jpg` — team banner atop the dossier card (`team.madonna.jpg`).
   - `data/ams2/smgp/rounds/<round>.jpg` — round card art under the round header (`1.jpg` … `16.jpg`).
   - `data/ams2/smgp/hero.jpg` — the mode hero image (reserved for the main-menu/mode screens, M4).
-- **Opt-in modded field (Iris & Azalea, Kobra Fleetworks)** — the BASE season fields 24
-  generic-model SMGP cars; the pack's `manifest.moddedField` declares two extra McLaren MP4/5B
-  teams (Iris #1 B. Salgado purple, Azalea #8 M. Larssen pink — the `mclaren_mp45b` mod car) that
-  round the grid to 26 (the F-Classic_Gen3 26-livery cap). Gated exactly like the alternate
+- **The McLaren field (Iris & Azalea, Kobra Fleetworks)** — two McLaren MP4/5B teams
+  (Iris #33 B. Salgado purple, Azalea #34 M. Larssen pink — the `mclaren_mp45b` mod car; numbers
+  33/34 because the 32-car skin universe uses every number 1–32) round the base 24 generic-model
+  SMGP cars to 26 (the F-Classic_Gen3 26-livery cap). Since the mod was finalized they are
+  PERMANENT base entries (the opt-in `manifest.moddedField` tick era is over). Gated exactly like the alternate
   tracks: a wizard tick verifies the car mod is installed (`mclaren_mp45b` in the content library
   + its `Overrides\mclaren_mp45b\` folder present) and, when it is, the creation-time
   `ModdedFieldTransform` appends the two entries and bumps each round's grid size before pinning —

@@ -158,8 +158,11 @@ var TEAMS = new (string Team, string Display, char Tier, (string Number, string 
 // entry); their entries are the modded field, added only when the car mod is installed.
 (string Team, string Display, string Driver, string Number, string Livery)[] MCLAREN_TEAMS =
 {
-    ("iris",   "Iris",   "driver.bruno_salgado", "1", "Iris #1 B. Salgado"),
-    ("azalea", "Azalea", "driver.mika_larssen",  "8", "Azalea #8 M. Larssen"),
+    // #33/#34 — every number 1–32 is taken by the 32-car SMGP skin universe, so the Kobra
+    // Fleetworks liveries (v1.1+) carry the next two. Must byte-match the installed override
+    // NAME in Overrides\mclaren_mp45b\mclaren_mp45b.xml or the cars pool-fill at staging.
+    ("iris",   "Iris",   "driver.bruno_salgado", "33", "Iris #33 B. Salgado"),
+    ("azalea", "Azalea", "driver.mika_larssen",  "34", "Azalea #34 M. Larssen"),
 };
 
 JsonObject Team(string id, string display, JsonArray models, double reliability, int prestige) => new()
@@ -370,7 +373,7 @@ var pack = new JsonObject
 {
     ["packId"] = "smgp-1",
     ["name"] = "Super Monaco GP",
-    ["version"] = "2.0.0",
+    ["version"] = "2.0.1",
     ["formatVersion"] = 1,
     ["skinSeason"] = "smgp",
     ["careerStyle"] = "smgp",
@@ -392,7 +395,7 @@ var pack = new JsonObject
         "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
         "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
         "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
-        "The season fields 26 cars: 24 generic-model SMGP cars (ALL 22 painted teams — SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon — plus Madonna #1 A. Senna and Firenze #4 I. Germi) and the two McLaren MP4/5B LEVEL-A teams by Kobra Fleetworks (Iris #1 B. Salgado, Azalea #8 M. Larssen). 26 = the class livery cap.",
+        "The season fields 26 cars: 24 generic-model SMGP cars (ALL 22 painted teams — SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon — plus Madonna #1 A. Senna and Firenze #4 I. Germi) and the two McLaren MP4/5B LEVEL-A teams by Kobra Fleetworks (Iris #33 B. Salgado, Azalea #34 M. Larssen). 26 = the class livery cap.",
         "The McLaren teams (Iris, Azalea) bind against the installed mclaren_mp45b mod car + the Kobra Fleetworks 'SMGP Iris & Azalea' livery override — install both so their cars show in-game.",
         "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
         "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game.",
@@ -400,7 +403,7 @@ var pack = new JsonObject
         "Per-round grids run the full field wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
         "New careers start in a LEVEL D car only (Rigel, Cool, Comet, Orchis, Moon, Zeroforce) — climb via the rival ladder.",
         "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
-        "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, Zeroforce career-over)."),
+        "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, the LEVEL D four-loss career-over)."),
 };
 WriteJson(Path.Combine(outDir, "pack.json"), pack);
 Console.WriteLine("pack.json written");
