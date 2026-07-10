@@ -3,8 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <StackPanel MaxWidth="860" HorizontalAlignment="Left">
+    <ScrollViewer x:Name="BriefingScroll" VerticalScrollBarVisibility="Auto" Focusable="False">
+        <!-- proportional page cap (was a hard 860): ~94% of the viewport, never under 860 where
+             there is room — fills a 2560 window in two columns yet still hugs a small one -->
+        <StackPanel HorizontalAlignment="Left"
+                    MaxWidth="{Binding ActualWidth, ElementName=BriefingScroll,
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.94|860}">
 
             <!-- title (placeholder rounds carry the "— placeholder: <track>" label) -->
             <TextBlock Text="{Binding Title}" Style="{StaticResource H2}" TextWrapping="Wrap" />
@@ -20,7 +24,9 @@
                  (the shared user-asset convention, keyed by the round's AMS2 track id). Collapses
                  entirely when no image is present, so the briefing is unchanged without art. The
                  x:Name lets the converter re-read when the round changes. -->
-            <Border x:Name="TrackArt" Margin="0,12,0,0" CornerRadius="7" MaxWidth="560" HorizontalAlignment="Left"
+            <Border x:Name="TrackArt" Margin="0,12,0,0" CornerRadius="7" HorizontalAlignment="Left"
+                    MaxWidth="{Binding ActualWidth, ElementName=BriefingScroll,
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.6|420}"
                     BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
                     Visibility="{Binding ElementName=TrackArtImage, Path=Source, Converter={StaticResource NullCollapsed}}">
                 <Border CornerRadius="6" ClipToBounds="True">
@@ -30,375 +36,397 @@
                 </Border>
             </Border>
 
-            <!-- Circuit map: the f1db-derived vector layout of the circuit this round is run on, with a
-                 one-line caption (name · length · turns · direction). Collapses when the round has no
-                 circuit data. Always shows (no user art needed) — the "very important visual per race". -->
-            <Border Style="{StaticResource Panel}" Margin="0,12,0,0" Padding="16" MaxWidth="720"
-                    HorizontalAlignment="Left"
-                    Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
-                <DockPanel>
-                    <Viewbox DockPanel.Dock="Left" Width="168" Height="168" Margin="0,0,20,0" VerticalAlignment="Top">
-                        <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
-                              Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
-                              StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                    </Viewbox>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="CIRCUIT" Style="{StaticResource Faint}" FontSize="11" />
-                        <TextBlock Text="{Binding VenueDisplayName}" FontWeight="SemiBold" FontSize="18"
-                                   TextWrapping="Wrap" Margin="0,3,0,0" />
-                        <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
-                                   TextWrapping="Wrap" Margin="0,5,0,0" />
-                        <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}"
-                                   TextWrapping="Wrap" Margin="0,10,0,0"
-                                   Visibility="{Binding CircuitHistory, Converter={StaticResource StringVisible}}" />
-
-                        <!-- era-capped fun facts (same reference data as the Calendar expander) -->
-                        <StackPanel Margin="0,10,0,0"
-                                    Visibility="{Binding HasCircuitFacts, Converter={StaticResource BoolVisible}}">
-                            <TextBlock Text="FUN FACTS" Style="{StaticResource Faint}" FontSize="11" Margin="0,0,0,4" />
-                            <ItemsControl ItemsSource="{Binding CircuitFacts}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,2"><Run Text="•  " /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </StackPanel>
-                </DockPanel>
-            </Border>
-
             <!-- season-complete state (Home normally swaps away before this shows) -->
             <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
                        Text="Season complete — there is no round left to brief."
                        Visibility="{Binding SeasonComplete, Converter={StaticResource BoolVisible}}" />
 
-            <!-- first-run coach mark: the briefing checklist (ux-round §4; binds through
-                 Home so the compact window — no HomeView ancestor — falls back to hidden) -->
-            <Border Style="{StaticResource CoachMark}" Margin="0,16,0,0"
-                    Visibility="{Binding DataContext.CoachMarks.ShowBriefingChecklist,
-                                 RelativeSource={RelativeSource AncestorType=views:HomeView},
-                                 Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Left" Style="{StaticResource CoachMarkGlyph}" />
-                    <Button DockPanel.Dock="Right" Content="Got it" VerticalAlignment="Center"
-                            Margin="12,0,0,0"
-                            ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
-                            Command="{Binding DataContext.CoachMarks.DismissBriefingChecklistCommand,
-                                      RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
-                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"
-                               Text="New here? This checklist mirrors AMS2's custom-race screen top to bottom. The game can't paste values, so set each line in-game and click the row here to tick it off — the Compact overlay button keeps the list on top of AMS2 while you do." />
-                </DockPanel>
-            </Border>
+            <!-- two-column race-day layout: checklist + staging (3*) | circuit + advisories (2*).
+                 Star columns absorb every window size and the 130% UI scale; the left column keeps
+                 a workable checklist width, the right takes the reference material. -->
+            <Grid Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" MinWidth="520" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
 
-            <!-- the manual setup CHECKLIST (ux-round correction: AMS2's custom-race settings
-                 are arrow-steppers, nothing can be pasted — tick each row as you set it) -->
-            <Border Style="{StaticResource Panel}" Margin="0,16,0,0"
-                    Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
-                <StackPanel>
-                    <DockPanel Margin="0,0,0,10">
-                        <Border DockPanel.Dock="Right" VerticalAlignment="Center">
-                            <Border.Style>
-                                <Style TargetType="Border" BasedOn="{StaticResource Chip}">
-                                    <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding AllSet}" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <TextBlock Text="{Binding ChecklistProgressText}" FontWeight="SemiBold" FontSize="13">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding AllSet}" Value="True">
-                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </Border>
+                <!-- ===== LEFT: the work column — checklist, staging, outcomes ===== -->
+                <StackPanel Grid.Column="0">
+
+                    <!-- first-run coach mark: the briefing checklist (ux-round §4; binds through
+                         Home so the compact window — no HomeView ancestor — falls back to hidden) -->
+                    <Border Style="{StaticResource CoachMark}" Margin="0,16,0,0"
+                            Visibility="{Binding DataContext.CoachMarks.ShowBriefingChecklist,
+                                         RelativeSource={RelativeSource AncestorType=views:HomeView},
+                                         Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource CoachMarkGlyph}" />
+                            <Button DockPanel.Dock="Right" Content="Got it" VerticalAlignment="Center"
+                                    Margin="12,0,0,0"
+                                    ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
+                                    Command="{Binding DataContext.CoachMarks.DismissBriefingChecklistCommand,
+                                              RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
+                            <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="New here? This checklist mirrors AMS2's custom-race screen top to bottom. The game can't paste values, so set each line in-game and click the row here to tick it off — the Compact overlay button keeps the list on top of AMS2 while you do." />
+                        </DockPanel>
+                    </Border>
+
+                    <!-- the manual setup CHECKLIST (ux-round correction: AMS2's custom-race settings
+                         are arrow-steppers, nothing can be pasted — tick each row as you set it) -->
+                    <Border Style="{StaticResource Panel}" Margin="0,16,0,0"
+                            Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
                         <StackPanel>
-                            <TextBlock Text="In-game race setup — set each line, tick it off" FontWeight="SemiBold" />
-                            <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
-                                       Text="Rows follow AMS2's custom-race screen top to bottom (the values can't be pasted — the game uses arrow-steppers). Click a row to tick it." />
-                        </StackPanel>
-                    </DockPanel>
-
-                    <!-- sectioned checklist: outer = Race-Day sections (Event / Practice /
-                         Qualifying / Race / Rules), inner = the tickable rows. Grouping is done in
-                         the viewmodel (Sections), so this is a plain nested ItemsControl with no
-                         grouping CollectionViewSource. (Render-test thread-safety comes from the
-                         harness's DisableTestParallelization, not from this structure.) -->
-                    <ItemsControl ItemsSource="{Binding Sections}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                            <DockPanel Margin="0,0,0,10">
+                                <Border DockPanel.Dock="Right" VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border" BasedOn="{StaticResource Chip}">
+                                            <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AllSet}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding ChecklistProgressText}" FontWeight="SemiBold" FontSize="13">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding AllSet}" Value="True">
+                                                        <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
                                 <StackPanel>
-                                    <!-- section header; collapses for an ungrouped (empty-title) section -->
-                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
-                                               FontSize="12" FontWeight="SemiBold" Margin="0,12,0,3"
-                                               ToolTip="AMS2 custom-race screen section"
-                                               Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
-                                    <ItemsControl ItemsSource="{Binding Items}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <!-- the whole row is the toggle hit-target -->
-                                                <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
-                                                          HorizontalContentAlignment="Stretch"
-                                                          ToolTip="Click to tick this setting off (ticks reset each round)">
-                                                    <Grid Margin="8,2,0,2">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="180" />
-                                                            <ColumnDefinition Width="*" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Grid.Column="0" Text="{Binding Label}"
-                                                                   Style="{StaticResource Muted}" VerticalAlignment="Center" />
-                                                        <!-- big glanceable value; read-only TextBox keeps it selectable -->
-                                                        <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
-                                                                 IsReadOnly="True" IsTabStop="False"
-                                                                 BorderThickness="0" Background="Transparent" Padding="0"
-                                                                 FontFamily="Consolas" FontSize="19" FontWeight="SemiBold"
-                                                                 VerticalAlignment="Center" TextWrapping="Wrap"
-                                                                 ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
-                                                            <TextBox.Style>
-                                                                <Style TargetType="TextBox">
-                                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
-                                                                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </TextBox.Style>
-                                                        </TextBox>
-                                                    </Grid>
-                                                </CheckBox>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                    <TextBlock Text="In-game race setup — set each line, tick it off" FontWeight="SemiBold" />
+                                    <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
+                                               Text="Rows follow AMS2's custom-race screen top to bottom (the values can't be pasted — the game uses arrow-steppers). Click a row to tick it." />
                                 </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                            </DockPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                        <Button Content="Copy summary" Command="{Binding CopySummaryCommand}"
-                                ToolTip="Copies the whole checklist as text — for sharing outside the game (AMS2 itself can't paste)" />
-                        <Button Margin="10,0,0,0" Command="{Binding ToggleCompactChecklistCommand}"
-                                ToolTip="A small always-on-top checklist window to keep over AMS2 in windowed/borderless mode">
+                            <!-- sectioned checklist: outer = Race-Day sections (Event / Practice /
+                                 Qualifying / Race / Rules), inner = the tickable rows. Grouping is done in
+                                 the viewmodel (Sections), so this is a plain nested ItemsControl with no
+                                 grouping CollectionViewSource. (Render-test thread-safety comes from the
+                                 harness's DisableTestParallelization, not from this structure.)
+                                 Label column is shared-size Auto so long labels never clip at 130% scale. -->
+                            <ItemsControl ItemsSource="{Binding Sections}" Grid.IsSharedSizeScope="True">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <!-- section header; collapses for an ungrouped (empty-title) section -->
+                                            <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
+                                                       FontSize="12" FontWeight="SemiBold" Margin="0,12,0,3"
+                                                       ToolTip="AMS2 custom-race screen section"
+                                                       Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <!-- the whole row is the toggle hit-target -->
+                                                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
+                                                                  HorizontalContentAlignment="Stretch"
+                                                                  ToolTip="Click to tick this setting off (ticks reset each round)">
+                                                            <Grid Margin="8,2,0,2">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto" MinWidth="150" SharedSizeGroup="ChecklistLabel" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,12,0"
+                                                                           Style="{StaticResource Muted}" VerticalAlignment="Center" />
+                                                                <!-- big glanceable value; read-only TextBox keeps it selectable -->
+                                                                <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
+                                                                         IsReadOnly="True" IsTabStop="False"
+                                                                         BorderThickness="0" Background="Transparent" Padding="0"
+                                                                         FontFamily="Consolas" FontSize="19" FontWeight="SemiBold"
+                                                                         VerticalAlignment="Center" TextWrapping="Wrap"
+                                                                         ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
+                                                                    <TextBox.Style>
+                                                                        <Style TargetType="TextBox">
+                                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBox.Style>
+                                                                </TextBox>
+                                                            </Grid>
+                                                        </CheckBox>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                <Button Content="Copy summary" Command="{Binding CopySummaryCommand}"
+                                        ToolTip="Copies the whole checklist as text — for sharing outside the game (AMS2 itself can't paste)" />
+                                <Button Margin="10,0,0,0" Command="{Binding ToggleCompactChecklistCommand}"
+                                        ToolTip="A small always-on-top checklist window to keep over AMS2 in windowed/borderless mode">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Content" Value="Compact overlay" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CompactChecklistOpen}" Value="True">
+                                                    <Setter Property="Content" Value="Close overlay" />
+                                                    <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- staging (confirmation popovers per the ux-round contract) -->
+                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0"
+                                Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
+                        <Button x:Name="StageButton" Content="Set up this race in AMS2" Style="{StaticResource AccentButton}"
+                                MinWidth="200" Click="OnStageClick"
+                                ToolTip="Writes this round's drivers and skins into AMS2 (backup-first) so the grid matches your career" />
+                        <Button x:Name="ForceStageButton" Content="Overwrite anyway (backup first)" Margin="10,0,0,0"
+                                Click="OnForceStageClick"
+                                ToolTip="Your installed AI is a community file — this overwrites it; a timestamped backup is still taken first">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Content" Value="Compact overlay" />
+                                    <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CompactChecklistOpen}" Value="True">
-                                            <Setter Property="Content" Value="Close overlay" />
-                                            <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding CanForceStage}" Value="True" />
+                                                <Condition Binding="{Binding StageSucceeded}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <MultiDataTrigger.Setters>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger.Setters>
+                                        </MultiDataTrigger>
+                                        <!-- last trigger wins: never show before a staging attempt -->
+                                        <DataTrigger Binding="{Binding LastStageOutcome}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
                         </Button>
                     </StackPanel>
-                </StackPanel>
-            </Border>
 
-            <!-- difficulty recommendation from the folded pace anchor (never auto-applied) -->
-            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
-                    Visibility="{Binding DifficultyRecommendation, Converter={StaticResource NullCollapsed}}">
-                <TextBlock Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
-                           Text="{Binding DifficultyRecommendation}" />
-            </Border>
+                    <!-- stage confirmation popover -->
+                    <Popup x:Name="StageConfirmPopup" StaysOpen="False" AllowsTransparency="True"
+                           PlacementTarget="{Binding ElementName=StageButton}" Placement="Bottom">
+                        <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource EdgeBrush}"
+                                BorderThickness="1" CornerRadius="6" Padding="14,12" MaxWidth="420">
+                            <StackPanel>
+                                <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
+                                           Text="This writes the round's generated AI grid into your AMS2 install. Any existing file is backed up first with a timestamp — and if your installed file already matches, nothing is written at all." />
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Content="Stage grid" Style="{StaticResource AccentButton}" Click="OnStageConfirm" />
+                                    <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
 
-            <!-- fuel advisory: one-tank range vs race length + the AMS2 "set your own fuel" gotcha
-                 (not a tick row). Collapses when no per-class fuel profile applies. -->
-            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                    Visibility="{Binding FuelNote, Converter={StaticResource NullCollapsed}}">
-                <StackPanel>
-                    <TextBlock Text="Fuel" FontWeight="SemiBold" Margin="0,0,0,6" />
-                    <TextBlock Text="{Binding FuelNote}" Style="{StaticResource Body}" TextWrapping="Wrap" />
-                </StackPanel>
-            </Border>
+                    <!-- force-stage confirmation popover: the NAMeS marker rule in plain words -->
+                    <Popup x:Name="ForceConfirmPopup" StaysOpen="False" AllowsTransparency="True"
+                           PlacementTarget="{Binding ElementName=ForceStageButton}" Placement="Bottom">
+                        <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource WarningBrush}"
+                                BorderThickness="1" CornerRadius="6" Padding="14,12" MaxWidth="440">
+                            <StackPanel>
+                                <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
+                                           Text="The app normally only overwrites AI files it wrote itself — it recognizes its own files by a marker it puts inside them. This file has no marker, so it is YOURS (hand-edited, or a community file like NAMeS) and normal staging refuses to touch it." />
+                                <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}" Margin="0,8,0,0"
+                                           Text="Overwrite anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Content="Overwrite anyway (backup first)" Click="OnForceStageConfirm">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                                <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
 
-            <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's
-                 expected finish; only shown when the round leaves room to call something bolder. -->
-            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                    Visibility="{Binding CanGamble, Converter={StaticResource BoolCollapsed}}">
-                <StackPanel>
-                    <TextBlock Text="Setup Gamble — call your shot" FontWeight="SemiBold" Margin="0,0,0,6" />
-                    <TextBlock Text="{Binding CalledShotSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" />
-                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                        <Button Content="Bolder ◂" Command="{Binding CallBolderCommand}" MinWidth="90"
-                                ToolTip="Call a better finish (a lower position) — a bolder gamble stakes more reputation" />
-                        <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="8,0,0,0" MinWidth="90"
-                                ToolTip="Ease the call one place" />
-                        <Button Content="No bet" Command="{Binding ClearCallCommand}" Margin="8,0,0,0" MinWidth="80"
-                                Visibility="{Binding HasCalledShot, Converter={StaticResource BoolCollapsed}}"
-                                ToolTip="Withdraw the gamble for this round" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- setup notes (placeholder distance note etc.) -->
-            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                    Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">
-                <StackPanel>
-                    <TextBlock Text="Notes" FontWeight="SemiBold" Margin="0,0,0,6" />
-                    <TextBlock Text="{Binding SetupNotes}" Style="{StaticResource Body}" />
-                </StackPanel>
-            </Border>
-
-            <!-- staging (confirmation popovers per the ux-round contract) -->
-            <StackPanel Orientation="Horizontal" Margin="0,18,0,0"
-                        Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
-                <Button x:Name="StageButton" Content="Set up this race in AMS2" Style="{StaticResource AccentButton}"
-                        MinWidth="200" Click="OnStageClick"
-                        ToolTip="Writes this round's drivers and skins into AMS2 (backup-first) so the grid matches your career" />
-                <Button x:Name="ForceStageButton" Content="Overwrite anyway (backup first)" Margin="10,0,0,0"
-                        Click="OnForceStageClick"
-                        ToolTip="Your installed AI is a community file — this overwrites it; a timestamped backup is still taken first">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding CanForceStage}" Value="True" />
-                                        <Condition Binding="{Binding StageSucceeded}" Value="False" />
-                                    </MultiDataTrigger.Conditions>
-                                    <MultiDataTrigger.Setters>
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </MultiDataTrigger.Setters>
-                                </MultiDataTrigger>
-                                <!-- last trigger wins: never show before a staging attempt -->
-                                <DataTrigger Binding="{Binding LastStageOutcome}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-            </StackPanel>
-
-            <!-- stage confirmation popover -->
-            <Popup x:Name="StageConfirmPopup" StaysOpen="False" AllowsTransparency="True"
-                   PlacementTarget="{Binding ElementName=StageButton}" Placement="Bottom">
-                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource EdgeBrush}"
-                        BorderThickness="1" CornerRadius="6" Padding="14,12" MaxWidth="420">
-                    <StackPanel>
-                        <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
-                                   Text="This writes the round's generated AI grid into your AMS2 install. Any existing file is backed up first with a timestamp — and if your installed file already matches, nothing is written at all." />
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <Button Content="Stage grid" Style="{StaticResource AccentButton}" Click="OnStageConfirm" />
-                            <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel" />
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-            </Popup>
-
-            <!-- force-stage confirmation popover: the NAMeS marker rule in plain words -->
-            <Popup x:Name="ForceConfirmPopup" StaysOpen="False" AllowsTransparency="True"
-                   PlacementTarget="{Binding ElementName=ForceStageButton}" Placement="Bottom">
-                <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource WarningBrush}"
-                        BorderThickness="1" CornerRadius="6" Padding="14,12" MaxWidth="440">
-                    <StackPanel>
-                        <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
-                                   Text="The app normally only overwrites AI files it wrote itself — it recognizes its own files by a marker it puts inside them. This file has no marker, so it is YOURS (hand-edited, or a community file like NAMeS) and normal staging refuses to touch it." />
-                        <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}" Margin="0,8,0,0"
-                                   Text="Overwrite anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <Button Content="Overwrite anyway (backup first)" Click="OnForceStageConfirm">
-                                <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <!-- staging outcome banner: green = staged/no-op, amber = the expected
+                         community-file force gate (a choice, not a failure), red = real failure -->
+                    <Border CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
+                            Visibility="{Binding LastStageOutcome, Converter={StaticResource NullCollapsed}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding BannerTone}" Value="Success">
+                                        <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding BannerTone}" Value="Info">
                                         <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
-                                        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
-                                        <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                            <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel" />
-                        </StackPanel>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding StageBanner}" TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding BannerTone}" Value="Success">
+                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding BannerTone}" Value="Info">
+                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+
+                    <!-- ⚠ staged file changed outside the app -->
+                    <Border Background="{StaticResource WarningDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,8,0,0"
+                            Visibility="{Binding StagedFileTouchedExternally, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Foreground="{StaticResource WarningBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                   Text="⚠ The staged file was modified outside the app — re-stage before racing." />
+                    </Border>
+
+                    <!-- preflight / staging summary messages (the livery scan is ONE line here) -->
+                    <ItemsControl ItemsSource="{Binding StageMessages}" Margin="0,8,0,12">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- per-file livery-scan details (unreadable files): collapsed by default -->
+                    <StackPanel Margin="0,0,0,24"
+                                Visibility="{Binding HasStageDetails, Converter={StaticResource BoolVisible}}">
+                        <Button HorizontalAlignment="Left" Command="{Binding ToggleStageDetailsCommand}"
+                                ToolTip="The files the livery scan could not read, one line each">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                                    <Setter Property="Content" Value="Show details ▸" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding StageDetailsExpanded}" Value="True">
+                                            <Setter Property="Content" Value="Hide details ▾" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <ItemsControl ItemsSource="{Binding StageDetails}" Margin="12,4,0,0"
+                                      Visibility="{Binding StageDetailsExpanded, Converter={StaticResource BoolVisible}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
-                </Border>
-            </Popup>
+                </StackPanel>
 
-            <!-- staging outcome banner: green = staged/no-op, amber = the expected
-                 community-file force gate (a choice, not a failure), red = real failure -->
-            <Border CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
-                    Visibility="{Binding LastStageOutcome, Converter={StaticResource NullCollapsed}}">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding BannerTone}" Value="Success">
-                                <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding BannerTone}" Value="Info">
-                                <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <TextBlock Text="{Binding StageBanner}" TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding BannerTone}" Value="Success">
-                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding BannerTone}" Value="Info">
-                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </Border>
+                <!-- ===== RIGHT: reference + advisories — circuit, difficulty, fuel, gamble, notes ===== -->
+                <StackPanel Grid.Column="2">
 
-            <!-- ⚠ staged file changed outside the app -->
-            <Border Background="{StaticResource WarningDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,8,0,0"
-                    Visibility="{Binding StagedFileTouchedExternally, Converter={StaticResource BoolVisible}}">
-                <TextBlock Foreground="{StaticResource WarningBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
-                           Text="⚠ The staged file was modified outside the app — re-stage before racing." />
-            </Border>
+                    <!-- Circuit map: the f1db-derived vector layout of the circuit this round is run on,
+                         with a one-line caption (name · length · turns · direction). Collapses when the
+                         round has no circuit data. Always shows (no user art needed) — the "very
+                         important visual per race". Map scales with the column (140–280 square). -->
+                    <Border x:Name="CircuitPanel" Style="{StaticResource Panel}" Margin="0,16,0,0"
+                            Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
+                        <StackPanel>
+                            <TextBlock Text="CIRCUIT" Style="{StaticResource Faint}" FontSize="11" />
+                            <Viewbox HorizontalAlignment="Left" Margin="0,10,0,0"
+                                     Width="{Binding ActualWidth, ElementName=CircuitPanel,
+                                             Converter={StaticResource WidthFraction}, ConverterParameter=0.55|140|280}"
+                                     Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
+                                              Converter={StaticResource AspectHeight}, ConverterParameter=1}">
+                                <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                                      Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                      StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding VenueDisplayName}" FontWeight="SemiBold" FontSize="18"
+                                       TextWrapping="Wrap" Margin="0,10,0,0" />
+                            <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                       TextWrapping="Wrap" Margin="0,5,0,0" />
+                            <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}"
+                                       TextWrapping="Wrap" Margin="0,10,0,0"
+                                       Visibility="{Binding CircuitHistory, Converter={StaticResource StringVisible}}" />
 
-            <!-- preflight / staging summary messages (the livery scan is ONE line here) -->
-            <ItemsControl ItemsSource="{Binding StageMessages}" Margin="0,8,0,12">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                            <!-- era-capped fun facts (same reference data as the Calendar expander) -->
+                            <StackPanel Margin="0,10,0,0"
+                                        Visibility="{Binding HasCircuitFacts, Converter={StaticResource BoolVisible}}">
+                                <TextBlock Text="FUN FACTS" Style="{StaticResource Faint}" FontSize="11" Margin="0,0,0,4" />
+                                <ItemsControl ItemsSource="{Binding CircuitFacts}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,2"><Run Text="•  " /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
 
-            <!-- per-file livery-scan details (unreadable files): collapsed by default -->
-            <StackPanel Margin="0,0,0,24"
-                        Visibility="{Binding HasStageDetails, Converter={StaticResource BoolVisible}}">
-                <Button HorizontalAlignment="Left" Command="{Binding ToggleStageDetailsCommand}"
-                        ToolTip="The files the livery scan could not read, one line each">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
-                            <Setter Property="Content" Value="Show details ▸" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding StageDetailsExpanded}" Value="True">
-                                    <Setter Property="Content" Value="Hide details ▾" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <ItemsControl ItemsSource="{Binding StageDetails}" Margin="12,4,0,0"
-                              Visibility="{Binding StageDetailsExpanded, Converter={StaticResource BoolVisible}}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,1" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                    <!-- difficulty recommendation from the folded pace anchor (never auto-applied) -->
+                    <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,12,0,0"
+                            Visibility="{Binding DifficultyRecommendation, Converter={StaticResource NullCollapsed}}">
+                        <TextBlock Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                   Text="{Binding DifficultyRecommendation}" />
+                    </Border>
+
+                    <!-- fuel advisory: one-tank range vs race length + the AMS2 "set your own fuel" gotcha
+                         (not a tick row). Collapses when no per-class fuel profile applies. -->
+                    <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                            Visibility="{Binding FuelNote, Converter={StaticResource NullCollapsed}}">
+                        <StackPanel>
+                            <TextBlock Text="Fuel" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <TextBlock Text="{Binding FuelNote}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's
+                         expected finish; only shown when the round leaves room to call something bolder. -->
+                    <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                            Visibility="{Binding CanGamble, Converter={StaticResource BoolCollapsed}}">
+                        <StackPanel>
+                            <TextBlock Text="Setup Gamble — call your shot" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <TextBlock Text="{Binding CalledShotSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" />
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <Button Content="Bolder ◂" Command="{Binding CallBolderCommand}" MinWidth="90"
+                                        ToolTip="Call a better finish (a lower position) — a bolder gamble stakes more reputation" />
+                                <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="8,0,0,0" MinWidth="90"
+                                        ToolTip="Ease the call one place" />
+                                <Button Content="No bet" Command="{Binding ClearCallCommand}" Margin="8,0,0,0" MinWidth="80"
+                                        Visibility="{Binding HasCalledShot, Converter={StaticResource BoolCollapsed}}"
+                                        ToolTip="Withdraw the gamble for this round" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- setup notes (placeholder distance note etc.) -->
+                    <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
+                            Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">
+                        <StackPanel>
+                            <TextBlock Text="Notes" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <TextBlock Text="{Binding SetupNotes}" Style="{StaticResource Body}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

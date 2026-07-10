@@ -68,6 +68,7 @@
     <conv:KeyedAssetImageConverter x:Key="AssetImage" />
     <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
     <conv:AspectRatioHeightConverter x:Key="AspectHeight" />
+    <conv:WidthFractionConverter x:Key="WidthFraction" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">

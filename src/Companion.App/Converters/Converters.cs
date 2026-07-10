@@ -480,6 +480,39 @@ public sealed class AspectRatioHeightConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>An ancestor's ActualWidth → a fraction of it (ConverterParameter = the fraction,
+/// default 0.7). Turns a hard-coded page cap (<c>MaxWidth="860"</c>) into a proportional one, so a
+/// column keeps a readable measure at 2560 wide yet fills a small or 130%-scaled window. Parameter
+/// accepts an optional floor and ceiling after "|"s ("0.7|520" = 70% but never under 520;
+/// "0.35|140|280" also never over 280). Returns UnsetValue until the ancestor has a real measured
+/// width.</summary>
+public sealed class WidthFractionConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double fraction = 0.7, floor = 0, ceiling = double.PositiveInfinity;
+        if (parameter is string s && s.Length > 0)
+        {
+            string[] parts = s.Split('|');
+            if (double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double f) && f > 0)
+                fraction = f;
+            if (parts.Length > 1 &&
+                double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedFloor))
+                floor = parsedFloor;
+            if (parts.Length > 2 &&
+                double.TryParse(parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedCeiling) &&
+                parsedCeiling > 0)
+                ceiling = parsedCeiling;
+        }
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? Math.Min(Math.Max(width * fraction, floor), ceiling)
+            : DependencyProperty.UnsetValue;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {
