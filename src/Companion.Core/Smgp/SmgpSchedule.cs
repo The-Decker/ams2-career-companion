@@ -66,18 +66,26 @@ public static class SmgpSchedule
     }
 
     /// <summary>The challenger's home car for the defense season — Bullets, or the LAST ladder
-    /// seat not already involved (its occupant loses the ride to the returning legend).</summary>
-    public static string? ChallengerHomeSeat(SeasonPack pack, string playerSeat, string championSeat)
+    /// seat that is not excluded (its occupant loses the ride to the returning legend). A seat
+    /// any existing override already targets is never eligible: the introduction REPLACES the
+    /// car's authored occupant, and replacing an override-parked driver would double-book the
+    /// car (two moves, one target — the resolver refuses the whole set) and leave his stale
+    /// override poisoning every later occupancy lookup.</summary>
+    public static string? ChallengerHomeSeat(
+        SeasonPack pack, SmgpState state, string championSeat, string? alsoExclude = null)
     {
         var ladder = SmgpBattleFold.Ladder(pack);
-        if (SeatOfTeam(ladder, BulletsTeamId) is { } bullets &&
-            !string.Equals(bullets, playerSeat, StringComparison.Ordinal) &&
-            !string.Equals(bullets, championSeat, StringComparison.Ordinal))
+        bool Eligible(string livery) =>
+            !string.Equals(livery, state.CurrentSeatLivery, StringComparison.Ordinal) &&
+            !string.Equals(livery, championSeat, StringComparison.Ordinal) &&
+            !string.Equals(livery, alsoExclude, StringComparison.Ordinal) &&
+            !state.AiSeatOverrides.Values.Contains(livery, StringComparer.Ordinal);
+
+        if (SeatOfTeam(ladder, BulletsTeamId) is { } bullets && Eligible(bullets))
             return bullets;
         for (int i = ladder.Count - 1; i >= 0; i--)
         {
-            if (!string.Equals(ladder[i].Livery, playerSeat, StringComparison.Ordinal) &&
-                !string.Equals(ladder[i].Livery, championSeat, StringComparison.Ordinal))
+            if (Eligible(ladder[i].Livery))
                 return ladder[i].Livery;
         }
         return null;
@@ -87,8 +95,11 @@ public static class SmgpSchedule
     /// The champion's between-seasons seating (called by the season-end fold on a title win,
     /// AFTER <see cref="SmgpState.WithSeasonReset"/> and the title increment): the player moves
     /// to the champion seat, its displaced occupant takes the player's old car, and the reserved
-    /// challenger — when he holds no seat yet — is INTRODUCED into his home car (replacing its
-    /// occupant, who loses the ride). Already seated where the mode wants them → no movement.
+    /// challenger — when he holds no seat yet — is INTRODUCED into his home car, replacing that
+    /// car's AUTHORED occupant (who loses the ride, exactly like Miller losing Bullets to Ceara).
+    /// The home pick excludes every seat this rollover (or any earlier swap) already moved
+    /// someone onto, so no car is ever booked twice. Already seated where the mode wants them →
+    /// no movement; no eligible home seat → no challenger this defense (it resolves as survived).
     /// </summary>
     public static SmgpState ChampionRollover(SeasonPack pack, SmgpState state)
     {
@@ -96,6 +107,7 @@ public static class SmgpSchedule
         if (championSeat is null)
             return state;
 
+        string? displacedTo = null;
         if (!string.Equals(state.CurrentSeatLivery, championSeat, StringComparison.Ordinal))
         {
             // Resolve the displaced occupant BEFORE moving the player onto his car.
@@ -103,14 +115,17 @@ public static class SmgpSchedule
             string playerOldSeat = state.CurrentSeatLivery;
             state = state with { CurrentSeatLivery = championSeat };
             if (displaced is not null)
+            {
                 state = state.WithAiSeatOverride(displaced, playerOldSeat);
+                displacedTo = playerOldSeat;
+            }
         }
 
         // Introduce the reserved challenger only when he holds no car yet (an override from an
         // earlier defense/battle keeps him where the season left him).
         if (DefenseChallenger(pack) is { } challenger &&
             SmgpBattleFold.CurrentSeatOf(pack, state, challenger) is null &&
-            ChallengerHomeSeat(pack, state.CurrentSeatLivery, championSeat) is { } home)
+            ChallengerHomeSeat(pack, state, championSeat, displacedTo) is { } home)
         {
             state = state.WithAiSeatOverride(challenger, home);
         }

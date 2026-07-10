@@ -677,6 +677,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         CreateError = null;
         bool importBaseline = UseInstalledAiBaseline && _installedAiFileXml is not null;
+        bool smgpMode = string.Equals(
+            Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
         var request = new CareerCreationRequest
         {
             PackDirectory = _packDirectory!,
@@ -687,15 +689,17 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             Character = Character?.BuildProfile(),
-            GridSelection = BuildGridSelection(),
+            // The SMGP ladder needs the WHOLE authored field — its seat chains reference every
+            // team's car, and a narrowed grid would make demotion/introduction targets unresolvable
+            // (the resolver would then refuse the moves round after round). Mode on → whole pack.
+            GridSelection = smgpMode ? null : BuildGridSelection(),
             // Ratings Phase 3: every new career is form-reactive — the sim's field reacts to who is
             // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
             FormAware = true,
             // The SMGP replica mode: every new career on an smgp-styled pack plays the mode (rival
             // battles, seat swaps, the title defense). Normal packs never set it; existing smgp-pack
             // careers created before the mode stay inert (their start state has no SmgpState).
-            SmgpMode = string.Equals(
-                Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal),
+            SmgpMode = smgpMode,
             // Opt-in alternate mod tracks — the service applies them only if every required mod is
             // installed (else it silently keeps the default AMS2 tracks). Default OFF.
             UseAlternateTracks = UseAlternateTracks,

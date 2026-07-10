@@ -102,6 +102,13 @@ public sealed class BriefingGambleRenderTests
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
+
+            // Pin the panel's ACTUAL visibility — CanGamble is true, so the gamble panel must be
+            // Visible (it shipped inverted through the BoolCollapsed converter and no assertion
+            // caught it), and the SMGP panel must stay collapsed on a non-smgp career.
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("GamblePanel")).Visibility);
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpPanel")).Visibility);
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
         });
     }
 }

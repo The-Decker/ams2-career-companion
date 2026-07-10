@@ -1028,6 +1028,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal))
             ?.CountedPoints.ToString() ?? "0";
 
+        // A forced challenger who is not actually on this round's grid (his introduction could
+        // not resolve) cannot be battled — surface a free pick instead of a lock on nothing.
+        string? forcedChallenger = Companion.Core.Smgp.SmgpSchedule.ForcedChallenger(Pack, state, round);
+        if (forcedChallenger is not null &&
+            !rivals.Any(r => string.Equals(r.DriverId, forcedChallenger, StringComparison.Ordinal)))
+            forcedChallenger = null;
+
         return new SmgpBriefingModel
         {
             RoundHeader = $"{(packRound?.Name ?? $"Round {round}").ToUpperInvariant()} · ROUND {round}",
@@ -1035,8 +1042,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
             Titles = state.Titles,
             CareerOver = state.CareerOver,
-            ForcedChallengerDriverId =
-                Companion.Core.Smgp.SmgpSchedule.ForcedChallenger(Pack, state, round),
+            ForcedChallengerDriverId = forcedChallenger,
             Rivals = rivals,
         };
     }

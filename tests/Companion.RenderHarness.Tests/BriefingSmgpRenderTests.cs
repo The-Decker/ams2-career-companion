@@ -145,6 +145,11 @@ public sealed class BriefingSmgpRenderTests
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
+
+            // Pin the ACTUAL visibility (a Bool converter inversion renders fine and passes any
+            // height assertion — this is the check that catches it).
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpPanel")).Visibility);
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
         });
     }
 

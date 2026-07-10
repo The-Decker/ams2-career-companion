@@ -225,10 +225,11 @@ public sealed partial class BriefingViewModel : ObservableObject
 
     public IReadOnlyList<SmgpRivalOption> SmgpRivals => SmgpBriefing?.Rivals ?? [];
 
-    /// <summary>The game's prompt (docs/dev/smgp-design.md) — forced challenges declare
-    /// themselves instead.</summary>
+    /// <summary>The game's prompt (docs/dev/smgp-design.md, sourced verbatim); a forced challenge
+    /// gets plain app copy instead — the doc supplies no in-game sentence for it, and the
+    /// accuracy rule is "nothing invented".</summary>
     public string SmgpRivalPrompt => SmgpForced
-        ? "HE HAS NAMED YOU AS HIS RIVAL."
+        ? "A forced challenge — your rival is already named."
         : "WILL YOU NAME HIM AS YOUR RIVAL?";
 
     /// <summary>What this rival's ladder telegraphs (the manual's own words), or empty.</summary>
@@ -276,6 +277,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// Rebuilds the checklist and restores this round's ticks, if any.</summary>
     public void Refresh()
     {
+        int previousRoundNumber = _currentRoundNumber;
         Briefing = _session.CurrentBriefing();
 
         foreach (var old in Settings)
@@ -331,13 +333,23 @@ public sealed partial class BriefingViewModel : ObservableObject
             CalledShot = null;
 
             // SMGP rival panel (null outside the mode): a fresh round starts unnamed — unless
-            // the title defense forces the challenger, which locks the pick to him.
+            // the title defense forces the challenger, which locks the pick to him. On a
+            // re-navigation WITHIN the same round (show result entry, peek back at the
+            // briefing) the declaration and swap answer are PRESERVED — resetting them here
+            // would silently drop the named battle from the draft.
+            string? namedRivalId = previousRoundNumber == briefing.Round.Round
+                ? SelectedSmgpRival?.DriverId
+                : null;
+            bool keptSwapAccept = previousRoundNumber == briefing.Round.Round && SmgpSwapAccept;
             SmgpBriefing = _session.CurrentSmgpBriefing();
-            SmgpSwapAccept = true;
+            SmgpSwapAccept = namedRivalId is null || keptSwapAccept;
             SelectedSmgpRival = SmgpBriefing?.ForcedChallengerDriverId is { } forced
                 ? SmgpBriefing.Rivals.FirstOrDefault(r =>
                     string.Equals(r.DriverId, forced, StringComparison.Ordinal))
-                : null;
+                : namedRivalId is not null
+                    ? SmgpBriefing?.Rivals.FirstOrDefault(r =>
+                        string.Equals(r.DriverId, namedRivalId, StringComparison.Ordinal))
+                    : null;
         }
         else
         {

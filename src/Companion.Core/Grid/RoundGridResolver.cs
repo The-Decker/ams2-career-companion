@@ -124,6 +124,18 @@ public static class RoundGridResolver
         if (applyWeekendForm)
             seats = ApplyWeekendForm(seats, pack.Season.DriverForm?.GetValueOrDefault(round));
 
+        // The character patch lands LAST, on wherever the player's block ended up — so an SMGP
+        // seat swap carries the perk car scalars to the player's NEW car instead of leaving them
+        // baked into the old one for a rival to inherit. Without overrides the player sits on the
+        // same seat this always patched, so every existing career resolves byte-identically (the
+        // cap keeps the player by flag, not rating; the form overlay skips the player seat).
+        if (playerSeat?.Character is { } characterPatch)
+        {
+            int patchIndex = seats.FindIndex(s => s.IsPlayer);
+            if (patchIndex >= 0)
+                seats[patchIndex] = ApplyCharacter(seats[patchIndex], characterPatch);
+        }
+
         return new GridPlan
         {
             PackId = pack.Manifest.PackId,
@@ -168,10 +180,13 @@ public static class RoundGridResolver
     /// ratings, driver car tuning, the IsPlayer mark) onto the target CAR (team, livery, number,
     /// reliability, scalars — which stay with the livery, exactly like the game's own swaps). A
     /// moved driver with NO seat on the grid but authored in the pack (the reserved title-defense
-    /// challenger, who holds no season entry) is INTRODUCED onto the target car — its resolved
-    /// occupant loses the ride. Applied only when the moves close over the seats present (every
-    /// vacated car receives someone); anything else returns the grid verbatim, so a malformed
-    /// carry can never duplicate a driver or strand the player. No moves ⇒ byte-identical.</summary>
+    /// challenger, who holds no season entry) is INTRODUCED onto the target car — its authored
+    /// occupant loses the ride. STRICTLY ALL-OR-NOTHING: a move whose target car or mover is
+    /// unresolvable, two moves booking one car, an unfilled vacated car, or a receiving car whose
+    /// sitting driver did not move (unless he is being deliberately replaced by an introduction —
+    /// never the player) each refuse the ENTIRE set and resolve the grid verbatim. A partial
+    /// application could otherwise overwrite the player's seat or field a driver twice; verbatim
+    /// keeps every round foldable. No moves ⇒ byte-identical.</summary>
     private static List<GridSeat> ApplySeatOverrides(
         SeasonPack pack, PackRound packRound,
         List<GridSeat> seats, IReadOnlyDictionary<string, string>? seatOverrides, string? playerSeatOverride)
@@ -192,32 +207,33 @@ public static class RoundGridResolver
             return seats;
 
         var byDriverId = new Dictionary<string, GridSeat>(StringComparer.Ordinal);
-        var liveriesOnGrid = new HashSet<string>(StringComparer.Ordinal);
+        var byLivery = new Dictionary<string, GridSeat>(StringComparer.Ordinal);
         foreach (var seat in seats)
         {
             byDriverId[seat.DriverId] = seat;
-            liveriesOnGrid.Add(seat.Ams2LiveryName);
+            byLivery[seat.Ams2LiveryName] = seat;
         }
 
-        // incoming: target livery -> the driver block arriving there. Moves whose target car is
-        // not on THIS round's grid are dropped; a mover with no seat is an INTRODUCTION when the
-        // pack authors him (his block builds from the pack baseline), dropped otherwise.
+        // incoming: target livery -> the driver block arriving there.
         var incoming = new Dictionary<string, GridSeat>(StringComparer.Ordinal);
         var vacated = new HashSet<string>(StringComparer.Ordinal);
+        var introducedTargets = new HashSet<string>(StringComparer.Ordinal);
         foreach (var (driverId, livery) in moves)
         {
-            if (!liveriesOnGrid.Contains(livery))
-                continue;
+            if (!byLivery.ContainsKey(livery))
+                return seats; // target car absent this round → refuse all
+
+            GridSeat block;
             if (byDriverId.TryGetValue(driverId, out var source))
             {
-                incoming[livery] = source;
+                block = source;
                 vacated.Add(source.Ams2LiveryName);
             }
             else if (pack.Drivers.FirstOrDefault(d =>
                          string.Equals(d.Id, driverId, StringComparison.Ordinal)) is { } introduced)
             {
                 // The driver side only — the car block comes from the target seat below.
-                incoming[livery] = new GridSeat
+                block = new GridSeat
                 {
                     DriverId = introduced.Id,
                     DriverName = introduced.Name,
@@ -233,10 +249,30 @@ public static class RoundGridResolver
                     DragScalar = 1.0,
                     IsGuest = false,
                 };
+                introducedTargets.Add(livery);
             }
+            else
+            {
+                return seats; // the mover is neither on the grid nor authored → refuse all
+            }
+
+            if (!incoming.TryAdd(livery, block))
+                return seats; // two drivers booked onto one car → refuse all
         }
-        if (incoming.Count == 0 || !vacated.IsSubsetOf(incoming.Keys))
+
+        // Closure, both directions: every vacated car is refilled, and every receiving car was
+        // either vacated by its own driver's move or holds a non-player driver being REPLACED by
+        // an INTRODUCTION (the only move allowed to push someone off the field). Anything else
+        // would strand or duplicate someone → refuse all.
+        if (!vacated.IsSubsetOf(incoming.Keys))
             return seats;
+        foreach (var livery in incoming.Keys)
+        {
+            if (vacated.Contains(livery))
+                continue;
+            if (!introducedTargets.Contains(livery) || byLivery[livery].IsPlayer)
+                return seats;
+        }
 
         return seats
             .Select(car => incoming.TryGetValue(car.Ams2LiveryName, out var occupant)
@@ -410,9 +446,7 @@ public static class RoundGridResolver
                 // then shapes — so a custom skin works AND the career never dead-ends on a livery no
                 // historical driver holds. Existing careers pick a pack-entry livery, so they never reach
                 // this branch (byte-identical). CapToGridSize keeps the player and trims the slowest AI.
-                seats.Add(ApplyCharacter(
-                    SyntheticPlayerSeat(playerSeat.Ams2LiveryName) with { IsPlayer = true },
-                    playerSeat.Character));
+                seats.Add(SyntheticPlayerSeat(playerSeat.Ams2LiveryName) with { IsPlayer = true });
                 return seats;
             }
 
@@ -423,13 +457,14 @@ public static class RoundGridResolver
                 LookupDriver(driversById, playerEntry.DriverId, pack, round),
                 LookupTeam(teamsById, playerEntry.TeamId, pack, round),
                 playerEntry.Number, playerEntry.Ams2LiveryName, isGuest: false);
-            seats.Add(ApplyCharacter(addedSeat with { IsPlayer = true }, playerSeat.Character));
+            seats.Add(addedSeat with { IsPlayer = true });
             return seats;
         }
 
-        // Mark the player seat, then patch it from the character (last in the merge chain:
-        // pack baseline → track form → aiOverrides → + character). No character = unchanged seat.
-        seats[index] = ApplyCharacter(seats[index] with { IsPlayer = true }, playerSeat.Character);
+        // Mark the player seat only — the character patch is applied by Resolve as the LAST
+        // step (after cap / SMGP seat overrides / form), so it always lands on the car the
+        // player actually drives. No character = unchanged seat either way.
+        seats[index] = seats[index] with { IsPlayer = true };
         return seats;
     }
 

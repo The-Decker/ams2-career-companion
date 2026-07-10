@@ -730,6 +730,14 @@ public static class ReplayService
             });
             events.AddRange(battle.Events);
             player = player with { Smgp = battle.State };
+            // A seat movement is a TEAM movement too — the season-end reputation tier and the
+            // displayed team read CurrentTeamId, which must follow the ladder, not the wizard seat.
+            if (!string.Equals(battle.State.CurrentSeatLivery, smgpState.CurrentSeatLivery, StringComparison.Ordinal) &&
+                pack.Entries.FirstOrDefault(e => string.Equals(
+                    e.Ams2LiveryName, battle.State.CurrentSeatLivery, StringComparison.Ordinal))?.TeamId is { } newTeamId)
+            {
+                player = player with { CurrentTeamId = newTeamId };
+            }
         }
 
         return new RoundFoldOutcome(

@@ -403,9 +403,11 @@
                     </Border>
 
                     <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's
-                         expected finish; only shown when the round leaves room to call something bolder. -->
-                    <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                            Visibility="{Binding CanGamble, Converter={StaticResource BoolCollapsed}}">
+                         expected finish; only shown when the round leaves room to call something bolder.
+                         (BoolVisible: true => Visible — BoolCollapsed is the INVERSE converter and had
+                         this panel backwards since 4b shipped; the render test now pins visibility.) -->
+                    <Border x:Name="GamblePanel" Style="{StaticResource Panel}" Margin="0,12,0,0"
+                            Visibility="{Binding CanGamble, Converter={StaticResource BoolVisible}}">
                         <StackPanel>
                             <TextBlock Text="Setup Gamble — call your shot" FontWeight="SemiBold" Margin="0,0,0,6" />
                             <TextBlock Text="{Binding CalledShotSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" />
@@ -415,7 +417,7 @@
                                 <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="8,0,0,0" MinWidth="90"
                                         ToolTip="Ease the call one place" />
                                 <Button Content="No bet" Command="{Binding ClearCallCommand}" Margin="8,0,0,0" MinWidth="80"
-                                        Visibility="{Binding HasCalledShot, Converter={StaticResource BoolCollapsed}}"
+                                        Visibility="{Binding HasCalledShot, Converter={StaticResource BoolVisible}}"
                                         ToolTip="Withdraw the gamble for this round" />
                             </StackPanel>
                         </StackPanel>
@@ -425,8 +427,8 @@
                          round header + D.P. readout, the pit-crew line, name-a-rival (locked to the
                          challenger on a title-defense round) and the rival dossier card. Renders
                          ONLY for an smgp career (SmgpBriefing null everywhere else). -->
-                    <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                            Visibility="{Binding SmgpActive, Converter={StaticResource BoolCollapsed}}">
+                    <Border x:Name="SmgpPanel" Style="{StaticResource Panel}" Margin="0,12,0,0"
+                            Visibility="{Binding SmgpActive, Converter={StaticResource BoolVisible}}">
                         <StackPanel>
                             <DockPanel>
                                 <TextBlock DockPanel.Dock="Right" Text="{Binding SmgpPointsLine}"
@@ -457,7 +459,7 @@
                                 </ComboBox>
                                 <Button Content="No rival" Margin="8,0,0,0" MinWidth="80"
                                         Command="{Binding SmgpDeclineRivalCommand}"
-                                        Visibility="{Binding SmgpPickEnabled, Converter={StaticResource BoolCollapsed}}"
+                                        Visibility="{Binding SmgpPickEnabled, Converter={StaticResource BoolVisible}}"
                                         ToolTip="Race without naming a rival this round" />
                             </StackPanel>
 
@@ -491,7 +493,7 @@
                                                Visibility="{Binding SmgpLadderLine, Converter={StaticResource StringVisible}}" />
                                     <CheckBox Content="Join his team if the offer comes" IsChecked="{Binding SmgpSwapAccept}"
                                               Margin="0,8,0,0"
-                                              Visibility="{Binding SmgpSwapPromptVisible, Converter={StaticResource BoolCollapsed}}"
+                                              Visibility="{Binding SmgpSwapPromptVisible, Converter={StaticResource BoolVisible}}"
                                               ToolTip="Beat the same rival twice without losing and you may get an offer to join his team — this is your standing answer" />
                                 </StackPanel>
                             </Border>
@@ -499,8 +501,8 @@
                     </Border>
 
                     <!-- SMGP game over: losing a rival battle at the floor team ends the career. -->
-                    <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                            Visibility="{Binding SmgpCareerOver, Converter={StaticResource BoolCollapsed}}">
+                    <Border x:Name="SmgpCareerOverPanel" Style="{StaticResource Panel}" Margin="0,12,0,0"
+                            Visibility="{Binding SmgpCareerOver, Converter={StaticResource BoolVisible}}">
                         <TextBlock Text="CAREER OVER — a rival took your seat with nothing below."
                                    FontWeight="Bold" TextWrapping="Wrap" />
                     </Border>

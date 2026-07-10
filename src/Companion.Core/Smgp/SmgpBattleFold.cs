@@ -66,7 +66,12 @@ public static class SmgpBattleFold
             state = state with { DefenseRound1 = outcome };
             events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
                 SmgpTrigger.None, state.CareerOver,
-                cause: outcome == SmgpBattleOutcome.PlayerBeatRival ? "defense-round-won" : "defense-round-lost"));
+                cause: outcome switch
+                {
+                    SmgpBattleOutcome.PlayerBeatRival => "defense-round-won",
+                    SmgpBattleOutcome.RivalBeatPlayer => "defense-round-lost",
+                    _ => "defense-round-void",
+                }));
             return new SmgpBattleFoldResult { State = state, Events = events };
         }
 
