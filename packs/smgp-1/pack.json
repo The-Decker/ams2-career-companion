@@ -1,0 +1,32 @@
+{
+  "packId": "smgp-1",
+  "name": "Super Monaco GP",
+  "version": "1.0.0",
+  "formatVersion": 1,
+  "skinSeason": "smgp",
+  "careerStyle": "smgp",
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Roster, ratings and liveries from SMGP SKINS V1 by rafaelcsanti (F-Classic_Gen3)",
+    "Season structure replicates Sega's Super Monaco GP (Mega Drive, 1990) — see docs/dev/smgp-design.md for the manual-sourced design"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "SMGP SKINS V1 (rafaelcsanti)",
+        "overridesFolder": "SMGP"
+      }
+    ]
+  },
+  "notes": [
+    "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits.",
+    "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
+    "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
+    "B. Miller drives BULLETS in season 1 (design correction) — the car is painted \"Bullets #17 G. Ceara\"; the staged AI file names Miller. G. Ceara himself is reserved for the title-defense event.",
+    "MINARAE is the player's team (the game assigns you there, Level C). Its default persona E. Sambena is the skinpack author's designated player-slot invention (non-canon).",
+    "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
+    "careerStyle \"smgp\" gates the replica mode (rival battles, seat swaps, the Ceara title defense); until that ships the pack plays as a normal 16-round season."
+  ]
+}
