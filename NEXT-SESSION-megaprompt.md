@@ -1,92 +1,108 @@
-# NEXT SESSION — skins everywhere → max grids → SMGP replica → beautification
+# NEXT SESSION — finish the SMGP mode, then beautify
 
 Resume the AMS2 Career Companion (`Z:\Claude Code\ams2-career-companion` — WPF/.NET 10, single
-self-contained exe). **READ MEMORY FIRST** (`MEMORY.md`, then `ams2-hub-build-progress.md` TOP),
-then the grounding docs this plan is built on:
-
-- `docs/dev/audits/audit-skins-rollout.md` — the 20-archive inventory, install state, conflict
-  mechanism, race-by-race variant discovery, 1985 diagnosis, blue-flag options, juppo schema.
-- `docs/dev/smgp-design.md` — the verified Super Monaco GP replica design (manual-sourced).
-- Extracted pack metadata: `scratchpad/skins-study/` (per-archive override XMLs + AI files).
+self-contained exe). **READ MEMORY FIRST** (`MEMORY.md`, then `ams2-hub-build-progress.md` TOP —
+the ⭐⭐⭐⭐ 2026-07-10 SECOND-session block is current), then `docs/dev/smgp-design.md` (the
+manual-verified mode design this plan implements).
 
 ## STATE (verify with `git log`)
 
-Branch `hub/increment-4`, pushed through **`dfecdb9`** (+ SMGP design doc after). RC
-`dist/AMS2CareerCompanion.exe` = 0.6.0+1e1b992-era code + calendar fixes `137e78c` + juppo 1991
-`ae8276f` — REPUBLISH when app is closed. Suite 1587 + 38 render; oracle 77/77. Mike is still
-installing/uploading skin packs (newer ones unfinished). Mike's blue-flag decision is PENDING —
-options in audit §(g); do not write blue-flag code until he picks.
+Branch `hub/increment-4`, head **`1b3c7c6`**, pushed, 208 commits ahead of `main`. Suite **1690 +
+38 render green; oracle 77/77**. RC `dist/AMS2CareerCompanion.exe` = **0.6.0+6d276ce**. M1 (skins
+foundation) + M2 (max grids + skinpack rosters, all 14 packs + juppo scalar schema) are DONE and
+shipped. **SMGP FOUNDATION is done:** `packs/smgp-1` plays as a normal season now; the mode's pure
+rules `Companion.Core/Smgp/SmgpRules.cs` (22 tests) and the envelope v6 `SmgpRivalCall` block are
+in. This session WIRES the mode through the fold + UI, then starts M4.
 
-## MISSION 1 — Skins foundation (sequential; everything else stands on it)
+## BUDGET DISCIPLINE (read this — it is the point of this session)
 
-1. **Comment-tolerant community-XML parsing everywhere** (the 1985 pack's `--` comments break
-   strict parsers): audit every reader of `Overrides\<model>\*.xml` (Skins lens scanner, livery
-   activator) and route them through one comment-stripping loader (regex like import_jusk_ai.cs).
-2. **Skin Season Manager**: per-model season swap of `Overrides\<model>\<model>.xml`
-   (backup-first + marker, the AI-staging contract). Career load/stage applies the season set the
-   pack declares (`skinSeason` key on the pack manifest → which variant XML family to activate).
-   Unlocks: 1985 (vs 1983), 1975 (vs 1974), 1996 (vs 1997), 2010 (vs 2012), SMGP (vs 1990).
-   Settings/Skins UI: show per-model which season is active; one-click swap; never touch
-   unmarked user files without the force gate.
-3. **Race-by-race variant binding**: at round staging, for each class model find the pack's
-   per-race variant XML (`<model>_<token>.xml`, token-matched to the round venue like
-   import_jusk_ai's mapping) and activate it (backup-first). Restore/next-swap next round. The
-   packs shipping variants: 1986, 1990, 1991, 1992, 1993, 1995, 1996, 1997, 1998, 2010, 2012,
-   2016, 2020 (list per model in the audit).
-4. **Livery auto-activation** already exists (cap-aware activator) — extend it to activate a
-   pack-declared ACTIVE SET (e.g. 1985's 10 slots swapped for the round's entry list).
+The Fable usage budget is LIMITED this session. The rule: **work sequentially, commit AND push
+every slice, and DO NOT launch large parallel agent workflows** (a 28-agent fan-out is what burned
+the budget last time). All of the work below is ordinary sequential coding — the `SmgpRules` and
+envelope-v6 slices already done are the exact cadence. Each slice is independently valuable and
+lands on its own, so when the budget runs low, STOP after the current slice's commit+push — the
+branch is always in a clean, green, shipped state. Only if budget clearly remains at the very end:
+one SMALL (≤4-agent) adversarial review of the session's diff, nothing larger. No `dotnet publish`
+until the app is confirmed closed (and only near the end).
 
-## MISSION 2 — Max grids + skinpack rosters, every season (ultracode-parallel per pack)
+## MISSION 3 — wire the SMGP replica mode (do these IN ORDER, one commit each)
 
-Per the audit §(d), for EVERY bundled season (1988 is the finished template): canonicalize
-entries.json to one-driver-per-seat bound to the installed skinpack's livery names; regenerate
-every round's grid.starterDriverIds to the FULL cap-aware roster (no 10-car Kyalami — Mike's
-rule: who's in the season = who's in the skinpack); player picking a non-default car replaces the
-slowest seat at staging (generalize the 1988 mechanism). Where the pack ships its own
-CustomAIDrivers XML (1986, 1995, 1996, 1997, 1998, 2010, 2012, 2016 — prefer "Realistic"
-variants), import it via import_jusk_ai.cs as the ratings source. SEQUENTIAL PRE-SLICE first:
-extend PackDriverRatings + aiOverrides + the staged-XML writer with juppo's scalar fields
-(drag/power/weight scalars, setup_downforce±randomness, fuel_management) — sim-inert staging
-data — then re-import Juppo 1991 to pick up his 49 per-track car-balance blocks. Pack data
-changes = NEW careers only; keep suite + oracle green per pack; commit per pack.
+The rules already exist in `SmgpRules.cs`; the raw inputs already ride the envelope
+(`RoundResultEnvelope.SmgpRival`, v6). What remains is folded STATE + the resolver + the UI. The
+gating precedent is **RATINGS PHASE 3 / FormAware** (a per-career flag, NOT "pack has the style",
+so existing careers stay byte-identical) and the **called-shot gamble** (versioned envelope row +
+determinism gate). Keep the oracle UNTOUCHED — it never resolves grids or folds these rows.
 
-## MISSION 3 — SUPER MONACO GP replica mode (the fun one; accuracy per smgp-design.md)
+1. **Folded `SmgpState` on `PlayerCareerState`** (`[JsonIgnore(WhenWritingNull)]`, so non-smgp
+   careers serialize byte-identically). Fields: `CurrentSeatLivery` (the player's car this season —
+   changes on a swap), `Tallies` (rivalDriverId → `SmgpBattleTally`), `Titles`, `CareerOver`, and
+   `AiSeatOverrides` (driverId → livery, for the displaced-driver reshuffle). Seed it at career
+   creation ONLY when `Pack.Manifest.CareerStyle == "smgp"` **and** a new
+   `CareerCreationRequest.SmgpMode` flag (wizard sets it for an smgp pack) — mirror `FormAware`
+   exactly, including the `with`-carried-forward path so rollover/season-end re-derive identically.
+   Default absent → the whole mode is inert. Test: an smgp career seeds state; a normal career
+   (and any existing career) has null state and folds unchanged.
 
-Build `packs/smgp-1` + the `careerStyle: "smgp"` mode: 16 country-named rounds in the game's
-order (San Marino → Monaco finale), 9-6-4-3-2-1 no drops, 16 one-driver teams in LEVEL A–D
-tiers, rosters + ratings from the SMGP skinpack's own CustomAIDrivers XML (apply the three
-verified roster corrections), rival pick/forced-challenge system with the exact two-wins seat-swap
-+ one-tier displacement rules, Zeroforce career-over, Madonna title-defense with the G. Ceara
-R1+R2 event, two-titles completion. New fold rows = envelope-versioned + determinism-gated (the
-called-shot precedent). Presentation strictly from the design doc's sourced vocabulary
-("PRELIMINARY RACE", rival dossier cards, pit-crew advice lines, D.P., MINARAE intro) + user
-asset slots under `data/ams2/smgp/`. Depends on M1's season manager (SMGP conflicts with 1990).
+2. **Fold the battle** (`ReplayService.ComputeRoundFold` / `RoundUpdate`). When
+   `envelope.SmgpRival` is present AND the career carries `SmgpState`, compute the battle outcome
+   from the stored result (player finish vs the named rival's finish — both derivable from the
+   `RoundResult` classification; DNF = null position), apply it via `SmgpRules.ApplyBattle`, and on
+   a `SeatSwapOfferToPlayer` trigger with `SeatSwapAccepted == true`, apply `PlayerSeatSwap` into
+   `SmgpState` (update `CurrentSeatLivery` + `AiSeatOverrides`); on `PlayerSeatForfeit` demote (or
+   set `CareerOver` when `IsCareerOver`). Emit journal events (a Why?-inspectable row per battle).
+   Gate: no `SmgpRival` → no event → byte-identical. **Determinism test** (the load-bearing one): a
+   career carrying rival calls folds the battles AND re-simulates byte-identically via `Resimulate`.
 
-## MISSION 4 — Beautification + main menu (Mike's GUI vision)
+3. **Resolver seat overrides** (`RoundGridResolver`). New optional param
+   (`IReadOnlyDictionary<string,string>? seatOverrides` = driverId → livery) applied AFTER the cap,
+   plus the player driving `SmgpState.CurrentSeatLivery`. Default param → no change → byte-identical;
+   the oracle never passes it. `CareerSessionService` threads `SmgpState` in when the mode is on.
+   Test: a swap reseats the three affected cars and nobody else; off-path is identical.
 
-- **Main menu before the career gallery**: a proper landing screen (New career / Continue /
-  Modes incl. SMGP / Settings), background art slot, the app's first "front door".
-- **Theme templates**: a few complete two-tone background+accent themes (F1-inspired), selectable
-  in Settings, driven by user assets (`data/ams2/themes/<name>/…` — background images, accent
-  pair, panel tint) reaching DEEP into the app (every view's Panel/Bg brushes, not just accents).
-- **Career-gallery polish**: bring the recent-careers cards to the season-picker's standard
-  (UniformGrid + AspectHeight hero, adaptive columns).
-- **More tactile feel**: extend MotionAssist (press springs/ripples exist) with hover glows on
-  cards, springy expanders, subtle parallax on hero images — restraint over spectacle.
-- Document every asset slot in one place (Settings → "User art" panel listing folders).
+4. **Forced-challenge schedule + the Ceara title defense.** A small pure helper (`SmgpSchedule` in
+   Core, tested): given the season year-in-career + titles + the player's team, return this round's
+   forced challenger (the Madonna title-defense season force-challenges via **G. Ceara at R1 and
+   R2**; `SmgpRules.TitleDefense` resolves at R2 → keep Madonna or fired to Dardan). Wire the
+   season-start seat assignment (champion → Madonna) into the carryover/rollover path, gated on the
+   mode. Test the two-titles completion + the fired-to-Dardan branch.
 
-## BACKLOG (after M1–M4)
+5. **Briefing rival panel + presentation** (`BriefingViewModel`/`BriefingView`, mode-gated so
+   normal packs never show it). A rival panel: pick-a-rival (any team) / decline, forced-challenge
+   display, and a rival **dossier card** (team banner + a MACHINE block [engine/power from the
+   pack] + portrait slot + a deadpan one-line quote). Round header format **"SAN MARINO · ROUND 1"**;
+   the qualifying label is **"PRELIMINARY RACE"** (NEVER "Super License"); points readout abbreviated
+   **"D.P."**; a pit-crew advice line. Vocabulary STRICTLY from `docs/dev/smgp-design.md` — invent
+   nothing. New user-asset slots under **`data/ams2/smgp/`** (mode hero, rival portraits, team
+   banners, round cards) via the existing `UserImageResolver`; document them. A render test hosts
+   the panel with a stub smgp DataContext. This is the biggest UI slice — if the budget is tight,
+   land slices 1–4 (the actual mechanics) first and treat this as the stretch goal.
 
-New seasons from the directory: 1983 (F-Retro_Gen3 + TAMS2SP), 1996 (F-V10_Gen1 HC), 1998
-(F-V10_Gen2 HC), 2010 + 2012 (F-Reiza — new class, needs class profile + caps), 1975 (needs M1
-manager). JGTC 500 + Ferrari 355/488 Challenge: mod-content discovery in `Z:\RCM MODS AMS2` +
-RCM/OverTake first (AMS2 has no base Ferrari/JGTC content), then normal pack building with
-alternate-track-style install verification. Blue flags: implement whichever of audit §(g)'s
-options Mike picks.
+After the mechanics land, note in the commit that the mode is playable end-to-end.
+
+## MISSION 4 — beautification (only if budget remains; each its own commit)
+
+Lower priority than finishing M3, and open-ended (Mike will want eyes on the aesthetics). Order:
+(a) **main menu landing screen** before the career gallery (New career / Continue / Modes incl.
+SMGP / Settings, background-art slot — the app's first "front door"); (b) **career-gallery card
+parity** with the season-picker (UniformGrid + AspectHeight hero, adaptive columns — reuse the
+existing converters); (c) **theme templates** (`data/ams2/themes/<name>/`, two-tone F1 background+
+accent, reaching Panel/Bg brushes not just accents; a couple of complete themes, Settings-selectable);
+(d) **MotionAssist extensions** (hover glows on cards, springy expanders, subtle hero parallax —
+restraint over spectacle); (e) a Settings **"User art"** panel listing every asset folder.
 
 ## CONSTRAINTS (unchanged, load-bearing)
 
-CRLF+2-space+no-BOM pack files; sim-inert vs determinism-gated discipline (grid/roster changes =
-pack data = new careers only; new fold rows = envelope version + gate); NEVER touch the oracle;
-no `git add -A`; era-art/venue-photos/user assets never committed; republish exe only app-closed
-(timestamped backup); commit every slice; no gh CLI (PR #4 is Mike's).
+CRLF+2-space+no-BOM pack/data files; sim-inert vs determinism-gated discipline (new fold rows =
+envelope version [already at v6] + per-career gate; grid/roster changes = pack data = new careers
+only); NEVER touch the oracle; no `git add -A` (stage named paths); era-art/venue-photos/user
+assets never committed; **republish the exe only when the app is closed** (timestamped backup;
+`dotnet publish src/Companion.App -c Release -o dist`) and only near session end; commit AND push
+every slice; no `gh` CLI (PR #4 is Mike's). Scratchpad `scratchpad/rosters/*.json` holds the 14
+applied M2 plans (provenance) — leave them.
+
+## LEFTOVERS (pick up only if everything above is done + budget remains)
+
+The M1 adversarial review died on the usage limit last session (journal `wf_685d22d4-2ad` has only
+starts) — a fresh ≤4-agent pass over the M1 diff `c974fc6..358591b` would close it. SkinsViewModel
+season-panel tests are thin. Backlog seasons (1983/1996/1998/2010/2012) and 1975-via-manager remain
+parked.
