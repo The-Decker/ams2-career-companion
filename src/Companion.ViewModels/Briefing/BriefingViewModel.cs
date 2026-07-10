@@ -183,6 +183,85 @@ public sealed partial class BriefingViewModel : ObservableObject
     [RelayCommand]
     private void ClearCall() => CalledShot = null;
 
+    // ---------- SMGP rival panel (M3 slice 5) ----------
+
+    /// <summary>The SMGP panel's data, or null — every non-smgp career, so the panel never
+    /// renders outside the mode.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
+        nameof(SmgpPointsLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
+        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled))]
+    private SmgpBriefingModel? _smgpBriefing;
+
+    /// <summary>The picker unlocks only for a free pick (forced challenges lock to the challenger).</summary>
+    public bool SmgpPickEnabled => !SmgpForced;
+
+    /// <summary>The rival the player has named this round (or the forced challenger), null =
+    /// declined / none. Reset each round.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpSwapPromptVisible))]
+    private SmgpRivalOption? _selectedSmgpRival;
+
+    /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
+    /// ("you may get an offer to join his team!") — asked up front so the result entry needs no
+    /// extra prompt; stored on the rival call only when the offer can actually arise.</summary>
+    [ObservableProperty]
+    private bool _smgpSwapAccept = true;
+
+    public bool SmgpActive => SmgpBriefing is not null && !SmgpBriefing.CareerOver;
+
+    public bool SmgpCareerOver => SmgpBriefing?.CareerOver == true;
+
+    /// <summary>True when the title defense forces the challenger — the pick is locked.</summary>
+    public bool SmgpForced => SmgpBriefing?.ForcedChallengerDriverId is not null;
+
+    public bool SmgpHasRival => SelectedSmgpRival is not null;
+
+    public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
+
+    public string SmgpPointsLine => SmgpBriefing?.PointsLine ?? "";
+
+    public string SmgpAdviceLine => SmgpBriefing?.AdviceLine ?? "";
+
+    public IReadOnlyList<SmgpRivalOption> SmgpRivals => SmgpBriefing?.Rivals ?? [];
+
+    /// <summary>The game's prompt (docs/dev/smgp-design.md) — forced challenges declare
+    /// themselves instead.</summary>
+    public string SmgpRivalPrompt => SmgpForced
+        ? "HE HAS NAMED YOU AS HIS RIVAL."
+        : "WILL YOU NAME HIM AS YOUR RIVAL?";
+
+    /// <summary>What this rival's ladder telegraphs (the manual's own words), or empty.</summary>
+    public string SmgpLadderLine => SelectedSmgpRival switch
+    {
+        { OfferOnWin: true } => "Beat him and you may get an offer to join his team!",
+        { ForfeitOnLoss: true } => "Lose to him and he is offered YOUR seat.",
+        _ => "",
+    };
+
+    /// <summary>The standing swap answer is only asked when this round's win can trigger it.</summary>
+    public bool SmgpSwapPromptVisible => SelectedSmgpRival?.OfferOnWin == true;
+
+    /// <summary>Decline naming a rival this round (never available on a forced challenge).</summary>
+    [RelayCommand]
+    private void SmgpDeclineRival()
+    {
+        if (!SmgpForced)
+            SelectedSmgpRival = null;
+    }
+
+    /// <summary>The rival call the result draft stores for this round, or null — no rival named,
+    /// or not an smgp career. The swap answer rides only when the offer can arise this round.</summary>
+    public Companion.Data.SmgpRivalCall? BuildSmgpRival() => SelectedSmgpRival is not { } rival
+        ? null
+        : new Companion.Data.SmgpRivalCall
+        {
+            RivalDriverId = rival.DriverId,
+            Forced = string.Equals(
+                rival.DriverId, SmgpBriefing?.ForcedChallengerDriverId, StringComparison.Ordinal),
+            SeatSwapAccepted = rival.OfferOnWin ? SmgpSwapAccept : null,
+        };
+
     /// <summary>The check-off rows, flat, in in-game custom-race screen order. The source of truth
     /// for ticks / progress / the copy summary; <see cref="Sections"/> re-groups these same
     /// instances for the sectioned view.</summary>
@@ -250,6 +329,15 @@ public sealed partial class BriefingViewModel : ObservableObject
             ExpectedFinish = _session.CurrentExpectedFinish();
             _gridSize = _session.CurrentGrid().Count;
             CalledShot = null;
+
+            // SMGP rival panel (null outside the mode): a fresh round starts unnamed — unless
+            // the title defense forces the challenger, which locks the pick to him.
+            SmgpBriefing = _session.CurrentSmgpBriefing();
+            SmgpSwapAccept = true;
+            SelectedSmgpRival = SmgpBriefing?.ForcedChallengerDriverId is { } forced
+                ? SmgpBriefing.Rivals.FirstOrDefault(r =>
+                    string.Equals(r.DriverId, forced, StringComparison.Ordinal))
+                : null;
         }
         else
         {
@@ -268,6 +356,8 @@ public sealed partial class BriefingViewModel : ObservableObject
             ExpectedFinish = null;
             _gridSize = 0;
             CalledShot = null;
+            SmgpBriefing = null;
+            SelectedSmgpRival = null;
             CompactChecklistOpen = false; // nothing left to tick — close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));

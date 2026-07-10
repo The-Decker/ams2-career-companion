@@ -93,6 +93,53 @@ public sealed class SmgpStateSeedTests : IDisposable
     }
 
     [Fact]
+    public void SmgpBriefing_SurfacesTheRivalPanelData_OnlyInTheMode()
+    {
+        // The smgp career briefs the panel: the game's header format, the D.P. readout, and
+        // every AI seat as a namable rival (2 seats, 1 AI). A normal career briefs null.
+        string packDirectory = Path.Combine(_root, "packs", "briefing");
+        TestPackBuilder.Write(SmgpPack(), packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "briefing"),
+            library: TestPackBuilder.Library());
+        using var session = CareerSessionService.CreateCareer(
+            new CareerCreationRequest
+            {
+                PackDirectory = packDirectory,
+                CareerFilePath = Path.Combine(_root, "careers", "briefing.ams2career"),
+                CareerName = "Briefing",
+                MasterSeed = Seed,
+                PlayerLiveryName = TestPackBuilder.StockLivery2,
+                SmgpMode = true,
+            },
+            environment);
+
+        var briefing = session.CurrentSmgpBriefing();
+        Assert.NotNull(briefing);
+        Assert.Equal("ROUND 1 · ROUND 1", briefing!.RoundHeader); // the test round's name IS "Round 1"
+        Assert.Equal("0 D.P.", briefing.PointsLine);
+        Assert.False(briefing.CareerOver);
+        Assert.Null(briefing.ForcedChallengerDriverId);
+        var rival = Assert.Single(briefing.Rivals);
+        Assert.Equal("driver.brabham", rival.DriverId);
+        Assert.False(rival.OfferOnWin);
+
+        string normalDirectory = Path.Combine(_root, "packs", "briefing-normal");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), normalDirectory);
+        using var normal = CareerSessionService.CreateCareer(
+            new CareerCreationRequest
+            {
+                PackDirectory = normalDirectory,
+                CareerFilePath = Path.Combine(_root, "careers", "briefing-normal.ams2career"),
+                CareerName = "Normal",
+                MasterSeed = Seed,
+                PlayerLiveryName = TestPackBuilder.StockLivery2,
+            },
+            environment);
+        Assert.Null(normal.CurrentSmgpBriefing());
+    }
+
+    [Fact]
     public void StateWithoutSmgp_SerializesWithoutTheKey()
     {
         // WhenWritingNull is the byte-identity contract for every existing career's player_state.

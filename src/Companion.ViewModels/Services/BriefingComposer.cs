@@ -43,8 +43,12 @@ public static class BriefingComposer
         // Practice / Qualifying: timed length + this session's weather. AMS2's practice and qualifying
         // are always time-limited (qualifying can never be lap-based). Only rendered when the pack
         // authors at least one detail, so an un-migrated pack shows no empty session block.
+        // SMGP packs call qualifying by the game's own name — "Preliminary Race" (never
+        // "Super License"; that is an SMGP II term. docs/dev/smgp-design.md).
+        bool smgp = string.Equals(
+            pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
         AddSession(settings, Practice, weekend?.Practice);
-        AddSession(settings, Qualifying, weekend?.Qualifying);
+        AddSession(settings, smgp ? "Preliminary Race" : Qualifying, weekend?.Qualifying);
 
         // Race: laps (the only lap-based session), its weather (per-session, else round-level), then
         // the shared date / start time / time progression.

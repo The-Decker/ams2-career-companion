@@ -81,6 +81,14 @@ ladder (0.99 → 0.70) and G. Ceara at 0.99.
   points 9-6-4-3-2-1 wholeSeason, grids = all 16 every round, skinpack livery bindings, ratings
   from the pack's own CustomAIDrivers XML) — CONFLICTS with the 1990 skinpack on disk, so it
   depends on the Skin Season Manager swapping `formula_classic_g3m*.xml` at career load/stage.
+- **User-art slots (SHIPPED, M3 slice 5)** — drop-in images beside the exe, never committed,
+  resolved by the shared keyed-asset convention (`.jpg`/`.jpeg`/`.png`, first found wins; absent
+  = the UI hides the slot):
+  - `data/ams2/smgp/portraits/<driverId>.jpg` — rival portrait on the briefing dossier card
+    (e.g. `driver.gilberto_ceara.jpg`; driver ids from `packs/smgp-1/drivers.json`).
+  - `data/ams2/smgp/banners/<teamId>.jpg` — team banner atop the dossier card (`team.madonna.jpg`).
+  - `data/ams2/smgp/rounds/<round>.jpg` — round card art under the round header (`1.jpg` … `16.jpg`).
+  - `data/ams2/smgp/hero.jpg` — the mode hero image (reserved for the main-menu/mode screens, M4).
 - A **mode flag** on the pack manifest (`careerStyle: "smgp"`) gating: rival panel in the
   briefing (pick/decline + forced challenges), rival-battle state in the envelope (new versioned
   fold rows — determinism-gated like the called-shot gamble), seat-swap offers + tier

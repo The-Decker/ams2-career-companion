@@ -353,6 +353,9 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             QualifyingOrder = _capturedQualifyingOrder,
             // The Setup Gamble called at the briefing (pre-race) rides the round's raw envelope.
             CalledShot = Briefing.CalledShot,
+            // The SMGP rival named at the briefing (null outside the mode / no rival) rides the
+            // same way — the fold derives the battle from the stored result.
+            SmgpRival = Briefing.BuildSmgpRival(),
             AdditionalRaces = races.Count > 1
                 ? races.Skip(1).Select(r => new ExtraRaceResult
                 {

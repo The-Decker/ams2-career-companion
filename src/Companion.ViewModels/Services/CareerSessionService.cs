@@ -985,6 +985,62 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.Smgp;
     }
 
+    /// <summary>The SMGP briefing panel's data (M3 slice 5): the game's round header, D.P.
+    /// readout, the pit-crew line, the forced title-defense challenger and every namable rival
+    /// on this round's (swap-aware) grid. Null outside the mode or once the season is complete —
+    /// the panel never renders for a normal career. Vocabulary per docs/dev/smgp-design.md.</summary>
+    public SmgpBriefingModel? CurrentSmgpBriefing()
+    {
+        if (CurrentSmgpState() is not { } state || SeasonComplete)
+            return null;
+
+        int round = CurrentRoundNumber;
+        var packRound = Pack.Season.Rounds.FirstOrDefault(r => r.Round == round);
+        var seats = ResolveGrid(round).Seats;
+        var teamsById = Pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
+
+        var rivals = new List<SmgpRivalOption>();
+        foreach (var seat in seats)
+        {
+            if (seat.IsPlayer)
+                continue;
+            teamsById.TryGetValue(seat.TeamId, out var team);
+            string? vehicle = team?.CarVehicleIds.FirstOrDefault();
+            var tally = state.TallyFor(seat.DriverId);
+            rivals.Add(new SmgpRivalOption
+            {
+                DriverId = seat.DriverId,
+                DriverName = seat.DriverName,
+                TeamId = seat.TeamId,
+                TeamName = seat.TeamName,
+                MachineLine = vehicle is null
+                    ? seat.TeamName.ToUpperInvariant()
+                    : $"{vehicle}" + (team?.Performance.PowerScalar is { } power && power != 1.0
+                        ? $" · POWER ×{power.ToString("0.###", CultureInfo.InvariantCulture)}"
+                        : ""),
+                Quote = "IT'S INTERESTING.",
+                OfferOnWin = tally.PlayerStreak == 1,
+                ForfeitOnLoss = tally.RivalStreak == 1,
+            });
+        }
+
+        string points = CurrentStandings()?.Drivers
+            .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal))
+            ?.CountedPoints.ToString() ?? "0";
+
+        return new SmgpBriefingModel
+        {
+            RoundHeader = $"{(packRound?.Name ?? $"Round {round}").ToUpperInvariant()} · ROUND {round}",
+            PointsLine = $"{points} D.P.",
+            AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
+            Titles = state.Titles,
+            CareerOver = state.CareerOver,
+            ForcedChallengerDriverId =
+                Companion.Core.Smgp.SmgpSchedule.ForcedChallenger(Pack, state, round),
+            Rivals = rivals,
+        };
+    }
+
     private Companion.Core.Grid.GridSelection? _gridSelection;
     private bool _gridSelectionResolved;
 

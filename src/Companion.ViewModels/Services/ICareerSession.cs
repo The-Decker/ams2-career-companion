@@ -33,6 +33,10 @@ public interface ICareerSession
     /// player has no seat this round. Additive default so fakes without it compile. (Setup Gamble, 4b.)</summary>
     int? CurrentExpectedFinish() => null;
 
+    /// <summary>The SMGP briefing panel's data for the current round (M3 slice 5), or null —
+    /// outside the mode, or when the season is complete. Additive default so fakes compile.</summary>
+    SmgpBriefingModel? CurrentSmgpBriefing() => null;
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
@@ -618,6 +622,61 @@ public sealed record ResultDraft
     /// scored on its own points table per the pack's <c>weekend.races</c>. Null/empty = today's
     /// single race, so the round scores + folds exactly as before. Older producers omit it.</summary>
     public IReadOnlyList<ExtraRaceResult>? AdditionalRaces { get; init; }
+}
+
+/// <summary>The SMGP briefing panel's data (M3 slice 5): the game's round header, the D.P.
+/// readout, the pit-crew line, the forced challenger (title-defense rounds) and every namable
+/// rival with its dossier facts. Null outside the mode (the panel never renders). Vocabulary
+/// strictly per docs/dev/smgp-design.md — nothing invented.</summary>
+public sealed record SmgpBriefingModel
+{
+    /// <summary>The game's Course Select header — "SAN MARINO · ROUND 1".</summary>
+    public required string RoundHeader { get; init; }
+
+    /// <summary>The player's points, the game's abbreviation — "12 D.P."</summary>
+    public required string PointsLine { get; init; }
+
+    /// <summary>The pit-crew advice line (the manual's own words).</summary>
+    public required string AdviceLine { get; init; }
+
+    /// <summary>Championships won in the mode so far (two = the replica is beaten).</summary>
+    public required int Titles { get; init; }
+
+    /// <summary>The Zeroforce game-over state — the panel shows it instead of a rival pick.</summary>
+    public required bool CareerOver { get; init; }
+
+    /// <summary>The title-defense challenger forced on the player this round, or null for a
+    /// free pick. When set, the pick is locked to him.</summary>
+    public string? ForcedChallengerDriverId { get; init; }
+
+    /// <summary>Every AI driver on this round's grid, in grid order — any of them can be named.</summary>
+    public required IReadOnlyList<SmgpRivalOption> Rivals { get; init; }
+}
+
+/// <summary>One namable rival: the dossier card's facts (docs/dev/smgp-design.md — team banner,
+/// MACHINE block, portrait slot, a deadpan quote) plus the two-wins ladder telegraphs.</summary>
+public sealed record SmgpRivalOption
+{
+    public required string DriverId { get; init; }
+
+    public required string DriverName { get; init; }
+
+    public required string TeamId { get; init; }
+
+    public required string TeamName { get; init; }
+
+    /// <summary>The MACHINE block line (the car, from the pack).</summary>
+    public required string MachineLine { get; init; }
+
+    /// <summary>The rival's deadpan one-liner (the game's own vocabulary).</summary>
+    public required string Quote { get; init; }
+
+    /// <summary>Beat him once more (without losing) and "you may get an offer to join his
+    /// team!" — the panel telegraphs it and asks for the standing answer.</summary>
+    public required bool OfferOnWin { get; init; }
+
+    /// <summary>Lose to him once more and he is offered YOUR seat.</summary>
+    public required bool ForfeitOnLoss { get; init; }
 }
 
 /// <summary>One additional race's classification in a two-race weekend (<see cref="ResultDraft.AdditionalRaces"/>),
