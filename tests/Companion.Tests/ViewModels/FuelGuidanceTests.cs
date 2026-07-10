@@ -49,7 +49,7 @@ public class FuelGuidanceTests
         string? note = FuelGuidance.Note("F-V8_Gen1", laps: 60, refuellingAllowed: true);
 
         Assert.NotNull(note);
-        Assert.Contains("and needed", note);
+        Assert.Contains("likely needed", note);
         Assert.Contains("at least one fuel stop", note);
         Assert.DoesNotContain("full distance", note);
     }
@@ -100,5 +100,29 @@ public class FuelGuidanceTests
     public void SafeLapBoundary_SwitchesGuidanceAtFiftyFive(int laps, string expected)
     {
         Assert.Contains(expected, FuelGuidance.Note(Vintage, laps, refuellingAllowed: false));
+    }
+
+    [Fact]
+    public void SafeToOneTankWindow_NeverContradictsItself()
+    {
+        // 59 laps sits in F-Retro_Gen3's SafeLaps(56)..OneTankLaps(59) window: the warning must
+        // quote the safe range it switched on, never "59 laps is beyond the ~59-lap range".
+        string? note = FuelGuidance.Note("F-Retro_Gen3", laps: 59, refuellingAllowed: false);
+
+        Assert.NotNull(note);
+        Assert.Contains("~56-lap safe range", note);
+        Assert.DoesNotContain("beyond the ~59-lap", note);
+    }
+
+    [Fact]
+    public void RefuelEra_SafeToOneTankWindow_QuotesTheSafeRange()
+    {
+        // Same window on the refuel branch: F-V10_Gen3 SafeLaps 52, OneTankLaps 55 → 53 laps.
+        string? note = FuelGuidance.Note("F-V10_Gen3", laps: 53, refuellingAllowed: true);
+
+        Assert.NotNull(note);
+        Assert.Contains("likely needed", note);
+        Assert.Contains("~52-lap safe range", note);
+        Assert.DoesNotContain("beyond the ~55-lap", note);
     }
 }

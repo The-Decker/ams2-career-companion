@@ -188,6 +188,9 @@ static string CircuitHistory(SqliteConnection conn, string? circuitId, string? n
 }
 
 // GPs this circuit hosted BEFORE seasonYear — the era cap every history sentence and fact shares.
+// The 1950–1960 Indianapolis 500 (grand_prix_id 'indianapolis', a WC round in name only) is
+// excluded everywhere: it shares circuit_id with the 2000s US GP road course and would otherwise
+// put Kurtis Kraft roadster stats on an F1 briefing.
 static (int Min, int Max, int Count)? EraSpan(SqliteConnection conn, string circuitId, int seasonYear,
     Dictionary<string, (int Min, int Max, int Count)?> cache)
 {
@@ -195,7 +198,8 @@ static (int Min, int Max, int Count)? EraSpan(SqliteConnection conn, string circ
     if (cache.TryGetValue(key, out var cached))
         return cached;
     (int, int, int)? span = null;
-    var rows = Rows(conn, "SELECT MIN(year), MAX(year), COUNT(*) FROM race WHERE circuit_id = $c AND year < $y;",
+    var rows = Rows(conn, "SELECT MIN(year), MAX(year), COUNT(*) FROM race " +
+        "WHERE circuit_id = $c AND year < $y AND grand_prix_id <> 'indianapolis';",
         ("$c", circuitId), ("$y", seasonYear));
     if (rows.Count == 1 && rows[0][0] is { } minS && rows[0][1] is { } maxS && rows[0][2] is { } countS
         && int.TryParse(minS, out int min) && int.TryParse(maxS, out int max) && int.TryParse(countS, out int count))
@@ -228,11 +232,13 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
     facts.Add($"First Grand Prix here: {firstYear} — {held} World Championship " +
               $"{(held == 1 ? "GP" : "GPs")} held coming into this season.");
 
-    // 2. Most wins (driver) — only when someone has won here more than once.
+    // 2. Most wins (driver) — only when someone has won here more than once. Row counts are
+    // CORRECT here: a shared drive officially credits both drivers with the win.
     string? wins = Leaders(Rows(conn,
         "SELECT d.name, COUNT(*) AS n FROM race_data rd JOIN race r ON rd.race_id = r.id " +
         "JOIN driver d ON rd.driver_id = d.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
         "GROUP BY rd.driver_id ORDER BY n DESC, d.name;", c, y));
     if (wins is not null)
         facts.Add($"Most wins here: {wins}.");
@@ -241,16 +247,19 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
     string? poles = Leaders(Rows(conn,
         "SELECT d.name, COUNT(*) AS n FROM race_data rd JOIN race r ON rd.race_id = r.id " +
         "JOIN driver d ON rd.driver_id = d.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.race_pole_position = 1 " +
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.race_pole_position = 1 " +
         "GROUP BY rd.driver_id ORDER BY n DESC, d.name;", c, y));
     if (poles is not null)
         facts.Add($"Most pole positions: {poles}.");
 
-    // 4. Most successful constructor (by wins).
+    // 4. Most successful constructor — DISTINCT races, not winner rows: a shared drive puts two
+    // position-1 rows on ONE car (1956 Argentine GP), which must stay one constructor win.
     string? teams = Leaders(Rows(conn,
-        "SELECT co.name, COUNT(*) AS n FROM race_data rd JOIN race r ON rd.race_id = r.id " +
+        "SELECT co.name, COUNT(DISTINCT rd.race_id) AS n FROM race_data rd JOIN race r ON rd.race_id = r.id " +
         "JOIN constructor co ON rd.constructor_id = co.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
         "GROUP BY rd.constructor_id ORDER BY n DESC, co.name;", c, y), singularSuffix: " wins");
     if (teams is not null)
         facts.Add($"Most successful constructor: {teams}.");
@@ -259,7 +268,8 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
     var variety = Rows(conn,
         "SELECT COUNT(DISTINCT rd.driver_id), COUNT(DISTINCT r.id) FROM race_data rd " +
         "JOIN race r ON rd.race_id = r.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.position_number = 1;", c, y);
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.position_number = 1;", c, y);
     if (variety.Count == 1 && int.TryParse(variety[0][0], out int winners) && int.TryParse(variety[0][1], out int races)
         && winners >= 2 && races >= 2)
         facts.Add($"{winners} different winners in {races} Grands Prix.");
@@ -274,10 +284,11 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
     if (record.Count == 1 && record[0][0] is { Length: > 0 } lapTime)
         facts.Add($"Race lap record on this layout: {lapTime} — {record[0][1]} ({record[0][2]}).");
 
-    // 7. Pole conversion.
+    // 7. Pole conversion — DISTINCT races (same shared-drive guard as fact 4).
     var fromPole = Rows(conn,
-        "SELECT COUNT(*) FROM race_data rd JOIN race r ON rd.race_id = r.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
+        "SELECT COUNT(DISTINCT rd.race_id) FROM race_data rd JOIN race r ON rd.race_id = r.id " +
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
         "AND rd.race_grid_position_number = 1;", c, y);
     if (held >= 2 && fromPole.Count == 1 && int.TryParse(fromPole[0][0], out int poleWins))
         facts.Add($"{poleWins} of {held} races here {(poleWins == 1 ? "was" : "were")} won from pole.");
@@ -286,7 +297,8 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
     var deepest = Rows(conn,
         "SELECT rd.race_grid_position_number, d.name, r.year FROM race_data rd " +
         "JOIN race r ON rd.race_id = r.id JOIN driver d ON rd.driver_id = d.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
         "AND rd.race_grid_position_number IS NOT NULL " +
         "ORDER BY rd.race_grid_position_number DESC, r.year LIMIT 1;", c, y);
     if (deepest.Count == 1 && int.TryParse(deepest[0][0], out int slot) && slot >= 3)
@@ -294,7 +306,8 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
 
     // 9. Drivers' title deciders.
     var deciders = Rows(conn,
-        "SELECT COUNT(*) FROM race WHERE circuit_id = $c AND year < $y AND drivers_championship_decider = 1;", c, y);
+        "SELECT COUNT(*) FROM race WHERE circuit_id = $c AND year < $y " +
+        "AND grand_prix_id <> 'indianapolis' AND drivers_championship_decider = 1;", c, y);
     if (deciders.Count == 1 && int.TryParse(deciders[0][0], out int decided) && decided > 0)
     {
         string times = decided switch { 1 => "once", 2 => "twice", _ => $"{decided} times" };
@@ -305,7 +318,8 @@ static List<string> CircuitFacts(SqliteConnection conn, string circuitId, string
     var home = Rows(conn,
         "SELECT COUNT(*) FROM race_data rd JOIN race r ON rd.race_id = r.id " +
         "JOIN driver d ON rd.driver_id = d.id JOIN circuit ci ON r.circuit_id = ci.id " +
-        "WHERE r.circuit_id = $c AND r.year < $y AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
+        "WHERE r.circuit_id = $c AND r.year < $y AND r.grand_prix_id <> 'indianapolis' " +
+        "AND rd.type = 'RACE_RESULT' AND rd.position_number = 1 " +
         "AND d.nationality_country_id = ci.country_id;", c, y);
     if (home.Count == 1 && int.TryParse(home[0][0], out int homeWins) && homeWins > 0)
         facts.Add($"Home-crowd wins: {homeWins}.");

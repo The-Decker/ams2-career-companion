@@ -42,11 +42,15 @@
                        Visibility="{Binding SeasonComplete, Converter={StaticResource BoolVisible}}" />
 
             <!-- two-column race-day layout: checklist + staging (3*) | circuit + advisories (2*).
-                 Star columns absorb every window size and the 130% UI scale; the left column keeps
-                 a workable checklist width, the right takes the reference material. -->
+                 The left column's floor is PROPORTIONAL (55% of the viewport, capped at 520): a
+                 fixed 520 floor would shove the whole right column — including the Setup Gamble
+                 buttons — outside the non-scrolling viewport at 130% UI scale near the 920px
+                 window minimum. -->
             <Grid Margin="0,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" MinWidth="520" />
+                    <ColumnDefinition Width="3*"
+                                      MinWidth="{Binding ActualWidth, ElementName=BriefingScroll,
+                                                 Converter={StaticResource WidthFraction}, ConverterParameter=0.55|0|520}" />
                     <ColumnDefinition Width="24" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>

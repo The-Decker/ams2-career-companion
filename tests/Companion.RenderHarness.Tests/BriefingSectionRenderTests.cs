@@ -149,6 +149,21 @@ public sealed class BriefingSectionRenderTests
                 Assert.True(view.ActualWidth > 0);
                 Assert.True(view.ActualHeight > 0);
             }
+
+            // 510 ≈ the briefing viewport at 130% UI scale on a 920px window (920/1.3 − rail −
+            // margins). The right column (circuit panel, fuel, gamble buttons) must stay INSIDE
+            // the viewport — a fixed 520 left-column floor used to shove it out of reach.
+            view.Measure(new Size(510, 1400));
+            view.Arrange(new Rect(0, 0, 510, 1400));
+            view.UpdateLayout();
+            var circuitPanel = (FrameworkElement?)view.FindName("CircuitPanel");
+            Assert.NotNull(circuitPanel);
+            Assert.True(circuitPanel!.ActualWidth > 80,
+                $"right column collapsed: circuit panel is {circuitPanel.ActualWidth:0} wide at a 510 viewport");
+            double rightEdge = circuitPanel.TransformToAncestor(view).Transform(new Point(0, 0)).X
+                               + circuitPanel.ActualWidth;
+            Assert.True(rightEdge <= 510.5,
+                $"right column clipped outside the 510 viewport (right edge {rightEdge:0})");
         });
     }
 }

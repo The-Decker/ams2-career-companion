@@ -72,13 +72,15 @@ public static class FuelGuidance
         // it — never a bare "fill to the distance" that tempts a no-stop on an unverified tank.
         if (refuellingAllowed == true)
         {
+            // Over-range copy quotes SafeLaps — the number this branch actually switched on — so a
+            // race in the SafeLaps..OneTankLaps window never reads "X laps is beyond ~Y" with X <= Y.
             string main = laps <= profile.SafeLaps
                 ? $"⛽ Refuelling is allowed this season. One tank (~{profile.TankLitres} L, " +
                   $"~{profile.OneTankLaps} laps) can cover this {lapsText}-lap race non-stop — or " +
                   "run a lighter load and refuel for pace, era-style (Setup → Fuel + pit strategy)."
-                : $"⛽ Refuelling is allowed this season — and needed: {lapsText} laps is beyond the " +
-                  $"~{profile.OneTankLaps}-lap range of the ~{profile.TankLitres} L tank at full (1×) " +
-                  "consumption. Plan at least one fuel stop (Setup → Fuel + pit strategy).";
+                : $"⛽ Refuelling is allowed this season — and likely needed: {lapsText} laps is beyond " +
+                  $"the conservative ~{profile.SafeLaps}-lap safe range of the ~{profile.TankLitres} L " +
+                  "tank at full (1×) consumption. Plan at least one fuel stop (Setup → Fuel + pit strategy).";
             return main + gotcha;
         }
 
@@ -90,8 +92,8 @@ public static class FuelGuidance
             ? $"⛽ One tank (~{profile.TankLitres} L, ~{profile.OneTankLaps} laps) covers this " +
               $"{lapsText}-lap race — set your starting fuel to the full distance in the car setup " +
               $"(Setup → Fuel).{noRefuel}"
-            : $"⛽ {lapsText} laps is beyond the ~{profile.OneTankLaps}-lap range of the " +
-              $"~{profile.TankLitres} L tank at full (1×) consumption. Fill to max and save fuel — " +
+            : $"⛽ {lapsText} laps is beyond the conservative ~{profile.SafeLaps}-lap safe range of " +
+              $"the ~{profile.TankLitres} L tank at full (1×) consumption. Fill to max and save fuel — " +
               "a leaner fuel map (ICM) + short-shifting — or lower Options → Gameplay → Fuel Usage." +
               noRefuel;
 
