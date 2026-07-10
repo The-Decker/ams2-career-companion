@@ -1009,6 +1009,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 continue;
             teamsById.TryGetValue(seat.TeamId, out var team);
             string? vehicle = team?.CarVehicleIds.FirstOrDefault();
+            // The MACHINE block reads the car's DISPLAY name from the extracted library
+            // ("F-Classic Gen3 M4"), never the raw vehicle id.
+            string machine = vehicle is null
+                ? seat.TeamName.ToUpperInvariant()
+                : _environment.ContentLibrary.Vehicles.TryGetValue(vehicle, out var v) &&
+                  (v.Name ?? v.VehicleName) is { Length: > 0 } displayName
+                    ? displayName
+                    : vehicle;
             var tally = state.TallyFor(seat.DriverId);
             rivals.Add(new SmgpRivalOption
             {
@@ -1016,11 +1024,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 DriverName = seat.DriverName,
                 TeamId = seat.TeamId,
                 TeamName = seat.TeamName,
-                MachineLine = vehicle is null
-                    ? seat.TeamName.ToUpperInvariant()
-                    : $"{vehicle}" + (team?.Performance.PowerScalar is { } power && power != 1.0
-                        ? $" · POWER ×{power.ToString("0.###", CultureInfo.InvariantCulture)}"
-                        : ""),
+                MachineLine = machine + (team?.Performance.PowerScalar is { } power && power != 1.0
+                    ? $" · POWER ×{power.ToString("0.###", CultureInfo.InvariantCulture)}"
+                    : ""),
                 Quote = "IT'S INTERESTING.",
                 OfferOnWin = tally.PlayerStreak == 1,
                 ForfeitOnLoss = tally.RivalStreak == 1,

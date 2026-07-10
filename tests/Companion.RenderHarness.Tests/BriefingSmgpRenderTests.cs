@@ -132,8 +132,17 @@ public sealed class BriefingSmgpRenderTests
             Assert.True(vm.SmgpPickEnabled);          // a free pick
             Assert.Null(vm.SelectedSmgpRival);        // fresh round: unnamed
 
-            // Name a rival so the dossier card + ladder telegraph + swap answer all render.
+            // BROWSING commits nothing: selecting shows the dossier (car + portrait slots), but
+            // the draft carries no rival until YES names him.
             vm.SelectedSmgpRival = vm.SmgpRivals[0];
+            Assert.True(vm.SmgpCanName);
+            Assert.Null(vm.BuildSmgpRival());
+            Assert.False(vm.SmgpSwapPromptVisible);
+
+            // YES — the commitment the fold counts the two-wins ladder against.
+            vm.SmgpNameRivalCommand.Execute(null);
+            Assert.True(vm.SmgpRivalNamed);
+            Assert.False(vm.SmgpCanName);
             Assert.True(vm.SmgpSwapPromptVisible);
             Assert.NotNull(vm.BuildSmgpRival());
             Assert.True(vm.BuildSmgpRival()!.SeatSwapAccepted);
@@ -150,6 +159,14 @@ public sealed class BriefingSmgpRenderTests
             // height assertion — this is the check that catches it).
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpPanel")).Visibility);
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
+            // Named: the YES button yields to the confirmation banner.
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpNameRivalButton")).Visibility);
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpNamedBanner")).Visibility);
+
+            // Withdrawing un-names: the draft goes back to carrying nothing.
+            vm.SmgpDeclineRivalCommand.Execute(null);
+            Assert.Null(vm.BuildSmgpRival());
+            Assert.False(vm.SmgpRivalNamed);
         });
     }
 
@@ -164,12 +181,13 @@ public sealed class BriefingSmgpRenderTests
             var vm = new BriefingViewModel(new SmgpSession { Forced = true });
             Assert.True(vm.SmgpForced);
             Assert.False(vm.SmgpPickEnabled);
-            // The forced challenger is pre-named and the call marks it forced.
-            Assert.Equal("driver.gilberto_ceara", vm.SelectedSmgpRival?.DriverId);
+            // The forced challenger arrives ALREADY NAMED (no YES needed) and the call marks it.
+            Assert.Equal("driver.gilberto_ceara", vm.NamedSmgpRival?.DriverId);
+            Assert.True(vm.SmgpRivalNamed);
             Assert.True(vm.BuildSmgpRival()!.Forced);
             // Declining is refused on a forced challenge.
             vm.SmgpDeclineRivalCommand.Execute(null);
-            Assert.NotNull(vm.SelectedSmgpRival);
+            Assert.NotNull(vm.NamedSmgpRival);
 
             var view = new BriefingView { DataContext = vm };
             view.Measure(new Size(1000, 1200));

@@ -196,11 +196,19 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// <summary>The picker unlocks only for a free pick (forced challenges lock to the challenger).</summary>
     public bool SmgpPickEnabled => !SmgpForced;
 
-    /// <summary>The rival the player has named this round (or the forced challenger), null =
-    /// declined / none. Reset each round.</summary>
+    /// <summary>The rival the player is LOOKING AT in the picker (the dossier card previews
+    /// him) — browsing only; nothing rides the result until the YES button NAMES him.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpSwapPromptVisible))]
+    [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpCanName))]
     private SmgpRivalOption? _selectedSmgpRival;
+
+    /// <summary>The rival the player has NAMED for this round (the YES confirmation, or the
+    /// forced challenger) — the commitment the result fold counts the two-wins ladder against.
+    /// Null = no rival named. Reset each round; survives same-round re-navigation.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpCanName),
+        nameof(SmgpSwapPromptVisible))]
+    private SmgpRivalOption? _namedSmgpRival;
 
     /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
     /// ("you may get an offer to join his team!") — asked up front so the result entry needs no
@@ -216,6 +224,18 @@ public sealed partial class BriefingViewModel : ObservableObject
     public bool SmgpForced => SmgpBriefing?.ForcedChallengerDriverId is not null;
 
     public bool SmgpHasRival => SelectedSmgpRival is not null;
+
+    /// <summary>True once the YES button committed a rival for this round.</summary>
+    public bool SmgpRivalNamed => NamedSmgpRival is not null;
+
+    /// <summary>YES is pressable while the previewed rival is not yet the named one.</summary>
+    public bool SmgpCanName => SelectedSmgpRival is not null &&
+        !ReferenceEquals(SelectedSmgpRival, NamedSmgpRival);
+
+    /// <summary>The commitment banner — deadpan, the game's register.</summary>
+    public string SmgpNamedLine => NamedSmgpRival is { } named
+        ? $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Finish ahead of him twice without losing and you may take his seat."
+        : "";
 
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
 
@@ -240,20 +260,33 @@ public sealed partial class BriefingViewModel : ObservableObject
         _ => "",
     };
 
-    /// <summary>The standing swap answer is only asked when this round's win can trigger it.</summary>
-    public bool SmgpSwapPromptVisible => SelectedSmgpRival?.OfferOnWin == true;
+    /// <summary>The standing swap answer is only asked once a rival whose offer can arise this
+    /// round has been NAMED.</summary>
+    public bool SmgpSwapPromptVisible => NamedSmgpRival?.OfferOnWin == true;
 
-    /// <summary>Decline naming a rival this round (never available on a forced challenge).</summary>
+    /// <summary>The YES button: commit the previewed rival — this is what the result fold
+    /// counts the two-wins ladder against when the round's result lands.</summary>
+    [RelayCommand]
+    private void SmgpNameRival()
+    {
+        if (SelectedSmgpRival is not null)
+            NamedSmgpRival = SelectedSmgpRival;
+    }
+
+    /// <summary>Decline / withdraw the rival this round (never available on a forced challenge).</summary>
     [RelayCommand]
     private void SmgpDeclineRival()
     {
-        if (!SmgpForced)
-            SelectedSmgpRival = null;
+        if (SmgpForced)
+            return;
+        NamedSmgpRival = null;
+        SelectedSmgpRival = null;
     }
 
-    /// <summary>The rival call the result draft stores for this round, or null — no rival named,
-    /// or not an smgp career. The swap answer rides only when the offer can arise this round.</summary>
-    public Companion.Data.SmgpRivalCall? BuildSmgpRival() => SelectedSmgpRival is not { } rival
+    /// <summary>The rival call the result draft stores for this round, or null — nothing NAMED
+    /// (browsing the picker commits nothing), or not an smgp career. The swap answer rides only
+    /// when the offer can arise this round.</summary>
+    public Companion.Data.SmgpRivalCall? BuildSmgpRival() => NamedSmgpRival is not { } rival
         ? null
         : new Companion.Data.SmgpRivalCall
         {
@@ -333,23 +366,24 @@ public sealed partial class BriefingViewModel : ObservableObject
             CalledShot = null;
 
             // SMGP rival panel (null outside the mode): a fresh round starts unnamed — unless
-            // the title defense forces the challenger, which locks the pick to him. On a
+            // the title defense forces the challenger, which NAMES him outright. On a
             // re-navigation WITHIN the same round (show result entry, peek back at the
-            // briefing) the declaration and swap answer are PRESERVED — resetting them here
-            // would silently drop the named battle from the draft.
-            string? namedRivalId = previousRoundNumber == briefing.Round.Round
-                ? SelectedSmgpRival?.DriverId
-                : null;
-            bool keptSwapAccept = previousRoundNumber == briefing.Round.Round && SmgpSwapAccept;
+            // briefing) the NAMED rival and swap answer are PRESERVED — resetting them here
+            // would silently drop the committed battle from the draft.
+            bool sameRound = previousRoundNumber == briefing.Round.Round;
+            string? namedRivalId = sameRound ? NamedSmgpRival?.DriverId : null;
+            bool keptSwapAccept = sameRound && SmgpSwapAccept;
             SmgpBriefing = _session.CurrentSmgpBriefing();
             SmgpSwapAccept = namedRivalId is null || keptSwapAccept;
-            SelectedSmgpRival = SmgpBriefing?.ForcedChallengerDriverId is { } forced
+            SmgpRivalOption? restored = SmgpBriefing?.ForcedChallengerDriverId is { } forced
                 ? SmgpBriefing.Rivals.FirstOrDefault(r =>
                     string.Equals(r.DriverId, forced, StringComparison.Ordinal))
                 : namedRivalId is not null
                     ? SmgpBriefing?.Rivals.FirstOrDefault(r =>
                         string.Equals(r.DriverId, namedRivalId, StringComparison.Ordinal))
                     : null;
+            SelectedSmgpRival = restored;
+            NamedSmgpRival = restored;
         }
         else
         {
@@ -370,6 +404,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             CalledShot = null;
             SmgpBriefing = null;
             SelectedSmgpRival = null;
+            NamedSmgpRival = null;
             CompactChecklistOpen = false; // nothing left to tick — close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));

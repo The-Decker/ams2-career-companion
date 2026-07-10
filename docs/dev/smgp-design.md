@@ -87,6 +87,9 @@ ladder (0.99 → 0.70) and G. Ceara at 0.99.
   - `data/ams2/portraits/<driverId>.jpg` — DRIVER PORTRAITS (universal, every pack): shown on
     the briefing dossier card AND the wizard's grid-choice cards (e.g.
     `driver.gilberto_ceara.jpg`; driver ids from `packs/smgp-1/drivers.json`).
+  - `data/ams2/cars/<driverId>.jpg` — the rival's CAR photo on the briefing dossier card
+    (universal, keyed by the driver whose car it is). Both dossier slots render as framed
+    placeholders until art is dropped in, so they are discoverable.
   - `data/ams2/smgp/banners/<teamId>.jpg` — team banner atop the dossier card (`team.madonna.jpg`).
   - `data/ams2/smgp/rounds/<round>.jpg` — round card art under the round header (`1.jpg` … `16.jpg`).
   - `data/ams2/smgp/hero.jpg` — the mode hero image (reserved for the main-menu/mode screens, M4).
