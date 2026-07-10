@@ -1245,6 +1245,31 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     $"Activated this race's liveries — {scenario.Applied} vehicle model(s) switched to the " +
                     "round's skins (your previous set was backed up).");
 
+            // The same per-race swap for packs WITHOUT a scenario .bat: the big skin packs ship
+            // per-race CHANGE-POINT variants for manual copying (formula_classic_g4m1_03Imola.xml
+            // = the grid from Imola on) — anchor them to the calendar and bind the set in force
+            // at this round automatically (backup-first). Ships no variants → no-op.
+            if (scenario is null or { AnyApplied: false } &&
+                _environment.LocateInstall() is { } variantInstall)
+            {
+                var variantModelDirs = _environment.ContentLibrary.Vehicles.Values
+                    .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                    .Select(v => v.Dir)
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+                var calendar = Pack.Season.Rounds
+                    .Select(r => new VariantOverrideBinder.CalendarRound(r.Round, r.Name, r.Track.RealVenue))
+                    .ToList();
+                var bound = VariantOverrideBinder.BindRound(
+                    variantInstall.InstallOverridesDirectory, variantModelDirs, roundNumber,
+                    calendar, Pack.Season.Year,
+                    DeclaredSkinSeason()?.Set.ModelXml, _environment.Clock.GetUtcNow());
+                if (bound.AnyChanged)
+                    messages.Add(
+                        $"Bound this race's livery variants — {bound.Swapped} vehicle model(s) switched to the " +
+                        $"round's skins{(bound.Restored > 0 ? $", {bound.Restored} restored to the season base" : "")} " +
+                        "(previous files backed up).");
+            }
+
             // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
             // a Coloni/Eurobrun DNQs some rounds), graft its skin into the slowest same-model qualifier's
             // slot so the player can pick THEIR car in-game with its real paint. The grid-seating already
