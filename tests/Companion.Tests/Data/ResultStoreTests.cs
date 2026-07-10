@@ -180,4 +180,46 @@ public class ResultStoreTests
             DataCareerFixture.Utc);
         Assert.Null(ResultStore.ReadSeasonResults(db, seasonId)[1].ToEnvelope().QualifyingOrder);
     }
+
+    [Fact]
+    public void SmgpRivalRoundTrips_AndOlderPayloadsReadNull()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        // An SMGP round stores the rival declaration + the offer answer alongside the result (v6).
+        var smgp = new RoundResultEnvelope
+        {
+            Result = DataCareerFixture.Rounds()[0],
+            SmgpRival = new SmgpRivalCall
+            {
+                RivalDriverId = "driver.miyagi_hamano",
+                Forced = false,
+                SeatSwapAccepted = true,
+            },
+        };
+        ResultStore.Append(
+            db, seasonId, 1,
+            JsonSerializer.Serialize(smgp, CoreJson.Options),
+            DataCareerFixture.Utc);
+
+        var stored = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
+        Assert.Equal(RoundResultEnvelope.CurrentVersion, stored.Version); // v6
+        Assert.Equal("driver.miyagi_hamano", stored.SmgpRival!.RivalDriverId);
+        Assert.False(stored.SmgpRival.Forced);
+        Assert.True(stored.SmgpRival.SeatSwapAccepted);
+        // The race result is unchanged by the added block — scoring never sees the rival.
+        Assert.Equal(
+            JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options),
+            JsonSerializer.Serialize(stored.Result, CoreJson.Options));
+
+        // A v5 (pre-smgp) payload reads with a null rival — every existing save.
+        var legacy = new RoundResultEnvelope { Version = 5, Result = DataCareerFixture.Rounds()[0] };
+        ResultStore.Append(
+            db, seasonId, 2,
+            JsonSerializer.Serialize(legacy, CoreJson.Options),
+            DataCareerFixture.Utc);
+        Assert.Null(ResultStore.ReadSeasonResults(db, seasonId)[1].ToEnvelope().SmgpRival);
+    }
 }
