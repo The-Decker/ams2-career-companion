@@ -50,8 +50,9 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="270" />
-                <ColumnDefinition Width="*" />
+                <!-- both columns flex (was a fixed 270 archetype rail) -->
+                <ColumnDefinition Width="1*" MinWidth="240" MaxWidth="400" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
             <!-- archetype presets: one click = a complete, valid character -->

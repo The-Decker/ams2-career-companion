@@ -513,6 +513,29 @@ public sealed class WidthFractionConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>An element's ActualWidth → how many UniformGrid columns fit (ConverterParameter = the
+/// target card width, default 360), clamped 2–6. Makes a card grid adaptive: ~2 columns at 920,
+/// 4 around 1440, 6 on an ultrawide — instead of a fixed count that cramps or balloons.</summary>
+public sealed class WidthToColumnsConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double cardWidth = 360;
+        if (parameter is string s &&
+            double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed) &&
+            parsed > 0)
+        {
+            cardWidth = parsed;
+        }
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? Math.Clamp((int)(width / cardWidth), 2, 6)
+            : 4;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {

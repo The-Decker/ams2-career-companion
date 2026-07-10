@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Focusable="False">
     <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <StackPanel MaxWidth="1000" HorizontalAlignment="Left">
+        <!-- proportional page cap (was a hard 1000) -->
+        <StackPanel HorizontalAlignment="Left"
+                    MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.75|1000|1500}">
 
             <!-- title + player summary -->
             <TextBlock Text="{Binding Title}" Style="{StaticResource H2}" />

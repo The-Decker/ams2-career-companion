@@ -69,6 +69,7 @@
     <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
     <conv:AspectRatioHeightConverter x:Key="AspectHeight" />
     <conv:WidthFractionConverter x:Key="WidthFraction" />
+    <conv:WidthToColumnsConverter x:Key="WidthToColumns" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">

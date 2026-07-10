@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Focusable="False">
-    <DockPanel MaxWidth="960" HorizontalAlignment="Left">
+    <!-- proportional page cap (was a hard 960): the two star panels below use the width fully -->
+    <DockPanel HorizontalAlignment="Left"
+               MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=UserControl},
+                          Converter={StaticResource WidthFraction}, ConverterParameter=0.85|960}">
 
         <!-- headline (M5 news engine; hidden by the minimal-narrative setting unless
              championship-critical) -->

@@ -74,8 +74,9 @@
             </DockPanel>
         </Border>
 
-        <!-- the persistent left tab rail (pure navigation) -->
-        <Border DockPanel.Dock="Left" Width="140"
+        <!-- the persistent left tab rail (pure navigation); Auto width with the old 140 as the
+             floor so long tab names never clip at 130% UI scale -->
+        <Border DockPanel.Dock="Left" Width="Auto" MinWidth="140"
                 Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,1,0">
             <DockPanel Margin="0,12">

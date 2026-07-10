@@ -5,7 +5,10 @@
     <!-- The Driver dossier (character depth 3). DataContext is a DossierViewModel; the character
          data is Dossier (a CharacterDossier). Read-only — this is the "see your driver" lens. -->
     <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" DataContext="{Binding Dossier}">
-        <StackPanel MaxWidth="720" Margin="40,32" HorizontalAlignment="Left">
+        <!-- proportional page cap (was a hard 720) -->
+        <StackPanel Margin="40,32" HorizontalAlignment="Left"
+                    MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.6|720|1100}">
 
             <!-- identity + progression -->
             <TextBlock Text="{Binding Name}" Style="{StaticResource H1}" />

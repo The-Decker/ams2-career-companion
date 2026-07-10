@@ -37,7 +37,10 @@
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <StackPanel MaxWidth="780" Margin="40,32" HorizontalAlignment="Left">
+        <!-- proportional page cap (was a hard 780) -->
+        <StackPanel Margin="40,32" HorizontalAlignment="Left"
+                    MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.65|780|1200}">
 
             <!-- header -->
             <TextBlock Text="Skins" Style="{StaticResource H1}" />

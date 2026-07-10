@@ -46,18 +46,28 @@ public sealed class SeasonGridRenderTests
         "Formula One 1991", "Formula One 2000");
 
     [Fact]
-    public void SeasonPickCards_FlowThroughAFourColumnUniformGrid()
+    public void SeasonPickCards_AdaptColumnsToTheWindowWidth()
     {
         if (!WpfRenderHarness.IsSupported)
             return;
 
         WpfRenderHarness.RunSta(() =>
         {
-            using var host = Host.Show(SixSeasons(), width: 1400);
+            // Mike's original ask stands at his screen: 4 columns of seasons at 2560.
+            using (var wide = Host.Show(SixSeasons(), width: 2560))
+            {
+                var grid = wide.Descendants<UniformGrid>().FirstOrDefault();
+                Assert.NotNull(grid);
+                Assert.Equal(4, grid!.Columns);
+            }
 
-            var grid = host.Descendants<UniformGrid>().FirstOrDefault();
-            Assert.NotNull(grid);
-            Assert.Equal(4, grid!.Columns); // Mike's ask: 4 columns of seasons
+            // Smaller windows degrade to fewer, uncramped columns instead of 4 slivers.
+            using (var narrow = Host.Show(SixSeasons(), width: 1400))
+            {
+                var grid = narrow.Descendants<UniformGrid>().FirstOrDefault();
+                Assert.NotNull(grid);
+                Assert.Equal(2, grid!.Columns);
+            }
         });
     }
 

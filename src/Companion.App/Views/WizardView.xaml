@@ -149,7 +149,13 @@
                                  Visibility="{Binding Packs.Count, Converter={StaticResource CountVisible}}">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid Columns="4" />
+                                    <!-- adaptive columns (was a fixed 4): the 580px target card width keeps
+                                         Mike's asked-for 4 columns at his 2560 screen (after the wizard's
+                                         chrome), degrades to 3 at 1920 and an uncramped 2 at the 920 minimum -->
+                                    <UniformGrid Columns="{Binding ActualWidth,
+                                                           RelativeSource={RelativeSource AncestorType=ListBox},
+                                                           Converter={StaticResource WidthToColumns},
+                                                           ConverterParameter=580}" />
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
                             <ListBox.ItemContainerStyle>
@@ -421,7 +427,7 @@
                                                Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
                                                Text="{Binding Number, StringFormat='#{0}'}" />
                                     <!-- ratings as bars; raw numbers on hover (ux-round §2) -->
-                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Width="190">
+                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" MinWidth="190" MaxWidth="280">
                                         <DockPanel ToolTip="{Binding RaceSkill, StringFormat='Race skill (raw): {0:0.000}'}"
                                                    Background="Transparent">
                                             <TextBlock DockPanel.Dock="Left" Width="42" Text="Race"
@@ -462,7 +468,7 @@
                     <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Left">
+                    <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Center">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,4">
@@ -497,7 +503,7 @@
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,16" TextWrapping="Wrap"
                            Text="Creating the career pins the pack into the career file — later pack edits never touch a running season." />
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <StackPanel MaxWidth="640" HorizontalAlignment="Left">
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Center">
                         <TextBlock Text="Career name" Style="{StaticResource Muted}" Margin="0,0,0,4" />
                         <TextBox Text="{Binding CareerName, UpdateSourceTrigger=PropertyChanged}" FontSize="15" />
 
