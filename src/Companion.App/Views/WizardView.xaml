@@ -541,14 +541,29 @@
                             <DataTemplate>
                                 <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,6,6" VerticalAlignment="Top">
                                     <StackPanel>
-                                        <!-- driver image: the hand-supplied portrait if present, else the
-                                             car preview extracted from the livery (tools/extract_car_previews.cs) -->
-                                        <Border CornerRadius="6,6,0,0" ClipToBounds="True">
-                                            <Image x:Name="PortraitImage" Stretch="UniformToFill" MaxHeight="150"
-                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits|cars}"
-                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                        </Border>
-                                        <DockPanel Margin="12,8">
+                                        <!-- the DRIVER PORTRAIT is the hero (data/ams2/portraits/<driverId>.jpg).
+                                             A framed placeholder (a person glyph) shows until the art is dropped
+                                             in, so the slot is always discoverable and every card keeps the same
+                                             height. -->
+                                        <Grid Height="160">
+                                            <Border CornerRadius="6,6,0,0" Background="{StaticResource SurfaceAltBrush}">
+                                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="46"
+                                                           Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <Border CornerRadius="6,6,0,0" ClipToBounds="True">
+                                                <Image Stretch="UniformToFill"
+                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                            </Border>
+                                        </Grid>
+                                        <!-- a smaller CAR thumbnail centered below the portrait
+                                             (data/ams2/cars/<driverId>.png, extracted from the livery by
+                                             tools/extract_car_previews.cs). Collapses when no preview exists. -->
+                                        <Image Height="44" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,7,0,1"
+                                               Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                        <DockPanel Margin="12,7,12,9">
                                             <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
                                                       IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
                                             <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
