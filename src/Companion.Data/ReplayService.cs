@@ -641,6 +641,7 @@ public static class ReplayService
         string? headline = null;
         int? expectedFinish = null;
         bool playerRaced = false;
+        int? battlePlayerFinish = null;
 
         for (int i = 0; i < raceSessions.Count; i++)
         {
@@ -649,6 +650,10 @@ public static class ReplayService
                 continue; // the player is not in this race's classification
 
             var (finish, dnf) = outcome.Value;
+            // The SMGP rival battle resolves against the round's PRIMARY race, like the called
+            // shot and the qualifying anchor (smgp packs author single-race rounds anyway).
+            if (i == 0)
+                battlePlayerFinish = finish;
 
             // The per-race modifier adds the driver-error-DNF gate (round conditions are constant
             // across a weekend; the DNF cause is per race). No character / no conditional perks →
@@ -705,6 +710,27 @@ public static class ReplayService
         if (!playerRaced)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
+        // The SMGP rival battle (M3 slice 2): BOTH gates — the round's raw envelope stored a
+        // rival call AND the career carries the mode's folded state (never over). No call / no
+        // state / a finished career → no event, no state change → byte-identical, which is every
+        // existing career and every non-smgp pack. The outcome derives from the stored result;
+        // the seat movements derive from the pinned pack's ladder + carried overrides.
+        if (envelope.SmgpRival is { } rivalCall && player.Smgp is { CareerOver: false } smgpState)
+        {
+            var battle = Companion.Core.Smgp.SmgpBattleFold.Apply(new Companion.Core.Smgp.SmgpBattleFoldContext
+            {
+                Pack = pack,
+                State = smgpState,
+                RivalDriverId = rivalCall.RivalDriverId,
+                Forced = rivalCall.Forced,
+                SeatSwapAccepted = rivalCall.SeatSwapAccepted,
+                PlayerFinish = battlePlayerFinish,
+                RivalFinish = ClassifiedPositionIn(raceSessions[0], rivalCall.RivalDriverId),
+            });
+            events.AddRange(battle.Events);
+            player = player with { Smgp = battle.State };
+        }
+
         return new RoundFoldOutcome(
             events,
             new RoundPlayerState { Player = player, RecommendedSlider = recommendedSlider },
@@ -712,6 +738,14 @@ public static class ReplayService
             headline,
             expectedFinish);
     }
+
+    /// <summary>A driver's 1-based CLASSIFIED finishing position in a race, or null when he
+    /// retired, was excluded, or does not appear — the SMGP battle's "a finish beats a DNF".</summary>
+    private static int? ClassifiedPositionIn(SessionResult race, string driverId) =>
+        race.Entries.FirstOrDefault(e => string.Equals(e.DriverId, driverId, StringComparison.Ordinal)) is
+            { Status: FinishStatus.Classified, Position: { } position }
+            ? position
+            : null;
 
     /// <summary>The player's 1-based qualifying position from the round's stored qualifying order
     /// (Increment 2), or null when the round ran no qualifying (single-race) or the player is not

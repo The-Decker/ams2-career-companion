@@ -606,6 +606,12 @@ public sealed record ResultDraft
     /// the raw envelope; never scored. Older producers omit it.</summary>
     public IReadOnlyList<string>? QualifyingOrder { get; init; }
 
+    /// <summary>The SMGP replica mode's rival declaration for this round (M3): who the player
+    /// named (or was force-challenged by) and, when the battle triggers a seat-swap offer, the
+    /// player's answer. Null = no rival this round — every non-smgp career and every declined
+    /// prompt. Stored verbatim in the raw envelope; the fold derives the battle from the result.</summary>
+    public Companion.Data.SmgpRivalCall? SmgpRival { get; init; }
+
     /// <summary>Additional race classifications for an authored TWO-race weekend (Increment 2): the
     /// PRIMARY race is this draft's own <see cref="Classified"/>/<see cref="DidNotFinish"/>/
     /// <see cref="Disqualified"/> (race index 0); each entry here is a further race (index 1…),

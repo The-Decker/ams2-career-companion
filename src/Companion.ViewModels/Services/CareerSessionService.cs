@@ -1750,6 +1750,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             QualifyingOrder = draft.QualifyingOrder,
             IsWet = draft.IsWet,
             CalledShot = draft.CalledShot,
+            SmgpRival = draft.SmgpRival,
         };
     }
 
