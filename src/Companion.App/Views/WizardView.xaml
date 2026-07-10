@@ -541,9 +541,11 @@
                             <DataTemplate>
                                 <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,6,6" VerticalAlignment="Top">
                                     <StackPanel>
+                                        <!-- driver image: the hand-supplied portrait if present, else the
+                                             car preview extracted from the livery (tools/extract_car_previews.cs) -->
                                         <Border CornerRadius="6,6,0,0" ClipToBounds="True">
                                             <Image x:Name="PortraitImage" Stretch="UniformToFill" MaxHeight="150"
-                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits|cars}"
                                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                         </Border>
                                         <DockPanel Margin="12,8">

@@ -42,10 +42,11 @@ string outDir = Path.Combine(repo, "packs", "smgp-1");
 Directory.CreateDirectory(outDir);
 
 // The class livery cap: AMS2's F-Classic_Gen3 supports at most 26 DISTINCT custom liveries on a
-// grid (data/ams2/livery-caps.json). The BASE field is 24 generic-model SMGP cars; the two
-// McLaren MP4/5B teams (Iris + Azalea) by Kobra Fleetworks are an OPT-IN modded field that rounds
-// it to 26 (at the cap) — gated on that car mod being installed (a wizard tick). 24 + 2 = 26.
-const int BaseFieldSize = 24;
+// grid (data/ams2/livery-caps.json). The field is 24 generic-model SMGP cars + the two McLaren
+// MP4/5B teams (Iris + Azalea) by Kobra Fleetworks = 26 (at the cap). The McLarens are permanent
+// base entries (the mod is finalized) and bind against the installed mclaren_mp45b mod car.
+const int FieldSize = 26;
+const int GenericBase = 24; // sanity: the TEAMS block emits exactly the 24 generic-model cars.
 
 // ---------------- drivers.json (from the skinpack's own AI XML) ----------------
 var RATING = new (string Xml, string Json)[]
@@ -91,8 +92,7 @@ foreach (var d in doc.Descendants("driver"))
     drivers.Add(driver);
 }
 // The two McLaren MP4/5B mod drivers (Kobra Fleetworks' "Iris & Azalea" skins) are not in the
-// skinpack XML — author them explicitly. They are always in drivers.json (inert without an entry;
-// the modded-field transform adds their entries only when the car mod is installed).
+// skinpack XML — author them explicitly. Permanent LEVEL-A entries (the mod is finalized).
 (string Id, string Name, string Country, double[] R, double Rel)[] MCLAREN_DRIVERS =
 {
     ("driver.bruno_salgado", "Bruno Salgado", "BRA",
@@ -208,8 +208,22 @@ foreach (var t in TEAMS)
             ["rounds"] = "1-16",
             ["ams2LiveryName"] = car.Livery,
         });
-if (entries.Count != BaseFieldSize)
-    throw new InvalidOperationException($"base field is {entries.Count} cars, expected {BaseFieldSize}");
+if (entries.Count != GenericBase)
+    throw new InvalidOperationException($"generic field is {entries.Count}, expected {GenericBase}");
+// The McLaren A-teams (Iris, Azalea) are now PERMANENT base entries — the mod is finalized, so
+// they race every season as top-tier teams (no longer an opt-in gated field). Their models bind
+// against the installed mclaren_mp45b mod. 24 generic + 2 McLaren = 26 = the class livery cap.
+foreach (var m in MCLAREN_TEAMS)
+    entries.Add(new JsonObject
+    {
+        ["teamId"] = "team." + m.Team,
+        ["driverId"] = m.Driver,
+        ["number"] = m.Number,
+        ["rounds"] = "1-16",
+        ["ams2LiveryName"] = m.Livery,
+    });
+if (entries.Count != FieldSize)
+    throw new InvalidOperationException($"field is {entries.Count} cars, expected {FieldSize}");
 WriteJson(Path.Combine(outDir, "entries.json"), new JsonObject { ["entries"] = entries });
 Console.WriteLine($"entries.json: {entries.Count} base entries");
 
@@ -237,7 +251,7 @@ var ROUNDS = new (string Name, string TrackId, string Venue, bool Placeholder, i
     ("Monaco",        "azure_circuit_2021",     "Circuit de Monaco", false, 78, [], 3),
 };
 
-// Per-track Max AI caps from the extracted library — the per-round base grid is min(BaseFieldSize, cap).
+// Per-track Max AI caps from the extracted library — the per-round grid is min(FieldSize, cap).
 var trackCaps = new Dictionary<string, int>(StringComparer.Ordinal);
 var tracksJson = JsonNode.Parse(File.ReadAllText(Path.Combine(repo, "data", "ams2", "tracks.json")))!;
 foreach (var track in tracksJson["tracks"]!.AsArray())
@@ -274,12 +288,14 @@ for (int i = 0; i < ROUNDS.Length; i++)
 
     if (!trackCaps.TryGetValue(r.TrackId, out int cap))
         throw new InvalidOperationException($"{r.TrackId} not in tracks.json");
-    int gridSize = Math.Min(BaseFieldSize, cap);
+    int gridSize = Math.Min(FieldSize, cap);
 
     var starterCopy = new JsonArray();
     foreach (var t in TEAMS)
         foreach (var car in t.Cars)
             starterCopy.Add(car.Driver);
+    foreach (var m in MCLAREN_TEAMS)
+        starterCopy.Add(m.Driver);
 
     rounds.Add(new JsonObject
     {
@@ -372,28 +388,12 @@ var pack = new JsonObject
             ["overridesFolder"] = "SMGP",
         }),
     },
-    // OPT-IN modded field: the two McLaren MP4/5B teams (Iris, Azalea) by Kobra Fleetworks round
-    // the base 24-car field out to 26. The wizard tick verifies the mclaren_mp45b car mod is
-    // installed and, when it is, the creation-time transform adds these entries + bumps the grids.
-    ["moddedField"] = new JsonObject
-    {
-        ["vehicleId"] = "mclaren_mp45b",
-        ["modName"] = "SMGP Iris & Azalea McLaren teams (Kobra Fleetworks)",
-        ["entries"] = new JsonArray(MCLAREN_TEAMS.Select(m => (JsonNode)new JsonObject
-        {
-            ["teamId"] = "team." + m.Team,
-            ["driverId"] = m.Driver,
-            ["number"] = m.Number,
-            ["rounds"] = "1-16",
-            ["ams2LiveryName"] = m.Livery,
-        }).ToArray()),
-    },
     ["notes"] = new JsonArray(
         "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
         "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
         "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
-        "The BASE season fields 24 generic-model SMGP cars covering ALL 22 painted teams (SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon) and two second cars (Madonna #1 A. Senna, Firenze #4 I. Germi).",
-        "OPT-IN modded field: the two McLaren MP4/5B teams by Kobra Fleetworks (Iris #1 B. Salgado, Azalea #8 M. Larssen) round the grid to 26 — tick 'Add the ... cars' at career creation when the mclaren_mp45b car mod is installed; without it the base 24-car field is used.",
+        "The season fields 26 cars: 24 generic-model SMGP cars (ALL 22 painted teams — SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon — plus Madonna #1 A. Senna and Firenze #4 I. Germi) and the two McLaren MP4/5B LEVEL-A teams by Kobra Fleetworks (Iris #1 B. Salgado, Azalea #8 M. Larssen). 26 = the class livery cap.",
+        "The McLaren teams (Iris, Azalea) bind against the installed mclaren_mp45b mod car + the Kobra Fleetworks 'SMGP Iris & Azalea' livery override — install both so their cars show in-game.",
         "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
         "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game.",
         "Reserves (authored drivers, no season entry): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27, plus N. Jones #5 and W. Dehehe #14 (second cars dropped so the McLarens fit the class 26-livery cap).",
