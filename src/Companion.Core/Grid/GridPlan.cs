@@ -99,6 +99,13 @@ public sealed record GridSeat
 
     public required double DragScalar { get; init; }
 
+    /// <summary>STAGING-ONLY per-driver car tuning (the juppo schema): driver-level car block
+    /// with the round's per-driver aiOverrides car fields applied on top (and, on the player's
+    /// seat, the character's scalar perk deltas folded in). When set, the staged custom-AI file
+    /// prefers these over the team scalars/reliability — but the sim's seat-strength model NEVER
+    /// reads it (sim-inert; the team fields above keep feeding the sim exactly as before).</summary>
+    public PackDriverCar? CarTuning { get; init; }
+
     /// <summary>True when the player drives this livery. The seat is still written to the
     /// generated file — the team scalars must apply to the player's car — and the AI skill
     /// fields stay: they are inert while the player is in the car.</summary>

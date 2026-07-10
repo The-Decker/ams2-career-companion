@@ -129,17 +129,73 @@
       },
       "guestEntries": [],
       "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.97,
+          "powerScalar": 1,
+          "dragScalar": 1.01,
+          "vehicleReliability": 0.45
+        },
+        "driver.andrea_de_cesaris": {
+          "dragScalar": 1.02,
+          "vehicleReliability": 0.39
+        },
+        "driver.bertrand_gachot": {
+          "dragScalar": 1.02,
+          "vehicleReliability": 0.39
+        },
+        "driver.emanuele_pirro": {
+          "weightScalar": 0.98,
+          "powerScalar": 0.94
+        },
+        "driver.gianni_morbidelli": {
+          "vehicleReliability": 0.37
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.1
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.97,
+          "powerScalar": 1,
+          "dragScalar": 1.01,
+          "vehicleReliability": 0.45
+        },
+        "driver.jj_lehto": {
+          "weightScalar": 0.98,
+          "powerScalar": 0.94
+        },
+        "driver.julian_bailey": {
+          "vehicleReliability": 0.24
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.05
+        },
         "driver.mika_hakkinen": {
           "raceSkill": 0.75,
-          "qualifyingSkill": 0.88
+          "qualifyingSkill": 0.88,
+          "vehicleReliability": 0.24
+        },
+        "driver.nelson_piquet": {
+          "powerScalar": 0.98,
+          "dragScalar": 1.01
         },
         "driver.nigel_mansell": {
           "raceSkill": 0.94,
-          "qualifyingSkill": 0.9
+          "qualifyingSkill": 0.9,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
+        },
+        "driver.pierluigi_martini": {
+          "vehicleReliability": 0.37
         },
         "driver.riccardo_patrese": {
           "raceSkill": 0.91,
-          "qualifyingSkill": 0.92
+          "qualifyingSkill": 0.92,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
+        },
+        "driver.roberto_moreno": {
+          "powerScalar": 0.98,
+          "dragScalar": 1.01
         }
       }
     },
@@ -246,13 +302,53 @@
           "raceSkill": 0.71,
           "qualifyingSkill": 0.76
         },
+        "driver.alain_prost": {
+          "weightScalar": 0.97,
+          "powerScalar": 1,
+          "dragScalar": 1.01,
+          "vehicleReliability": 0.45
+        },
+        "driver.andrea_de_cesaris": {
+          "dragScalar": 1.02,
+          "vehicleReliability": 0.39
+        },
+        "driver.bertrand_gachot": {
+          "dragScalar": 1.02,
+          "vehicleReliability": 0.39
+        },
+        "driver.emanuele_pirro": {
+          "weightScalar": 0.98,
+          "powerScalar": 0.94
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.97,
+          "powerScalar": 1,
+          "dragScalar": 1.01,
+          "vehicleReliability": 0.45
+        },
+        "driver.jj_lehto": {
+          "weightScalar": 0.98,
+          "powerScalar": 0.94
+        },
+        "driver.nelson_piquet": {
+          "powerScalar": 0.98,
+          "dragScalar": 1.01
+        },
         "driver.nigel_mansell": {
           "raceSkill": 0.94,
-          "qualifyingSkill": 0.9
+          "qualifyingSkill": 0.9,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
         },
         "driver.riccardo_patrese": {
           "raceSkill": 0.91,
-          "qualifyingSkill": 0.92
+          "qualifyingSkill": 0.92,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
+        },
+        "driver.roberto_moreno": {
+          "powerScalar": 0.98,
+          "dragScalar": 1.01
         }
       }
     },
@@ -349,13 +445,35 @@
       },
       "guestEntries": [],
       "aiOverrides": {
+        "driver.andrea_de_cesaris": {
+          "dragScalar": 1.02,
+          "vehicleReliability": 0.39
+        },
+        "driver.bertrand_gachot": {
+          "dragScalar": 1.02,
+          "vehicleReliability": 0.39
+        },
+        "driver.emanuele_pirro": {
+          "weightScalar": 0.98,
+          "powerScalar": 0.94
+        },
         "driver.gianni_morbidelli": {
           "raceSkill": 0.78,
           "qualifyingSkill": 0.82
         },
+        "driver.jj_lehto": {
+          "weightScalar": 0.98,
+          "powerScalar": 0.94
+        },
+        "driver.nelson_piquet": {
+          "powerScalar": 0.98,
+          "dragScalar": 1.01
+        },
         "driver.nigel_mansell": {
           "raceSkill": 0.94,
-          "qualifyingSkill": 0.9
+          "qualifyingSkill": 0.9,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
         },
         "driver.pierluigi_martini": {
           "raceSkill": 0.8,
@@ -363,7 +481,13 @@
         },
         "driver.riccardo_patrese": {
           "raceSkill": 0.91,
-          "qualifyingSkill": 0.92
+          "qualifyingSkill": 0.92,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
+        },
+        "driver.roberto_moreno": {
+          "powerScalar": 0.98,
+          "dragScalar": 1.01
         }
       }
     },
@@ -468,15 +592,44 @@
       "aiOverrides": {
         "driver.ayrton_senna": {
           "avoidanceOfMistakes": 0.98,
-          "avoidanceOfForcedMistakes": 0.95
+          "avoidanceOfForcedMistakes": 0.95,
+          "vehicleReliability": 0.5
+        },
+        "driver.gerhard_berger": {
+          "vehicleReliability": 0.5
+        },
+        "driver.gianni_morbidelli": {
+          "vehicleReliability": 0.37
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.1
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.05
+        },
+        "driver.mika_hakkinen": {
+          "vehicleReliability": 0.24
+        },
+        "driver.nelson_piquet": {
+          "vehicleReliability": 0.48
         },
         "driver.nigel_mansell": {
           "raceSkill": 0.94,
-          "qualifyingSkill": 0.9
+          "qualifyingSkill": 0.9,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
+        },
+        "driver.pierluigi_martini": {
+          "vehicleReliability": 0.37
         },
         "driver.riccardo_patrese": {
           "raceSkill": 0.91,
-          "qualifyingSkill": 0.92
+          "qualifyingSkill": 0.92,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
+        },
+        "driver.roberto_moreno": {
+          "vehicleReliability": 0.48
         },
         "driver.stefano_modena": {
           "raceSkill": 0.89,
@@ -590,11 +743,15 @@
       "aiOverrides": {
         "driver.nigel_mansell": {
           "raceSkill": 0.94,
-          "qualifyingSkill": 0.9
+          "qualifyingSkill": 0.9,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
         },
         "driver.riccardo_patrese": {
           "raceSkill": 0.91,
-          "qualifyingSkill": 0.92
+          "qualifyingSkill": 0.92,
+          "powerScalar": 0.99,
+          "vehicleReliability": 0.37
         }
       }
     },
@@ -921,9 +1078,45 @@
       },
       "guestEntries": [],
       "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
         "driver.nigel_mansell": {
           "raceSkill": 0.99,
           "qualifyingSkill": 0.99
+        },
+        "driver.satoru_nakajima": {
+          "vehicleReliability": 0.43
+        },
+        "driver.stefano_modena": {
+          "vehicleReliability": 0.43
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
         }
       }
     },
@@ -1028,7 +1221,52 @@
         "notes": "No 1991 Hockenheim layout in AMS2; the venue is real, so the historical lap count is kept on the era-matching 1988 layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.satoru_nakajima": {
+          "vehicleReliability": 0.43
+        },
+        "driver.stefano_modena": {
+          "vehicleReliability": 0.43
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        }
+      }
     },
     {
       "round": 10,
@@ -1131,7 +1369,66 @@
         "notes": "AMS2 ships the 2025 Hungaroring; the venue is real and largely unchanged in character since 1986, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.ayrton_senna": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
+        "driver.gerhard_berger": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.44
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.44
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.satoru_nakajima": {
+          "vehicleReliability": 0.43
+        },
+        "driver.stefano_modena": {
+          "vehicleReliability": 0.43
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        }
+      }
     },
     {
       "round": 11,
@@ -1229,7 +1526,60 @@
         "notes": "No 1991 Spa layout in AMS2; the venue is real, so the historical lap count is kept on the era-adjacent 1993 layout."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.ayrton_senna": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
+        "driver.gerhard_berger": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.44
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.44
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        }
+      }
     },
     {
       "round": 12,
@@ -1329,7 +1679,76 @@
         "notes": "AMS2\u0027s Monza 1991 is the exact layout the 1991 Italian GP ran; the venue is real, so the historical lap count is kept."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.ayrton_senna": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
+        "driver.gerhard_berger": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.44
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.44
+        },
+        "driver.nigel_mansell": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.riccardo_patrese": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.satoru_nakajima": {
+          "vehicleReliability": 0.43
+        },
+        "driver.stefano_modena": {
+          "vehicleReliability": 0.43
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        }
+      }
     },
     {
       "round": 13,
@@ -1528,9 +1947,75 @@
       },
       "guestEntries": [],
       "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.02,
+          "dragScalar": 0.98
+        },
+        "driver.ayrton_senna": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.01
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
         "driver.gerhard_berger": {
           "raceSkill": 0.97,
-          "qualifyingSkill": 0.97
+          "qualifyingSkill": 0.97,
+          "weightScalar": 0.96,
+          "powerScalar": 1.02
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.44
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.02,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.44
+        },
+        "driver.nigel_mansell": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.riccardo_patrese": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.satoru_nakajima": {
+          "vehicleReliability": 0.43
+        },
+        "driver.stefano_modena": {
+          "vehicleReliability": 0.43
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
         }
       }
     },
@@ -1636,9 +2121,75 @@
       },
       "guestEntries": [],
       "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.02,
+          "dragScalar": 0.98
+        },
+        "driver.ayrton_senna": {
+          "weightScalar": 0.95,
+          "powerScalar": 1.02
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
         "driver.gerhard_berger": {
           "raceSkill": 0.95,
-          "qualifyingSkill": 0.95
+          "qualifyingSkill": 0.95,
+          "weightScalar": 0.95,
+          "powerScalar": 1.02
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.44
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.02,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.44
+        },
+        "driver.nigel_mansell": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.riccardo_patrese": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.satoru_nakajima": {
+          "vehicleReliability": 0.43
+        },
+        "driver.stefano_modena": {
+          "vehicleReliability": 0.43
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
         }
       }
     },
@@ -1735,9 +2286,69 @@
       },
       "guestEntries": [],
       "aiOverrides": {
+        "driver.alain_prost": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.02,
+          "dragScalar": 0.98
+        },
+        "driver.ayrton_senna": {
+          "weightScalar": 0.95,
+          "powerScalar": 1.02
+        },
+        "driver.erik_comas": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
+        },
         "driver.gerhard_berger": {
           "raceSkill": 0.95,
-          "qualifyingSkill": 0.95
+          "qualifyingSkill": 0.95,
+          "weightScalar": 0.95,
+          "powerScalar": 1.02
+        },
+        "driver.gianni_morbidelli": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.ivan_capelli": {
+          "vehicleReliability": 0.44
+        },
+        "driver.jean_alesi": {
+          "weightScalar": 0.96,
+          "powerScalar": 1.02,
+          "dragScalar": 0.98
+        },
+        "driver.mark_blundell": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.martin_brundle": {
+          "weightScalar": 1.04,
+          "powerScalar": 1.02,
+          "dragScalar": 1.05
+        },
+        "driver.mauricio_gugelmin": {
+          "vehicleReliability": 0.44
+        },
+        "driver.nigel_mansell": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.pierluigi_martini": {
+          "weightScalar": 0.97,
+          "dragScalar": 1.01
+        },
+        "driver.riccardo_patrese": {
+          "weightScalar": 1,
+          "powerScalar": 1.01,
+          "dragScalar": 1
+        },
+        "driver.thierry_boutsen": {
+          "weightScalar": 1.03,
+          "powerScalar": 1,
+          "dragScalar": 1
         }
       }
     }

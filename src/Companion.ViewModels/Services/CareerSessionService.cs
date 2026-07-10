@@ -1532,6 +1532,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         WeatherTyreChanges = driver.Ratings.WeatherTyreChanges,
         AvoidanceOfForcedMistakes = driver.Ratings.AvoidanceOfForcedMistakes,
         FuelManagement = driver.Ratings.FuelManagement,
+        SetupDownforce = driver.Ratings.SetupDownforce,
+        SetupDownforceRandomness = driver.Ratings.SetupDownforceRandomness,
     };
 
     // ---------- season-end restore (IAiFileRestore) ----------

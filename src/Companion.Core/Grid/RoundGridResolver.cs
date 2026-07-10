@@ -212,8 +212,29 @@ public static class RoundGridResolver
         WeightScalar = team.Performance.WeightScalar,
         PowerScalar = team.Performance.PowerScalar,
         DragScalar = team.Performance.DragScalar,
+        CarTuning = MergeCarTuning(driver, round),
         IsGuest = isGuest,
     };
+
+    /// <summary>Driver-level car block with the round's per-driver aiOverrides car fields on top
+    /// (patch wins per field). STAGING-ONLY — the staged file prefers it over the team values;
+    /// the sim's seat-strength model never reads it. Null when neither authors anything.</summary>
+    private static PackDriverCar? MergeCarTuning(PackDriver driver, PackRound round)
+    {
+        var car = driver.Car;
+        if (round.AiOverrides.TryGetValue(driver.Id, out var patch))
+        {
+            var merged = new PackDriverCar
+            {
+                WeightScalar = patch.WeightScalar ?? car?.WeightScalar,
+                PowerScalar = patch.PowerScalar ?? car?.PowerScalar,
+                DragScalar = patch.DragScalar ?? car?.DragScalar,
+                VehicleReliability = patch.VehicleReliability ?? car?.VehicleReliability,
+            };
+            return merged.IsEmpty ? null : merged;
+        }
+        return car is { IsEmpty: false } ? car : null;
+    }
 
     /// <summary>Baseline -> trackForm -> aiOverrides. The trackForm nudge expresses per-venue
     /// FORM, so it moves the pace ratings (raceSkill, qualifyingSkill) and nothing else — a
@@ -250,6 +271,8 @@ public static class RoundGridResolver
                 WeatherTyreChanges = patch.WeatherTyreChanges ?? ratings.WeatherTyreChanges,
                 AvoidanceOfForcedMistakes = patch.AvoidanceOfForcedMistakes ?? ratings.AvoidanceOfForcedMistakes,
                 FuelManagement = patch.FuelManagement ?? ratings.FuelManagement,
+                SetupDownforce = patch.SetupDownforce ?? ratings.SetupDownforce,
+                SetupDownforceRandomness = patch.SetupDownforceRandomness ?? ratings.SetupDownforceRandomness,
             };
         }
 
@@ -318,12 +341,23 @@ public static class RoundGridResolver
             return seat;
 
         var mods = character.Modifiers;
+        // Per-driver car tuning (staged-file-only) gets the same perk deltas, so a character's
+        // car tweaks survive on a pack that authors juppo-style tuning for the player's seat.
+        var tuning = seat.CarTuning;
+        if (tuning is not null)
+            tuning = tuning with
+            {
+                WeightScalar = tuning.WeightScalar is { } w ? w + mods.WeightScalarDelta : null,
+                PowerScalar = tuning.PowerScalar is { } p ? p + mods.PowerScalarDelta : null,
+                DragScalar = tuning.DragScalar is { } d ? d + mods.DragScalarDelta : null,
+            };
         return seat with
         {
             Ratings = CharacterRatingWriter.Apply(seat.Ratings, character.Profile, character.Rules, mods),
             WeightScalar = seat.WeightScalar + mods.WeightScalarDelta,
             PowerScalar = seat.PowerScalar + mods.PowerScalarDelta,
             DragScalar = seat.DragScalar + mods.DragScalarDelta,
+            CarTuning = tuning,
         };
     }
 

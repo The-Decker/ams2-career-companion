@@ -19,7 +19,15 @@
         "blueFlagConceding": 0.5,
         "weatherTyreChanges": 0.35,
         "avoidanceOfMistakes": 0.95,
-        "avoidanceOfForcedMistakes": 0.9
+        "avoidanceOfForcedMistakes": 0.9,
+        "setupDownforce": 0.6,
+        "setupDownforceRandomness": 0.1
+      },
+      "car": {
+        "weightScalar": 0.97,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.48
       }
     },
     {
@@ -41,7 +49,15 @@
         "blueFlagConceding": 0.9,
         "weatherTyreChanges": 0.61,
         "avoidanceOfMistakes": 0.85,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.2
+      },
+      "car": {
+        "weightScalar": 0.97,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.48
       }
     },
     {
@@ -63,7 +79,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.8,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.7,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 1.02,
+        "powerScalar": 1.02,
+        "dragScalar": 1.02,
+        "vehicleReliability": 0.37
       }
     },
     {
@@ -85,7 +109,15 @@
         "blueFlagConceding": 0.95,
         "weatherTyreChanges": 0.8,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.7,
+        "setupDownforceRandomness": 0.2
+      },
+      "car": {
+        "weightScalar": 1.02,
+        "powerScalar": 1.02,
+        "dragScalar": 1.02,
+        "vehicleReliability": 0.37
       }
     },
     {
@@ -107,7 +139,15 @@
         "blueFlagConceding": 0.4,
         "weatherTyreChanges": 0.54,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.44
       }
     },
     {
@@ -129,7 +169,15 @@
         "blueFlagConceding": 0.6,
         "weatherTyreChanges": 0.71,
         "avoidanceOfMistakes": 0.7,
-        "avoidanceOfForcedMistakes": 0.5
+        "avoidanceOfForcedMistakes": 0.5,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.5
+      },
+      "car": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.44
       }
     },
     {
@@ -151,7 +199,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.86,
         "avoidanceOfMistakes": 0.85,
-        "avoidanceOfForcedMistakes": 0.75
+        "avoidanceOfForcedMistakes": 0.75,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 1.05,
+        "powerScalar": 0.99,
+        "dragScalar": 1.05,
+        "vehicleReliability": 0.39
       }
     },
     {
@@ -173,7 +229,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.75,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 1.05,
+        "powerScalar": 0.99,
+        "dragScalar": 1.05,
+        "vehicleReliability": 0.39
       }
     },
     {
@@ -261,7 +325,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.75,
         "avoidanceOfMistakes": 0.6,
-        "avoidanceOfForcedMistakes": 0.6
+        "avoidanceOfForcedMistakes": 0.6,
+        "setupDownforce": 0.4,
+        "setupDownforceRandomness": 0.4
+      },
+      "car": {
+        "weightScalar": 1.08,
+        "powerScalar": 0.91,
+        "dragScalar": 1.09,
+        "vehicleReliability": 0.44
       }
     },
     {
@@ -283,7 +355,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.91,
         "avoidanceOfMistakes": 0.6,
-        "avoidanceOfForcedMistakes": 0.6
+        "avoidanceOfForcedMistakes": 0.6,
+        "setupDownforce": 0.4,
+        "setupDownforceRandomness": 0.4
+      },
+      "car": {
+        "weightScalar": 1.08,
+        "powerScalar": 0.91,
+        "dragScalar": 1.09,
+        "vehicleReliability": 0.44
       }
     },
     {
@@ -349,7 +429,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.81,
         "avoidanceOfMistakes": 0.7,
-        "avoidanceOfForcedMistakes": 0.6
+        "avoidanceOfForcedMistakes": 0.6,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.8
+      },
+      "car": {
+        "weightScalar": 1.05,
+        "powerScalar": 0.98,
+        "dragScalar": 1.02,
+        "vehicleReliability": 0.31
       }
     },
     {
@@ -371,7 +459,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.83,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.75
+        "avoidanceOfForcedMistakes": 0.75,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.8
+      },
+      "car": {
+        "weightScalar": 1.05,
+        "powerScalar": 0.98,
+        "dragScalar": 1.02,
+        "vehicleReliability": 0.31
       }
     },
     {
@@ -393,7 +489,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.75,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.2
+      },
+      "car": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.46
       }
     },
     {
@@ -415,7 +519,15 @@
         "blueFlagConceding": 0.8,
         "weatherTyreChanges": 0.71,
         "avoidanceOfMistakes": 0.9,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.1
+      },
+      "car": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.46
       }
     },
     {
@@ -437,7 +549,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.75,
         "avoidanceOfMistakes": 0.75,
-        "avoidanceOfForcedMistakes": 0.75
+        "avoidanceOfForcedMistakes": 0.75,
+        "setupDownforce": 0.6,
+        "setupDownforceRandomness": 0.2
+      },
+      "car": {
+        "weightScalar": 0.97,
+        "powerScalar": 0.96,
+        "dragScalar": 0.99,
+        "vehicleReliability": 0.39
       }
     },
     {
@@ -459,7 +579,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.8,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.6,
+        "setupDownforceRandomness": 0.4
+      },
+      "car": {
+        "weightScalar": 0.97,
+        "powerScalar": 0.96,
+        "dragScalar": 0.99,
+        "vehicleReliability": 0.39
       }
     },
     {
@@ -481,7 +609,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.67,
         "avoidanceOfMistakes": 0.9,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 0.98,
+        "powerScalar": 1,
+        "dragScalar": 1.02,
+        "vehicleReliability": 0.43
       }
     },
     {
@@ -503,7 +639,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.85,
         "avoidanceOfMistakes": 0.7,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 0.98,
+        "powerScalar": 1,
+        "dragScalar": 1.02,
+        "vehicleReliability": 0.43
       }
     },
     {
@@ -525,7 +669,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.79,
         "avoidanceOfMistakes": 0.85,
-        "avoidanceOfForcedMistakes": 0.8
+        "avoidanceOfForcedMistakes": 0.8,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.2
+      },
+      "car": {
+        "weightScalar": 1.04,
+        "powerScalar": 0.98,
+        "dragScalar": 1,
+        "vehicleReliability": 0.51
       }
     },
     {
@@ -547,7 +699,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.68,
         "avoidanceOfMistakes": 0.7,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.2
+      },
+      "car": {
+        "weightScalar": 1.04,
+        "powerScalar": 0.98,
+        "dragScalar": 1,
+        "vehicleReliability": 0.51
       }
     },
     {
@@ -569,7 +729,15 @@
         "blueFlagConceding": 0.6,
         "weatherTyreChanges": 0.6,
         "avoidanceOfMistakes": 0.98,
-        "avoidanceOfForcedMistakes": 0.95
+        "avoidanceOfForcedMistakes": 0.95,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.1
+      },
+      "car": {
+        "weightScalar": 0.96,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.43
       }
     },
     {
@@ -591,7 +759,15 @@
         "blueFlagConceding": 0.6,
         "weatherTyreChanges": 0.73,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.4
+      },
+      "car": {
+        "weightScalar": 0.96,
+        "powerScalar": 1,
+        "dragScalar": 1,
+        "vehicleReliability": 0.43
       }
     },
     {
@@ -635,7 +811,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.85,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.4,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 1.04,
+        "powerScalar": 1,
+        "dragScalar": 1.01,
+        "vehicleReliability": 0.24
       }
     },
     {
@@ -657,7 +841,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.72,
         "avoidanceOfMistakes": 0.7,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.5
+      },
+      "car": {
+        "weightScalar": 1.01,
+        "powerScalar": 0.92,
+        "dragScalar": 1,
+        "vehicleReliability": 0.44
       }
     },
     {
@@ -679,7 +871,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.78,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.75
+        "avoidanceOfForcedMistakes": 0.75,
+        "setupDownforce": 0.4,
+        "setupDownforceRandomness": 0.3
+      },
+      "car": {
+        "weightScalar": 1.04,
+        "powerScalar": 1,
+        "dragScalar": 1.01,
+        "vehicleReliability": 0.24
       }
     },
     {
@@ -723,7 +923,15 @@
         "blueFlagConceding": 0.98,
         "weatherTyreChanges": 0.73,
         "avoidanceOfMistakes": 0.8,
-        "avoidanceOfForcedMistakes": 0.7
+        "avoidanceOfForcedMistakes": 0.7,
+        "setupDownforce": 0.5,
+        "setupDownforceRandomness": 0.4
+      },
+      "car": {
+        "weightScalar": 1.02,
+        "powerScalar": 0.92,
+        "dragScalar": 1,
+        "vehicleReliability": 0.44
       }
     },
     {

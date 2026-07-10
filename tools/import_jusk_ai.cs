@@ -9,8 +9,10 @@
 //                    dropped, never a dangling ref). Optionally the f1db driverForm block is removed
 //                    (--drop-form) so jusk's hand-tuned per-track form is the only per-round variation.
 //
-// vehicle_reliability is per-DRIVER in the XML but per-TEAM in the pack model, so it is NOT imported
-// (reported only). Sim-inert for existing careers (they pin their own pack copy) and oracle
+// v1.3: the per-driver CAR block (weight/power/drag scalars + vehicle_reliability — juppo's
+// "evolving car balancing") is imported too: base blocks -> drivers.json "car", per-track blocks ->
+// that round's aiOverrides (both staging-only; the sim's seat strength keeps reading team values).
+// Sim-inert for existing careers (they pin their own pack copy) and oracle
 // (fixtures, not bundled packs) — only NEW careers from this pack see the change.
 //
 // Usage:
@@ -34,16 +36,27 @@ if (argList.Count < 2)
 string xmlPath = argList[0];
 string packDir = argList[1];
 
-// jusk snake_case -> pack camelCase for the 13 rating dims the pack models (no fuelManagement in
-// these vintage packs; vehicle_reliability is team-level, handled separately).
+// jusk snake_case -> pack camelCase for the RATING dims the pack models (0..1 fields, incl. the
+// juppo setup-preference pair the schema gained in v1.3).
 var FIELD = new (string Xml, string Json)[]
 {
     ("race_skill", "raceSkill"), ("qualifying_skill", "qualifyingSkill"),
     ("aggression", "aggression"), ("defending", "defending"), ("stamina", "stamina"),
     ("consistency", "consistency"), ("start_reactions", "startReactions"), ("wet_skill", "wetSkill"),
-    ("tyre_management", "tyreManagement"), ("blue_flag_conceding", "blueFlagConceding"),
+    ("tyre_management", "tyreManagement"), ("fuel_management", "fuelManagement"),
+    ("blue_flag_conceding", "blueFlagConceding"),
     ("weather_tyre_changes", "weatherTyreChanges"), ("avoidance_of_mistakes", "avoidanceOfMistakes"),
     ("avoidance_of_forced_mistakes", "avoidanceOfForcedMistakes"),
+    ("setup_downforce", "setupDownforce"), ("setup_downforce_randomness", "setupDownforceRandomness"),
+};
+
+// jusk snake_case -> pack camelCase for the per-driver CAR block (juppo's "evolving car
+// balancing": physics scalars ~1.0 + per-driver reliability). Base blocks land in drivers.json
+// "car"; per-track blocks land in that round's aiOverrides (staging-only either way).
+var CAR_FIELD = new (string Xml, string Json)[]
+{
+    ("weight_scalar", "weightScalar"), ("power_scalar", "powerScalar"),
+    ("drag_scalar", "dragScalar"), ("vehicle_reliability", "vehicleReliability"),
 };
 
 // ---- parse the AI XML -----------------------------------------------------
@@ -53,6 +66,7 @@ string xmlText = System.Text.RegularExpressions.Regex.Replace(
     File.ReadAllText(xmlPath), "<!--.*?-->", "", System.Text.RegularExpressions.RegexOptions.Singleline);
 var doc = XDocument.Parse(xmlText);
 var baseByLivery = new Dictionary<string, Dictionary<string, double>>(StringComparer.Ordinal);
+var carByLivery = new Dictionary<string, Dictionary<string, double>>(StringComparer.Ordinal);
 var overridesByLivery = new List<(string Livery, string[] Tracks, Dictionary<string, double> Patch)>();
 foreach (var d in doc.Descendants("driver"))
 {
@@ -62,14 +76,25 @@ foreach (var d in doc.Descendants("driver"))
     foreach (var (xml, json) in FIELD)
         if (d.Element(xml) is { } e && double.TryParse(e.Value.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
             vals[json] = v;
+    var car = new Dictionary<string, double>(StringComparer.Ordinal);
+    foreach (var (xml, json) in CAR_FIELD)
+        if (d.Element(xml) is { } e && double.TryParse(e.Value.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
+            car[json] = v;
     string? tracks = (string?)d.Attribute("tracks");
     if (tracks is null)
+    {
         baseByLivery[livery] = vals; // base block (last one wins if duplicated)
-    else if (vals.Count > 0)
-        // A per-track block whose only content is fields the pack doesn't model (juppo's
-        // drag/power/weight scalars, setup fields) maps to an EMPTY patch — skip it rather
-        // than writing meaningless {} aiOverrides entries.
-        overridesByLivery.Add((livery, tracks.Split(',').Select(t => t.Trim()).ToArray(), vals));
+        if (car.Count > 0)
+            carByLivery[livery] = car;
+    }
+    else
+    {
+        // Per-track blocks: ratings AND car fields ride the round's aiOverrides patch together
+        // (the pack model splits them by property name). A block with nothing mapped is skipped.
+        foreach (var (k, v) in car) vals[k] = v;
+        if (vals.Count > 0)
+            overridesByLivery.Add((livery, tracks.Split(',').Select(t => t.Trim()).ToArray(), vals));
+    }
 }
 
 // ---- read the pack --------------------------------------------------------
@@ -182,6 +207,7 @@ foreach (var dn in driverArr)
     Console.WriteLine($"  {(string)o["name"]!,-24} race {curR:0.00}->{newR:0.00}   quali {curQ:0.00}->{newQ:0.00}{mark}");
 }
 Console.WriteLine($"\n  unmatched liveries: {unmatched}");
+Console.WriteLine($"  per-driver car blocks (scalars/reliability): {carByLivery.Count(kv => driverIdByLivery.ContainsKey(kv.Key))}");
 
 Console.WriteLine("\n-- per-round aiOverrides (jusk per-track form -> rounds, grid-filtered) --");
 foreach (var (roundNo, perDriver) in overridePlan)
@@ -200,15 +226,30 @@ if (!write)
 }
 
 // ---- apply ----------------------------------------------------------------
-// drivers.json: set the 13 base dims per matched driver.
+// drivers.json: set the base rating dims per matched driver, plus the per-driver "car" block
+// (juppo scalars/reliability) when the source authors one.
+var carPlan = new Dictionary<string, Dictionary<string, double>>(StringComparer.Ordinal);
+foreach (var (livery, car) in carByLivery)
+    if (driverIdByLivery.TryGetValue(livery, out var driverId))
+        carPlan[driverId] = car;
+
 foreach (var dn in driverArr)
 {
     var o = (JsonObject)dn!;
     string id = (string)o["id"]!;
-    if (!basePlan.TryGetValue(id, out var nv)) continue;
-    var ratings = (JsonObject)o["ratings"]!;
-    foreach (var (_, json) in FIELD)
-        if (nv.TryGetValue(json, out double v)) ratings[json] = JsonValue.Create(v);
+    if (basePlan.TryGetValue(id, out var nv))
+    {
+        var ratings = (JsonObject)o["ratings"]!;
+        foreach (var (_, json) in FIELD)
+            if (nv.TryGetValue(json, out double v)) ratings[json] = JsonValue.Create(v);
+    }
+    if (carPlan.TryGetValue(id, out var carVals))
+    {
+        var car = new JsonObject();
+        foreach (var (_, json) in CAR_FIELD)
+            if (carVals.TryGetValue(json, out double v)) car[json] = JsonValue.Create(v);
+        o["car"] = car;
+    }
 }
 
 // season.json: rebuild each round's aiOverrides; optionally drop driverForm.
