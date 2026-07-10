@@ -53,22 +53,15 @@
       "teamId": "team.brabham",
       "driverId": "driver.elio_de_angelis",
       "number": "8",
-      "rounds": "1-16",
+      "rounds": "1-4",
       "ams2LiveryName": "1986 Brabham #8 - E. De Angelis"
     },
     {
-      "teamId": "team.ferrari",
-      "driverId": "driver.michele_alboreto",
-      "number": "27",
-      "rounds": "1-16",
-      "ams2LiveryName": "1986 Ferrari #27 - M. Alboreto"
-    },
-    {
-      "teamId": "team.ferrari",
-      "driverId": "driver.stefan_johansson",
-      "number": "28",
-      "rounds": "1-16",
-      "ams2LiveryName": "1986 Ferrari #28 - S. Johansson"
+      "teamId": "team.brabham",
+      "driverId": "driver.derek_warwick",
+      "number": "8",
+      "rounds": "6-16",
+      "ams2LiveryName": "1986 Brabham #8 - D. Warwick"
     },
     {
       "teamId": "team.lotus",
@@ -92,6 +85,13 @@
       "ams2LiveryName": "1986 Zakspeed #14 - J. Palmer"
     },
     {
+      "teamId": "team.zakspeed",
+      "driverId": "driver.huub_rothengatter",
+      "number": "29",
+      "rounds": "1-16",
+      "ams2LiveryName": "1986 Zakspeed #29 - H. Rothengatter"
+    },
+    {
       "teamId": "team.lola",
       "driverId": "driver.alan_jones",
       "number": "15",
@@ -102,15 +102,36 @@
       "teamId": "team.lola",
       "driverId": "driver.patrick_tambay",
       "number": "16",
-      "rounds": "1-16",
+      "rounds": "1-6",
+      "ams2LiveryName": "1986 Lola #16 - P. Tambay"
+    },
+    {
+      "teamId": "team.lola",
+      "driverId": "driver.eddie_cheever",
+      "number": "16",
+      "rounds": "7",
+      "ams2LiveryName": "1986 Lola #16 - E. Cheever"
+    },
+    {
+      "teamId": "team.lola",
+      "driverId": "driver.patrick_tambay",
+      "number": "16",
+      "rounds": "8-16",
       "ams2LiveryName": "1986 Lola #16 - P. Tambay"
     },
     {
       "teamId": "team.arrows",
       "driverId": "driver.marc_surer",
       "number": "17",
-      "rounds": "1-16",
+      "rounds": "1-5",
       "ams2LiveryName": "1986 Arrows #17 - M. Surer"
+    },
+    {
+      "teamId": "team.arrows",
+      "driverId": "driver.christian_danner",
+      "number": "17",
+      "rounds": "7-16",
+      "ams2LiveryName": "1986 Arrows #17 - C. Danner"
     },
     {
       "teamId": "team.arrows",
@@ -144,8 +165,22 @@
       "teamId": "team.osella",
       "driverId": "driver.christian_danner",
       "number": "22",
-      "rounds": "1-16",
+      "rounds": "1-6",
       "ams2LiveryName": "1986 Osella #22 - C. Danner"
+    },
+    {
+      "teamId": "team.osella",
+      "driverId": "driver.allen_berg",
+      "number": "22",
+      "rounds": "7-16",
+      "ams2LiveryName": "1986 Osella #22 - A. Berg"
+    },
+    {
+      "teamId": "team.minardi",
+      "driverId": "driver.andrea_de_cesaris",
+      "number": "23",
+      "rounds": "1-16",
+      "ams2LiveryName": "1986 Minardi #23 - A. De Cesaris"
     },
     {
       "teamId": "team.minardi",
@@ -165,8 +200,36 @@
       "teamId": "team.ligier",
       "driverId": "driver.jacques_laffite",
       "number": "26",
-      "rounds": "1-16",
+      "rounds": "1-9",
       "ams2LiveryName": "1986 Ligier #26 - J. Laffite"
+    },
+    {
+      "teamId": "team.ligier",
+      "driverId": "driver.philippe_alliot",
+      "number": "26",
+      "rounds": "10-16",
+      "ams2LiveryName": "1986 Ligier #26 - P. Alliot"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.michele_alboreto",
+      "number": "27",
+      "rounds": "1-16",
+      "ams2LiveryName": "1986 Ferrari #27 - M. Alboreto"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.stefan_johansson",
+      "number": "28",
+      "rounds": "1-16",
+      "ams2LiveryName": "1986 Ferrari #28 - S. Johansson"
+    },
+    {
+      "teamId": "team.ags",
+      "driverId": "driver.ivan_capelli",
+      "number": "31",
+      "rounds": "13-16",
+      "ams2LiveryName": "1986 AGS #31 - I. Capelli"
     }
   ]
 }
