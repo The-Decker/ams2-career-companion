@@ -416,7 +416,8 @@
                                         ToolTip="Call a better finish (a lower position) — a bolder gamble stakes more reputation" />
                                 <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="8,0,0,0" MinWidth="90"
                                         ToolTip="Ease the call one place" />
-                                <Button Content="No bet" Command="{Binding ClearCallCommand}" Margin="8,0,0,0" MinWidth="80"
+                                <Button x:Name="GambleNoBetButton" Content="No bet" Command="{Binding ClearCallCommand}"
+                                        Margin="8,0,0,0" MinWidth="80"
                                         Visibility="{Binding HasCalledShot, Converter={StaticResource BoolVisible}}"
                                         ToolTip="Withdraw the gamble for this round" />
                             </StackPanel>

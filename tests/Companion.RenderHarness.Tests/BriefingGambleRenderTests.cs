@@ -91,10 +91,6 @@ public sealed class BriefingGambleRenderTests
             var vm = new BriefingViewModel(new GambleSession());
             Assert.True(vm.CanGamble); // the panel is shown
 
-            // Commit a bold call so the stake-preview branch + the "No bet" button both render.
-            vm.CallBolderCommand.Execute(null);
-            Assert.True(vm.HasCalledShot);
-
             var view = new BriefingView { DataContext = vm };
             view.Measure(new Size(1000, 900));
             view.Arrange(new Rect(0, 0, 1000, 900));
@@ -109,6 +105,15 @@ public sealed class BriefingGambleRenderTests
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("GamblePanel")).Visibility);
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpPanel")).Visibility);
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
+
+            // "No bet" is the WITHDRAW action: hidden while there is nothing to withdraw,
+            // visible once a call is committed (the second half of the inverted-pair bug).
+            var noBet = (FrameworkElement)view.FindName("GambleNoBetButton");
+            Assert.Equal(Visibility.Collapsed, noBet.Visibility);
+            vm.CallBolderCommand.Execute(null);
+            Assert.True(vm.HasCalledShot);
+            view.UpdateLayout();
+            Assert.Equal(Visibility.Visible, noBet.Visibility);
         });
     }
 }
