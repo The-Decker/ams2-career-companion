@@ -306,6 +306,42 @@
                                     ToolTip="Re-scan your AMS2 install for the mod tracks this season's alternates need" />
                         </StackPanel>
                     </Border>
+
+                    <!-- optional modded FIELD (a community CAR mod): the SMGP McLaren teams by Kobra
+                         Fleetworks that round the grid out. Opt-in AND install-verified, exactly like
+                         the alternate tracks above. Off (or the mod missing) => base field only. -->
+                    <Border Style="{StaticResource Panel}" Margin="0,10,0,0"
+                            Visibility="{Binding PackHasModdedField, Converter={StaticResource BoolVisible}}">
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding UseModdedField}"
+                                      Content="{Binding ModdedVehicle.ModName, StringFormat='Add the {0} cars (community car mod)'}"
+                                      ToolTip="Fields the mod's extra cars to round out the grid — but ONLY if the car mod is installed. Off = the base grid." />
+                            <TextBlock Text="{Binding ModdedFieldStatus}" Style="{StaticResource Body}"
+                                       TextWrapping="Wrap" Margin="0,6,0,0" />
+                            <DockPanel Margin="0,6,0,0"
+                                       Visibility="{Binding UseModdedField, Converter={StaticResource BoolVisible}}">
+                                <TextBlock DockPanel.Dock="Left" Width="18" VerticalAlignment="Top">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="Text" Value="✗" />
+                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ModdedVehicle.Installed}" Value="True">
+                                                    <Setter Property="Text" Value="✔" />
+                                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"><Run Text="{Binding ModdedVehicle.ModName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="{Binding ModdedVehicle.VehicleId, Mode=OneWay, StringFormat=' ({0})'}" /></TextBlock>
+                            </DockPanel>
+                            <Button Content="Re-check installed mod" Command="{Binding CheckModdedFieldCommand}"
+                                    HorizontalAlignment="Left" Margin="0,8,0,0" Style="{StaticResource SubtleButton}"
+                                    Visibility="{Binding UseModdedField, Converter={StaticResource BoolVisible}}"
+                                    ToolTip="Re-scan your AMS2 install for the car mod this season's extra cars need" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
                 <Border Style="{StaticResource Panel}">
                     <DockPanel>

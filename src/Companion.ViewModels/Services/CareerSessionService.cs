@@ -148,6 +148,26 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             pack = files.Parse();
         }
 
+        // OPT-IN modded field (v1.4): append the mod's extra grid entries + bump the round grid
+        // sizes ONLY when the player opted in AND the required car mod is installed — otherwise the
+        // base field is pinned (no mod dependency). The TRANSFORMED files are pinned, so the fold
+        // fields the fuller grid and replays stay byte-identical (no seed).
+        if (request.UseModdedField &&
+            pack.Manifest.ModdedField is { } moddedField &&
+            ModdedFieldTransform.HasModdedField(pack) &&
+            ModdedVehiclePreflight.CanApplyModdedField(
+                pack, environment.ContentLibrary, environment.LocateInstall()?.InstallDirectory))
+        {
+            var trackCaps = environment.ContentLibrary.Tracks
+                .ToDictionary(t => t.Key, t => t.Value.MaxAiParticipants, StringComparer.Ordinal);
+            files = files with
+            {
+                EntriesJson = ModdedFieldTransform.ApplyToEntriesJson(files.EntriesJson, moddedField),
+                SeasonJson = ModdedFieldTransform.ApplyToSeasonJson(files.SeasonJson, moddedField, trackCaps),
+            };
+            pack = files.Parse();
+        }
+
         string playerDriverId = ResolvePlayerDriverId(pack, request.PlayerLiveryName);
 
         if (File.Exists(request.CareerFilePath))

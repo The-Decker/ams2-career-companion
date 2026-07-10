@@ -273,6 +273,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 IsInfo: issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Info));
 
         RefreshAlternateTrackStatus(installation?.InstallDirectory);
+        RefreshModdedFieldStatus(installation?.InstallDirectory);
 
         OnPropertyChanged(nameof(HasErrors));
         OnPropertyChanged(nameof(HasWarnings));
@@ -341,6 +342,54 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     partial void OnUseAlternateTracksChanged(bool value) =>
         // Ticking re-checks the install (Mike: "the tick is pressed to check the optional maps are installed").
         RefreshAlternateTrackStatus(_environment.LocateInstall()?.InstallDirectory);
+
+    // ---------- step b (cont): optional modded field (a community CAR mod) ----------
+
+    /// <summary>OPT-IN modded field. When ticked AND the required car mod is installed, the new
+    /// career fields the mod's extra grid entries (the SMGP McLaren teams by Kobra Fleetworks);
+    /// otherwise the season keeps its base field (no mod dependency). Toggling re-checks the install.</summary>
+    [ObservableProperty]
+    private bool _useModdedField;
+
+    /// <summary>The car mod this pack's modded field needs, flagged installed or not — null when the
+    /// pack offers none. Refreshed from the install on verification + on toggling.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PackHasModdedField), nameof(ModdedFieldStatus))]
+    private Companion.Ams2.Preflight.RequiredModVehicle? _moddedVehicle;
+
+    public bool PackHasModdedField => ModdedVehicle is not null;
+
+    /// <summary>One honest line on what the tick will do given the install state.</summary>
+    public string ModdedFieldStatus
+    {
+        get
+        {
+            if (ModdedVehicle is not { } mod)
+                return "";
+            if (!UseModdedField)
+                return $"Adds the {mod.ModName} cars to round out the grid — if the mod is installed.";
+            return mod.Installed
+                ? $"✔ {mod.ModName} is installed — its cars will join the grid."
+                : $"⚠ {mod.ModName} not found — its cars won't be added; the season fields its base grid. " +
+                  "Install the mod and re-tick, or race without it.";
+        }
+    }
+
+    private void RefreshModdedFieldStatus(string? installDirectory)
+    {
+        ModdedVehicle = Pack is { } pack
+            ? Companion.Ams2.Preflight.ModdedVehiclePreflight.RequiredModVehicleFor(
+                pack, _environment.ContentLibrary, installDirectory)
+            : null;
+    }
+
+    /// <summary>The "check installed" action — re-probe the install for the required car mod.</summary>
+    [RelayCommand]
+    private void CheckModdedField() =>
+        RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
+
+    partial void OnUseModdedFieldChanged(bool value) =>
+        RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
 
     // ---------- step c: seat pick ----------
 
@@ -729,6 +778,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             // Opt-in alternate mod tracks — the service applies them only if every required mod is
             // installed (else it silently keeps the default AMS2 tracks). Default OFF.
             UseAlternateTracks = UseAlternateTracks,
+            // Opt-in modded field (the SMGP McLaren teams) — the service adds them only if the
+            // required car mod is installed (else the base field). Default OFF.
+            UseModdedField = UseModdedField,
         };
 
         ICareerSession session;

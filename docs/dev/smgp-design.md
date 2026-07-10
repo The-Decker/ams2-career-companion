@@ -93,6 +93,16 @@ ladder (0.99 → 0.70) and G. Ceara at 0.99.
   - `data/ams2/smgp/banners/<teamId>.jpg` — team banner atop the dossier card (`team.madonna.jpg`).
   - `data/ams2/smgp/rounds/<round>.jpg` — round card art under the round header (`1.jpg` … `16.jpg`).
   - `data/ams2/smgp/hero.jpg` — the mode hero image (reserved for the main-menu/mode screens, M4).
+- **Opt-in modded field (Iris & Azalea, Kobra Fleetworks)** — the BASE season fields 24
+  generic-model SMGP cars; the pack's `manifest.moddedField` declares two extra McLaren MP4/5B
+  teams (Iris #1 B. Salgado purple, Azalea #8 M. Larssen pink — the `mclaren_mp45b` mod car) that
+  round the grid to 26 (the F-Classic_Gen3 26-livery cap). Gated exactly like the alternate
+  tracks: a wizard tick verifies the car mod is installed (`mclaren_mp45b` in the content library
+  + its `Overrides\mclaren_mp45b\` folder present) and, when it is, the creation-time
+  `ModdedFieldTransform` appends the two entries and bumps each round's grid size before pinning —
+  so the pinned pack fields 26 and replays byte-identically. Off or mod missing = the base 24-car
+  field, no dependency. The Iris/Azalea teams (LEVEL A) + drivers are always in teams.json/
+  drivers.json (inert without an entry); Zeroforce stays the ladder floor.
 - A **mode flag** on the pack manifest (`careerStyle: "smgp"`) gating: rival panel in the
   briefing (pick/decline + forced challenges), rival-battle state in the envelope (new versioned
   fold rows — determinism-gated like the called-shot gamble), seat-swap offers + tier

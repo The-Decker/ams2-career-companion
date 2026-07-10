@@ -47,6 +47,46 @@ public sealed record PackManifest
     /// and determinism-gated per career).</summary>
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string? CareerStyle { get; init; }
+
+    /// <summary>OPT-IN modded field (v1.4, optional, additive): extra grid entries a COMMUNITY CAR
+    /// MOD adds to round the season out — the SMGP pack's two McLaren MP4/5B teams (Iris, Azalea)
+    /// by Kobra Fleetworks. Gated exactly like <c>track.alternate</c>: the entries + a per-round
+    /// grid-size bump apply at CAREER CREATION only when the player ticks it on AND the required
+    /// vehicle mod is installed; off/absent = the base field only (no mod dependency). Null = a
+    /// pack with no modded field (every other pack, byte-identical).</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public PackModdedField? ModdedField { get; init; }
+}
+
+/// <summary>An opt-in, install-gated set of extra grid entries a community CAR MOD provides
+/// (<see cref="PackManifest.ModdedField"/>). The teams + drivers these entries reference live in
+/// the pack's teams.json/drivers.json already (inert without an entry); the creation-time
+/// transform appends the entries and bumps each round's grid size when the mod is present.</summary>
+public sealed record PackModdedField
+{
+    /// <summary>The AMS2 vehicle id the mod adds (e.g. <c>mclaren_mp45b</c>) — the install check
+    /// verifies it is present in the extracted content library.</summary>
+    public required string VehicleId { get; init; }
+
+    /// <summary>Human name of the mod + author, for the wizard tick ("SMGP Iris &amp; Azalea (Kobra
+    /// Fleetworks)").</summary>
+    public required string ModName { get; init; }
+
+    public string? Url { get; init; }
+
+    /// <summary>The extra entries (each referencing a team + driver already in the pack).</summary>
+    public required IReadOnlyList<PackModdedEntry> Entries { get; init; }
+}
+
+/// <summary>One modded grid entry (<see cref="PackModdedField.Entries"/>) — the same shape as a
+/// normal <c>entries.json</c> row; the transform appends it verbatim when the mod applies.</summary>
+public sealed record PackModdedEntry
+{
+    public required string TeamId { get; init; }
+    public required string DriverId { get; init; }
+    public required string Number { get; init; }
+    public required string Rounds { get; init; }
+    public required string Ams2LiveryName { get; init; }
 }
 
 public sealed record PackRequirements

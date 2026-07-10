@@ -42,9 +42,10 @@ string outDir = Path.Combine(repo, "packs", "smgp-1");
 Directory.CreateDirectory(outDir);
 
 // The class livery cap: AMS2's F-Classic_Gen3 supports at most 26 DISTINCT custom liveries on a
-// grid (data/ams2/livery-caps.json) — the field size. 24 skinpack liveries ship slot-active;
-// fielding Lares #23 + Feet #24 needs their slots activated (Skins tab, cap-safe) = exactly 26.
-const int FieldSize = 26;
+// grid (data/ams2/livery-caps.json). The BASE field is 24 generic-model SMGP cars; the two
+// McLaren MP4/5B teams (Iris + Azalea) by Kobra Fleetworks are an OPT-IN modded field that rounds
+// it to 26 (at the cap) — gated on that car mod being installed (a wizard tick). 24 + 2 = 26.
+const int BaseFieldSize = 24;
 
 // ---------------- drivers.json (from the skinpack's own AI XML) ----------------
 var RATING = new (string Xml, string Json)[]
@@ -89,6 +90,30 @@ foreach (var d in doc.Descendants("driver"))
         driver["car"] = new JsonObject { ["vehicleReliability"] = JsonValue.Create(relV) };
     drivers.Add(driver);
 }
+// The two McLaren MP4/5B mod drivers (Kobra Fleetworks' "Iris & Azalea" skins) are not in the
+// skinpack XML — author them explicitly. They are always in drivers.json (inert without an entry;
+// the modded-field transform adds their entries only when the car mod is installed).
+(string Id, string Name, string Country, double[] R, double Rel)[] MCLAREN_DRIVERS =
+{
+    ("driver.bruno_salgado", "Bruno Salgado", "BRA",
+        [0.98, 0.98, 0.90, 0.82, 0.93, 0.88, 0.92, 0.94, 0.90, 0.62, 0.82, 0.58, 0.66, 0.55], 1.10),
+    ("driver.mika_larssen", "Mika Larssen", "FIN",
+        [0.95, 0.96, 0.80, 0.78, 0.90, 0.86, 0.85, 0.83, 0.87, 0.58, 0.84, 0.56, 0.60, 0.50], 0.88),
+};
+foreach (var (id, name, country, r, rel) in MCLAREN_DRIVERS)
+{
+    var ratings = new JsonObject();
+    for (int i = 0; i < RATING.Length; i++)
+        ratings[RATING[i].Json] = JsonValue.Create(r[i]);
+    drivers.Add(new JsonObject
+    {
+        ["id"] = id,
+        ["name"] = name,
+        ["country"] = country,
+        ["ratings"] = ratings,
+        ["car"] = new JsonObject { ["vehicleReliability"] = JsonValue.Create(rel) },
+    });
+}
 WriteJson(Path.Combine(outDir, "drivers.json"), new JsonObject { ["drivers"] = drivers });
 Console.WriteLine($"drivers.json: {drivers.Count} drivers");
 
@@ -103,14 +128,12 @@ var TEAMS = new (string Team, string Display, char Tier, (string Number, string 
                                      ("2",  "driver.alain_asselin",      "Madonna #2 A. Asselin", "formula_classic_g3m1")]),
     ("firenze",   "Firenze",   'A', [("3",  "driver.felipe_elssler",     "Firenze #3 F. Elsser",  "formula_classic_g3m1"),
                                      ("4",  "driver.ivanazzio_germi",    "Firenze #4 I. Germi",   "formula_classic_g3m1")]),
-    ("millions",  "Millions",  'A', [("6",  "driver.giorgio_alberti",    "Millions #6 G. Alberti", "formula_classic_g3m3"),
-                                     ("5",  "driver.nigel_jones",        "Millions #5 N. Jones",  "formula_classic_g3m3")]),
+    ("millions",  "Millions",  'A', [("6",  "driver.giorgio_alberti",    "Millions #6 G. Alberti", "formula_classic_g3m3")]),
     ("bestowal",  "Bestowal",  'A', [("7",  "driver.alex_picos",         "Bestowal #7 A. Picos",  "formula_classic_g3m1")]),
     // LEVEL B
     ("blanche",   "Blanche",   'B', [("9",  "driver.jean_herbin",        "Blanche #9 J. Herbin",  "formula_classic_g3m1")]),
     ("tyrant",    "Tyrant",    'B', [("11", "driver.miyagi_hamano",      "Tyrant #11 M. Hamano",  "formula_classic_g3m4")]),
-    ("losel",     "Losel",     'B', [("13", "driver.esteban_pacheco",    "Losel #13 E. Pacheco",  "formula_classic_g3m4"),
-                                     ("14", "driver.willian_dehehe",     "Losel #14 W. Dehehe",   "formula_classic_g3m4")]),
+    ("losel",     "Losel",     'B', [("13", "driver.esteban_pacheco",    "Losel #13 E. Pacheco",  "formula_classic_g3m4")]),
     ("may",       "May",       'B', [("15", "driver.george_turner",      "May #15 G. Turner",     "formula_classic_g3m4")]),
     ("joke",      "Joke",      'B', [("16", "driver.luca_dufay",         "Joke #16 L. Dufay",     "formula_classic_g3m4")]),
     // LEVEL C
@@ -130,6 +153,26 @@ var TEAMS = new (string Team, string Display, char Tier, (string Number, string 
     ("zeroforce", "Zeroforce", 'D', [("32", "driver.paul_klinger",       "Zeroforce #32 P. Kilnger", "formula_classic_g3m2")]),
 };
 
+// The two McLaren MP4/5B mod TEAMS (Iris, Azalea) — LEVEL A, so they sit among the top teams on
+// the ladder (never last — Zeroforce must stay the floor). Always in teams.json (inert without an
+// entry); their entries are the modded field, added only when the car mod is installed.
+(string Team, string Display, string Driver, string Number, string Livery)[] MCLAREN_TEAMS =
+{
+    ("iris",   "Iris",   "driver.bruno_salgado", "1", "Iris #1 B. Salgado"),
+    ("azalea", "Azalea", "driver.mika_larssen",  "8", "Azalea #8 M. Larssen"),
+};
+
+JsonObject Team(string id, string display, JsonArray models, double reliability, int prestige) => new()
+{
+    ["id"] = "team." + id,
+    ["name"] = display,
+    ["carVehicleIds"] = models,
+    ["performance"] = new JsonObject { ["weightScalar"] = 1, ["powerScalar"] = 1, ["dragScalar"] = 1 },
+    ["reliability"] = reliability,
+    ["prestige"] = prestige,
+    ["budgetTier"] = prestige,
+};
+
 var teams = new JsonArray();
 foreach (var t in TEAMS)
 {
@@ -143,16 +186,13 @@ foreach (var t in TEAMS)
     var models = new JsonArray();
     foreach (var model in t.Cars.Select(c => c.Model).Distinct())
         models.Add(model);
-    teams.Add(new JsonObject
-    {
-        ["id"] = "team." + t.Team,
-        ["name"] = t.Display,
-        ["carVehicleIds"] = models,
-        ["performance"] = new JsonObject { ["weightScalar"] = 1, ["powerScalar"] = 1, ["dragScalar"] = 1 },
-        ["reliability"] = reliability,
-        ["prestige"] = prestige,
-        ["budgetTier"] = prestige,
-    });
+    teams.Add(Team(t.Team, t.Display, models, reliability, prestige));
+
+    // Weave the McLaren A-teams in right after Bestowal (the last LEVEL A generic team) so the
+    // ladder keeps them at LEVEL A and Zeroforce stays the last (floor) team.
+    if (t.Team == "bestowal")
+        foreach (var m in MCLAREN_TEAMS)
+            teams.Add(Team(m.Team, m.Display, new JsonArray("mclaren_mp45b"), 0.92, 5));
 }
 WriteJson(Path.Combine(outDir, "teams.json"), new JsonObject { ["teams"] = teams });
 Console.WriteLine($"teams.json: {teams.Count} teams");
@@ -168,10 +208,10 @@ foreach (var t in TEAMS)
             ["rounds"] = "1-16",
             ["ams2LiveryName"] = car.Livery,
         });
-if (entries.Count != FieldSize)
-    throw new InvalidOperationException($"field is {entries.Count} cars, expected {FieldSize}");
+if (entries.Count != BaseFieldSize)
+    throw new InvalidOperationException($"base field is {entries.Count} cars, expected {BaseFieldSize}");
 WriteJson(Path.Combine(outDir, "entries.json"), new JsonObject { ["entries"] = entries });
-Console.WriteLine($"entries.json: {entries.Count} entries");
+Console.WriteLine($"entries.json: {entries.Count} base entries");
 
 // ---------------- season.json (the game's 16-round order) ----------------
 // (name, trackId, realVenue, isPlaceholder, laps, fallbacks, historyRound) — track choices
@@ -197,7 +237,7 @@ var ROUNDS = new (string Name, string TrackId, string Venue, bool Placeholder, i
     ("Monaco",        "azure_circuit_2021",     "Circuit de Monaco", false, 78, [], 3),
 };
 
-// Per-track Max AI caps from the extracted library — the per-round grid is min(FieldSize, cap).
+// Per-track Max AI caps from the extracted library — the per-round base grid is min(BaseFieldSize, cap).
 var trackCaps = new Dictionary<string, int>(StringComparer.Ordinal);
 var tracksJson = JsonNode.Parse(File.ReadAllText(Path.Combine(repo, "data", "ams2", "tracks.json")))!;
 foreach (var track in tracksJson["tracks"]!.AsArray())
@@ -234,7 +274,7 @@ for (int i = 0; i < ROUNDS.Length; i++)
 
     if (!trackCaps.TryGetValue(r.TrackId, out int cap))
         throw new InvalidOperationException($"{r.TrackId} not in tracks.json");
-    int gridSize = Math.Min(FieldSize, cap);
+    int gridSize = Math.Min(BaseFieldSize, cap);
 
     var starterCopy = new JsonArray();
     foreach (var t in TEAMS)
@@ -332,15 +372,32 @@ var pack = new JsonObject
             ["overridesFolder"] = "SMGP",
         }),
     },
+    // OPT-IN modded field: the two McLaren MP4/5B teams (Iris, Azalea) by Kobra Fleetworks round
+    // the base 24-car field out to 26. The wizard tick verifies the mclaren_mp45b car mod is
+    // installed and, when it is, the creation-time transform adds these entries + bumps the grids.
+    ["moddedField"] = new JsonObject
+    {
+        ["vehicleId"] = "mclaren_mp45b",
+        ["modName"] = "SMGP Iris & Azalea McLaren teams (Kobra Fleetworks)",
+        ["entries"] = new JsonArray(MCLAREN_TEAMS.Select(m => (JsonNode)new JsonObject
+        {
+            ["teamId"] = "team." + m.Team,
+            ["driverId"] = m.Driver,
+            ["number"] = m.Number,
+            ["rounds"] = "1-16",
+            ["ams2LiveryName"] = m.Livery,
+        }).ToArray()),
+    },
     ["notes"] = new JsonArray(
         "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
         "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
         "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
-        "The season fields 26 cars — the F-Classic_Gen3 class livery cap — covering ALL 22 painted teams (SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool and Moon) and the four strongest second cars (Madonna #1 A. Senna, Firenze #4 I. Germi, Millions #5 N. Jones, Losel #14 W. Dehehe).",
+        "The BASE season fields 24 generic-model SMGP cars covering ALL 22 painted teams (SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon) and two second cars (Madonna #1 A. Senna, Firenze #4 I. Germi).",
+        "OPT-IN modded field: the two McLaren MP4/5B teams by Kobra Fleetworks (Iris #1 B. Salgado, Azalea #8 M. Larssen) round the grid to 26 — tick 'Add the ... cars' at career creation when the mclaren_mp45b car mod is installed; without it the base 24-car field is used.",
         "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
-        "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game; 24+2 lands exactly on the class cap of 26.",
-        "Reserves (authored drivers, no season entry — shipped slot-inactive second cars): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27.",
-        "Per-round grids run the full 26 wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
+        "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game.",
+        "Reserves (authored drivers, no season entry): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27, plus N. Jones #5 and W. Dehehe #14 (second cars dropped so the McLarens fit the class 26-livery cap).",
+        "Per-round grids run the full field wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
         "New careers start in a LEVEL D car only (Rigel, Cool, Comet, Orchis, Moon, Zeroforce) — climb via the rival ladder.",
         "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
         "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, Zeroforce career-over)."),

@@ -54,6 +54,14 @@ public sealed record CareerCreationRequest
     /// normal pack the flag is ignored — the pack's style is the other half of the gate.</summary>
     public bool SmgpMode { get; init; }
 
+    /// <summary>OPT-IN modded field (v1.4): when true AND the pack declares a modded field AND its
+    /// required car mod is installed, the creation-time transform appends the mod's grid entries
+    /// and bumps the round grid sizes BEFORE pinning — so the pinned pack fields the fuller grid
+    /// (the SMGP McLaren teams) and replays stay byte-identical. False (default) — or true but the
+    /// mod missing — pins the base field only, so the default never depends on the mod. The wizard
+    /// sets it for a pack that has a modded field.</summary>
+    public bool UseModdedField { get; init; }
+
     /// <summary>OPT-IN alternate mod tracks (Mike's "RockyTM track switch"): when true AND every mod
     /// track the pack's alternates need is installed, the creation-time transform swaps each round
     /// with a <c>track.alternate</c> to that alternate BEFORE pinning — so the pinned pack drives the

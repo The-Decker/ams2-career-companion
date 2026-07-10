@@ -20,15 +20,36 @@
       }
     ]
   },
+  "moddedField": {
+    "vehicleId": "mclaren_mp45b",
+    "modName": "SMGP Iris & Azalea McLaren teams (Kobra Fleetworks)",
+    "entries": [
+      {
+        "teamId": "team.iris",
+        "driverId": "driver.bruno_salgado",
+        "number": "1",
+        "rounds": "1-16",
+        "ams2LiveryName": "Iris #1 B. Salgado"
+      },
+      {
+        "teamId": "team.azalea",
+        "driverId": "driver.mika_larssen",
+        "number": "8",
+        "rounds": "1-16",
+        "ams2LiveryName": "Azalea #8 M. Larssen"
+      }
+    ]
+  },
   "notes": [
     "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
     "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
     "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
-    "The season fields 26 cars — the F-Classic_Gen3 class livery cap — covering ALL 22 painted teams (SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool and Moon) and the four strongest second cars (Madonna #1 A. Senna, Firenze #4 I. Germi, Millions #5 N. Jones, Losel #14 W. Dehehe).",
+    "The BASE season fields 24 generic-model SMGP cars covering ALL 22 painted teams (SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon) and two second cars (Madonna #1 A. Senna, Firenze #4 I. Germi).",
+    "OPT-IN modded field: the two McLaren MP4/5B teams by Kobra Fleetworks (Iris #1 B. Salgado, Azalea #8 M. Larssen) round the grid to 26 — tick 'Add the ... cars' at career creation when the mclaren_mp45b car mod is installed; without it the base 24-car field is used.",
     "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
-    "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game; 24+2 lands exactly on the class cap of 26.",
-    "Reserves (authored drivers, no season entry — shipped slot-inactive second cars): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27.",
-    "Per-round grids run the full 26 wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
+    "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game.",
+    "Reserves (authored drivers, no season entry): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27, plus N. Jones #5 and W. Dehehe #14 (second cars dropped so the McLarens fit the class 26-livery cap).",
+    "Per-round grids run the full field wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
     "New careers start in a LEVEL D car only (Rigel, Cool, Comet, Orchis, Moon, Zeroforce) — climb via the rival ladder.",
     "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
     "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, Zeroforce career-over)."

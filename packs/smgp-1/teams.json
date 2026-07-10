@@ -61,6 +61,36 @@
       "budgetTier": 5
     },
     {
+      "id": "team.iris",
+      "name": "Iris",
+      "carVehicleIds": [
+        "mclaren_mp45b"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.92,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.azalea",
+      "name": "Azalea",
+      "carVehicleIds": [
+        "mclaren_mp45b"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.92,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
       "id": "team.blanche",
       "name": "Blanche",
       "carVehicleIds": [
