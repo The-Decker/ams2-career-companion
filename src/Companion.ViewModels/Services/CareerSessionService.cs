@@ -239,7 +239,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
                 SeedStartStates(
                     database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
-                    request.Character, request.GridSelection, request.FormAware, transaction);
+                    request.Character, request.GridSelection, request.FormAware,
+                    request.SmgpMode, transaction);
 
                 transaction.Commit();
             }
@@ -373,6 +374,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         CharacterProfile? character,
         Companion.Core.Grid.GridSelection? gridSelection,
         bool formAware,
+        bool smgpMode,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -411,6 +413,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // forward each round via record `with`, so a multi-season career stays form-aware and its
             // re-derived start states match — no rollover/transition change needed.
             FormAware = formAware,
+            // The SMGP replica mode (M3): both halves of the gate — the pack's declared style AND the
+            // creation opt-in — or null, which serializes to nothing (WhenWritingNull) so every other
+            // career is byte-identical. The player starts in the wizard-picked car.
+            Smgp = smgpMode && string.Equals(
+                    pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal)
+                ? new Companion.Core.Smgp.SmgpState { CurrentSeatLivery = playerLiveryName }
+                : null,
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);

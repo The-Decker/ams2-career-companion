@@ -46,6 +46,14 @@ public sealed record CareerCreationRequest
     /// as before — byte-identical. The new-career wizard sets it true for all new careers.</summary>
     public bool FormAware { get; init; }
 
+    /// <summary>The SMGP replica mode (M3): when true AND the pack declares <c>careerStyle "smgp"</c>,
+    /// the career's start state seeds <see cref="Companion.Core.Smgp.SmgpState"/> — the per-career gate
+    /// every mode mechanic (rival battles, seat swaps, the title defense) hangs off. Mirrors
+    /// <see cref="FormAware"/>: default false, so existing creation callers (and every test that does
+    /// not opt in) seed nothing and fold byte-identically; the wizard sets it for smgp packs. On a
+    /// normal pack the flag is ignored — the pack's style is the other half of the gate.</summary>
+    public bool SmgpMode { get; init; }
+
     /// <summary>OPT-IN alternate mod tracks (Mike's "RockyTM track switch"): when true AND every mod
     /// track the pack's alternates need is installed, the creation-time transform swaps each round
     /// with a <c>track.alternate</c> to that alternate BEFORE pinning — so the pinned pack drives the
