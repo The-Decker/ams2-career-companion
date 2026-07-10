@@ -71,6 +71,7 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(entry);
         RoundLabel = $"R{entry.Round}";
         Name = entry.Name;
+        ChipLabel = ShortName(entry.Name);
         DateText = entry.Date;
         RealVenue = entry.RealVenue;
         Ams2TrackName = entry.Ams2TrackName;
@@ -96,6 +97,11 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
 
     public string RoundLabel { get; }
     public string Name { get; }
+
+    /// <summary>The short name for the at-a-glance overview chip ("Belgian Grand Prix" →
+    /// "Belgian") — the full name still heads the round card.</summary>
+    public string ChipLabel { get; }
+
     public string DateText { get; }
     public string RealVenue { get; }
     /// <summary>The AMS2 track you will actually drive — the calendar's headline value.</summary>
@@ -144,4 +150,14 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     /// <summary>Era-capped fun facts about the original circuit — spoiler-free by construction.</summary>
     public IReadOnlyList<string> CircuitFacts { get; }
     public bool HasCircuitFacts => CircuitFacts.Count > 0;
+
+    private static string ShortName(string name)
+    {
+        foreach (string suffix in (string[])[" Grand Prix", " GP"])
+        {
+            if (name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase) && name.Length > suffix.Length)
+                return name[..^suffix.Length];
+        }
+        return name;
+    }
 }

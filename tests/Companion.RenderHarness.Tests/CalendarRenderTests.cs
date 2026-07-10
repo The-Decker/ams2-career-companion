@@ -85,4 +85,60 @@ public sealed class CalendarRenderTests
             Assert.True(view.ActualHeight > 0);
         });
     }
+
+    /// <summary>The expanded ORIGINAL-CIRCUIT detail is template-applied LAZILY: collapsed rounds
+    /// carry no detail subtree (no photo decode / geometry parse at tab open); expanding builds
+    /// it. And the overview strip renders one short-named chip per round.</summary>
+    [Fact]
+    public void CalendarView_DetailIsLazy_AndOverviewChipsRender()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new CalendarViewModel(new CalendarSession());
+            vm.Rounds[1].IsExpanded = true;
+
+            var view = new CalendarView { DataContext = vm };
+            view.Measure(new Size(1000, 2000));
+            view.Arrange(new Rect(0, 0, 1000, 2000));
+            view.UpdateLayout();
+
+            // Only the EXPANDED round instantiated its detail template.
+            Assert.Equal(1, CountText(view, "ORIGINAL CIRCUIT"));
+
+            // The overview chips carry the SHORT names ("Belgian GP" -> "Belgian"); the card
+            // headers keep the full names — both present exactly once each.
+            Assert.Equal(1, CountText(view, "Belgian"));
+            Assert.Equal(1, CountText(view, "Belgian GP"));
+            Assert.Equal(1, CountText(view, "Dutch"));
+
+            // Expanding a second round builds its detail on demand.
+            vm.Rounds[2].IsExpanded = true;
+            view.UpdateLayout();
+            Assert.Equal(2, CountText(view, "ORIGINAL CIRCUIT"));
+
+            // Collapsing removes the template again (the subtree is released, not just hidden).
+            vm.Rounds[1].IsExpanded = false;
+            view.UpdateLayout();
+            Assert.Equal(1, CountText(view, "ORIGINAL CIRCUIT"));
+        });
+    }
+
+    private static int CountText(DependencyObject root, string text) =>
+        Descendants<System.Windows.Controls.TextBlock>(root).Count(tb => tb.Text == text);
+
+    private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
+    {
+        int count = System.Windows.Media.VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(root, i);
+            if (child is T match)
+                yield return match;
+            foreach (var descendant in Descendants<T>(child))
+                yield return descendant;
+        }
+    }
 }

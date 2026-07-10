@@ -57,6 +57,20 @@ public class CalendarViewModelTests
     }
 
     [Fact]
+    public void ChipLabel_ShortensTheRoundName_ForTheOverviewStrip()
+    {
+        var vm = Vm(
+            Entry(1, "United States Grand Prix", "Phoenix", "Long Beach", SeasonTrackKind.StandIn),
+            Entry(2, "Monaco GP", "Monaco", "Monaco", SeasonTrackKind.RealVenue),
+            Entry(3, "San Marino", "Imola", "Imola 1988", SeasonTrackKind.RealVenue));
+
+        Assert.Equal("United States", vm.Rounds[0].ChipLabel);
+        Assert.Equal("Monaco", vm.Rounds[1].ChipLabel);
+        Assert.Equal("San Marino", vm.Rounds[2].ChipLabel); // no suffix — kept whole
+        Assert.Equal("United States Grand Prix", vm.Rounds[0].Name); // the card keeps the full name
+    }
+
+    [Fact]
     public void HeaderNote_CountsAlternatesAndStandIns()
     {
         var vm = Vm(

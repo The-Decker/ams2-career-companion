@@ -24,4 +24,15 @@ public partial class CalendarView : UserControl
         string title = image.DataContext is CalendarRoundViewModel round ? round.RealVenue : "Photo";
         new PhotoWindow(source, title) { Owner = Window.GetWindow(this) }.Show();
     }
+
+    /// <summary>Overview-strip chip: jump to that round's card, expanded. The list is a plain
+    /// (non-virtualized) StackPanel, so the container always exists.</summary>
+    private void OnChipClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: CalendarRoundViewModel round })
+            return;
+        round.IsExpanded = true;
+        if (RoundsList.ItemContainerGenerator.ContainerFromItem(round) is FrameworkElement card)
+            card.BringIntoView();
+    }
 }
