@@ -17,7 +17,7 @@ nothing folded, so corpus growth changes display copy only and needs no determin
 
 | decade | bodies (min–max per key) | pools | signature pools | state |
 |--------|--------------------------|-------|-----------------|-------|
-| 1960s | 7–10 | 6 | (period print voice) | **thinnest bodies now — next deepen** |
+| 1960s | 9–11 (was 7–10) | 7 | wire-report voice, **rivalLine (new)** | **deepened 2026-07-10** |
 | 1970s | 9–11 (was 7–8) | 9 | sponsorLine, techNote (wings/ground-effect), **rivalLine (new)** | **deepened 2026-07-10** |
 | 1980s | 7–9 | 8 | boostLine (turbo), mediaLine | healthy |
 | 1990s | 7–8 | 8 | techNote, rivalLine | healthy |
@@ -31,6 +31,9 @@ expectationBeat/champLine/techNote/punditTake/seasonClose.
 1970s pass added: +3–4 variants on every race cause, +2 on both season digests, and the
 `rivalLine` pool (the era's front-of-field duels — woven into podium/points/midfield).
 
+1960s pass added: brought every body key to 10–11 (from 7–10) and both digests to 9, plus a
+wire-report `rivalLine` pool — same treatment as 1970s, in the telegram/STOP voice.
+
 ## Known coarse-grain (accepted)
 
 - Era windows are DECADE-wide: the 2010s file (2010–2029) voices DRS/hybrid from 2010 though
@@ -42,9 +45,9 @@ expectationBeat/champLine/techNote/punditTake/seasonClose.
 
 ## The grind queue (one slice per session, commit each)
 
-1. **1960s deepen** — now the thinnest at the bottom end (some 7s). Add ~3 variants per cause in
-   the established period-print voice; consider a `rivalLine`-style pool.
-2. **1990s / 1980s / 2000s** — same treatment, thinnest first.
+1. **1990s deepen** — now the thinnest (bodies 7–8, digests 7). Add ~3 variants per cause in the
+   established voice.
+2. **1980s / 2000s** — same treatment, thinnest first. (1960s + 1970s done 2026-07-10.)
 3. **New article TYPE: title watch** (the megaprompt's championship-permutation beat). Wiring:
    read-side in `CareerSessionService.ReadFeed` — when late-season facts qualify (player top-2,
    tight gap), compose a second body via a distinct stream discriminator (`"title"`, precedent:
