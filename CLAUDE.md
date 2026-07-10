@@ -1,9 +1,22 @@
 # AMS2 Career Companion
 
 Windows desktop app (WPF, .NET 10, single self-contained exe) that runs historical career seasons
-around Automobilista 2 single-player custom races. **PLAN.md is the approved product plan and the
-single source of truth**; docs/research/RESEARCH.md holds the verified AMS2/f1db reference tables.
-Four product decisions are locked (see HANDOFF.md) — do not re-litigate them.
+around Automobilista 2 single-player custom races. **`PLAN.md` is the founding product vision**
+(2026-07-02) — still the scope north star, though the built state has moved well past it (career
+hub, character system, SMGP replica mode). The **living** progress log — branch/RC state, what
+shipped, what's next — is the auto-memory (`MEMORY.md` → `ams2-hub-build-progress.md`); the durable
+design specs are in `docs/dev/` (`career-hub-design.md`, `character-system.md`, `smgp-design.md`,
+the audits). Superseded planning docs are in `docs/archive/`. The single current resume prompt is
+`NEXT-SESSION-megaprompt.md`. Verified AMS2/f1db reference tables: `docs/research/RESEARCH.md`.
+
+## Locked directions (do not re-litigate)
+
+- **SMGP is a separate career entity** from the semi-historical F1 careers — its own mode, not a
+  pack mixed into the historical gallery (see `docs/dev/smgp-design.md`). In SMGP, **A. Senna is
+  always OP** (Madonna #1, the top of the grid) — the benchmark to beat, never nerfed or dropped.
+- The v1 result-entry model is **manual-first** (fast keyboard entry); the sim is **deterministic
+  and replay-verified** — new fold rows are envelope-versioned + per-career gated, pack/grid
+  changes affect new careers only, and the **f1db oracle is never touched**.
 
 ## Build & test
 

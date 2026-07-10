@@ -5,6 +5,20 @@ page-by-page from segaretro scans, RaceFans, Sega-16, 1UP fiches, GameFAQs guide
 Full citations in the smgp-replica-research workflow output. Accuracy rule: nothing invented; the
 game's own deadpan vocabulary; no cheese.
 
+## Locked design constraints (Mike, 2026-07-10)
+
+- **SMGP is a SEPARATE CAREER ENTITY from the semi-historical F1 careers.** It is not just
+  another pack in the season-picker gallery — the M4 main-menu landing must present it as its own
+  mode ("Modes → Super Monaco GP") distinct from "Historical careers". Its rules (rival ladder,
+  seat swaps, Zeroforce game-over, title defense), its D-only starts, and its fictional world
+  (no real-season History documents) all set it apart. Keep the two conceptually separate in the
+  UI as the front door is built.
+- **Senna is always OP — the one to beat, but beatable.** A. Senna (Madonna #1, raceSkill 0.99,
+  tied with G. Ceara at the top of the grid, above the McLarens at 0.98) is a permanent BASE
+  entry, so he leads every season. He is the benchmark the player climbs toward; he can be beaten,
+  but he is never nerfed or dropped. (author_smgp.cs keeps Madonna #1 in the base 24 — do not move
+  Senna to the reserves when trimming for the livery cap.)
+
 ## The season (SMGP1 World Championship, Mega Drive 1990)
 
 - **16 races**, country-named rounds in the GAME's order (not the real 1989 calendar):
