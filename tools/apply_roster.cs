@@ -1,3 +1,4 @@
+#:property JsonSerializerIsReflectionEnabledByDefault=true
 // Applies a researched SEAT-COVERAGE PLAN to a season pack (the M2 max-grid rollout):
 //
 //   entries.json  <- one entry per CAR STINT from the plan. A seat ("car") is a team+number; each

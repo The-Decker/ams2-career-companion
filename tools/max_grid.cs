@@ -1,3 +1,4 @@
+#:property JsonSerializerIsReflectionEnabledByDefault=true
 // MAX-GRID pass (Mike's rule: "who's in the season = who's in the skinpack; no 10-car Kyalami"):
 // regenerate every round's grid to the FULL cap-aware roster —
 //

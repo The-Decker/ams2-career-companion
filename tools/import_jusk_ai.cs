@@ -61,9 +61,13 @@ var CAR_FIELD = new (string Xml, string Json)[]
 
 // ---- parse the AI XML -----------------------------------------------------
 // jusk's header comment contains a "----" rule that is invalid inside an XML comment (AMS2 tolerates
-// it); strip all comments before the strict .NET parser sees them.
+// it); strip all comments before the strict .NET parser sees them. Community files also carry raw
+// ampersands in livery names ("Surtees Bang & Olufsen") — escape any '&' that is not already an
+// entity (the same repair the app's LenientXml applies).
 string xmlText = System.Text.RegularExpressions.Regex.Replace(
     File.ReadAllText(xmlPath), "<!--.*?-->", "", System.Text.RegularExpressions.RegexOptions.Singleline);
+xmlText = System.Text.RegularExpressions.Regex.Replace(
+    xmlText, @"&(?!(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#x[0-9A-Fa-f]+);)", "&amp;");
 var doc = XDocument.Parse(xmlText);
 var baseByLivery = new Dictionary<string, Dictionary<string, double>>(StringComparer.Ordinal);
 var carByLivery = new Dictionary<string, Dictionary<string, double>>(StringComparer.Ordinal);

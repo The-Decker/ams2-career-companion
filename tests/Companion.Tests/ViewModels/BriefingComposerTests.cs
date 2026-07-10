@@ -61,9 +61,9 @@ public class BriefingComposerTests
         // The REAL venue stays on record; the track driven is the placeholder.
         Assert.Equal("Circuit Park Zandvoort", briefing.VenueDisplayName);
 
-        // grid.size 14 (14 historical starters) - 1 for the player's seat = 13 opponents.
+        // grid.size 19 (the max-grid roster covering round 3) - 1 for the player's seat = 18.
         Assert.Equal(
-            ExpectedSettings(track: "Spielberg_Vintage", opponents: "13", laps: "64", date: "1967-06-04"),
+            ExpectedSettings(track: "Spielberg_Vintage", opponents: "18", laps: "64", date: "1967-06-04"),
             briefing.Settings.Select(s => (s.Section, s.Label, s.Value)));
 
         // The distance note (authored in setupGuide.notes) rides along verbatim.
@@ -88,9 +88,9 @@ public class BriefingComposerTests
         Assert.False(briefing.IsPlaceholder);
         Assert.Equal("Kyalami Racing Circuit", briefing.VenueDisplayName);
 
-        // grid.size 11 (11 historical starters) - 1 for the player's seat = 10 opponents.
+        // grid.size 20 (the FULL 20-car skinpack roster — no more 11-car Kyalami) - 1 = 19.
         Assert.Equal(
-            ExpectedSettings(track: "Kyalami_Historic", opponents: "10", laps: "80", date: "1967-01-02"),
+            ExpectedSettings(track: "Kyalami_Historic", opponents: "19", laps: "80", date: "1967-01-02"),
             briefing.Settings.Select(s => (s.Section, s.Label, s.Value)));
 
         Assert.Contains("80 laps", briefing.FuelNote);

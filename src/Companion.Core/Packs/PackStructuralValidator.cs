@@ -201,16 +201,18 @@ public static class PackStructuralValidator
         }
     }
 
-    /// <summary>Car scalars hover around 1.0 (0.5..1.5 sane); vehicleReliability legitimately
-    /// exceeds 1.0 in community sets (0..2). Staged-file-only data, but a typo'd magnitude would
-    /// still wreck the in-game field — validate loudly.</summary>
+    /// <summary>Car scalars hover around 1.0 (0.5..1.5 sane). vehicleReliability legitimately
+    /// exceeds 1.0 in community sets (SMGP's 1.43) AND goes deeply NEGATIVE in the "Realistic"
+    /// per-track blocks — a −19 at one venue is the community idiom for a scripted retirement
+    /// there (the game clamps internally), so the floor admits those. Staged-file-only data, but
+    /// a typo'd magnitude would still wreck the in-game field — validate loudly.</summary>
     private static void CheckCarValue(string owner, string name, double value, List<PackIssue> issues)
     {
-        bool ok = name == "vehicleReliability" ? value is >= 0.0 and <= 2.0 : value is >= 0.5 and <= 1.5;
+        bool ok = name == "vehicleReliability" ? value is >= -25.0 and <= 2.0 : value is >= 0.5 and <= 1.5;
         if (!ok)
             issues.Add(Error(
                 $"{owner} {name}={Num(value)} is outside the sane range " +
-                $"({(name == "vehicleReliability" ? "0..2" : "0.5..1.5")})."));
+                $"({(name == "vehicleReliability" ? "-25..2" : "0.5..1.5")})."));
     }
 
     private static void CheckAiOverrides(
