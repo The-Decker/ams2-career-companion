@@ -6,6 +6,46 @@ by the m2-deep-pass-research workflow, 2026-07-09. Applied to packs/f1-<year>/se
 by tools/author_weather.cs. Slots = equal quarters of the session, AMS2 vocabulary.
 Rounds not listed stay at the authored Clear x4 default (verified dry or no wet evidence).
 
+## 1967
+
+Researched + adversarially verified 2026-07-10 (the wet-1967-research workflow — one researcher +
+one independent skeptic per round, all 11 championship rounds). Exactly one wet race.
+
+### R8 Canadian Grand Prix (Mosport Park)
+- race: Rain / Light Rain / Light Rain / Heavy Rain
+- evidence: VERIFIED genuinely wet (real precipitation, not grey skies). The inaugural Canadian
+  GP, a canonical wet 1967 race. Wikipedia infobox: "Rainy, temperatures up to 24.4 C".
+  motorsport.com and grandprix.com give the same arc: raining at the start ("It was raining when
+  the race began"), the track then began to dry through the middle, then rain returned around
+  lap 68 (water into Clark's ignition ended his lead) and fell "harder than ever" to the flag —
+  "conditions reached their worst" (Motor Sport period report). 90-lap quarters ~1-22 / 23-45 /
+  46-67 / 68-90: Q1 raining and intensifying (slot 1 = Rain, since AMS2 cannot start a session
+  already-wet); Q2 easing, track drying = Light Rain (lingering damp); Q3 dried then a fine rain
+  returns ~lap 58 = Light Rain; Q4 the heaviest rain of the day to the finish = Heavy Rain.
+  Qualifying/practice ran on the preceding fine, warm days — no wet quali, so qualifyingSlots [].
+- source: https://en.wikipedia.org/wiki/1967_Canadian_Grand_Prix
+- source: https://www.grandprix.com/races/canadian-gp-1967.html
+- source: https://www.motorsport.com/f1/news/jack-brabham-won-the-first-canadian-gp-on-this-day-in-1967-810124/810124/
+- source: https://www.motorsportmagazine.com/archive/article/october-1967/71/weather-affects-first-canadian-grand-prix/
+
+The other ten rounds were all independently verified DRY (empty slots, left untouched):
+- R1 South Africa (Kyalami): the tropical storm fell the NIGHT BEFORE and washed the rubber off
+  (a Monday-morning re-rubbering session was added); race day was hot (~60 C track), chicanef1
+  "Hot". The early "spray" was cement dust after a support-race oil spill, not rain.
+- R3 Netherlands (Zandvoort): the researcher first read it wet (a slippery early surface), but the
+  **adversarial verify pass CORRECTED it to dry** — Jenkinson's Motor Sport report says race day
+  was "grey, but everywhere was dry"; the slick surface was coastal dew / a green track, not
+  precipitation. A caught false-positive, kept as the record of the correction.
+- R2 Monaco (StatsF1 "Sunny"), R4 Belgium (Autosport "both days on dry roads"; Gurney's 148.85 mph
+  lap record impossible wet), R5 France/Le Mans (a race-morning shower dried well before the
+  start), R6 Britain (Motor Sport "Warm and dry"; a threatened shower never fell), R7 Germany
+  (Nürburgring "Warm, dry and sunny"), R9 Italy (Monza "Sunday warm and dry" — the only rain was
+  an isolated Saturday-practice storm that did not set the grid), R10 USA (Watkins Glen "beautiful
+  bright sun"; rain confined to Friday practice), R11 Mexico (Autosport "warm and sunny").
+- NOTE: the R7 (Germany) *verify* agent returned a malformed placeholder result; the R7 *research*
+  agent's dry finding (Wikipedia "Warm, dry and sunny", a well-documented dry race) is authoritative
+  and stands — R7 is dry.
+
 ## 1969
 
 No rain-affected races (all rounds independently verified dry).

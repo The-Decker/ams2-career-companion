@@ -18,7 +18,7 @@ era corpus, and era-art present in `dist/` (uncommitted user art, Mike-managed).
 
 | pack | ratings source | car scalars | per-track AI | form | wet races | alternates | skin season | notes |
 |------|----------------|-------------|--------------|------|-----------|------------|-------------|-------|
-| f1-1967 | ✔ jusk XML import | ✗ none shipped | ✔ 6 rds | — dropped (jusk) | ✗ **not researched** (Clear×4 placeholder) | ✔ 2 (0 gaps) | — | 20-car class cap (2×10 liveries); Bandini/Parkes/Peterson exits authored |
+| f1-1967 | ✔ jusk XML import | ✗ none shipped | ✔ 6 rds | — dropped (jusk) | ✔ 1 (Canadian/Mosport; 10 verified dry) | ✔ 2 (0 gaps) | — | 20-car class cap (2×10 liveries); Bandini/Parkes/Peterson exits authored |
 | f1-1969 | ✔ jusk XML import | ✗ none shipped | ✔ 3 rds | — dropped (jusk) | ✔ verified all-dry | ✔ 4 (0 gaps) | — | jusk variant files = trimmed rosters, rating-identical (don't import) |
 | f1-1974 | ✔ f1db + Realistic skinpack | ✔ 26 | ✔ 5 rds | — dropped (import) | ✔ 3 | ✔ 5 (0 gaps) | ✔ f1-1974 | |
 | f1-1978 | ✔ f1db + skinpack | ✔ 22 | ✗ none | ✔ 16 rds | ✔ 1 | ✔ 5 (0 gaps) | — | |
@@ -44,9 +44,9 @@ Marina Bay ×2, Valencia) — audited twice, legitimately none; not a todo.
 
 ## The open work this table surfaces
 
-1. **f1-1967 wet-race research** — the only pack whose weather was never researched (authored
-   Clear×4 when the weekend model shipped, explicitly deferred). Same 2-agent
-   research-then-adversarial-verify discipline as `wet-weather-research.md`; add findings there.
+1. ~~f1-1967 wet-race research~~ — DONE 2026-07-10 (the wet-1967-research workflow: only the
+   Canadian GP at Mosport was wet; the other 10 rounds verified dry, incl. a caught false-positive
+   at Zandvoort). See `wet-weather-research.md`. Every pack's weather is now researched.
 2. **2000s ratings depth (2000/2005/2006/2008)** — f1db-only; no community Custom-AI XML existed
    at last check. Re-check OverTake occasionally; import via `tools/import_jusk_ai.cs` when one
    lands (verify the header credits a real community author first — the 1988 trap below).
