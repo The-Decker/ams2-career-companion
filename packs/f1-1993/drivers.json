@@ -6,8 +6,8 @@
       "country": "GBR",
       "born": 1960,
       "ratings": {
-        "raceSkill": 0.94,
-        "qualifyingSkill": 0.98,
+        "raceSkill": 0.889,
+        "qualifyingSkill": 0.891,
         "aggression": 0.59,
         "defending": 0.68,
         "stamina": 0.88,
@@ -20,6 +20,9 @@
         "weatherTyreChanges": 0.78,
         "avoidanceOfMistakes": 0.59,
         "avoidanceOfForcedMistakes": 0.52
+      },
+      "car": {
+        "vehicleReliability": 0.54
       }
     },
     {
@@ -28,8 +31,8 @@
       "country": "FRA",
       "born": 1955,
       "ratings": {
-        "raceSkill": 0.99,
-        "qualifyingSkill": 1,
+        "raceSkill": 0.933,
+        "qualifyingSkill": 0.934,
         "aggression": 0.54,
         "defending": 0.74,
         "stamina": 0.95,
@@ -42,6 +45,9 @@
         "weatherTyreChanges": 0.6,
         "avoidanceOfMistakes": 0.69,
         "avoidanceOfForcedMistakes": 0.59
+      },
+      "car": {
+        "vehicleReliability": 1.18
       }
     },
     {
@@ -50,8 +56,8 @@
       "country": "JPN",
       "born": 1963,
       "ratings": {
-        "raceSkill": 0.73,
-        "qualifyingSkill": 0.74,
+        "raceSkill": 0.739,
+        "qualifyingSkill": 0.748,
         "aggression": 0.42,
         "defending": 0.38,
         "stamina": 0.68,
@@ -64,6 +70,9 @@
         "weatherTyreChanges": 0.89,
         "avoidanceOfMistakes": 0.36,
         "avoidanceOfForcedMistakes": 0.21
+      },
+      "car": {
+        "vehicleReliability": 0.28
       }
     },
     {
@@ -72,8 +81,8 @@
       "country": "ITA",
       "born": 1959,
       "ratings": {
-        "raceSkill": 0.73,
-        "qualifyingSkill": 0.74,
+        "raceSkill": 0.748,
+        "qualifyingSkill": 0.755,
         "aggression": 0.63,
         "defending": 0.41,
         "stamina": 0.83,
@@ -86,6 +95,9 @@
         "weatherTyreChanges": 0.73,
         "avoidanceOfMistakes": 0.42,
         "avoidanceOfForcedMistakes": 0.24
+      },
+      "car": {
+        "vehicleReliability": 0.34
       }
     },
     {
@@ -94,8 +106,8 @@
       "country": "DEU",
       "born": 1969,
       "ratings": {
-        "raceSkill": 0.91,
-        "qualifyingSkill": 0.97,
+        "raceSkill": 1,
+        "qualifyingSkill": 1,
         "aggression": 0.72,
         "defending": 0.54,
         "stamina": 0.95,
@@ -108,6 +120,9 @@
         "weatherTyreChanges": 0.55,
         "avoidanceOfMistakes": 0.48,
         "avoidanceOfForcedMistakes": 0.39
+      },
+      "car": {
+        "vehicleReliability": 0.48
       }
     },
     {
@@ -116,8 +131,8 @@
       "country": "ITA",
       "born": 1954,
       "ratings": {
-        "raceSkill": 0.84,
-        "qualifyingSkill": 0.91,
+        "raceSkill": 0.91,
+        "qualifyingSkill": 0.912,
         "aggression": 0.57,
         "defending": 0.59,
         "stamina": 0.92,
@@ -130,6 +145,9 @@
         "weatherTyreChanges": 0.71,
         "avoidanceOfMistakes": 0.48,
         "avoidanceOfForcedMistakes": 0.32
+      },
+      "car": {
+        "vehicleReliability": 0.61
       }
     },
     {
@@ -138,8 +156,8 @@
       "country": "USA",
       "born": 1962,
       "ratings": {
-        "raceSkill": 0.81,
-        "qualifyingSkill": 0.88,
+        "raceSkill": 0.825,
+        "qualifyingSkill": 0.827,
         "aggression": 0.69,
         "defending": 0.51,
         "stamina": 0.72,
@@ -152,6 +170,9 @@
         "weatherTyreChanges": 0.68,
         "avoidanceOfMistakes": 0.24,
         "avoidanceOfForcedMistakes": 0.21
+      },
+      "car": {
+        "vehicleReliability": 0.77
       }
     },
     {
@@ -160,8 +181,8 @@
       "country": "BRA",
       "born": 1960,
       "ratings": {
-        "raceSkill": 0.94,
-        "qualifyingSkill": 0.97,
+        "raceSkill": 0.958,
+        "qualifyingSkill": 0.96,
         "aggression": 0.7,
         "defending": 0.73,
         "stamina": 0.94,
@@ -174,6 +195,9 @@
         "weatherTyreChanges": 0.35,
         "avoidanceOfMistakes": 0.64,
         "avoidanceOfForcedMistakes": 0.56
+      },
+      "car": {
+        "vehicleReliability": 0.54
       }
     },
     {
@@ -182,8 +206,8 @@
       "country": "GBR",
       "born": 1954,
       "ratings": {
-        "raceSkill": 0.79,
-        "qualifyingSkill": 0.84,
+        "raceSkill": 0.831,
+        "qualifyingSkill": 0.848,
         "aggression": 0.54,
         "defending": 0.48,
         "stamina": 0.7,
@@ -196,6 +220,9 @@
         "weatherTyreChanges": 0.82,
         "avoidanceOfMistakes": 0.51,
         "avoidanceOfForcedMistakes": 0.47
+      },
+      "car": {
+        "vehicleReliability": 0.63
       }
     },
     {
@@ -204,8 +231,8 @@
       "country": "JPN",
       "born": 1960,
       "ratings": {
-        "raceSkill": 0.77,
-        "qualifyingSkill": 0.83,
+        "raceSkill": 0.823,
+        "qualifyingSkill": 0.834,
         "aggression": 0.37,
         "defending": 0.11,
         "stamina": 0.43,
@@ -218,6 +245,9 @@
         "weatherTyreChanges": 0.78,
         "avoidanceOfMistakes": 0.38,
         "avoidanceOfForcedMistakes": 0.24
+      },
+      "car": {
+        "vehicleReliability": 0.5
       }
     },
     {
@@ -226,8 +256,8 @@
       "country": "ITA",
       "born": 1966,
       "ratings": {
-        "raceSkill": 0.75,
-        "qualifyingSkill": 0.79,
+        "raceSkill": 0.549,
+        "qualifyingSkill": 0.551,
         "aggression": 0.7,
         "defending": 0.35,
         "stamina": 0.72,
@@ -240,6 +270,9 @@
         "weatherTyreChanges": 0.68,
         "avoidanceOfMistakes": 0.46,
         "avoidanceOfForcedMistakes": 0.37
+      },
+      "car": {
+        "vehicleReliability": 0.41
       }
     },
     {
@@ -248,8 +281,8 @@
       "country": "GBR",
       "born": 1964,
       "ratings": {
-        "raceSkill": 0.79,
-        "qualifyingSkill": 0.83,
+        "raceSkill": 0.592,
+        "qualifyingSkill": 0.592,
         "aggression": 0.53,
         "defending": 0.23,
         "stamina": 0.68,
@@ -262,6 +295,9 @@
         "weatherTyreChanges": 0.81,
         "avoidanceOfMistakes": 0.39,
         "avoidanceOfForcedMistakes": 0.29
+      },
+      "car": {
+        "vehicleReliability": 0.43
       }
     },
     {
@@ -270,8 +306,8 @@
       "country": "BRA",
       "born": 1972,
       "ratings": {
-        "raceSkill": 0.77,
-        "qualifyingSkill": 0.82,
+        "raceSkill": 0.585,
+        "qualifyingSkill": 0.593,
         "aggression": 0.69,
         "defending": 0.52,
         "stamina": 0.88,
@@ -284,6 +320,9 @@
         "weatherTyreChanges": 0.48,
         "avoidanceOfMistakes": 0.54,
         "avoidanceOfForcedMistakes": 0.48
+      },
+      "car": {
+        "vehicleReliability": 0.37
       }
     },
     {
@@ -292,8 +331,8 @@
       "country": "ITA",
       "born": 1963,
       "ratings": {
-        "raceSkill": 0.72,
-        "qualifyingSkill": 0.72,
+        "raceSkill": 0.577,
+        "qualifyingSkill": 0.579,
         "aggression": 0.53,
         "defending": 0.34,
         "stamina": 0.75,
@@ -306,6 +345,9 @@
         "weatherTyreChanges": 0.83,
         "avoidanceOfMistakes": 0.4,
         "avoidanceOfForcedMistakes": 0.24
+      },
+      "car": {
+        "vehicleReliability": 0.34
       }
     },
     {
@@ -314,8 +356,8 @@
       "country": "FRA",
       "born": 1954,
       "ratings": {
-        "raceSkill": 0.76,
-        "qualifyingSkill": 0.8,
+        "raceSkill": 0.807,
+        "qualifyingSkill": 0.809,
         "aggression": 0.42,
         "defending": 0.4,
         "stamina": 0.42,
@@ -328,6 +370,9 @@
         "weatherTyreChanges": 0.74,
         "avoidanceOfMistakes": 0.29,
         "avoidanceOfForcedMistakes": 0.23
+      },
+      "car": {
+        "vehicleReliability": 0.7
       }
     },
     {
@@ -336,8 +381,8 @@
       "country": "FRA",
       "born": 1963,
       "ratings": {
-        "raceSkill": 0.76,
-        "qualifyingSkill": 0.79,
+        "raceSkill": 0.815,
+        "qualifyingSkill": 0.817,
         "aggression": 0.37,
         "defending": 0.24,
         "stamina": 0.58,
@@ -350,6 +395,9 @@
         "weatherTyreChanges": 0.68,
         "avoidanceOfMistakes": 0.39,
         "avoidanceOfForcedMistakes": 0.28
+      },
+      "car": {
+        "vehicleReliability": 0.31
       }
     },
     {
@@ -358,8 +406,8 @@
       "country": "ITA",
       "born": 1956,
       "ratings": {
-        "raceSkill": 0.7,
-        "qualifyingSkill": 0.68,
+        "raceSkill": 0.622,
+        "qualifyingSkill": 0.626,
         "aggression": 0.56,
         "defending": 0.31,
         "stamina": 0.71,
@@ -372,6 +420,9 @@
         "weatherTyreChanges": 0.68,
         "avoidanceOfMistakes": 0.41,
         "avoidanceOfForcedMistakes": 0.28
+      },
+      "car": {
+        "vehicleReliability": 0.31
       }
     },
     {
@@ -380,8 +431,8 @@
       "country": "ITA",
       "born": 1971,
       "ratings": {
-        "raceSkill": 0.7,
-        "qualifyingSkill": 0.69,
+        "raceSkill": 0.612,
+        "qualifyingSkill": 0.601,
         "aggression": 0.61,
         "defending": 0.48,
         "stamina": 0.78,
@@ -394,6 +445,9 @@
         "weatherTyreChanges": 0.71,
         "avoidanceOfMistakes": 0.45,
         "avoidanceOfForcedMistakes": 0.29
+      },
+      "car": {
+        "vehicleReliability": 0.35
       }
     },
     {
@@ -402,8 +456,8 @@
       "country": "BRA",
       "born": 1971,
       "ratings": {
-        "raceSkill": 0.74,
-        "qualifyingSkill": 0.75,
+        "raceSkill": 0.495,
+        "qualifyingSkill": 0.497,
         "aggression": 0.5,
         "defending": 0.31,
         "stamina": 0.78,
@@ -416,6 +470,9 @@
         "weatherTyreChanges": 0.59,
         "avoidanceOfMistakes": 0.36,
         "avoidanceOfForcedMistakes": 0.26
+      },
+      "car": {
+        "vehicleReliability": 0.58
       }
     },
     {
@@ -424,8 +481,8 @@
       "country": "ITA",
       "born": 1963,
       "ratings": {
-        "raceSkill": 0.71,
-        "qualifyingSkill": 0.7,
+        "raceSkill": 0.484,
+        "qualifyingSkill": 0.486,
         "aggression": 0.3,
         "defending": 0.18,
         "stamina": 0.59,
@@ -438,6 +495,9 @@
         "weatherTyreChanges": 0.96,
         "avoidanceOfMistakes": 0.28,
         "avoidanceOfForcedMistakes": 0.12
+      },
+      "car": {
+        "vehicleReliability": 0.45
       }
     },
     {
@@ -446,8 +506,8 @@
       "country": "GBR",
       "born": 1959,
       "ratings": {
-        "raceSkill": 0.81,
-        "qualifyingSkill": 0.86,
+        "raceSkill": 0.627,
+        "qualifyingSkill": 0.634,
         "aggression": 0.6,
         "defending": 0.35,
         "stamina": 0.81,
@@ -460,6 +520,9 @@
         "weatherTyreChanges": 0.86,
         "avoidanceOfMistakes": 0.51,
         "avoidanceOfForcedMistakes": 0.34
+      },
+      "car": {
+        "vehicleReliability": 0.74
       }
     },
     {
@@ -468,8 +531,8 @@
       "country": "GBR",
       "born": 1966,
       "ratings": {
-        "raceSkill": 0.8,
-        "qualifyingSkill": 0.86,
+        "raceSkill": 0.62,
+        "qualifyingSkill": 0.62,
         "aggression": 0.66,
         "defending": 0.22,
         "stamina": 0.68,
@@ -482,6 +545,9 @@
         "weatherTyreChanges": 0.75,
         "avoidanceOfMistakes": 0.42,
         "avoidanceOfForcedMistakes": 0.31
+      },
+      "car": {
+        "vehicleReliability": 1.02
       }
     },
     {
@@ -490,8 +556,8 @@
       "country": "FRA",
       "born": 1964,
       "ratings": {
-        "raceSkill": 0.84,
-        "qualifyingSkill": 0.92,
+        "raceSkill": 0.955,
+        "qualifyingSkill": 0.957,
         "aggression": 0.68,
         "defending": 0.63,
         "stamina": 0.89,
@@ -504,6 +570,9 @@
         "weatherTyreChanges": 0.73,
         "avoidanceOfMistakes": 0.52,
         "avoidanceOfForcedMistakes": 0.41
+      },
+      "car": {
+        "vehicleReliability": 0.32
       }
     },
     {
@@ -512,8 +581,8 @@
       "country": "AUT",
       "born": 1959,
       "ratings": {
-        "raceSkill": 0.82,
-        "qualifyingSkill": 0.89,
+        "raceSkill": 0.93,
+        "qualifyingSkill": 0.934,
         "aggression": 0.53,
         "defending": 0.56,
         "stamina": 0.85,
@@ -526,6 +595,9 @@
         "weatherTyreChanges": 0.61,
         "avoidanceOfMistakes": 0.59,
         "avoidanceOfForcedMistakes": 0.44
+      },
+      "car": {
+        "vehicleReliability": 0.38
       }
     },
     {
@@ -534,8 +606,8 @@
       "country": "AUT",
       "born": 1968,
       "ratings": {
-        "raceSkill": 0.8,
-        "qualifyingSkill": 0.87,
+        "raceSkill": 0.623,
+        "qualifyingSkill": 0.631,
         "aggression": 0.61,
         "defending": 0.25,
         "stamina": 0.75,
@@ -548,6 +620,9 @@
         "weatherTyreChanges": 0.94,
         "avoidanceOfMistakes": 0.36,
         "avoidanceOfForcedMistakes": 0.24
+      },
+      "car": {
+        "vehicleReliability": 0.33
       }
     },
     {
@@ -556,8 +631,8 @@
       "country": "FIN",
       "born": 1966,
       "ratings": {
-        "raceSkill": 0.79,
-        "qualifyingSkill": 0.86,
+        "raceSkill": 0.616,
+        "qualifyingSkill": 0.618,
         "aggression": 0.52,
         "defending": 0.36,
         "stamina": 0.64,
@@ -570,6 +645,234 @@
         "weatherTyreChanges": 0.8,
         "avoidanceOfMistakes": 0.39,
         "avoidanceOfForcedMistakes": 0.3
+      },
+      "car": {
+        "vehicleReliability": 0.38
+      }
+    },
+    {
+      "id": "driver.mika_hakkinen",
+      "name": "Mika H\u00C3\u00A4kkinen",
+      "country": "FIN",
+      "born": 1968,
+      "ratings": {
+        "raceSkill": 0.918,
+        "qualifyingSkill": 0.919,
+        "aggression": 0.6,
+        "defending": 0.59,
+        "stamina": 0.78,
+        "consistency": 0.62,
+        "startReactions": 0.86,
+        "wetSkill": 0.73,
+        "tyreManagement": 0.81,
+        "fuelManagement": 0.41,
+        "blueFlagConceding": 0.97,
+        "weatherTyreChanges": 0.75,
+        "avoidanceOfMistakes": 0.42,
+        "avoidanceOfForcedMistakes": 0.36
+      },
+      "car": {
+        "vehicleReliability": 0.38
+      }
+    },
+    {
+      "id": "driver.thierry_boutsen",
+      "name": "Thierry Boutsen",
+      "country": "BEL",
+      "born": 1957,
+      "ratings": {
+        "raceSkill": 0.579,
+        "qualifyingSkill": 0.581,
+        "aggression": 0.53,
+        "defending": 0.36,
+        "stamina": 0.74,
+        "consistency": 0.47,
+        "startReactions": 0.72,
+        "wetSkill": 0.62,
+        "tyreManagement": 0.81,
+        "fuelManagement": 0.42,
+        "blueFlagConceding": 0.96,
+        "weatherTyreChanges": 0.79,
+        "avoidanceOfMistakes": 0.42,
+        "avoidanceOfForcedMistakes": 0.29
+      },
+      "car": {
+        "vehicleReliability": 0.31
+      }
+    },
+    {
+      "id": "driver.marco_apicella",
+      "name": "Marco Apicella",
+      "country": "ITA",
+      "born": 1965,
+      "ratings": {
+        "raceSkill": 0.583,
+        "qualifyingSkill": 0.586,
+        "aggression": 0.61,
+        "defending": 0.28,
+        "stamina": 0.52,
+        "consistency": 0.3,
+        "startReactions": 0.77,
+        "wetSkill": 0.49,
+        "tyreManagement": 0.71,
+        "fuelManagement": 0.52,
+        "blueFlagConceding": 0.98,
+        "weatherTyreChanges": 0.78,
+        "avoidanceOfMistakes": 0.31,
+        "avoidanceOfForcedMistakes": 0.28
+      },
+      "car": {
+        "vehicleReliability": 0.34
+      }
+    },
+    {
+      "id": "driver.emanuele_naspetti",
+      "name": "Emanuele Naspetti",
+      "country": "ITA",
+      "born": 1968,
+      "ratings": {
+        "raceSkill": 0.566,
+        "qualifyingSkill": 0.568,
+        "aggression": 0.58,
+        "defending": 0.39,
+        "stamina": 0.64,
+        "consistency": 0.47,
+        "startReactions": 0.72,
+        "wetSkill": 0.69,
+        "tyreManagement": 0.56,
+        "fuelManagement": 0.59,
+        "blueFlagConceding": 0.97,
+        "weatherTyreChanges": 0.58,
+        "avoidanceOfMistakes": 0.37,
+        "avoidanceOfForcedMistakes": 0.34
+      },
+      "car": {
+        "vehicleReliability": 0.3
+      }
+    },
+    {
+      "id": "driver.eddie_irvine",
+      "name": "Eddie Irvine",
+      "country": "GBR",
+      "born": 1965,
+      "ratings": {
+        "raceSkill": 0.663,
+        "qualifyingSkill": 0.664,
+        "aggression": 0.78,
+        "defending": 0.68,
+        "stamina": 0.93,
+        "consistency": 0.61,
+        "startReactions": 0.93,
+        "wetSkill": 0.74,
+        "tyreManagement": 0.75,
+        "fuelManagement": 0.63,
+        "blueFlagConceding": 0.79,
+        "weatherTyreChanges": 0.82,
+        "avoidanceOfMistakes": 0.49,
+        "avoidanceOfForcedMistakes": 0.46
+      },
+      "car": {
+        "vehicleReliability": 0.34
+      }
+    },
+    {
+      "id": "driver.pedro_lamy",
+      "name": "Pedro Lamy",
+      "country": "PRT",
+      "born": 1972,
+      "ratings": {
+        "raceSkill": 0.317,
+        "qualifyingSkill": 0.321,
+        "aggression": 0.41,
+        "defending": 0.54,
+        "stamina": 0.68,
+        "consistency": 0.38,
+        "startReactions": 0.85,
+        "wetSkill": 0.71,
+        "tyreManagement": 0.44,
+        "fuelManagement": 0.52,
+        "blueFlagConceding": 0.94,
+        "weatherTyreChanges": 0.71,
+        "avoidanceOfMistakes": 0.45,
+        "avoidanceOfForcedMistakes": 0.39
+      },
+      "car": {
+        "vehicleReliability": 0.47
+      }
+    },
+    {
+      "id": "driver.toshio_suzuki",
+      "name": "Toshio Suzuki",
+      "country": "JPN",
+      "born": 1955,
+      "ratings": {
+        "raceSkill": 0.695,
+        "qualifyingSkill": 0.697,
+        "aggression": 0.25,
+        "defending": 0.18,
+        "stamina": 0.5,
+        "consistency": 0.3,
+        "startReactions": 0.69,
+        "wetSkill": 0.32,
+        "tyreManagement": 0.5,
+        "fuelManagement": 0.4,
+        "blueFlagConceding": 0.99,
+        "weatherTyreChanges": 0.98,
+        "avoidanceOfMistakes": 0.16,
+        "avoidanceOfForcedMistakes": 0.12
+      },
+      "car": {
+        "vehicleReliability": 0.43
+      }
+    },
+    {
+      "id": "driver.jean_marc_gounon",
+      "name": "Jean-Marc Gounon",
+      "country": "FRA",
+      "born": 1963,
+      "ratings": {
+        "raceSkill": 0.477,
+        "qualifyingSkill": 0.479,
+        "aggression": 0.35,
+        "defending": 0.23,
+        "stamina": 0.48,
+        "consistency": 0.29,
+        "startReactions": 0.71,
+        "wetSkill": 0.52,
+        "tyreManagement": 0.56,
+        "fuelManagement": 0.46,
+        "blueFlagConceding": 0.97,
+        "weatherTyreChanges": 0.86,
+        "avoidanceOfMistakes": 0.22,
+        "avoidanceOfForcedMistakes": 0.2
+      },
+      "car": {
+        "vehicleReliability": 0.46
+      }
+    },
+    {
+      "id": "driver.pierluigi_martini",
+      "name": "Pierluigi Martini",
+      "country": "ITA",
+      "born": 1961,
+      "ratings": {
+        "raceSkill": 0.514,
+        "qualifyingSkill": 0.516,
+        "aggression": 0.48,
+        "defending": 0.35,
+        "stamina": 0.75,
+        "consistency": 0.47,
+        "startReactions": 0.78,
+        "wetSkill": 0.52,
+        "tyreManagement": 0.79,
+        "fuelManagement": 0.45,
+        "blueFlagConceding": 0.94,
+        "weatherTyreChanges": 0.67,
+        "avoidanceOfMistakes": 0.38,
+        "avoidanceOfForcedMistakes": 0.25
+      },
+      "car": {
+        "vehicleReliability": 0.69
       }
     }
   ]
