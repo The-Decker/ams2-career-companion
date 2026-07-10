@@ -4,8 +4,15 @@
       "teamId": "team.mercedes",
       "driverId": "driver.lewis_hamilton",
       "number": "44",
-      "rounds": "1-17",
+      "rounds": "1-15,17",
       "ams2LiveryName": "2020 Mercedes #44 L. Hamilton"
+    },
+    {
+      "teamId": "team.mercedes",
+      "driverId": "driver.george_russell",
+      "number": "44",
+      "rounds": "16",
+      "ams2LiveryName": "2020 Mercedes #63 G. Russell"
     },
     {
       "teamId": "team.mercedes",
@@ -32,29 +39,29 @@
       "teamId": "team.racing_point",
       "driverId": "driver.sergio_perez",
       "number": "11",
-      "rounds": "1-17",
+      "rounds": "1-3,6-17",
       "ams2LiveryName": "2020 Racing Point #11 S. P\u00E9rez"
+    },
+    {
+      "teamId": "team.racing_point",
+      "driverId": "driver.nico_hulkenberg",
+      "number": "11",
+      "rounds": "4-5",
+      "ams2LiveryName": "2020 Racing Point #27 N. H\u00FClkenberg"
     },
     {
       "teamId": "team.racing_point",
       "driverId": "driver.lance_stroll",
       "number": "18",
-      "rounds": "1-17",
+      "rounds": "1-10,12-17",
       "ams2LiveryName": "2020 Racing Point #18 L. Stroll"
     },
     {
-      "teamId": "team.haas",
-      "driverId": "driver.kevin_magnussen",
-      "number": "20",
-      "rounds": "1-17",
-      "ams2LiveryName": "2020 Haas #20 K. Magnussen"
-    },
-    {
-      "teamId": "team.haas",
-      "driverId": "driver.romain_grosjean",
-      "number": "8",
-      "rounds": "1-17",
-      "ams2LiveryName": "2020 Haas #8 R. Grosjean"
+      "teamId": "team.racing_point",
+      "driverId": "driver.nico_hulkenberg",
+      "number": "18",
+      "rounds": "11",
+      "ams2LiveryName": "2020 Racing Point #27 N. H\u00FClkenberg"
     },
     {
       "teamId": "team.mclaren",
@@ -85,20 +92,6 @@
       "ams2LiveryName": "2020 Renault #31 E. Ocon"
     },
     {
-      "teamId": "team.alphatauri",
-      "driverId": "driver.daniil_kvyat",
-      "number": "26",
-      "rounds": "1-17",
-      "ams2LiveryName": "2020 AlphaTauri #26 D. Kvyat"
-    },
-    {
-      "teamId": "team.alphatauri",
-      "driverId": "driver.pierre_gasly",
-      "number": "10",
-      "rounds": "1-17",
-      "ams2LiveryName": "2020 AlphaTauri #10 P. Gasly"
-    },
-    {
       "teamId": "team.ferrari",
       "driverId": "driver.charles_leclerc",
       "number": "16",
@@ -113,18 +106,25 @@
       "ams2LiveryName": "2020 Ferrari #5 S. Vettel"
     },
     {
-      "teamId": "team.williams",
-      "driverId": "driver.george_russell",
-      "number": "63",
+      "teamId": "team.alphatauri",
+      "driverId": "driver.pierre_gasly",
+      "number": "10",
       "rounds": "1-17",
-      "ams2LiveryName": "2020 Williams #63 G. Russell"
+      "ams2LiveryName": "2020 AlphaTauri #10 P. Gasly"
     },
     {
-      "teamId": "team.williams",
-      "driverId": "driver.nicholas_latifi",
-      "number": "6",
+      "teamId": "team.alphatauri",
+      "driverId": "driver.daniil_kvyat",
+      "number": "26",
       "rounds": "1-17",
-      "ams2LiveryName": "2020 Williams #6 N. Latifi"
+      "ams2LiveryName": "2020 AlphaTauri #26 D. Kvyat"
+    },
+    {
+      "teamId": "team.alfa_romeo",
+      "driverId": "driver.kimi_raikkonen",
+      "number": "7",
+      "rounds": "1-17",
+      "ams2LiveryName": "2020 Alfa Romeo #7 K. R\u00E4ikk\u00F6nen"
     },
     {
       "teamId": "team.alfa_romeo",
@@ -134,11 +134,46 @@
       "ams2LiveryName": "2020 Alfa Romeo #99 A. Giovinazzi"
     },
     {
-      "teamId": "team.alfa_romeo",
-      "driverId": "driver.kimi_raikkonen",
-      "number": "7",
+      "teamId": "team.haas",
+      "driverId": "driver.kevin_magnussen",
+      "number": "20",
       "rounds": "1-17",
-      "ams2LiveryName": "2020 Alfa Romeo #7 K. R\u00E4ikk\u00F6nen"
+      "ams2LiveryName": "2020 Haas #20 K. Magnussen"
+    },
+    {
+      "teamId": "team.haas",
+      "driverId": "driver.romain_grosjean",
+      "number": "8",
+      "rounds": "1-15",
+      "ams2LiveryName": "2020 Haas #8 R. Grosjean"
+    },
+    {
+      "teamId": "team.haas",
+      "driverId": "driver.pietro_fittipaldi",
+      "number": "8",
+      "rounds": "16-17",
+      "ams2LiveryName": "2020 Haas #51 P. Fittipaldi"
+    },
+    {
+      "teamId": "team.williams",
+      "driverId": "driver.george_russell",
+      "number": "63",
+      "rounds": "1-15,17",
+      "ams2LiveryName": "2020 Williams #63 G. Russell"
+    },
+    {
+      "teamId": "team.williams",
+      "driverId": "driver.jack_aitken",
+      "number": "63",
+      "rounds": "16",
+      "ams2LiveryName": "2020 Williams #89 J. Aitken"
+    },
+    {
+      "teamId": "team.williams",
+      "driverId": "driver.nicholas_latifi",
+      "number": "6",
+      "rounds": "1-17",
+      "ams2LiveryName": "2020 Williams #6 N. Latifi"
     }
   ]
 }
