@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+    <LIVERY_OVERRIDE LIVERY="51" NAME="McLaren-Honda #27 A. Senna" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="F1_Season_1990\preview27.dds" />
+    <TEXTURE NAME="BODY" PATH="F1_Season_1990\body27.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Senna_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Senna_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_McLaren_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_McLaren_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_McLaren_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="52" NAME="McLaren-Honda #28 G. Berger" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="F1_Season_1990\preview28.dds" />
+    <TEXTURE NAME="BODY" PATH="F1_Season_1990\body28.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Berger_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Berger_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_McLaren_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_McLaren_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_McLaren_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+</USER_OVERRIDES>

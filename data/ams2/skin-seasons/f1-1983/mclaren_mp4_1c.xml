@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+   	<LIVERY_OVERRIDE LIVERY="51" NAME="McLaren-Ford #7 Watson" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="TAMS2SP\MP4_1c#7p.dds" />
+        <TEXTURE NAME="BODY" PATH="TAMS2SP\MP4_1c#7.dds" />
+        </LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" NAME="McLaren-Ford #7 Watson" BASEHELMET="DEFAULT">
+    	<TEXTURE NAME="BODY_DIFF" PATH="TAMS2SP\83_Watson_Helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="TAMS2SP\83_Watson_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="TAMS2SP\83_Watson_visor_spec.dds" />
+    	</HELMET_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="McLaren-Ford #8 Lauda" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="TAMS2SP\MP4_1c#8p.dds" />
+        <TEXTURE NAME="BODY" PATH="TAMS2SP\MP4_1c#8.dds" />
+        </LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" NAME="McLaren-Ford #8 Lauda" BASEHELMET="DEFAULT">
+    	<TEXTURE NAME="BODY_DIFF" PATH="TAMS2SP\83_Lauda_Helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="TAMS2SP\83_Lauda_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="TAMS2SP\83_Lauda_visor_spec.dds" />
+    	</HELMET_OVERRIDE>
+
+</USER_OVERRIDES>

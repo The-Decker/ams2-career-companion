@@ -1,6 +1,7 @@
 using Companion.Ams2;
 using Companion.Ams2.ContentLibrary;
 using Companion.Ams2.Preflight;
+using Companion.Ams2.Skins;
 
 namespace Companion.ViewModels.Services;
 
@@ -33,6 +34,18 @@ public sealed class CareerEnvironment
     /// player's own career).</summary>
     public string? HistoryDirectory { get; init; }
 
+    /// <summary>Directory of the app-shipped skin-season pointer library
+    /// (<c>data/ams2/skin-seasons/&lt;key&gt;/&lt;model&gt;.xml</c>) the Skin Season Manager swaps
+    /// between conflicting season skin packs. Null/missing = the manager is simply absent.</summary>
+    public string? SkinSeasonsDirectory { get; init; }
+
+    private SkinSeasonLibrary? _skinSeasons;
+
+    /// <summary>The parsed skin-season library, loaded once and cached. Empty when
+    /// <see cref="SkinSeasonsDirectory"/> is null or missing.</summary>
+    public SkinSeasonLibrary SkinSeasons => _skinSeasons ??=
+        SkinSeasonsDirectory is null ? SkinSeasonLibrary.Empty : SkinSeasonLibrary.Load(SkinSeasonsDirectory);
+
     /// <summary>Season-pack search roots for era-transition discovery (M6 sign-and-continue).
     /// Null = <see cref="PackDiscovery.DefaultSearchRoots"/> (the exe-adjacent packs folder,
     /// then Documents\AMS2CareerCompanion\Packs). A Func so the app can fold in the settings
@@ -64,6 +77,7 @@ public sealed class CareerEnvironment
         HistoryDirectory = Path.Combine(
             Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(ams2DataDirectory)) ?? ams2DataDirectory,
             "history"),
+        SkinSeasonsDirectory = Path.Combine(ams2DataDirectory, "skin-seasons"),
     };
 
     /// <summary>Scans installed skin-pack livery overrides for this machine (install-side and

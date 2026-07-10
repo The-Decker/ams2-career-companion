@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--F1 1996 Monaco Liveries-->
+<USER_OVERRIDES>
+
+	<LIVERY_OVERRIDE LIVERY="51" NAME="1996 McLaren #7 - M. Häkkinen" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_1996\Preview\7_McLaren.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_1996\7_McLaren.dds" />
+		<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_1996\Rims\McLaren.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_1996\Rims\McLaren_Blur.dds" />
+		<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_1996\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_1996\Rims\spec_low_blur.dds" />
+	<TEXTURE NAME="TIREDIFF" PATH="F1_Season_1996\Tires\7_McLaren.dds" />
+	<TEXTURE NAME="TIREBLURDIFF" PATH="F1_Season_1996\Tires\7_McLaren_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Helmet\Hakkinen.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1996\Helmet\helmet_spec.dds" />
+		<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_1996\Helmet\McLaren.dds" />
+		<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_1996\Helmet\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Driver\McLarenDriver.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1996\Driver\McLarenArms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1996\Driver\McLarenGloves.dds" />
+				<TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_1996\Driver\Gloves_spec.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1996\Driver\McLarenLegs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1996\Harness\black.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="1996 McLaren #8 - D. Coulthard" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_1996\Preview\8_McLaren.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_1996\8_McLaren.dds" />
+		<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_1996\Rims\McLaren.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_1996\Rims\McLaren_Blur.dds" />
+		<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_1996\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_1996\Rims\spec_low_blur.dds" />
+	<TEXTURE NAME="TIREDIFF" PATH="F1_Season_1996\Tires\8_McLaren.dds" />
+	<TEXTURE NAME="TIREBLURDIFF" PATH="F1_Season_1996\Tires\8_McLaren_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Helmet\Coulthard.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1996\Helmet\helmet_spec.dds" />
+		<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_1996\Helmet\McLaren.dds" />
+		<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_1996\Helmet\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Driver\McLarenDriver.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1996\Driver\McLarenArms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1996\Driver\McLarenGloves.dds" />
+				<TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_1996\Driver\Gloves_spec.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1996\Driver\McLarenLegs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1996\Harness\black.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="53" NAME="1996 Ligier #9 - O. Panis" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_1996\Preview\9_Ligier.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_1996\9_Ligier.dds" />
+			<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_1996\Rims\Ligier.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_1996\Rims\Ligier_Blur.dds" />
+		<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_1996\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_1996\Rims\spec_low_blur.dds" />
+	<TEXTURE NAME="TIREDIFF" PATH="F1_Season_1996\Tires\9_Ligier.dds" />
+	<TEXTURE NAME="TIREBLURDIFF" PATH="F1_Season_1996\Tires\9_Ligier_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Helmet\Panis.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1996\Helmet\helmet_spec.dds" />
+		<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_1996\Helmet\Ligier.dds" />
+		<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_1996\Helmet\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Driver\LigierDriver.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1996\Driver\LigierArms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1996\Driver\LigierGloves.dds" />
+				<TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_1996\Driver\Gloves_spec.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1996\Driver\LigierLegs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1996\Harness\red.dds" />
+	</OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="54" NAME="1996 Ligier #10 - P. Diniz" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_1996\Preview\10_Ligier.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_1996\10_Ligier.dds" />
+			<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_1996\Rims\Ligier.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_1996\Rims\Ligier_Blur.dds" />
+		<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_1996\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_1996\Rims\spec_low_blur.dds" />
+	<TEXTURE NAME="TIREDIFF" PATH="F1_Season_1996\Tires\10_Ligier.dds" />
+	<TEXTURE NAME="TIREBLURDIFF" PATH="F1_Season_1996\Tires\10_Ligier_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Helmet\Diniz.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1996\Helmet\helmet_spec.dds" />
+		<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_1996\Helmet\Ligier.dds" />
+		<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_1996\Helmet\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1996\Driver\LigierDriver.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1996\Driver\LigierArms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1996\Driver\LigierGloves.dds" />
+				<TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_1996\Driver\Gloves_spec.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1996\Driver\LigierLegs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1996\Harness\red.dds" />
+	</OUTFIT_OVERRIDE>
+
+</USER_OVERRIDES>

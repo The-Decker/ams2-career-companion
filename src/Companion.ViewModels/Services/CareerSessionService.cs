@@ -870,6 +870,45 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             chosen.SourceFile, liveryName, _environment.Clock.GetUtcNow(), slot: null, maxSlot: maxSlot);
     }
 
+    /// <summary>The library set this pack declares via <c>pack.json skinSeason</c>, with the
+    /// install's Overrides root — null when undeclared, unknown to the library, or no install.</summary>
+    private (SkinSeasonSet Set, string OverridesRoot)? DeclaredSkinSeason()
+    {
+        var set = _environment.SkinSeasons.Get(Pack.Manifest.SkinSeason);
+        if (set is null)
+            return null;
+        var installation = _environment.LocateInstall();
+        if (installation is null)
+            return null;
+        return (set, installation.InstallOverridesDirectory);
+    }
+
+    /// <summary>Read-only Skin Season Manager status for this pack's declared season (Skins tab
+    /// panel). Null when the pack declares none / no install.</summary>
+    public SkinSeasonStatus? CurrentSkinSeasonStatus()
+    {
+        if (DeclaredSkinSeason() is not { } declared)
+            return null;
+        return SkinSeasonManager.Inspect(declared.Set, _environment.SkinSeasons, declared.OverridesRoot);
+    }
+
+    /// <summary>Switches the install onto this pack's declared skin season (backup-first,
+    /// all-or-nothing; unrecognized user files hold the swap behind the force gate). Skin pointer
+    /// files only — the career DB / sim / oracle are never touched.</summary>
+    public SkinSeasonApplyResult ActivateSkinSeason(bool force = false)
+    {
+        if (DeclaredSkinSeason() is not { } declared)
+            return new SkinSeasonApplyResult
+            {
+                Success = false,
+                Applied = 0,
+                Message = "This pack declares no managed skin season (or no AMS2 install was found).",
+            };
+        return SkinSeasonManager.Activate(
+            declared.Set, _environment.SkinSeasons, declared.OverridesRoot, force,
+            _environment.Clock.GetUtcNow());
+    }
+
     /// <summary>The grid editor's per-seat cosmetic overrides for this season (v4 staging_override
     /// table). Read-only projection over a non-journaled table — the sim never sees it.</summary>
     public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
@@ -1175,7 +1214,26 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // explicit "Apply grid to AMS2" action.
         if (baseGameLiveries)
         {
-            // First, activate THIS round's community liveries the way the pack's scenario .bat does:
+            // FIRST, make sure the pack's declared SKIN SEASON owns the car models (pack.json
+            // skinSeason → the Skin Season Manager): conflicting season packs share the same
+            // override pointer file (1983↔1985, 1990↔SMGP…), so staging on the wrong season would
+            // show the other year's cars. Backup-first, all-or-nothing; unrecognized user files
+            // hold the swap behind the same force gate as the AI file. No declared season → no-op.
+            if (DeclaredSkinSeason() is { } declaredSeason)
+            {
+                var seasonStatus = SkinSeasonManager.Inspect(
+                    declaredSeason.Set, _environment.SkinSeasons, declaredSeason.OverridesRoot);
+                if (!seasonStatus.IsFullyActive)
+                {
+                    var swap = SkinSeasonManager.Activate(
+                        declaredSeason.Set, _environment.SkinSeasons, declaredSeason.OverridesRoot,
+                        force, _environment.Clock.GetUtcNow());
+                    if (swap.Applied > 0 || !swap.Success)
+                        messages.Add(swap.Message);
+                }
+            }
+
+            // Then, activate THIS round's community liveries the way the pack's scenario .bat does:
             // swap each vehicle model's active override file to the round's variant (backup-first). A
             // pre-qualifying season rotates which liveries are on the grid per race; without this the
             // app wrote the custom-AI file but AMS2's livery pool stayed on the wrong variant and

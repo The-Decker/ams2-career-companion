@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+    <LIVERY_OVERRIDE LIVERY="51" NAME="Madonna #1 A. Senna" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview madonna s.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\MADONNA S V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Senna_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Prost_visor.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_ferrari_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_ferrari_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_ferrari_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_ferrari_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="52" NAME="Madonna #2 A. Asselin" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview madonna2.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\MADONNA2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Donnelly_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_lotus_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_lotus_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_lotus_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_lotus_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="53" NAME="Firenze #3 F. Elsser" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview firenze1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\FIRENZE1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+      <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Warwick_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_lotus_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_lotus_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_lotus_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_lotus_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="54" NAME="Firenze #4 I. Germi" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview firenze2.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\FIRENZE2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Mansell_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Mansell_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_ferrari_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_ferrari_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_ferrari_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_ferrari_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="55" NAME="Bestowal #7 A. Picos" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview bestowal1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\BESTOWAL1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Bernard_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Lola_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Lola_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Lola_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Lola_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Lola_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="56" NAME="Blanche #9 J. Herbin" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview BLANCHE1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\BLANCHE1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Suzuki_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Lola_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Lola_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Lola_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Lola_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Lola_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+<LIVERY_OVERRIDE LIVERY="X6" NAME="Bestowal #8 M. Blume" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview BESTOWAL2.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\BESTOWAL2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="X6" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Suzuki_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Lola_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="X6" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Lola_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Lola_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Lola_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Lola_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    
+
+</USER_OVERRIDES>

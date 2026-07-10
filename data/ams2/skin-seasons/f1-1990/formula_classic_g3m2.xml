@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+	<!-- AGS-Ford -->
+	<LIVERY_OVERRIDE LIVERY="51" NAME="AGS-Ford #17 G. Tarquini" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview17_Tarquini.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\17_Tarquini.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Tarquini_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_ags_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_ags_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_ags_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_ags_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="AGS-Ford #18 Y. Dalmas" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview18_Dalmas.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\18_Dalmas.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Dalmas_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_ags_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_ags_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_ags_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_ags_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Ligier-Ford -->
+	<LIVERY_OVERRIDE LIVERY="53" NAME="Ligier-Ford #25 N. Larini" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview25_Larini.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\25_Larini.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Larini_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_ligier_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_ligier_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_ligier_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_ligier_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="54" NAME="Ligier-Ford #26 P. Alliot" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview26_Alliot.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\26_Alliot.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Alliot_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_ligier_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_ligier_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_ligier_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_ligier_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Minardi-Ford -->
+	<LIVERY_OVERRIDE LIVERY="55" NAME="Minardi-Ford #23 P. Martini" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview23_Martini.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\23_Martini.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Martini_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="56" NAME="Minardi-Ford #24 P. Barilla" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview24_Barilla.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\24_Barilla.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Barilla_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Minardi_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+</USER_OVERRIDES>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+	<LIVERY_OVERRIDE LIVERY="51" NAME="Canon Williams Honda Team #5" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview5-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body5-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="Canon Williams Honda Team #6" BASELIVERY="Default">
+	        <PREVIEWIMAGE PATH="F1_1985\preview6-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body6-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="53" NAME="Motor Racing Developments #7" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview7-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body7-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="54" NAME="John Player Special Team Lotus #11" BASELIVERY="Default">
+        	<PREVIEWIMAGE PATH="F1_1985\preview11-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body11-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="55" NAME="John Player Special Team Lotus #12" BASELIVERY="Default">
+        	<PREVIEWIMAGE PATH="F1_1985\preview12-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body12-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="56" NAME="Equipe Renault Elf #15" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview15-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body15-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="57" NAME="Barclay Arrows BMW #18" BASELIVERY="Default">
+        	<PREVIEWIMAGE PATH="F1_1985\preview18-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body18-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="58" NAME="Equipe Ligier Gitanes #26" BASELIVERY="Default">
+        	<PREVIEWIMAGE PATH="F1_1985\preview26-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body26-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="59" NAME="Scuderia Ferrari SpA SEFAC #27" BASELIVERY="Default">
+        	<PREVIEWIMAGE PATH="F1_1985\preview27-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body27-te.dds" />
+    	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="60" NAME="Scuderia Ferrari SpA SEFAC #28" BASELIVERY="Default">
+        	<PREVIEWIMAGE PATH="F1_1985\preview28-te.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body28-te.dds" />
+	</LIVERY_OVERRIDE>
+	
+	
+	
+<!-- ---------------ALTERNATE LIVERY OPTIONS ------------------
+All livery override options are detailed below. This includes the 10 active liveries listed above, plus several extra liveries - either for cars that there is no space for (e.g. de Cesaris' Ligier), or alternative liveries for specific alternate drivers (e.g. Arnoux's Ferrari). 
+
+To replace one of the above liveries with one of the below options:
+1: Find the livery you want to include from the list below and COPY its four-line block of xml.
+2: PASTE it above on a new line under the block of xml of whichever livery you want to replace. 
+3. Replace the "##" in the pasted block of xml with the LIVERY number of the one you are replacing (a number between 51 and 60).
+4. DELETE the four-line block of xml code for the livery you want to replace. 
+5. SAVE the file.
+----------------------------------------------------------------
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Canon Williams Honda Team #5" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview5-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body5-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Canon Williams Honda Team #6" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview6-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body6-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Motor Racing Developments #7" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview7-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body7-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Motor Racing Developments #8" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview8-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body8-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Motor Racing Developments #8" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview8-te-hesnault.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body8-te-hesnault.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="John Player Special Team Lotus #11" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview11-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body11-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="John Player Special Team Lotus #12" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview12-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body12-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Equipe Renault Elf #14" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview14-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body14-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Equipe Renault Elf #15" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview15-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body15-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Equipe Renault Elf #16" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview16-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body16-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Barclay Arrows BMW #17" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview17-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body17-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Barclay Arrows BMW #18" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview18-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body18-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Equipe Ligier Gitanes #25" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview25-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body25-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Equipe Ligier Gitanes #25" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview25-te-streiff.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body25-te-streiff.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Equipe Ligier Gitanes #26" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview26-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body26-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Scuderia Ferrari SpA SEFAC #27" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview27-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body27-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Scuderia Ferrari SpA SEFAC #28" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview28-te.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body28-te.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Scuderia Ferrari SpA SEFAC #28" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview28-te-arnoux.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body28-te-arnoux.dds" />
+	</LIVERY_OVERRIDE>
+
+
+-->
+</USER_OVERRIDES>

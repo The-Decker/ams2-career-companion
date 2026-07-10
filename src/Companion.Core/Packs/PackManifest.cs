@@ -30,6 +30,15 @@ public sealed record PackManifest
     /// caveats, authored data corrections, and mapping notes that belong to the pack as a whole
     /// rather than a single round. Absent in v1 packs.</summary>
     public IReadOnlyList<string> Notes { get; init; } = [];
+
+    /// <summary>Skin-season key (v1.2, optional, additive): which
+    /// <c>data/ams2/skin-seasons/&lt;key&gt;/</c> pointer set this pack's liveries belong to.
+    /// Two season skin packs for the same car model collide on the model's active override XML
+    /// (1983↔1985, 1990↔SMGP, 1996↔1997…); when set, career load/staging asks the Skin Season
+    /// Manager to make this season's pointers active (backup-first). Null = no managed season
+    /// (the pack's skins own their models outright). Staging-side only — the sim never reads it.</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? SkinSeason { get; init; }
 }
 
 public sealed record PackRequirements

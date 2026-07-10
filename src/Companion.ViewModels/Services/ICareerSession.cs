@@ -55,6 +55,25 @@ public interface ICareerSession
     LiveryActivationResult ActivateLivery(string liveryName) =>
         LiveryActivationResult.Failed("This career session cannot activate liveries.");
 
+    /// <summary>The Skin Season Manager's view of this pack's declared skin season
+    /// (<c>pack.json skinSeason</c>): per car model, whether the install's active override pointer
+    /// is this season's, another known season's, a per-race variant, or unrecognized. Null when the
+    /// pack declares no season, the library has no such set, or there is no install. Read-only —
+    /// powers the Skins tab's season panel. Additive default so existing fakes compile.</summary>
+    SkinSeasonStatus? CurrentSkinSeasonStatus() => null;
+
+    /// <summary>Switches the install onto this pack's declared skin season: writes each car model's
+    /// season pointer XML over the active one, backup-first (all-or-nothing per set; an
+    /// unrecognized user file refuses without <paramref name="force"/> — the AI-file contract).
+    /// Skin files only — never the career DB / sim / oracle. Additive default: a clear
+    /// "not supported" failure so existing fakes compile.</summary>
+    SkinSeasonApplyResult ActivateSkinSeason(bool force = false) => new()
+    {
+        Success = false,
+        Applied = 0,
+        Message = "This career session cannot switch skin seasons.",
+    };
+
     /// <summary>The grid editor's current per-seat COSMETIC overrides for this season, keyed by the
     /// seat's original <c>ams2LiveryName</c>: a custom driver name and/or a rebound livery, applied
     /// only to the staged custom-AI file (never the sim). Empty default so existing fakes compile.</summary>

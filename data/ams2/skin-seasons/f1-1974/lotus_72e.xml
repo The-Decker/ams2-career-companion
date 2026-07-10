@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+ 
+    <LIVERY_OVERRIDE LIVERY="51" NAME="John Player Team Lotus - R. Peterson #1" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="F1_1974\preview1.dds" />
+        <TEXTURE NAME="BODY" PATH="F1_1974\body1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_1974\74_Peterson_Helmet.dds" />
+        <TEXTURE NAME="BODY_SPEC" PATH="F1_1974\74_Peterson_helmet_spec.dds" />
+        <TEXTURE NAME="VISOR_DIFF" PATH="F1_1974\74_Peterson_visor.dds" />
+        <TEXTURE NAME="VISOR_SPEC" PATH="F1_1974\74_Peterson_visor_spec.dds" />
+    </HELMET_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="52" NAME="John Player Team Lotus - J. Ickx #2" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="F1_1974\preview2.dds" />
+        <TEXTURE NAME="BODY" PATH="F1_1974\body2.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_1974\74_Ickx_Helmet.dds" />
+        <TEXTURE NAME="BODY_SPEC" PATH="F1_1974\Common\74_helmet_spec.dds" />
+        <TEXTURE NAME="VISOR_DIFF" PATH="F1_1974\74_Ickx_helmet_visor.dds" />
+        <TEXTURE NAME="VISOR_SPEC" PATH="F1_1974\Common\74_visor_spec.dds" />
+    </HELMET_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="53" NAME="Team Gunston - I. Scheckter #29" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="F1_1974\preview29.dds" />
+        <TEXTURE NAME="BODY" PATH="F1_1974\body29.dds" />
+    </LIVERY_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="54" NAME="Team Gunston - P. Driver #30" BASELIVERY="Default">
+        <PREVIEWIMAGE PATH="F1_1974\preview30.dds" />
+        <TEXTURE NAME="BODY" PATH="F1_1974\body30.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_1974\74_Driver_Helmet.dds" />
+        <TEXTURE NAME="BODY_SPEC" PATH="F1_1974\Common\74_helmet_spec.dds" />
+        <TEXTURE NAME="VISOR_DIFF" PATH="F1_1974\Common\74_visor.dds" />
+        <TEXTURE NAME="VISOR_SPEC" PATH="F1_1974\Common\74_visor_spec.dds" />
+    </HELMET_OVERRIDE>
+
+</USER_OVERRIDES>

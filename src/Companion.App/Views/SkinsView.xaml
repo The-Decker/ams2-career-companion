@@ -60,6 +60,48 @@
                 </StackPanel>
             </Border>
 
+            <!-- SKIN SEASON manager: conflicting season packs share the same override pointer file
+                 (1983<->1985, 1990<->SMGP...) — this panel shows which season owns the car models
+                 and switches them (backup-first). The same swap runs automatically at race setup. -->
+            <Border Margin="0,14,0,0" Padding="14,11" CornerRadius="8"
+                    Background="{StaticResource SurfaceAltBrush}"
+                    Visibility="{Binding HasSkinSeason, Converter={StaticResource BoolVisible}}">
+                <StackPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" MinWidth="150" Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Command="{Binding ActivateSkinSeasonCommand}"
+                                Visibility="{Binding SkinSeasonActive,
+                                             Converter={StaticResource BoolCollapsed}}">
+                            <TextBlock>
+                                <Run Text="Switch to the " /><Run Text="{Binding SkinSeasonKey, Mode=OneWay}" /><Run Text=" skins" />
+                            </TextBlock>
+                        </Button>
+                        <TextBlock Style="{StaticResource H2}" VerticalAlignment="Center">
+                            <Run Text="Skin season" /><Run Text="  ·  " Foreground="{StaticResource TextFaintBrush}" /><Run
+                                Text="{Binding SkinSeasonKey, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                        </TextBlock>
+                    </DockPanel>
+                    <TextBlock Text="{Binding SkinSeasonSummary}" Style="{StaticResource Body}"
+                               TextWrapping="Wrap" Margin="0,4,0,0" />
+                    <ItemsControl ItemsSource="{Binding SkinSeasonModels}" Margin="0,6,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource Faint}"
+                                           TextWrapping="Wrap" Margin="0,1,0,0" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Button MinWidth="220" Margin="0,8,0,0" HorizontalAlignment="Left"
+                            Content="Overwrite anyway (backup first)"
+                            Command="{Binding ForceActivateSkinSeasonCommand}"
+                            Visibility="{Binding SkinSeasonRequiresForce, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Text="{Binding SkinSeasonBanner}" TextWrapping="Wrap" Margin="0,8,0,0"
+                               Style="{StaticResource Body}"
+                               Visibility="{Binding SkinSeasonBanner, Converter={StaticResource NullCollapsed}}" />
+                </StackPanel>
+            </Border>
+
             <!-- YOUR CAR crib — the headline: the exact livery to pick in-game -->
             <Border Margin="0,20,0,0" Padding="18,14" CornerRadius="8"
                     Background="{StaticResource SurfaceAltBrush}"
