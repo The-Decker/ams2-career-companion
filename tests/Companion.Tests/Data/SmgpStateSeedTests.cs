@@ -38,14 +38,15 @@ public sealed class SmgpStateSeedTests : IDisposable
             Manifest = basePack.Manifest with { CareerStyle = SmgpRules.CareerStyle },
             Teams =
             [
-                .. basePack.Teams,
+                // brabham = LEVEL C (prestige 3) so the LEVEL-D player can CHALLENGE him (D→C).
+                basePack.Teams[0] with { Prestige = 3, BudgetTier = 3 },
                 new Companion.Core.Packs.PackTeam
                 {
                     Id = "team.hulme",
                     Name = "Hulme Racing",
                     CarVehicleIds = [TestPackBuilder.VintageCar],
                     Reliability = 0.9,
-                    Prestige = 2,
+                    Prestige = 2, // LEVEL D — the player's team
                     BudgetTier = 2,
                 },
             ],

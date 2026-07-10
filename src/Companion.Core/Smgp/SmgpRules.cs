@@ -30,6 +30,30 @@ public static class SmgpRules
         _ => null,
     };
 
+    /// <summary>One step UP the ladder (D→C→B→A); A has nothing above.</summary>
+    public static char? TierAbove(char tier) => tier switch
+    {
+        'D' => 'C',
+        'C' => 'B',
+        'B' => 'A',
+        _ => null,
+    };
+
+    /// <summary>Ladder rank, D=0 … A=3 (higher = better team) — for tier comparisons.</summary>
+    public static int Rank(char tier) => tier switch { 'A' => 3, 'B' => 2, 'C' => 1, _ => 0 };
+
+    /// <summary>Whether the player (in <paramref name="playerTier"/>) may CHALLENGE a rival in
+    /// <paramref name="rivalTier"/> (Mike's rule): the ONE tier directly above (the seat you climb
+    /// toward) or ANY tier below. So D→C only; C→B or D; B→A, C or D; A→B, C or D. Never two tiers
+    /// up, never your own tier.</summary>
+    public static bool CanChallenge(char playerTier, char rivalTier) =>
+        Rank(rivalTier) == Rank(playerTier) + 1 || Rank(rivalTier) < Rank(playerTier);
+
+    /// <summary>The floor (LEVEL D) tolerance: lose this many rival battles while in a D team and
+    /// the SMGP career is over — kicked out of F1 SMGP. (Mike's rule; the one hard-fail state now
+    /// that D has nowhere to be relegated to.)</summary>
+    public const int FloorLossLimit = 4;
+
     /// <summary>
     /// The round's rival-battle outcome. The game decides by finishing ahead: a classified
     /// finish beats a DNF; both out = the battle is VOID (no count moves — the manual's rule
@@ -111,11 +135,6 @@ public static class SmgpRules
             DisplacedSeat = null,
         };
     }
-
-    /// <summary>Losing a rival battle at ZEROFORCE (the LEVEL D floor team, nothing below) is
-    /// the replica's one hard-fail state — the game-over screen.</summary>
-    public static bool IsCareerOver(SmgpTrigger trigger, char playerTier, bool playerAtFloorTeam) =>
-        trigger == SmgpTrigger.PlayerSeatForfeit && playerTier == 'D' && playerAtFloorTeam;
 
     /// <summary>
     /// The Madonna title defense: the reigning champion starts the next season in MADONNA and

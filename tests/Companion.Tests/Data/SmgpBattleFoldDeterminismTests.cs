@@ -84,21 +84,50 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     [Fact]
-    public void TwoLosses_AtTheFloorTeam_EndTheCareer_WithoutMovingSeats()
+    public void FourLosses_AtTheFloor_EndTheCareer_ButNotBefore()
     {
-        // The player IS the floor team (Seat D, the last ladder seat): the second loss is the
-        // replica's one hard-fail state — CareerOver, nothing moves, later battles fold inert.
-        var (careerPath, seasonId) = FoldTwoBattleRounds(
-            "career-over.ams2career",
-            playerWins: false,
-            round2Call: new SmgpRivalCall { RivalDriverId = "driver.a" },
-            playerSeat: SeatD);
+        // At the LEVEL D floor there is nowhere to be relegated: losses accumulate, and the FOURTH
+        // (SmgpRules.FloorLossLimit) ends the career — kicked out. No seat ever moves.
+        string packDirectory = Path.Combine(_root, "packs", "floor-4");
+        TestPackBuilder.Write(LadderPack(), packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "floor-4"),
+            library: FourSeatLibrary());
+        string careerPath = Path.Combine(_root, "careers", "floor-4.ams2career");
 
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "floor-4",
+                       MasterSeed = Seed,
+                       PlayerLiveryName = SeatD,
+                       SmgpMode = true,
+                   },
+                   environment))
+        {
+            // Lose to driver.c (the C tier a D player may challenge) four times.
+            for (int round = 1; round <= 4; round++)
+                ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" });
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
         using var db = CareerDatabase.Open(careerPath);
-        var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
-        Assert.True(smgp.CareerOver);
-        Assert.Equal(SeatD, smgp.CurrentSeatLivery);
-        Assert.Empty(smgp.AiSeatOverrides);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+
+        // After three losses: still alive (FloorLosses 3), no seat moved.
+        var after3 = StateStore.ReadRoundPlayerState(db, seasonId, 3)!.Player.Smgp!;
+        Assert.False(after3.CareerOver);
+        Assert.Equal(3, after3.FloorLosses);
+        Assert.Equal(SeatD, after3.CurrentSeatLivery);
+
+        // The fourth ends it.
+        var after4 = StateStore.ReadRoundPlayerState(db, seasonId, 4)!.Player.Smgp!;
+        Assert.True(after4.CareerOver);
+        Assert.Equal(4, after4.FloorLosses);
+        Assert.Equal(SeatD, after4.CurrentSeatLivery);
+        Assert.Empty(after4.AiSeatOverrides);
         Assert.DoesNotContain(JournalStore.ReadSeason(db, seasonId), r => r.Phase == JournalPhases.SmgpSeat);
 
         AssertResimulatesByteIdentically(db);
@@ -173,17 +202,17 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     [Fact]
-    public void TheFloorTeamsSecondCar_IsNotInvincible_TeamLevelCareerOver()
+    public void TheFloorTeamsSecondCar_CountsFloorLossesToo()
     {
         // Two-car floor team (the 26-car field shape): the player starts in team.d's SECOND car.
-        // Losing the rival battle twice must still end the career — the floor check is
-        // TEAM-level, not a compare against the last ladder car's livery.
+        // The floor is TEAM-level, so this car counts D losses toward the 4-loss game-over just
+        // like the first floor car (a two-car floor team must not have an invincible second car).
         const string SeatE = "Stock Livery #5";
         var basePack = LadderPack();
         var pack = basePack with
         {
             Drivers = [.. basePack.Drivers, TestPackBuilder.Driver("driver.e")],
-            Entries = [.. basePack.Entries, TestPackBuilder.Entry("team.d", "driver.e", "5", SeatE) with { Rounds = "1-3" }],
+            Entries = [.. basePack.Entries, TestPackBuilder.Entry("team.d", "driver.e", "5", SeatE) with { Rounds = "1-5" }],
         };
 
         string packDirectory = Path.Combine(_root, "packs", "floor-second-car");
@@ -205,6 +234,55 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
                    },
                    environment))
         {
+            for (int round = 1; round <= 4; round++)
+                ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" });
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+        var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 4)!.Player.Smgp!;
+        Assert.True(smgp.CareerOver);
+        Assert.Equal(4, smgp.FloorLosses);
+        Assert.Equal(SeatE, smgp.CurrentSeatLivery); // nothing moved — the game-over screen
+    }
+
+    [Fact]
+    public void Forfeit_RelegatesToA_RANDOM_TeamBelow_Deterministically()
+    {
+        // Two teams in the class below (C1, C2): a LEVEL-B player who loses twice is relegated to
+        // ONE of them, picked from the master seed — the same one every time (replay-identical),
+        // and the other C team is untouched.
+        const string SeatC2 = "Stock Livery #5";
+        var basePack = LadderPack();
+        var pack = basePack with
+        {
+            Drivers = [.. basePack.Drivers, TestPackBuilder.Driver("driver.c2")],
+            // A second LEVEL-C team (prestige 3), so 'the class below B' has two choices.
+            Teams = [.. basePack.Teams, Team("team.c2", "Charlie2", prestige: 3)],
+            Entries = [.. basePack.Entries, TestPackBuilder.Entry("team.c2", "driver.c2", "6", SeatC2) with { Rounds = "1-5" }],
+        };
+
+        string packDirectory = Path.Combine(_root, "packs", "relegate");
+        TestPackBuilder.Write(pack, packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "relegate"),
+            library: FiveSeatLibrary());
+        string careerPath = Path.Combine(_root, "careers", "relegate.ams2career");
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "relegate",
+                       MasterSeed = Seed,
+                       PlayerLiveryName = SeatB, // LEVEL B
+                       SmgpMode = true,
+                   },
+                   environment))
+        {
+            // Lose twice to the LEVEL-A rival (a B player may challenge up to A).
             ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.a" });
             ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.a" });
         }
@@ -213,8 +291,28 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         using var db = CareerDatabase.Open(careerPath);
         long seasonId = CareerStore.ReadSeasons(db).Single().Id;
         var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
-        Assert.True(smgp.CareerOver);
-        Assert.Equal(SeatE, smgp.CurrentSeatLivery); // nothing moved — the game-over screen
+
+        // Relegated to ONE of the two C teams (a real class-below move), not the player's old seat.
+        Assert.Contains(smgp.CurrentSeatLivery, new[] { SeatC, SeatC2 });
+        Assert.NotEqual(SeatB, smgp.CurrentSeatLivery);
+        Assert.Equal(SeatB, smgp.AiSeatOverrides["driver.a"]); // the rival takes the player's old car
+        Assert.False(smgp.CareerOver);
+
+        // Deterministic: the whole thing re-simulates byte-identically (the random pick re-derives)
+        // — against the DB's PINNED pack (this test's pack differs from LadderPack()).
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        var report = ReplayService.Resimulate(db, unchecked((ulong)Seed), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = "driver.b",
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        });
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
     }
 
     private static void ApplyPlayerLast(ICareerSession session, SmgpRivalCall rival)
@@ -271,8 +369,8 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
 
     // ---------- the four-tier ladder pack + the fold driver ----------
 
-    /// <summary>Four one-driver teams down the authored ladder (A/B/C/D), THREE rounds (so a
-    /// round can still fold after a round-2 swap), smgp style.</summary>
+    /// <summary>Four one-driver teams down the authored ladder (A/B/C/D), FIVE rounds (enough to
+    /// fold the four D-floor losses that end the career), smgp style.</summary>
     private static SeasonPack LadderPack()
     {
         var basePack = TestPackBuilder.TwoRoundPack();
@@ -284,8 +382,10 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
                 Rounds =
                 [
                     TestPackBuilder.Round(1, "1967-01-02"),
-                    TestPackBuilder.Round(2, "1967-05-07"),
-                    TestPackBuilder.Round(3, "1967-09-03"),
+                    TestPackBuilder.Round(2, "1967-03-06"),
+                    TestPackBuilder.Round(3, "1967-05-07"),
+                    TestPackBuilder.Round(4, "1967-07-02"),
+                    TestPackBuilder.Round(5, "1967-09-03"),
                 ],
             },
             Teams =
@@ -313,7 +413,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     private static PackEntry Entry(string teamId, string driverId, string number, string livery) =>
-        TestPackBuilder.Entry(teamId, driverId, number, livery) with { Rounds = "1-3" };
+        TestPackBuilder.Entry(teamId, driverId, number, livery) with { Rounds = "1-5" };
 
     private static PackTeam Team(string id, string name, int prestige) => new()
     {

@@ -116,17 +116,10 @@ public sealed class SmgpRulesTests
         Assert.Null(swap.DisplacedDriverNewSeat);
     }
 
-    // ---------- career over / title defense / completion ----------
-
-    [Fact]
-    public void LosingABattleAtZeroforce_IsCareerOver()
-    {
-        Assert.True(SmgpRules.IsCareerOver(SmgpTrigger.PlayerSeatForfeit, 'D', playerAtFloorTeam: true));
-        // A D-tier team that is NOT Zeroforce still has somewhere to fall.
-        Assert.False(SmgpRules.IsCareerOver(SmgpTrigger.PlayerSeatForfeit, 'D', playerAtFloorTeam: false));
-        Assert.False(SmgpRules.IsCareerOver(SmgpTrigger.PlayerSeatForfeit, 'C', playerAtFloorTeam: false));
-        Assert.False(SmgpRules.IsCareerOver(SmgpTrigger.SeatSwapOfferToPlayer, 'D', playerAtFloorTeam: true));
-    }
+    // ---------- title defense / completion ----------
+    // (The old "forfeit at the Zeroforce floor = career over" rule is superseded by the LEVEL-D
+    //  4-loss counter — see SmgpRules.FloorLossLimit + SmgpChallengeRulesTests /
+    //  SmgpBattleFoldDeterminismTests.FourLosses_AtTheFloor_EndTheCareer_ButNotBefore.)
 
     [Theory]
     [InlineData(SmgpBattleOutcome.PlayerBeatRival, SmgpBattleOutcome.RivalBeatPlayer, SmgpTitleDefense.MadonnaKept)]

@@ -25,9 +25,16 @@ public sealed record SmgpState
     /// <summary>Championships won in the mode (two = the replica is beaten).</summary>
     public int Titles { get; init; }
 
-    /// <summary>The Zeroforce game-over state: a rival took the player's seat with nothing below
-    /// LEVEL D. The one hard-fail state — the career stops accepting rounds.</summary>
+    /// <summary>The game-over state: the player lost too many battles at the LEVEL D floor
+    /// (<see cref="SmgpRules.FloorLossLimit"/>) — kicked out of F1 SMGP. The one hard-fail state;
+    /// the career stops accepting rounds.</summary>
     public bool CareerOver { get; init; }
+
+    /// <summary>Rival battles LOST while in a LEVEL D team, cumulative across rivals. At
+    /// <see cref="SmgpRules.FloorLossLimit"/> the career ends. Resets to 0 when the player climbs
+    /// out of D (a promotion) and between seasons. Omitted when 0 (WhenWritingDefault).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int FloorLosses { get; init; }
 
     /// <summary>Seat-swap displacements applied to the AI field (pack driver id → the
     /// ams2LiveryName that driver NOW occupies), ordinal key order. Applied by the grid resolver
@@ -68,6 +75,7 @@ public sealed record SmgpState
         Tallies = EmptyTallies,
         TitleDefense = false,
         DefenseRound1 = SmgpBattleOutcome.Void,
+        FloorLosses = 0,
     };
 
     // STRUCTURAL equality — the record default compares the dictionaries by REFERENCE, which
@@ -86,6 +94,7 @@ public sealed record SmgpState
             && CareerOver == other.CareerOver
             && TitleDefense == other.TitleDefense
             && DefenseRound1 == other.DefenseRound1
+            && FloorLosses == other.FloorLosses
             && Tallies.SequenceEqual(other.Tallies)
             && AiSeatOverrides.SequenceEqual(other.AiSeatOverrides);
     }
@@ -98,6 +107,7 @@ public sealed record SmgpState
         hash.Add(CareerOver);
         hash.Add(TitleDefense);
         hash.Add(DefenseRound1);
+        hash.Add(FloorLosses);
         foreach (var pair in Tallies)
         {
             hash.Add(pair.Key, StringComparer.Ordinal);

@@ -1019,7 +1019,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var teamsById = Pack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
         // Your own TEAMMATE is never a namable rival (a two-car team's sister seat): beating him
         // twice would "offer" you your own team, and losing would forfeit your car to him.
-        string? playerTeamId = seats.FirstOrDefault(s => s.IsPlayer)?.TeamId;
+        var playerSeatSeat = seats.FirstOrDefault(s => s.IsPlayer);
+        string? playerTeamId = playerSeatSeat?.TeamId;
+        // The CHALLENGE-TIER rule (Mike): you may only name a rival in the tier directly ABOVE you
+        // (the seat you climb toward) or ANY tier below — never two tiers up, never your own tier.
+        char? playerTier = playerSeatSeat is null ? null
+            : Companion.Core.Smgp.SmgpRules.Tier(
+                teamsById.TryGetValue(playerSeatSeat.TeamId, out var pt) ? pt.Prestige : 3);
+        string? forcedChallenger = Companion.Core.Smgp.SmgpSchedule.ForcedChallenger(Pack, state, round);
 
         var rivals = new List<SmgpRivalOption>();
         foreach (var seat in seats)
@@ -1027,6 +1034,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             if (seat.IsPlayer ||
                 string.Equals(seat.TeamId, playerTeamId, StringComparison.Ordinal))
                 continue;
+            // Tier gate — but the forced title-defense challenger is always namable regardless.
+            bool isForced = string.Equals(seat.DriverId, forcedChallenger, StringComparison.Ordinal);
+            if (!isForced && playerTier is { } ptier)
+            {
+                char rivalTier = Companion.Core.Smgp.SmgpRules.Tier(
+                    teamsById.TryGetValue(seat.TeamId, out var rt) ? rt.Prestige : 3);
+                if (!Companion.Core.Smgp.SmgpRules.CanChallenge(ptier, rivalTier))
+                    continue;
+            }
             teamsById.TryGetValue(seat.TeamId, out var team);
             string? vehicle = team?.CarVehicleIds.FirstOrDefault();
             // The MACHINE block reads the car's DISPLAY name from the extracted library
@@ -1059,7 +1075,6 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         // A forced challenger who is not actually on this round's grid (his introduction could
         // not resolve) cannot be battled — surface a free pick instead of a lock on nothing.
-        string? forcedChallenger = Companion.Core.Smgp.SmgpSchedule.ForcedChallenger(Pack, state, round);
         if (forcedChallenger is not null &&
             !rivals.Any(r => string.Equals(r.DriverId, forcedChallenger, StringComparison.Ordinal)))
             forcedChallenger = null;

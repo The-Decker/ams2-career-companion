@@ -722,6 +722,7 @@ public static class ReplayService
                 Pack = pack,
                 State = smgpState,
                 Round = round,
+                MasterSeed = unchecked((long)masterSeed),
                 RivalDriverId = rivalCall.RivalDriverId,
                 Forced = rivalCall.Forced,
                 SeatSwapAccepted = rivalCall.SeatSwapAccepted,

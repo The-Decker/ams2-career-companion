@@ -48,9 +48,18 @@ game's own deadpan vocabulary; no cheese.
   - Beat the same rival **twice without losing to him** → "you may get an offer to join his
     team!" — a SEAT SWAP: you take his seat; he drops to the team one tier below yours; that
     team's driver takes your old seat (verified displacement chain).
-  - A rival beats YOU under the same rule → he is offered YOUR seat; you are demoted one tier.
-  - Losing a rival battle while at **ZEROFORCE** (nothing below) = **career over** (the game's
-    game-over screen — the replica's one hard-fail state).
+  - **Challenge targeting (Mike's rule):** you may only name a rival in the tier directly ABOVE
+    you (the seat you climb toward) or ANY tier below — never two tiers up, never your own tier.
+    So D→C only; C→B or D; B→A, C or D; A→B, C or D. (`SmgpRules.CanChallenge`; the briefing
+    filters the namable-rival list, but the FORCED title-defense challenger bypasses it.)
+  - **Relegation (Mike's rule):** losing to the same rival **twice** while ABOVE LEVEL D → you are
+    RELEGATED to the class below, in a **RANDOM team** (picked deterministically from the master
+    seed + round + rival, so replay re-derives it); the rival takes your old car, that team's
+    driver takes his.
+  - **The LEVEL D floor (Mike's rule):** at D there is nowhere below, so a two-loss forfeit does
+    NOT relegate — instead every LOST battle (any rival) counts, and the **fourth**
+    (`SmgpRules.FloorLossLimit`) ends the career: kicked out of F1 SMGP. Promoting out of D (a
+    win up to C) wipes the count. This replaces the old "forfeit at Zeroforce = game over" rule.
 - **Title defense**: winning the championship automatically seats you in **MADONNA** for the next
   season. At its start, **G. Ceara** (Brazilian, Bullets, the Senna analogue, near-unbeatable
   pace) declares your days are over and force-challenges you in R1 (San Marino) + R2 (Brazil).

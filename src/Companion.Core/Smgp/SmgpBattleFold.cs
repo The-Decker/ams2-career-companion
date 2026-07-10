@@ -29,11 +29,28 @@ public static class SmgpBattleFold
 
         var ladder = Ladder(context.Pack);
         var seatEvents = new List<JournalEvent>();
+        char? playerTier = TierOf(ladder, state.CurrentSeatLivery);
 
+        // A two-wins offer promotes in EVERY tier (incl. D→C — the way out of the floor). A
+        // two-losses forfeit relegates only ABOVE D (to a RANDOM team one class below); at the D
+        // floor there is nowhere below, so it does not relegate.
         if (update.Trigger == SmgpTrigger.SeatSwapOfferToPlayer && context.SeatSwapAccepted == true)
             state = ApplyAcceptedSwap(context, ladder, state, seatEvents);
-        else if (update.Trigger == SmgpTrigger.PlayerSeatForfeit)
+        else if (update.Trigger == SmgpTrigger.PlayerSeatForfeit && playerTier != 'D')
             state = ApplyForfeit(context, ladder, state, seatEvents);
+
+        // The LEVEL D floor: every LOST battle (any rival) counts toward FloorLossLimit; reaching
+        // it ends the career — kicked out of F1 SMGP (Mike's rule).
+        if (playerTier == 'D' && outcome == SmgpBattleOutcome.RivalBeatPlayer)
+        {
+            state = state with { FloorLosses = state.FloorLosses + 1 };
+            if (state.FloorLosses >= SmgpRules.FloorLossLimit)
+                state = state with { CareerOver = true };
+        }
+
+        // Promoting OUT of D (a win-swap up to C) wipes the floor-loss count — a fresh start above.
+        if (playerTier == 'D' && TierOf(ladder, state.CurrentSeatLivery) is { } newTier && newTier != 'D')
+            state = state with { FloorLosses = 0 };
 
         var events = new List<JournalEvent>
         {
@@ -172,11 +189,11 @@ public static class SmgpBattleFold
         return state;
     }
 
-    /// <summary>The rival beat the player twice: he takes the player's car and the player is
-    /// demoted — to the first ladder seat one tier below, or one ladder step down WITHIN the
-    /// floor tier; at the floor team itself (nothing below, the last ladder seat) the career is
-    /// over (<see cref="SmgpRules.IsCareerOver"/>) and no seat moves. The displaced occupant of
-    /// the player's destination takes the rival's old car (the mirrored chain).</summary>
+    /// <summary>The rival beat the player twice (above D): the player is RELEGATED to a team in
+    /// the class BELOW, chosen at RANDOM (deterministically, from the master seed) among that
+    /// tier's teams — the rival takes the player's old car, and the random team's displaced
+    /// driver takes the rival's old car (the mirrored chain). Caller guards D out (the floor has
+    /// nowhere below — the FloorLoss counter governs it there).</summary>
     private static SmgpState ApplyForfeit(
         SmgpBattleFoldContext context, IReadOnlyList<LadderSeat> ladder, SmgpState state,
         List<JournalEvent> seatEvents)
@@ -188,17 +205,11 @@ public static class SmgpBattleFold
             string.Equals(rivalSeat, playerSeat, StringComparison.Ordinal))
             return state;
 
-        // The floor check is TEAM-level: losing at ANY of the floor team's cars is the game-over
-        // state (a two-car floor team must not have an invincible second car).
-        bool atFloorTeam = ladder.Count > 0 &&
-            string.Equals(ladder[^1].TeamId, TeamOf(ladder, playerSeat), StringComparison.Ordinal);
-        if (SmgpRules.IsCareerOver(SmgpTrigger.PlayerSeatForfeit, tier, atFloorTeam))
-            return state with { CareerOver = true };
-
+        // A RANDOM team in the class below (deterministic pick from the master seed + round +
+        // rival), excluding the player's and rival's seats. None resolvable → a straight swap.
         string? target = SmgpRules.TierBelow(tier) is { } below
-            ? FirstSeatAt(ladder, below, playerSeat, rivalSeat)
-            : NextSeatDownWithin(ladder, tier, playerSeat, rivalSeat);
-        // Nothing to demote into (a pack without a lower rung): a straight two-way swap.
+            ? RandomSeatAt(ladder, below, playerSeat, rivalSeat, context)
+            : null;
         target ??= rivalSeat;
 
         string? displacedDriver = string.Equals(target, rivalSeat, StringComparison.Ordinal)
@@ -256,8 +267,6 @@ public static class SmgpBattleFold
         return ladder;
     }
 
-    internal static string? TeamOf(IReadOnlyList<LadderSeat> ladder, string livery) =>
-        ladder.FirstOrDefault(s => string.Equals(s.Livery, livery, StringComparison.Ordinal))?.TeamId;
 
     internal static char? TierOf(IReadOnlyList<LadderSeat> ladder, string livery) =>
         ladder.FirstOrDefault(s => string.Equals(s.Livery, livery, StringComparison.Ordinal))?.Tier;
@@ -270,27 +279,44 @@ public static class SmgpBattleFold
             !string.Equals(s.Livery, excludeSeat1, StringComparison.Ordinal) &&
             !string.Equals(s.Livery, excludeSeat2, StringComparison.Ordinal))?.Livery;
 
-    /// <summary>The next authored seat below the player's WITHIN the floor tier (Rigel → Comet →
-    /// Orchis → Zeroforce): the one honest reading of "demoted one tier" when no tier is left.
-    /// A DIFFERENT team's car only — moving into your own teammate's seat is not a demotion.</summary>
-    private static string? NextSeatDownWithin(
-        IReadOnlyList<LadderSeat> ladder, char tier, string playerSeat, string rivalSeat)
+    /// <summary>A RANDOM team's (first) seat at <paramref name="tier"/> — the relegation target,
+    /// picked deterministically from the master seed + round + rival so replay re-derives the
+    /// exact same team. One seat per team (its first, in ladder order), excluding the player's and
+    /// rival's seats. Null when no team at that tier is eligible.</summary>
+    private static string? RandomSeatAt(
+        IReadOnlyList<LadderSeat> ladder, char tier, string playerSeat, string rivalSeat,
+        SmgpBattleFoldContext context)
     {
-        for (int i = 0; i < ladder.Count; i++)
+        var candidates = new List<string>();
+        var seenTeams = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var s in ladder)
         {
-            if (!string.Equals(ladder[i].Livery, playerSeat, StringComparison.Ordinal))
+            if (s.Tier != tier || !seenTeams.Add(s.TeamId))
                 continue;
-            string playerTeam = ladder[i].TeamId;
-            for (int j = i + 1; j < ladder.Count; j++)
-            {
-                if (ladder[j].Tier == tier &&
-                    !string.Equals(ladder[j].TeamId, playerTeam, StringComparison.Ordinal) &&
-                    !string.Equals(ladder[j].Livery, rivalSeat, StringComparison.Ordinal))
-                    return ladder[j].Livery;
-            }
-            return null;
+            if (string.Equals(s.Livery, playerSeat, StringComparison.Ordinal) ||
+                string.Equals(s.Livery, rivalSeat, StringComparison.Ordinal))
+                continue;
+            candidates.Add(s.Livery);
         }
-        return null;
+        if (candidates.Count == 0)
+            return null;
+        uint pick = DeterministicHash(context.MasterSeed, context.Round, context.RivalDriverId);
+        return candidates[(int)(pick % (uint)candidates.Count)];
+    }
+
+    /// <summary>A stable FNV-1a hash over (master seed, round, rival) — deterministic and
+    /// build-stable, so the relegation team is identical on the live and replay paths.</summary>
+    private static uint DeterministicHash(long seed, int round, string rival)
+    {
+        unchecked
+        {
+            uint h = 2166136261;
+            void MixByte(byte b) { h ^= b; h *= 16777619; }
+            for (int i = 0; i < 8; i++) MixByte((byte)((ulong)seed >> (i * 8)));
+            for (int i = 0; i < 4; i++) MixByte((byte)((uint)round >> (i * 8)));
+            foreach (char c in rival) { MixByte((byte)c); MixByte((byte)(c >> 8)); }
+            return h;
+        }
     }
 
     /// <summary>The car <paramref name="driverId"/> currently drives: his seat override when a
@@ -344,6 +370,10 @@ public sealed record SmgpBattleFoldContext
     /// 1 and 2. Default 0 (callers that never see a defense season) never matches a defense
     /// round, so the ordinary ladder runs exactly as before.</summary>
     public int Round { get; init; }
+
+    /// <summary>The career's master seed — the relegation team is picked deterministically from
+    /// it (+ round + rival), so the "random" team is identical on the live and replay paths.</summary>
+    public long MasterSeed { get; init; }
 
     public bool Forced { get; init; }
 
