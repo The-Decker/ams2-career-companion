@@ -325,7 +325,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" Focusable="False"
+                            <ScrollViewer MaxHeight="180" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False"
                                           Visibility="{Binding LiveryScanDetailsExpanded, Converter={StaticResource BoolVisible}}">
                                 <ItemsControl ItemsSource="{Binding LiveryScanDetails}" Margin="12,4,0,0">
                                     <ItemsControl.ItemTemplate>
@@ -342,7 +342,7 @@
                                    Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}">
                             <Run FontFamily="Segoe MDL2 Assets" Text="&#xE73E;" /><Run Text="  All clear — the pack verifies clean against this install." />
                         </TextBlock>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False"
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False"
                                       Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountVisible}}">
                             <ItemsControl ItemsSource="{Binding VerificationItems}">
                                 <ItemsControl.ItemTemplate>
@@ -467,7 +467,7 @@
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
                     <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Center">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -502,7 +502,7 @@
                 <TextBlock DockPanel.Dock="Top" Text="Confirm" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,16" TextWrapping="Wrap"
                            Text="Creating the career pins the pack into the career file — later pack edits never touch a running season." />
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <StackPanel MaxWidth="640" HorizontalAlignment="Center">
                         <TextBlock Text="Career name" Style="{StaticResource Muted}" Margin="0,0,0,4" />
                         <TextBox Text="{Binding CareerName, UpdateSourceTrigger=PropertyChanged}" FontSize="15" />

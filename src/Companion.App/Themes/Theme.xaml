@@ -143,6 +143,11 @@
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <!-- content alignment must be TEMPLATE-BOUND (below), not hard-coded: full-width list
+             buttons (calendar round headers) set Stretch and it has to actually apply. These two
+             setters keep the classic centered look for every ordinary button. -->
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -161,7 +166,8 @@
                         <!-- click-point ripple host (behaviour-driven; see MotionAssist.Ripple) -->
                         <Border x:Name="RippleHost" CornerRadius="5" ClipToBounds="True" />
                         <ContentPresenter Margin="{TemplateBinding Padding}"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           RecognizesAccessKey="True" />
                     </Grid>
                     <ControlTemplate.Triggers>

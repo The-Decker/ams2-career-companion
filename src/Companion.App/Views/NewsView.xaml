@@ -28,7 +28,7 @@
                    Text="No dispatches yet — run a race and the paddock starts talking. Click any headline to read the full story."
                    Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>

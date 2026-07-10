@@ -34,7 +34,7 @@
             </StackPanel>
         </DockPanel>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
             <!-- centered settings column; label columns share one Auto size so nothing clips at
                  130% UI scale -->
             <StackPanel MaxWidth="760" HorizontalAlignment="Center" Grid.IsSharedSizeScope="True">

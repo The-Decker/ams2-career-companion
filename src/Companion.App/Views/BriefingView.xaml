@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
-    <ScrollViewer x:Name="BriefingScroll" VerticalScrollBarVisibility="Auto" Focusable="False">
+    <ScrollViewer x:Name="BriefingScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
         <!-- proportional page cap (was a hard 860): ~94% of the viewport, never under 860 where
              there is room — fills a 2560 window in two columns yet still hugs a small one -->
         <StackPanel HorizontalAlignment="Left"

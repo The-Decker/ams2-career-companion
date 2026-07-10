@@ -36,7 +36,7 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
         <!-- proportional page cap (was a hard 780) -->
         <StackPanel Margin="40,32" HorizontalAlignment="Left"
                     MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},

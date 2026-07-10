@@ -392,7 +392,7 @@
                                    Foreground="{StaticResource WarningBrush}" Text="DNF — drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="Multi-select drops retire in bulk; pick the reason on the dropped row" />
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                             <ItemsControl ItemsSource="{Binding Dnfs}"
                                           b:ListDragDropBehavior.Role="dnf"
                                           b:ListDragDropBehavior.IsDragSource="True">
@@ -498,7 +498,7 @@
                                    Foreground="{StaticResource ErrorBrush}" Text="DSQ — drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="A placed driver is pulled out of the classification" />
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                             <ItemsControl ItemsSource="{Binding Disqualified}"
                                           b:ListDragDropBehavior.Role="dsq"
                                           b:ListDragDropBehavior.IsDragSource="True">

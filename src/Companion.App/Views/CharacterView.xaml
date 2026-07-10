@@ -76,7 +76,7 @@
             </DockPanel>
 
             <!-- stats + perks -->
-            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Focusable="False">
+            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                 <StackPanel>
                     <TextBlock Text="Stats" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,4" />
                     <ItemsControl ItemsSource="{Binding Stats}">

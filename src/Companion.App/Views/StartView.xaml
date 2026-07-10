@@ -43,7 +43,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Focusable="False">
+        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
             <!-- proportional page column (was a hard 680 that strangled the gallery to 2 cards/row
                  on a 2560 monitor): the gallery WrapPanel now flows 4–6 cards; the intro text keeps
                  its own readable 680 cap -->
