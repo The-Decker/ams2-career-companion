@@ -15,6 +15,13 @@ public static class SmgpBattleFold
 {
     public static SmgpBattleFoldResult Apply(SmgpBattleFoldContext context)
     {
+        // The Madonna title defense OWNS its two rounds' battles against the reserved
+        // challenger — the ordinary two-wins ladder never runs there (losing both must fire
+        // you to Dardan, not demote you one tier).
+        if (SmgpSchedule.IsTitleDefenseRound(context.State, context.Round) &&
+            string.Equals(context.RivalDriverId, SmgpSchedule.DefenseChallenger(context.Pack), StringComparison.Ordinal))
+            return ApplyTitleDefense(context);
+
         var state = context.State;
         var outcome = SmgpRules.BattleOutcome(context.PlayerFinish, context.RivalFinish);
         var update = SmgpRules.ApplyBattle(state.TallyFor(context.RivalDriverId), outcome);
@@ -30,35 +37,91 @@ public static class SmgpBattleFold
 
         var events = new List<JournalEvent>
         {
-            new()
-            {
-                Phase = JournalPhases.SmgpBattle,
-                Entity = "player",
-                DeltaJson = CareerJson.Serialize(new
-                {
-                    rival = context.RivalDriverId,
-                    forced = context.Forced,
-                    playerFinish = context.PlayerFinish,
-                    rivalFinish = context.RivalFinish,
-                    outcome,
-                    playerStreak = update.Tally.PlayerStreak,
-                    rivalStreak = update.Tally.RivalStreak,
-                    trigger = update.Trigger,
-                    swapAccepted = context.SeatSwapAccepted,
-                    careerOver = state.CareerOver,
-                }),
-                Cause = outcome switch
+            BattleEvent(context, outcome, update.Tally, update.Trigger, state.CareerOver,
+                cause: outcome switch
                 {
                     SmgpBattleOutcome.PlayerBeatRival => "battle-won",
                     SmgpBattleOutcome.RivalBeatPlayer => "battle-lost",
                     _ => "battle-void",
-                },
-            },
+                }),
         };
         events.AddRange(seatEvents);
 
         return new SmgpBattleFoldResult { State = state, Events = events };
     }
+
+    /// <summary>The Madonna title defense (M3 slice 4): round 1's outcome is carried on the
+    /// state; round 2 resolves both via <see cref="SmgpRules.TitleDefense"/> — win at least one
+    /// → Madonna kept; lose both → fired to Dardan (the challenger takes the player's car, the
+    /// player takes the demotion seat, its occupant takes the challenger's old car). Defense
+    /// battles never touch the two-wins tallies.</summary>
+    private static SmgpBattleFoldResult ApplyTitleDefense(SmgpBattleFoldContext context)
+    {
+        var state = context.State;
+        var outcome = SmgpRules.BattleOutcome(context.PlayerFinish, context.RivalFinish);
+        var events = new List<JournalEvent>();
+
+        if (context.Round <= 1)
+        {
+            state = state with { DefenseRound1 = outcome };
+            events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
+                SmgpTrigger.None, state.CareerOver,
+                cause: outcome == SmgpBattleOutcome.PlayerBeatRival ? "defense-round-won" : "defense-round-lost"));
+            return new SmgpBattleFoldResult { State = state, Events = events };
+        }
+
+        var verdict = SmgpRules.TitleDefense(state.DefenseRound1, outcome);
+        state = state with { TitleDefense = false, DefenseRound1 = SmgpBattleOutcome.Void };
+
+        if (verdict == SmgpTitleDefense.FiredToDardan)
+        {
+            string playerSeat = state.CurrentSeatLivery;
+            string? challengerSeat = CurrentSeatOf(context.Pack, state, context.RivalDriverId);
+            string? demotionSeat = SmgpSchedule.DemotionSeat(context.Pack, playerSeat, challengerSeat);
+            if (demotionSeat is not null && challengerSeat is not null &&
+                !string.Equals(challengerSeat, playerSeat, StringComparison.Ordinal))
+            {
+                string? displacedDriver = OccupantOf(context.Pack, state, demotionSeat);
+                state = state with { CurrentSeatLivery = demotionSeat };
+                state = state.WithAiSeatOverride(context.RivalDriverId, playerSeat);
+                if (displacedDriver is not null)
+                    state = state.WithAiSeatOverride(displacedDriver, challengerSeat);
+                events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
+                    SmgpTrigger.None, state.CareerOver, cause: "defense-lost"));
+                events.Add(SeatEvent("defense-lost", playerSeat, demotionSeat,
+                    context.RivalDriverId, challengerSeat, playerSeat,
+                    displacedDriver, displacedDriver is null ? null : demotionSeat,
+                    displacedDriver is null ? null : challengerSeat));
+                return new SmgpBattleFoldResult { State = state, Events = events };
+            }
+        }
+
+        events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
+            SmgpTrigger.None, state.CareerOver, cause: "defense-held"));
+        return new SmgpBattleFoldResult { State = state, Events = events };
+    }
+
+    private static JournalEvent BattleEvent(
+        SmgpBattleFoldContext context, SmgpBattleOutcome outcome, SmgpBattleTally tally,
+        SmgpTrigger trigger, bool careerOver, string cause) => new()
+    {
+        Phase = JournalPhases.SmgpBattle,
+        Entity = "player",
+        DeltaJson = CareerJson.Serialize(new
+        {
+            rival = context.RivalDriverId,
+            forced = context.Forced,
+            playerFinish = context.PlayerFinish,
+            rivalFinish = context.RivalFinish,
+            outcome,
+            playerStreak = tally.PlayerStreak,
+            rivalStreak = tally.RivalStreak,
+            trigger,
+            swapAccepted = context.SeatSwapAccepted,
+            careerOver,
+        }),
+        Cause = cause,
+    };
 
     /// <summary>The two-wins offer, accepted: the verified displacement chain via
     /// <see cref="SmgpRules.PlayerSeatSwap"/> — player takes the rival's car, the rival drops to
@@ -162,9 +225,9 @@ public static class SmgpBattleFold
     /// <summary>One team's car on the ladder, in the pack's authored team order (the design
     /// doc's tier listing — the LAST entry is the floor team). One-driver teams per the mode;
     /// a team's seat is its first authored entry.</summary>
-    private sealed record LadderSeat(string TeamId, char Tier, string Livery, string DefaultDriverId);
+    internal sealed record LadderSeat(string TeamId, char Tier, string Livery, string DefaultDriverId);
 
-    private static List<LadderSeat> Ladder(SeasonPack pack)
+    internal static List<LadderSeat> Ladder(SeasonPack pack)
     {
         var ladder = new List<LadderSeat>(pack.Teams.Count);
         foreach (var team in pack.Teams)
@@ -177,12 +240,12 @@ public static class SmgpBattleFold
         return ladder;
     }
 
-    private static char? TierOf(IReadOnlyList<LadderSeat> ladder, string livery) =>
+    internal static char? TierOf(IReadOnlyList<LadderSeat> ladder, string livery) =>
         ladder.FirstOrDefault(s => string.Equals(s.Livery, livery, StringComparison.Ordinal))?.Tier;
 
     /// <summary>The first authored seat at <paramref name="tier"/> not already involved in the
     /// swap — the deterministic stand-in for the game's "the team one tier below yours".</summary>
-    private static string? FirstSeatAt(
+    internal static string? FirstSeatAt(
         IReadOnlyList<LadderSeat> ladder, char tier, string excludeSeat1, string excludeSeat2) =>
         ladder.FirstOrDefault(s => s.Tier == tier &&
             !string.Equals(s.Livery, excludeSeat1, StringComparison.Ordinal) &&
@@ -210,7 +273,7 @@ public static class SmgpBattleFold
 
     /// <summary>The car <paramref name="driverId"/> currently drives: his seat override when a
     /// swap moved him, else his authored pack seat. Null = he does not race (no authored entry).</summary>
-    private static string? CurrentSeatOf(SeasonPack pack, SmgpState state, string driverId)
+    internal static string? CurrentSeatOf(SeasonPack pack, SmgpState state, string driverId)
     {
         if (state.AiSeatOverrides.TryGetValue(driverId, out var overridden))
             return overridden;
@@ -221,7 +284,7 @@ public static class SmgpBattleFold
     /// <summary>Who currently occupies <paramref name="livery"/>: the player (null — callers
     /// never displace the player), a swapped-in driver, or the seat's authored default when he
     /// has not been moved elsewhere. Swap chains are closed, so every seat stays occupied.</summary>
-    private static string? OccupantOf(SeasonPack pack, SmgpState state, string livery)
+    internal static string? OccupantOf(SeasonPack pack, SmgpState state, string livery)
     {
         if (string.Equals(livery, state.CurrentSeatLivery, StringComparison.Ordinal))
             return null;
@@ -247,6 +310,11 @@ public sealed record SmgpBattleFoldContext
     public required SmgpState State { get; init; }
 
     public required string RivalDriverId { get; init; }
+
+    /// <summary>The 1-based round this battle happened in — the title defense keys off rounds
+    /// 1 and 2. Default 0 (callers that never see a defense season) never matches a defense
+    /// round, so the ordinary ladder runs exactly as before.</summary>
+    public int Round { get; init; }
 
     public bool Forced { get; init; }
 

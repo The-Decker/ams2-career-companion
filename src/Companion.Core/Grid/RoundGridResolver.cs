@@ -116,7 +116,7 @@ public static class RoundGridResolver
         // changes. The player's block rides to playerSeatOverride (SmgpState.CurrentSeatLivery).
         // Default null ⇒ untouched ⇒ byte-identical; the oracle never passes either.
         if (seatOverrides is { Count: > 0 } || playerSeatOverride is not null)
-            seats = ApplySeatOverrides(seats, seatOverrides, playerSeatOverride);
+            seats = ApplySeatOverrides(pack, packRound, seats, seatOverrides, playerSeatOverride);
 
         // Ratings Phase 3 (FormAware careers only): overlay the round's per-race form onto the AI
         // seats' pace ratings AFTER the cap, so form perturbs strength/pace but never grid
@@ -166,12 +166,14 @@ public static class RoundGridResolver
     /// move (driver id → target livery, plus the player's block riding to
     /// <paramref name="playerSeatOverride"/>) transplants the DRIVER side of the seat (identity,
     /// ratings, driver car tuning, the IsPlayer mark) onto the target CAR (team, livery, number,
-    /// reliability, scalars — which stay with the livery, exactly like the game's own swaps).
-    /// Applied only when the moves form a CLOSED permutation of seats present on this grid
-    /// (vacated cars == received cars — what the battle fold's chains always produce); anything
-    /// else returns the grid verbatim, so a malformed carry can never duplicate a driver or
-    /// strand the player. No moves ⇒ verbatim ⇒ byte-identical.</summary>
+    /// reliability, scalars — which stay with the livery, exactly like the game's own swaps). A
+    /// moved driver with NO seat on the grid but authored in the pack (the reserved title-defense
+    /// challenger, who holds no season entry) is INTRODUCED onto the target car — its resolved
+    /// occupant loses the ride. Applied only when the moves close over the seats present (every
+    /// vacated car receives someone); anything else returns the grid verbatim, so a malformed
+    /// carry can never duplicate a driver or strand the player. No moves ⇒ byte-identical.</summary>
     private static List<GridSeat> ApplySeatOverrides(
+        SeasonPack pack, PackRound packRound,
         List<GridSeat> seats, IReadOnlyDictionary<string, string>? seatOverrides, string? playerSeatOverride)
     {
         var moves = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -197,18 +199,43 @@ public static class RoundGridResolver
             liveriesOnGrid.Add(seat.Ams2LiveryName);
         }
 
-        // incoming: target livery -> the driver block arriving there. Moves whose driver or car
-        // is not on THIS round's grid are dropped (their seats stay as resolved).
+        // incoming: target livery -> the driver block arriving there. Moves whose target car is
+        // not on THIS round's grid are dropped; a mover with no seat is an INTRODUCTION when the
+        // pack authors him (his block builds from the pack baseline), dropped otherwise.
         var incoming = new Dictionary<string, GridSeat>(StringComparer.Ordinal);
         var vacated = new HashSet<string>(StringComparer.Ordinal);
         foreach (var (driverId, livery) in moves)
         {
-            if (!byDriverId.TryGetValue(driverId, out var source) || !liveriesOnGrid.Contains(livery))
+            if (!liveriesOnGrid.Contains(livery))
                 continue;
-            incoming[livery] = source;
-            vacated.Add(source.Ams2LiveryName);
+            if (byDriverId.TryGetValue(driverId, out var source))
+            {
+                incoming[livery] = source;
+                vacated.Add(source.Ams2LiveryName);
+            }
+            else if (pack.Drivers.FirstOrDefault(d =>
+                         string.Equals(d.Id, driverId, StringComparison.Ordinal)) is { } introduced)
+            {
+                // The driver side only — the car block comes from the target seat below.
+                incoming[livery] = new GridSeat
+                {
+                    DriverId = introduced.Id,
+                    DriverName = introduced.Name,
+                    Country = introduced.Country,
+                    TeamId = "", // never read: only the driver-side fields transplant
+                    TeamName = "",
+                    Ams2LiveryName = livery,
+                    Ratings = MergeRatings(introduced, packRound),
+                    CarTuning = MergeCarTuning(introduced, packRound),
+                    Reliability = 0.0,
+                    WeightScalar = 1.0,
+                    PowerScalar = 1.0,
+                    DragScalar = 1.0,
+                    IsGuest = false,
+                };
+            }
         }
-        if (incoming.Count == 0 || !vacated.SetEquals(incoming.Keys))
+        if (incoming.Count == 0 || !vacated.IsSubsetOf(incoming.Keys))
             return seats;
 
         return seats

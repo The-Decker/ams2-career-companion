@@ -37,11 +37,17 @@ public static class SeasonRollover
     {
         ArgumentException.ThrowIfNullOrEmpty(acceptedTeamId);
 
-        var player = playerEnd with
-        {
-            CurrentTeamId = acceptedTeamId,
-            LiveryName = playerLiveryName ?? playerEnd.LiveryName,
-        };
+        // The SMGP replica owns its player's seat — the rival ladder and the title defense
+        // decide it in the season-end fold, so the accepted offer never reseats an smgp player
+        // (offers remain the season-advance trigger only). Every other career: the shipped
+        // offer-driven reseat, byte-identical.
+        var player = playerEnd.Smgp is not null
+            ? playerEnd
+            : playerEnd with
+            {
+                CurrentTeamId = acceptedTeamId,
+                LiveryName = playerLiveryName ?? playerEnd.LiveryName,
+            };
 
         // Between-season development (character depth 4): apply the player's journaled statSpend
         // INPUTs to the carried character as the career rolls into the next year — the exact same

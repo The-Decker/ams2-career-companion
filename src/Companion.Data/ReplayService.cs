@@ -721,6 +721,7 @@ public static class ReplayService
             {
                 Pack = pack,
                 State = smgpState,
+                Round = round,
                 RivalDriverId = rivalCall.RivalDriverId,
                 Forced = rivalCall.Forced,
                 SeatSwapAccepted = rivalCall.SeatSwapAccepted,

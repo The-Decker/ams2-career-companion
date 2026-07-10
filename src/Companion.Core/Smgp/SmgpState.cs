@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Companion.Core.Smgp;
 
 /// <summary>
@@ -29,8 +31,23 @@ public sealed record SmgpState
 
     /// <summary>Seat-swap displacements applied to the AI field (pack driver id → the
     /// ams2LiveryName that driver NOW occupies), ordinal key order. Applied by the grid resolver
-    /// after the cap so swapped rivals really drive their new cars (M3 slice 3).</summary>
+    /// after the cap so swapped rivals really drive their new cars (M3 slice 3). A driver with
+    /// no season ENTRY here (the reserved title-defense challenger) is INTRODUCED into that car,
+    /// replacing its authored occupant.</summary>
     public IReadOnlyDictionary<string, string> AiSeatOverrides { get; init; } = EmptyOverrides;
+
+    /// <summary>The Madonna title defense is LIVE this season (M3 slice 4): set when the player
+    /// wins the championship (next season starts in Madonna; the reserved challenger forces
+    /// battles at rounds 1 + 2), cleared when the defense resolves — or at season end, unresolved
+    /// = survived. Omitted when false so pre-slice-4 state cells parse/serialize unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool TitleDefense { get; init; }
+
+    /// <summary>Round 1's defense battle outcome, carried so <see cref="SmgpRules.TitleDefense"/>
+    /// can resolve both rounds together at round 2. Void (the default, omitted) = not fought /
+    /// no better than a void — exactly how the resolve treats it.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public SmgpBattleOutcome DefenseRound1 { get; init; }
 
     /// <summary>This rival's running tally (a rival never battled starts empty).</summary>
     public SmgpBattleTally TallyFor(string rivalDriverId) =>
@@ -43,6 +60,56 @@ public sealed record SmgpState
     /// <summary>The state with one AI seat override set/replaced, keys re-canonicalized.</summary>
     public SmgpState WithAiSeatOverride(string driverId, string ams2LiveryName) =>
         this with { AiSeatOverrides = Canonical(AiSeatOverrides, driverId, ams2LiveryName) };
+
+    /// <summary>The between-seasons reset: rival streaks and the defense scratchpad clear (each
+    /// season's ladder starts fresh); seats, titles and the career-over flag carry.</summary>
+    public SmgpState WithSeasonReset() => this with
+    {
+        Tallies = EmptyTallies,
+        TitleDefense = false,
+        DefenseRound1 = SmgpBattleOutcome.Void,
+    };
+
+    // STRUCTURAL equality — the record default compares the dictionaries by REFERENCE, which
+    // would make the rollover verifier's re-derived start state unequal to the deserialized
+    // stored one and fail the byte-identical replay gate at every smgp season boundary (the
+    // exact bug GridSelection/CharacterProfile hit). Both dictionaries are canonically ordered,
+    // so order-sensitive sequence comparison is exact.
+    public bool Equals(SmgpState? other)
+    {
+        if (other is null)
+            return false;
+        if (ReferenceEquals(this, other))
+            return true;
+        return string.Equals(CurrentSeatLivery, other.CurrentSeatLivery, StringComparison.Ordinal)
+            && Titles == other.Titles
+            && CareerOver == other.CareerOver
+            && TitleDefense == other.TitleDefense
+            && DefenseRound1 == other.DefenseRound1
+            && Tallies.SequenceEqual(other.Tallies)
+            && AiSeatOverrides.SequenceEqual(other.AiSeatOverrides);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(CurrentSeatLivery, StringComparer.Ordinal);
+        hash.Add(Titles);
+        hash.Add(CareerOver);
+        hash.Add(TitleDefense);
+        hash.Add(DefenseRound1);
+        foreach (var pair in Tallies)
+        {
+            hash.Add(pair.Key, StringComparer.Ordinal);
+            hash.Add(pair.Value);
+        }
+        foreach (var pair in AiSeatOverrides)
+        {
+            hash.Add(pair.Key, StringComparer.Ordinal);
+            hash.Add(pair.Value, StringComparer.Ordinal);
+        }
+        return hash.ToHashCode();
+    }
 
     private static readonly IReadOnlyDictionary<string, SmgpBattleTally> EmptyTallies =
         new Dictionary<string, SmgpBattleTally>(StringComparer.Ordinal);

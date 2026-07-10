@@ -88,6 +88,11 @@ public static class JournalPhases
     /// who now drives what. Emitted only when a battle actually moved seats.</summary>
     public const string SmgpSeat = "smgp.seat";
 
+    /// <summary>The SMGP season-end fold (M3 slice 4): the championship title increment + the
+    /// Madonna title-defense arming (champion), or the between-seasons streak reset (everyone
+    /// else, only when something actually reset). Absent for every non-smgp career.</summary>
+    public const string SmgpTitle = "smgp.title";
+
     /// <summary>One row per bridged gap year of an era transition (M6): the aging +
     /// retirement pass nobody played, keyed with the bridged year.</summary>
     public const string EraBridge = "era.bridge";

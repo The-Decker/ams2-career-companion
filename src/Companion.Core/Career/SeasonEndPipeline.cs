@@ -4,6 +4,7 @@ using Companion.Core.Character;
 using Companion.Core.Determinism;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
+using Companion.Core.Smgp;
 
 namespace Companion.Core.Career;
 
@@ -303,6 +304,53 @@ public static class SeasonEndPipeline
             // so it never carries into next season's start state (SeasonRollover copies the end state).
             SeasonInjuryLoad = 0.0,
         };
+
+        // ---- SMGP season fold (M3 slice 4) — only for a career carrying the mode's state ----
+        // Streaks and the defense scratchpad reset between seasons; a CHAMPIONSHIP win banks a
+        // title, arms the Madonna title defense and moves the champion into Madonna (the reserved
+        // challenger is introduced into his home car). SeasonRollover copies the end state, so
+        // this IS the next season's seating — re-derived identically on replay. Null state (every
+        // other career) folds exactly as before.
+        if (player.Smgp is { CareerOver: false } smgpEnd)
+        {
+            bool champion = playerPosition == 1;
+            var smgpNext = smgpEnd.WithSeasonReset();
+            if (champion)
+            {
+                smgpNext = SmgpSchedule.ChampionRollover(
+                    pack, smgpNext with { Titles = smgpNext.Titles + 1, TitleDefense = true });
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.SmgpTitle,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        titles = smgpNext.Titles,
+                        completed = SmgpRules.IsComplete(smgpNext.Titles),
+                        seat = smgpNext.CurrentSeatLivery,
+                        challenger = SmgpSchedule.DefenseChallenger(pack),
+                    }),
+                    Cause = "champion",
+                });
+                // The champion's TEAM carries too (rep tier next season reads it).
+                var championLadder = SmgpBattleFold.Ladder(pack);
+                string? championTeam = championLadder.FirstOrDefault(s =>
+                    string.Equals(s.Livery, smgpNext.CurrentSeatLivery, StringComparison.Ordinal))?.TeamId;
+                if (championTeam is not null)
+                    player = player with { CurrentTeamId = championTeam };
+            }
+            else if (smgpNext != smgpEnd)
+            {
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.SmgpTitle,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new { titles = smgpNext.Titles }),
+                    Cause = "season-reset",
+                });
+            }
+            player = player with { Smgp = smgpNext };
+        }
 
         // ---- step 3: aging -------------------------------------------------------------
         var agedDrivers = new List<DriverCareerState>(context.Drivers.Count);
