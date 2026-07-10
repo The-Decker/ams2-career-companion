@@ -788,9 +788,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         GridPlan grid;
         try
         {
-            grid = RoundGridResolver.Resolve(Pack, CurrentRoundNumber,
-                new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
-                CurrentGridSelection(), applyWeekendForm: CurrentFormAware());
+            // The same resolve as the fold's — including the SMGP seat swaps via ResolveGrid's
+            // path — so the expectation shown is the expectation scored.
+            grid = ResolveGrid(CurrentRoundNumber, applyWeekendForm: CurrentFormAware());
         }
         catch (InvalidOperationException)
         {
@@ -962,9 +962,27 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // synthetic entrant). This mirrors the fold + CurrentExpectedFinish, which seat the player
         // unconditionally, so the staged AMS2 file matches what the sim scores. Existing careers on a
         // qualifying pack livery resolve byte-identically.
+        // SMGP (M3): the latest folded mode state reseats swapped drivers — display, staging and
+        // the fold all read the same swaps, so the car the player sees IS the car the sim scores
+        // and the staged AMS2 file names the reseated drivers. Null outside the mode.
+        var smgp = CurrentSmgpState();
         return RoundGridResolver.Resolve(Pack, round,
             new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
-            CurrentGridSelection(), applyWeekendForm: applyWeekendForm);
+            CurrentGridSelection(), applyWeekendForm: applyWeekendForm,
+            seatOverrides: smgp?.AiSeatOverrides is { Count: > 0 } overrides ? overrides : null,
+            playerSeatOverride: smgp?.CurrentSeatLivery);
+    }
+
+    /// <summary>The SMGP mode's LATEST folded state — the last folded round's, else the season
+    /// start's — or null outside the mode. Deliberately NOT cached: every folded round can move
+    /// seats, and the next round's grid must show them.</summary>
+    private Companion.Core.Smgp.SmgpState? CurrentSmgpState()
+    {
+        int lastRound = MaxAppliedRound;
+        if (lastRound > 0 &&
+            StateStore.ReadRoundPlayerState(_database, _seasonId, lastRound) is { } folded)
+            return folded.Player.Smgp;
+        return StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.Smgp;
     }
 
     private Companion.Core.Grid.GridSelection? _gridSelection;

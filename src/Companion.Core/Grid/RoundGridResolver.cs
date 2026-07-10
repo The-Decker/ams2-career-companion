@@ -29,7 +29,8 @@ public static class RoundGridResolver
 {
     public static GridPlan Resolve(
         SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null,
-        bool capToGridSize = true, bool applyWeekendForm = false)
+        bool capToGridSize = true, bool applyWeekendForm = false,
+        IReadOnlyDictionary<string, string>? seatOverrides = null, string? playerSeatOverride = null)
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
@@ -110,6 +111,13 @@ public static class RoundGridResolver
         if (capToGridSize && packRound.Grid is { } capGrid)
             seats = CapToGridSize(seats, capGrid.Size);
 
+        // SMGP seat swaps (M3 slice 3): reseat drivers onto other cars AFTER the cap — driver
+        // identity/ratings move, the cars (team, livery, scalars) stay put, membership never
+        // changes. The player's block rides to playerSeatOverride (SmgpState.CurrentSeatLivery).
+        // Default null ⇒ untouched ⇒ byte-identical; the oracle never passes either.
+        if (seatOverrides is { Count: > 0 } || playerSeatOverride is not null)
+            seats = ApplySeatOverrides(seats, seatOverrides, playerSeatOverride);
+
         // Ratings Phase 3 (FormAware careers only): overlay the round's per-race form onto the AI
         // seats' pace ratings AFTER the cap, so form perturbs strength/pace but never grid
         // MEMBERSHIP. Default off ⇒ existing callers + form-less packs resolve a byte-identical grid.
@@ -150,6 +158,72 @@ public static class RoundGridResolver
             .ToList();
 
         return kept;
+    }
+
+    // ---------- SMGP seat overrides (M3) ----------
+
+    /// <summary>Reseats drivers onto other cars — the SMGP swap ladder's view of the grid. Each
+    /// move (driver id → target livery, plus the player's block riding to
+    /// <paramref name="playerSeatOverride"/>) transplants the DRIVER side of the seat (identity,
+    /// ratings, driver car tuning, the IsPlayer mark) onto the target CAR (team, livery, number,
+    /// reliability, scalars — which stay with the livery, exactly like the game's own swaps).
+    /// Applied only when the moves form a CLOSED permutation of seats present on this grid
+    /// (vacated cars == received cars — what the battle fold's chains always produce); anything
+    /// else returns the grid verbatim, so a malformed carry can never duplicate a driver or
+    /// strand the player. No moves ⇒ verbatim ⇒ byte-identical.</summary>
+    private static List<GridSeat> ApplySeatOverrides(
+        List<GridSeat> seats, IReadOnlyDictionary<string, string>? seatOverrides, string? playerSeatOverride)
+    {
+        var moves = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (seatOverrides is not null)
+        {
+            foreach (var pair in seatOverrides)
+                moves[pair.Key] = pair.Value;
+        }
+        if (playerSeatOverride is not null &&
+            seats.FirstOrDefault(s => s.IsPlayer) is { } playerSeat &&
+            !string.Equals(playerSeat.Ams2LiveryName, playerSeatOverride, StringComparison.Ordinal))
+        {
+            moves[playerSeat.DriverId] = playerSeatOverride;
+        }
+        if (moves.Count == 0)
+            return seats;
+
+        var byDriverId = new Dictionary<string, GridSeat>(StringComparer.Ordinal);
+        var liveriesOnGrid = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var seat in seats)
+        {
+            byDriverId[seat.DriverId] = seat;
+            liveriesOnGrid.Add(seat.Ams2LiveryName);
+        }
+
+        // incoming: target livery -> the driver block arriving there. Moves whose driver or car
+        // is not on THIS round's grid are dropped (their seats stay as resolved).
+        var incoming = new Dictionary<string, GridSeat>(StringComparer.Ordinal);
+        var vacated = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (driverId, livery) in moves)
+        {
+            if (!byDriverId.TryGetValue(driverId, out var source) || !liveriesOnGrid.Contains(livery))
+                continue;
+            incoming[livery] = source;
+            vacated.Add(source.Ams2LiveryName);
+        }
+        if (incoming.Count == 0 || !vacated.SetEquals(incoming.Keys))
+            return seats;
+
+        return seats
+            .Select(car => incoming.TryGetValue(car.Ams2LiveryName, out var occupant)
+                ? car with
+                {
+                    DriverId = occupant.DriverId,
+                    DriverName = occupant.DriverName,
+                    Country = occupant.Country,
+                    Ratings = occupant.Ratings,
+                    CarTuning = occupant.CarTuning,
+                    IsPlayer = occupant.IsPlayer,
+                }
+                : car)
+            .ToList();
     }
 
     // ---------- Ratings Phase 3: per-race form overlay ----------

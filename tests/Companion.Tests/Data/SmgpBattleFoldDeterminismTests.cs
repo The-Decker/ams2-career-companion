@@ -105,6 +105,74 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void AfterAnAcceptedSwap_TheNextRound_SeatsTheSwappedCars_EverywhereTheSameWay()
+    {
+        // M3 slice 3: the round AFTER the swap — the session grid (display + staging), the
+        // fold, and replay all seat the player on the rival's old car, the rival on the tier-D
+        // car, the displaced driver on the player's old car, and NOBODY else moves. Identities
+        // (driver ids) stay with the drivers; cars (team, livery) stay with the seats.
+        string packDirectory = Path.Combine(_root, "packs", "post-swap");
+        TestPackBuilder.Write(LadderPack(), packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "post-swap"),
+            library: FourSeatLibrary());
+        string careerPath = Path.Combine(_root, "careers", "post-swap.ams2career");
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "post-swap",
+                       MasterSeed = Seed,
+                       PlayerLiveryName = SeatC,
+                       SmgpMode = true,
+                   },
+                   environment))
+        {
+            for (int round = 1; round <= 2; round++)
+            {
+                ApplyPlayerFirst(session, round == 2
+                    ? new SmgpRivalCall { RivalDriverId = "driver.a", SeatSwapAccepted = true }
+                    : new SmgpRivalCall { RivalDriverId = "driver.a" });
+            }
+
+            // Round 3's grid: the swap is live.
+            var seats = session.CurrentGrid();
+            var player = seats.Single(s => s.IsPlayer);
+            Assert.Equal(SeatA, player.Ams2LiveryName);
+            Assert.Equal("driver.c", player.DriverId);   // identity rides with the player
+            Assert.Equal("team.a", player.TeamId);       // the car's team rides with the car
+            Assert.Equal(SeatD, seats.Single(s => s.DriverId == "driver.a").Ams2LiveryName);
+            Assert.Equal(SeatC, seats.Single(s => s.DriverId == "driver.d").Ams2LiveryName);
+            Assert.Equal(SeatB, seats.Single(s => s.DriverId == "driver.b").Ams2LiveryName);
+
+            // ...and the post-swap round FOLDS on that grid (the expected finish now measures
+            // the player against the field from the LEVEL A car).
+            ApplyPlayerFirst(session, rival: null);
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(careerPath);
+        AssertResimulatesByteIdentically(db);
+    }
+
+    private static void ApplyPlayerFirst(ICareerSession session, SmgpRivalCall? rival)
+    {
+        var others = session.CurrentGrid()
+            .Select(s => s.DriverId)
+            .Where(id => !string.Equals(id, session.Summary.PlayerDriverId, StringComparison.Ordinal))
+            .ToList();
+        session.Apply(new ResultDraft
+        {
+            Classified = new List<string> { session.Summary.PlayerDriverId }.Concat(others).ToList(),
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+            SmgpRival = rival,
+        });
+    }
+
+    [Fact]
     public void RoundsWithoutARivalCall_FoldNoBattleRows()
     {
         // The off path: an smgp career whose envelopes never stored a rival call folds exactly
@@ -123,13 +191,23 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
 
     // ---------- the four-tier ladder pack + the fold driver ----------
 
-    /// <summary>Four one-driver teams down the authored ladder (A/B/C/D), two rounds, smgp style.</summary>
+    /// <summary>Four one-driver teams down the authored ladder (A/B/C/D), THREE rounds (so a
+    /// round can still fold after a round-2 swap), smgp style.</summary>
     private static SeasonPack LadderPack()
     {
         var basePack = TestPackBuilder.TwoRoundPack();
         return basePack with
         {
             Manifest = basePack.Manifest with { CareerStyle = SmgpRules.CareerStyle },
+            Season = basePack.Season with
+            {
+                Rounds =
+                [
+                    TestPackBuilder.Round(1, "1967-01-02"),
+                    TestPackBuilder.Round(2, "1967-05-07"),
+                    TestPackBuilder.Round(3, "1967-09-03"),
+                ],
+            },
             Teams =
             [
                 Team("team.a", "Alpha", prestige: 5),
@@ -146,13 +224,16 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             ],
             Entries =
             [
-                TestPackBuilder.Entry("team.a", "driver.a", "1", SeatA),
-                TestPackBuilder.Entry("team.b", "driver.b", "2", SeatB),
-                TestPackBuilder.Entry("team.c", "driver.c", "3", SeatC),
-                TestPackBuilder.Entry("team.d", "driver.d", "4", SeatD),
+                Entry("team.a", "driver.a", "1", SeatA),
+                Entry("team.b", "driver.b", "2", SeatB),
+                Entry("team.c", "driver.c", "3", SeatC),
+                Entry("team.d", "driver.d", "4", SeatD),
             ],
         };
     }
+
+    private static PackEntry Entry(string teamId, string driverId, string number, string livery) =>
+        TestPackBuilder.Entry(teamId, driverId, number, livery) with { Rounds = "1-3" };
 
     private static PackTeam Team(string id, string name, int prestige) => new()
     {
