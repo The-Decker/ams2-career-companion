@@ -101,9 +101,16 @@ ladder (0.99 → 0.70) and G. Ceara at 0.99.
   - `data/ams2/portraits/<driverId>.jpg` — DRIVER PORTRAITS (universal, every pack): shown on
     the briefing dossier card AND the wizard's grid-choice cards (e.g.
     `driver.gilberto_ceara.jpg`; driver ids from `packs/smgp-1/drivers.json`).
-  - `data/ams2/cars/<driverId>.jpg` — the rival's CAR photo on the briefing dossier card
-    (universal, keyed by the driver whose car it is). Both dossier slots render as framed
-    placeholders until art is dropped in, so they are discoverable.
+  - `data/ams2/cars/<driverId>.png` — the rival's CAR photo on the briefing dossier card
+    (universal, keyed by the driver whose car it is). **EXTRACTED from the installed livery** by
+    `tools/extract_car_previews.cs` (`dotnet run tools/extract_car_previews.cs`): it parses each
+    F-Classic_Gen3 model's override XML for the `<PREVIEWIMAGE>` DDS (a pre-rendered car
+    thumbnail), decodes it (self-contained BC1/BC3/uncompressed DDS → PNG, ~900px), matches the
+    livery to the pack driver, and writes `dist/data/ams2/cars/<driverId>.png`. Re-run when the
+    skins change. The tool also emits `dist/data/ams2/portraits/_SMGP-portrait-keys.txt` — the
+    exact filename for each driver's hand-supplied PORTRAIT drop. Both are USER ASSETS (skinpack
+    renders / your art) under gitignored `dist/`, never committed. Both dossier slots render as
+    framed placeholders until art is present, so they are discoverable.
   - `data/ams2/smgp/banners/<teamId>.jpg` — team banner atop the dossier card (`team.madonna.jpg`).
   - `data/ams2/smgp/rounds/<round>.jpg` — round card art under the round header (`1.jpg` … `16.jpg`).
   - `data/ams2/smgp/hero.jpg` — the mode hero image (reserved for the main-menu/mode screens, M4).
