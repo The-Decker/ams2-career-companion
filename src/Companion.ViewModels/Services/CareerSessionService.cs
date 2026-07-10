@@ -1270,6 +1270,59 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                         "(previous files backed up).");
             }
 
+            // ACTIVE-SET activation (the 1985-style packs): a fixed slot budget with alternates
+            // kept inside one giant comment. Do the pack's own documented copy-paste procedure
+            // automatically — lift the alternates this round's grid needs into the slots of cars
+            // the round does not field (backup-first, the comment and its alternates preserved).
+            // Files without commented alternates are naturally untouched.
+            if (_environment.LocateInstall() is { } activeSetInstall)
+            {
+                var gridLiveries = plan.Seats.Select(s => s.Ams2LiveryName)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList();
+                int? activeSetMaxSlot =
+                    _environment.ContentLibrary.LiveryCaps.TryGetValue(plan.Ams2Class, out int activeSetCap)
+                        ? LiveryOverrideWriter.FirstCustomSlot + activeSetCap - 1
+                        : null;
+                var activeSetModelDirs = _environment.ContentLibrary.Vehicles.Values
+                    .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                    .Select(v => v.Dir)
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+                int activatedTotal = 0;
+                foreach (var dir in activeSetModelDirs)
+                {
+                    string activeSetPath = Path.Combine(
+                        activeSetInstall.InstallOverridesDirectory, dir, dir + ".xml");
+                    if (!File.Exists(activeSetPath))
+                        continue;
+                    try
+                    {
+                        var (activeNames, altNames) =
+                            ActiveSetRewriter.AvailableNames(File.ReadAllText(activeSetPath));
+                        if (altNames.Count == 0)
+                            continue; // no commented alternates — not a 1985-style file
+                        var wanted = gridLiveries
+                            .Where(n => activeNames.Contains(n, StringComparer.Ordinal) ||
+                                        altNames.Contains(n, StringComparer.Ordinal))
+                            .ToList();
+                        if (wanted.Count == 0)
+                            continue;
+                        var setResult = ActiveSetRewriter.Apply(
+                            activeSetPath, wanted, activeSetMaxSlot, _environment.Clock.GetUtcNow());
+                        if (setResult.Changed)
+                            activatedTotal += setResult.Activated;
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                    {
+                        // Best-effort cosmetic pass — never blocks staging.
+                    }
+                }
+                if (activatedTotal > 0)
+                    messages.Add(
+                        $"Activated {activatedTotal} alternate livery(ies) for this round's grid — " +
+                        "slots swapped from the pack's alternates list (previous files backed up).");
+            }
+
             // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
             // a Coloni/Eurobrun DNQs some rounds), graft its skin into the slowest same-model qualifier's
             // slot so the player can pick THEIR car in-game with its real paint. The grid-seating already
