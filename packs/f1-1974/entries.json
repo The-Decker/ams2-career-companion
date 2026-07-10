@@ -1,18 +1,46 @@
 {
   "entries": [
     {
-      "teamId": "team.brabham",
-      "driverId": "driver.john_watson",
-      "number": "28",
+      "teamId": "team.lotus",
+      "driverId": "driver.ronnie_peterson",
+      "number": "1",
       "rounds": "1-15",
-      "ams2LiveryName": "Goldie Hexagon - J. Watson #28"
+      "ams2LiveryName": "John Player Team Lotus - R. Peterson #1"
     },
     {
-      "teamId": "team.brabham",
-      "driverId": "driver.richard_robarts",
-      "number": "8",
+      "teamId": "team.lotus",
+      "driverId": "driver.jacky_ickx",
+      "number": "2",
       "rounds": "1-15",
-      "ams2LiveryName": "Goodyear Racing - R. Robarts #8"
+      "ams2LiveryName": "John Player Team Lotus - J. Ickx #2"
+    },
+    {
+      "teamId": "team.tyrrell",
+      "driverId": "driver.jody_scheckter",
+      "number": "3",
+      "rounds": "1-15",
+      "ams2LiveryName": "Elf Team Tyrrell - J. Scheckter #3"
+    },
+    {
+      "teamId": "team.tyrrell",
+      "driverId": "driver.patrick_depailler",
+      "number": "4",
+      "rounds": "1-15",
+      "ams2LiveryName": "Elf Team Tyrrell - P. Depailler #4"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.emerson_fittipaldi",
+      "number": "5",
+      "rounds": "1-15",
+      "ams2LiveryName": "Marlboro Team Texaco - E. Fittipaldi #5"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.denny_hulme",
+      "number": "6",
+      "rounds": "1-15",
+      "ams2LiveryName": "Marlboro Team Texaco - D. Hulme #6"
     },
     {
       "teamId": "team.brabham",
@@ -22,25 +50,60 @@
       "ams2LiveryName": "Hitachi Goodyear - C. Reutemann #7"
     },
     {
-      "teamId": "team.brm",
-      "driverId": "driver.jean_pierre_beltoise",
-      "number": "14",
-      "rounds": "1-15",
-      "ams2LiveryName": "Team BRM GB - J.P. Beltoise #14"
+      "teamId": "team.brabham",
+      "driverId": "driver.richard_robarts",
+      "number": "8",
+      "rounds": "1-3",
+      "ams2LiveryName": "Goodyear Racing - C. Pace #8"
     },
     {
-      "teamId": "team.brm",
-      "driverId": "driver.francois_migault",
-      "number": "37",
-      "rounds": "1-15",
-      "ams2LiveryName": "Team BRM GB - F. Migault #37"
+      "teamId": "team.brabham",
+      "driverId": "driver.rikky_von_opel",
+      "number": "8",
+      "rounds": "4-8",
+      "ams2LiveryName": "Goodyear Racing - C. Pace #8"
     },
     {
-      "teamId": "team.brm",
-      "driverId": "driver.henri_pescarolo",
-      "number": "15",
-      "rounds": "1-15",
-      "ams2LiveryName": "Team BRM GB - H. Pescarolo #15"
+      "teamId": "team.brabham",
+      "driverId": "driver.carlos_pace",
+      "number": "8",
+      "rounds": "9-15",
+      "ams2LiveryName": "Goodyear Racing - C. Pace #8"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.hans_joachim_stuck",
+      "number": "9",
+      "rounds": "1-6",
+      "ams2LiveryName": "March Goodyear - H. Stuck #9"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.reine_wisell",
+      "number": "9",
+      "rounds": "7",
+      "ams2LiveryName": "March Goodyear - H. Stuck #9"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.hans_joachim_stuck",
+      "number": "9",
+      "rounds": "8-15",
+      "ams2LiveryName": "March Goodyear - H. Stuck #9"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.howden_ganley",
+      "number": "10",
+      "rounds": "1-2",
+      "ams2LiveryName": "March Beta - V. Brambilla #10"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.vittorio_brambilla",
+      "number": "10",
+      "rounds": "3-15",
+      "ams2LiveryName": "March Beta - V. Brambilla #10"
     },
     {
       "teamId": "team.ferrari",
@@ -57,74 +120,53 @@
       "ams2LiveryName": "Scuderia Ferrari - N. Lauda #12"
     },
     {
-      "teamId": "team.iso_marlboro",
-      "driverId": "driver.arturo_merzario",
-      "number": "20",
+      "teamId": "team.brm",
+      "driverId": "driver.jean_pierre_beltoise",
+      "number": "14",
       "rounds": "1-15",
-      "ams2LiveryName": "ISO Marlboro FW - A. Merzario #20"
+      "ams2LiveryName": "Team BRM GB - J.P. Beltoise #14"
     },
     {
-      "teamId": "team.lola",
-      "driverId": "driver.guy_edwards",
-      "number": "27",
-      "rounds": "1-15",
-      "ams2LiveryName": "Lola Embassy Racing - G. Edwards #27"
+      "teamId": "team.brm",
+      "driverId": "driver.henri_pescarolo",
+      "number": "15",
+      "rounds": "1-13",
+      "ams2LiveryName": "Team BRM GB - H. Pescarolo #15"
     },
     {
-      "teamId": "team.lola",
-      "driverId": "driver.graham_hill",
-      "number": "26",
-      "rounds": "1-15",
-      "ams2LiveryName": "Lola Embassy Racing - G. Hill #26"
+      "teamId": "team.brm",
+      "driverId": "driver.chris_amon",
+      "number": "15",
+      "rounds": "14-15",
+      "ams2LiveryName": "Team BRM GB - H. Pescarolo #15"
     },
     {
-      "teamId": "team.lotus",
-      "driverId": "driver.ronnie_peterson",
-      "number": "1",
-      "rounds": "1-15",
-      "ams2LiveryName": "John Player Team Lotus - R. Peterson #1"
+      "teamId": "team.shadow",
+      "driverId": "driver.peter_revson",
+      "number": "16",
+      "rounds": "1-2",
+      "ams2LiveryName": "Shadow UOP Racing Team - T. Pryce #16"
     },
     {
-      "teamId": "team.lotus",
-      "driverId": "driver.jacky_ickx",
-      "number": "2",
-      "rounds": "1-15",
-      "ams2LiveryName": "John Player Team Lotus - J. Ickx #2"
+      "teamId": "team.shadow",
+      "driverId": "driver.brian_redman",
+      "number": "16",
+      "rounds": "4-6",
+      "ams2LiveryName": "Shadow UOP Racing Team - T. Pryce #16"
     },
     {
-      "teamId": "team.march",
-      "driverId": "driver.hans_joachim_stuck",
-      "number": "9",
-      "rounds": "1-15",
-      "ams2LiveryName": "March Goodyear - H. Stuck #9"
+      "teamId": "team.shadow",
+      "driverId": "driver.bertil_roos",
+      "number": "16",
+      "rounds": "7",
+      "ams2LiveryName": "Shadow UOP Racing Team - T. Pryce #16"
     },
     {
-      "teamId": "team.march",
-      "driverId": "driver.howden_ganley",
-      "number": "10",
-      "rounds": "1-15",
-      "ams2LiveryName": "March Goodyear - H. Ganley #10"
-    },
-    {
-      "teamId": "team.mclaren",
-      "driverId": "driver.emerson_fittipaldi",
-      "number": "5",
-      "rounds": "1-15",
-      "ams2LiveryName": "Marlboro Team Texaco - E. Fittipaldi #5"
-    },
-    {
-      "teamId": "team.mclaren",
-      "driverId": "driver.mike_hailwood",
-      "number": "33",
-      "rounds": "1-15",
-      "ams2LiveryName": "Yardley Mclaren - M. Hailwood #33"
-    },
-    {
-      "teamId": "team.mclaren",
-      "driverId": "driver.denny_hulme",
-      "number": "6",
-      "rounds": "1-15",
-      "ams2LiveryName": "Marlboro Team Texaco - D. Hulme #6"
+      "teamId": "team.shadow",
+      "driverId": "driver.tom_pryce",
+      "number": "16",
+      "rounds": "8-15",
+      "ams2LiveryName": "Shadow UOP Racing Team - T. Pryce #16"
     },
     {
       "teamId": "team.shadow",
@@ -134,39 +176,109 @@
       "ams2LiveryName": "Shadow UOP Racing Team - J.P. Jarier #17"
     },
     {
-      "teamId": "team.shadow",
-      "driverId": "driver.peter_revson",
-      "number": "16",
+      "teamId": "team.iso_marlboro",
+      "driverId": "driver.arturo_merzario",
+      "number": "20",
       "rounds": "1-15",
-      "ams2LiveryName": "Shadow UOP Racing Team - P. Revson #16"
+      "ams2LiveryName": "ISO Marlboro FW - A. Merzario #20"
+    },
+    {
+      "teamId": "team.iso_marlboro",
+      "driverId": "driver.tom_belso",
+      "number": "21",
+      "rounds": "3-4,7,10",
+      "ams2LiveryName": "ISO Marlboro FW - J. Laffite #21"
+    },
+    {
+      "teamId": "team.iso_marlboro",
+      "driverId": "driver.gijs_van_lennep",
+      "number": "21",
+      "rounds": "5-6,8",
+      "ams2LiveryName": "ISO Marlboro FW - J. Laffite #21"
+    },
+    {
+      "teamId": "team.iso_marlboro",
+      "driverId": "driver.jean_pierre_jabouille",
+      "number": "21",
+      "rounds": "9",
+      "ams2LiveryName": "ISO Marlboro FW - J. Laffite #21"
+    },
+    {
+      "teamId": "team.iso_marlboro",
+      "driverId": "driver.jacques_laffite",
+      "number": "21",
+      "rounds": "11-15",
+      "ams2LiveryName": "ISO Marlboro FW - J. Laffite #21"
     },
     {
       "teamId": "team.surtees",
+      "driverId": "driver.leo_kinnunen",
+      "number": "23",
+      "rounds": "5-13",
+      "ams2LiveryName": "Surtees AAW Racing Team - L. Kinnunen #23"
+    },
+    {
+      "teamId": "team.hesketh",
+      "driverId": "driver.james_hunt",
+      "number": "24",
+      "rounds": "1-15",
+      "ams2LiveryName": "Hesketh - J. Hunt #24"
+    },
+    {
+      "teamId": "team.lola",
+      "driverId": "driver.graham_hill",
+      "number": "26",
+      "rounds": "1-15",
+      "ams2LiveryName": "Lola Embassy Racing - G. Hill #26"
+    },
+    {
+      "teamId": "team.brabham",
+      "driverId": "driver.john_watson",
+      "number": "28",
+      "rounds": "1-15",
+      "ams2LiveryName": "Goldie Hexagon - J. Watson #28"
+    },
+    {
+      "teamId": "team.lotus",
+      "driverId": "driver.ian_scheckter",
+      "number": "29",
+      "rounds": "3",
+      "ams2LiveryName": "Team Gunston - I. Scheckter #29"
+    },
+    {
+      "teamId": "team.lotus",
+      "driverId": "driver.paddy_driver",
+      "number": "30",
+      "rounds": "3",
+      "ams2LiveryName": "Team Gunston - P. Driver #30"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.mike_hailwood",
+      "number": "33",
+      "rounds": "1-11",
+      "ams2LiveryName": "Yardley Mclaren - M. Hailwood #33"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.david_hobbs",
+      "number": "33",
+      "rounds": "12-13",
+      "ams2LiveryName": "Yardley Mclaren - M. Hailwood #33"
+    },
+    {
+      "teamId": "team.mclaren",
       "driverId": "driver.jochen_mass",
-      "number": "19",
-      "rounds": "1-15",
-      "ams2LiveryName": "Surtees Bang \u0026 Olufsen - J. Mass #19"
+      "number": "33",
+      "rounds": "14-15",
+      "ams2LiveryName": "Yardley Mclaren - M. Hailwood #33"
     },
     {
-      "teamId": "team.surtees",
-      "driverId": "driver.carlos_pace",
-      "number": "18",
-      "rounds": "1-15",
-      "ams2LiveryName": "Surtees Bang \u0026 Olufsen - C. Pace #18"
-    },
-    {
-      "teamId": "team.tyrrell",
-      "driverId": "driver.jody_scheckter",
-      "number": "3",
-      "rounds": "1-15",
-      "ams2LiveryName": "Elf Team Tyrrell - J. Scheckter #3"
-    },
-    {
-      "teamId": "team.tyrrell",
-      "driverId": "driver.patrick_depailler",
-      "number": "4",
-      "rounds": "1-15",
-      "ams2LiveryName": "Elf Team Tyrrell - P. Depailler #4"
+      "teamId": "team.brabham",
+      "driverId": "driver.gerard_larrousse",
+      "number": "43",
+      "rounds": "5-13",
+      "ams2LiveryName": "Scuderia Finotto - G. Larrousse #43"
     }
   ]
 }
