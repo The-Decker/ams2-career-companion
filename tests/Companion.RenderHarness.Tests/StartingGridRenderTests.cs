@@ -6,11 +6,12 @@ using Companion.ViewModels.Shell;
 
 namespace Companion.RenderHarness.Tests;
 
-/// <summary>Off-screen render of the starting-grid screen (shown after qualifying) over a real
-/// <see cref="StartingGridViewModel"/>. Laying out the REAL <see cref="StartingGridView"/> realises
-/// the two-wide UniformGrid of driver/car cards — resolving every StaticResource (SurfaceBrush,
-/// AccentBrush, the AssetImage converter, …) and the player-highlight DataTrigger — which a pure VM
-/// test can't exercise. Self-skips on a non-Windows / non-STA host.</summary>
+/// <summary>Off-screen render of the cinematic starting-grid screen (shown after qualifying) over a
+/// real <see cref="StartingGridViewModel"/>. Laying out the REAL <see cref="StartingGridView"/>
+/// realises the staggered two-row team-coloured card grid + the conditions bars — resolving every
+/// StaticResource (SurfaceBrush, AccentBrush, HexBrush, the AssetImage converter, …), the
+/// team-colour binding and the player-highlight DataTrigger — which a pure VM test can't exercise.
+/// Self-skips on a non-Windows / non-STA host.</summary>
 public sealed class StartingGridRenderTests
 {
     private const string PlayerId = "driver.hulme";
@@ -42,17 +43,22 @@ public sealed class StartingGridRenderTests
         {
             var grid = new[]
             {
-                Seat(PlayerId, "Hulme", "2"),
                 Seat("driver.brabham", "Brabham", "1"),
+                Seat(PlayerId, "Hulme", "2"),
                 Seat("driver.clark", "Clark", "5"),
             };
-            var vm = new StartingGridViewModel(grid, PlayerId, "Feature");
+            var vm = new StartingGridViewModel(grid, PlayerId, "Feature",
+                new GridConditions { LapDistanceKm = 5.278, Weather = "Clear", TrackTempC = 28, AirTempC = 22 });
 
-            // The player's own card carries the team player image key; the pole slot leads.
-            Assert.Equal("driver.hulme", vm.Slots[0].DriverId);
-            Assert.True(vm.Slots[0].IsPlayer);
-            Assert.Equal("player.hulme", vm.Slots[0].PortraitKey); // team-coloured player image
-            Assert.Equal("driver.brabham", vm.Slots[1].PortraitKey); // a rival keeps their own portrait
+            // The pole slot leads; the player's own card carries the team player image key.
+            Assert.Equal("driver.brabham", vm.Slots[0].DriverId);
+            Assert.Equal("player.hulme", vm.Slots[1].PortraitKey); // team-coloured player image
+            // Staggered rows: odds on top (P1, P3), evens on the back row (P2).
+            Assert.Equal([1, 3], vm.TopRow.Select(s => s.Position));
+            Assert.Equal([2], vm.BottomRow.Select(s => s.Position));
+            // Every card resolves a team accent colour.
+            Assert.All(vm.Slots, s => Assert.StartsWith("#", s.TeamColor));
+            Assert.Equal("5.278 km", vm.Conditions.LapDistanceLabel);
 
             var view = new StartingGridView { DataContext = vm };
             view.Measure(new Size(900, 600));

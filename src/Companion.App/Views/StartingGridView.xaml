@@ -3,83 +3,155 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
-    <!-- The starting grid, shown after qualifying and before the race: the grid pole-first as
-         driver + car cards, two wide and scrolling down. Display-only. -->
-    <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" Style="{StaticResource H2}" Margin="0,0,0,4" />
-        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,14"
-                   Text="Your grid for the race — pole first. Start the race when you're ready." />
-        <!-- primary action ("Start the race"); binds up to the hosting HomeView like the result entry -->
-        <Button DockPanel.Dock="Bottom" Style="{StaticResource AccentButton}" HorizontalAlignment="Right"
-                Margin="0,14,0,0" MinWidth="160"
-                Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='Start the race  ⏎'}"
-                Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
-                ToolTip="Go racing from this grid" />
-
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-            <ItemsControl ItemsSource="{Binding Slots}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="0,0,10,10" Padding="12,10" CornerRadius="8"
-                                Background="{StaticResource SurfaceBrush}" BorderThickness="1">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="BorderBrush" Value="{StaticResource EdgeBrush}" />
-                                    <Style.Triggers>
-                                        <!-- the player's own slot stands out -->
-                                        <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                                            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                                            <Setter Property="BorderThickness" Value="2" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <DockPanel>
-                                <!-- grid position -->
-                                <Border DockPanel.Dock="Left" Width="34" Height="34" CornerRadius="17"
-                                        Background="{StaticResource SurfaceAltBrush}" VerticalAlignment="Center"
-                                        Margin="0,0,12,0">
-                                    <TextBlock Text="{Binding Position}" FontWeight="Bold" FontSize="15"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-
-                                <!-- portrait (team player image on the player's card, else the driver) -->
-                                <Grid DockPanel.Dock="Left" Width="52" Height="52" Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
-                                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="22"
-                                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <Border CornerRadius="8" ClipToBounds="True">
-                                        <Image Stretch="UniformToFill"
-                                               Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                    </Border>
-                                </Grid>
-
-                                <!-- car preview (right) -->
-                                <Image DockPanel.Dock="Right" Width="64" Height="34" Stretch="Uniform"
-                                       VerticalAlignment="Center" Margin="10,0,0,0"
-                                       Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-
-                                <!-- driver + team -->
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding DriverNameUpper}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock Style="{StaticResource Faint}" TextTrimming="CharacterEllipsis">
-                                        <Run Text="{Binding TeamName, Mode=OneWay}" /><Run Text="  " /><Run Text="{Binding NumberLabel, Mode=OneWay}" />
-                                    </TextBlock>
-                                </StackPanel>
-                            </DockPanel>
+    <!-- The cinematic starting grid (Phase 1 of Mike's vision): the qualifying result laid out
+         pole-first as team-coloured driver + car cards in a staggered two-row grid (odds front /
+         evens a half-car back), paged horizontally, framed by the race conditions. Display-only. -->
+    <UserControl.Resources>
+        <!-- one grid card: team-coloured position box + name, portrait + car, team edge. -->
+        <DataTemplate x:Key="GridCard">
+            <Border Width="264" Margin="7,6" CornerRadius="10" Background="{StaticResource SurfaceBrush}"
+                    BorderThickness="1" BorderBrush="{Binding TeamColor, Converter={StaticResource HexBrush}}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderThickness" Value="2" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel>
+                    <!-- header: position box (team colour) + driver / team -->
+                    <DockPanel Margin="10,10,10,0">
+                        <Border DockPanel.Dock="Left" Width="44" Height="44" CornerRadius="8"
+                                Background="{Binding TeamColor, Converter={StaticResource HexBrush}}">
+                            <TextBlock Text="{Binding Position}" Foreground="White" FontWeight="Bold"
+                                       FontSize="21" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+                        <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding DriverNameUpper}" FontWeight="Bold" FontSize="15"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding TeamNameUpper}" FontSize="11.5" Margin="0,2,0,0"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <!-- portrait + car -->
+                    <Grid Height="112" Margin="10,8,10,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1.15*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0" Margin="0,0,6,0">
+                            <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
+                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="34"
+                                           Foreground="{StaticResource TextMutedBrush}" Opacity="0.4"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border CornerRadius="8" ClipToBounds="True">
+                                <Image Stretch="UniformToFill"
+                                       Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            </Border>
+                        </Grid>
+
+                        <Image Grid.Column="1" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- a horizontal row of cards (the panel both grid rows reuse) -->
+        <ItemsPanelTemplate x:Key="RowPanel">
+            <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <!-- ===== top: title + race-conditions bar ===== -->
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="STARTING GRID" Style="{StaticResource H2}" />
+                <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
+                           Text="Your grid for the race — pole first. Start the race when you're ready." />
+            </StackPanel>
+
+            <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="8" Padding="4"
+                    Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    DataContext="{Binding Conditions}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Margin="14,6" MinWidth="76">
+                        <TextBlock Text="LAP DISTANCE" Style="{StaticResource Faint}" FontSize="10" />
+                        <TextBlock Text="{Binding LapDistanceLabel}" FontWeight="SemiBold" FontSize="14" Margin="0,3,0,0" />
+                    </StackPanel>
+                    <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="2,6" />
+                    <StackPanel Margin="14,6" MinWidth="70">
+                        <TextBlock Text="WEATHER" Style="{StaticResource Faint}" FontSize="10" />
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <TextBlock Text="{Binding WeatherGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                       Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBlock Text="{Binding Weather}" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
+                    <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="2,6" />
+                    <StackPanel Margin="14,6" MinWidth="66">
+                        <TextBlock Text="TRACK TEMP" Style="{StaticResource Faint}" FontSize="10" />
+                        <TextBlock Text="{Binding TrackTempLabel}" FontWeight="SemiBold" FontSize="14" Margin="0,3,0,0" />
+                    </StackPanel>
+                    <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="2,6" />
+                    <StackPanel Margin="14,6" MinWidth="58">
+                        <TextBlock Text="AIR TEMP" Style="{StaticResource Faint}" FontSize="10" />
+                        <TextBlock Text="{Binding AirTempLabel}" FontWeight="SemiBold" FontSize="14" Margin="0,3,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ===== bottom: conditions strip + START RACE ===== -->
+        <Border DockPanel.Dock="Bottom" Margin="0,12,0,0" BorderThickness="0,1,0,0"
+                BorderBrush="{StaticResource EdgeBrush}" Padding="0,12,0,0">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}" MinWidth="170" FontWeight="Bold"
+                        Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='START RACE'}"
+                        Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
+                        ToolTip="Go racing from this grid" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DataContext="{Binding Conditions}">
+                    <TextBlock Text="{Binding WeatherGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="15"
+                               Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Weather}" Margin="7,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding WindLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding HumidityLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TrackStateLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding FuelLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ===== the staggered grid, paged horizontally ===== -->
+        <Grid Margin="0,14,0,0">
+            <ScrollViewer x:Name="GridScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                          Focusable="False" Padding="36,0">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding TopRow}" ItemTemplate="{StaticResource GridCard}"
+                                  ItemsPanel="{StaticResource RowPanel}" />
+                    <!-- the back row sits a half-car to the right, like a real grid -->
+                    <ItemsControl ItemsSource="{Binding BottomRow}" ItemTemplate="{StaticResource GridCard}"
+                                  ItemsPanel="{StaticResource RowPanel}" Margin="139,4,0,0" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- carousel arrows -->
+            <Button x:Name="ScrollLeftButton" Click="OnScrollLeft" HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Width="30" Height="52" Content="&#xE76B;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                    Style="{StaticResource SubtleButton}" ToolTip="Earlier on the grid" />
+            <Button x:Name="ScrollRightButton" Click="OnScrollRight" HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Width="30" Height="52" Content="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                    Style="{StaticResource SubtleButton}" ToolTip="Further down the grid" />
+        </Grid>
     </DockPanel>
 </UserControl>

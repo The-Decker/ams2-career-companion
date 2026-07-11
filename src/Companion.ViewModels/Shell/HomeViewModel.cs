@@ -304,9 +304,45 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
         _startingGrid = new StartingGridViewModel(
             grid, Summary.PlayerDriverId,
-            WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null);
+            WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null,
+            BuildGridConditions());
         CurrentContent = _startingGrid;
         ConfirmResultCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>The starting-grid bars' race conditions — lap distance + weather read from the current
+    /// briefing; the atmospheric readouts (track/air temp, wind, humidity) are synthesised
+    /// deterministically from the weather for flavour (display-only, never folded).</summary>
+    private GridConditions BuildGridConditions()
+    {
+        var briefing = _session.CurrentBriefing();
+        string weather = briefing?.Settings.FirstOrDefault(s =>
+            string.Equals(s.Section, "Race", StringComparison.Ordinal) &&
+            s.Label.StartsWith("Weather", StringComparison.OrdinalIgnoreCase))?.Value ?? "Clear";
+        bool wet = weather.Contains("rain", StringComparison.OrdinalIgnoreCase)
+            || weather.Contains("wet", StringComparison.OrdinalIgnoreCase)
+            || weather.Contains("storm", StringComparison.OrdinalIgnoreCase)
+            || weather.Contains("shower", StringComparison.OrdinalIgnoreCase);
+        int seed = Math.Abs(Summary.CurrentRound * 7 + weather.Length * 3);
+        return new GridConditions
+        {
+            LapDistanceKm = ParseKm(Briefing.CircuitCaption),
+            Weather = weather,
+            IsWet = wet,
+            TrackTempC = wet ? 16 + seed % 5 : 26 + seed % 7,
+            AirTempC = wet ? 13 + seed % 4 : 20 + seed % 5,
+            WindMs = Math.Round((wet ? 3.5 : 1.5) + seed % 4 * 0.4, 1),
+            HumidityPct = wet ? 80 + seed % 15 : 30 + seed % 20,
+            FuelPct = 100,
+        };
+    }
+
+    /// <summary>Pulls the "X.XXX km" lap distance out of the briefing's circuit caption, or null.</summary>
+    private static double? ParseKm(string? caption)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(caption ?? "", @"([\d.]+)\s*km");
+        return match.Success && double.TryParse(match.Groups[1].Value,
+            System.Globalization.CultureInfo.InvariantCulture, out double km) ? km : null;
     }
 
     /// <summary>Show the race result entry — the shipped flow, now seeded pole-first from any
