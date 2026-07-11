@@ -2,14 +2,13 @@
 // Authors packs/smgp-1 — the SUPER MONACO GP replica season pack — from the SMGP skinpack's own
 // CustomAIDrivers XML + the verified design (docs/dev/smgp-design.md, manual-sourced).
 //
-// v2 (the 32-skin integration): the season fields TWENTY-SIX cars — the F-Classic_Gen3 class
-// livery cap — covering ALL 22 teams the skinpack paints (SMGP1's sixteen + SMGP II's Joke,
-// Lares, Feet, Serga, Cool, Moon) plus the four strongest second cars (Madonna #1 A. Senna,
-// Firenze #4 I. Germi, Millions #5 N. Jones, Losel #14 W. Dehehe). Everyone drives THEIR OWN
-// painted car now: G. Ceara RACES at Bullets #17 from round 1 (and remains the title-defense
-// challenger), B. Miller drives Minarae #20, E. Sambena drives Serga #25. The six weakest
-// second cars stay authored in drivers.json as RESERVES with no season entry (Blume #8,
-// White #10, Gould #12, Alfven #19, Nono #21, Chardin #27 — all shipped slot-inactive anyway).
+// v3 (the dynamic DNQ field): the entry pool is the FULL 34 painted cars — all 22 teams (ten
+// two-car) plus the two McLaren MP4/5B LEVEL-A teams. The F-Classic_Gen3 class shows at most 26
+// distinct liveries, so per round only ~26 RACE and the slowest 8 (9 at Monaco) DID NOT QUALIFY;
+// which cars sit out rotates race to race (see QualifiersForRound — the 1988 pre-qualifying
+// pattern, baked so it replays identically). Everyone drives THEIR OWN painted car: G. Ceara
+// RACES at Bullets #17 from round 1 (and remains the title-defense challenger), B. Miller drives
+// Minarae #20, E. Sambena drives Serga #25. No reserves — every skin is a season entry now.
 // Data contract: each team's LADDER/champion car is authored FIRST in its entries block, and
 // ZEROFORCE is the last authored team (the mode's career-over floor).
 //
@@ -18,12 +17,13 @@
 //                    (Elsser->Elssler, Kilnger->Klinger) — LIVERY strings stay verbatim.
 //   teams.json    <- the 22 teams in the game's LEVEL A-D tiers (new teams slotted by their
 //                    drivers' pack ratings); carVehicleIds = the models their fielded cars use.
-//   entries.json  <- the 26 fielded cars.
+//   entries.json  <- all 34 fielded cars (the qualifying pool; ~26 race each round).
 //   season.json   <- 16 country-named rounds in the GAME's order (San Marino -> Monaco finale),
 //                    modelled on the 1989 F1 circuits (per-round history pointers to the 1989
 //                    reference); per-round grid.size = min(26, the track's Max AI cap) read from
-//                    data/ams2/tracks.json; points 9-6-4-3-2-1, no drops; Warm Up + "Preliminary
-//                    Race" qualifying + Grand Prix, always Clear; no refuelling.
+//                    data/ams2/tracks.json + grid.starterDriverIds = that round's dynamic
+//                    qualifiers; points 9-6-4-3-2-1, no drops; Warm Up + "Preliminary Race"
+//                    qualifying + Grand Prix, always Clear; no refuelling.
 //   pack.json     <- manifest with skinSeason "smgp" + careerStyle "smgp" (the mode gate).
 //
 // Usage: dotnet run tools/author_smgp.cs   (writes packs/smgp-1/*, idempotent)
@@ -41,12 +41,16 @@ string xmlPath = Path.Combine(repo, "scratchpad", "skins-study", "smgp", "F-Clas
 string outDir = Path.Combine(repo, "packs", "smgp-1");
 Directory.CreateDirectory(outDir);
 
-// The class livery cap: AMS2's F-Classic_Gen3 supports at most 26 DISTINCT custom liveries on a
-// grid (data/ams2/livery-caps.json). The field is 24 generic-model SMGP cars + the two McLaren
-// MP4/5B teams (Iris + Azalea) by Kobra Fleetworks = 26 (at the cap). The McLarens are permanent
-// base entries (the mod is finalized) and bind against the installed mclaren_mp45b mod car.
-const int FieldSize = 26;
-const int GenericBase = 24; // sanity: the TEAMS block emits exactly the 24 generic-model cars.
+// The FULL entry pool is 34 cars — every livery the skinpack paints: 32 generic-model SMGP cars
+// (all 22 teams, ten of them two-car) plus the two McLaren MP4/5B teams (Iris + Azalea) by Kobra
+// Fleetworks. AMS2's F-Classic_Gen3 supports at most 26 DISTINCT custom liveries on a grid
+// (data/ams2/livery-caps.json), so only ~26 of the 34 can RACE each round — the rest DID NOT
+// QUALIFY. Which cars sit out rotates race to race (the dynamic per-round DNQ field below), the
+// way the 1988 pre-qualifying packs work. The McLarens are permanent base entries (the mod is
+// finalized) and bind against the installed mclaren_mp45b mod car.
+const int FieldSize = 34;      // the whole entry pool (32 generic + 2 McLaren).
+const int GenericBase = 32;    // sanity: the TEAMS block emits exactly the 32 generic-model cars.
+const int LiveryCap = 26;      // the class livery cap — the real per-round racing ceiling (NOT FieldSize).
 
 // ---------------- drivers.json (from the skinpack's own AI XML) ----------------
 var RATING = new (string Xml, string Json)[]
@@ -128,24 +132,32 @@ var TEAMS = new (string Team, string Display, char Tier, (string Number, string 
                                      ("2",  "driver.alain_asselin",      "Madonna #2 A. Asselin", "formula_classic_g3m1")]),
     ("firenze",   "Firenze",   'A', [("3",  "driver.felipe_elssler",     "Firenze #3 F. Elsser",  "formula_classic_g3m1"),
                                      ("4",  "driver.ivanazzio_germi",    "Firenze #4 I. Germi",   "formula_classic_g3m1")]),
-    ("millions",  "Millions",  'A', [("6",  "driver.giorgio_alberti",    "Millions #6 G. Alberti", "formula_classic_g3m3")]),
-    ("bestowal",  "Bestowal",  'A', [("7",  "driver.alex_picos",         "Bestowal #7 A. Picos",  "formula_classic_g3m1")]),
+    ("millions",  "Millions",  'A', [("6",  "driver.giorgio_alberti",    "Millions #6 G. Alberti", "formula_classic_g3m3"),
+                                     ("5",  "driver.nigel_jones",        "Millions #5 N. Jones",  "formula_classic_g3m3")]),
+    ("bestowal",  "Bestowal",  'A', [("7",  "driver.alex_picos",         "Bestowal #7 A. Picos",  "formula_classic_g3m1"),
+                                     ("8",  "driver.michael_blume",      "Bestowal #8 M. Blume",  "formula_classic_g3m1")]),
     // LEVEL B
-    ("blanche",   "Blanche",   'B', [("9",  "driver.jean_herbin",        "Blanche #9 J. Herbin",  "formula_classic_g3m1")]),
-    ("tyrant",    "Tyrant",    'B', [("11", "driver.miyagi_hamano",      "Tyrant #11 M. Hamano",  "formula_classic_g3m4")]),
-    ("losel",     "Losel",     'B', [("13", "driver.esteban_pacheco",    "Losel #13 E. Pacheco",  "formula_classic_g3m4")]),
+    ("blanche",   "Blanche",   'B', [("9",  "driver.jean_herbin",        "Blanche #9 J. Herbin",  "formula_classic_g3m1"),
+                                     ("10", "driver.paul_white",         "Blanche #10 P. White",  "formula_classic_g3m4")]),
+    ("tyrant",    "Tyrant",    'B', [("11", "driver.miyagi_hamano",      "Tyrant #11 M. Hamano",  "formula_classic_g3m4"),
+                                     ("12", "driver.gilles_gould",       "Tyrant #12 G. Gould",   "formula_classic_g3m4")]),
+    ("losel",     "Losel",     'B', [("13", "driver.esteban_pacheco",    "Losel #13 E. Pacheco",  "formula_classic_g3m4"),
+                                     ("14", "driver.willian_dehehe",     "Losel #14 W. Dehehe",   "formula_classic_g3m4")]),
     ("may",       "May",       'B', [("15", "driver.george_turner",      "May #15 G. Turner",     "formula_classic_g3m4")]),
     ("joke",      "Joke",      'B', [("16", "driver.luca_dufay",         "Joke #16 L. Dufay",     "formula_classic_g3m4")]),
     // LEVEL C
     ("bullets",   "Bullets",   'C', [("17", "driver.gilberto_ceara",     "Bullets #17 G. Ceara",  "formula_classic_g3m4")]),
-    ("dardan",    "Dardan",    'C', [("18", "driver.eddie_bellini",      "Dardan #18 E. Bellini", "formula_classic_g3m4")]),
+    ("dardan",    "Dardan",    'C', [("18", "driver.eddie_bellini",      "Dardan #18 E. Bellini", "formula_classic_g3m4"),
+                                     ("19", "driver.keke_alfven",        "Dardan #19 K. Alfven",  "formula_classic_g3m4")]),
     ("linden",    "Linden",    'C', [("22", "driver.marcel_moreau",      "Linden #22 M. Moreau",  "formula_classic_g3m2")]),
-    ("minarae",   "Minarae",   'C', [("20", "driver.bernie_miller",      "Minarae #20 B. Miller", "formula_classic_g3m2")]),
+    ("minarae",   "Minarae",   'C', [("20", "driver.bernie_miller",      "Minarae #20 B. Miller", "formula_classic_g3m2"),
+                                     ("21", "driver.julianno_nono",      "Minarae #21 J. Nono",   "formula_classic_g3m4")]),
     ("lares",     "Lares",     'C', [("23", "driver.park_arai",          "Lares #23 P. Arai",     "formula_classic_g3m2")]),
     ("feet",      "Feet",      'C', [("24", "driver.jean_rampal",        "Feet #24 J. Rampal",    "formula_classic_g3m4")]),
     ("serga",     "Serga",     'C', [("25", "driver.eric_sambena",       "Serga #25 E. Sambena",  "formula_classic_g3m4")]),
     // LEVEL D (the player's rookie tier; Zeroforce is the floor — keep it LAST)
-    ("rigel",     "Rigel",     'D', [("26", "driver.ryan_cotman",        "Rigel #26 R. Cotman",   "formula_classic_g3m2")]),
+    ("rigel",     "Rigel",     'D', [("26", "driver.ryan_cotman",        "Rigel #26 R. Cotman",   "formula_classic_g3m2"),
+                                     ("27", "driver.tristan_chardin",    "Rigel #27 T. Chardin",  "formula_classic_g3m2")]),
     ("cool",      "Cool",      'D', [("28", "driver.alef_delvaux",       "Cool #28 A. Delvaux",   "formula_classic_g3m4")]),
     ("comet",     "Comet",     'D', [("29", "driver.ethan_tornio",       "Comet #29 E. Tornio",   "formula_classic_g3m2")]),
     ("orchis",    "Orchis",    'D', [("31", "driver.christopher_tegner", "Orchis #31 C. Tegner",  "formula_classic_g3m2")]),
@@ -263,6 +275,56 @@ foreach (var track in tracksJson["tracks"]!.AsArray())
 
 JsonArray Weather() => new("Clear", "Clear", "Clear", "Clear");
 
+// ---- dynamic per-race DNQ field (Mike, "use the max ... like our 1988 examples") ----
+// 34 painted cars, only ~26 grid slots: each round the slowest 8-9 fail to qualify, and WHICH
+// ones rotates race to race. We BAKE the round's qualifiers into grid.starterDriverIds (the same
+// mechanism the 1988 pre-qualifying packs use), so the resolver seats exactly them and the fold
+// replays byte-identically — no engine change. Selection = the top gridSize of the 34 by raceSkill
+// plus a small deterministic per-round perturbation: the perturbation only reshuffles the boundary
+// cluster (~0.74-0.82 raceSkill), so the strong (Senna/Ceara/the McLarens/every LEVEL A-B car)
+// ALWAYS qualify while the tail swaps out and in. The player's own car is never dropped — the
+// resolver's player-protection seats whatever weak D seat they picked even on a round it DNQ'd.
+var raceSkillById = new Dictionary<string, double>(StringComparer.Ordinal);
+foreach (var d in drivers)
+    raceSkillById[(string)d!["id"]!] = d["ratings"]!["raceSkill"]!.GetValue<double>();
+
+var fieldDrivers = new List<string>();
+foreach (var t in TEAMS)
+    foreach (var car in t.Cars)
+        fieldDrivers.Add(car.Driver);
+foreach (var m in MCLAREN_TEAMS)
+    fieldDrivers.Add(m.Driver);
+
+// A small deterministic per-round nudge (~[-0.03, +0.03]) via FNV-1a over (round, driverId):
+// baked so the DNQ set is replay-stable, yet different each race so the bubble cars rotate.
+static double DnqPerturb(int round, string driverId)
+{
+    unchecked
+    {
+        uint h = 2166136261;
+        void Mix(byte b) { h ^= b; h *= 16777619; }
+        for (int i = 0; i < 4; i++) Mix((byte)((uint)round >> (i * 8)));
+        foreach (char c in driverId) { Mix((byte)c); Mix((byte)(c >> 8)); }
+        return ((h % 1000) / 999.0 - 0.5) * 0.06;
+    }
+}
+
+// The round's qualifiers: top gridSize by perturbed raceSkill, EMITTED in authored field order
+// (membership is all the resolver reads — authored order keeps the JSON diff-friendly).
+JsonArray QualifiersForRound(int round, int gridSize)
+{
+    var qualified = fieldDrivers
+        .OrderByDescending(id => raceSkillById[id] + DnqPerturb(round, id))
+        .ThenBy(id => id, StringComparer.Ordinal)
+        .Take(gridSize)
+        .ToHashSet(StringComparer.Ordinal);
+    var arr = new JsonArray();
+    foreach (var id in fieldDrivers)
+        if (qualified.Contains(id))
+            arr.Add(id);
+    return arr;
+}
+
 var rounds = new JsonArray();
 var start = new DateTime(1990, 3, 11);
 
@@ -291,14 +353,13 @@ for (int i = 0; i < ROUNDS.Length; i++)
 
     if (!trackCaps.TryGetValue(r.TrackId, out int cap))
         throw new InvalidOperationException($"{r.TrackId} not in tracks.json");
-    int gridSize = Math.Min(FieldSize, cap);
+    // The per-round grid is the class livery cap, trimmed by the track's own Max AI cap — 26
+    // everywhere the venue allows, 25 at Monaco. NOT FieldSize (34): only 26 cars can wear a
+    // distinct livery, so 8-9 of the 34 DNQ each round.
+    int gridSize = Math.Min(LiveryCap, cap);
 
-    var starterCopy = new JsonArray();
-    foreach (var t in TEAMS)
-        foreach (var car in t.Cars)
-            starterCopy.Add(car.Driver);
-    foreach (var m in MCLAREN_TEAMS)
-        starterCopy.Add(m.Driver);
+    // The round's qualifiers — dynamic per race (see QualifiersForRound). Baked = replay-safe.
+    var starterCopy = QualifiersForRound(i + 1, gridSize);
 
     rounds.Add(new JsonObject
     {
@@ -376,7 +437,7 @@ var pack = new JsonObject
 {
     ["packId"] = "smgp-1",
     ["name"] = "Super Monaco GP",
-    ["version"] = "2.0.1",
+    ["version"] = "2.1.0",
     ["formatVersion"] = 1,
     ["skinSeason"] = "smgp",
     ["careerStyle"] = "smgp",
@@ -398,12 +459,11 @@ var pack = new JsonObject
         "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
         "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
         "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
-        "The season fields 26 cars: 24 generic-model SMGP cars (ALL 22 painted teams — SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon — plus Madonna #1 A. Senna and Firenze #4 I. Germi) and the two McLaren MP4/5B LEVEL-A teams by Kobra Fleetworks (Iris #33 B. Salgado, Azalea #34 M. Larssen). 26 = the class livery cap.",
+        "The full field is 34 painted cars: 32 generic-model SMGP cars (ALL 22 teams, ten of them two-car — SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon) and the two McLaren MP4/5B LEVEL-A teams by Kobra Fleetworks (Iris #33 B. Salgado, Azalea #34 M. Larssen).",
+        "DYNAMIC DNQ (pre-qualifying): the F-Classic_Gen3 class shows at most 26 distinct liveries, so only ~26 of the 34 race each round — the slowest 8 (9 at Monaco, cap 25) DID NOT QUALIFY, and WHICH cars sit out rotates race to race (the strong always make it; the backmarkers swap in and out). Your own car never DNQs. Baked per round, so it is deterministic and replays identically.",
         "The McLaren teams (Iris, Azalea) bind against the installed mclaren_mp45b mod car + the Kobra Fleetworks 'SMGP Iris & Azalea' livery override — install both so their cars show in-game.",
         "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
-        "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game.",
-        "Reserves (authored drivers, no season entry): M. Blume #8, P. White #10, G. Gould #12, K. Alfven #19, J. Nono #21, T. Chardin #27, plus N. Jones #5 and W. Dehehe #14 (second cars dropped so the McLarens fit the class 26-livery cap).",
-        "Per-round grids run the full field wherever the venue allows; Monaco's cap is 25, so its slowest qualifier sits out (the game's own limit).",
+        "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game. A qualifying car whose skin is not active floors to a guaranteed base-game livery for that round.",
         "New careers start in a LEVEL D car only (Rigel, Cool, Comet, Orchis, Moon, Zeroforce) — climb via the rival ladder.",
         "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
         "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, the LEVEL D four-loss career-over)."),
