@@ -305,18 +305,21 @@ for (int i = 0; i < ROUNDS.Length; i++)
         ["round"] = i + 1,
         ["weekend"] = new JsonObject
         {
+            // A full-race weekend (we run real GP distances, not the game's 5-lap sprints): a
+            // one-hour Warm Up (practice) then a 30-minute Preliminary Race (qualifying) — Mike's
+            // rule. The Preliminary Race IS qualifying (the game's own name for it).
             ["practice"] = new JsonObject
             {
                 ["present"] = true,
                 ["label"] = "Warm Up",
-                ["durationMinutes"] = 30,
+                ["durationMinutes"] = 60,
                 ["weatherSlots"] = Weather(),
             },
             ["qualifying"] = new JsonObject
             {
                 ["present"] = true,
                 ["label"] = "Preliminary Race",
-                ["durationMinutes"] = 15,
+                ["durationMinutes"] = 30,
                 ["weatherSlots"] = Weather(),
             },
             ["races"] = new JsonArray(new JsonObject

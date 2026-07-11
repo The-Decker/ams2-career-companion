@@ -29,11 +29,14 @@ game's own deadpan vocabulary; no cheese.
   Estoril, Jerez, Mexico City, Suzuka, Spa, Adelaide, Monte Carlo) — our placeholder/alternate
   track system already covers exactly this era (the 1990 pack's calendar is nearly identical).
 - **Points 9-6-4-3-2-1**, top six only, NO dropped scores — raw leader after 16 races wins.
-- Races are 5 laps in the game; the app authors laps per its own distance conventions but the
-  briefing should note the game ran sprint distances. Weather: always ideal (Clear) — verified.
-- Each weekend: optional WARM UP, then a one-lap **"Preliminary Race"** (the game's name for
-  qualifying — NEVER call it "Super License" in SMGP1; that's an SMGP II term/music cue only),
-  then the race. Field: 16 one-driver teams (player included).
+- Races are 5 laps in the game; **the app runs FULL GP distances** (real lap counts per its own
+  distance conventions), so the weekend is a real F1-style one, not the arcade sprint. Weather:
+  always ideal (Clear) — verified.
+- Each weekend (Mike's rule, since we run full races): a **60-minute WARM UP** (practice) then a
+  **30-minute "Preliminary Race"** — the game's name for **qualifying** (NEVER call it "Super
+  License" in SMGP1; that's an SMGP II term/music cue only). The briefing groups it under the
+  **"Qualifying (Preliminary Race)"** heading so it reads unmistakably as qualifying, not a second
+  race. Then the Grand Prix. Field: 16 one-driver teams (player included).
 
 ## The career premise (the part that must be exact)
 

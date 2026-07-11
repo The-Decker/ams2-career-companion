@@ -232,10 +232,19 @@ public sealed partial class BriefingViewModel : ObservableObject
     public bool SmgpCanName => SelectedSmgpRival is not null &&
         !ReferenceEquals(SelectedSmgpRival, NamedSmgpRival);
 
-    /// <summary>The commitment banner — deadpan, the game's register.</summary>
-    public string SmgpNamedLine => NamedSmgpRival is { } named
-        ? $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Finish ahead of him twice without losing and you may take his seat."
-        : "";
+    /// <summary>The commitment banner — deadpan, the game's register. Streak-aware: once you have
+    /// already beaten him once (a win banked from a PAST race you named him in), it says so, so the
+    /// two-wins ladder never reads as "start over".</summary>
+    public string SmgpNamedLine => NamedSmgpRival switch
+    {
+        { OfferOnWin: true } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL — and you have beaten him once already. " +
+            "Finish ahead of him again THIS race and his seat is yours.",
+        { } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat him this race and once more — two wins " +
+            "without losing to him — and you take his seat.",
+        null => "",
+    };
 
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
 
@@ -252,12 +261,15 @@ public sealed partial class BriefingViewModel : ObservableObject
         ? "A forced challenge — your rival is already named."
         : "WILL YOU NAME HIM AS YOUR RIVAL?";
 
-    /// <summary>What this rival's ladder telegraphs (the manual's own words), or empty.</summary>
+    /// <summary>What this rival's ladder telegraphs — streak-aware so the two-wins path and your
+    /// progress along it are always explicit (Mike's fix: "beat him once, then it said two races").
+    /// A win only counts in a race you NAMED him for, so the fresh-rival line spells that out.</summary>
     public string SmgpLadderLine => SelectedSmgpRival switch
     {
-        { OfferOnWin: true } => "Beat him and you may get an offer to join his team!",
-        { ForfeitOnLoss: true } => "Lose to him and he is offered YOUR seat.",
-        _ => "",
+        { OfferOnWin: true } => "You have beaten him once — finish ahead of him again THIS race and you take his seat!",
+        { ForfeitOnLoss: true } => "He has beaten you once — lose to him again this race and he takes YOUR seat.",
+        not null => "Beat him twice without losing to take his seat. Name him each race you mean to beat — a win only counts when he is your named rival.",
+        null => "",
     };
 
     /// <summary>The standing swap answer is only asked once a rival whose offer can arise this
