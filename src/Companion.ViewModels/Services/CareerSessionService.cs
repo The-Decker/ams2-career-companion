@@ -1498,22 +1498,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                         "slots swapped from the pack's alternates list (previous files backed up).");
             }
 
-            // PER-RACE SKIN ACTIVATION (SMGP, Mike's rule: "make sure EVERY CAR CAN SWITCH OFF AND
-            // ON FROM ACTIVE TO INACTIVE PERFECTLY"). The SMGP field rotates 34 painted cars through
-            // a ≤26-car grid via pre-qualifying; six second cars ship INSTALLED but INACTIVE
-            // (LIVERY="X.." placeholders — Bestowal #8, Tyrant #12, Dardan #19, Minarae #21, Lares
-            // #23, Feet #24). Switch on EXACTLY this round's qualifiers and park every other pack
-            // livery, per model override file (backup-first, cap-safe) — BEFORE the smart binding
-            // below scans active liveries, so all 26 grid cars read active and keep their real SMGP
-            // paint instead of being floored to a base-game livery (which AMS2 then pool-fills with a
-            // random stock driver — the "different names each load" bug). SMGP-only; every other pack
-            // is untouched. (This deliberately restores auto-activation removed in 9673a81, but done
-            // right: qualifiers ON + non-qualifiers OFF each race, not a blind placeholder activation.)
+            // FIXED FULL-SET SKIN ACTIVATION (SMGP). AMS2 loads a car model's custom liveries ONCE, at
+            // launch, and only the active (numeric-slot) ones — so a per-race rotation (park the
+            // non-qualifiers, switch the round's in) breaks: the just-switched-on skins aren't in the
+            // pool AMS2 already loaded, so those cars pool-fill with random stock drivers, and it takes
+            // a full game restart every round to fix. Instead, activate EVERY SMGP livery that fits each
+            // model's slot cap — ONCE, parking nothing — so the active set is STABLE: AMS2 loads it at
+            // launch and every car that fits stays painted, no per-round restart. (The pre-qualifying
+            // field is display-only anyway; whatever fits the cap is always active.) Cars beyond a
+            // model's cap keep a base-game livery. SMGP-only; runs before the smart binder's scan.
             if (IsSmgpPack && _environment.LocateInstall() is { } smgpInstall)
             {
-                var roundLiveries = plan.Seats
-                    .Select(s => s.Ams2LiveryName)
-                    .ToHashSet(StringComparer.Ordinal);
                 var packLiveries = Pack.Entries
                     .Select(e => e.Ams2LiveryName)
                     .ToHashSet(StringComparer.Ordinal);
@@ -1525,19 +1520,20 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
                     .Select(v => v.Dir)
                     .Distinct(StringComparer.OrdinalIgnoreCase);
+                // roundLiveries == packLiveries → activate every inactive SMGP livery, park none.
                 var activation = RoundLiveryActivator.ApplyRound(
-                    smgpInstall.InstallOverridesDirectory, smgpModelDirs, roundLiveries, packLiveries,
+                    smgpInstall.InstallOverridesDirectory, smgpModelDirs, packLiveries, packLiveries,
                     smgpMaxSlot, _environment.Clock.GetUtcNow());
                 if (activation.AnyChanged)
                     messages.Add(
-                        $"Activated this round's skins — {activation.Activated} switched on, " +
-                        $"{activation.Deactivated} parked across {activation.ModelsChanged} car model(s), so every " +
-                        "grid car shows its real SMGP livery (previous files backed up). If any car still shows a " +
-                        "wrong or random driver, fully close and reopen AMS2 once so it reloads the new liveries.");
+                        $"Activated {activation.Activated} SMGP skin(s) as a fixed set across " +
+                        $"{activation.ModelsChanged} car model(s) — every livery that fits is now switched on " +
+                        "(previous files backed up). Fully close and reopen AMS2 (launch it DIRECTLY, not through a " +
+                        "mod manager) so it loads the active skins; after that they stay put with no per-round restart.");
                 if (activation.Skipped.Count > 0)
                     messages.Add(
-                        $"Note: {activation.Skipped.Count} skin(s) could not be switched on (the class livery limit " +
-                        $"was reached) and will show a base-game car: {string.Join(", ", activation.Skipped.Take(6))}.");
+                        $"Note: {activation.Skipped.Count} skin(s) exceed AMS2's per-model livery limit and will show " +
+                        $"a base-game car: {string.Join(", ", activation.Skipped.Take(8))}.");
             }
 
             // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
