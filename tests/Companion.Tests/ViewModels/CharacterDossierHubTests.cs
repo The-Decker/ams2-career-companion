@@ -75,6 +75,34 @@ public sealed class CharacterDossierHubTests : IDisposable
     }
 
     [Fact]
+    public void Dossier_SurfacesThePlayerPortraitCarAndSpecCard()
+    {
+        using var session = CreateCareer(Character());
+        var vm = new DossierViewModel(session);
+
+        // The team-coloured player portrait key (player.<team>) drives the dossier hero image.
+        Assert.StartsWith("player.", vm.PlayerImageKey);
+        // The car the player drives — its preview key is the seat's driver id.
+        Assert.False(string.IsNullOrEmpty(vm.PlayerCarKey));
+        // The test pack's car has no authored car-spec (only the five SMGP models ship one), so the
+        // card is gracefully absent — proving the absent-tolerant wiring end to end.
+        Assert.Null(vm.PlayerCarSpec);
+    }
+
+    [Fact]
+    public void UpcomingRaceTab_IsRenamed_AndLockedOutOfTheRail()
+    {
+        using var hub = new HubViewModel(CreateCareer(Character()));
+
+        var raceTab = hub.Tabs.Single(t => t.Key == HubViewModel.RaceTabKey);
+        Assert.Equal("Upcoming Race", raceTab.Title);
+        Assert.False(raceTab.ShowInRail); // reached only via the header loop buttons, not the rail
+
+        // Every other tab still shows in the rail.
+        Assert.All(hub.Tabs.Where(t => t.Key != HubViewModel.RaceTabKey), t => Assert.True(t.ShowInRail));
+    }
+
+    [Fact]
     public void CharacterFreeCareer_HubHasNoDriverTab()
     {
         using var hub = new HubViewModel(CreateCareer(character: null));

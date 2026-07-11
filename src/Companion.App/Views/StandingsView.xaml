@@ -25,73 +25,92 @@
                       IsChecked="{Binding ShowPerRoundColumn, Mode=TwoWay}" StaysOpenOnClick="True" />
         </ContextMenu>
 
-        <!-- shared header row for the drivers/constructors tables -->
+        <!-- shared header row for the drivers/constructors tables. Header + rows are the SAME
+             shared-size grid (scope on each tab's DockPanel), so the columns can never drift
+             apart and Auto sizing means nothing clips at 130% UI scale. -->
         <DataTemplate x:Key="TableHeader">
-            <DockPanel Margin="4,0,4,4" Background="Transparent"
-                       ContextMenu="{StaticResource ColumnChooser}"
-                       ToolTip="Right-click to choose columns">
-                <Button DockPanel.Dock="Right" Width="76" Style="{StaticResource HeaderButton}"
-                        HorizontalContentAlignment="Right"
-                        Content="{Binding CountedHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="counted"
-                        Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
-                <Button DockPanel.Dock="Right" Width="86" Style="{StaticResource HeaderButton}"
-                        HorizontalContentAlignment="Right"
-                        Content="{Binding PerRoundHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="perRound"
-                        Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
-                <Button DockPanel.Dock="Right" Width="86" Style="{StaticResource HeaderButton}"
-                        HorizontalContentAlignment="Right"
-                        Content="{Binding GrossHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="gross"
-                        Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
-                <Button DockPanel.Dock="Right" Width="104" Style="{StaticResource HeaderButton}"
+            <Grid Margin="4,0,4,4" Background="Transparent"
+                  ContextMenu="{StaticResource ColumnChooser}"
+                  ToolTip="Right-click to choose columns">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Style="{StaticResource HeaderButton}"
+                        Content="{Binding PositionHeader}"
+                        Command="{Binding SortByCommand}" CommandParameter="position" />
+                <Button Grid.Column="1" Style="{StaticResource HeaderButton}" HorizontalAlignment="Stretch"
+                        Content="{Binding NameHeader}"
+                        Command="{Binding SortByCommand}" CommandParameter="name" />
+                <Button Grid.Column="2" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
                         Content="{Binding DroppedHeader}"
                         Command="{Binding SortByCommand}" CommandParameter="dropped"
                         Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
-                <Button DockPanel.Dock="Left" Width="44" Style="{StaticResource HeaderButton}"
-                        Content="{Binding PositionHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="position" />
-                <Button Style="{StaticResource HeaderButton}" HorizontalAlignment="Stretch"
-                        Content="{Binding NameHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="name" />
-            </DockPanel>
+                <Button Grid.Column="3" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
+                        HorizontalContentAlignment="Right"
+                        Content="{Binding GrossHeader}"
+                        Command="{Binding SortByCommand}" CommandParameter="gross"
+                        Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
+                <Button Grid.Column="4" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
+                        HorizontalContentAlignment="Right"
+                        Content="{Binding PerRoundHeader}"
+                        Command="{Binding SortByCommand}" CommandParameter="perRound"
+                        Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
+                <Button Grid.Column="5" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
+                        HorizontalContentAlignment="Right"
+                        Content="{Binding CountedHeader}"
+                        Command="{Binding SortByCommand}" CommandParameter="counted"
+                        Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
+            </Grid>
         </DataTemplate>
 
-        <!-- one drivers/constructors table row; columns mirror the header layout -->
+        <!-- one drivers/constructors table row; columns mirror the header layout via the shared
+             size groups above -->
         <DataTemplate x:Key="StandingsRowTemplate">
-            <DockPanel Margin="4,4">
-                <TextBlock DockPanel.Dock="Right" Width="76" Text="{Binding CountedText}" FontWeight="SemiBold"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           ToolTip="Counted points (dropped results excluded)"
-                           Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock DockPanel.Dock="Right" Width="86" Text="{Binding PerRoundText}"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           Foreground="{StaticResource TextSecondaryBrush}"
-                           ToolTip="Average counted points per applied round"
-                           Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock DockPanel.Dock="Right" Width="86" Text="{Binding GrossText}"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           Foreground="{StaticResource TextMutedBrush}"
-                           ToolTip="Gross points before the best-N rule dropped anything"
-                           Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock DockPanel.Dock="Right" Width="104" Text="{Binding DroppedRoundsText}"
-                           TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                           ToolTip="Rounds dropped by the best-N rule"
-                           Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock DockPanel.Dock="Left" Width="44" Text="{Binding PositionText}" FontWeight="SemiBold"
+            <Grid Margin="4,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
                            Foreground="{StaticResource TextMutedBrush}" />
                 <!-- The name is a "Why?" walk-back target (decisions 4 + 5): click (or focus +
                      Enter/Space — a Button is keyboard-invokable, locked decision 8) opens the
                      shared inspector for this competitor's journal. When no session is wired
                      (CanInspect false) the command no-ops and the row reads as plain text. -->
-                <Button Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
+                <Button Grid.Column="1" Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
                         HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
                         Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                         CommandParameter="{Binding CompetitorId}"
                         ToolTip="Why? — walk back the journal rows behind this number" />
-            </DockPanel>
+                <TextBlock Grid.Column="2" Margin="14,0,0,0" Text="{Binding DroppedRoundsText}"
+                           TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
+                           ToolTip="Rounds dropped by the best-N rule"
+                           Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
+                           FontFamily="Consolas" TextAlignment="Right"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           ToolTip="Gross points before the best-N rule dropped anything"
+                           Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
+                           FontFamily="Consolas" TextAlignment="Right"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           ToolTip="Average counted points per applied round"
+                           Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
+                           FontFamily="Consolas" TextAlignment="Right"
+                           ToolTip="Counted points (dropped results excluded)"
+                           Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+            </Grid>
         </DataTemplate>
         <!-- one inspector contribution row: label · detail · value -->
         <DataTemplate x:Key="InspectorRowTemplate">
@@ -145,7 +164,10 @@
                     Visibility="{Binding DriverRows.Count, Converter={StaticResource CountVisible}}">
             <TabItem Header="Drivers"
                      Visibility="{Binding ShowDriversTab, Converter={StaticResource BoolVisible}}">
-                <DockPanel MaxWidth="760" HorizontalAlignment="Left">
+                <!-- proportional table cap (was a hard 760): ~65% of the lens, 760–1200 -->
+                <DockPanel HorizontalAlignment="Left" Grid.IsSharedSizeScope="True"
+                           MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=TabControl},
+                                      Converter={StaticResource WidthFraction}, ConverterParameter=0.65|760|1200}">
                     <ContentPresenter DockPanel.Dock="Top" ContentTemplate="{StaticResource TableHeader}"
                                       Content="{Binding}" />
                     <!-- virtualized (ux-round §4): shared-drive eras classify 60+ drivers -->
@@ -157,7 +179,9 @@
 
             <TabItem Header="Constructors"
                      Visibility="{Binding ShowConstructorsTab, Converter={StaticResource BoolVisible}}">
-                <DockPanel MaxWidth="760" HorizontalAlignment="Left">
+                <DockPanel HorizontalAlignment="Left" Grid.IsSharedSizeScope="True"
+                           MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=TabControl},
+                                      Converter={StaticResource WidthFraction}, ConverterParameter=0.65|760|1200}">
                     <ContentPresenter DockPanel.Dock="Top" ContentTemplate="{StaticResource TableHeader}"
                                       Content="{Binding}" />
                     <ItemsControl Style="{StaticResource VirtualizedList}"
@@ -184,7 +208,9 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Width="48" Text="{Binding}" Style="{StaticResource Muted}"
+                                            <!-- 56 wide (was 48) so big values (25.5, 26+FL) never clip; header and
+                                                 body cells stay the same fixed width so the columns can't drift -->
+                                            <TextBlock Width="56" Text="{Binding}" Style="{StaticResource Muted}"
                                                        FontWeight="SemiBold" TextAlignment="Center" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -208,7 +234,7 @@
                                                              Enter/Space) walks that driver's journal narrowed to the
                                                              round. A blank cell (InspectorRef null) still renders its
                                                              number; the command no-ops on null. -->
-                                                        <Button Style="{StaticResource SubtleButton}" Padding="0" Width="48"
+                                                        <Button Style="{StaticResource SubtleButton}" Padding="0" Width="56"
                                                                 Command="{Binding DataContext.OpenCellInspectorCommand,
                                                                           RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding InspectorRef}"
@@ -245,12 +271,18 @@
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5). Shown while an
              inspector is open; the scrim + Close button (mouse) and the ESC key binding
              (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border Background="#99000000"
+        <Border x:Name="InspectorScrim" Background="#99000000"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
             </Border.InputBindings>
-            <Border MaxWidth="520" MaxHeight="440" Margin="24" Padding="18"
+            <!-- proportional modal (was a fixed 520x440 — cramped on 1440p): half the lens wide,
+                 70% tall, never below the old size -->
+            <Border Margin="24" Padding="18"
+                    MaxWidth="{Binding ActualWidth, ElementName=InspectorScrim,
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.5|520}"
+                    MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
+                                Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Background="{StaticResource SurfaceBrush}" CornerRadius="6"
                     BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
@@ -267,7 +299,7 @@
                     <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" TextWrapping="Wrap"
                                Style="{StaticResource Muted}" Margin="0,0,0,10"
                                Visibility="{Binding HasSummary, Converter={StaticResource BoolVisible}}" />
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                         <ItemsControl ItemsSource="{Binding Rows}"
                                       ItemTemplate="{StaticResource InspectorRowTemplate}" />
                     </ScrollViewer>

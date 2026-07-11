@@ -76,8 +76,13 @@ public sealed record HistoricalCircuit
     public int? Turns { get; init; }
     /// <summary>A brief, data-grounded circuit history ("The Nelson Piquet circuit (formerly
     /// Jacarepaguá) in Rio de Janeiro hosted 10 F1 World Championship Grands Prix between 1978 and
-    /// 1989."). Null/empty when unknown.</summary>
+    /// 1989."). Era-capped to races before the file's season. Null/empty when unknown.</summary>
     public string? History { get; init; }
+
+    /// <summary>Era-capped fun facts "coming into this season" (most wins, poles, lap record, …) —
+    /// pure f1db aggregations baked by derive_history.cs, never editorial. Empty on files baked
+    /// before the field existed (back-compat) or when nothing is known.</summary>
+    public IReadOnlyList<string> Facts { get; init; } = [];
 }
 
 /// <summary>One driver's line in a historical race result.</summary>

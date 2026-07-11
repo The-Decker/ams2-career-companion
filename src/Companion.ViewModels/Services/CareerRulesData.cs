@@ -1,6 +1,7 @@
 using Companion.Core.Career;
 using Companion.Core.Character;
 using Companion.Core.News;
+using Companion.Core.Smgp;
 
 namespace Companion.ViewModels.Services;
 
@@ -31,6 +32,27 @@ public sealed record CareerRulesData
     /// eagerly like the other rules so the live and replay paths see the identical instance.</summary>
     public required CharacterRules Character { get; init; }
 
+    /// <summary>The SMGP rivals' per-driver, per-mood trash-talk (<c>data\rules\smgp\rival-quotes.json</c>).
+    /// DISPLAY-ONLY — the briefing quote is never a fold input; empty (the deadpan default) when the
+    /// file is absent, so a non-SMGP install or an un-updated data folder is unaffected.</summary>
+    public required SmgpRivalQuotes SmgpRivalQuotes { get; init; }
+
+    /// <summary>The SMGP-universe "What Really Happened" almanac (<c>data\rules\smgp\what-really-happened.json</c>):
+    /// the SEGA world's own legend of every calendar circuit, revealed on the History tab once the
+    /// player has raced it. DISPLAY-ONLY — never a fold input; empty when the file is absent (the
+    /// History panel then simply hides).</summary>
+    public required SmgpWhatReallyHappened SmgpWhatReallyHappened { get; init; }
+
+    /// <summary>Per-team SMGP-world quotes + multi-paragraph history (<c>data\rules\smgp\team-profiles.json</c>),
+    /// shown on the promotion/demotion screen when the player joins a team. DISPLAY-ONLY — never a fold
+    /// input; empty when the file is absent (the team story then simply omits).</summary>
+    public required SmgpTeamProfiles SmgpTeamProfiles { get; init; }
+
+    /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
+    /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
+    /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
+    public required CarSpecCatalog CarSpecs { get; init; }
+
     public static CareerRulesData Load(string rulesDirectory) => new()
     {
         AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
@@ -38,6 +60,10 @@ public sealed record CareerRulesData
         Headlines = HeadlineBank.Parse(Read(rulesDirectory, "career-headline-templates.json")),
         NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
         Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
+        SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
+        SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
+        SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
+        CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 
     private static string Read(string rulesDirectory, string fileName)

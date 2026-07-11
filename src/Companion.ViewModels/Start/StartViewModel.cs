@@ -291,9 +291,9 @@ public sealed partial class StartViewModel : ObservableObject
     /// <paramref name="seasonYear"/> is the career's stored season year
     /// (<see cref="Services.CareerSummary.SeasonYear"/>) so the gallery card resolves its era art
     /// from the authoritative year rather than the name.</summary>
-    public void RecordCareer(string path, string careerName, int seasonYear = 0)
+    public void RecordCareer(string path, string careerName, int seasonYear = 0, string? careerStyle = null)
     {
-        _store.Touch(path, careerName, seasonYear);
+        _store.Touch(path, careerName, seasonYear, careerStyle);
         Refresh();
     }
 

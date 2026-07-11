@@ -26,8 +26,22 @@
     <SolidColorBrush x:Key="ErrorDimBrush" Color="#3A2226" />
     <SolidColorBrush x:Key="SelectionBrush" Color="#33415E" />
 
-    <!-- root font size (the base body font, 14) — MainWindow binds via DynamicResource. -->
-    <sys:Double x:Key="AppFontSize">14</sys:Double>
+    <!-- root font size (the base body font) — every window binds via DynamicResource. 15 (a touch
+         up from 14) so the app-wide body face (Retro Floral) reads comfortably and stays LARGER than the
+         Season's Grid card face (Mike's pick). -->
+    <sys:Double x:Key="AppFontSize">15</sys:Double>
+
+    <!-- Bundled faces (embedded as Resource in the App's Fonts\ folder, so the single exe carries
+         them). "BodyFont" (Roboto — Mike's pick for the clean, readable main text, Apache 2.0) =
+         the app-wide REGULAR text — every window sets it as the base FontFamily, so a body-font swap
+         is this one line. Display faces kept on specific screens: "Race Sport" = the season/career
+         picker card titles, "Microsport" = the Season's Grid card driver/team names, "Open Sans" =
+         the character screen. Segoe UI is the safe fallback if a face fails to load. -->
+    <FontFamily x:Key="BodyFont">/Fonts/#Roboto</FontFamily>
+    <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
+    <FontFamily x:Key="MicrosportFont">/Fonts/#Microsport</FontFamily>
+    <FontFamily x:Key="OpenSansFont">/Fonts/#Open Sans</FontFamily>
+    <FontFamily x:Key="RobotoFont">/Fonts/#Roboto</FontFamily>
 
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
          multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings
@@ -68,6 +82,8 @@
     <conv:KeyedAssetImageConverter x:Key="AssetImage" />
     <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
     <conv:AspectRatioHeightConverter x:Key="AspectHeight" />
+    <conv:WidthFractionConverter x:Key="WidthFraction" />
+    <conv:WidthToColumnsConverter x:Key="WidthToColumns" />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">
@@ -141,6 +157,11 @@
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <!-- content alignment must be TEMPLATE-BOUND (below), not hard-coded: full-width list
+             buttons (calendar round headers) set Stretch and it has to actually apply. These two
+             setters keep the classic centered look for every ordinary button. -->
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -159,7 +180,8 @@
                         <!-- click-point ripple host (behaviour-driven; see MotionAssist.Ripple) -->
                         <Border x:Name="RippleHost" CornerRadius="5" ClipToBounds="True" />
                         <ContentPresenter Margin="{TemplateBinding Padding}"
-                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           RecognizesAccessKey="True" />
                     </Grid>
                     <ControlTemplate.Triggers>

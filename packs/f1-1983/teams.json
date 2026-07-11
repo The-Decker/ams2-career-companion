@@ -1,0 +1,215 @@
+{
+  "teams": [
+    {
+      "id": "team.brabham",
+      "name": "Brabham-BMW",
+      "carVehicleIds": [
+        "brabham_bt52"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.3,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.renault",
+      "name": "Renault",
+      "carVehicleIds": [
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.36,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams-Ford",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.42,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.mclaren",
+      "name": "McLaren-Ford",
+      "carVehicleIds": [
+        "mclaren_mp4_1c"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.45,
+      "prestige": 5,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.alfa_romeo",
+      "name": "Alfa Romeo",
+      "carVehicleIds": [
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.25,
+      "prestige": 3,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.tyrrell",
+      "name": "Tyrrell-Ford",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.4,
+      "prestige": 4,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.lotus",
+      "name": "Lotus",
+      "carVehicleIds": [
+        "formula_retro_g3",
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.32,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.toleman",
+      "name": "Toleman-Hart",
+      "carVehicleIds": [
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.25,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.arrows",
+      "name": "Arrows-Ford",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.32,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.theodore",
+      "name": "Theodore-Ford",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.3,
+      "prestige": 1,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.ligier",
+      "name": "Ligier-Ford",
+      "carVehicleIds": [
+        "formula_retro_g3"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.28,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.spirit",
+      "name": "Spirit-Honda",
+      "carVehicleIds": [
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.15,
+      "prestige": 1,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.ats_wheels",
+      "name": "ATS-BMW",
+      "carVehicleIds": [
+        "formula_retro_g3_te"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.2,
+      "prestige": 2,
+      "budgetTier": 3
+    }
+  ]
+}

@@ -73,7 +73,7 @@ public sealed record CharacterDossier
         string? injuryRisk = null;
         if (InjuryModel.HasInjuryPerk(character, rules))
         {
-            double hazard = InjuryModel.Hazard(character.Stat("durability"), PerkResolver.Resolve(character.PerkIds, rules));
+            double hazard = InjuryModel.Hazard(character.Stat("durability"), PerkResolver.Resolve(character, rules));
             injuryRisk = hazard >= 0.30 ? "High" : hazard >= 0.16 ? "Moderate" : "Low";
         }
 
@@ -127,4 +127,45 @@ public static class CharacterLabels
         };
 
     public static string Stat(string id) => StatLabels.GetValueOrDefault(id, id);
+
+    private static readonly IReadOnlyDictionary<string, string> CategoryLabels =
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["pace"] = "Pace",
+            ["racecraft"] = "Racecraft",
+            ["physical"] = "Physical",
+            ["mental"] = "Mental",
+            ["business"] = "Business",
+            ["weather"] = "Weather",
+            ["team"] = "Team",
+            ["media"] = "Media",
+            ["era"] = "Era-flavor",
+        };
+
+    /// <summary>The friendly title for a perk category id ("era" → "Era-flavor"); Title-cases any
+    /// unmapped id so a new category never surfaces as a raw lowercase token.</summary>
+    public static string Category(string id) =>
+        CategoryLabels.TryGetValue(id, out var label)
+            ? label
+            : id.Length == 0 ? id : char.ToUpperInvariant(id[0]) + id[1..];
+
+    private static readonly IReadOnlyDictionary<string, string> RatingLabels =
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["raceSkill"] = "race pace",
+            ["qualifyingSkill"] = "one-lap pace",
+            ["aggression"] = "overtaking",
+            ["defending"] = "defending",
+            ["consistency"] = "consistency",
+            ["avoidanceOfMistakes"] = "composure",
+            ["startReactions"] = "starts",
+            ["wetSkill"] = "wet-weather pace",
+            ["tyreManagement"] = "tyre management",
+            ["stamina"] = "stamina",
+            ["fuelManagement"] = "fuel saving",
+        };
+
+    /// <summary>The friendly name for a <c>PackDriverRatings</c> field the character UI surfaces
+    /// (the stat→rating "advanced" numbers, the One-Trick specialism picker).</summary>
+    public static string Rating(string field) => RatingLabels.GetValueOrDefault(field, field);
 }

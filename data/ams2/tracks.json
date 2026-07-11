@@ -1,5 +1,5 @@
 {
-    "extractedFrom":  "AMS2 build 23820506, 2026-07-02",
+    "extractedFrom":  "AMS2 build 23820506, 2026-07-02 + 37 mod tracks refreshed from install Tracks\\*.trd via extract_tracks.cs, 2026-07-08",
     "tracks":  [
                    {
                        "id":  "adelaide_historic",
@@ -100,18 +100,79 @@
                        "ovalType":  7
                    },
                    {
-                       "id":  "azure_circuit_88",
-                       "trackName":  "Azure_Circuit_88",
-                       "shortTrackName":  "Azure_Circuit_88",
-                       "location":  "Monaco",
+                       "id":  "azure_coast",
+                       "trackName":  "Azure_Coast",
+                       "shortTrackName":  "Azure_Coast",
+                       "location":  "France",
                        "country":  "FR",
-                       "year":  2019,
-                       "lengthMeters":  3920,
-                       "maxAiParticipants":  29,
-                       "trackType":  "Circuit",
-                       "trackGrade":  "Historic",
+                       "year":  2017,
+                       "lengthMeters":  19251,
+                       "maxAiParticipants":  31,
+                       "trackType":  "Point to Point",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "azure_coast_reverse",
+                       "trackName":  "Azure_Coast_Westbound",
+                       "shortTrackName":  "Azure_Coast_W",
+                       "location":  "France",
+                       "country":  "FR",
+                       "year":  2017,
+                       "lengthMeters":  19277,
+                       "maxAiParticipants":  23,
+                       "trackType":  "Point to Point",
+                       "trackGrade":  "Alt",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "azure_coast_stage1",
+                       "trackName":  "Azure_Coast_Stage1",
+                       "shortTrackName":  "Azure_Coast_S1",
+                       "location":  "France",
+                       "country":  "FR",
+                       "year":  2017,
+                       "lengthMeters":  7401,
+                       "maxAiParticipants":  31,
+                       "trackType":  "Point to Point",
+                       "trackGrade":  "Alt",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "azure_coast_stage2",
+                       "trackName":  "Azure_Coast_Stage2",
+                       "shortTrackName":  "Azure_Coast_S2",
+                       "location":  "France",
+                       "country":  "FR",
+                       "year":  2017,
+                       "lengthMeters":  6889,
+                       "maxAiParticipants":  23,
+                       "trackType":  "Point to Point",
+                       "trackGrade":  "Alt",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "azure_coast_stage3",
+                       "trackName":  "Azure_Coast_Stage3",
+                       "shortTrackName":  "Azure_Coast_S3",
+                       "location":  "France",
+                       "country":  "FR",
+                       "year":  2017,
+                       "lengthMeters":  4966,
+                       "maxAiParticipants":  31,
+                       "trackType":  "Point to Point",
+                       "trackGrade":  "Alt",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "bannochbrae1",
@@ -121,11 +182,12 @@
                        "country":  "UK",
                        "year":  2017,
                        "lengthMeters":  7282,
-                       "maxAiParticipants":  19,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
-                       "trackGrade":  "",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "barcelona_1991",
@@ -279,7 +341,8 @@
                        "trackType":  "Rallycross",
                        "trackGrade":  "Rallycross",
                        "eventTypes":  "RallyCross,Practice,Race,TimeAttack",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "brandshatch_gp",
@@ -487,9 +550,10 @@
                        "lengthMeters":  20648,
                        "maxAiParticipants":  31,
                        "trackType":  "Point to Point",
-                       "trackGrade":  "",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "california_highway_reverse",
@@ -501,9 +565,10 @@
                        "lengthMeters":  20648,
                        "maxAiParticipants":  31,
                        "trackType":  "Point to Point",
-                       "trackGrade":  "",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "california_highway_stage1",
@@ -515,9 +580,10 @@
                        "lengthMeters":  6624,
                        "maxAiParticipants":  31,
                        "trackType":  "Point to Point",
-                       "trackGrade":  "",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "california_highway_stage2",
@@ -529,9 +595,10 @@
                        "lengthMeters":  8152,
                        "maxAiParticipants":  31,
                        "trackType":  "Point to Point",
-                       "trackGrade":  "",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "california_highway_stage3",
@@ -543,9 +610,10 @@
                        "lengthMeters":  5856,
                        "maxAiParticipants":  31,
                        "trackType":  "Point to Point",
-                       "trackGrade":  "",
+                       "trackGrade":  "Alt",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "california_horse_thief_mile",
@@ -618,6 +686,21 @@
                        "ovalType":  null
                    },
                    {
+                       "id":  "circuit_of_the_americas_club",
+                       "trackName":  "Circuit_of_the_Americas_Club",
+                       "shortTrackName":  "COTA_CLUB",
+                       "location":  "USA",
+                       "country":  "US",
+                       "year":  2017,
+                       "lengthMeters":  1985,
+                       "maxAiParticipants":  17,
+                       "trackType":  "Circuit",
+                       "trackGrade":  "Grade1",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
                        "id":  "circuit_of_the_americas_gp",
                        "trackName":  "Circuit_of_the_Americas_GP",
                        "shortTrackName":  "Circuit_of_the_Americas_GP",
@@ -629,7 +712,23 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "circuit_of_the_americas_national",
+                       "trackName":  "Circuit_of_the_Americas_National",
+                       "shortTrackName":  "COTA_NAT",
+                       "location":  "USA",
+                       "country":  "US",
+                       "year":  2017,
+                       "lengthMeters":  3702,
+                       "maxAiParticipants":  31,
+                       "trackType":  "Circuit",
+                       "trackGrade":  "Grade1",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "cleveland_gp",
@@ -870,6 +969,21 @@
                        "ovalType":  null
                    },
                    {
+                       "id":  "emirates_kartdrome",
+                       "trackName":  "Dubai_Kartdrome",
+                       "shortTrackName":  "Dubai_Kartdrome",
+                       "location":  "UAE",
+                       "country":  "AE",
+                       "year":  2017,
+                       "lengthMeters":  1165,
+                       "maxAiParticipants":  21,
+                       "trackType":  "Kart",
+                       "trackGrade":  "kart",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
                        "id":  "emirates_raceway_club",
                        "trackName":  "Dubai_Autodrome_Club",
                        "shortTrackName":  "Dubai_Club",
@@ -877,11 +991,12 @@
                        "country":  "AE",
                        "year":  2017,
                        "lengthMeters":  2460,
-                       "maxAiParticipants":  31,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "emirates_raceway_gp",
@@ -891,11 +1006,12 @@
                        "country":  "AE",
                        "year":  2017,
                        "lengthMeters":  5337,
-                       "maxAiParticipants":  31,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "emirates_raceway_int",
@@ -905,11 +1021,12 @@
                        "country":  "AE",
                        "year":  2017,
                        "lengthMeters":  4328,
-                       "maxAiParticipants":  31,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "emirates_raceway_nat",
@@ -919,11 +1036,12 @@
                        "country":  "AE",
                        "year":  2017,
                        "lengthMeters":  3589,
-                       "maxAiParticipants":  31,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "estoril_1988",
@@ -979,7 +1097,23 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "florence_short",
+                       "trackName":  "Mugello_Short",
+                       "shortTrackName":  "Mugello_Short",
+                       "location":  "Italy",
+                       "country":  "IT",
+                       "year":  2017,
+                       "lengthMeters":  2280,
+                       "maxAiParticipants":  39,
+                       "trackType":  "Circuit",
+                       "trackGrade":  "Grade1",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "fontana_oval",
@@ -1049,7 +1183,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade2",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "galeao_airport",
@@ -1269,11 +1404,12 @@
                        "country":  "BE",
                        "year":  2017,
                        "lengthMeters":  4011,
-                       "maxAiParticipants":  31,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "hockenheim_1977",
@@ -1917,7 +2053,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "knockhill_national_reverse",
@@ -1931,7 +2068,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "knockhill_racing",
@@ -1945,7 +2083,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "knockhill_racing_reverse",
@@ -1959,7 +2098,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "knockhill_rallycross",
@@ -1969,11 +2109,27 @@
                        "country":  "UK",
                        "year":  2017,
                        "lengthMeters":  1378,
-                       "maxAiParticipants":  7,
-                       "trackType":  "Rallycross",
+                       "maxAiParticipants":  14,
+                       "trackType":  "Circuit",
                        "trackGrade":  "Rallycross",
                        "eventTypes":  "RallyCross,Practice,Race,TimeAttack",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
+                       "id":  "knockhill_tri_oval",
+                       "trackName":  "Knockhill_Tri_Oval",
+                       "shortTrackName":  "Knockhill_Tri_Oval",
+                       "location":  "Scotland",
+                       "country":  "UK",
+                       "year":  2017,
+                       "lengthMeters":  482,
+                       "maxAiParticipants":  9,
+                       "trackType":  "Circuit",
+                       "trackGrade":  "Alt",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "kyalami_2019",
@@ -2043,7 +2199,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "lakeville_raceway_national",
@@ -2057,7 +2214,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "lakeville_raceway_short",
@@ -2071,7 +2229,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "le_mans_24h",
@@ -2242,6 +2401,21 @@
                        "ovalType":  null
                    },
                    {
+                       "id":  "lydden_hill_circuit",
+                       "trackName":  "Lydden_Hill_Circuit",
+                       "shortTrackName":  "Lydden_Hill_Circuit",
+                       "location":  "UK",
+                       "country":  "GB",
+                       "year":  2017,
+                       "lengthMeters":  1455,
+                       "maxAiParticipants":  15,
+                       "trackType":  "Circuit",
+                       "trackGrade":  "Grade4",
+                       "eventTypes":  "!RallyCross",
+                       "ovalType":  0,
+                       "isMod":  true
+                   },
+                   {
                        "id":  "lydden_hill_rx",
                        "trackName":  "Lydden_Hill_Rx",
                        "shortTrackName":  "Lydden_Hill_Rx",
@@ -2249,11 +2423,12 @@
                        "country":  "GB",
                        "year":  2017,
                        "lengthMeters":  1170,
-                       "maxAiParticipants":  15,
-                       "trackType":  "Rallycross",
+                       "maxAiParticipants":  13,
+                       "trackType":  "Circuit",
                        "trackGrade":  "Rallycross",
                        "eventTypes":  "RallyCross,Practice,Race,TimeAttack",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "montrealhistoric",
@@ -2431,11 +2606,12 @@
                        "country":  "CZ",
                        "year":  2016,
                        "lengthMeters":  5403,
-                       "maxAiParticipants":  31,
+                       "maxAiParticipants":  47,
                        "trackType":  "Circuit",
-                       "trackGrade":  null,
+                       "trackGrade":  "Grade1",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "mosport",
@@ -3653,7 +3829,8 @@
                        "trackType":  "Circuit",
                        "trackGrade":  "Grade3",
                        "eventTypes":  "!RallyCross",
-                       "ovalType":  null
+                       "ovalType":  0,
+                       "isMod":  true
                    },
                    {
                        "id":  "taruma",

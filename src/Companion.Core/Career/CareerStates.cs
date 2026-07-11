@@ -130,6 +130,18 @@ public sealed record PlayerCareerState
     /// packs that already ship DriverForm — is byte-identical and folds form-inert forever.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool FormAware { get; init; }
+
+    // ---- SMGP replica mode (M3) ----
+
+    /// <summary>The SMGP replica mode's folded state (rival tallies, the player's current car,
+    /// seat-swap displacements, titles, the Zeroforce game-over flag), or null for every career
+    /// outside the mode. Seeded at creation ONLY when the pack declares <c>careerStyle "smgp"</c>
+    /// AND the creation request opted in — mirroring <see cref="FormAware"/> — and carried forward
+    /// each round via record <c>with</c>, so rollover/season-end re-derive it identically. Omitted
+    /// when null (WhenWritingNull): every existing career's player_state blob is byte-identical
+    /// and the whole mode stays inert.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Companion.Core.Smgp.SmgpState? Smgp { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller

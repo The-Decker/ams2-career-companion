@@ -46,6 +46,13 @@ public sealed record Ams2Track
     public string? TrackGrade { get; init; }
     public string? EventTypes { get; init; }
     public int? OvalType { get; init; }
+
+    /// <summary>True for a community MOD track — one that ships as a LOOSE folder under the install's
+    /// <c>Tracks\&lt;id&gt;\</c> (base/DLC tracks are packed, so they have no loose folder). The
+    /// pre-season track preflight uses this to tell "must be downloaded/installed" mod tracks apart
+    /// from always-present base tracks. Populated by <c>tools/extract_tracks.cs</c>; absent = false
+    /// (a base/DLC track).</summary>
+    public bool IsMod { get; init; }
 }
 
 public sealed record Ams2LiveryClassEntry

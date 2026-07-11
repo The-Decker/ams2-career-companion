@@ -88,6 +88,8 @@ public static class CommunityBaselineImport
             WeatherTyreChanges = entry.WeatherTyreChanges ?? driver.Ratings.WeatherTyreChanges,
             AvoidanceOfForcedMistakes = entry.AvoidanceOfForcedMistakes ?? driver.Ratings.AvoidanceOfForcedMistakes,
             FuelManagement = entry.FuelManagement ?? driver.Ratings.FuelManagement,
+            SetupDownforce = entry.SetupDownforce ?? driver.Ratings.SetupDownforce,
+            SetupDownforceRandomness = entry.SetupDownforceRandomness ?? driver.Ratings.SetupDownforceRandomness,
         },
     };
 }

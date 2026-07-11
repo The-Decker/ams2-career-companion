@@ -46,8 +46,15 @@
       "teamId": "team.brabham",
       "driverId": "driver.gregor_foitek",
       "number": "7",
-      "rounds": "1-16",
+      "rounds": "1-2",
       "ams2LiveryName": "Brabham-Judd #7 G. Foitek"
+    },
+    {
+      "teamId": "team.brabham",
+      "driverId": "driver.david_brabham",
+      "number": "7",
+      "rounds": "3-16",
+      "ams2LiveryName": "Brabham-Judd #7 D. Brabham"
     },
     {
       "teamId": "team.brabham",
@@ -67,8 +74,15 @@
       "teamId": "team.arrows",
       "driverId": "driver.bernd_schneider",
       "number": "10",
-      "rounds": "1-16",
+      "rounds": "1,14",
       "ams2LiveryName": "Arrows-Ford #10 B. Schneider"
+    },
+    {
+      "teamId": "team.arrows",
+      "driverId": "driver.alex_caffi",
+      "number": "10",
+      "rounds": "2-13,15-16",
+      "ams2LiveryName": "Arrows-Ford #10 A. Caffi"
     },
     {
       "teamId": "team.lotus",
@@ -81,8 +95,15 @@
       "teamId": "team.lotus",
       "driverId": "driver.martin_donnelly",
       "number": "12",
-      "rounds": "1-16",
+      "rounds": "1-13",
       "ams2LiveryName": "Lotus-Lamborghini #12 M. Donnelly"
+    },
+    {
+      "teamId": "team.lotus",
+      "driverId": "driver.johnny_herbert",
+      "number": "12",
+      "rounds": "14-16",
+      "ams2LiveryName": "Lotus-Lamborghini #12 J. Herbert"
     },
     {
       "teamId": "team.osella",
@@ -123,8 +144,15 @@
       "teamId": "team.benetton",
       "driverId": "driver.alessandro_nannini",
       "number": "19",
-      "rounds": "1-16",
+      "rounds": "1-14",
       "ams2LiveryName": "Benetton-Ford #19 A. Nannini"
+    },
+    {
+      "teamId": "team.benetton",
+      "driverId": "driver.roberto_moreno",
+      "number": "19",
+      "rounds": "15-16",
+      "ams2LiveryName": "Benetton-Ford #19 R. Moreno"
     },
     {
       "teamId": "team.benetton",
@@ -137,7 +165,14 @@
       "teamId": "team.dallara",
       "driverId": "driver.gianni_morbidelli",
       "number": "21",
-      "rounds": "1-16",
+      "rounds": "1-2",
+      "ams2LiveryName": "Dallara-Ford #21 G. Morbidelli"
+    },
+    {
+      "teamId": "team.dallara",
+      "driverId": "driver.emanuele_pirro",
+      "number": "21",
+      "rounds": "3-16",
       "ams2LiveryName": "Dallara-Ford #21 G. Morbidelli"
     },
     {
@@ -158,8 +193,15 @@
       "teamId": "team.minardi",
       "driverId": "driver.paolo_barilla",
       "number": "24",
-      "rounds": "1-16",
+      "rounds": "1-14",
       "ams2LiveryName": "Minardi-Ford #24 P. Barilla"
+    },
+    {
+      "teamId": "team.minardi",
+      "driverId": "driver.gianni_morbidelli",
+      "number": "24",
+      "rounds": "15-16",
+      "ams2LiveryName": "Minardi-Ford #24 G. Morbidelli"
     },
     {
       "teamId": "team.ligier",
@@ -214,7 +256,7 @@
       "teamId": "team.eurobrun",
       "driverId": "driver.roberto_moreno",
       "number": "33",
-      "rounds": "1-16",
+      "rounds": "1-14",
       "ams2LiveryName": "EuroBrun-Judd #33 R. Moreno"
     },
     {
@@ -228,21 +270,35 @@
       "teamId": "team.onyx",
       "driverId": "driver.stefan_johansson",
       "number": "35",
-      "rounds": "1-16",
+      "rounds": "1-2",
+      "ams2LiveryName": "Onyx-Ford #35 S. Johansson"
+    },
+    {
+      "teamId": "team.onyx",
+      "driverId": "driver.gregor_foitek",
+      "number": "35",
+      "rounds": "3-10",
       "ams2LiveryName": "Onyx-Ford #35 S. Johansson"
     },
     {
       "teamId": "team.onyx",
       "driverId": "driver.jj_lehto",
       "number": "35",
-      "rounds": "1-16",
+      "rounds": "1-10",
       "ams2LiveryName": "Onyx-Ford #35 J. Lehto"
     },
     {
       "teamId": "team.life",
       "driverId": "driver.gary_brabham",
       "number": "39",
-      "rounds": "1-16",
+      "rounds": "1-2",
+      "ams2LiveryName": "Life #39 G. Brabham"
+    },
+    {
+      "teamId": "team.life",
+      "driverId": "driver.bruno_giacomelli",
+      "number": "39",
+      "rounds": "3-14",
       "ams2LiveryName": "Life #39 G. Brabham"
     }
   ]

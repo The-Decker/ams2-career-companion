@@ -132,6 +132,83 @@ public sealed class HistoryViewModelTests
         Assert.True(article.IsExpanded); // click-to-expand parity with the News ticker
     }
 
+    [Fact]
+    public void Smgp_world_almanac_maps_races_and_seals_the_unraced_circuits()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons = [new CareerSeasonCard { SeasonYear = 1990, RoundsApplied = 2, RoundCount = 16 }],
+            },
+            SmgpWorld = new SmgpWorldHistory
+            {
+                Races =
+                [
+                    new SmgpWorldRace
+                    {
+                        Round = 1, VenueName = "San Marino", IsRevealed = true,
+                        Title = "SAN MARINO — THE OPENER", Circuit = "the season's lights-out",
+                        Champion = "A. Senna · Madonna", Body = ["The king sets the tone."], Notes = ["A note."],
+                    },
+                    new SmgpWorldRace
+                    {
+                        Round = 2, VenueName = "Brazil", IsRevealed = true,
+                        Title = "BRAZIL — CEARA'S FORTRESS", Champion = "G. Ceara · Bullets",
+                        Body = ["Home hero."], Notes = [],
+                    },
+                    // Unraced → sealed: the header still shows the venue, but the legend stays hidden.
+                    new SmgpWorldRace { Round = 3, VenueName = "France", IsRevealed = false },
+                ],
+            },
+        };
+
+        var history = new HistoryViewModel(session);
+
+        Assert.True(history.HasSmgpWorld);
+        var world = history.SmgpWorld!;
+        Assert.Equal(3, world.Races.Count);
+        Assert.Equal("2 of 3 circuits unlocked", world.ProgressText);
+
+        var opener = world.Races[0];
+        Assert.Equal("R1", opener.RoundLabel);
+        Assert.Equal("San Marino", opener.VenueName);
+        Assert.True(opener.IsRevealed);
+        Assert.True(opener.HasChampion);
+        Assert.True(opener.HasCircuit);
+        Assert.True(opener.HasNotes);
+        Assert.Equal("A. Senna · Madonna", opener.Champion);
+
+        // Brazil authored no notes → HasNotes gates that section off cleanly.
+        Assert.False(world.Races[1].HasNotes);
+
+        // The sealed circuit leaks nothing but its name + round.
+        var sealed3 = world.Races[2];
+        Assert.False(sealed3.IsRevealed);
+        Assert.Equal("France", sealed3.VenueName);
+        Assert.False(sealed3.HasChampion);
+        Assert.False(sealed3.HasCircuit);
+        Assert.Empty(sealed3.Body);
+    }
+
+    [Fact]
+    public void A_normal_career_has_no_smgp_world_almanac()
+    {
+        var session = new HistoryFakeSession
+        {
+            Timeline = new CareerTimeline
+            {
+                Seasons = [new CareerSeasonCard { SeasonYear = 1967, RoundsApplied = 1, RoundCount = 11 }],
+            },
+            // SmgpWorld left null (the seam default) — the panel must stay hidden.
+        };
+
+        var history = new HistoryViewModel(session);
+
+        Assert.False(history.HasSmgpWorld);
+        Assert.Null(history.SmgpWorld);
+    }
+
     /// <summary>A session that only implements what the History lens reads — the additive
     /// default seam members keep this minimal and prove the lens couples to nothing else.</summary>
     [Fact]
@@ -368,6 +445,10 @@ public sealed class HistoryViewModelTests
 
         public HistoricalSeason? HistoricalSeason(int year) =>
             HistoricalSeasons.GetValueOrDefault(year);
+
+        public SmgpWorldHistory? SmgpWorld { get; init; }
+
+        public SmgpWorldHistory? SmgpWorldHistory() => SmgpWorld;
 
         public IReadOnlyList<NewsDispatch> ReadFeed() => Feed;
 

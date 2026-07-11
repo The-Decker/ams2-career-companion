@@ -2,6 +2,7 @@
   "year": 2000,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-V10_Gen2",
+  "refuellingAllowed": true,
   "pointsSystem": {
     "racePoints": [
       10,
@@ -30,16 +31,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -52,7 +73,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "montrealmodern"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 96,
       "grid": {
@@ -103,16 +129,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -176,16 +222,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -249,16 +315,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -322,16 +408,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -395,16 +501,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Light Rain",
+            "Overcast",
+            "Rain",
+            "Heavy Rain"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Overcast",
+              "Rain",
+              "Heavy Rain",
+              "Heavy Rain"
+            ]
           }
         ]
       },
@@ -469,16 +595,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -487,7 +633,7 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit de Monaco",
-        "id": "azure_circuit_88",
+        "id": "azure_circuit_2021",
         "isPlaceholder": false,
         "fallbacks": [
           "azure_circuit"
@@ -542,16 +688,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Medium Cloud",
+              "Light Rain",
+              "Rain",
+              "Heavy Rain"
+            ]
           }
         ]
       },
@@ -615,16 +781,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -638,7 +824,12 @@
         "fallbacks": [
           "brandshatch_gp",
           "barcelona_gp_1999"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 73,
       "grid": {
@@ -689,16 +880,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -762,16 +973,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Light Rain",
+            "Overcast",
+            "Light Rain",
+            "Overcast"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Light Cloud",
+              "Overcast",
+              "Rain"
+            ]
           }
         ]
       },
@@ -835,16 +1066,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -906,16 +1157,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Rain",
+              "Medium Cloud",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -979,16 +1250,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1052,16 +1343,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Light Rain",
+              "Overcast",
+              "Medium Cloud",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1125,16 +1436,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Medium Cloud",
+              "Overcast",
+              "Light Rain",
+              "Light Rain"
+            ]
           }
         ]
       },
@@ -1196,16 +1527,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1218,7 +1569,12 @@
         "isPlaceholder": true,
         "fallbacks": [
           "circuit_of_the_americas_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "sugo",
+          "laps": 79,
+          "isRealVenue": false
+        }
       },
       "laps": 68,
       "grid": {

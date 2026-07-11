@@ -20,27 +20,36 @@ public class RoundGridResolverTests
 
         var plan = RoundGridResolver.Resolve(pack, 1);
 
-        // entries.json order, filtered to rounds expressions containing 1.
+        // entries.json order, filtered to rounds expressions containing 1 — since the max-grid
+        // roster pass, Kyalami fields the FULL 20-car skinpack roster (no more 11-car round 1).
         string[] expected =
         [
-            "driver.jack_brabham",   // 1-11
-            "driver.denny_hulme",    // 1-11
-            "driver.jim_clark",      // 1-11
-            "driver.graham_hill",    // 1-11
-            "driver.jo_siffert",     // 1-11
-            "driver.jackie_stewart", // 1-11
-            "driver.mike_spence",    // 1-11
-            "driver.john_surtees",   // 1-4,6-7,9-11
-            "driver.jochen_rindt",   // 1-10
-            "driver.pedro_rodriguez",// 1-7,11
-            "driver.dan_gurney",     // 1-11
+            "driver.jack_brabham",       // 1-11
+            "driver.denny_hulme",        // 1-11
+            "driver.bob_anderson",       // 1-5 (the real privateer Brabham; died Aug 1967)
+            "driver.jim_clark",          // 1-11
+            "driver.graham_hill",        // 1-11
+            "driver.jackie_stewart",     // 1-11
+            "driver.mike_spence",        // 1-11
+            "driver.pedro_rodriguez",    // 1-7,11
+            "driver.jo_siffert",         // 1-11
+            "driver.jochen_rindt",       // 1-10
+            "driver.chris_amon",         // 1-11
+            "driver.lorenzo_bandini",    // 1-2 (fatal Monaco accident)
+            "driver.ludovico_scarfiotti",// 1-11
+            "driver.john_surtees",       // 1-11
+            "driver.dan_gurney",         // 1-11
+            "driver.richie_ginther",     // 1-2 (retired from driving)
+            "driver.bruce_mclaren",      // 1-11
+            "driver.hubert_hahne",       // 1-11
+            "driver.jean_pierre_beltoise", // 1-6,8-11
+            "driver.jacky_ickx",         // 1,3-11
         ];
         Assert.Equal(expected, plan.Seats.Select(s => s.DriverId));
 
-        // Split ranges exclude correctly: Bruce McLaren (2-3,8-11) and the round-2-only
-        // Ferrari/Eagle one-offs are not in round 1.
-        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.bruce_mclaren");
-        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.lorenzo_bandini");
+        // Mid-season stints exclude correctly: Parkes (3-4) and Servoz-Gavin (2) are not in round 1.
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.mike_parkes");
+        Assert.DoesNotContain(plan.Seats, s => s.DriverId == "driver.johnny_servoz_gavin");
     }
 
     [Fact]
@@ -48,38 +57,47 @@ public class RoundGridResolverTests
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");
 
-        // driver.john_surtees has rounds "1-4,6-7,9-11": in for 4, out for 5 and 8.
-        Assert.Contains(RoundGridResolver.Resolve(pack, 4).Seats, s => s.DriverId == "driver.john_surtees");
-        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 5).Seats, s => s.DriverId == "driver.john_surtees");
-        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 8).Seats, s => s.DriverId == "driver.john_surtees");
-        Assert.Contains(RoundGridResolver.Resolve(pack, 9).Seats, s => s.DriverId == "driver.john_surtees");
+        // driver.pedro_rodriguez has rounds "1-7,11" (injured mid-season): in for 4, out for 8-10.
+        Assert.Contains(RoundGridResolver.Resolve(pack, 4).Seats, s => s.DriverId == "driver.pedro_rodriguez");
+        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 8).Seats, s => s.DriverId == "driver.pedro_rodriguez");
+        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 9).Seats, s => s.DriverId == "driver.pedro_rodriguez");
+        Assert.Contains(RoundGridResolver.Resolve(pack, 11).Seats, s => s.DriverId == "driver.pedro_rodriguez");
 
-        // driver.hubert_hahne is a single-round entry ("7").
-        Assert.Contains(RoundGridResolver.Resolve(pack, 7).Seats, s => s.DriverId == "driver.hubert_hahne");
-        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 6).Seats, s => s.DriverId == "driver.hubert_hahne");
+        // driver.richard_attwood is his single-round stand-in ("8") in the same car.
+        Assert.Contains(RoundGridResolver.Resolve(pack, 8).Seats, s => s.DriverId == "driver.richard_attwood");
+        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 7).Seats, s => s.DriverId == "driver.richard_attwood");
+
+        // driver.jo_bonnier covers two DIFFERENT Cooper seats: #11 for "9-10", #30 for "11".
+        Assert.Equal("Cooper-Maserati #11 P. Rodriguez",
+            Assert.Single(RoundGridResolver.Resolve(pack, 9).Seats, s => s.DriverId == "driver.jo_bonnier").Ams2LiveryName);
+        Assert.Equal("Cooper-Maserati #30 J. Rindt",
+            Assert.Single(RoundGridResolver.Resolve(pack, 11).Seats, s => s.DriverId == "driver.jo_bonnier").Ams2LiveryName);
     }
 
-    // ---------- the player races the FULL season, even when their historical driver sat out ----------
+    // ---------- the player races the FULL season, even when their seat has a coverage gap ----------
 
     [Fact]
     public void Resolve_PlayerSeat_RacesEveryRound_EvenWhenTheirHistoricalDriverSatOut()
     {
         var pack = GridTestData.LoadReferencePack("f1-1967");
-        // John Surtees ran rounds "1-4,6-7,9-11" — historically OUT for rounds 5 and 8.
-        var player = new PlayerSeat { Ams2LiveryName = "Honda #7 J. Surtees" };
+        // Ferrari #18: Bandini (1-2), Parkes (3-4), then a REAL gap 5-10 (the second works Ferrari
+        // did not exist those rounds), Williams (11).
+        var player = new PlayerSeat { Ams2LiveryName = "Ferrari #18 L. Bandini" };
 
-        // Round 4: Surtees raced, so the player takes his real seat (replacement, exactly as before).
-        var seat4 = Assert.Single(RoundGridResolver.Resolve(pack, 4, player).Seats, s => s.IsPlayer);
-        Assert.Equal("Honda #7 J. Surtees", seat4.Ams2LiveryName);
+        // Round 3: the livery is covered (Parkes), so the player takes that seat (replacement).
+        var seat3 = Assert.Single(RoundGridResolver.Resolve(pack, 3, player).Seats, s => s.IsPlayer);
+        Assert.Equal("Ferrari #18 L. Bandini", seat3.Ams2LiveryName);
+        Assert.Equal("driver.mike_parkes", seat3.DriverId);
 
-        // Round 5: Surtees sat out — but the player still races, seated from their own livery entry,
-        // instead of being benched (the old behaviour returned no player seat).
+        // Round 5: nobody covers the seat — but the player still races, seated from their own
+        // livery entry, instead of being benched (the old behaviour returned no player seat).
         var seat5 = Assert.Single(RoundGridResolver.Resolve(pack, 5, player).Seats, s => s.IsPlayer);
-        Assert.Equal("Honda #7 J. Surtees", seat5.Ams2LiveryName);
-        Assert.Equal("driver.john_surtees", seat5.DriverId);
+        Assert.Equal("Ferrari #18 L. Bandini", seat5.Ams2LiveryName);
+        Assert.Equal("driver.lorenzo_bandini", seat5.DriverId);
 
-        // Without a player seat, round 5's historical field still excludes Surtees (unchanged).
-        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 5).Seats, s => s.DriverId == "driver.john_surtees");
+        // Without a player seat, round 5's historical field still leaves the seat empty (unchanged).
+        Assert.DoesNotContain(RoundGridResolver.Resolve(pack, 5).Seats,
+            s => s.Ams2LiveryName == "Ferrari #18 L. Bandini");
     }
 
     [Fact]

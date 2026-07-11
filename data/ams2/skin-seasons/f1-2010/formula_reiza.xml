@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+	
+	<LIVERY_OVERRIDE LIVERY="51" NAME="2010 McLaren #1 - J. Button" BASELIVERY="Chrome">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\1_McLaren.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\1_McLaren.dds" />
+	<TEXTURE NAME="FRESNEL" PATH="F1_Season_2010\1_McLaren_Fres.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\McLaren.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\McLaren_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Button.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\McLaren_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\McLarenDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\McLarenArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\McLarenGloves_Button.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\McLarenLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\McLaren.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="52" NAME="2010 McLaren #2 - L. Hamilton" BASELIVERY="Chrome">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\2_McLaren.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\2_McLaren.dds" />
+	<TEXTURE NAME="FRESNEL" PATH="F1_Season_2010\2_McLaren_Fres.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\McLaren.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\McLaren_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Hamilton.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\McLaren_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\McLarenDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\McLarenArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\McLarenGloves_Hamilton.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\McLarenLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\McLaren.dds" />
+    </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="53" NAME="2010 Mercedes #3 - M. Schumacher" BASELIVERY="SilverMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\3_Mercedes.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\3_Mercedes.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Mercedes.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Mercedes_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Schumacher.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Mercedes_visor_Schumacher.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\MercedesDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\MercedesArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\MercedesGloves_Schumacher.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\MercedesLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Mercedes.dds" />
+    </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="54" NAME="2010 Mercedes #4 - N. Rosberg" BASELIVERY="SilverMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\4_Mercedes.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\4_Mercedes.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Mercedes.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Mercedes_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Rosberg.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Mercedes_visor_Rosberg.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\MercedesDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\MercedesArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\MercedesGloves_Rosberg.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\MercedesLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Mercedes.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="55" NAME="2010 Red Bull #5 - S. Vettel" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\5_RedBull.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\5_RedBull.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\RedBull.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\RedBull_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_med.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_med.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Vettel.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\RedBull_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\RedBullDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\RedBullArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\RedBullGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\RedBullLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\RedBull.dds" />
+    </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="56" NAME="2010 Red Bull #6 - M. Webber" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\6_RedBull.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\6_RedBull.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\RedBull.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\RedBull_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_med.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_med.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Webber.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\RedBull_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\RedBullDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\RedBullArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\RedBullGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\RedBullLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\RedBull.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="57" NAME="2010 Ferrari #7 - F. Massa" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\7_Ferrari.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\7_Ferrari.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Ferrari.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Ferrari_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_med.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_med.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="57" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Massa.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Ferrari_visor_Massa.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="57" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\FerrariDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\FerrariArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\FerrariGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\FerrariLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Ferrari.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="58" NAME="2010 Ferrari #8 - F. Alonso" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\8_Ferrari.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\8_Ferrari.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Ferrari.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Ferrari_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_med.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_med.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="58" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Alonso.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Ferrari_visor_Alonso.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="58" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\FerrariDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\FerrariArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\FerrariGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\FerrariLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Ferrari.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="59" NAME="2010 Williams #9 - R. Barrichello" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\9_Williams.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\9_Williams.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Williams.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Williams_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="59" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Barrichello.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Williams_visor_Barrichello.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="59" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\WilliamsDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\WilliamsArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\WilliamsGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\WilliamsLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Williams.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="60" NAME="2010 Williams #10 - N. Hülkenberg" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\10_Williams.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\10_Williams.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Williams.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Williams_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="60" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Hulkenberg.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Williams_visor_Hulkenberg.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="60" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\WilliamsDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\WilliamsArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\WilliamsGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\WilliamsLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Williams.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="61" NAME="2010 Renault #11 - R. Kubica" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\11_Renault.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\11_Renault.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Renault.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Renault_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="61" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Kubica.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Renault_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="61" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\RenaultDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\RenaultArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\RenaultGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\RenaultLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Renault.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="62" NAME="2010 Renault #12 - V. Petrov" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\12_Renault.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\12_Renault.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Renault.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Renault_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="62" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Petrov.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Renault_visor_Petrov.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="62" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\RenaultDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\RenaultArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\RenaultGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\RenaultLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Renault.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="63" NAME="2010 Force India #14 - A. Sutil" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\14_ForceIndia.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\14_ForceIndia.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\ForceIndia.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\ForceIndia_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="63" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Sutil.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\ForceIndia_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="63" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\ForceIndia.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="64" NAME="2010 Force India #15 - V. Liuzzi" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\15_ForceIndia.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\15_ForceIndia.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\ForceIndia.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\ForceIndia_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="64" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Liuzzi.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\ForceIndia_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="64" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\ForceIndiaLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\ForceIndia.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="65" NAME="2010 Toro Rosso #16 - S. Buemi" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\16_ToroRosso.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\16_ToroRosso.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\ToroRosso.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\ToroRosso_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="65" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Buemi.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\ToroRosso_visor_Buemi.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="65" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\ToroRossoDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\ToroRossoArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\ToroRossoGloves_Buemi.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\ToroRossoLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\ToroRosso.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="66" NAME="2010 Toro Rosso #17 - J. Alguersuari" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\17_ToroRosso.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\17_ToroRosso.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\ToroRosso.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\ToroRosso_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="66" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Alguersuari.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\ToroRosso_visor_Alguersuari.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="66" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\ToroRossoDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\ToroRossoArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\ToroRossoGloves_Alguersuari.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\ToroRossoLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\ToroRosso.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="67" NAME="2010 Lotus Racing #18 - J. Trulli" BASELIVERY="GreenMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\18_Lotus.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\18_Lotus.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Lotus.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Lotus_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="67" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Trulli.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Lotus_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="67" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\LotusDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\LotusArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\LotusGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\LotusLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Lotus.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="68" NAME="2010 Lotus Racing #19 - H. Kovalainen" BASELIVERY="GreenMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\19_Lotus.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\19_Lotus.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Lotus.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Lotus_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="68" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Kovalainen.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Lotus_visor_Kovalainen.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="68" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\LotusDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\LotusArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\LotusGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\LotusLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Lotus.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="69" NAME="2010 Hispania #20 - K. Chandhok" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\20_Hispania.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\20_Hispania.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Hispania.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Hispania_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="69" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Chandhok.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+      <TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Hispania_visor_Chandhok.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="69" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\HispaniaDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\HispaniaArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\HispaniaGloves_Chandhok.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\HispaniaLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Hispania.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="70" NAME="2010 Hispania #21 - B. Senna" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\21_Hispania.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\21_Hispania.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Hispania.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Hispania_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="70" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Senna.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Hispania_visor_Senna.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="70" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\HispaniaDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\HispaniaArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\HispaniaGloves_Senna.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\HispaniaLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Hispania.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="71" NAME="2010 BMW Sauber #22 - P. de la Rosa" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\22_Sauber.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\22_Sauber.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Sauber.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Sauber_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="71" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\delaRosa.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Sauber_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="71" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\SauberDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\SauberArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\SauberGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\SauberLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Sauber.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="72" NAME="2010 BMW Sauber #23 - K. Kobayashi" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\23_Sauber.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\23_Sauber.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Sauber.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Sauber_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="72" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Kobayashi.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Sauber_visor.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="72" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\SauberDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\SauberArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\SauberGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\SauberLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Sauber.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="73" NAME="2010 Virgin #24 - T. Glock" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\24_Virgin.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\24_Virgin.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Virgin.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Virgin_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="73" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\Glock.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Virgin_visor_Glock.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="73" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\VirginDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\VirginArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\VirginGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\VirginLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Virgin.dds" />
+    </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="74" NAME="2010 Virgin #25 - L. di Grassi" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2010\Preview\25_Virgin.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2010\25_Virgin.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2010\Rims\Virgin.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2010\Rims\Virgin_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2010\Rims\spec_low.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2010\Rims\spec_blur_low.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="74" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Helmet\diGrassi.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2010\Helmet\spec_helmet.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2010\Helmet\Virgin_visor_diGrassi.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="74" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2010\Driver\VirginDriver.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2010\Driver\VirginArms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2010\Driver\VirginGloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2010\Driver\spec_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2010\Driver\VirginLegs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2010\Harness\Virgin.dds" />
+    </OUTFIT_OVERRIDE>
+	
+</USER_OVERRIDES>

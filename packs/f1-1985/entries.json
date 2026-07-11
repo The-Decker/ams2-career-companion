@@ -4,7 +4,21 @@
       "teamId": "team.mclaren",
       "driverId": "driver.niki_lauda",
       "number": "1",
-      "rounds": "1-16",
+      "rounds": "1-13",
+      "ams2LiveryName": "Marlboro McLaren International #1"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.john_watson",
+      "number": "1",
+      "rounds": "14",
+      "ams2LiveryName": "Marlboro McLaren International #1"
+    },
+    {
+      "teamId": "team.mclaren",
+      "driverId": "driver.niki_lauda",
+      "number": "1",
+      "rounds": "15-16",
       "ams2LiveryName": "Marlboro McLaren International #1"
     },
     {
@@ -25,7 +39,14 @@
       "teamId": "team.ferrari",
       "driverId": "driver.rene_arnoux",
       "number": "28",
-      "rounds": "1-16",
+      "rounds": "1",
+      "ams2LiveryName": "Scuderia Ferrari SpA SEFAC #28"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.stefan_johansson",
+      "number": "28",
+      "rounds": "2-16",
       "ams2LiveryName": "Scuderia Ferrari SpA SEFAC #28"
     },
     {
@@ -53,14 +74,28 @@
       "teamId": "team.brabham",
       "driverId": "driver.francois_hesnault",
       "number": "8",
-      "rounds": "1-16",
+      "rounds": "1-4",
+      "ams2LiveryName": "Motor Racing Developments #8"
+    },
+    {
+      "teamId": "team.brabham",
+      "driverId": "driver.marc_surer",
+      "number": "8",
+      "rounds": "5-16",
       "ams2LiveryName": "Motor Racing Developments #8"
     },
     {
       "teamId": "team.ram",
       "driverId": "driver.manfred_winkelhock",
       "number": "9",
-      "rounds": "1-16",
+      "rounds": "1-9",
+      "ams2LiveryName": "Skoal Bandit Formula 1 Team #9"
+    },
+    {
+      "teamId": "team.ram",
+      "driverId": "driver.kenny_acheson",
+      "number": "9",
+      "rounds": "10-16",
       "ams2LiveryName": "Skoal Bandit Formula 1 Team #9"
     },
     {
@@ -83,6 +118,13 @@
       "number": "12",
       "rounds": "1-16",
       "ams2LiveryName": "John Player Special Team Lotus #12"
+    },
+    {
+      "teamId": "team.renault",
+      "driverId": "driver.francois_hesnault",
+      "number": "14",
+      "rounds": "9",
+      "ams2LiveryName": "Equipe Renault Elf #14"
     },
     {
       "teamId": "team.renault",
@@ -113,6 +155,20 @@
       "ams2LiveryName": "Barclay Arrows BMW #18"
     },
     {
+      "teamId": "team.toleman",
+      "driverId": "driver.teo_fabi",
+      "number": "19",
+      "rounds": "1-16",
+      "ams2LiveryName": "Toleman Group Motorsport #19"
+    },
+    {
+      "teamId": "team.toleman",
+      "driverId": "driver.piercarlo_ghinzani",
+      "number": "20",
+      "rounds": "10-16",
+      "ams2LiveryName": "Toleman Group Motorsport #20"
+    },
+    {
       "teamId": "team.spirit",
       "driverId": "driver.mauro_baldi",
       "number": "21",
@@ -137,14 +193,28 @@
       "teamId": "team.osella",
       "driverId": "driver.piercarlo_ghinzani",
       "number": "24",
-      "rounds": "1-16",
+      "rounds": "1-8",
+      "ams2LiveryName": "Osella Squadra Corse #24"
+    },
+    {
+      "teamId": "team.osella",
+      "driverId": "driver.huub_rothengatter",
+      "number": "24",
+      "rounds": "9-16",
       "ams2LiveryName": "Osella Squadra Corse #24"
     },
     {
       "teamId": "team.ligier",
       "driverId": "driver.andrea_de_cesaris",
       "number": "25",
-      "rounds": "1-16",
+      "rounds": "1-11",
+      "ams2LiveryName": "Equipe Ligier Gitanes #25"
+    },
+    {
+      "teamId": "team.ligier",
+      "driverId": "driver.philippe_streiff",
+      "number": "25",
+      "rounds": "12-16",
       "ams2LiveryName": "Equipe Ligier Gitanes #25"
     },
     {
@@ -162,6 +232,20 @@
       "ams2LiveryName": "Minardi Team SpA #29"
     },
     {
+      "teamId": "team.zakspeed",
+      "driverId": "driver.jonathan_palmer",
+      "number": "30",
+      "rounds": "1-11",
+      "ams2LiveryName": "West Zakspeed Racing #30"
+    },
+    {
+      "teamId": "team.zakspeed",
+      "driverId": "driver.christian_danner",
+      "number": "30",
+      "rounds": "12-16",
+      "ams2LiveryName": "West Zakspeed Racing #30"
+    },
+    {
       "teamId": "team.tyrrell",
       "driverId": "driver.martin_brundle",
       "number": "3",
@@ -172,8 +256,29 @@
       "teamId": "team.tyrrell",
       "driverId": "driver.stefan_johansson",
       "number": "4",
-      "rounds": "1-16",
+      "rounds": "1",
       "ams2LiveryName": "Tyrrell Racing Organisation #4"
+    },
+    {
+      "teamId": "team.tyrrell",
+      "driverId": "driver.stefan_bellof",
+      "number": "4",
+      "rounds": "2-11",
+      "ams2LiveryName": "Tyrrell Racing Organisation #4"
+    },
+    {
+      "teamId": "team.tyrrell",
+      "driverId": "driver.ivan_capelli",
+      "number": "4",
+      "rounds": "12-16",
+      "ams2LiveryName": "Tyrrell Racing Organisation #4"
+    },
+    {
+      "teamId": "team.haas",
+      "driverId": "driver.alan_jones",
+      "number": "33",
+      "rounds": "12-16",
+      "ams2LiveryName": "Team Haas (USA) Ltd #33"
     }
   ]
 }

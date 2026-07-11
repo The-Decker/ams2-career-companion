@@ -68,9 +68,11 @@ public sealed class TeamArchetypeCatalog
     }
 
     /// <summary>The contract offer-scoring formula:
-    /// <c>w1·rep + w2·OPI + w3·experience − w4·salaryAsk − w5·ageRisk</c>. A character's business
-    /// perks scale the experience / salary-ask / age-risk terms; a null modifier scores exactly the
-    /// shipped formula.</summary>
+    /// <c>w1·rep + w2·OPI + w3·experience − w4·salaryAsk − w5·ageRisk + payWeight·payBudget</c>. A
+    /// character's business perks scale the experience / salary-ask / age-risk terms and add the
+    /// pay-budget term (sponsor money the driver brings, valued by the same per-archetype
+    /// <see cref="TeamArchetype.PayDriverWeight"/> the AI seat market uses); a null modifier scores
+    /// exactly the shipped formula (payBudget 0).</summary>
     public static double OfferScore(
         TeamArchetype archetype,
         double reputation,
@@ -80,11 +82,13 @@ public sealed class TeamArchetypeCatalog
         double ageRiskYears,
         PlayerPerkModifiers? mods = null)
     {
+        double payBudgetBu = 0.0;
         if (mods is not null)
         {
             experienceSeasons *= mods.OfferExperienceMult;
             salaryAskBu *= mods.SalaryAskMult;
             ageRiskYears *= mods.AgeRiskMult;
+            payBudgetBu = mods.PayBudgetBu;
         }
 
         var w = archetype.Weights;
@@ -92,7 +96,10 @@ public sealed class TeamArchetypeCatalog
                + w.Opi * opi
                + w.Experience * experienceSeasons
                - w.Salary * salaryAskBu
-               - w.AgeRisk * ageRiskYears;
+               - w.AgeRisk * ageRiskYears
+               // Sponsor money the driver brings — scaled like the AI candidate pay term
+               // (SeasonEndPipeline seat market: PayDriverWeight · payBudgetBu / 100).
+               + archetype.PayDriverWeight * payBudgetBu / 100.0;
     }
 
     public double RepFloor(int tier) =>

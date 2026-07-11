@@ -78,24 +78,33 @@
       },
       "laps": 80,
       "grid": {
-        "size": 11,
+        "size": 20,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.bob_anderson",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.jochen_rindt",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
+          "driver.chris_amon",
+          "driver.lorenzo_bandini",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.richie_ginther",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 10,
+          "opponents": 19,
           "startTime": "14:00",
           "date": "1967-01-02",
           "weatherSlots": [
@@ -170,7 +179,7 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit de Monaco",
-        "id": "azure_circuit_88",
+        "id": "azure_circuit_2021",
         "isPlaceholder": false,
         "fallbacks": [
           "azure_circuit"
@@ -178,27 +187,33 @@
       },
       "laps": 100,
       "grid": {
-        "size": 14,
+        "size": 20,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.bob_anderson",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
+          "driver.pedro_rodriguez",
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
           "driver.chris_amon",
           "driver.lorenzo_bandini",
-          "driver.jochen_rindt",
-          "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.richie_ginther",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.johnny_servoz_gavin"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 19,
           "startTime": "14:00",
           "date": "1967-05-07",
           "weatherSlots": [
@@ -270,31 +285,41 @@
           "spielberg_historic",
           "silverstone_1975",
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 52,
+          "isRealVenue": false
+        }
       },
       "laps": 64,
       "grid": {
-        "size": 14,
+        "size": 19,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.bob_anderson",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.chris_amon",
-          "driver.ludovico_scarfiotti",
-          "driver.jochen_rindt",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
+          "driver.chris_amon",
+          "driver.mike_parkes",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 18,
           "startTime": "14:00",
           "date": "1967-06-04",
           "weatherSlots": [
@@ -357,26 +382,32 @@
       },
       "laps": 28,
       "grid": {
-        "size": 13,
+        "size": 19,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.bob_anderson",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.chris_amon",
-          "driver.ludovico_scarfiotti",
-          "driver.jochen_rindt",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
+          "driver.chris_amon",
+          "driver.mike_parkes",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 12,
+          "opponents": 18,
           "startTime": "14:00",
           "date": "1967-06-18",
           "weatherSlots": [
@@ -457,24 +488,31 @@
       },
       "laps": 80,
       "grid": {
-        "size": 11,
+        "size": 18,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.bob_anderson",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.chris_amon",
-          "driver.jochen_rindt",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
+          "driver.chris_amon",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 10,
+          "opponents": 17,
           "startTime": "14:00",
           "date": "1967-07-02",
           "weatherSlots": [
@@ -539,26 +577,31 @@
       },
       "laps": 80,
       "grid": {
-        "size": 13,
+        "size": 18,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.guy_ligier",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.guy_ligier",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.chris_amon",
-          "driver.jochen_rindt",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
+          "driver.chris_amon",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 12,
+          "opponents": 17,
           "startTime": "14:00",
           "date": "1967-07-15",
           "weatherSlots": [
@@ -621,28 +664,31 @@
       },
       "laps": 15,
       "grid": {
-        "size": 15,
+        "size": 18,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.guy_ligier",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.guy_ligier",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.hubert_hahne",
-          "driver.jacky_ickx",
-          "driver.chris_amon",
-          "driver.jochen_rindt",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jochen_rindt",
+          "driver.chris_amon",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jo_schlesser",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 14,
+          "opponents": 17,
           "startTime": "14:00",
           "date": "1967-08-06",
           "weatherSlots": [
@@ -697,10 +743,10 @@
             "id": "race",
             "label": "Grand Prix",
             "weatherSlots": [
-              "Clear",
-              "Clear",
-              "Clear",
-              "Clear"
+              "Rain",
+              "Light Rain",
+              "Light Rain",
+              "Heavy Rain"
             ]
           }
         ]
@@ -709,30 +755,39 @@
       "date": "1967-08-27",
       "championship": true,
       "track": {
-        "realVenue": "Canadian Tire Motorsport Park",
+        "realVenue": "Mosport Park",
         "id": "mosport_1971",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 90,
       "grid": {
-        "size": 10,
+        "size": 19,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.guy_ligier",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.bruce_mclaren",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.chris_amon",
+          "driver.richard_attwood",
+          "driver.jo_siffert",
           "driver.jochen_rindt",
-          "driver.dan_gurney"
+          "driver.chris_amon",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.al_pease",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 9,
+          "opponents": 18,
           "startTime": "14:00",
           "date": "1967-08-27",
           "weatherSlots": [
@@ -795,26 +850,31 @@
       },
       "laps": 68,
       "grid": {
-        "size": 13,
+        "size": 18,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.guy_ligier",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.bruce_mclaren",
-          "driver.guy_ligier",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.chris_amon",
+          "driver.jo_bonnier",
+          "driver.jo_siffert",
           "driver.jochen_rindt",
-          "driver.dan_gurney"
+          "driver.chris_amon",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 12,
+          "opponents": 17,
           "startTime": "14:00",
           "date": "1967-09-10",
           "weatherSlots": [
@@ -851,6 +911,10 @@
         "driver.john_surtees": {
           "raceSkill": 0.64,
           "qualifyingSkill": 0.65
+        },
+        "driver.ludovico_scarfiotti": {
+          "raceSkill": 0.55,
+          "qualifyingSkill": 0.56
         }
       }
     },
@@ -896,34 +960,38 @@
       "date": "1967-10-01",
       "championship": true,
       "track": {
-        "realVenue": "Watkins Glen International",
+        "realVenue": "Watkins Glen",
         "id": "watkins_glen_1971_short",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 108,
       "grid": {
-        "size": 14,
+        "size": 18,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.guy_ligier",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.bruce_mclaren",
-          "driver.guy_ligier",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
+          "driver.jo_bonnier",
+          "driver.jo_siffert",
           "driver.jochen_rindt",
-          "driver.dan_gurney"
+          "driver.chris_amon",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 17,
           "startTime": "14:00",
           "date": "1967-10-01",
           "weatherSlots": [
@@ -985,36 +1053,46 @@
       "date": "1967-10-22",
       "championship": true,
       "track": {
-        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
+        "realVenue": "Aut\u00F3dromo Ricardo Rodr\u00EDguez",
         "id": "interlagos_historic",
         "isPlaceholder": true,
         "fallbacks": [
           "monza_1971"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 60,
+          "isRealVenue": false
+        }
       },
       "laps": 41,
       "grid": {
-        "size": 14,
+        "size": 19,
         "starterDriverIds": [
           "driver.jack_brabham",
           "driver.denny_hulme",
+          "driver.guy_ligier",
           "driver.jim_clark",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.bruce_mclaren",
-          "driver.guy_ligier",
           "driver.jackie_stewart",
           "driver.mike_spence",
-          "driver.john_surtees",
-          "driver.jean_pierre_beltoise",
-          "driver.chris_amon",
           "driver.pedro_rodriguez",
-          "driver.dan_gurney"
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.chris_amon",
+          "driver.jonathan_williams",
+          "driver.ludovico_scarfiotti",
+          "driver.john_surtees",
+          "driver.dan_gurney",
+          "driver.bruce_mclaren",
+          "driver.hubert_hahne",
+          "driver.jean_pierre_beltoise",
+          "driver.jacky_ickx"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 18,
           "startTime": "14:00",
           "date": "1967-10-22",
           "weatherSlots": [
@@ -1023,10 +1101,14 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
+        "notes": "Placeholder for Aut\u00F3dromo Ricardo Rodr\u00EDguez \u2014 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.jo_bonnier": {
+          "vehicleReliability": 0.24
+        }
+      }
     }
   ]
 }

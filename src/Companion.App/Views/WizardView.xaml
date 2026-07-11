@@ -11,6 +11,26 @@
             <Setter Property="Margin" Value="0,0,22,0" />
             <Setter Property="FontSize" Value="14" />
         </Style>
+
+        <!-- Season-grid card labels in the bundled "Microsport" display face (Mike's pick for this
+             screen; the app's regular text is Retro Floral, run a touch larger) — uppercase, centered;
+             the driver name reads like a race-entry board and the team is an accent tag beneath it.
+             Kept a step SMALLER than the 15pt body so the regular text stays the larger face. -->
+        <Style x:Key="GridDriverName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontFamily" Value="{StaticResource MicrosportFont}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style x:Key="GridTeamName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontFamily" Value="{StaticResource MicrosportFont}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+        </Style>
     </UserControl.Resources>
 
     <DockPanel Margin="40,32">
@@ -54,11 +74,12 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="4 · Grid">
+                <TextBlock Text="4 · Driver"
+                           Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Character}">
                                     <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                 </DataTrigger>
@@ -66,12 +87,11 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="5 · Driver"
-                           Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
+                <TextBlock Text="5 · Season Grid">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Character}">
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
                                     <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                 </DataTrigger>
@@ -149,7 +169,13 @@
                                  Visibility="{Binding Packs.Count, Converter={StaticResource CountVisible}}">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid Columns="4" />
+                                    <!-- adaptive columns (was a fixed 4): the 580px target card width keeps
+                                         Mike's asked-for 4 columns at his 2560 screen (after the wizard's
+                                         chrome), degrades to 3 at 1920 and an uncramped 2 at the 920 minimum -->
+                                    <UniformGrid Columns="{Binding ActualWidth,
+                                                           RelativeSource={RelativeSource AncestorType=ListBox},
+                                                           Converter={StaticResource WidthToColumns},
+                                                           ConverterParameter=580}" />
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
                             <ListBox.ItemContainerStyle>
@@ -177,23 +203,24 @@
                                             </Style>
                                         </Border.Style>
                                         <StackPanel>
-                                            <!-- 16:9 year-pic hero (era art keyed by the season name;
-                                                 coloured era placeholder when no image is present). The
-                                                 height tracks the card's own width at 16:9 so the hero
-                                                 scales as the responsive column flexes. -->
+                                            <!-- 16:9 year-pic hero (era art keyed by the season year, or
+                                                 by identity for SMGP — its SEGA Grand Prix art rather than
+                                                 the shared 1990 photo; coloured era placeholder when none).
+                                                 The image binds the whole pack so the converter sees the
+                                                 careerStyle; the accent still keys off the title text. -->
                                             <Grid MinHeight="120"
                                                   Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource AspectHeight}, ConverterParameter=0.5625}">
                                                 <Border CornerRadius="6,6,0,0"
                                                         Background="{Binding Title, Converter={StaticResource EraAccent}}" />
                                                 <Border CornerRadius="6,6,0,0">
                                                     <Border.Background>
-                                                        <ImageBrush ImageSource="{Binding Title, Converter={StaticResource EraImage}}"
+                                                        <ImageBrush ImageSource="{Binding Converter={StaticResource EraImage}}"
                                                                     Stretch="UniformToFill" />
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
-                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"
-                                                       Margin="12,9,12,12" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Title}" FontFamily="{StaticResource RaceSportFont}"
+                                                       FontSize="18" Margin="12,10,12,13" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12"
                                                        Margin="12,0,12,10" TextWrapping="Wrap"
                                                        Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
@@ -259,6 +286,83 @@
                             </Style>
                         </CheckBox.Style>
                     </CheckBox>
+
+                    <!-- optional alternate MOD tracks (the "RockyTM track switch"): opt-in AND
+                         install-verified. Off (or any required mod missing) => default AMS2 tracks only. -->
+                    <Border Style="{StaticResource Panel}" Margin="0,10,0,0"
+                            Visibility="{Binding PackHasAlternateTracks, Converter={StaticResource BoolVisible}}">
+                        <StackPanel>
+                            <CheckBox Content="Use alternate tracks (community mods)"
+                                      IsChecked="{Binding UseAlternateTracks}"
+                                      ToolTip="Swaps this season's placeholder rounds to era-appropriate mod circuits — but ONLY if every required mod is installed. Off = default AMS2 tracks only." />
+                            <TextBlock Text="{Binding AlternateTrackStatus}" Style="{StaticResource Body}"
+                                       TextWrapping="Wrap" Margin="0,6,0,0" />
+                            <ItemsControl ItemsSource="{Binding AlternateModTracks}" Margin="0,6,0,0"
+                                          Visibility="{Binding UseAlternateTracks, Converter={StaticResource BoolVisible}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,1">
+                                            <TextBlock DockPanel.Dock="Left" Width="18" VerticalAlignment="Top">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                        <Setter Property="Text" Value="✗" />
+                                                        <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Installed}" Value="True">
+                                                                <Setter Property="Text" Value="✔" />
+                                                                <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"><Run Text="{Binding DisplayName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="{Binding Tag, Mode=OneWay, StringFormat=' ({0})'}" /></TextBlock>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Content="Re-check installed mods" Command="{Binding CheckAlternateModsCommand}"
+                                    HorizontalAlignment="Left" Margin="0,8,0,0" Style="{StaticResource SubtleButton}"
+                                    Visibility="{Binding UseAlternateTracks, Converter={StaticResource BoolVisible}}"
+                                    ToolTip="Re-scan your AMS2 install for the mod tracks this season's alternates need" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- optional modded FIELD (a community CAR mod): the SMGP McLaren teams by Kobra
+                         Fleetworks that round the grid out. Opt-in AND install-verified, exactly like
+                         the alternate tracks above. Off (or the mod missing) => base field only. -->
+                    <Border Style="{StaticResource Panel}" Margin="0,10,0,0"
+                            Visibility="{Binding PackHasModdedField, Converter={StaticResource BoolVisible}}">
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding UseModdedField}"
+                                      Content="{Binding ModdedVehicle.ModName, StringFormat='Add the {0} cars (community car mod)'}"
+                                      ToolTip="Fields the mod's extra cars to round out the grid — but ONLY if the car mod is installed. Off = the base grid." />
+                            <TextBlock Text="{Binding ModdedFieldStatus}" Style="{StaticResource Body}"
+                                       TextWrapping="Wrap" Margin="0,6,0,0" />
+                            <DockPanel Margin="0,6,0,0"
+                                       Visibility="{Binding UseModdedField, Converter={StaticResource BoolVisible}}">
+                                <TextBlock DockPanel.Dock="Left" Width="18" VerticalAlignment="Top">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="Text" Value="✗" />
+                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ModdedVehicle.Installed}" Value="True">
+                                                    <Setter Property="Text" Value="✔" />
+                                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"><Run Text="{Binding ModdedVehicle.ModName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="{Binding ModdedVehicle.VehicleId, Mode=OneWay, StringFormat=' ({0})'}" /></TextBlock>
+                            </DockPanel>
+                            <Button Content="Re-check installed mod" Command="{Binding CheckModdedFieldCommand}"
+                                    HorizontalAlignment="Left" Margin="0,8,0,0" Style="{StaticResource SubtleButton}"
+                                    Visibility="{Binding UseModdedField, Converter={StaticResource BoolVisible}}"
+                                    ToolTip="Re-scan your AMS2 install for the car mod this season's extra cars need" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
                 <Border Style="{StaticResource Panel}">
                     <DockPanel>
@@ -278,7 +382,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" Focusable="False"
+                            <ScrollViewer MaxHeight="180" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False"
                                           Visibility="{Binding LiveryScanDetailsExpanded, Converter={StaticResource BoolVisible}}">
                                 <ItemsControl ItemsSource="{Binding LiveryScanDetails}" Margin="12,4,0,0">
                                     <ItemsControl.ItemTemplate>
@@ -295,7 +399,7 @@
                                    Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountCollapsed}}">
                             <Run FontFamily="Segoe MDL2 Assets" Text="&#xE73E;" /><Run Text="  All clear — the pack verifies clean against this install." />
                         </TextBlock>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False"
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False"
                                       Visibility="{Binding VerificationItems.Count, Converter={StaticResource CountVisible}}">
                             <ItemsControl ItemsSource="{Binding VerificationItems}">
                                 <ItemsControl.ItemTemplate>
@@ -349,9 +453,18 @@
                 <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
+                <!-- SMGP: rookies start at the bottom — the list is filtered to LEVEL D cars. -->
+                <Border DockPanel.Dock="Top" Background="{StaticResource AccentDimBrush}" CornerRadius="6"
+                        Padding="10,7" Margin="0,0,0,10"
+                        Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
+                    <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                               Text="SUPER MONACO GP starts you at the bottom — LEVEL D cars only. Beat the same rival twice to take his seat and climb the ladder." />
+                </Border>
                 <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
-                     over the seat above; leave blank for the ordinary seat pick. -->
-                <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12">
+                     over the seat above; leave blank for the ordinary seat pick. Hidden for the SMGP
+                     replica — a custom livery holds no seat on the mode's ladder. -->
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Margin="0,10,0,0" Padding="12"
+                        Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolCollapsed}}">
                     <StackPanel>
                         <TextBlock Text="— or race as your own entrant —" Style="{StaticResource Faint}" />
                         <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,6" TextWrapping="Wrap"
@@ -380,7 +493,7 @@
                                                Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
                                                Text="{Binding Number, StringFormat='#{0}'}" />
                                     <!-- ratings as bars; raw numbers on hover (ux-round §2) -->
-                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Width="190">
+                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" MinWidth="190" MaxWidth="280">
                                         <DockPanel ToolTip="{Binding RaceSkill, StringFormat='Race skill (raw): {0:0.000}'}"
                                                    Background="Transparent">
                                             <TextBlock DockPanel.Dock="Left" Width="42" Text="Race"
@@ -414,27 +527,92 @@
 
             <!-- c1. choose the grid (v0.6.0) -->
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Grid}}">
-                <TextBlock DockPanel.Dock="Top" Text="Choose your grid" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Text="The Season's Grid" Style="{StaticResource H2}" />
+                <!-- The normal-career blurb (unchecking) — hidden for SMGP, whose field is locked and
+                     described by its own accent banner below. -->
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
-                           Text="Your own car is always in — it's the row marked &quot;You&quot;. Uncheck any driver you don't want racing on the grid this season." />
+                           Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolCollapsed}}"
+                           Text="The field you'll race — it carries across every season of the career. Your own car is always in (the card marked &quot;You&quot;). Uncheck any driver you don't want on the grid." />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
                     <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <ItemsControl ItemsSource="{Binding GridChoices}" MaxWidth="640" HorizontalAlignment="Left">
+                <!-- SMGP: the ladder needs the whole field — the pick is display-only (locked). The
+                     banner also sets the mode's expectations: it's a self-contained career (never the
+                     historical gallery), the same cars for good, with a per-race DNQ field. -->
+                <Border DockPanel.Dock="Top" Background="{StaticResource AccentDimBrush}" CornerRadius="6"
+                        Padding="10,7" Margin="0,0,0,10"
+                        Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
+                    <StackPanel>
+                        <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap" FontWeight="SemiBold"
+                                   Text="SUPER MONACO GP is its own career — these are your cars for good." />
+                        <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap" Margin="0,3,0,0"
+                                   Text="You stay in this 34-car world every season, however many titles you win — it never crosses into the historical careers. The field is locked (the rival ladder needs every seat), and each race only the cars that qualify start: the slowest pre-qualify out, and which ones changes race to race." />
+                    </StackPanel>
+                </Border>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <!-- adaptive multi-column grid, ~230px per card so more portraits fit a screen
+                         (Mike's ask) while the 148px portrait + car keep their detail. The whole
+                         control is NOT disabled for SMGP anymore — the cards stay vibrant; only the
+                         per-card checkbox is hidden (SMGP forces the whole field). -->
+                    <ItemsControl ItemsSource="{Binding GridChoices}" HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid VerticalAlignment="Top"
+                                             Columns="{Binding ActualWidth,
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl},
+                                                       Converter={StaticResource WidthToColumns},
+                                                       ConverterParameter=230}" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource Panel}" Padding="12,8" Margin="0,0,0,4">
-                                    <DockPanel>
-                                        <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
-                                                  IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                                                   Text="You" Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}" />
+                                <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,5,5" VerticalAlignment="Top">
+                                    <Grid>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
-                                            <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}" />
+                                            <!-- the DRIVER PORTRAIT is the hero (data/ams2/portraits/<driverId>.jpg):
+                                                 a centered SQUARE (the art is square 1254×1254). A framed
+                                                 person-glyph placeholder shows until the art is dropped in. -->
+                                            <Grid Width="148" Height="148" HorizontalAlignment="Center" Margin="0,10,0,0">
+                                                <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
+                                                    <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="44"
+                                                               Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <Border CornerRadius="8" ClipToBounds="True">
+                                                    <!-- The player's own card shows the TEAM's player image (team-coloured
+                                                         helmet, data/ams2/portraits/player.<team>.jpg); every other card shows
+                                                         the seat driver's portrait. PortraitKey resolves which. -->
+                                                    <Image Stretch="UniformToFill"
+                                                           Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                                </Border>
+                                            </Grid>
+                                            <!-- a smaller CAR thumbnail centered below the portrait
+                                                 (data/ams2/cars/<driverId>.png). Collapses when absent. -->
+                                            <Image Height="40" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,6,0,0"
+                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                            <!-- CENTERED racing-style name + team (Bahnschrift, uppercase) -->
+                                            <StackPanel Margin="6,7,6,11" HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding DriverNameUpper}" Style="{StaticResource GridDriverName}" />
+                                                <TextBlock Text="{Binding TeamNameUpper}" Style="{StaticResource GridTeamName}" />
+                                            </StackPanel>
                                         </StackPanel>
-                                    </DockPanel>
+                                        <!-- season-field checkbox: ONLY for a normal career. SMGP forces the whole
+                                             field, so nothing is clickable there — the checkbox is hidden. Overlaid
+                                             top-left so the names stay centered. -->
+                                        <CheckBox VerticalAlignment="Top" HorizontalAlignment="Left" Margin="9,9,0,0"
+                                                  IsChecked="{Binding IsIncluded}" IsEnabled="{Binding IsUnlocked}"
+                                                  Visibility="{Binding DataContext.GridPickEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                                        <!-- the player's own car marker -->
+                                        <Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,9,9,0"
+                                                Background="{StaticResource AccentDimBrush}" CornerRadius="3" Padding="6,2"
+                                                Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}">
+                                            <TextBlock Text="YOU" FontFamily="{StaticResource MicrosportFont}" FontSize="11"
+                                                       Foreground="{StaticResource AccentBrush}" />
+                                        </Border>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -447,6 +625,36 @@
                 <TextBlock DockPanel.Dock="Top" Text="Your driver" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="Pick an archetype for a ready-made driver, or customise the stats and perks. Your choices set the sim's expectation of you — a faster driver is judged against a harder bar, never handed secret pace." />
+                <!-- YOU, front and centre: the team-coloured player image (drop art at
+                     data\ams2\portraits\player.<team>.jpg) with the car you'll drive beneath it. Both
+                     follow the team you joined; framed placeholders show until the art is dropped. -->
+                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,14">
+                    <Grid Width="168" Height="168" HorizontalAlignment="Center"
+                          ToolTip="Drop your team player image at data\ams2\portraits\player.&lt;team&gt;.jpg (beside the exe)">
+                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="52"
+                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border CornerRadius="10" ClipToBounds="True">
+                            <Image Stretch="UniformToFill"
+                                   Source="{Binding PlayerImageKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                        </Border>
+                    </Grid>
+                    <Image Height="44" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,8,0,0"
+                           Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    <!-- the car you'll drive, as the arcade spec card — collapses when no spec is authored -->
+                    <ContentControl Content="{Binding PlayerCarSpec}" HorizontalAlignment="Center" Margin="0,8,0,0"
+                                    Visibility="{Binding PlayerCarSpec, Converter={StaticResource NullCollapsed}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <views:CarSpecCard MaxWidth="260" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </StackPanel>
                 <views:CharacterView DataContext="{Binding Character}" />
             </DockPanel>
 
@@ -455,8 +663,8 @@
                 <TextBlock DockPanel.Dock="Top" Text="Confirm" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,16" TextWrapping="Wrap"
                            Text="Creating the career pins the pack into the career file — later pack edits never touch a running season." />
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <StackPanel MaxWidth="640" HorizontalAlignment="Left">
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Center">
                         <TextBlock Text="Career name" Style="{StaticResource Muted}" Margin="0,0,0,4" />
                         <TextBox Text="{Binding CareerName, UpdateSourceTrigger=PropertyChanged}" FontSize="15" />
 

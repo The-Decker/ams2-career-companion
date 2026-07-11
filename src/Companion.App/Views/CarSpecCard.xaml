@@ -1,0 +1,29 @@
+<UserControl x:Class="Companion.App.Views.CarSpecCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- The arcade car-select card: machine name + engine·power, then the ENG-TM-SUS-TIRE-BRA bars.
+         DataContext is a CarSpecCardViewModel; the host collapses this control when it is null. -->
+    <Border Style="{StaticResource Panel}" Padding="10,8">
+        <StackPanel>
+            <TextBlock Text="{Binding MachineName}" FontWeight="SemiBold" FontSize="15" />
+            <TextBlock Text="{Binding SubHeader}" Style="{StaticResource Faint}" Margin="0,1,0,6"
+                       Visibility="{Binding SubHeader, Converter={StaticResource StringVisible}}" />
+            <ItemsControl ItemsSource="{Binding Bars}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="0,2">
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="42"
+                                       VerticalAlignment="Center" Style="{StaticResource Faint}" FontSize="12" />
+                            <TextBlock DockPanel.Dock="Right" Width="26" TextAlignment="Right"
+                                       VerticalAlignment="Center" Style="{StaticResource Faint}" FontSize="12"
+                                       Text="{Binding Value, Mode=OneWay}" />
+                            <ProgressBar Minimum="0" Maximum="{Binding Max}" Value="{Binding Value, Mode=OneWay}"
+                                         Height="9" VerticalAlignment="Center" Margin="4,0" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>

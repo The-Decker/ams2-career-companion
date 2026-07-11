@@ -88,6 +88,14 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private string _circuitHistory = "";
 
+    /// <summary>Era-capped fun facts about this round's circuit (data-grounded, spoiler-free) —
+    /// same reference data the Calendar expander shows.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCircuitFacts))]
+    private IReadOnlyList<string> _circuitFacts = [];
+
+    public bool HasCircuitFacts => CircuitFacts.Count > 0;
+
     [ObservableProperty]
     private bool _isPlaceholder;
 
@@ -175,6 +183,131 @@ public sealed partial class BriefingViewModel : ObservableObject
     [RelayCommand]
     private void ClearCall() => CalledShot = null;
 
+    // ---------- SMGP rival panel (M3 slice 5) ----------
+
+    /// <summary>The SMGP panel's data, or null — every non-smgp career, so the panel never
+    /// renders outside the mode.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
+        nameof(SmgpPointsLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
+        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled))]
+    private SmgpBriefingModel? _smgpBriefing;
+
+    /// <summary>The picker unlocks only for a free pick (forced challenges lock to the challenger).</summary>
+    public bool SmgpPickEnabled => !SmgpForced;
+
+    /// <summary>The rival the player is LOOKING AT in the picker (the dossier card previews
+    /// him) — browsing only; nothing rides the result until the YES button NAMES him.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpCanName))]
+    private SmgpRivalOption? _selectedSmgpRival;
+
+    /// <summary>The rival the player has NAMED for this round (the YES confirmation, or the
+    /// forced challenger) — the commitment the result fold counts the two-wins ladder against.
+    /// Null = no rival named. Reset each round; survives same-round re-navigation.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpCanName),
+        nameof(SmgpSwapPromptVisible))]
+    private SmgpRivalOption? _namedSmgpRival;
+
+    /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
+    /// ("you may get an offer to join his team!") — asked up front so the result entry needs no
+    /// extra prompt; stored on the rival call only when the offer can actually arise.</summary>
+    [ObservableProperty]
+    private bool _smgpSwapAccept = true;
+
+    public bool SmgpActive => SmgpBriefing is not null && !SmgpBriefing.CareerOver;
+
+    public bool SmgpCareerOver => SmgpBriefing?.CareerOver == true;
+
+    /// <summary>True when the title defense forces the challenger — the pick is locked.</summary>
+    public bool SmgpForced => SmgpBriefing?.ForcedChallengerDriverId is not null;
+
+    public bool SmgpHasRival => SelectedSmgpRival is not null;
+
+    /// <summary>True once the YES button committed a rival for this round.</summary>
+    public bool SmgpRivalNamed => NamedSmgpRival is not null;
+
+    /// <summary>YES is pressable while the previewed rival is not yet the named one.</summary>
+    public bool SmgpCanName => SelectedSmgpRival is not null &&
+        !ReferenceEquals(SelectedSmgpRival, NamedSmgpRival);
+
+    /// <summary>The commitment banner — deadpan, the game's register. Streak-aware: once you have
+    /// already beaten him once (a win banked from a PAST race you named him in), it says so, so the
+    /// two-wins ladder never reads as "start over".</summary>
+    public string SmgpNamedLine => NamedSmgpRival switch
+    {
+        { OfferOnWin: true } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL — and you have beaten him once already. " +
+            "Finish ahead of him again THIS race and his seat is yours.",
+        { } named =>
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat him this race and once more — two wins " +
+            "without losing to him — and you take his seat.",
+        null => "",
+    };
+
+    public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
+
+    public string SmgpPointsLine => SmgpBriefing?.PointsLine ?? "";
+
+    public string SmgpAdviceLine => SmgpBriefing?.AdviceLine ?? "";
+
+    public IReadOnlyList<SmgpRivalOption> SmgpRivals => SmgpBriefing?.Rivals ?? [];
+
+    /// <summary>The game's prompt (docs/dev/smgp-design.md, sourced verbatim); a forced challenge
+    /// gets plain app copy instead — the doc supplies no in-game sentence for it, and the
+    /// accuracy rule is "nothing invented".</summary>
+    public string SmgpRivalPrompt => SmgpForced
+        ? "A forced challenge — your rival is already named."
+        : "WILL YOU NAME HIM AS YOUR RIVAL?";
+
+    /// <summary>What this rival's ladder telegraphs — streak-aware so the two-wins path and your
+    /// progress along it are always explicit (Mike's fix: "beat him once, then it said two races").
+    /// A win only counts in a race you NAMED him for, so the fresh-rival line spells that out.</summary>
+    public string SmgpLadderLine => SelectedSmgpRival switch
+    {
+        { OfferOnWin: true } => "You have beaten him once — finish ahead of him again THIS race and you take his seat!",
+        { ForfeitOnLoss: true } => "He has beaten you once — lose to him again this race and he takes YOUR seat.",
+        not null => "Beat him twice without losing to take his seat. Name him each race you mean to beat — a win only counts when he is your named rival.",
+        null => "",
+    };
+
+    /// <summary>The standing swap answer is only asked once a rival whose offer can arise this
+    /// round has been NAMED.</summary>
+    public bool SmgpSwapPromptVisible => NamedSmgpRival?.OfferOnWin == true;
+
+    /// <summary>The YES button: commit the previewed rival — this is what the result fold
+    /// counts the two-wins ladder against when the round's result lands.</summary>
+    [RelayCommand]
+    private void SmgpNameRival()
+    {
+        if (SelectedSmgpRival is not null)
+            NamedSmgpRival = SelectedSmgpRival;
+    }
+
+    /// <summary>Decline / withdraw the rival this round (never available on a forced challenge).</summary>
+    [RelayCommand]
+    private void SmgpDeclineRival()
+    {
+        if (SmgpForced)
+            return;
+        NamedSmgpRival = null;
+        SelectedSmgpRival = null;
+    }
+
+    /// <summary>The rival call the result draft stores for this round, or null — nothing NAMED
+    /// (browsing the picker commits nothing), or not an smgp career. The swap answer rides only
+    /// when the offer can arise this round.</summary>
+    public Companion.Data.SmgpRivalCall? BuildSmgpRival() => NamedSmgpRival is not { } rival
+        ? null
+        : new Companion.Data.SmgpRivalCall
+        {
+            RivalDriverId = rival.DriverId,
+            Forced = string.Equals(
+                rival.DriverId, SmgpBriefing?.ForcedChallengerDriverId, StringComparison.Ordinal),
+            SeatSwapAccepted = rival.OfferOnWin ? SmgpSwapAccept : null,
+        };
+
     /// <summary>The check-off rows, flat, in in-game custom-race screen order. The source of truth
     /// for ticks / progress / the copy summary; <see cref="Sections"/> re-groups these same
     /// instances for the sectioned view.</summary>
@@ -189,6 +322,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// Rebuilds the checklist and restores this round's ticks, if any.</summary>
     public void Refresh()
     {
+        int previousRoundNumber = _currentRoundNumber;
         Briefing = _session.CurrentBriefing();
 
         foreach (var old in Settings)
@@ -219,16 +353,17 @@ public sealed partial class BriefingViewModel : ObservableObject
             VenueDisplayName = briefing.VenueDisplayName;
             TrackId = briefing.Round.Track.Id;
             // The real circuit for this round (from the shipped history data) drives the vector circuit
-            // map + caption on the race-setup screen. Key it by the PACK's authored year, not the
-            // career's current season year: on a CARRYOVER season the same pinned pack (its calendar,
-            // its tracks) is reused for a later year, so Summary.SeasonYear runs ahead of the pack while
-            // the track you actually set up in AMS2 is still the pack's — the pack year is what matches
-            // the venue this round races (they're equal for every ordinary season). Absent => no map.
-            var circuit = _session.HistoricalSeason(_session.Pack.Season.Year)?.Rounds
-                .FirstOrDefault(r => r.Round == briefing.Round.Round)?.Circuit;
+            // map + caption on the race-setup screen — resolved through the shared lookup rule
+            // (the round's authored history pointer, else the PACK year's same-numbered round).
+            // Keying the PACK's authored year, not the career's current season year, keeps a
+            // CARRYOVER season on the venue the round actually races; the pointer keeps a
+            // non-historical calendar (the SMGP replica) on the venue it models. Absent => no map.
+            var circuit = HistoricalCircuitLookup.ForRound(
+                _session.Pack, briefing.Round.Round, _session.HistoricalSeason);
             CircuitLayoutId = circuit?.LayoutId ?? "";
             CircuitCaption = CircuitCaptions.Compose(circuit, includeName: false);
             CircuitHistory = circuit?.History ?? "";
+            CircuitFacts = circuit?.Facts ?? [];
             IsPlaceholder = briefing.IsPlaceholder;
             SetupNotes = briefing.SetupNotes;
             DifficultyRecommendation = briefing.RecommendedSlider is { } slider
@@ -241,6 +376,26 @@ public sealed partial class BriefingViewModel : ObservableObject
             ExpectedFinish = _session.CurrentExpectedFinish();
             _gridSize = _session.CurrentGrid().Count;
             CalledShot = null;
+
+            // SMGP rival panel (null outside the mode): a fresh round starts unnamed — unless
+            // the title defense forces the challenger, which NAMES him outright. On a
+            // re-navigation WITHIN the same round (show result entry, peek back at the
+            // briefing) the NAMED rival and swap answer are PRESERVED — resetting them here
+            // would silently drop the committed battle from the draft.
+            bool sameRound = previousRoundNumber == briefing.Round.Round;
+            string? namedRivalId = sameRound ? NamedSmgpRival?.DriverId : null;
+            bool keptSwapAccept = sameRound && SmgpSwapAccept;
+            SmgpBriefing = _session.CurrentSmgpBriefing();
+            SmgpSwapAccept = namedRivalId is null || keptSwapAccept;
+            SmgpRivalOption? restored = SmgpBriefing?.ForcedChallengerDriverId is { } forced
+                ? SmgpBriefing.Rivals.FirstOrDefault(r =>
+                    string.Equals(r.DriverId, forced, StringComparison.Ordinal))
+                : namedRivalId is not null
+                    ? SmgpBriefing?.Rivals.FirstOrDefault(r =>
+                        string.Equals(r.DriverId, namedRivalId, StringComparison.Ordinal))
+                    : null;
+            SelectedSmgpRival = restored;
+            NamedSmgpRival = restored;
         }
         else
         {
@@ -251,6 +406,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             CircuitLayoutId = "";
             CircuitCaption = "";
             CircuitHistory = "";
+            CircuitFacts = [];
             IsPlaceholder = false;
             SetupNotes = null;
             DifficultyRecommendation = null;
@@ -258,6 +414,9 @@ public sealed partial class BriefingViewModel : ObservableObject
             ExpectedFinish = null;
             _gridSize = 0;
             CalledShot = null;
+            SmgpBriefing = null;
+            SelectedSmgpRival = null;
+            NamedSmgpRival = null;
             CompactChecklistOpen = false; // nothing left to tick — close the overlay
         }
         OnPropertyChanged(nameof(SeasonComplete));

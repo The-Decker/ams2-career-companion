@@ -120,6 +120,29 @@ public sealed class CharacterModifierThreadingTests
     }
 
     [Fact]
+    public void OfferScore_SponsorMoney_RaisesTheScoreForPayDriverTeams()
+    {
+        // sponsor_magnet's payBudgetBu was a dead lever; OfferScore now reads it, scaled by the
+        // team's own pay-driver appetite (PayDriverWeight), exactly like the AI seat market.
+        var payTeam = new TeamArchetype
+        {
+            Weights = new OfferWeights { Rep = 1, Opi = 1, Experience = 1, Salary = 1, AgeRisk = 1 },
+            PayDriverWeight = 20,
+        };
+        var sponsored = PlayerPerkModifiers.Identity with { PayBudgetBu = 2.0 };
+        double withMoney = TeamArchetypeCatalog.OfferScore(payTeam, 50, 1.2, 3, 5, 2, sponsored);
+        double without = TeamArchetypeCatalog.OfferScore(payTeam, 50, 1.2, 3, 5, 2);
+        Assert.True(withMoney > without);
+        Assert.Equal(without + 20 * 2.0 / 100.0, withMoney, 6); // PayDriverWeight · payBudget / 100
+
+        // A team that does not value pay drivers (weight 0) is unaffected — no free score.
+        var noPay = payTeam with { PayDriverWeight = 0 };
+        Assert.Equal(
+            TeamArchetypeCatalog.OfferScore(noPay, 50, 1.2, 3, 5, 2),
+            TeamArchetypeCatalog.OfferScore(noPay, 50, 1.2, 3, 5, 2, sponsored), 6);
+    }
+
+    [Fact]
     public void SalaryOffer_NullModifier_IsExactlyTheShippedBand()
     {
         var cat = Catalog();

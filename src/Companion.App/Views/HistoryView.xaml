@@ -41,7 +41,12 @@
                             Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
                     <!-- circuit map + detail: the "what the track is like" preview, shown either way -->
                     <DockPanel Margin="0,0,0,6" Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
-                        <Viewbox DockPanel.Dock="Left" Width="96" Height="96" Margin="0,0,14,0" VerticalAlignment="Top">
+                        <!-- per-round mini map scales with the scrapbook column (96–200 square) -->
+                        <Viewbox DockPanel.Dock="Left" Margin="0,0,14,0" VerticalAlignment="Top"
+                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                         Converter={StaticResource WidthFraction}, ConverterParameter=0.12|96|200}"
+                                 Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
+                                          Converter={StaticResource AspectHeight}, ConverterParameter=1}">
                             <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                                   Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
@@ -81,6 +86,74 @@
                     <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap"
                                Visibility="{Binding IsRevealed, Converter={StaticResource BoolCollapsed}}"
                                Text="The real result unlocks once you finish this race in your career." />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- one circuit's SMGP-universe legend. SEALED (a spoiler-free teaser) until the player has
+             raced it; once raced, the header shows the champion of record and expanding shows the full
+             SEGA-world legend (title / circuit / champion / story paragraphs / lore notes). The
+             fictional-world counterpart to HistoricalRoundTemplate. -->
+        <DataTemplate x:Key="SmgpWorldRaceTemplate">
+            <StackPanel Margin="0,1">
+                <Button Style="{StaticResource SubtleButton}" HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left" Padding="4,3"
+                        Command="{Binding ToggleCommand}" ToolTip="What the world remembers here">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextMutedBrush}" Width="34" VerticalAlignment="Center" />
+                        <!-- revealed: the champion of record; sealed: a spoiler-free tag -->
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding Champion}"
+                                   Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}" />
+                        <TextBlock DockPanel.Dock="Right" Text="sealed" Style="{StaticResource Faint}"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsRevealed, Converter={StaticResource BoolCollapsed}}" />
+                        <TextBlock Text="{Binding VenueName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                    </DockPanel>
+                </Button>
+                <StackPanel Margin="34,2,0,10"
+                            Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                    <!-- REVEALED: the SEGA world's legend of this circuit -->
+                    <StackPanel Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,2"
+                                   Visibility="{Binding HasTitle, Converter={StaticResource BoolVisible}}" />
+                        <TextBlock Text="{Binding Circuit}" Foreground="{StaticResource AccentBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,6"
+                                   Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}" />
+                        <DockPanel Margin="0,0,0,8"
+                                   Visibility="{Binding HasChampion, Converter={StaticResource BoolVisible}}">
+                            <TextBlock DockPanel.Dock="Left" Text="Champion of record" Style="{StaticResource Faint}"
+                                       Width="132" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Champion}" TextWrapping="Wrap" />
+                        </DockPanel>
+                        <ItemsControl ItemsSource="{Binding Body}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap"
+                                               Margin="0,0,0,6" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl ItemsSource="{Binding Notes}" Margin="0,2,0,0"
+                                      Visibility="{Binding HasNotes, Converter={StaticResource BoolVisible}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="0,2">
+                                        <TextBlock DockPanel.Dock="Left" Text="•" Foreground="{StaticResource AccentBrush}"
+                                                   VerticalAlignment="Top" Margin="0,0,8,0" />
+                                        <TextBlock Text="{Binding}" Style="{StaticResource Muted}" FontSize="12"
+                                                   TextWrapping="Wrap" />
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                    <!-- SEALED (not yet raced): a spoiler-free teaser, the legend stays hidden -->
+                    <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap"
+                               Visibility="{Binding IsRevealed, Converter={StaticResource BoolCollapsed}}"
+                               Text="Finish this race in your career to unlock what the world remembers here." />
                 </StackPanel>
             </StackPanel>
         </DataTemplate>
@@ -170,7 +243,9 @@
                                     <!-- Optional story image for the season: drop <year>.jpg/.png into
                                          data\ams2\history-art and it appears here (shared user-asset
                                          convention, keyed by year). Collapses when no art is present. -->
-                                    <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10" MaxWidth="620"
+                                    <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10"
+                                            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                                       Converter={StaticResource WidthFraction}, ConverterParameter=0.55|620}"
                                             HorizontalAlignment="Left" BorderBrush="{StaticResource EdgeBrush}"
                                             BorderThickness="1"
                                             Visibility="{Binding ElementName=SeasonStoryImage, Path=Source, Converter={StaticResource NullCollapsed}}">
@@ -241,9 +316,12 @@
                    Text="No history yet — finish a race and your career starts filling the scrapbook: season cards, a records book, and every dispatch archived forever."
                    Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
-            <StackPanel Margin="24,4,24,24" MaxWidth="820" HorizontalAlignment="Left">
+            <!-- proportional scrapbook cap (was a hard 820) -->
+            <StackPanel Margin="24,4,24,24" HorizontalAlignment="Left"
+                        MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                   Converter={StaticResource WidthFraction}, ConverterParameter=0.7|820|1300}">
                 <!-- NEXT RACE preview: the current season's upcoming round — circuit map + track detail,
                      no result spoiler. The History screen's "what's coming next". -->
                 <Border Style="{StaticResource Panel}" Margin="0,0,0,18"
@@ -253,7 +331,12 @@
                             <Run Text="NEXT RACE" /><Run Text="{Binding NextRaceYear, StringFormat=' · {0}', Mode=OneWay}" />
                         </TextBlock>
                         <DockPanel Margin="0,8,0,0" DataContext="{Binding NextRacePreview}">
-                            <Viewbox DockPanel.Dock="Left" Width="180" Height="180" Margin="0,0,18,0" VerticalAlignment="Top"
+                            <!-- the NEXT RACE hero map scales with the column (160–280 square) -->
+                            <Viewbox DockPanel.Dock="Left" Margin="0,0,18,0" VerticalAlignment="Top"
+                                     Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                             Converter={StaticResource WidthFraction}, ConverterParameter=0.22|160|280}"
+                                     Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
+                                              Converter={StaticResource AspectHeight}, ConverterParameter=1}"
                                      Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
                                 <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
                                       Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
@@ -270,6 +353,27 @@
                                            Text="Race it in your career to see how it really unfolded." />
                             </StackPanel>
                         </DockPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- WHAT THE WORLD REMEMBERS: the SMGP-universe "what really happened" almanac — the
+                     fictional SEGA world's own legend of every circuit, each unlocked once the player
+                     finishes that race. Shown ONLY for the replica mode (HasSmgpWorld); a normal career
+                     never sees it. One panel per History tab (not per season card), since the replica is
+                     one continuous fictional world with a fixed set of circuits. -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,18"
+                        Visibility="{Binding HasSmgpWorld, Converter={StaticResource BoolVisible}}"
+                        DataContext="{Binding SmgpWorld}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}"
+                                       Text="{Binding ProgressText}" VerticalAlignment="Center" />
+                            <TextBlock Text="What the world remembers" Style="{StaticResource H2}" />
+                        </DockPanel>
+                        <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,10"
+                                   Text="The Super Monaco GP world's own account of every circuit — each unlocks once you finish that race." />
+                        <ItemsControl ItemsSource="{Binding Races}"
+                                      ItemTemplate="{StaticResource SmgpWorldRaceTemplate}" />
                     </StackPanel>
                 </Border>
 
@@ -334,12 +438,17 @@
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5), mirroring StandingsView.
              Shown while an inspector is open; the scrim + Close button (mouse) and the ESC key
              binding (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border Background="#99000000"
+        <Border x:Name="InspectorScrim" Background="#99000000"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
             </Border.InputBindings>
-            <Border MaxWidth="520" MaxHeight="440" Margin="24" Padding="18"
+            <!-- proportional modal (was a fixed 520x440) — same fix as StandingsView's inspector -->
+            <Border Margin="24" Padding="18"
+                    MaxWidth="{Binding ActualWidth, ElementName=InspectorScrim,
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.5|520}"
+                    MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
+                                Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Background="{StaticResource SurfaceBrush}" CornerRadius="6"
                     BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
@@ -356,7 +465,7 @@
                     <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" TextWrapping="Wrap"
                                Style="{StaticResource Muted}" Margin="0,0,0,10"
                                Visibility="{Binding HasSummary, Converter={StaticResource BoolVisible}}" />
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                         <ItemsControl ItemsSource="{Binding Rows}"
                                       ItemTemplate="{StaticResource InspectorRowTemplate}" />
                     </ScrollViewer>

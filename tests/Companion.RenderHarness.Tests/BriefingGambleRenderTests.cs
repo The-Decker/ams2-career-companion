@@ -91,10 +91,6 @@ public sealed class BriefingGambleRenderTests
             var vm = new BriefingViewModel(new GambleSession());
             Assert.True(vm.CanGamble); // the panel is shown
 
-            // Commit a bold call so the stake-preview branch + the "No bet" button both render.
-            vm.CallBolderCommand.Execute(null);
-            Assert.True(vm.HasCalledShot);
-
             var view = new BriefingView { DataContext = vm };
             view.Measure(new Size(1000, 900));
             view.Arrange(new Rect(0, 0, 1000, 900));
@@ -102,6 +98,22 @@ public sealed class BriefingGambleRenderTests
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
+
+            // Pin the panel's ACTUAL visibility — CanGamble is true, so the gamble panel must be
+            // Visible (it shipped inverted through the BoolCollapsed converter and no assertion
+            // caught it), and the SMGP panel must stay collapsed on a non-smgp career.
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("GamblePanel")).Visibility);
+            // (the SMGP rival panel moved to its own RivalScreenView — no longer in the briefing)
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
+
+            // "No bet" is the WITHDRAW action: hidden while there is nothing to withdraw,
+            // visible once a call is committed (the second half of the inverted-pair bug).
+            var noBet = (FrameworkElement)view.FindName("GambleNoBetButton");
+            Assert.Equal(Visibility.Collapsed, noBet.Visibility);
+            vm.CallBolderCommand.Execute(null);
+            Assert.True(vm.HasCalledShot);
+            view.UpdateLayout();
+            Assert.Equal(Visibility.Visible, noBet.Visibility);
         });
     }
 }

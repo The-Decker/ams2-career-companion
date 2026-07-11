@@ -199,11 +199,13 @@ public sealed class NewsArticleBank
     /// unknown token or an undeclared pool — so corpus bugs surface in tests, not journals.</exception>
     public string? BuildBody(NewsFacts facts, Pcg32 stream)
     {
-        var templates = Templates(facts.Phase, facts.Cause, facts.Year);
+        // PreferredEra (the SMGP fictional-world corpus) overrides the year→era resolution; a
+        // key the preferred era lacks still falls back per-key to "default" inside VariantsFor.
+        string era = facts.PreferredEra is { Length: > 0 } preferred ? preferred : ResolveEra(facts.Year);
+        var templates = VariantsFor(Bodies, facts.Phase + "|" + facts.Cause, era);
         if (templates.Count == 0)
             return null;
 
-        string era = ResolveEra(facts.Year);
         var tokens = TokenValues(facts);
 
         string template = templates[stream.NextInt(0, templates.Count)];

@@ -1,5 +1,5 @@
 {
-  "$comment": "Generative news-article corpus for the 2000s (digital live-timing / manufacturer-war online race-report voice), parsed by Companion.Core.News.NewsArticleBank. Crisp modern newswire cadence: stats-forward, sector times and telemetry to hand, global HD broadcast, manufacturer mega-budgets. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically. Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools'. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only.",
+  "$comment": "Generative news-article corpus for the 2000s (digital live-timing and online race-report voice), parsed by Companion.Core.News.NewsArticleBank. Crisp modern newswire cadence uses official classifications, web desks, data review and paddock feeds without inventing sector, broadcast, component or manufacturer facts. Keys under 'bodies' are 'journalPhase|cause'; each holds era-keyed body templates selected deterministically. Bodies compose literal prose, fact tokens, and {pool:name} references into 'pools'. Fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add new eras/events by adding JSON only.",
   "eras": [
     { "key": "2000s", "fromYear": 2000, "toYear": 2009 }
   ],
@@ -11,11 +11,11 @@
         "FROM THE MEDIA CENTRE AT {race}.",
         "ONLINE RACE REPORT — {race}, {year}.",
         "PADDOCK WIRE — {race}, round {round}.",
-        "TIMING SCREENS LIVE — {race}, {year}.",
+        "TIMING SCREEN UPDATE — {race}, {year}.",
         "PRESS ROOM FEED — {race}, round {round}.",
         "TRACKSIDE DATA WIRE — {race}, {year}.",
-        "GLOBAL BROADCAST DESK — {race}, round {round}.",
-        "SECTOR-BY-SECTOR — {race}, {year}.",
+        "RACE DESK — {race}, round {round}.",
+        "OFFICIAL CLASSIFICATION — {race}, {year}.",
         "PIT WALL BULLETIN — {race}, round {round}."
       ],
       "default": [
@@ -27,17 +27,17 @@
     },
     "closeGood": {
       "2000s": [
-        "The data goes back to the factory; the momentum stays with the team.",
-        "One for the season highlights package.",
-        "The timing sheets will read kindly in the Monday debrief.",
-        "A benchmark the rest of the grid now has to chase.",
-        "Points banked, and a happy manufacturer board.",
-        "The telemetry says keep doing exactly that.",
-        "A result the marketing department will run with all week.",
-        "Green across the board on the debrief sheet.",
-        "The engineers will enjoy this dataset.",
-        "Momentum, points, and a manufacturer board that's smiling.",
-        "Filed under 'do it again next round.'"
+        "The official result gives the team a clear starting point for review.",
+        "Another classification enters the season archive.",
+        "The timing sheet will sit at the centre of the Monday debrief.",
+        "The final order is published and the paddock moves on.",
+        "The result page is live; the analysis follows.",
+        "The engineers now have a confirmed outcome to examine.",
+        "Round {round} closes with {team} on the record.",
+        "The report is filed under the official classification.",
+        "The result gives {team} a baseline for the next event.",
+        "The online feed closes, but the season keeps moving.",
+        "Filed under the {year} campaign, ready for review."
       ],
       "default": [
         "A solid weekend's work.",
@@ -48,16 +48,16 @@
     },
     "closeBad": {
       "2000s": [
-        "The engineers will spend the flight home buried in the data.",
-        "A weekend the team will want scrubbed from the servers.",
+        "The engineers leave with a difficult result to review.",
+        "The team cannot edit the classification, only its response.",
         "Questions for the debrief, and few easy answers.",
-        "The manufacturer board will want a better story next time.",
-        "Back to the simulator before the next round.",
-        "The data package flies home for a long night of analysis.",
-        "A weekend the strategists will replay frame by frame.",
-        "The manufacturer board wanted more, and the numbers know it.",
+        "{team} turns from the result page to the work ahead.",
+        "The next round begins with this debrief.",
+        "The timing sheet travels home for a long night of analysis.",
+        "A difficult entry goes into the {year} race archive.",
+        "The official order leaves {team} with work to do.",
         "Straight into the debrief, and no shortage of questions.",
-        "The simulator gets a heavy workload before the next round.",
+        "The review list grows before the next round.",
         "One for the 'lessons learned' folder on the server."
       ],
       "default": [
@@ -69,15 +69,15 @@
     },
     "champLine": {
       "2000s": [
-        "In the standings {player} sits {champPosition}, {champMove}, with {champLeader} setting the pace.",
+        "In the standings {player} sits {champPosition}, {champMove}.",
         "The championship table now reads {player} {champPosition} — {champMove} on the season.",
-        "That leaves {player} {champPosition} in the title race, {champMove}, chasing {champLeader}.",
-        "On the timing-based standings {player} holds {champPosition}, {champMove}, with {champLeader} out front.",
-        "Crunch the numbers and {player} is {champPosition} in the title chase, {champMove} on the year, {champLeader} leading.",
-        "The points ledger has {player} {champPosition} now — {champMove}, and {champLeader} the name to catch.",
-        "Standings update: {player} {champPosition}, {champMove}, {champLeader} still setting the benchmark.",
-        "That's {player} {champPosition} on the championship spreadsheet, {champMove}, chasing {champLeader}.",
-        "By the season's running totals, {player} sits {champPosition} — {champMove} — behind pacesetter {champLeader}."
+        "That leaves {player} {champPosition} in the title race, {champMove}.",
+        "On the published standings {player} holds {champPosition}, {champMove}.",
+        "Crunch the numbers and {player} is {champPosition}, {champMove} on the year.",
+        "The points ledger has {player} {champPosition} now — {champMove}.",
+        "Standings update: {player} {champPosition}, {champMove}.",
+        "That's {player} {champPosition} on the championship page, {champMove}.",
+        "By the season's running totals, {player} sits {champPosition} — {champMove}."
       ],
       "default": [
         "{player} is {champPosition} in the standings, {champMove}.",
@@ -90,52 +90,52 @@
       "2000s": [
         "against pre-race models that called {expected}",
         "with the form guide pegged at {expected}",
-        "when the grid data pointed to {expected}",
+        "when the pre-race data pointed to {expected}",
         "against a data model that projected {expected}",
-        "with the simulation calling only {expected}",
+        "with the preview calling only {expected}",
         "when the pre-event numbers said {expected}",
         "past a form-guide line of {expected}",
-        "against telemetry-based odds of {expected}",
+        "against published odds of {expected}",
         "when the paddock consensus read {expected}"
       ],
       "default": [
-        "beyond an expected {expected}",
-        "past a projected {expected}",
-        "above a forecast {expected}",
-        "beyond a predicted {expected}"
+        "beyond a model line of {expected}",
+        "past a projection of {expected}",
+        "above a forecast of {expected}",
+        "beyond a prediction of {expected}"
       ]
     },
-    "sectorNote": {
+    "webDesk": {
       "2000s": [
-        "The sector splits told the whole story.",
-        "Every timing loop had the {team} car in the green.",
-        "The live splits backed up the result.",
-        "Purple sectors where it mattered most.",
-        "The broadcast timing graphic said as much.",
-        "The mini-sectors lit up green for {team} all afternoon.",
-        "Fastest in two sectors, quickest through the speed trap.",
-        "The delta bar barely left the positive side.",
-        "The onboard data matched the stopwatch to the thousandth.",
-        "The {team} car owned the timing loops.",
-        "Purple splits landed exactly where the strategists wanted them."
+        "The official timing sheet confirms {player} in {position}.",
+        "The online classification lists {player} {position} for {team}.",
+        "The final result page records {player} in {position}.",
+        "Round {round} is filed with {player} {position}.",
+        "The race database now carries the confirmed order.",
+        "The media-centre feed closes on the official classification.",
+        "The {year} archive records {player} {position} for {team}.",
+        "The published result places {player} {position} at {race}.",
+        "The online report is updated with {player} in {position}.",
+        "The timing sheet is final; {position} is on the record.",
+        "The result feed confirms {player} {position}."
       ],
       "default": [
-        "The timing data agreed.",
-        "The splits backed it up.",
-        "The lap times told the story.",
-        "The data lined up."
+        "The official result is posted.",
+        "The online classification is final.",
+        "The result page carries the order.",
+        "The timing sheet is confirmed."
       ]
     },
     "seasonClose": {
       "2000s": [
-        "The season's data is archived; the manufacturer program resets for next year.",
-        "The final standings are locked, and the offseason simulator work begins.",
-        "The championship servers go quiet until lights-out on a new campaign.",
-        "The telemetry archive is sealed and the winter development program spins up.",
-        "The standings are final, the servers idle, and the simulator work begins.",
-        "A season's worth of data goes to the factory; the new campaign is already on the whiteboard.",
-        "The championship feed signs off until the next lights-out.",
-        "The numbers are filed, the manufacturer resets, and the countdown to next year starts now."
+        "The season's record is archived; planning turns to next year.",
+        "The final standings are locked, and off-season work begins.",
+        "The championship site closes its live feed on a completed campaign.",
+        "The results archive is sealed and the winter review starts.",
+        "The standings are final, the updates stop, and planning begins again.",
+        "A season's worth of classifications goes into the archive.",
+        "The championship feed signs off until the next campaign.",
+        "The numbers are filed and the countdown to next year starts now."
       ],
       "default": [
         "The season is in the books.",
@@ -143,20 +143,56 @@
         "The year is done; the next begins.",
         "Attention turns to next season."
       ]
+    },
+    "paddockNote": {
+      "2000s": [
+        "The paddock moves on with another result to analyse.",
+        "For {team}, the debrief begins with the official result.",
+        "The race report is filed; the analysis follows.",
+        "Another weekend enters the {year} record.",
+        "The result gives {team} its starting point for the next review.",
+        "The online report closes, but the numbers remain.",
+        "Round {round} is complete and the paddock turns to the consequences.",
+        "The classification is final; {team} now has the record to assess."
+      ],
+      "default": [
+        "The paddock moves on.",
+        "The debrief starts with the result.",
+        "The report is filed.",
+        "The classification is ready for review."
+      ]
+    },
+    "reviewNote": {
+      "2000s": [
+        "The final table is the season's record.",
+        "The last standings update is posted and the order is final.",
+        "The {year} championship now belongs to the archive.",
+        "The season's championship results have produced this final order.",
+        "The online season file closes on the official standings.",
+        "The points ledger is complete for the campaign.",
+        "With the table locked, the winter review can begin.",
+        "The championship page now carries the final order."
+      ],
+      "default": [
+        "The final table is set.",
+        "The standings update is complete.",
+        "The season record is closed.",
+        "The championship order is final."
+      ]
     }
   },
   "bodies": {
     "race.result|win": {
       "2000s": [
-        "{pool:dateline} {player} takes the win at {race}, controlling the {year} race from the front for {team}. The gap over a {fieldSize}-car field never came under threat once the pit sequence played out. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Victory logged: {player} wins {race} for {team}. Sector by sector the {team} car set the benchmark, and the broadcast graphics ran out of rivals to track. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} beats a {expected} projection and then some — a flag-to-flag win at {race}. {team}'s manufacturer program has its result, and the live timing has a new fastest name. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} converts front-running control into a {race} win for {team}. A {fieldSize}-car field never got a look-in once the {team} car cleared the opening sequence. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Win logged for {player} at {race}. The live timing had {team} in front from the first sector and never gave the lead away. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Domination at {race}: {player} leads every lap that matters for {team}. {pool:expectationBeat}, the win was never in doubt once the pit windows opened. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} takes {race} for {team}, the timing tower reading one name at the front all day. The gap back to the {fieldSize}-car field only grew. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Lights to flag, {player} owns {race} for {team}. The data crew watched a clean run print across every timing screen. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Victory at {race} for {player}, and the manufacturer program has the headline result it budgeted for. {team} controlled the race from the front. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} takes the win at {race} for {team}, first in the official order from a {fieldSize}-car field. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory logged: {player} wins {race} for {team}. Round {round} now has its confirmed winner. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} RESULT: {player} wins the {year} {race}. The classification records {position} for {team}. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} is the {race} winner for {team}, heading the final result among {fieldSize} starters. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Win logged for {player} at {race}. The official page puts the {team} entry at the top of the order. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} takes victory at {race} for {team}. The online classification supplies the headline. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The {race} result is final: {player} wins for {team} in round {round}. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} First place belongs to {player} at {race}, a win for {team} from a field of {fieldSize}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Victory at {race} for {player}. The {team} driver's winning line is live on the {year} result page. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} won {race} for {team}, heading a field of {fieldSize}. {pool:champLine} {pool:closeGood}"
@@ -164,15 +200,15 @@
     },
     "race.result|podium": {
       "2000s": [
-        "{pool:dateline} {player} on the podium at {race}, home {position} for {team} in a {fieldSize}-car field. {winner} took the win, but the {team} car was in the fight to the flag. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A rostrum result: {player} finishes {position} at {race}, splitting the frontrunners on a day when the sector times stacked up. {winner} led home, {team} banked the silverware. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Podium for {player} — {position} at {race}, {pool:expectationBeat}, and the {team} garage has plenty to work with. Only {winner} finished ahead. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} banks a podium at {race}, {position} for {team} in a {fieldSize}-car field. {winner} won it, but the {team} car was never out of the timing fight. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Rostrum for {player} — {position} at {race}. The sector splits kept {team} in the top three all the way to the flag, {winner} leading home. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} climbs the podium at {race}, {position} {pool:expectationBeat}. Only {winner} finished ahead of the {team} car. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A top-three for {player} at {race}: {position} for {team}, the trophy cabinet restocked. {winner} took the win in a {fieldSize}-car field. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} on the box at {race} — {position} at the flag. The {team} garage read the strategy right and the timing screens rewarded it. {winner} led the way. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Podium logged: {player} {position} at {race} for {team}. Behind {winner}, but ahead of the rest of a {fieldSize}-car field, and the data backs the pace. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} is on the podium at {race}, home {position} for {team} in a {fieldSize}-car field. {winner} took the win. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A rostrum result: {player} finishes {position} at {race}. {winner} wins and {team} records a top-three finish. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Podium for {player} — {position} at {race} for {team}, with {winner} first in the classification. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} banks a podium at {race}, {position} for {team} from a {fieldSize}-car field. {winner} won the race. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Rostrum for {player}: {position} at {race}. The result page lists {winner} first and {team} in the top three. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} climbs the podium at {race}, classified {position} for {team}. Victory belongs to {winner}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A top-three for {player} at {race}: {position} for {team}, with {winner} winning a {fieldSize}-car field. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} is on the box at {race} — {position} at the flag. {winner} heads the official order. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Podium logged: {player} {position} at {race} for {team}. The final result records {winner} first. {pool:webDesk} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}"
@@ -180,14 +216,15 @@
     },
     "race.result|points": {
       "2000s": [
-        "{pool:dateline} {player} banks championship points at {race}, {position} at the flag for {team} from a {fieldSize}-car field. {winner} won the day; the {team} data crew will take the clean run. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A points-scoring afternoon for {player} — {position} at {race}. No podium, but the numbers add up and the standings tick over for {team}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} adds to the tally at {race}, {position} for {team} in a {fieldSize}-car field. {winner} won; the {team} pit wall banks a clean, quiet score. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Points on the board for {player} — {position} at {race}. No fireworks on the timing screens, but the standings tick over for {team}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A solid points haul for {player} at {race}, home {position} behind {winner}. The {team} data crew will take the consistency. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} scores at {race}, {position} at the flag for {team}. Not a headline result, but the manufacturer program values the reliability. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Championship points for {player} — {position} from a {fieldSize}-car field at {race}. {winner} took the spoils; {team} logs the run and moves on. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} brings the {team} car home {position} at {race}, inside the points. The timing tower stayed quiet, the debrief stays short. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} banks championship points at {race}, {position} for {team} from a {fieldSize}-car field. {winner} won the day. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A points-scoring result for {player} — {position} at {race}, added to the drivers' ledger. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} adds championship points at {race}, finishing {position} for {team}. {winner} wins the race. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Points on the board for {player}: {position} at {race} from {fieldSize} starters. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The official result gives {player} {position} and a points finish for {team} at {race}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} scores at {race}, {position} at the flag for {team}. The points are entered in the ledger. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Championship points for {player} — {position} at {race}, while {winner} takes the victory. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} brings the {team} car home {position} at {race}, inside the points. The classification is final. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A scoring finish for {player}: {position} at {race} for {team} from a field of {fieldSize}. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} scored points at {race}, finishing {position}. {pool:champLine} {pool:closeGood}"
@@ -195,14 +232,15 @@
     },
     "race.result|overperformed": {
       "2000s": [
-        "{pool:dateline} Overachievement at {race}: {player} hauls the {team} car to {position}, {pool:expectationBeat}. The paddock — and the TV timing loop — did a double take. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} outdrives the machinery at {race}, {position} from a {fieldSize}-car field when the pre-race models said {expected}. Drive of the day, by any metric. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} beats the model at {race}: {position} for {team} {pool:expectationBeat}. The paddock data analysts will want a second look. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Well over the odds at {race} — {player} drags the {team} car to {position} when the numbers said {expected}. Drive of the weekend on any spreadsheet. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} rewrites the form guide at {race}, {position} from a {fieldSize}-car field {pool:expectationBeat}. The {team} garage did not see this coming, and neither did the timing screens. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A result the projections did not allow for: {player} {position} at {race} for {team}. {winner} won, but the story was the {team} car finishing where {expected} said it could not. {pool:sectorNote} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} outperforms the machinery at {race}, hauling {team} to {position} against a pre-race line of {expected}. The telemetry says the driver made the difference. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Overachievement, logged and verified: {player} {position} at {race}, {pool:expectationBeat}. The {team} board gets a result the budget didn't buy. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} Overachievement at {race}: {player} brings the {team} car home {position} {pool:expectationBeat}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} beats the pre-race model at {race}, {position} from a {fieldSize}-car field against a projection of {expected}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} beats the projection at {race}: {position} for {team} {pool:expectationBeat}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Above the forecast at {race} — {player} takes {position} when the numbers said {expected} for {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} rewrites the form guide at {race}, {position} from a {fieldSize}-car field with {expected} projected. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A result beyond the projection: {player} {position} at {race} for {team}, with {expected} predicted. {winner} won. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} outperforms the pre-race line at {race}, finishing {position} for {team} against a forecast of {expected}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Overachievement, logged and verified: {player} {position} at {race}, {pool:expectationBeat}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The model called {expected}; {player} finishes {position} at {race} for {team}. The better result is now official. {pool:paddockNote} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} overdelivered at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
@@ -210,29 +248,31 @@
     },
     "race.result|underperformed": {
       "2000s": [
-        "{pool:dateline} A weekend that got away from {player}: {position} at {race} when {expected} was on the table. {team} will comb the telemetry for the deficit, and {winner} won. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} {player} off the pace at {race}, home {position} in a {fieldSize}-car field. The sector times flattered no one in the {team} garage this weekend. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} A weekend below the line for {player}: {position} at {race} with {expected} on the table. {team} will mine the telemetry for the missing time; {winner} won. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} {player} short of the mark at {race}, home {position} in a {fieldSize}-car field. The sector times never came alive for {team}. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} The numbers expected {expected}; {player} delivered {position} at {race}. The {team} data crew has a deficit to explain and a flight home to do it. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} Off-colour at {race}: {player} {position} for {team} when the form guide pointed higher. {winner} led a {fieldSize}-car field home while the {team} garage searched the screens. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} {player} loses ground at {race}, {position} at the flag. The pace that {expected} promised never showed on the {team} telemetry. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} A quiet, frustrating run for {player} — {position} at {race} when more was expected of the {team} package. The debrief will be a long one. {pool:champLine} {pool:closeBad}"
+        "{pool:dateline} Below the line at {race}: {player} finishes {position} when {expected} was projected for {team}. {winner} wins. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} is classified {position} at {race} in a {fieldSize}-car field, short of a forecast of {expected}. {pool:webDesk} {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} A result below the model for {player}: {position} at {race} with {expected} forecast. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} finishes {position} at {race} for {team}, at least three places below the pre-race expectation of {expected}. {pool:webDesk} {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The pre-race numbers pointed to {expected}; the official order records {player} {position} at {race}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} Off the forecast at {race}: {player} {position} for {team} while {winner} wins a {fieldSize}-car field. {pool:paddockNote} {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} ends {race} {position}, below a pre-race projection of {expected} for {team}. {pool:webDesk} {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The final result gives {player} {position} at {race} when the {team} model had called {expected}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} Short of the target: {player} is {position} at {race}, against a {team} forecast of {expected}. {pool:paddockNote} {pool:champLine} {pool:closeBad}"
       ],
       "default": [
-        "{player} was below par at {race}, only {position} when {expected} was expected. {pool:champLine} {pool:closeBad}"
+        "{player} was below par at {race}, only {position} against a forecast of {expected}. {pool:champLine} {pool:closeBad}"
       ]
     },
     "race.result|dnf-mechanical": {
       "2000s": [
-        "{pool:dateline} {player} is out at {race} — a mechanical failure ends the run for {team}, no fault of the driver's. Reliability, not pace, wrote the result; {winner} took the win. {pool:closeBad}",
-        "{pool:dateline} Retirement at {race}: the {team} car let go while running its race and the telemetry flatlined. A {expected} projection counts for nothing once the machine stops. {pool:closeBad}",
-        "{pool:dateline} {player} parks the {team} car at {race} — a mechanical failure, no driver fault, and the telemetry cut out mid-run. {winner} took the win the reliability denied. {pool:closeBad}",
-        "{pool:dateline} Retirement at {race}: the {team} machine cried enough while {player} was in the fight. The data logs the failure; the standings log the zero. {pool:closeBad}",
-        "{pool:dateline} A DNF for {player} at {race}, the {team} car stopping with a problem no driver could out-drive. {expected} on paper counts for nothing once the engine note dies. {pool:closeBad}",
-        "{pool:dateline} Machinery, not the man: {player} is out of {race} with a mechanical failure for {team}. The timing screen went dark on a run that had promise. {pool:closeBad}",
-        "{pool:dateline} {player}'s {race} ends in the garage — a component lets go and the {team} car is done. {winner} led a {fieldSize}-car field to the flag. {pool:closeBad}",
-        "{pool:dateline} Reliability writes the result at {race}: {player} retires the {team} car, the telemetry flagging the failure before the driver could react. {pool:closeBad}"
+        "{pool:dateline} {player} is out at {race}: a mechanical failure ends the {team} run. {winner} takes the win. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} Mechanical retirement at {race} for {player}. A projection of {expected} counts for nothing once the {team} entry is out. {pool:closeBad}",
+        "{pool:dateline} {player} retires from {race} with a mechanical failure for {team}. The retirement enters the official order. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} A mechanical DNF for {player} at {race}; the official classification records no finish for {team}. {pool:closeBad}",
+        "{pool:dateline} Mechanical trouble ends {player}'s {race} before the flag, leaving a target of {expected} unrealised. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} {team} records a mechanical retirement for {player} at {race}. {winner} wins the event. {pool:closeBad}",
+        "{pool:dateline} {player}'s {race} ends through mechanical failure for {team}. The retirement goes into the record. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} Reliability writes the result at {race}: {player} retires the {team} entry from a {fieldSize}-car event. {pool:closeBad}",
+        "{pool:dateline} OUT through mechanical trouble: {player} leaves {race} without a finish for {team}. {pool:paddockNote} {pool:closeBad}"
       ],
       "default": [
         "{player} retired from {race} with a mechanical failure. {pool:closeBad}"
@@ -240,29 +280,31 @@
     },
     "race.result|dnf-driver-error": {
       "2000s": [
-        "{pool:dateline} {player} out of {race} — a driver error puts the {team} car in the barriers with the job unfinished. {winner} led a {fieldSize}-car field home. {pool:closeBad}",
-        "{pool:dateline} A costly mistake at {race}: {player} throws away a run that promised {expected}, the incident replaying on every broadcast angle. {team} counts the cost. {pool:closeBad}",
-        "{pool:dateline} {player} in the barriers at {race} — a driver error ends the {team} run early, replayed from every broadcast angle. {winner} won a {fieldSize}-car field. {pool:closeBad}",
-        "{pool:dateline} A mistake that cost everything at {race}: {player} throws away a run that read {expected} for {team}. The onboard data tells the story. {pool:closeBad}",
-        "{pool:dateline} DNF for {player} at {race}, the {team} car parked after a driver error the timing loop marked to the metre. Nothing to bank but the lesson. {pool:closeBad}",
-        "{pool:dateline} {player} loses the {team} car at {race} — an unforced error, and the race is over. {winner} took the spoils while the {team} garage watched the replay. {pool:closeBad}",
-        "{pool:dateline} A costly moment at {race}: {player} clips the limit and the {team} car is done. {expected} was on the table before the error; now it's a zero. {pool:closeBad}",
-        "{pool:dateline} Driver error ends {player}'s {race}, the {team} car in the wall and the broadcast running the incident on loop. The debrief writes itself. {pool:closeBad}"
+        "{pool:dateline} {player} is out of {race} through driver error for {team}. {winner} wins the {fieldSize}-car event. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} A costly mistake at {race} leaves {player} without a finish, with the forecast of {expected} unrealised. {pool:closeBad}",
+        "{pool:dateline} Driver error ends the {team} run for {player} at {race}. The retirement is official. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} A driver mistake stops {player} before the flag at {race}, leaving {team} with a DNF. {pool:closeBad}",
+        "{pool:dateline} DNF for {player} at {race}: the official cause is driver error. {winner} takes the victory. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} {player}'s {race} ends through driver error for {team}. The classification records the retirement. {pool:closeBad}",
+        "{pool:dateline} A costly moment at {race}: driver error leaves {player} out and a target of {expected} unconverted. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} Driver error ends {player}'s {race} for {team}, and the DNF is final. {winner} wins. {pool:closeBad}",
+        "{pool:dateline} {team} records a driver-error DNF for {player} at {race}. The official order moves on without a finish. {pool:paddockNote} {pool:closeBad}"
       ],
       "default": [
-        "{player} crashed out of {race} through driver error. {pool:closeBad}"
+        "{player} retired from {race} through driver error. {pool:closeBad}"
       ]
     },
     "race.result|midfield": {
       "2000s": [
-        "{pool:dateline} A quiet, clean run for {player} — {position} at {race} in a {fieldSize}-car field. Not one for the highlight reel, but the laps and data are in the bank for {team}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} logs {position} at {race}, mid-pack behind {winner}. A low-key afternoon for {team}, with little for the timing screens to flag. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A quiet {position} for {player} at {race}, mid-pack in a {fieldSize}-car field. Little for the timing screens to flag, but the laps are in the bank for {team}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} runs to {position} at {race}, tucked into the pack behind {winner}. A low-key afternoon of clean data for {team}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} An anonymous run for {player} — {position} at {race} for {team}. The broadcast barely cut to the {team} car, and that suited a tidy afternoon. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} logs {position} at {race}, mid-order in a {fieldSize}-car field. No drama on the timing tower, just laps banked for the {team} data crew. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A steady, unremarkable {race} for {player}: {position} at the flag for {team}, {winner} up the road. The kind of run the strategists quietly value. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} brings it home {position} at {race}, clean and quiet for {team}. Not one for the highlights package, but every lap is data. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} finishes {position} at {race} in a {fieldSize}-car field, outside the points for {team}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} logs {position} at {race}, a non-scoring result for {team}. {winner} wins the event. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The classification puts {player} {position} at {race}, outside the points from a field of {fieldSize}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} runs to {position} at {race} for {team}. No championship points are added. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A midfield result for {player}: {position} at {race}, with {winner} taking the win. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} is classified {position} at {race} in a {fieldSize}-car field, beyond the scoring places for {team}. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The official result records {player} {position} at {race}, outside the points for {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} brings the {team} entry home {position} at {race}. The result does not add to the points tally. {pool:webDesk} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Midfield in the final order: {player} {position} at {race} while {winner} wins the day. {pool:paddockNote} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}"
@@ -270,14 +312,15 @@
     },
     "season.digest|player-champion": {
       "2000s": [
-        "SEASON REVIEW — {year}. {player} closes the campaign as world champion, the {team} program topping the final standings after a title run the timing data flagged early. {pool:seasonClose}",
-        "The {year} title is settled and the number reads {champPosition}: {player} is champion, {team}'s manufacturer effort rewarded across a full season of points. {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {player} is world champion, the {team} program topping the final standings after a campaign the data flagged from the opening rounds. {pool:seasonClose}",
-        "The {year} title belongs to {player}. {team}'s manufacturer effort is rewarded, the season's numbers reading champion at {champPosition}. {pool:seasonClose}",
-        "SEASON REVIEW — {year}. Champion: {player}. A full year of points and green sectors delivers the {team} board the title it chased. {pool:seasonClose}",
-        "The standings are final and {player} sits {champPosition} — world champion for {team}, a season the telemetry called correctly all year. {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {player} closes out the championship for {team}, the timing archive full of the laps that won it. {pool:seasonClose}",
-        "It reads {champPosition} in the final table: {player}, {year} world champion, and {team}'s program has its headline season. {pool:seasonClose}"
+        "SEASON REVIEW — {year}. {player} closes the campaign as world champion, {champPosition} in the final drivers' standings for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "The {year} title is settled: {player} is World Drivers' Champion for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW — {year}. Champion: {player}. The final table puts the {team} driver first. {pool:reviewNote} {pool:seasonClose}",
+        "The {year} title belongs to {player}, world champion at {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW — {year}. {player} wins the drivers' championship for {team}; the final order is official. {pool:reviewNote} {pool:seasonClose}",
+        "The standings are final and {player} sits {champPosition} — world champion for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW — {year}. {player} closes the championship on top for {team}. The drivers' title is secured. {pool:reviewNote} {pool:seasonClose}",
+        "It reads {champPosition} in the final table: {player}, {year} world champion for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "WORLD CHAMPION — {player}. The {year} drivers' standings end with the {team} racer first. {pool:reviewNote} {pool:seasonClose}"
       ],
       "default": [
         "{player} tops the final {year} standings — champion, and a title season logged for {team}. {pool:seasonClose}"
@@ -285,14 +328,15 @@
     },
     "season.digest|season-complete": {
       "2000s": [
-        "SEASON REVIEW — {year}. {champLeader} takes the championship; {player} signs off {champPosition} in the final standings for {team}, the season's numbers filed for the offseason review. {pool:seasonClose}",
-        "The {year} campaign is complete: {champLeader} is champion, {player} classified {champPosition} for {team}. The data crew turns to the winter build. {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {champLeader} is champion; {player} signs off {champPosition} for {team}, the season's data filed for the winter review. {pool:seasonClose}",
-        "The {year} campaign is done: {champLeader} takes the title, {player} classified {champPosition} for {team}. The manufacturer program resets. {pool:seasonClose}",
-        "SEASON REVIEW — {year}. {champLeader} tops the standings; {player} ends the year {champPosition}, the {team} data crew already on the winter build. {pool:seasonClose}",
-        "Final numbers for {year}: {champLeader} champion, {player} {champPosition} for {team}. A season's telemetry goes to the archive. {pool:seasonClose}",
-        "SEASON REVIEW — {year}. The title goes to {champLeader}; {player} finishes {champPosition} for {team}, the season logged and the offseason begun. {pool:seasonClose}",
-        "The {year} standings are locked — {champLeader} champion, {player} {champPosition} for {team}. The servers go quiet until next year. {pool:seasonClose}"
+        "SEASON REVIEW — {year}. {champLeader} takes the championship; {player} signs off {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "The {year} campaign is complete: {champLeader} is champion, with {player} classified {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW — {year}. {champLeader} is champion; {player} ends the drivers' standings {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "The {year} campaign is done: {champLeader} takes the title and {player} is {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW — {year}. {champLeader} tops the standings; {player} ends the year {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "Final numbers for {year}: {champLeader} champion, {player} {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "SEASON REVIEW — {year}. The title goes to {champLeader}; {player} finishes {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "The {year} standings are locked — {champLeader} champion, {player} {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}",
+        "FINAL TABLE — {year}. {champLeader} takes the crown; {player} closes the campaign {champPosition} for {team}. {pool:reviewNote} {pool:seasonClose}"
       ],
       "default": [
         "{champLeader} took the {year} title; {player} finished the year {champPosition} for {team}. {pool:seasonClose}"

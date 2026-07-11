@@ -24,21 +24,38 @@ public static class BubbleCarGraft
     /// <summary>A car's contiguous block-group inside an override file (line span + slot + name).</summary>
     public sealed record BlockGroup(int StartLine, int EndLine, string Slot, string Name);
 
-    /// <summary>Every car block-group in <paramref name="lines"/>, in file order.</summary>
+    /// <summary>Every ACTIVE car block-group in <paramref name="lines"/>, in file order. Blocks
+    /// inside <c>&lt;!-- --&gt;</c> comments are skipped — packs like 1985 keep ~20 alternate
+    /// LIVERY_OVERRIDE blocks inside one giant comment, and AMS2 never loads those, so treating
+    /// them as cars would offer phantom displacement targets (a graft written into a comment is a
+    /// silent in-game no-op).</summary>
     public static IReadOnlyList<BlockGroup> BlockGroups(IReadOnlyList<string> lines)
     {
+        // Comment spans are computed over the joined text; map each line to its absolute offset so
+        // a match's position can be tested against them.
+        var comments = CustomAi.LenientXml.CommentSpans(string.Join("\n", lines));
+        var lineStart = new int[lines.Count];
+        for (int i = 1; i < lines.Count; i++)
+            lineStart[i] = lineStart[i - 1] + lines[i - 1].Length + 1;
+
         var groups = new List<BlockGroup>();
         for (int i = 0; i < lines.Count; i++)
         {
             var m = LiveryOpen.Match(lines[i]);
-            if (!m.Success)
+            if (!m.Success || CustomAi.LenientXml.IsInComment(lineStart[i] + m.Index, comments))
                 continue;
             int end = i;
             for (int j = i; j < lines.Count; j++)
             {
                 if (OutfitClose.IsMatch(lines[j])) { end = j; break; }
-                // A malformed group with no OUTFIT close ends at the next livery block.
-                if (j > i && LiveryOpen.IsMatch(lines[j])) { end = j - 1; break; }
+                // A malformed group with no OUTFIT close ends at the next livery block or at a
+                // comment (the 1985 alternates section opens with a commented instructions header).
+                if (j > i && (LiveryOpen.IsMatch(lines[j]) ||
+                              lines[j].TrimStart().StartsWith("<!--", StringComparison.Ordinal)))
+                {
+                    end = j - 1;
+                    break;
+                }
                 end = j;
             }
             groups.Add(new BlockGroup(i, end, m.Groups["slot"].Value, m.Groups["name"].Value));

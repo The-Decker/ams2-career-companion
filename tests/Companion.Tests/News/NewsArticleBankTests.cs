@@ -54,6 +54,44 @@ public sealed class NewsArticleBankTests
         }
     }
 
+    // ---------- the SMGP fictional-world corpus (selected by PreferredEra, never by year) ----------
+
+    [Fact]
+    public void SmgpEra_IsSelectedByOverrideOnly_NeverByYear()
+    {
+        var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
+
+        // The sentinel year range means a real career (incl. the 1990 F1 pack) never resolves to
+        // the smgp outlet by year — only the explicit PreferredEra override reaches it.
+        Assert.NotEqual("smgp", bank.ResolveEra(1990));
+        Assert.NotEqual("smgp", bank.ResolveEra(1967));
+        Assert.NotEqual("smgp", bank.ResolveEra(2020));
+
+        var stream = new StreamFactory(Seed).CreateStream(CareerStreams.Headlines, 1990, 1, "race");
+        string? body = bank.BuildBody(SampleWin() with { Year = 1990, PreferredEra = "smgp" }, stream);
+        Assert.False(string.IsNullOrEmpty(body));
+    }
+
+    [Fact]
+    public void SmgpEra_CoversEveryRaceCause_AndBothDigests()
+    {
+        var bank = NewsArticleBank.LoadDirectory(ShippedNewsDirectory);
+        foreach (string cause in RaceCauses)
+        {
+            var facts = SampleWin() with { Cause = cause, Year = 1990, PreferredEra = "smgp" };
+            var stream = new StreamFactory(Seed).CreateStream(CareerStreams.Headlines, 1990, 1, "race");
+            Assert.False(string.IsNullOrEmpty(bank.BuildBody(facts, stream)),
+                $"smgp corpus missing a body for race.result|{cause}.");
+        }
+        foreach (string cause in new[] { "player-champion", "season-complete" })
+        {
+            var facts = SampleWin() with { Phase = "season.digest", Cause = cause, Year = 1990, PreferredEra = "smgp" };
+            var stream = new StreamFactory(Seed).CreateStream(CareerStreams.Headlines, 1990, 0, "season");
+            Assert.False(string.IsNullOrEmpty(bank.BuildBody(facts, stream)),
+                $"smgp corpus missing a body for season.digest|{cause}.");
+        }
+    }
+
     // A representative year inside each shipped era's declared range — the era files span
     // 1946..2029 contiguously (1960s/1970s/1980s/1990s/2000s/2010s), covering every bundled pack.
     public static IEnumerable<object[]> EraYears() =>

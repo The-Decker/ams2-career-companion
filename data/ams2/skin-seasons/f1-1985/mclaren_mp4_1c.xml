@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+	<LIVERY_OVERRIDE LIVERY="51" NAME="Marlboro McLaren International #1" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview1.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body1.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="Marlboro McLaren International #2" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview2.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body2.dds" />
+	</LIVERY_OVERRIDE>
+	
+
+
+<!-- ---------------ALTERNATE LIVERY OPTIONS ------------------
+All livery override options are detailed below. This includes the 10 active liveries listed above, plus several extra liveries - either for cars that there is no space for (e.g. Alan Jones' Haas), or alternative liveries for specific alternate drivers (e.g. Ivan Capelli's Tyrrell). 
+
+To replace one of the above liveries with one of the below options:
+1: Find the livery you want to include from the list below and COPY its four-line block of xml.
+2: PASTE it above on a new line under the block of xml of whichever livery you want to replace. 
+3. Replace the "##" in the pasted block of xml with the LIVERY number of the one you are replacing (a number between 51 and 60).
+4. DELETE the four-line block of xml code for the livery you want to replace. 
+5. SAVE the file.
+----------------------------------------------------------------
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Marlboro McLaren International #1" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview1.dds" />
+        	<TEXTURE NAME="BODY" PATH="F1_1985\body1.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Marlboro McLaren International #2" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview2.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_1985\body2.dds" />
+	</LIVERY_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="##" NAME="Marlboro McLaren International #1" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_1985\preview1-watson.dds" />
+       		<TEXTURE NAME="BODY" PATH="F1_1985\body1-watson.dds" />
+	</LIVERY_OVERRIDE>
+
+-->
+
+</USER_OVERRIDES>

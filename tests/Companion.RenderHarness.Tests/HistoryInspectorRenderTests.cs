@@ -142,6 +142,71 @@ public sealed class HistoryInspectorRenderTests
         });
     }
 
+    [Fact]
+    public void SmgpWorldAlmanac_RevealsRacedCircuits_AndKeepsSealedOnesHidden()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = new HistoryRenderFakeSession
+            {
+                Timeline = new CareerTimeline
+                {
+                    Seasons = [new CareerSeasonCard { SeasonYear = 1990, RoundsApplied = 1, RoundCount = 16 }],
+                },
+                SmgpWorld = new SmgpWorldHistory
+                {
+                    Races =
+                    [
+                        new SmgpWorldRace
+                        {
+                            Round = 1, VenueName = "San Marino", IsRevealed = true,
+                            Title = "SAN MARINO — THE OPENER", Circuit = "the season's lights-out",
+                            Champion = "A. Senna · Madonna",
+                            Body = ["The king sets the tone."], Notes = ["A note about the king."],
+                        },
+                        // SEALED — carries lore, but IsRevealed=false must keep every word of it hidden
+                        // (the exact inverted-visibility trap a render test exists to catch).
+                        new SmgpWorldRace
+                        {
+                            Round = 2, VenueName = "Brazil", IsRevealed = false,
+                            Title = "SHOULD NOT SHOW — TITLE", Champion = "HIDDEN CHAMPION",
+                            Body = ["SECRET BODY PARAGRAPH"], Notes = ["SECRET NOTE"],
+                        },
+                    ],
+                },
+            };
+            var vm = new HistoryViewModel(session);
+
+            // Expand BOTH entries so the sealed one's detail region is realised (and proven hidden).
+            vm.SmgpWorld!.Races[0].IsExpanded = true;
+            vm.SmgpWorld.Races[1].IsExpanded = true;
+
+            var view = new HistoryView { DataContext = vm };
+            using var host = Host.Show(view);
+            host.Layout();
+
+            var texts = host.VisibleTexts();
+
+            // The panel header + progress, and the REVEALED circuit's full legend, all render.
+            Assert.Contains(texts, t => t.Contains("What the world remembers"));
+            Assert.Contains(texts, t => t.Contains("1 of 2 circuits unlocked"));
+            Assert.Contains(texts, t => t.Contains("SAN MARINO — THE OPENER"));
+            Assert.Contains(texts, t => t.Contains("A. Senna · Madonna"));
+            Assert.Contains(texts, t => t.Contains("The king sets the tone."));
+            Assert.Contains(texts, t => t.Contains("A note about the king."));
+            // The sealed circuit shows its spoiler-free teaser…
+            Assert.Contains(texts, t => t.Contains("Finish this race in your career to unlock"));
+            // …and leaks NOT ONE WORD of its authored legend.
+            Assert.DoesNotContain(texts, t => t.Contains("SHOULD NOT SHOW"));
+            Assert.DoesNotContain(texts, t => t.Contains("HIDDEN CHAMPION"));
+            Assert.DoesNotContain(texts, t => t.Contains("SECRET BODY PARAGRAPH"));
+            Assert.DoesNotContain(texts, t => t.Contains("SECRET NOTE"));
+        });
+    }
+
     // ---------- a minimal off-screen host for one HistoryView ----------
 
     private sealed class Host : IDisposable
@@ -245,6 +310,10 @@ public sealed class HistoryInspectorRenderTests
             new Dictionary<int, HistoricalSeason>();
 
         public HistoricalSeason? HistoricalSeason(int year) => HistoricalSeasons.GetValueOrDefault(year);
+
+        public SmgpWorldHistory? SmgpWorld { get; init; }
+
+        public SmgpWorldHistory? SmgpWorldHistory() => SmgpWorld;
 
         public JournalChain JournalForSeason(string entity, int seasonYear, int? round = null) => SeasonChain;
 

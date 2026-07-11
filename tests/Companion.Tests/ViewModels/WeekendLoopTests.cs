@@ -59,11 +59,21 @@ public sealed class WeekendLoopTests
         Order(qualifying, "2", "1");
         Assert.True(home.ConfirmResultCommand.CanExecute(null)); // "Set the grid" is enabled
 
-        home.ConfirmResultCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null); // set the grid → the starting-grid look
+
+        // The starting grid shows the qualifying result pole-first BEFORE the race.
+        var startingGrid = Assert.IsType<StartingGridViewModel>(home.CurrentContent);
+        Assert.True(home.IsStartingGridState);
+        Assert.Equal("Start the race  ⏎", home.ConfirmButtonText);
+        Assert.Equal("driver.hulme", startingGrid.Slots[0].DriverId);   // pole-sitter leads the grid
+        Assert.Equal("driver.brabham", startingGrid.Slots[1].DriverId);
+
+        home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
         var race = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         Assert.NotSame(qualifying, race);
         Assert.False(home.IsQualifyingStep);
+        Assert.False(home.IsStartingGridState);
         Assert.Null(race.SessionLabel);
         Assert.Equal("Confirm result  ⏎", home.ConfirmButtonText);
         // The race grid is seeded from the qualifying order: pole-sitter Hulme leads Remaining.
@@ -79,7 +89,8 @@ public sealed class WeekendLoopTests
 
         home.EnterResultCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1"); // pole Hulme, then Brabham
-        home.ConfirmResultCommand.Execute(null);                     // set the grid → race
+        home.ConfirmResultCommand.Execute(null);                     // set the grid → starting grid
+        home.ConfirmResultCommand.Execute(null);                     // start the race → race entry
 
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1"); // race result
         home.ConfirmResultCommand.Execute(null);                     // → confirm interstitial
@@ -113,7 +124,8 @@ public sealed class WeekendLoopTests
         // Round 1: qualify + race + apply.
         home.EnterResultCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
-        home.ConfirmResultCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null); // set the grid → starting grid
+        home.ConfirmResultCommand.Execute(null); // start the race → race entry
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
         home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
@@ -122,6 +134,55 @@ public sealed class WeekendLoopTests
         home.EnterResultCommand.Execute(null);
         Assert.True(home.IsQualifyingStep);
         Assert.Equal("Qualifying", ((ResultEntryViewModel)home.CurrentContent!).SessionLabel);
+    }
+
+    // ---------- SMGP rival step (Upcoming Race loop) ----------
+
+    [Fact]
+    public void Smgp_career_shows_the_rival_step_before_qualifying_then_continues()
+    {
+        var session = new WeekendSession
+        {
+            SmgpBriefing = new Companion.ViewModels.Services.SmgpBriefingModel
+            {
+                RoundHeader = "SAN MARINO · ROUND 1",
+                PointsLine = "9 D.P.",
+                AdviceLine = "PASS AT THE HAIRPIN!",
+                Titles = 0,
+                CareerOver = false,
+                Rivals =
+                [
+                    new Companion.ViewModels.Services.SmgpRivalOption
+                    {
+                        DriverId = "driver.brabham", DriverName = "Jack Brabham",
+                        TeamId = "team.bullets", TeamName = "Bullets",
+                        MachineLine = "g3m1", Quote = "IT'S INTERESTING.",
+                        OfferOnWin = false, ForfeitOnLoss = false,
+                    },
+                ],
+            },
+        };
+        using var home = new HomeViewModel(session);
+
+        // The rival screen is its OWN step, shown before qualifying.
+        home.EnterResultCommand.Execute(null);
+        Assert.True(home.IsRivalStep);
+        Assert.False(home.IsQualifyingStep);
+        Assert.Equal("Continue  ⏎", home.ConfirmButtonText);
+
+        // Continue advances to qualifying (the rival step is done for this round).
+        home.ConfirmResultCommand.Execute(null);
+        Assert.False(home.IsRivalStep);
+        Assert.True(home.IsQualifyingStep);
+    }
+
+    [Fact]
+    public void Non_smgp_career_has_no_rival_step()
+    {
+        using var home = new HomeViewModel(new WeekendSession()); // no SmgpBriefing
+        home.EnterResultCommand.Execute(null);
+        Assert.False(home.IsRivalStep);
+        Assert.True(home.IsQualifyingStep); // straight to qualifying, byte-identical to the shipped loop
     }
 
     // ---------- two-race weekend (Increment 2e.3) ----------
@@ -147,7 +208,12 @@ public sealed class WeekendLoopTests
         home.EnterResultCommand.Execute(null);
         Assert.True(home.IsQualifyingStep);
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1");
-        home.ConfirmResultCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null); // set the grid → starting grid
+
+        // The starting grid names the first race (Feature) it precedes.
+        var grid = Assert.IsType<StartingGridViewModel>(home.CurrentContent);
+        Assert.Contains("Feature", grid.Title);
+        home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
         // Race 1 (Feature) — NOT the round's last, so the primary action advances to the next race.
         var feature = (ResultEntryViewModel)home.CurrentContent!;
@@ -286,6 +352,12 @@ public sealed class WeekendLoopTests
         };
 
         public PackWeekend? CurrentWeekend() => Summary.SeasonComplete ? null : Weekend;
+
+        /// <summary>An SMGP rival briefing (null = a non-SMGP career, so no rival step fires).</summary>
+        public Companion.ViewModels.Services.SmgpBriefingModel? SmgpBriefing { get; init; }
+
+        public Companion.ViewModels.Services.SmgpBriefingModel? CurrentSmgpBriefing() =>
+            Summary.SeasonComplete ? null : SmgpBriefing;
 
         public BriefingModel? CurrentBriefing() => Summary.SeasonComplete
             ? null

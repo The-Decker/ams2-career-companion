@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+	
+	<LIVERY_OVERRIDE LIVERY="51" NAME="2012 Red Bull #1 - S. Vettel" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\RedBull01p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\RedBull01.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_RedBull_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_RedBull_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Vettel_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_RedBull_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_RedBull_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="52" NAME="2012 Red Bull #2 - M. Webber" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\RedBull02p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\RedBull02.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_RedBull_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_RedBull_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Webber_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_RedBull_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_RedBull_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_RedBull_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="53" NAME="2012 McLaren #3 - J. Button" BASELIVERY="Chrome">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\McLaren03p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\McLaren03.dds" />
+	<TEXTURE NAME="SPEC" PATH="F1_Season_2012\McLaren03spec.dds" />
+	<TEXTURE NAME="FRESNEL" PATH="F1_Season_2012\McLaren03fresnel.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_McLaren_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_McLaren_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Button_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_McLaren_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_McLaren_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_McLaren_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Button_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_McLaren_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_McLaren_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="54" NAME="2012 McLaren #4 - L. Hamilton" BASELIVERY="Chrome">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\McLaren04p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\McLaren04.dds" />
+	<TEXTURE NAME="SPEC" PATH="F1_Season_2012\McLaren04spec.dds" />
+	<TEXTURE NAME="FRESNEL" PATH="F1_Season_2012\McLaren04fresnel.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_McLaren_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_McLaren_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Hamilton_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_McLaren_visor_Hamilton.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_McLaren_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_McLaren_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Hamilton_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_McLaren_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_McLaren_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="55" NAME="2012 Ferrari #5 - F. Alonso" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Ferrari05p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Ferrari05.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Ferrari_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Ferrari_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Alonso_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Alonso_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_blue.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Ferrari_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="56" NAME="2012 Ferrari #6 - F. Massa" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Ferrari06p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Ferrari06.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Ferrari_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Ferrari_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Massa_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Massa_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_blue.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Ferrari_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Ferrari_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="57" NAME="2012 Mercedes #7 - M. Schumacher" BASELIVERY="SilverMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Mercedes07p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Mercedes07.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Mercedes_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Mercedes_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="57" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_MSchumacher_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Mercedes_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="57" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Mercedes_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Mercedes_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_MSchumacher_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_MSchumacher_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Mercedes_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="58" NAME="2012 Mercedes #8 - N. Rosberg" BASELIVERY="SilverMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Mercedes08p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Mercedes08.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Mercedes_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Mercedes_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="58" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Rosberg_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Mercedes_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="58" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Mercedes_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Mercedes_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Rosberg_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Rosberg_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Mercedes_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="59" NAME="2012 Lotus #9 - K. Räikkönen" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Lotus09p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Lotus09.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Lotus_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Lotus_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="59" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Raikkonen_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Lotus_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="59" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Lotus_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="60" NAME="2012 Lotus #10 - R. Grosjean" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Lotus10p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Lotus10.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Lotus_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Lotus_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="60" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Grosjean_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Lotus_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="60" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Lotus_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Lotus_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="61" NAME="2012 Force India #11 - P. di Resta" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\ForceIndia11p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\ForceIndia11.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_ForceIndia_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_ForceIndia_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="61" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_DiResta_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_ForceIndia_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="61" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_ForceIndia_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="62" NAME="2012 Force India #12 - N. Hülkenberg" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\ForceIndia12p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\ForceIndia12.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_ForceIndia_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_ForceIndia_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="62" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Hulkenberg_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_ForceIndia_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="62" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_ForceIndia_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_ForceIndia_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="63" NAME="2012 Sauber #14 - K. Kobayashi" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Sauber14p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Sauber14.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Sauber_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Sauber_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="63" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Kobayashi_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Sauber_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="63" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Sauber_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="64" NAME="2012 Sauber #15 - S. Pérez" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Sauber15p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Sauber15.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Sauber_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Sauber_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="64" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Perez_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Sauber_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="64" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Sauber_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Sauber_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="65" NAME="2012 Toro Rosso #16 - D. Ricciardo" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\ToroRosso16p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\ToroRosso16.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_ToroRosso_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_ToroRosso_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="65" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Ricciardo_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_ToroRosso_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_blue.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="65" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_ToroRosso_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_ToroRosso_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Ricciardo_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_ToroRosso_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_ToroRosso_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="66" NAME="2012 Toro Rosso #17 - J-É. Vergne" BASELIVERY="BlueMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\ToroRosso17p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\ToroRosso17.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_ToroRosso_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_ToroRosso_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="66" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Vergne_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_ToroRosso_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_blue.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="66" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_ToroRosso_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_ToroRosso_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Vergne_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_ToroRosso_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_ToroRosso_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="67" NAME="2012 Williams #18 - P. Maldonado" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Williams18p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Williams18.dds" />
+        <TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\FReiza_wheel_silver_diff.dds" />
+        <TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\FReiza_wheel_silver_blur_diff.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="67" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Maldonado_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Williams_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="67" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Williams_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="68" NAME="2012 Williams #19 - B. Senna" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Williams19p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Williams19.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Williams_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Williams_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="68" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Senna_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Williams_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="68" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Williams_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Williams_harness.dds" />
+        </OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="69" NAME="2012 Caterham #20 - H. Kovalainen" BASELIVERY="GreenMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Caterham20p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Caterham20.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Caterham_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Caterham_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="69" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Kovalainen_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Caterham_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="69" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Caterham_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="70" NAME="2012 Caterham #21 - V. Petrov" BASELIVERY="GreenMetallic">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Caterham21p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Caterham21.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Caterham_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Caterham_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="70" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Petrov_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Caterham_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="70" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_gloves.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Caterham_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Caterham_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="71" NAME="2012 HRT #22 - P. de la Rosa" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\HRT22p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\HRT22.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_HRT_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_HRT_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="71" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_DelaRosa_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_DelaRosa_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="71" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_HRT_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_HRT_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_DelaRosa_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_HRT_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_HRT_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="72" NAME="2012 HRT #23 - N. Karthikeyan" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\HRT23p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\HRT23.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_HRT_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_HRT_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="72" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Karthikeyan_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Karthikeyan_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="72" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_HRT_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_HRT_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Karthikeyan_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_HRT_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_HRT_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="73" NAME="2012 Marussia #24 - T. Glock" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Marussia24p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Marussia24.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Marussia_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Marussia_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="73" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Glock_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Marussia_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="73" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Marussia_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+	<LIVERY_OVERRIDE LIVERY="74" NAME="2012 Marussia #25 - C. Pic" BASELIVERY="Default">
+	<PREVIEWIMAGE PATH="F1_Season_2012\Previews\Marussia25p.dds" />
+	<TEXTURE NAME="BODY" PATH="F1_Season_2012\Marussia25.dds" />
+	<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_2012\Rims\2012_Marussia_rims.dds" />
+	<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_2012\Rims\2012_Marussia_rims_blur.dds" />
+	<TEXTURE NAME="WHEELSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec.dds" />
+	<TEXTURE NAME="WHEELBLURSPEC" PATH="F1_Season_2012\Rims\2012_rims_lowspec_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="74" BASEHELMET="DEFAULT">
+	<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Helmets\2012_Pic_helmet.dds" />
+	<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_2012\Helmets\2012_helmet_spec.dds" />
+    	<TEXTURE NAME="VISOR_DIFF" PATH="F1_Season_2012\Helmets\2012_Marussia_visor.dds" />
+	<TEXTURE NAME="VISOR_SPEC" PATH="F1_Season_2012\Helmets\visor_spec_black.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="74" BASEOUTFIT="DEFAULT">
+        <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_body.dds" />
+        <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_arms.dds" />
+        <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_gloves.dds" />
+        <TEXTURE NAME="GLOVES_SPEC" PATH="F1_Season_2012\Suits\2012_gloves_spec.dds" />
+        <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_2012\Suits\2012_Marussia_legs.dds" />
+        <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_2012\Harness\2012_Marussia_harness.dds" />
+        </OUTFIT_OVERRIDE>
+	
+</USER_OVERRIDES>

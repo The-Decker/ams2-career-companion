@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+    <LIVERY_OVERRIDE LIVERY="51" NAME="Williams-Renault #5 T. Boutsen" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="F1_Season_1990\preview5.dds" />
+    <TEXTURE NAME="BODY" PATH="F1_Season_1990\body5.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Boutsen_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_williams_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_williams_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_williams_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_williams_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+	
+    <LIVERY_OVERRIDE LIVERY="52" NAME="Williams-Renault #6 R. Patrese" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="F1_Season_1990\preview6.dds" />
+    <TEXTURE NAME="BODY" PATH="F1_Season_1990\body6.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Patrese_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_williams_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_williams_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_williams_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_williams_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+    
+</USER_OVERRIDES>

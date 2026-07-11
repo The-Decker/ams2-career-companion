@@ -175,6 +175,37 @@ public class PackLoaderTests
         Assert.Equal("F1 1967 Season (Alain Fry)", skinPack.Name);
         Assert.Equal("https://example.test/downloads/f1-1967", skinPack.Url);
         Assert.Equal("F1_Season_1967", skinPack.OverridesFolder);
+
+        // v1.2 additive skinSeason: absent → null, and re-serializing does not invent the key
+        // (a pack without it round-trips byte-identically).
+        Assert.Null(manifest.SkinSeason);
+        Assert.DoesNotContain("skinSeason",
+            JsonSerializer.Serialize(manifest, CoreJson.Options));
+    }
+
+    [Fact]
+    public void Parse_Manifest_ReadsTheOptionalSkinSeason_AndCareerStyle()
+    {
+        var manifest = PackLoader.ParseManifest("""
+            {
+              "packId": "smgp-1",
+              "name": "Super Monaco GP",
+              "version": "1.0.0",
+              "formatVersion": 1,
+              "skinSeason": "smgp",
+              "careerStyle": "smgp"
+            }
+            """);
+
+        Assert.Equal("smgp", manifest.SkinSeason);
+        Assert.Equal("smgp", manifest.CareerStyle);
+        // Absent on a normal pack → null, and never invented on re-serialize.
+        var plain = PackLoader.ParseManifest("""
+            { "packId": "f1-1985", "name": "Formula One 1985", "version": "1.0.0", "formatVersion": 1 }
+            """);
+        Assert.Null(plain.CareerStyle);
+        Assert.DoesNotContain("careerStyle",
+            JsonSerializer.Serialize(plain, CoreJson.Options));
     }
 
     [Fact]

@@ -593,14 +593,14 @@ public static class ReplayService
         }
 
         PlayerPerkModifiers? gridMods = hasCharacter
-            ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, gridConditions)
+            ? PerkResolver.Resolve(character!, inputs.CharacterRules!, gridConditions)
             : null;
         PlayerCharacterPatch? gridPatch = hasCharacter
             ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
             : null;
 
         var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch,
-            previous.Player.GridSelection, previous.Player.FormAware);
+            previous.Player.GridSelection, previous.Player.FormAware, previous.Player.Smgp, inputs.PlayerDriverId);
         if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
@@ -641,6 +641,7 @@ public static class ReplayService
         string? headline = null;
         int? expectedFinish = null;
         bool playerRaced = false;
+        int? battlePlayerFinish = null;
 
         for (int i = 0; i < raceSessions.Count; i++)
         {
@@ -649,6 +650,10 @@ public static class ReplayService
                 continue; // the player is not in this race's classification
 
             var (finish, dnf) = outcome.Value;
+            // The SMGP rival battle resolves against the round's PRIMARY race, like the called
+            // shot and the qualifying anchor (smgp packs author single-race rounds anyway).
+            if (i == 0)
+                battlePlayerFinish = finish;
 
             // The per-race modifier adds the driver-error-DNF gate (round conditions are constant
             // across a weekend; the DNF cause is per race). No character / no conditional perks →
@@ -657,7 +662,7 @@ public static class ReplayService
             if (hasCharacter && dnf == DnfCause.DriverError)
                 raceConditions = new HashSet<string>(roundConditions, StringComparer.Ordinal) { "driverErrorDnf" };
             var raceMods = hasCharacter
-                ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, raceConditions)
+                ? PerkResolver.Resolve(character!, inputs.CharacterRules!, raceConditions)
                 : null;
 
             // A driver-error DNF banks the perErrorAdd injury contribution toward the season injury
@@ -705,6 +710,37 @@ public static class ReplayService
         if (!playerRaced)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
+        // The SMGP rival battle (M3 slice 2): BOTH gates — the round's raw envelope stored a
+        // rival call AND the career carries the mode's folded state (never over). No call / no
+        // state / a finished career → no event, no state change → byte-identical, which is every
+        // existing career and every non-smgp pack. The outcome derives from the stored result;
+        // the seat movements derive from the pinned pack's ladder + carried overrides.
+        if (envelope.SmgpRival is { } rivalCall && player.Smgp is { CareerOver: false } smgpState)
+        {
+            var battle = Companion.Core.Smgp.SmgpBattleFold.Apply(new Companion.Core.Smgp.SmgpBattleFoldContext
+            {
+                Pack = pack,
+                State = smgpState,
+                Round = round,
+                MasterSeed = unchecked((long)masterSeed),
+                RivalDriverId = rivalCall.RivalDriverId,
+                Forced = rivalCall.Forced,
+                SeatSwapAccepted = rivalCall.SeatSwapAccepted,
+                PlayerFinish = battlePlayerFinish,
+                RivalFinish = ClassifiedPositionIn(raceSessions[0], rivalCall.RivalDriverId),
+            });
+            events.AddRange(battle.Events);
+            player = player with { Smgp = battle.State };
+            // A seat movement is a TEAM movement too — the season-end reputation tier and the
+            // displayed team read CurrentTeamId, which must follow the ladder, not the wizard seat.
+            if (!string.Equals(battle.State.CurrentSeatLivery, smgpState.CurrentSeatLivery, StringComparison.Ordinal) &&
+                pack.Entries.FirstOrDefault(e => string.Equals(
+                    e.Ams2LiveryName, battle.State.CurrentSeatLivery, StringComparison.Ordinal))?.TeamId is { } newTeamId)
+            {
+                player = player with { CurrentTeamId = newTeamId };
+            }
+        }
+
         return new RoundFoldOutcome(
             events,
             new RoundPlayerState { Player = player, RecommendedSlider = recommendedSlider },
@@ -712,6 +748,14 @@ public static class ReplayService
             headline,
             expectedFinish);
     }
+
+    /// <summary>A driver's 1-based CLASSIFIED finishing position in a race, or null when he
+    /// retired, was excluded, or does not appear — the SMGP battle's "a finish beats a DNF".</summary>
+    private static int? ClassifiedPositionIn(SessionResult race, string driverId) =>
+        race.Entries.FirstOrDefault(e => string.Equals(e.DriverId, driverId, StringComparison.Ordinal)) is
+            { Status: FinishStatus.Classified, Position: { } position }
+            ? position
+            : null;
 
     /// <summary>The player's 1-based qualifying position from the round's stored qualifying order
     /// (Increment 2), or null when the round ran no qualifying (single-race) or the player is not
@@ -731,7 +775,8 @@ public static class ReplayService
     /// then the round folds with the player state carried over unchanged.</summary>
     private static GridPlan? ResolvePlayerGrid(
         SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null,
-        GridSelection? gridSelection = null, bool applyWeekendForm = false)
+        GridSelection? gridSelection = null, bool applyWeekendForm = false,
+        Companion.Core.Smgp.SmgpState? smgp = null, string? playerDriverId = null)
     {
         if (liveryName is null)
             return null;
@@ -742,11 +787,29 @@ public static class ReplayService
         // absent seat (the player's team is simply not entered this round) as "did not race".
         // Ratings Phase 3: applyWeekendForm (a FormAware career) makes the scored grid react to the
         // round's per-race form; false ⇒ byte-identical (existing careers + form-less packs).
+        // SMGP (M3): the carried mode state reseats swapped drivers and puts the player in the car
+        // the ladder earned them; null (every other career) ⇒ byte-identical.
         try
         {
+            // SMGP CLEAN-SWAP model: a DISTINCT player driver id seats the player DIRECTLY on their
+            // current car (smgp.CurrentSeatLivery), so the FOLD scores them under that distinct id —
+            // exactly matching the live display path (CareerSessionService.ResolveGrid). Its authored
+            // AI benches; no overrides. Pre-change SMGP careers (player id == a pack driver) fall to
+            // the override path below (byte-identical).
+            if (smgp is not null &&
+                string.Equals(playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
+            {
+                return RoundGridResolver.Resolve(
+                    pack, round,
+                    new PlayerSeat { Ams2LiveryName = smgp.CurrentSeatLivery, DriverId = playerDriverId, Character = character },
+                    gridSelection, applyWeekendForm: applyWeekendForm);
+            }
+
             return RoundGridResolver.Resolve(
                 pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
-                gridSelection, applyWeekendForm: applyWeekendForm);
+                gridSelection, applyWeekendForm: applyWeekendForm,
+                seatOverrides: smgp?.AiSeatOverrides is { Count: > 0 } overrides ? overrides : null,
+                playerSeatOverride: smgp?.CurrentSeatLivery);
         }
         catch (InvalidOperationException)
         {
@@ -779,6 +842,15 @@ public static class ReplayService
     /// start state) or no seat resolves.</summary>
     private static string SeasonPlayerDriverId(SeasonPack pack, string? liveryName, string fallback)
     {
+        // SMGP clean-swap model: the player races as their OWN distinct driver on whatever car they
+        // currently hold, so they score under the synthetic id for the WHOLE season regardless of the
+        // start livery. Return it straight — walking the grid below would resolve the livery's AUTHORED
+        // AI (the default resolve path takes no driver id), and the standings never carry that AI, so the
+        // mismatch dropped the player's championship position on replay (rep season-final diverged). Only
+        // a clean-swap career carries this fallback; every other career keeps the historical walk.
+        if (string.Equals(fallback, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
+            return fallback;
+
         if (!string.IsNullOrEmpty(liveryName))
         {
             foreach (var round in pack.Season.Rounds)

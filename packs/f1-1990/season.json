@@ -2,6 +2,7 @@
   "year": 1990,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-Classic_Gen3",
+  "refuellingAllowed": false,
   "pointsSystem": {
     "racePoints": [
       9,
@@ -26,16 +27,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -52,48 +73,48 @@
       },
       "laps": 86,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.gregor_foitek",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.bernd_schneider",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.gianni_morbidelli",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
           "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.stefan_johansson",
+          "driver.jj_lehto",
+          "driver.gary_brabham"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-03-11",
           "weatherSlots": [
@@ -112,16 +133,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -136,44 +177,48 @@
       },
       "laps": 71,
       "grid": {
-        "size": 31,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.gregor_foitek",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
+          "driver.gabriele_tarquini",
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
           "driver.gianni_morbidelli",
           "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
+          "driver.pierluigi_martini",
           "driver.paolo_barilla",
-          "driver.gregor_foitek",
-          "driver.gabriele_tarquini",
-          "driver.yannick_dalmas"
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.stefan_johansson",
+          "driver.jj_lehto",
+          "driver.gary_brabham"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 30,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-03-25",
           "weatherSlots": [
@@ -192,16 +237,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -216,38 +281,48 @@
       },
       "laps": 61,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
+          "driver.gabriele_tarquini",
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
           "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
           "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini"
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-05-13",
           "weatherSlots": [
@@ -266,16 +341,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -284,7 +379,7 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit de Monaco",
-        "id": "azure_circuit_88",
+        "id": "azure_circuit_2021",
         "isPlaceholder": false,
         "fallbacks": [
           "azure_circuit"
@@ -292,42 +387,48 @@
       },
       "laps": 78,
       "grid": {
-        "size": 29,
+        "size": 25,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
+          "driver.gabriele_tarquini",
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
           "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
+          "driver.pierluigi_martini",
           "driver.paolo_barilla",
-          "driver.gregor_foitek"
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 28,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1990-05-27",
           "weatherSlots": [
@@ -346,16 +447,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Rain",
+            "Rain",
+            "Rain",
+            "Rain"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Rain",
+              "Light Rain",
+              "Medium Cloud",
+              "Light Cloud"
+            ]
           }
         ]
       },
@@ -370,48 +491,48 @@
       },
       "laps": 70,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
           "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-06-10",
           "weatherSlots": [
@@ -430,16 +551,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -453,52 +594,57 @@
         "fallbacks": [
           "interlagos_1991",
           "interlagos_historic"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 61,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
           "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-06-24",
           "weatherSlots": [
@@ -517,16 +663,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -540,48 +706,57 @@
         "fallbacks": [
           "hockenheim_1988",
           "silverstone_1991"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 78,
+          "isRealVenue": false
+        }
       },
       "laps": 73,
       "grid": {
-        "size": 31,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
-          "driver.yannick_dalmas"
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 30,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-07-08",
           "weatherSlots": [
@@ -600,16 +775,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -626,48 +821,48 @@
       },
       "laps": 64,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
           "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-07-15",
           "weatherSlots": [
@@ -686,16 +881,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -710,48 +925,48 @@
       },
       "laps": 45,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
           "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-07-29",
           "weatherSlots": [
@@ -770,16 +985,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -794,48 +1029,48 @@
       },
       "laps": 77,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
           "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.gregor_foitek",
+          "driver.jj_lehto",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-08-12",
           "weatherSlots": [
@@ -854,16 +1089,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -878,42 +1133,46 @@
       },
       "laps": 44,
       "grid": {
-        "size": 29,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
+          "driver.gabriele_tarquini",
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
           "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
+          "driver.pierluigi_martini",
           "driver.paolo_barilla",
-          "driver.gregor_foitek"
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 28,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-08-26",
           "weatherSlots": [
@@ -932,16 +1191,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -956,44 +1235,46 @@
       },
       "laps": 53,
       "grid": {
-        "size": 31,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
-          "driver.yannick_dalmas"
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 30,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-09-09",
           "weatherSlots": [
@@ -1012,16 +1293,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1036,42 +1337,46 @@
       },
       "laps": 61,
       "grid": {
-        "size": 29,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
           "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
+          "driver.gabriele_tarquini",
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
           "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
+          "driver.pierluigi_martini",
           "driver.paolo_barilla",
-          "driver.gregor_foitek"
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 28,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-09-23",
           "weatherSlots": [
@@ -1090,16 +1395,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1114,44 +1439,46 @@
       },
       "laps": 73,
       "grid": {
-        "size": 31,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.bernd_schneider",
           "driver.derek_warwick",
-          "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.johnny_herbert",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
-          "driver.yannick_dalmas"
+          "driver.yannick_dalmas",
+          "driver.alessandro_nannini",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.paolo_barilla",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.roberto_moreno",
+          "driver.claudio_langes",
+          "driver.bruno_giacomelli"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 30,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-09-30",
           "weatherSlots": [
@@ -1170,16 +1497,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1194,48 +1541,44 @@
       },
       "laps": 53,
       "grid": {
-        "size": 35,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
-          "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.johnny_herbert",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
-          "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
-          "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini",
-          "driver.bernd_schneider",
-          "driver.michele_alboreto",
-          "driver.paolo_barilla",
-          "driver.gregor_foitek",
           "driver.gabriele_tarquini",
           "driver.yannick_dalmas",
-          "driver.jj_lehto",
-          "driver.gary_brabham",
-          "driver.claudio_langes",
-          "driver.stefan_johansson"
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
+          "driver.andrea_de_cesaris",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.nicola_larini",
+          "driver.philippe_alliot",
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.claudio_langes"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 34,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-10-21",
           "weatherSlots": [
@@ -1254,16 +1597,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1278,38 +1641,44 @@
       },
       "laps": 81,
       "grid": {
-        "size": 25,
+        "size": 26,
         "starterDriverIds": [
           "driver.alain_prost",
           "driver.nigel_mansell",
-          "driver.ayrton_senna",
-          "driver.gerhard_berger",
+          "driver.satoru_nakajima",
+          "driver.jean_alesi",
           "driver.thierry_boutsen",
           "driver.riccardo_patrese",
-          "driver.nelson_piquet",
-          "driver.jean_alesi",
-          "driver.roberto_moreno",
-          "driver.alessandro_nannini",
+          "driver.david_brabham",
+          "driver.stefano_modena",
+          "driver.michele_alboreto",
+          "driver.alex_caffi",
           "driver.derek_warwick",
-          "driver.martin_donnelly",
-          "driver.satoru_nakajima",
-          "driver.pierluigi_martini",
-          "driver.eric_bernard",
+          "driver.johnny_herbert",
+          "driver.olivier_grouillard",
           "driver.mauricio_gugelmin",
           "driver.ivan_capelli",
-          "driver.aguri_suzuki",
-          "driver.stefano_modena",
-          "driver.gianni_morbidelli",
+          "driver.gabriele_tarquini",
+          "driver.yannick_dalmas",
+          "driver.roberto_moreno",
+          "driver.nelson_piquet",
+          "driver.emanuele_pirro",
           "driver.andrea_de_cesaris",
-          "driver.bertrand_gachot",
+          "driver.pierluigi_martini",
+          "driver.gianni_morbidelli",
+          "driver.nicola_larini",
           "driver.philippe_alliot",
-          "driver.olivier_grouillard",
-          "driver.nicola_larini"
+          "driver.ayrton_senna",
+          "driver.gerhard_berger",
+          "driver.eric_bernard",
+          "driver.aguri_suzuki",
+          "driver.bertrand_gachot",
+          "driver.claudio_langes"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 24,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1990-11-04",
           "weatherSlots": [

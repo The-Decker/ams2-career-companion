@@ -59,6 +59,28 @@ public sealed class BriefingSectionRenderTests
         };
 
         public SeasonPack Pack { get; } = SectionPack();
+
+        // A circuit with facts so the right-column panel (scaling map Viewbox + FUN FACTS list)
+        // renders; the geometry converter degrades to no path data for the unknown layout id.
+        public HistoricalSeason? HistoricalSeason(int year) => new()
+        {
+            Year = year,
+            Rounds =
+            [
+                new HistoricalRound
+                {
+                    Round = 1, Name = "Test Grand Prix",
+                    Circuit = new HistoricalCircuit
+                    {
+                        LayoutId = "render-layout", Name = "Kyalami", Place = "Midrand",
+                        LengthKm = "4.10", Turns = 10,
+                        History = "The Kyalami circuit in Midrand.",
+                        Facts = ["Hosts its first World Championship Grand Prix this season."],
+                    },
+                },
+            ],
+        };
+
         public StageOutcome StageCurrentGrid() => new() { Success = true, Messages = ["staged"] };
         public IReadOnlyList<GridSeat> CurrentGrid() => [];
         public ConfirmModel Preview(ResultDraft draft) => new() { RoundPoints = [], Movements = [], Headline = "" };
@@ -113,13 +135,35 @@ public sealed class BriefingSectionRenderTests
             practiceWeather.IsChecked = true;
             Assert.False(raceWeather.IsChecked);
 
-            var view = new BriefingView { DataContext = vm };
-            view.Measure(new Size(1000, 900));
-            view.Arrange(new Rect(0, 0, 1000, 900));
-            view.UpdateLayout();
+            Assert.True(vm.HasCircuitFacts); // the fake circuit's facts reached the VM
 
-            Assert.True(view.ActualWidth > 0);
-            Assert.True(view.ActualHeight > 0);
+            // The two-column layout must survive the responsive extremes: the 920 minimum, the old
+            // default, and a 2560 monitor (star columns + proportional caps, no fixed 860 wall).
+            var view = new BriefingView { DataContext = vm };
+            foreach (double width in new[] { 920.0, 1000.0, 2560.0 })
+            {
+                view.Measure(new Size(width, 1400));
+                view.Arrange(new Rect(0, 0, width, 1400));
+                view.UpdateLayout();
+
+                Assert.True(view.ActualWidth > 0);
+                Assert.True(view.ActualHeight > 0);
+            }
+
+            // 510 ≈ the briefing viewport at 130% UI scale on a 920px window (920/1.3 − rail −
+            // margins). The right column (circuit panel, fuel, gamble buttons) must stay INSIDE
+            // the viewport — a fixed 520 left-column floor used to shove it out of reach.
+            view.Measure(new Size(510, 1400));
+            view.Arrange(new Rect(0, 0, 510, 1400));
+            view.UpdateLayout();
+            var circuitPanel = (FrameworkElement?)view.FindName("CircuitPanel");
+            Assert.NotNull(circuitPanel);
+            Assert.True(circuitPanel!.ActualWidth > 80,
+                $"right column collapsed: circuit panel is {circuitPanel.ActualWidth:0} wide at a 510 viewport");
+            double rightEdge = circuitPanel.TransformToAncestor(view).Transform(new Point(0, 0)).X
+                               + circuitPanel.ActualWidth;
+            Assert.True(rightEdge <= 510.5,
+                $"right column clipped outside the 510 viewport (right edge {rightEdge:0})");
         });
     }
 }

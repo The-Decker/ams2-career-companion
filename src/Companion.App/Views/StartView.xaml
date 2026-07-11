@@ -43,10 +43,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Focusable="False">
-            <StackPanel MaxWidth="680" Margin="48,56" HorizontalAlignment="Center">
+        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+            <!-- proportional page column (was a hard 680 that strangled the gallery to 2 cards/row
+                 on a 2560 monitor): the gallery WrapPanel now flows 4–6 cards; the intro text keeps
+                 its own readable 680 cap -->
+            <StackPanel Margin="48,56" HorizontalAlignment="Center"
+                        MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
+                                   Converter={StaticResource WidthFraction}, ConverterParameter=0.85|680}">
                 <TextBlock Text="AMS2 Career Companion" Style="{StaticResource H1}" />
-                <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,28" TextWrapping="Wrap"
+                <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,28" TextWrapping="Wrap" MaxWidth="680"
+                           HorizontalAlignment="Left"
                            Text="Historical career seasons around Automobilista 2 single-player custom races — offline, one file per career." />
 
                 <StackPanel Orientation="Horizontal">
@@ -117,10 +123,12 @@
                              see career-hub-design.md §11). Drop a 16:9 historical photo into
                              data\ams2\era-art and it fills the card top uncropped; otherwise the
                              coloured era placeholder shows through. -->
+                        <!-- no MaxHeight: the page ScrollViewer scrolls, the gallery flows freely -->
                         <ListBox ItemsSource="{Binding RecentCareers}"
                                  SelectedItem="{Binding SelectedCareer}"
-                                 MaxHeight="640" Background="Transparent" BorderThickness="0"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                 Background="Transparent" BorderThickness="0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel />

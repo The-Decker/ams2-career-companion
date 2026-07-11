@@ -12,13 +12,33 @@ namespace Companion.Core.Character;
 /// </summary>
 public static class PerkResolver
 {
+    /// <summary>The rating One-Trick Pony's specialism defaults to when a profile carries the perk
+    /// but named no chosen flavor (a legacy character created before the pick existed). A fixed
+    /// constant so every call site — live and replay — resolves the same delta byte-for-byte.</summary>
+    public const string DefaultChosenFlavor = "wetSkill";
+
+    /// <summary>Resolve straight from a character profile — threads the profile's chosen flavor so
+    /// One-Trick Pony's <c>chosenFlavor</c>/<c>lockToOne</c> bind to the rating the player picked.
+    /// Prefer this overload wherever a full <see cref="CharacterProfile"/> is in hand.</summary>
+    public static PlayerPerkModifiers Resolve(
+        CharacterProfile character,
+        CharacterRules rules,
+        IReadOnlySet<string>? activeConditions = null) =>
+        Resolve(character.PerkIds, rules, activeConditions, character.ChosenFlavor);
+
     public static PlayerPerkModifiers Resolve(
         IReadOnlyList<string> perkIds,
         CharacterRules rules,
-        IReadOnlySet<string>? activeConditions = null)
+        IReadOnlySet<string>? activeConditions = null,
+        string? chosenFlavor = null)
     {
         if (perkIds.Count == 0)
             return PlayerPerkModifiers.Identity;
+
+        // One-Trick Pony's chosenFlavor/lockToOne both bind to this one rating (the player's pick,
+        // or a fixed deterministic default for a legacy profile that named none).
+        string flavor = chosenFlavor ?? DefaultChosenFlavor;
+        string? lockedFlavor = null;
 
         var talent = new Dictionary<string, double>(StringComparer.Ordinal);
         var xp = new Dictionary<string, double>(StringComparer.Ordinal);
@@ -28,7 +48,7 @@ public static class PerkResolver
         double opiRetention = OpiMath.Retention, opiGain = 1.0, errorBlame = 1.0, blameFloor = 0.0;
         double repRound = 1.0, repSeason = 1.0, marketability = 0.5, underdogLow = 0.0, topTier = 1.0;
         double anchorAlpha = PaceAnchorMath.Alpha;
-        double peakShift = 0.0, riseMult = 1.0, declineAccel = 1.0;
+        double peakShift = 0.0, declineAccel = 1.0;
         double offerExp = 1.0, salaryAsk = 1.0, ageRisk = 1.0, payBu = 0.0, salaryOffer = 1.0;
         int repFloorRelax = 0, statPointsPerLevel = 0;
         double injuryDurability = 0.0, injuryBase = 0.0, statSoftCap = 0.0;
@@ -41,7 +61,10 @@ public static class PerkResolver
             switch (lever)
             {
                 case "statDelta" when target is { } rating:
-                    talent[rating] = talent.GetValueOrDefault(rating) + m;
+                    // "chosenFlavor" is the One-Trick Pony placeholder — resolve it to the concrete
+                    // rating the player's specialism owns before it lands on a talent field.
+                    string field = rating == "chosenFlavor" ? flavor : rating;
+                    talent[field] = talent.GetValueOrDefault(field) + m;
                     break;
                 case "carScalar":
                     switch (target)
@@ -74,7 +97,6 @@ public static class PerkResolver
                     switch (target)
                     {
                         case "peakShift": peakShift += m; break;
-                        case "riseMult": riseMult += m; break;
                         case "declineAccelMult": declineAccel += m; break;
                     }
                     break;
@@ -101,6 +123,7 @@ public static class PerkResolver
                 case "statPoints":
                     if (target == "perLevel") statPointsPerLevel += (int)Math.Round(m);
                     else if (target == "softCap") statSoftCap += m;
+                    else if (target == "lockToOne") lockedFlavor = flavor;
                     break;
             }
         }
@@ -144,7 +167,6 @@ public static class PerkResolver
             TopTierRepMult = topTier,
             AnchorAlpha = anchorAlpha,
             PeakShift = peakShift,
-            RiseMult = riseMult,
             DeclineAccelMult = declineAccel,
             OfferExperienceMult = offerExp,
             SalaryAskMult = salaryAsk,
@@ -157,6 +179,7 @@ public static class PerkResolver
             InjuryBaseAdd = injuryBase,
             StatPointsPerLevelBonus = statPointsPerLevel,
             StatSoftCapDelta = statSoftCap,
+            LockedFlavorRating = lockedFlavor,
             Conditional = conditional,
         };
     }

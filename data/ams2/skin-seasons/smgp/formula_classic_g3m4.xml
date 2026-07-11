@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+    <LIVERY_OVERRIDE LIVERY="X1" NAME="Feet #24 J. Rampal" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview FEET1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\FEET1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="X1" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Gachot_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="X1" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Coloni_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Coloni_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Coloni_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Coloni_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="52" NAME="Tyrant #11 M. Hamano" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview TYRANT1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\Tyrant1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Grouillard_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Osella_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Osella_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Osella_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Osella_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+    
+    <LIVERY_OVERRIDE LIVERY="XX" NAME="Minarae #21 J. Nono" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview MINARAE2 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\MINARAE2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="XX" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Nakajima_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="XX" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Tyrrell_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Tyrrell_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Tyrrell_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Tyrrell_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="54" NAME="Losel #13 E. Pacheco" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview LOSEL1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\LOSEL1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Alesi_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Tyrrell_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Tyrrell_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Tyrrell_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Tyrrell_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="55" NAME="Serga #25 E. Sambena" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview SERGA1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\SERGA1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Alboreto_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Arrows_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_Arrows_visor_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Arrows_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Arrows_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Arrows_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Arrows_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="56" NAME="May #15 G. Turner" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview MAY1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\MAY1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Caffi_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Arrows_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_Arrows_visor_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Arrows_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Arrows_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Arrows_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Arrows_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="57" NAME="Bullets #17 G. Ceara" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview BULLETS1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\BULLETS1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="57" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Gugelmin_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_LeytonHouse_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="57" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_LeytonHouse_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_LeytonHouse_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_LeytonHouse_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_LeytonHouse_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    <LIVERY_OVERRIDE LIVERY="58" NAME="Dardan #18 E. Bellini" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview DARDAN1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\DARDAN1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="58" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Capelli_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_LeytonHouse_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="58" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_LeytonHouse_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_LeytonHouse_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_LeytonHouse_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_LeytonHouse_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+    
+    <LIVERY_OVERRIDE LIVERY="59" NAME="Cool #28 A. Delvaux" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview COOL1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\COOL1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="59" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Brabham_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="59" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Brabham_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Brabham_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Brabham_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Brabham_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\blue_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+	 
+	 <LIVERY_OVERRIDE LIVERY="60" NAME="Moon #30 K. Yepes" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview MOON1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\MOON1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="60" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Modena_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="60" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Brabham_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Brabham_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Brabham_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Brabham_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\blue_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+<LIVERY_OVERRIDE LIVERY="X8" NAME="Dardan #19 K. Alfven" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview DARDAN2 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\DARDAN2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="X8" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Capelli_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_LeytonHouse_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor2_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="X8" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_LeytonHouse_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_LeytonHouse_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_LeytonHouse_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_LeytonHouse_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+ <LIVERY_OVERRIDE LIVERY="51" NAME="Joke #16 L. Dufay" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview JOKE1 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\JOKE1 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Brabham_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Brabham_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Brabham_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Brabham_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Brabham_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\blue_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+<LIVERY_OVERRIDE LIVERY="53" NAME="Losel #14 W. Dehehe" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview LOSEL2 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\LOSEL2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Gachot_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Coloni_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Coloni_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Coloni_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Coloni_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+<LIVERY_OVERRIDE LIVERY="X6" NAME="Tyrant #12 G. Gould" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview TYRANT2 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\TYRANT2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="X6" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Caffi_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_Arrows_visor.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_Arrows_visor_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="X6" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Arrows_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Arrows_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Arrows_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Arrows_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+<LIVERY_OVERRIDE LIVERY="X2" NAME="Blanche #10 P. White" BASELIVERY="Default">
+    <PREVIEWIMAGE PATH="SMGP\preview BLANCHE2 V1.dds" />
+    <TEXTURE NAME="BODY" PATH="SMGP\BLANCHE2 V1.dds" />
+    </LIVERY_OVERRIDE>
+    <HELMET_OVERRIDE LIVERY="X2" BASEHELMET="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Helmets\90_Grouillard_helmet.dds" />
+    <TEXTURE NAME="BODY_SPEC" PATH="SMGP\Helmets\90_helmet_spec.dds" />
+    <TEXTURE NAME="VISOR_DIFF" PATH="SMGP\Helmets\90_visor1.dds" />
+    <TEXTURE NAME="VISOR_SPEC" PATH="SMGP\Helmets\90_visor1_spec.dds" />
+    </HELMET_OVERRIDE>
+    <OUTFIT_OVERRIDE LIVERY="X2" BASEOUTFIT="DEFAULT">
+    <TEXTURE NAME="BODY_DIFF" PATH="SMGP\Suits\90_Osella_body.dds" />
+    <TEXTURE NAME="ARMS_DIFF" PATH="SMGP\Suits\90_Osella_arms.dds" />
+    <TEXTURE NAME="GLOVES_DIFF" PATH="SMGP\Suits\90_Osella_gloves.dds" />
+    <TEXTURE NAME="LEGS_DIFF" PATH="SMGP\Suits\90_Osella_legs.dds" />
+    <TEXTURE NAME="SEATBELTS_DIFF" PATH="SMGP\Suits\red_safety_harness.dds" />
+    </OUTFIT_OVERRIDE>
+
+    
+
+</USER_OVERRIDES>

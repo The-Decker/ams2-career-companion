@@ -7,8 +7,9 @@
         MinWidth="920" MinHeight="620"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
-        FontFamily="Segoe UI" FontSize="{DynamicResource AppFontSize}"
-        TextOptions.TextFormattingMode="Display"
+        FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="ClearType"
         PreviewKeyDown="OnPreviewKeyDown">
     <DockPanel>
         <!-- root UI-scale (settings: font scale): a single LayoutTransform scales all text +

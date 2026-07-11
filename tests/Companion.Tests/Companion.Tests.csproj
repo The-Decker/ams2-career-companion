@@ -32,12 +32,28 @@
     <None Include="..\..\data\rules\career-*.json" Link="Fixtures\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Driver character / perk rules data, for the perk-balance audit test. -->
     <None Include="..\..\data\rules\perks.json" Link="Fixtures\rules\perks.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Arcade car-spec cards (display-only), for the catalog loader test + the on-real-data checks. -->
+    <None Include="..\..\data\rules\car-specs.json" Link="Fixtures\rules\car-specs.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- The generative news-article corpora (data\rules\news\*.json) for the news-feed tests. -->
     <None Include="..\..\data\rules\news\*.json" Link="Fixtures\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The SMGP rival-dossier trash-talk corpus, for the quote drift guard. -->
+    <None Include="..\..\data\rules\smgp\*.json" Link="Fixtures\rules\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The real extracted AMS2 content library, for living validation of the shipped packs. -->
     <None Include="..\..\data\ams2\*.json" Link="Fixtures\ams2\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The reference season packs themselves (packs/<packId>/*.json). -->
     <None Include="..\..\packs\**\*.json" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The 1983 skin-season pointers are the active-livery source for F11983SourceParityTests. -->
+    <None Include="..\..\data\ams2\skin-seasons\f1-1983\*.xml" Link="Fixtures\ams2\skin-seasons\f1-1983\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\data\history\1983.json" Link="Fixtures\history\1983.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The 2010 Formula Reiza pointer + history fixture are pinned by F12010SourceParityTests. -->
+    <None Include="..\..\data\ams2\skin-seasons\f1-2010\*.xml" Link="Fixtures\ams2\skin-seasons\f1-2010\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\data\history\2010.json" Link="Fixtures\history\2010.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The 1989 historical reference: smgp-1's per-round history pointers resolve against it
+         (the replica's circuits model the 1989 season) — validated by SmgpHistoryMappingTests. -->
+    <None Include="..\..\data\history\1989.json" Link="Fixtures\history\1989.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The smgp skin-season pointer set: smgp-1's entries bind against these override NAMEs
+         verbatim — validated by SmgpRosterDriftTests. -->
+    <None Include="..\..\data\ams2\skin-seasons\smgp\*.xml" Link="Fixtures\ams2\skin-seasons\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

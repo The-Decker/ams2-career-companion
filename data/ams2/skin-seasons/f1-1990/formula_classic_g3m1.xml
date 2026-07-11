@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+	<!-- Ferrari -->
+	<LIVERY_OVERRIDE LIVERY="51" NAME="Ferrari #1 A. Prost" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview1.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body1.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Prost_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="Ferrari #2 N. Mansell" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview2.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body2.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Mansell_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_ferrari_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Lotus-Lamborghini -->
+	<LIVERY_OVERRIDE LIVERY="53" NAME="Lotus-Lamborghini #11 D. Warwick" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview11.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body11.dds" />
+		<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_1990\Oz_rim_diff.dds" />
+		<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_1990\Oz_rim_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Warwick_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_lotus_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_lotus_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_lotus_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_lotus_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="54" NAME="Lotus-Lamborghini #12 M. Donnelly" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview12.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body12.dds" />
+		<TEXTURE NAME="WHEELDIFF" PATH="F1_Season_1990\Oz_rim_diff.dds" />
+		<TEXTURE NAME="WHEELBLURDIFF" PATH="F1_Season_1990\Oz_rim_blur.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Donnelly_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_lotus_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_lotus_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_lotus_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_lotus_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Lola-Lamborghini -->
+	<LIVERY_OVERRIDE LIVERY="55" NAME="Lola-Lamborghini #29 E. Bernard" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview29.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body29.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Bernard_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Lola_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Lola_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Lola_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Lola_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="56" NAME="Lola-Lamborghini #30 A. Suzuki" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview30.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body30.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Suzuki_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Lola_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Lola_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Lola_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Lola_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+</USER_OVERRIDES>

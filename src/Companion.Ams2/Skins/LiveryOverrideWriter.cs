@@ -76,6 +76,30 @@ public static class LiveryOverrideWriter
         return slot;
     }
 
+    /// <summary>Every non-commented <c>LIVERY_OVERRIDE</c> in the file: its NAME and whether it is
+    /// ACTIVE (a numeric <c>LIVERY</c> slot AMS2 loads) vs an inactive placeholder. The read side of
+    /// <see cref="Activate"/>/<see cref="Deactivate"/> — the per-race activator uses it to decide which
+    /// liveries to switch on and which to park. Commented-out entries (AMS2 never loads them) are
+    /// skipped, exactly as the writer refuses to edit them.</summary>
+    public static IReadOnlyList<(string Name, bool Active)> Liveries(string xml)
+    {
+        var comments = CommentSpans(xml);
+        var list = new List<(string Name, bool Active)>();
+        foreach (Match tag in OverrideTag.Matches(xml))
+        {
+            if (IsInComment(tag.Index, comments))
+                continue;
+            var name = NameAttr.Match(tag.Value);
+            if (!name.Success)
+                continue;
+            var livery = LiveryAttr.Match(tag.Value);
+            bool active = livery.Success &&
+                int.TryParse(livery.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+            list.Add((name.Groups[1].Value, active));
+        }
+        return list;
+    }
+
     /// <summary>Whether the numeric slot is free (not already used by a NON-commented entry).</summary>
     public static bool SlotIsFree(string xml, int slot)
     {
@@ -86,34 +110,13 @@ public static class LiveryOverrideWriter
         return true;
     }
 
-    /// <summary>The <c>&lt;!-- --&gt;</c> spans in <paramref name="xml"/> (start inclusive, end
-    /// exclusive) — used to refuse editing a LIVERY_OVERRIDE that lives inside a comment (AMS2 never
-    /// parses commented entries, so activating one would be a silent no-op that only corrupts the
-    /// file). An unterminated comment runs to end-of-text.</summary>
-    private static List<(int Start, int End)> CommentSpans(string xml)
-    {
-        var spans = new List<(int, int)>();
-        int i = 0;
-        while (true)
-        {
-            int start = xml.IndexOf("<!--", i, StringComparison.Ordinal);
-            if (start < 0)
-                break;
-            int end = xml.IndexOf("-->", start + 4, StringComparison.Ordinal);
-            if (end < 0) { spans.Add((start, xml.Length)); break; }
-            spans.Add((start, end + 3));
-            i = end + 3;
-        }
-        return spans;
-    }
+    // Comment awareness (refusing to edit a LIVERY_OVERRIDE inside <!-- -->) is shared with every
+    // other community-XML reader/editor via LenientXml.CommentSpans/IsInComment.
+    private static IReadOnlyList<(int Start, int End)> CommentSpans(string xml) =>
+        LenientXml.CommentSpans(xml);
 
-    private static bool IsInComment(int index, List<(int Start, int End)> spans)
-    {
-        foreach (var (start, end) in spans)
-            if (index >= start && index < end)
-                return true;
-        return false;
-    }
+    private static bool IsInComment(int index, IReadOnlyList<(int Start, int End)> spans) =>
+        LenientXml.IsInComment(index, spans);
 
     /// <summary>
     /// Activates the FIRST placeholder <c>LIVERY_OVERRIDE</c> whose NAME matches

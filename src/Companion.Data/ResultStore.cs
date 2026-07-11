@@ -28,9 +28,17 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 5;
+    public const int CurrentVersion = 6;
 
     public int Version { get; init; } = CurrentVersion;
+
+    /// <summary>The SMGP replica mode's rival declaration for this round (v6): who the player
+    /// named (or was force-challenged by) and, when this round's battle triggered a seat-swap
+    /// offer, the player's answer. Raw player-choice INPUTS the sim cannot re-derive, so they
+    /// are stored; the battle OUTCOME itself derives from <see cref="Result"/>. Null = no rival
+    /// this round (every pre-v6 save, every non-smgp career, every declined prompt) — the fold
+    /// then runs no battle, so those rounds replay byte-identically. (M3, careerStyle "smgp".)</summary>
+    public SmgpRivalCall? SmgpRival { get; init; }
 
     /// <summary>Whether the round was run in the WET (character depth: weather-conditional perks).
     /// A raw INPUT the sim cannot re-derive, so it is stored. Null = unknown/legacy (every pre-v4
@@ -81,6 +89,23 @@ public sealed record RoundResultEnvelope
             Result = DataJson.Deserialize<RoundResult>(payloadJson),
         };
     }
+}
+
+/// <summary>The SMGP rival declaration stored on a round's envelope (see
+/// <see cref="RoundResultEnvelope.SmgpRival"/>).</summary>
+public sealed record SmgpRivalCall
+{
+    /// <summary>The named rival's pack driver id.</summary>
+    public required string RivalDriverId { get; init; }
+
+    /// <summary>True when the challenge was FORCED on the player (a rival's own challenge, or
+    /// the Ceara title-defense rounds) rather than freely picked.</summary>
+    public bool Forced { get; init; }
+
+    /// <summary>The player's answer to a seat-swap offer TRIGGERED by this round's battle
+    /// (the two-wins rule): true = accepted (the swap applies from the next round), false =
+    /// declined. Null = no offer arose this round.</summary>
+    public bool? SeatSwapAccepted { get; init; }
 }
 
 public sealed record StoredRoundResult

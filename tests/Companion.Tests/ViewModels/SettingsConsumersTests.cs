@@ -79,10 +79,10 @@ public sealed class SettingsConsumersTests : IDisposable
             wizard.ProceedAnyway = true;
         wizard.NextCommand.Execute(null);
         wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
-        wizard.NextCommand.Execute(null);          // -> Grid (choose the field)
-        wizard.NextCommand.Execute(null);          // -> Character (rules loaded)
+        wizard.NextCommand.Execute(null);          // -> Character (rules loaded) or Grid (no rules)
         if (wizard.Step == WizardStep.Character)
-            wizard.NextCommand.Execute(null);      // -> Confirm (archetype preset is valid)
+            wizard.NextCommand.Execute(null);      // -> Grid (archetype preset is valid)
+        wizard.NextCommand.Execute(null);          // -> Confirm
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         return wizard;
     }
@@ -524,7 +524,7 @@ public sealed class SettingsConsumersTests : IDisposable
     {
         public IReadOnlyList<RecentCareer> Load() => [];
 
-        public void Touch(string path, string careerName, int seasonYear = 0)
+        public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null)
         {
         }
 

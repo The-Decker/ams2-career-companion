@@ -46,15 +46,22 @@
       "teamId": "team.brabham",
       "driverId": "driver.eric_van_de_poele",
       "number": "7",
-      "rounds": "1-16",
+      "rounds": "1-10",
       "ams2LiveryName": "Brabham-Judd #7 E. van de Poele"
     },
     {
       "teamId": "team.brabham",
       "driverId": "driver.giovanna_amati",
       "number": "8",
-      "rounds": "1-16",
+      "rounds": "1-3",
       "ams2LiveryName": "Brabham-Judd #8 G. Amati"
+    },
+    {
+      "teamId": "team.brabham",
+      "driverId": "driver.damon_hill",
+      "number": "8",
+      "rounds": "4-11",
+      "ams2LiveryName": "Brabham-Judd #8 D. Hill"
     },
     {
       "teamId": "team.footwork",
@@ -88,29 +95,50 @@
       "teamId": "team.fondmetal",
       "driverId": "driver.andrea_chiesa",
       "number": "14",
-      "rounds": "1-16",
+      "rounds": "1-10",
+      "ams2LiveryName": "Fondmetal-Ford #14 A. Chiesa"
+    },
+    {
+      "teamId": "team.fondmetal",
+      "driverId": "driver.eric_van_de_poele",
+      "number": "14",
+      "rounds": "11-13",
       "ams2LiveryName": "Fondmetal-Ford #14 A. Chiesa"
     },
     {
       "teamId": "team.fondmetal",
       "driverId": "driver.gabriele_tarquini",
       "number": "15",
-      "rounds": "1-16",
+      "rounds": "1-13",
       "ams2LiveryName": "Fondmetal-Ford #15 G. Tarquini"
     },
     {
       "teamId": "team.march",
       "driverId": "driver.karl_wendlinger",
       "number": "16",
-      "rounds": "1-16",
+      "rounds": "1-14",
       "ams2LiveryName": "March-Ilmor #16 K. Wendlinger"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.jan_lammers",
+      "number": "16",
+      "rounds": "15-16",
+      "ams2LiveryName": "March-Ilmor #16 J. Lammers"
     },
     {
       "teamId": "team.march",
       "driverId": "driver.paul_belmondo",
       "number": "17",
-      "rounds": "1-16",
+      "rounds": "1-11",
       "ams2LiveryName": "March-Ilmor #17 P. Belmondo"
+    },
+    {
+      "teamId": "team.march",
+      "driverId": "driver.emanuele_naspetti",
+      "number": "17",
+      "rounds": "12-16",
+      "ams2LiveryName": "March-Ilmor #17 E. Naspetti"
     },
     {
       "teamId": "team.benetton",
@@ -144,7 +172,21 @@
       "teamId": "team.minardi",
       "driverId": "driver.christian_fittipaldi",
       "number": "23",
-      "rounds": "1-16",
+      "rounds": "1-8",
+      "ams2LiveryName": "Minardi-Lamborghini #23 C. Fittipaldi"
+    },
+    {
+      "teamId": "team.minardi",
+      "driverId": "driver.alex_zanardi",
+      "number": "23",
+      "rounds": "9-11",
+      "ams2LiveryName": "Minardi-Lamborghini #23 A. Zanardi"
+    },
+    {
+      "teamId": "team.minardi",
+      "driverId": "driver.christian_fittipaldi",
+      "number": "23",
+      "rounds": "12-16",
       "ams2LiveryName": "Minardi-Lamborghini #23 C. Fittipaldi"
     },
     {
@@ -179,8 +221,15 @@
       "teamId": "team.ferrari",
       "driverId": "driver.ivan_capelli",
       "number": "28",
-      "rounds": "1-16",
+      "rounds": "1-14",
       "ams2LiveryName": "Scuderia Ferrari #28 I. Capelli"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.nicola_larini",
+      "number": "28",
+      "rounds": "15-16",
+      "ams2LiveryName": "Scuderia Ferrari #28 N. Larini"
     },
     {
       "teamId": "team.venturi",
@@ -214,15 +263,29 @@
       "teamId": "team.andrea_moda",
       "driverId": "driver.alex_caffi",
       "number": "34",
-      "rounds": "1-16",
+      "rounds": "1-2",
       "ams2LiveryName": "Andrea Moda-Judd #34 A. Caffi"
+    },
+    {
+      "teamId": "team.andrea_moda",
+      "driverId": "driver.roberto_moreno",
+      "number": "34",
+      "rounds": "3-12",
+      "ams2LiveryName": "Andrea Moda-Judd #34 R. Moreno"
     },
     {
       "teamId": "team.andrea_moda",
       "driverId": "driver.enrico_bertaggia",
       "number": "35",
-      "rounds": "1-16",
+      "rounds": "1-2",
       "ams2LiveryName": "Andrea Moda-Judd #35 E. Bertaggia"
+    },
+    {
+      "teamId": "team.andrea_moda",
+      "driverId": "driver.perry_mccarthy",
+      "number": "35",
+      "rounds": "3-12",
+      "ams2LiveryName": "Andrea Moda-Judd #35 P. McCarthy"
     }
   ]
 }

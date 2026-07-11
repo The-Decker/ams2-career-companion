@@ -16,6 +16,26 @@
     <InternalsVisibleTo Include="Companion.RenderHarness.Tests" />
   </ItemGroup>
 
+  <!-- Bundled display fonts (embedded as resources so the single exe carries them — no system
+       install needed): "Race Sport" (the career/season-name selector face) and "Victory Striker
+       Sans Demo" (the Season's Grid card driver/team names). Referenced in Theme.xaml via
+       /Fonts/#<family>. -->
+  <ItemGroup>
+    <Resource Include="Fonts\Race Sport.ttf" />
+    <Resource Include="Fonts\Retro Floral.ttf" />
+    <Resource Include="Fonts\Microsport Bold.ttf" />
+    <!-- Clean, license-clean (Apache 2.0) sans families for readable screens — the character screen
+         uses Open Sans; Roboto is bundled and available. Regular/Bold/Italic/BoldItalic each. -->
+    <Resource Include="Fonts\OpenSans-Regular.ttf" />
+    <Resource Include="Fonts\OpenSans-Bold.ttf" />
+    <Resource Include="Fonts\OpenSans-Italic.ttf" />
+    <Resource Include="Fonts\OpenSans-BoldItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Regular.ttf" />
+    <Resource Include="Fonts\Roboto-Bold.ttf" />
+    <Resource Include="Fonts\Roboto-Italic.ttf" />
+    <Resource Include="Fonts\Roboto-BoldItalic.ttf" />
+  </ItemGroup>
+
   <!-- Refreshable data beside the exe (never compiled in): the extracted AMS2 content
        library, the rules data, and the bundled season packs. Copied to build output AND
        carried into publish, so the published single exe is self-sufficient. -->
@@ -39,6 +59,10 @@
     <!-- Circuit-map geometry (f1db-derived, CC BY 4.0), keyed by circuit-layout id — the vector track
          maps the race-setup + History screens render. Regenerate with tools/derive_circuits.cs. -->
     <None Include="..\..\data\ams2\circuits\*.json" Link="data\ams2\circuits\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Skin-season pointer library (per season key, each car model's ACTIVE override XML) the
+         Skin Season Manager swaps between conflicting season skin packs (1983<->1985, 1990<->SMGP...).
+         Small committed text files; the README documents provenance. -->
+    <None Include="..\..\data\ams2\skin-seasons\**\*.*" Link="data\ams2\skin-seasons\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\data\rules\news\*.json" Link="data\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\packs\**\*.*" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

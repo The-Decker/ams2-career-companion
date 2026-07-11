@@ -16,6 +16,15 @@ public sealed record PlayerSeat
     /// <summary>EXACT livery display name (case-sensitive) of the entry the player takes over.</summary>
     public required string Ams2LiveryName { get; init; }
 
+    /// <summary>The player's OWN distinct driver id, when they race as their own entrant rather than
+    /// impersonating the livery's authored driver (the SMGP clean-swap model: the player is a separate
+    /// driver, so the AI whose car they occupy is BENCHED — and returns the moment the player moves to
+    /// another car). When set, the resolver stamps this id onto the car at <see cref="Ams2LiveryName"/>
+    /// and drops that car's authored AI; when null the historical behavior stands (the player wears the
+    /// seat's own driver id, marked <see cref="GridSeat.IsPlayer"/>), so every non-SMGP career and every
+    /// pre-change SMGP career resolves byte-identically.</summary>
+    public string? DriverId { get; init; }
+
     /// <summary>The player's character applied to this seat, or null for a pre-character career.
     /// When present, the resolver patches the seat's ratings and car scalars from it (see
     /// <see cref="PlayerCharacterPatch"/>); when null the seat is exactly what the pack/track/
@@ -98,6 +107,13 @@ public sealed record GridSeat
     public required double PowerScalar { get; init; }
 
     public required double DragScalar { get; init; }
+
+    /// <summary>STAGING-ONLY per-driver car tuning (the juppo schema): driver-level car block
+    /// with the round's per-driver aiOverrides car fields applied on top (and, on the player's
+    /// seat, the character's scalar perk deltas folded in). When set, the staged custom-AI file
+    /// prefers these over the team scalars/reliability — but the sim's seat-strength model NEVER
+    /// reads it (sim-inert; the team fields above keep feeding the sim exactly as before).</summary>
+    public PackDriverCar? CarTuning { get; init; }
 
     /// <summary>True when the player drives this livery. The seat is still written to the
     /// generated file — the team scalars must apply to the player's car — and the AI skill

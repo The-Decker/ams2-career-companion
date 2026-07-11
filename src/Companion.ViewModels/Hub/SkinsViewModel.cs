@@ -202,6 +202,41 @@ public sealed partial class SkinsViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasMissingSkins;
 
+    // ---------- the Skin Season Manager panel (pack.json skinSeason) ----------
+
+    /// <summary>True when this pack declares a managed skin season — shows the season panel.</summary>
+    [ObservableProperty]
+    private bool _hasSkinSeason;
+
+    /// <summary>One line: is the declared season active on the install
+    /// (e.g. "2 of 3 car models on the f1-1985 skins").</summary>
+    [ObservableProperty]
+    private string _skinSeasonSummary = "";
+
+    /// <summary>The declared season key (e.g. "f1-1985"), for labels.</summary>
+    [ObservableProperty]
+    private string _skinSeasonKey = "";
+
+    /// <summary>True when the declared season is fully active — the panel shows a green tick
+    /// instead of the switch button.</summary>
+    [ObservableProperty]
+    private bool _skinSeasonActive;
+
+    /// <summary>True when the only blocker is an unrecognized (possibly hand-edited) installed
+    /// file — the panel offers "Overwrite anyway (backup first)".</summary>
+    [ObservableProperty]
+    private bool _skinSeasonRequiresForce;
+
+    /// <summary>Per-model status lines ("formula_retro_g3 — currently on the f1-1983 skins").</summary>
+    public ObservableCollection<string> SkinSeasonModels { get; } = [];
+
+    /// <summary>The outcome banner of the last season switch (null before any).</summary>
+    [ObservableProperty]
+    private string? _skinSeasonBanner;
+
+    [ObservableProperty]
+    private bool _skinSeasonSwitchSucceeded;
+
     public void Refresh()
     {
         var plan = _session.CurrentSkinAssignments();
@@ -255,6 +290,8 @@ public sealed partial class SkinsViewModel : ObservableObject
         foreach (var name in plan.InactiveLiveries)
             ActivatableLiveries.Add(name);
         HasActivatable = ActivatableLiveries.Count > 0;
+
+        RefreshSkinSeason();
 
         // Editable grid: one row per seat, seeded from any saved override. Livery options = the
         // seat's own livery plus every active livery for the class (so "keep original" is selectable
@@ -345,6 +382,58 @@ public sealed partial class SkinsViewModel : ObservableObject
             lines.Add($"Your previous file was backed up ({System.IO.Path.GetFileName(backup)}); season-end can restore it.");
         lines.Add("Close AMS2 first if it's open, then launch and race.");
         return string.Join("\n\n", lines);
+    }
+
+    /// <summary>Re-reads the Skin Season Manager's status for this pack's declared season.</summary>
+    private void RefreshSkinSeason()
+    {
+        var status = _session.CurrentSkinSeasonStatus();
+        HasSkinSeason = status is not null;
+        SkinSeasonModels.Clear();
+        if (status is null)
+        {
+            SkinSeasonSummary = "";
+            SkinSeasonKey = "";
+            SkinSeasonActive = false;
+            SkinSeasonRequiresForce = false;
+            return;
+        }
+
+        SkinSeasonKey = status.Key;
+        SkinSeasonSummary = status.Summary;
+        SkinSeasonActive = status.IsFullyActive;
+        SkinSeasonRequiresForce = status.RequiresForce;
+        foreach (var m in status.Models)
+        {
+            string line = m.State switch
+            {
+                SkinSeasonModelState.Active => $"{m.Model} — on the {status.Key} skins ✓",
+                SkinSeasonModelState.NoActiveFile => $"{m.Model} — no active override yet (switching creates it)",
+                _ => $"{m.Model} — {m.Detail ?? m.State.ToString()}",
+            };
+            SkinSeasonModels.Add(line);
+        }
+    }
+
+    /// <summary>Switch the install onto this pack's declared skin season (backup-first). The
+    /// same swap runs automatically when you set up a race — this button is the explicit,
+    /// see-it-now version.</summary>
+    [RelayCommand]
+    private void ActivateSkinSeason() => ApplySkinSeason(force: false);
+
+    /// <summary>The force-gate escape hatch for an unrecognized (possibly hand-edited) installed
+    /// override — still backup-first.</summary>
+    [RelayCommand]
+    private void ForceActivateSkinSeason() => ApplySkinSeason(force: true);
+
+    private void ApplySkinSeason(bool force)
+    {
+        var result = _session.ActivateSkinSeason(force);
+        SkinSeasonSwitchSucceeded = result.Success;
+        SkinSeasonBanner = result.Errors.Count > 0
+            ? result.Message + "\n" + string.Join("\n", result.Errors)
+            : result.Message;
+        Refresh();
     }
 
     /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the

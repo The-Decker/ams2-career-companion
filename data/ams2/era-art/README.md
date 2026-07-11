@@ -36,5 +36,8 @@ its `TELEGRAM` / `FAX` / `EMAIL` label.
   add, replace or delete images while the app is running (reopen the Start screen to see a swap).
 - Nothing here is compiled into the exe; this whole folder is refreshable content copied beside
   the app at build/publish time. Add or change images freely.
+- **These assets are now tracked in git** (as of 2026-07-11) — `data/ams2/` is the source of truth,
+  synced to `dist/data/ams2/` at publish. Drop new art HERE (not in `dist/`) so it's version-controlled.
+  See [`../ART-INVENTORY.md`](../ART-INVENTORY.md) for what's present vs. still missing.
 - Provide only what you have — a single `telegram.jpg` / `fax.jpg` / `email.jpg` set is enough to
   give every career an era-appropriate photo.

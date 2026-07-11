@@ -2,6 +2,7 @@
   "year": 1969,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-Vintage_Gen2",
+  "refuellingAllowed": false,
   "pointsSystem": {
     "racePoints": [
       9,
@@ -31,16 +32,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -57,27 +78,39 @@
       },
       "laps": 80,
       "grid": {
-        "size": 14,
+        "size": 26,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.gerhard_mitter",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1969-03-01",
           "weatherSlots": [
@@ -96,16 +129,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -118,31 +171,48 @@
         "isPlaceholder": true,
         "fallbacks": [
           "adelaide_historic"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 47,
+          "isRealVenue": false
+        }
       },
       "laps": 87,
       "grid": {
-        "size": 14,
+        "size": 26,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.gerhard_mitter",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1969-05-04",
           "weatherSlots": [
@@ -161,16 +231,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -179,7 +269,7 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit de Monaco",
-        "id": "azure_circuit_88",
+        "id": "azure_circuit_2021",
         "isPlaceholder": false,
         "fallbacks": [
           "azure_circuit"
@@ -187,27 +277,39 @@
       },
       "laps": 80,
       "grid": {
-        "size": 14,
+        "size": 25,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.gerhard_mitter",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1969-05-18",
           "weatherSlots": [
@@ -235,16 +337,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -259,31 +381,48 @@
           "spielberg_historic",
           "silverstone_1975",
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 70,
+          "isRealVenue": false
+        }
       },
       "laps": 64,
       "grid": {
-        "size": 14,
+        "size": 26,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.gerhard_mitter",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1969-06-21",
           "weatherSlots": [
@@ -302,16 +441,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -325,31 +484,48 @@
         "fallbacks": [
           "rouen_short",
           "le_mans_bugatti"
-        ]
+        ],
+        "alternate": {
+          "id": "bannochbrae1",
+          "laps": 42,
+          "isRealVenue": false
+        }
       },
       "laps": 47,
       "grid": {
-        "size": 14,
+        "size": 26,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.gerhard_mitter",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1969-07-06",
           "weatherSlots": [
@@ -368,16 +544,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -394,27 +590,39 @@
       },
       "laps": 84,
       "grid": {
-        "size": 14,
+        "size": 26,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.gerhard_mitter",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 25,
           "startTime": "14:00",
           "date": "1969-07-19",
           "weatherSlots": [
@@ -438,16 +646,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -462,27 +690,38 @@
       },
       "laps": 14,
       "grid": {
-        "size": 14,
+        "size": 25,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.vic_elford",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 24,
           "startTime": "14:00",
           "date": "1969-08-03",
           "weatherSlots": [
@@ -501,16 +740,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -525,27 +784,37 @@
       },
       "laps": 68,
       "grid": {
-        "size": 14,
+        "size": 24,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.ernesto_brambilla",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1969-09-07",
           "weatherSlots": [
@@ -557,36 +826,43 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {
-        "driver.chris_amon": {
-          "raceSkill": 0.68,
-          "qualifyingSkill": 0.69,
-          "aggression": 0.39,
-          "defending": 0.31,
-          "stamina": 0.73,
-          "consistency": 0.61,
-          "startReactions": 0.81,
-          "wetSkill": 0.71,
-          "tyreManagement": 0.63,
-          "avoidanceOfMistakes": 0.37
-        }
-      }
+      "aiOverrides": {}
     },
     {
       "round": 9,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -594,34 +870,44 @@
       "date": "1969-09-20",
       "championship": true,
       "track": {
-        "realVenue": "Canadian Tire Motorsport Park",
+        "realVenue": "Mosport Park",
         "id": "mosport_1971",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 90,
       "grid": {
-        "size": 14,
+        "size": 24,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.bill_brack",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1969-09-20",
           "weatherSlots": [
@@ -640,16 +926,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -657,34 +963,44 @@
       "date": "1969-10-05",
       "championship": true,
       "track": {
-        "realVenue": "Watkins Glen International",
+        "realVenue": "Watkins Glen",
         "id": "watkins_glen_1971_short",
         "isPlaceholder": false,
         "fallbacks": []
       },
       "laps": 108,
       "grid": {
-        "size": 14,
+        "size": 24,
         "starterDriverIds": [
-          "driver.jackie_stewart",
-          "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
           "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
+          "driver.jochen_rindt",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 23,
           "startTime": "14:00",
           "date": "1969-10-05",
           "weatherSlots": [
@@ -703,16 +1019,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -720,36 +1056,50 @@
       "date": "1969-10-19",
       "championship": true,
       "track": {
-        "realVenue": "Aut\u00F3dromo Hermanos Rodr\u00EDguez",
+        "realVenue": "Aut\u00F3dromo Ricardo Rodr\u00EDguez",
         "id": "interlagos_historic",
         "isPlaceholder": true,
         "fallbacks": [
           "monza_1971"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 83,
+          "isRealVenue": false
+        }
       },
       "laps": 41,
       "grid": {
-        "size": 14,
+        "size": 23,
         "starterDriverIds": [
-          "driver.jackie_stewart",
           "driver.jochen_rindt",
-          "driver.jacky_ickx",
-          "driver.denny_hulme",
-          "driver.jack_brabham",
-          "driver.graham_hill",
-          "driver.jo_siffert",
-          "driver.chris_amon",
-          "driver.bruce_mclaren",
-          "driver.jean_pierre_beltoise",
-          "driver.john_surtees",
           "driver.mario_andretti",
+          "driver.jo_siffert",
+          "driver.jo_bonnier",
+          "driver.pete_lovely",
+          "driver.denny_hulme",
+          "driver.bruce_mclaren",
+          "driver.derek_bell",
+          "driver.jackie_stewart",
+          "driver.jean_pierre_beltoise",
+          "driver.henri_pescarolo",
+          "driver.chris_amon",
+          "driver.pedro_rodriguez",
+          "driver.john_surtees",
           "driver.jackie_oliver",
-          "driver.peter_de_klerk"
+          "driver.george_eaton",
+          "driver.jack_brabham",
+          "driver.jacky_ickx",
+          "driver.silvio_moser",
+          "driver.peter_de_klerk",
+          "driver.richard_attwood",
+          "driver.piers_courage",
+          "driver.francois_cevert"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 13,
+          "opponents": 22,
           "startTime": "14:00",
           "date": "1969-10-19",
           "weatherSlots": [
@@ -758,434 +1108,10 @@
           "timeProgression": "1x",
           "mandatoryPitStop": false
         },
-        "notes": "Placeholder for Aut\u00F3dromo Hermanos Rodr\u00EDguez \u2014 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
+        "notes": "Placeholder for Aut\u00F3dromo Ricardo Rodr\u00EDguez \u2014 65 laps / 325 km reproduced as 41 laps of Interlagos Historic."
       },
       "guestEntries": [],
       "aiOverrides": {}
     }
-  ],
-  "driverForm": {
-    "1": {
-      "driver.chris_amon": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.denny_hulme": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.jack_brabham": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jackie_oliver": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jackie_stewart": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.john_surtees": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.mario_andretti": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "2": {
-      "driver.bruce_mclaren": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.chris_amon": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.denny_hulme": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.graham_hill": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jack_brabham": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.jackie_oliver": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jackie_stewart": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.john_surtees": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      }
-    },
-    "3": {
-      "driver.bruce_mclaren": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.chris_amon": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.denny_hulme": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.graham_hill": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jack_brabham": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jackie_stewart": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.john_surtees": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "4": {
-      "driver.bruce_mclaren": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.denny_hulme": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.graham_hill": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jack_brabham": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jackie_stewart": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.john_surtees": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      }
-    },
-    "5": {
-      "driver.bruce_mclaren": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.chris_amon": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.denny_hulme": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.graham_hill": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jackie_stewart": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      }
-    },
-    "6": {
-      "driver.bruce_mclaren": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.chris_amon": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.denny_hulme": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.graham_hill": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jackie_stewart": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.john_surtees": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "7": {
-      "driver.graham_hill": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jackie_stewart": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jo_siffert": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.mario_andretti": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      }
-    },
-    "8": {
-      "driver.bruce_mclaren": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.denny_hulme": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.graham_hill": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jack_brabham": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jackie_oliver": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jo_siffert": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.john_surtees": {
-        "qualifyingSkill": 0.02
-      }
-    },
-    "9": {
-      "driver.bruce_mclaren": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jackie_stewart": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jo_siffert": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.john_surtees": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "10": {
-      "driver.bruce_mclaren": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.denny_hulme": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.graham_hill": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jack_brabham": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.jackie_oliver": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.jean_pierre_beltoise": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.jo_siffert": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.mario_andretti": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "11": {
-      "driver.bruce_mclaren": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.denny_hulme": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.jack_brabham": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jacky_ickx": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jo_siffert": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.jochen_rindt": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.john_surtees": {
-        "qualifyingSkill": 0.02
-      }
-    }
-  }
+  ]
 }

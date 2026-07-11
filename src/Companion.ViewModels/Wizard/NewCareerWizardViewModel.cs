@@ -108,11 +108,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.SeatPick:
-                BuildGridChoices();
-                Step = WizardStep.Grid;
-                break;
-
-            case WizardStep.Grid:
+                // Flow (Mike): select car → create character → see the grid → confirm. Create the
+                // character first (when the mode has one), then the grid reveal is the last look.
                 if (HasCharacterStep)
                 {
                     PrepareCharacter();
@@ -120,12 +117,17 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 }
                 else
                 {
-                    PrepareConfirm();
-                    Step = WizardStep.Confirm;
+                    BuildGridChoices();
+                    Step = WizardStep.Grid;
                 }
                 break;
 
             case WizardStep.Character:
+                BuildGridChoices();
+                Step = WizardStep.Grid;
+                break;
+
+            case WizardStep.Grid:
                 PrepareConfirm();
                 Step = WizardStep.Confirm;
                 break;
@@ -141,10 +143,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (!CanGoBack)
             return;
-        // Confirm steps back over the (possibly skipped) character step to the grid step.
+        // The grid step precedes confirm and follows the (possibly skipped) character step; step
+        // back over character straight to seat pick when the mode has no character.
         Step = Step switch
         {
-            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.Grid,
+            WizardStep.Grid => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
             _ => Step - 1,
         };
     }
@@ -180,6 +183,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             var files = SeasonPackFiles.Read(SelectedPack!.Directory);
             Pack = files.Parse();
             _packDirectory = SelectedPack.Directory;
+            OnPropertyChanged(nameof(IsSmgpPack));
+            OnPropertyChanged(nameof(GridPickEnabled));
             return true;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
@@ -187,9 +192,21 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             Pack = null;
             _packDirectory = null;
             PackLoadError = ex.Message;
+            OnPropertyChanged(nameof(IsSmgpPack));
+            OnPropertyChanged(nameof(GridPickEnabled));
             return false;
         }
     }
+
+    /// <summary>True when the selected pack is the SMGP replica: the wizard reshapes — seats
+    /// restrict to the lower divisions (the game starts rookies there), the season field is the
+    /// whole pack (the ladder needs every car), and own-entrant is unavailable (a custom livery
+    /// holds no ladder seat).</summary>
+    public bool IsSmgpPack => string.Equals(
+        Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
+
+    /// <summary>The grid step's checkboxes lock for the SMGP replica — the field is fixed.</summary>
+    public bool GridPickEnabled => !IsSmgpPack;
 
     // ---------- step b: verification ----------
 
@@ -258,6 +275,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Error, issue.Message,
                 IsInfo: issue.Severity == Companion.Ams2.Preflight.PreflightSeverity.Info));
 
+        RefreshAlternateTrackStatus(installation?.InstallDirectory);
+        RefreshModdedFieldStatus(installation?.InstallDirectory);
+
         OnPropertyChanged(nameof(HasErrors));
         OnPropertyChanged(nameof(HasWarnings));
         OnPropertyChanged(nameof(LiveryScanDetails));
@@ -266,14 +286,154 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         NextCommand.NotifyCanExecuteChanged();
     }
 
+    // ---------- step b (cont): optional alternate MOD tracks (the "RockyTM track switch") ----------
+
+    /// <summary>OPT-IN alternate mod tracks. When ticked AND every required mod is installed, the new
+    /// career swaps the flagged rounds to their alternate venues; otherwise the season stays on its
+    /// base/DLC defaults (no mod dependency). Toggling re-checks the install.</summary>
+    [ObservableProperty]
+    private bool _useAlternateTracks;
+
+    /// <summary>The mod tracks this pack's alternates need, each flagged installed or not (empty when
+    /// the pack offers no alternates). Refreshed from the install on verification + on toggling.</summary>
+    public ObservableCollection<Companion.Ams2.Preflight.RequiredModTrack> AlternateModTracks { get; } = [];
+
+    public bool PackHasAlternateTracks => AlternateModTracks.Count > 0;
+
+    public bool AllAlternateModsInstalled =>
+        AlternateModTracks.Count > 0 && AlternateModTracks.All(t => t.Installed);
+
+    /// <summary>One honest line on what the tick will actually do given the install state.</summary>
+    public string AlternateTrackStatus
+    {
+        get
+        {
+            int total = AlternateModTracks.Count;
+            if (total == 0)
+                return "This season has no alternate tracks.";
+            int missing = AlternateModTracks.Count(t => !t.Installed);
+            string tracks = total == 1 ? "track" : "tracks";
+            if (!UseAlternateTracks)
+                return $"{total} alternate mod {tracks} available for this season.";
+            if (missing == 0)
+                return total == 1
+                    ? "✔ The alternate mod track is installed — this season will use it."
+                    : $"✔ All {total} alternate mod tracks installed — this season will use them.";
+            return $"⚠ {missing} of {total} required mod {tracks} not installed — alternates won't be applied; " +
+                   "the season stays on its default AMS2 tracks. Install the missing mods and re-tick, or race the defaults.";
+        }
+    }
+
+    private void RefreshAlternateTrackStatus(string? installDirectory)
+    {
+        AlternateModTracks.Clear();
+        if (Pack is { } pack)
+            foreach (var t in Companion.Ams2.Preflight.AlternateTrackPreflight.RequiredModTracks(
+                         pack, _environment.ContentLibrary, installDirectory))
+                AlternateModTracks.Add(t);
+        OnPropertyChanged(nameof(PackHasAlternateTracks));
+        OnPropertyChanged(nameof(AllAlternateModsInstalled));
+        OnPropertyChanged(nameof(AlternateTrackStatus));
+    }
+
+    /// <summary>The "check installed" action — re-probe the install for the required mod tracks
+    /// (e.g. after installing a missing one). Mirrors the tick's own re-check.</summary>
+    [RelayCommand]
+    private void CheckAlternateMods() =>
+        RefreshAlternateTrackStatus(_environment.LocateInstall()?.InstallDirectory);
+
+    partial void OnUseAlternateTracksChanged(bool value) =>
+        // Ticking re-checks the install (Mike: "the tick is pressed to check the optional maps are installed").
+        RefreshAlternateTrackStatus(_environment.LocateInstall()?.InstallDirectory);
+
+    // ---------- step b (cont): optional modded field (a community CAR mod) ----------
+
+    /// <summary>OPT-IN modded field. When ticked AND the required car mod is installed, the new
+    /// career fields the mod's extra grid entries (the SMGP McLaren teams by Kobra Fleetworks);
+    /// otherwise the season keeps its base field (no mod dependency). Toggling re-checks the install.</summary>
+    [ObservableProperty]
+    private bool _useModdedField;
+
+    /// <summary>The car mod this pack's modded field needs, flagged installed or not — null when the
+    /// pack offers none. Refreshed from the install on verification + on toggling.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PackHasModdedField), nameof(ModdedFieldStatus))]
+    private Companion.Ams2.Preflight.RequiredModVehicle? _moddedVehicle;
+
+    public bool PackHasModdedField => ModdedVehicle is not null;
+
+    /// <summary>One honest line on what the tick will do given the install state.</summary>
+    public string ModdedFieldStatus
+    {
+        get
+        {
+            if (ModdedVehicle is not { } mod)
+                return "";
+            if (!UseModdedField)
+                return $"Adds the {mod.ModName} cars to round out the grid — if the mod is installed.";
+            return mod.Installed
+                ? $"✔ {mod.ModName} is installed — its cars will join the grid."
+                : $"⚠ {mod.ModName} not found — its cars won't be added; the season fields its base grid. " +
+                  "Install the mod and re-tick, or race without it.";
+        }
+    }
+
+    private void RefreshModdedFieldStatus(string? installDirectory)
+    {
+        ModdedVehicle = Pack is { } pack
+            ? Companion.Ams2.Preflight.ModdedVehiclePreflight.RequiredModVehicleFor(
+                pack, _environment.ContentLibrary, installDirectory)
+            : null;
+    }
+
+    /// <summary>The "check installed" action — re-probe the install for the required car mod.</summary>
+    [RelayCommand]
+    private void CheckModdedField() =>
+        RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
+
+    partial void OnUseModdedFieldChanged(bool value) =>
+        RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
+
     // ---------- step c: seat pick ----------
 
     public ObservableCollection<SeatOption> Seats { get; } = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(PlayerImageKey), nameof(PlayerCarKey), nameof(PlayerCarSpec))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private SeatOption? _selectedSeat;
+
+    /// <summary>The team-coloured PLAYER image for the character screen — the team the player is
+    /// joining (<c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, a team helmet), or a plain
+    /// "player" key for an own entrant. Updates when the chosen seat changes.</summary>
+    public string PlayerImageKey => GridSeatChoice.PlayerImageKey(SelectedSeat?.TeamId ?? "");
+
+    /// <summary>The car the player will drive — its preview image key (the seat's driver id keys
+    /// <c>data/ams2/cars/&lt;driverId&gt;.png</c>). Null for an own entrant (no pack car).</summary>
+    public string? PlayerCarKey => SelectedSeat?.DriverId;
+
+    /// <summary>The arcade car-spec card for the car the player will drive (machine/engine/power +
+    /// ENG-TM-SUS-TIRE-BRA bars), resolved from the chosen seat's team/vehicle. Null when there is no
+    /// character system, no seat, or no authored spec — the character screen then hides the card.</summary>
+    public CarSpecCardViewModel? PlayerCarSpec
+    {
+        get
+        {
+            if (SelectedSeat is null || _environment.RulesDirectory is null)
+                return null;
+            var catalog = _environment.Rules.CarSpecs;
+            string? vehicle = Pack?.Teams
+                .FirstOrDefault(t => string.Equals(t.Id, SelectedSeat.TeamId, StringComparison.Ordinal))
+                ?.CarVehicleIds.FirstOrDefault();
+            return CarSpecCardViewModel.From(catalog.For(SelectedSeat.TeamId, vehicle), catalog.BarMax);
+        }
+    }
+
+    /// <summary>The player's chosen driver name (the character step, defaulting to the seat driver
+    /// until edited) — replaces the AI driver's name on the player's own Season's-Grid card. Null
+    /// (character-less / empty) leaves the card on the seat driver's name.</summary>
+    private string? PlayerDisplayName =>
+        Character?.Name?.Trim() is { Length: > 0 } n ? n : null;
 
     /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
     /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path — a
@@ -287,7 +447,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
 
     /// <summary>True when the player typed a custom livery — they race as their own entrant instead of
     /// taking a pack seat.</summary>
-    public bool IsOwnEntrant => !string.IsNullOrWhiteSpace(CustomLiveryName);
+    /// <summary>Own-entrant never applies to the SMGP replica — a custom livery holds no seat on
+    /// the ladder, so the mode's swaps and the title defense could never reach it.</summary>
+    public bool IsOwnEntrant => !IsSmgpPack && !string.IsNullOrWhiteSpace(CustomLiveryName);
 
     /// <summary>The livery the player will drive: the typed custom livery (own entrant) when present,
     /// otherwise the selected pack seat's livery. Null only before either is chosen (the Next gate
@@ -310,6 +472,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         // for the most rounds. Packs whose livery names embed the driver (e.g. "1988 Williams #5 -
         // N. Mansell") never collide, so they are unaffected; team-only livery names (1985) no longer
         // list the same seat twice. (Dangling team/driver refs are validation findings, skipped.)
+        // The SMGP replica starts rookies at the BOTTOM (Mike's rule): only LEVEL D cars are
+        // offered — you earn everything above through the rival ladder.
+        bool smgp = IsSmgpPack;
+
         foreach (var group in pack.Entries
                      .Where(e => teamsById.ContainsKey(e.TeamId) && driversById.ContainsKey(e.DriverId))
                      .GroupBy(e => e.Ams2LiveryName, StringComparer.Ordinal))
@@ -317,6 +483,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
             var team = teamsById[entry.TeamId];
             var driver = driversById[entry.DriverId];
+            if (smgp && Companion.Core.Smgp.SmgpRules.Tier(team.Prestige) != 'D')
+                continue;
 
             Seats.Add(new SeatOption
             {
@@ -334,6 +502,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 Reliability = team.Reliability,
             });
         }
+
+        if (smgp)
+            SelectedSeat = Seats.FirstOrDefault();
     }
 
     /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
@@ -401,13 +572,21 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         {
             var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
             var liveries = group.Select(e => e.Ams2LiveryName).Distinct(StringComparer.Ordinal).ToList();
+            bool locked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal);
             var choice = new GridSeatChoice
             {
                 LiveryName = entry.Ams2LiveryName,
                 Liveries = liveries,
-                DriverName = driversById[entry.DriverId].Name,
+                // The player REPLACES this seat's driver — their own (locked) card shows the PLAYER's
+                // chosen name, not the AI driver whose car they took. Every other card keeps its
+                // driver. (In-career the resolver does the same swap by IsPlayer; this is the wizard.)
+                DriverName = locked && PlayerDisplayName is { } playerName
+                    ? playerName
+                    : driversById[entry.DriverId].Name,
                 TeamName = teamsById[entry.TeamId].Name,
-                IsLocked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal),
+                DriverId = entry.DriverId,
+                TeamId = entry.TeamId,
+                IsLocked = locked,
                 IsIncluded = true,
             };
             choice.PropertyChanged += OnGridChoiceChanged;
@@ -615,6 +794,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         CreateError = null;
         bool importBaseline = UseInstalledAiBaseline && _installedAiFileXml is not null;
+        bool smgpMode = string.Equals(
+            Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
         var request = new CareerCreationRequest
         {
             PackDirectory = _packDirectory!,
@@ -625,10 +806,23 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
             Character = Character?.BuildProfile(),
-            GridSelection = BuildGridSelection(),
+            // The SMGP ladder needs the WHOLE authored field — its seat chains reference every
+            // team's car, and a narrowed grid would make demotion/introduction targets unresolvable
+            // (the resolver would then refuse the moves round after round). Mode on → whole pack.
+            GridSelection = smgpMode ? null : BuildGridSelection(),
             // Ratings Phase 3: every new career is form-reactive — the sim's field reacts to who is
             // hot each weekend (the pinned pack's per-race form). Existing careers stay form-inert.
             FormAware = true,
+            // The SMGP replica mode: every new career on an smgp-styled pack plays the mode (rival
+            // battles, seat swaps, the title defense). Normal packs never set it; existing smgp-pack
+            // careers created before the mode stay inert (their start state has no SmgpState).
+            SmgpMode = smgpMode,
+            // Opt-in alternate mod tracks — the service applies them only if every required mod is
+            // installed (else it silently keeps the default AMS2 tracks). Default OFF.
+            UseAlternateTracks = UseAlternateTracks,
+            // Opt-in modded field (the SMGP McLaren teams) — the service adds them only if the
+            // required car mod is installed (else the base field). Default OFF.
+            UseModdedField = UseModdedField,
         };
 
         ICareerSession session;

@@ -45,6 +45,30 @@ public sealed record CareerCreationRequest
     /// Default false so existing creation callers (and every test that does not opt in) fold exactly
     /// as before — byte-identical. The new-career wizard sets it true for all new careers.</summary>
     public bool FormAware { get; init; }
+
+    /// <summary>The SMGP replica mode (M3): when true AND the pack declares <c>careerStyle "smgp"</c>,
+    /// the career's start state seeds <see cref="Companion.Core.Smgp.SmgpState"/> — the per-career gate
+    /// every mode mechanic (rival battles, seat swaps, the title defense) hangs off. Mirrors
+    /// <see cref="FormAware"/>: default false, so existing creation callers (and every test that does
+    /// not opt in) seed nothing and fold byte-identically; the wizard sets it for smgp packs. On a
+    /// normal pack the flag is ignored — the pack's style is the other half of the gate.</summary>
+    public bool SmgpMode { get; init; }
+
+    /// <summary>OPT-IN modded field (v1.4): when true AND the pack declares a modded field AND its
+    /// required car mod is installed, the creation-time transform appends the mod's grid entries
+    /// and bumps the round grid sizes BEFORE pinning — so the pinned pack fields the fuller grid
+    /// (the SMGP McLaren teams) and replays stay byte-identical. False (default) — or true but the
+    /// mod missing — pins the base field only, so the default never depends on the mod. The wizard
+    /// sets it for a pack that has a modded field.</summary>
+    public bool UseModdedField { get; init; }
+
+    /// <summary>OPT-IN alternate mod tracks (Mike's "RockyTM track switch"): when true AND every mod
+    /// track the pack's alternates need is installed, the creation-time transform swaps each round
+    /// with a <c>track.alternate</c> to that alternate BEFORE pinning — so the pinned pack drives the
+    /// mod venues and replays stay byte-identical. When false (default) — or true but a required mod
+    /// is missing — the season is pinned on its base/DLC defaults and NO mod track is used, so the
+    /// default never depends on a mod. Seed-driven per-round variety is a later slice.</summary>
+    public bool UseAlternateTracks { get; init; }
 }
 
 /// <summary>

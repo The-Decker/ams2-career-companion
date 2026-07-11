@@ -238,6 +238,33 @@ public class ReferencePackTests
         }
     }
 
+    // ---------- optional alternate mod tracks (opt-in venue swaps) ----------
+
+    /// <summary>Every authored <c>track.alternate</c> must point at a track that (a) resolves in the
+    /// content library, (b) is an installed MOD track (<c>isMod:true</c> — base/DLC tracks are never
+    /// offered as opt-in mod alternates), and (c) carries a positive distance-preserving lap count.
+    /// Guards the curated alternate list against a typo'd tag or a non-mod target.</summary>
+    [Theory]
+    [MemberData(nameof(ReferencePackIds))]
+    public void ReferencePack_EveryTrackAlternateResolvesToAnInstalledModTrack(string packId)
+    {
+        var pack = LoadPack(packId);
+
+        foreach (var round in pack.Season.Rounds)
+        {
+            if (round.Track.Alternate is not { } alt)
+                continue;
+
+            Assert.True(Library.Value.Tracks.TryGetValue(alt.Id, out var track),
+                $"{packId} round {round.Round}: alternate track '{alt.Id}' is not in the content library.");
+            Assert.True(track!.IsMod,
+                $"{packId} round {round.Round}: alternate '{alt.Id}' is not a mod track (isMod:false) — " +
+                "only installed mod tracks may be opt-in alternates.");
+            Assert.True(alt.Laps >= 1,
+                $"{packId} round {round.Round}: alternate '{alt.Id}' has laps={alt.Laps}; must be >= 1.");
+        }
+    }
+
     // ---------- v1.1: real venues + placeholder distance preservation ----------
 
     [Theory]

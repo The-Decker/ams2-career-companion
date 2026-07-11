@@ -77,6 +77,22 @@ public static class JournalPhases
     public const string TeamTier = "team.tier";
     public const string Headline = "news.headline";
 
+    /// <summary>An SMGP rival battle's resolution (M3, careerStyle "smgp"): a DERIVED row emitted
+    /// only when the round's raw envelope stored a rival call AND the career carries the mode's
+    /// folded state — every other career's journal sequence is unchanged. Carries both finishes,
+    /// the outcome, the post-battle streaks and what they triggered (the Why? inspector's view of
+    /// the two-wins ladder).</summary>
+    public const string SmgpBattle = "smgp.battle";
+
+    /// <summary>An SMGP seat reassignment (M3): the accepted swap / forfeit displacement chain —
+    /// who now drives what. Emitted only when a battle actually moved seats.</summary>
+    public const string SmgpSeat = "smgp.seat";
+
+    /// <summary>The SMGP season-end fold (M3 slice 4): the championship title increment + the
+    /// Madonna title-defense arming (champion), or the between-seasons streak reset (everyone
+    /// else, only when something actually reset). Absent for every non-smgp career.</summary>
+    public const string SmgpTitle = "smgp.title";
+
     /// <summary>One row per bridged gap year of an era transition (M6): the aging +
     /// retirement pass nobody played, keyed with the bridged year.</summary>
     public const string EraBridge = "era.bridge";

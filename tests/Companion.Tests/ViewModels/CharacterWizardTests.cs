@@ -181,7 +181,105 @@ public sealed class CharacterWizardTests : IDisposable
         Assert.Equal(vm.RemainingCp, profile.CpUnspent);
     }
 
+    [Fact]
+    public void PerkCategories_ExposeFriendlyDisplayNames_NotRawIds()
+    {
+        var vm = new CharacterViewModel(Rules());
+        var era = vm.PerkCategories.Single(c => c.Name == "era");
+        Assert.Equal("Era-flavor", era.DisplayName); // was the raw "era" on the shelf header
+        Assert.All(vm.PerkCategories, c => Assert.False(string.IsNullOrWhiteSpace(c.DisplayName)));
+    }
+
+    [Fact]
+    public void MetaStatSlider_RangesBeyondTheTalentBand()
+    {
+        // Meta stats (marketability/durability) have no rating analog, so they range over the full
+        // authored band (0–1), not the talent 0.15–0.85 clamp.
+        var marketability = new CharacterViewModel(Rules()).MetaStats.Single(s => s.Id == "marketability");
+        marketability.Value = 0.95;
+        Assert.Equal(0.95, marketability.Value, 6); // not clamped down to the talent ceiling
+    }
+
+    [Fact]
+    public void TalentStatSlider_ExposesItsWrittenRatingPreview()
+    {
+        var pace = new CharacterViewModel(Rules()).Stats.Single(s => s.Id == "pace");
+        pace.Value = 0.50;
+        // writeBase 0.35 + writeSpan 0.55 * 0.50 = 0.625 → "race pace 0.63".
+        Assert.Contains("race pace", pace.WrittenPreview);
+        Assert.Contains("0.63", pace.WrittenPreview);
+    }
+
+    [Fact]
+    public void OneTrick_RevealsTheSpecialismPicker_AndBuildProfileRecordsTheChosenFlavor()
+    {
+        var vm = new CharacterViewModel(Rules());
+        // Start from a clean slate so only one_trick drives IsOneTrickSelected.
+        foreach (var selected in vm.Perks.Where(p => p.IsSelected).ToList())
+            vm.TogglePerkCommand.Execute(selected);
+        Assert.False(vm.IsOneTrickSelected);
+        Assert.Null(vm.BuildProfile().ChosenFlavor); // no one_trick → no recorded flavor
+
+        vm.TogglePerkCommand.Execute(vm.Perks.Single(p => p.Id == "one_trick"));
+        Assert.True(vm.IsOneTrickSelected);
+
+        vm.ChosenFlavor = vm.EligibleFlavors.Single(f => f.Field == "tyreManagement");
+        Assert.Equal("tyreManagement", vm.BuildProfile().ChosenFlavor);
+
+        // raceSkill (the auto-taxed pace lever) is deliberately NOT an eligible specialism.
+        Assert.DoesNotContain(vm.EligibleFlavors, f => f.Field == "raceSkill");
+    }
+
+    [Fact]
+    public void RandomBuild_ProducesAValidInBudgetCharacter_AndVariesAcrossRolls()
+    {
+        var vm = new CharacterViewModel(Rules());
+
+        vm.RandomBuildCommand.Execute(null);
+        Assert.True(vm.IsValid, vm.Invalidity);
+        Assert.Null(vm.SelectedArchetype); // the rolled spread is no longer a preset
+
+        // A second roll is also valid and (deterministically) differs from the first.
+        var firstStats = vm.Stats.Select(s => s.Value).ToList();
+        vm.RandomBuildCommand.Execute(null);
+        Assert.True(vm.IsValid, vm.Invalidity);
+        var secondStats = vm.Stats.Select(s => s.Value).ToList();
+        Assert.NotEqual(firstStats, secondStats);
+    }
+
     // ---------- wizard integration ----------
+
+    [Fact]
+    public void RenamingTheDriver_ReplacesTheSeatDriver_OnThePlayersOwnGridCard()
+    {
+        // Mike's bug: changing the driver name left the seat's original driver on the "YOU" card.
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), Path.Combine(_root, "packs", "pack"));
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+        var wizard = new NewCareerWizardViewModel(
+            environment, new FakeCareerFactory(),
+            packSearchRoots: [Path.Combine(_root, "packs")],
+            careersDirectory: Path.Combine(_root, "careers"),
+            seedSource: new Random(9));
+
+        wizard.SelectedPack = Assert.Single(wizard.Packs);
+        wizard.NextCommand.Execute(null);                 // -> Verification
+        if (wizard.HasWarnings) wizard.ProceedAnyway = true;
+        wizard.NextCommand.Execute(null);                 // -> SeatPick
+        var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.SelectedSeat = seat;
+        wizard.NextCommand.Execute(null);                 // -> Character
+        wizard.Character!.Name = "Renamed Driver";        // the player changes their name
+        wizard.NextCommand.Execute(null);                 // -> Grid (choices built on entry)
+
+        // The player REPLACES the seat's driver on their own (locked) card — new name, not the AI's.
+        var you = Assert.Single(wizard.GridChoices, c => c.IsLocked);
+        Assert.Equal("Renamed Driver", you.DriverName);
+        Assert.NotEqual(seat.DriverName, you.DriverName);
+        // Every other card keeps its own driver.
+        Assert.All(wizard.GridChoices.Where(c => !c.IsLocked), c => Assert.NotEqual("Renamed Driver", c.DriverName));
+    }
 
     [Fact]
     public void Wizard_WithRules_ShowsTheCharacterStep_AndWritesTheCharacterIntoTheRequest()
@@ -205,12 +303,13 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.NextCommand.Execute(null);                 // -> SeatPick
         var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
         wizard.SelectedSeat = seat;
-        wizard.NextCommand.Execute(null);                 // -> Grid (choose the field)
-        wizard.NextCommand.Execute(null);                 // -> Character (whole field by default)
+        wizard.NextCommand.Execute(null);                 // -> Character (rules loaded)
         Assert.Equal(WizardStep.Character, wizard.Step);
         Assert.NotNull(wizard.Character);
         Assert.Equal(seat.DriverName, wizard.Character!.Name); // driver name pre-filled from the seat
 
+        wizard.NextCommand.Execute(null);                 // -> Grid (whole field by default)
+        Assert.Equal(WizardStep.Grid, wizard.Step);
         wizard.NextCommand.Execute(null);                 // -> Confirm
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         wizard.NextCommand.Execute(null);                 // Create

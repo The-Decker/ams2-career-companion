@@ -2,6 +2,7 @@
   "year": 2020,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-Ultimate",
+  "refuellingAllowed": false,
   "pointsSystem": {
     "racePoints": [
       25,
@@ -40,16 +41,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -69,24 +90,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -104,23 +125,124 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.86
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.82,
+          "qualifyingSkill": 0.75
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.84
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.85
+        },
+        "driver.daniel_ricciardo": {
+          "qualifyingSkill": 0.81,
+          "vehicleReliability": -19
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.78
+        },
+        "driver.esteban_ocon": {
+          "raceSkill": 0.84,
+          "qualifyingSkill": 0.78
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -19
+        },
+        "driver.kevin_magnussen": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -19
+        },
+        "driver.kimi_raikkonen": {
+          "qualifyingSkill": 0.74,
+          "vehicleReliability": -19
+        },
+        "driver.lance_stroll": {
+          "qualifyingSkill": 0.84,
+          "vehicleReliability": -19
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.89
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 1
+        },
+        "driver.max_verstappen": {
+          "qualifyingSkill": 0.94,
+          "vehicleReliability": -19
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.77,
+          "qualifyingSkill": 0.69
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.86,
+          "qualifyingSkill": 0.8
+        },
+        "driver.romain_grosjean": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -19
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.81
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.86
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1
+        }
+      }
     },
     {
       "round": 2,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -140,24 +262,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -175,23 +297,124 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.86
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.82,
+          "qualifyingSkill": 0.75
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.84
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.85
+        },
+        "driver.daniel_ricciardo": {
+          "qualifyingSkill": 0.81,
+          "vehicleReliability": -19
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.78
+        },
+        "driver.esteban_ocon": {
+          "raceSkill": 0.84,
+          "qualifyingSkill": 0.78
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -19
+        },
+        "driver.kevin_magnussen": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -19
+        },
+        "driver.kimi_raikkonen": {
+          "qualifyingSkill": 0.74,
+          "vehicleReliability": -19
+        },
+        "driver.lance_stroll": {
+          "qualifyingSkill": 0.84,
+          "vehicleReliability": -19
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.89
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 1
+        },
+        "driver.max_verstappen": {
+          "qualifyingSkill": 0.94,
+          "vehicleReliability": -19
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.77,
+          "qualifyingSkill": 0.69
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.86,
+          "qualifyingSkill": 0.8
+        },
+        "driver.romain_grosjean": {
+          "qualifyingSkill": 0.78,
+          "vehicleReliability": -19
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.81
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.86
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1
+        }
+      }
     },
     {
       "round": 3,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Light Rain",
+              "Overcast",
+              "Medium Cloud",
+              "Light Cloud"
+            ]
           }
         ]
       },
@@ -209,24 +432,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -251,16 +474,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -280,24 +523,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.nico_hulkenberg",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -315,23 +558,128 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.79
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.76,
+          "qualifyingSkill": 0.73
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.82
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.87
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.81
+        },
+        "driver.daniil_kvyat": {
+          "qualifyingSkill": 0.77,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.esteban_ocon": {
+          "raceSkill": 0.9,
+          "qualifyingSkill": 0.79
+        },
+        "driver.george_russell": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.74
+        },
+        "driver.kevin_magnussen": {
+          "qualifyingSkill": 0.73,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.73,
+          "qualifyingSkill": 0.74
+        },
+        "driver.lance_stroll": {
+          "raceSkill": 0.84,
+          "qualifyingSkill": 0.83
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.83
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 1
+        },
+        "driver.max_verstappen": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.88
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.72
+        },
+        "driver.nico_hulkenberg": {
+          "qualifyingSkill": 0.79,
+          "vehicleReliability": -19
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.79
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.72
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.78
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 0.82,
+          "qualifyingSkill": 0.98
+        }
+      }
     },
     {
       "round": 5,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -351,24 +699,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.nico_hulkenberg",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -386,23 +734,128 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.79
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.76,
+          "qualifyingSkill": 0.73
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.82
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.87
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.81
+        },
+        "driver.daniil_kvyat": {
+          "qualifyingSkill": 0.77,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.esteban_ocon": {
+          "raceSkill": 0.9,
+          "qualifyingSkill": 0.79
+        },
+        "driver.george_russell": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.74
+        },
+        "driver.kevin_magnussen": {
+          "qualifyingSkill": 0.73,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.73,
+          "qualifyingSkill": 0.74
+        },
+        "driver.lance_stroll": {
+          "raceSkill": 0.84,
+          "qualifyingSkill": 0.83
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.83
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 1
+        },
+        "driver.max_verstappen": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.88
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.72
+        },
+        "driver.nico_hulkenberg": {
+          "qualifyingSkill": 0.79,
+          "vehicleReliability": -19
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.79
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.72
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.78
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 0.82,
+          "qualifyingSkill": 0.98
+        }
+      }
     },
     {
       "round": 6,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -422,24 +875,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -464,16 +917,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -493,24 +966,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -528,23 +1001,128 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.93
+        },
+        "driver.antonio_giovinazzi": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.carlos_sainz_jr": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -19
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.84
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.95
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.86
+        },
+        "driver.esteban_ocon": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.89
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.8,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kevin_magnussen": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.76
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.81,
+          "qualifyingSkill": 0.77
+        },
+        "driver.lance_stroll": {
+          "raceSkill": 0.86,
+          "qualifyingSkill": 0.87
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.9,
+          "qualifyingSkill": 0.87
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 1,
+          "qualifyingSkill": 1
+        },
+        "driver.max_verstappen": {
+          "raceSkill": 0.96,
+          "qualifyingSkill": 0.97
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.76,
+          "qualifyingSkill": 0.77
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.86
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.76,
+          "qualifyingSkill": 0.8
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.81
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.85,
+          "qualifyingSkill": 0.88
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.97
+        }
+      }
     },
     {
       "round": 8,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -564,24 +1142,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -599,23 +1177,126 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.75,
+          "qualifyingSkill": 0.85
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.73,
+          "qualifyingSkill": 0.77
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.97,
+          "qualifyingSkill": 0.9
+        },
+        "driver.charles_leclerc": {
+          "qualifyingSkill": 0.83,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.9,
+          "qualifyingSkill": 0.88
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.85,
+          "qualifyingSkill": 0.85
+        },
+        "driver.esteban_ocon": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.84
+        },
+        "driver.george_russell": {
+          "raceSkill": 0.77,
+          "qualifyingSkill": 0.73
+        },
+        "driver.kevin_magnussen": {
+          "qualifyingSkill": 0.73,
+          "vehicleReliability": -19
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.78,
+          "qualifyingSkill": 0.79
+        },
+        "driver.lance_stroll": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.86
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.88
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 0.9,
+          "qualifyingSkill": 1
+        },
+        "driver.max_verstappen": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -19
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.81,
+          "qualifyingSkill": 0.74
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.84
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.77
+        },
+        "driver.sebastian_vettel": {
+          "qualifyingSkill": 0.77,
+          "vehicleReliability": -19
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.9
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.99
+        }
+      }
     },
     {
       "round": 9,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -628,31 +1309,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "imola"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 59,
+          "isRealVenue": true
+        }
       },
       "laps": 60,
       "grid": {
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -670,23 +1356,122 @@
         "notes": "Placeholder for Autodromo Internazionale del Mugello - 59 laps / 309.455 km reproduced as 60 laps. Both are fast, flowing permanent road courses; the N\u00FCrburgring GP loop keeps Mugello\u0027s high-speed sweeping character."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "qualifyingSkill": 0.94,
+          "vehicleReliability": -19
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.81,
+          "qualifyingSkill": 0.82
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.84
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.94
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.89
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.72,
+          "qualifyingSkill": 0.83
+        },
+        "driver.esteban_ocon": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -19
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kevin_magnussen": {
+          "raceSkill": 0.77,
+          "qualifyingSkill": 0.8
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.78,
+          "qualifyingSkill": 0.76
+        },
+        "driver.lando_norris": {
+          "qualifyingSkill": 0.87,
+          "vehicleReliability": -19
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.98
+        },
+        "driver.max_verstappen": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.98
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.76
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.83
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.79
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.84
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.84
+        },
+        "driver.valtteri_bottas": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": -19
+        }
+      }
     },
     {
       "round": 10,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -699,31 +1484,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurb_gp_2020"
-        ]
+        ],
+        "alternate": {
+          "id": "circuit_of_the_americas_gp",
+          "laps": 56,
+          "isRealVenue": false
+        }
       },
       "laps": 66,
       "grid": {
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -748,16 +1538,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -777,24 +1587,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.nico_hulkenberg",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -812,23 +1622,126 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "qualifyingSkill": 0.94,
+          "vehicleReliability": -19
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.81,
+          "qualifyingSkill": 0.82
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.84
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.94
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.89
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.72,
+          "qualifyingSkill": 0.83
+        },
+        "driver.esteban_ocon": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -19
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kevin_magnussen": {
+          "raceSkill": 0.77,
+          "qualifyingSkill": 0.8
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.78,
+          "qualifyingSkill": 0.76
+        },
+        "driver.lando_norris": {
+          "qualifyingSkill": 0.87,
+          "vehicleReliability": -19
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.98
+        },
+        "driver.max_verstappen": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.98
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.76
+        },
+        "driver.nico_hulkenberg": {
+          "raceSkill": 0.85,
+          "qualifyingSkill": 0.75
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.83
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.79
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.84
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.84
+        },
+        "driver.valtteri_bottas": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": -19
+        }
+      }
     },
     {
       "round": 12,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Light Rain",
+              "Light Cloud",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -841,31 +1754,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 73,
       "grid": {
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -890,16 +1808,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -919,24 +1857,24 @@
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -954,23 +1892,126 @@
         "notes": ""
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.87
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.75
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.86,
+          "qualifyingSkill": 0.83
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.9,
+          "qualifyingSkill": 0.87
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.94,
+          "qualifyingSkill": 0.88
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.92,
+          "qualifyingSkill": 0.86
+        },
+        "driver.esteban_ocon": {
+          "qualifyingSkill": 0.8,
+          "vehicleReliability": -19
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.78,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kevin_magnussen": {
+          "qualifyingSkill": 0.75,
+          "vehicleReliability": -19
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.75
+        },
+        "driver.lance_stroll": {
+          "raceSkill": 0.76,
+          "qualifyingSkill": 0.8
+        },
+        "driver.lando_norris": {
+          "raceSkill": 0.85,
+          "qualifyingSkill": 0.84
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.99
+        },
+        "driver.max_verstappen": {
+          "qualifyingSkill": 0.95,
+          "vehicleReliability": -19
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.79,
+          "qualifyingSkill": 0.75
+        },
+        "driver.pierre_gasly": {
+          "qualifyingSkill": 0.88,
+          "vehicleReliability": -19
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.75
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.78,
+          "qualifyingSkill": 0.78
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.88,
+          "qualifyingSkill": 0.81
+        },
+        "driver.valtteri_bottas": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 1
+        }
+      }
     },
     {
       "round": 14,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Heavy Rain",
+            "Rain",
+            "Rain",
+            "Light Rain"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Rain",
+              "Light Rain",
+              "Overcast",
+              "Overcast"
+            ]
           }
         ]
       },
@@ -983,31 +2024,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "barcelona_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "circuit_of_the_americas_gp",
+          "laps": 56,
+          "isRealVenue": false
+        }
       },
       "laps": 60,
       "grid": {
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -1025,23 +2071,122 @@
         "notes": "Placeholder for Istanbul Park - 58 laps / 309.396 km reproduced as 60 laps. Istanbul Park\u0027s long multi-apex corners are stood in by the modern N\u00FCrburgring GP loop, a wide permanent Grade-1 venue."
       },
       "guestEntries": [],
-      "aiOverrides": {}
+      "aiOverrides": {
+        "driver.alexander_albon": {
+          "qualifyingSkill": 0.94,
+          "vehicleReliability": -19
+        },
+        "driver.antonio_giovinazzi": {
+          "raceSkill": 0.81,
+          "qualifyingSkill": 0.82
+        },
+        "driver.carlos_sainz_jr": {
+          "raceSkill": 0.91,
+          "qualifyingSkill": 0.84
+        },
+        "driver.charles_leclerc": {
+          "raceSkill": 0.87,
+          "qualifyingSkill": 0.94
+        },
+        "driver.daniel_ricciardo": {
+          "raceSkill": 0.95,
+          "qualifyingSkill": 0.89
+        },
+        "driver.daniil_kvyat": {
+          "raceSkill": 0.72,
+          "qualifyingSkill": 0.83
+        },
+        "driver.esteban_ocon": {
+          "qualifyingSkill": 0.89,
+          "vehicleReliability": -19
+        },
+        "driver.george_russell": {
+          "qualifyingSkill": 0.79,
+          "aggression": 0.95,
+          "defending": 0.25,
+          "avoidanceOfForcedMistakes": 0.15
+        },
+        "driver.kevin_magnussen": {
+          "raceSkill": 0.77,
+          "qualifyingSkill": 0.8
+        },
+        "driver.kimi_raikkonen": {
+          "raceSkill": 0.78,
+          "qualifyingSkill": 0.76
+        },
+        "driver.lando_norris": {
+          "qualifyingSkill": 0.87,
+          "vehicleReliability": -19
+        },
+        "driver.lewis_hamilton": {
+          "raceSkill": 1,
+          "qualifyingSkill": 0.98
+        },
+        "driver.max_verstappen": {
+          "raceSkill": 0.98,
+          "qualifyingSkill": 0.98
+        },
+        "driver.nicholas_latifi": {
+          "raceSkill": 0.74,
+          "qualifyingSkill": 0.76
+        },
+        "driver.pierre_gasly": {
+          "raceSkill": 0.89,
+          "qualifyingSkill": 0.83
+        },
+        "driver.romain_grosjean": {
+          "raceSkill": 0.83,
+          "qualifyingSkill": 0.79
+        },
+        "driver.sebastian_vettel": {
+          "raceSkill": 0.8,
+          "qualifyingSkill": 0.84
+        },
+        "driver.sergio_perez": {
+          "raceSkill": 0.93,
+          "qualifyingSkill": 0.84
+        },
+        "driver.valtteri_bottas": {
+          "qualifyingSkill": 1,
+          "vehicleReliability": -19
+        }
+      }
     },
     {
       "round": 15,
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1054,31 +2199,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurb_gp_2020"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 66,
       "grid": {
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
           "driver.romain_grosjean",
+          "driver.george_russell",
           "driver.nicholas_latifi"
         ]
       },
@@ -1103,16 +2253,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1125,31 +2295,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "nurb_gp_2020"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 58,
+          "isRealVenue": false
+        }
       },
       "laps": 66,
       "grid": {
         "size": 20,
         "starterDriverIds": [
-          "driver.lewis_hamilton",
-          "driver.max_verstappen",
+          "driver.george_russell",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
-          "driver.george_russell",
-          "driver.romain_grosjean",
+          "driver.pietro_fittipaldi",
+          "driver.jack_aitken",
           "driver.nicholas_latifi"
         ]
       },
@@ -1174,16 +2349,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1196,31 +2391,36 @@
         "isPlaceholder": true,
         "fallbacks": [
           "estoril_2019"
-        ]
+        ],
+        "alternate": {
+          "id": "emirates_raceway_gp",
+          "laps": 57,
+          "isRealVenue": false
+        }
       },
       "laps": 65,
       "grid": {
         "size": 20,
         "starterDriverIds": [
           "driver.lewis_hamilton",
-          "driver.max_verstappen",
           "driver.valtteri_bottas",
-          "driver.sergio_perez",
-          "driver.daniel_ricciardo",
-          "driver.carlos_sainz_jr",
-          "driver.pierre_gasly",
-          "driver.lance_stroll",
-          "driver.lando_norris",
-          "driver.charles_leclerc",
-          "driver.esteban_ocon",
+          "driver.max_verstappen",
           "driver.alexander_albon",
-          "driver.daniil_kvyat",
+          "driver.sergio_perez",
+          "driver.lance_stroll",
+          "driver.carlos_sainz_jr",
+          "driver.lando_norris",
+          "driver.daniel_ricciardo",
+          "driver.esteban_ocon",
+          "driver.charles_leclerc",
           "driver.sebastian_vettel",
+          "driver.pierre_gasly",
+          "driver.daniil_kvyat",
           "driver.kimi_raikkonen",
           "driver.antonio_giovinazzi",
           "driver.kevin_magnussen",
+          "driver.pietro_fittipaldi",
           "driver.george_russell",
-          "driver.romain_grosjean",
           "driver.nicholas_latifi"
         ]
       },
@@ -1240,978 +2440,5 @@
       "guestEntries": [],
       "aiOverrides": {}
     }
-  ],
-  "driverForm": {
-    "1": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.daniil_kvyat": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.kevin_magnussen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.04
-      },
-      "driver.lando_norris": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "2": {
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.george_russell": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.lance_stroll": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.lando_norris": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.max_verstappen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.nicholas_latifi": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.06
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.sergio_perez": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      }
-    },
-    "3": {
-      "driver.alexander_albon": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.george_russell": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.kevin_magnussen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.lance_stroll": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.max_verstappen": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.romain_grosjean": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "4": {
-      "driver.alexander_albon": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.esteban_ocon": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kevin_magnussen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.lance_stroll": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.lando_norris": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pierre_gasly": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      }
-    },
-    "5": {
-      "driver.alexander_albon": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.lance_stroll": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.lando_norris": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.max_verstappen": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.nicholas_latifi": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.06
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "6": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.kevin_magnussen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.lance_stroll": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "7": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.lando_norris": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.sergio_perez": {
-        "qualifyingSkill": -0.02
-      }
-    },
-    "8": {
-      "driver.alexander_albon": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.lando_norris": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.max_verstappen": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.romain_grosjean": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "9": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.lance_stroll": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.03
-      },
-      "driver.lando_norris": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "10": {
-      "driver.alexander_albon": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.lance_stroll": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.max_verstappen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.romain_grosjean": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      }
-    },
-    "11": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.daniil_kvyat": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.04
-      },
-      "driver.nicholas_latifi": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.romain_grosjean": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.sergio_perez": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "12": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.daniil_kvyat": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.lance_stroll": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.romain_grosjean": {
-        "qualifyingSkill": -0.02
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      }
-    },
-    "13": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.george_russell": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.lance_stroll": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.romain_grosjean": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.03
-      },
-      "driver.sergio_perez": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "14": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.kevin_magnussen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.lance_stroll": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.lando_norris": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.05
-      },
-      "driver.lewis_hamilton": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.max_verstappen": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    },
-    "15": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.05,
-        "qualifyingSkill": 0.06
-      },
-      "driver.antonio_giovinazzi": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.03
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.kevin_magnussen": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.lance_stroll": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.romain_grosjean": {
-        "raceSkill": -0.03,
-        "qualifyingSkill": -0.04
-      },
-      "driver.sebastian_vettel": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      }
-    },
-    "16": {
-      "driver.alexander_albon": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.charles_leclerc": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.george_russell": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.kevin_magnussen": {
-        "qualifyingSkill": 0.02
-      },
-      "driver.kimi_raikkonen": {
-        "raceSkill": -0.04,
-        "qualifyingSkill": -0.04
-      },
-      "driver.lance_stroll": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.03
-      },
-      "driver.lando_norris": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.pierre_gasly": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      },
-      "driver.sergio_perez": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.valtteri_bottas": {
-        "raceSkill": 0.02,
-        "qualifyingSkill": 0.02
-      }
-    },
-    "17": {
-      "driver.alexander_albon": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.antonio_giovinazzi": {
-        "raceSkill": 0.04,
-        "qualifyingSkill": 0.05
-      },
-      "driver.carlos_sainz_jr": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.daniel_ricciardo": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      },
-      "driver.daniil_kvyat": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.esteban_ocon": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.george_russell": {
-        "raceSkill": -0.05,
-        "qualifyingSkill": -0.06
-      },
-      "driver.lando_norris": {
-        "raceSkill": 0.06,
-        "qualifyingSkill": 0.06
-      },
-      "driver.lewis_hamilton": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.max_verstappen": {
-        "raceSkill": 0.03,
-        "qualifyingSkill": 0.04
-      },
-      "driver.nicholas_latifi": {
-        "raceSkill": -0.02,
-        "qualifyingSkill": -0.02
-      },
-      "driver.sergio_perez": {
-        "raceSkill": -0.06,
-        "qualifyingSkill": -0.06
-      }
-    }
-  }
+  ]
 }

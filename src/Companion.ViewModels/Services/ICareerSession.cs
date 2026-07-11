@@ -33,6 +33,10 @@ public interface ICareerSession
     /// player has no seat this round. Additive default so fakes without it compile. (Setup Gamble, 4b.)</summary>
     int? CurrentExpectedFinish() => null;
 
+    /// <summary>The SMGP briefing panel's data for the current round (M3 slice 5), or null —
+    /// outside the mode, or when the season is complete. Additive default so fakes compile.</summary>
+    SmgpBriefingModel? CurrentSmgpBriefing() => null;
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
@@ -54,6 +58,25 @@ public interface ICareerSession
     /// Additive default: a clear "not supported" failure so existing fakes compile.</summary>
     LiveryActivationResult ActivateLivery(string liveryName) =>
         LiveryActivationResult.Failed("This career session cannot activate liveries.");
+
+    /// <summary>The Skin Season Manager's view of this pack's declared skin season
+    /// (<c>pack.json skinSeason</c>): per car model, whether the install's active override pointer
+    /// is this season's, another known season's, a per-race variant, or unrecognized. Null when the
+    /// pack declares no season, the library has no such set, or there is no install. Read-only —
+    /// powers the Skins tab's season panel. Additive default so existing fakes compile.</summary>
+    SkinSeasonStatus? CurrentSkinSeasonStatus() => null;
+
+    /// <summary>Switches the install onto this pack's declared skin season: writes each car model's
+    /// season pointer XML over the active one, backup-first (all-or-nothing per set; an
+    /// unrecognized user file refuses without <paramref name="force"/> — the AI-file contract).
+    /// Skin files only — never the career DB / sim / oracle. Additive default: a clear
+    /// "not supported" failure so existing fakes compile.</summary>
+    SkinSeasonApplyResult ActivateSkinSeason(bool force = false) => new()
+    {
+        Success = false,
+        Applied = 0,
+        Message = "This career session cannot switch skin seasons.",
+    };
 
     /// <summary>The grid editor's current per-seat COSMETIC overrides for this season, keyed by the
     /// seat's original <c>ams2LiveryName</c>: a custom driver name and/or a rebound livery, applied
@@ -100,6 +123,15 @@ public interface ICareerSession
     /// read-only reference: the sim/fold never scores it, so it can never affect a replayed result.
     /// Additive default: sessions without it report null, so existing fakes compile.</summary>
     HistoricalSeason? HistoricalSeason(int year) => null;
+
+    /// <summary>The SMGP-universe "What Really Happened" almanac — the History tab's FICTIONAL-world
+    /// counterpart to <see cref="HistoricalSeason"/>. A replica (SMGP) career is a made-up SEGA world,
+    /// so it never gets the real-F1 documents; instead each circuit carries the SEGA world's OWN legend,
+    /// unlocked once the player has finished that race. Venue-keyed (so season 2+ calendar variety still
+    /// resolves each place), display-only reference — the sim/fold never reads it. Null for every
+    /// non-SMGP career and when no almanac data is shipped. Additive default: null, so existing fakes
+    /// compile.</summary>
+    SmgpWorldHistory? SmgpWorldHistory() => null;
 
     /// <summary>The clickable-everywhere "Why?" inspector (career-hub-design.md §5, decisions 4 +
     /// 5): walks the append-only journal rows that produced a number the hub shows and returns them
@@ -167,6 +199,11 @@ public interface ICareerSession
     /// current team), or null when unknown. Additive default: null.</summary>
     string? PlayerTeamName() => null;
 
+    /// <summary>The player's current car spec card (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars),
+    /// resolved from the player's team/vehicle via the car-specs catalog; null when there is no
+    /// authored spec (or no rules). Display-only. Additive default: null.</summary>
+    CarSpecCardViewModel? PlayerCarSpec() => null;
+
     /// <summary>The player's driver dossier (character depth 3): name, the seven stats, the chosen
     /// perks with what they do, and progression (level + XP toward the next), projected from the
     /// current folded player state + the character rules. Null for a career with no character (or no
@@ -192,7 +229,62 @@ public interface ICareerSession
     /// points to spend. Additive default: empty.</summary>
     IReadOnlyList<PurchasablePerk> PurchasablePerks() => [];
 
+    /// <summary>The whole season's TRACK schedule, up front and spoiler-free (the Calendar lens): one
+    /// entry per round with its real venue, the ACTUAL AMS2 track that will be driven (after any opt-in
+    /// alternate swap, since the pinned pack carries it), and whether that track is the real venue, a
+    /// base stand-in, or an applied mod alternate — plus, when an alternate exists that was NOT enabled,
+    /// its name so the player sees what they could have raced. Pure read-only projection of the pinned
+    /// pack + content library; no results, so nothing is hidden. Additive default: empty.</summary>
+    IReadOnlyList<SeasonScheduleEntry> SeasonSchedule() => [];
+
     SeasonPack Pack { get; }
+}
+
+/// <summary>How a round's driven AMS2 track relates to its real historical venue.</summary>
+public enum SeasonTrackKind
+{
+    /// <summary>The AMS2 track IS the round's real venue.</summary>
+    RealVenue,
+
+    /// <summary>A base/DLC stand-in (the real venue isn't in AMS2) — a labelled placeholder.</summary>
+    StandIn,
+
+    /// <summary>An opt-in community MOD alternate the player enabled at career creation.</summary>
+    Alternate,
+}
+
+/// <summary>One round of the season's track schedule (the Calendar lens) — spoiler-free, all known
+/// from the pinned pack the moment the career starts.</summary>
+public sealed record SeasonScheduleEntry
+{
+    public required int Round { get; init; }
+    public required string Name { get; init; }
+    public required string Date { get; init; }
+    /// <summary>The historical venue's name (always on record, even for a stand-in).</summary>
+    public required string RealVenue { get; init; }
+    /// <summary>The AMS2 track actually driven this round (its library display name).</summary>
+    public required string Ams2TrackName { get; init; }
+    public required int Laps { get; init; }
+    public required SeasonTrackKind Kind { get; init; }
+    /// <summary>When the round has an alternate that is NOT the driven track (the player didn't enable
+    /// alternates, or a required mod was missing) — the alternate's display name, so the schedule can
+    /// note "alternate available: …". Null when no unused alternate.</summary>
+    public string? UnusedAlternateName { get; init; }
+
+    /// <summary>The REAL (historical) circuit's map layout id — the ORIGINAL venue's shape, NOT the
+    /// stand-in track's. Keys the shipped circuit-map SVG. Empty when no history is shipped for the
+    /// year. (The expandable calendar card shows the original circuit + facts.)</summary>
+    public string CircuitLayoutId { get; init; } = "";
+
+    /// <summary>The original circuit's one-line caption (name · place · km · turns · direction).</summary>
+    public string CircuitCaption { get; init; } = "";
+
+    /// <summary>A brief, data-grounded history of the original circuit. Empty when unknown.</summary>
+    public string CircuitHistory { get; init; } = "";
+
+    /// <summary>Era-capped fun facts about the original circuit (data-grounded, spoiler-free).
+    /// Empty when none are shipped.</summary>
+    public IReadOnlyList<string> CircuitFacts { get; init; } = [];
 }
 
 /// <summary>One perk offered on the season-review development block: what it is, what it costs, and —
@@ -369,6 +461,51 @@ public sealed record CareerSeasonCard
     public IReadOnlyList<string> Headlines { get; init; } = [];
 }
 
+/// <summary>The SMGP-universe "What Really Happened" almanac projection: the SEGA world's own legend
+/// of every circuit on the CURRENT season's calendar (venue-keyed, so season 2+ variety still resolves
+/// each place), each unlocked once the player has raced it. A pure read model — no session coupling —
+/// so the History view-model is built and tested from a plain value. Display-only reference: the
+/// sim/fold never reads it.</summary>
+public sealed record SmgpWorldHistory
+{
+    /// <summary>Every venue on the calendar, in the current season's round order.</summary>
+    public IReadOnlyList<SmgpWorldRace> Races { get; init; } = [];
+
+    /// <summary>How many circuits the player has unlocked so far.</summary>
+    public int RevealedCount => Races.Count(r => r.IsRevealed);
+
+    public bool IsEmpty => Races.Count == 0;
+}
+
+/// <summary>One circuit's entry in the SMGP-universe almanac: SEALED (a spoiler-free teaser) until the
+/// player finishes that round, then the SEGA world's full legend of the place (title, circuit
+/// character, the champion of record, the story, and lore notes).</summary>
+public sealed record SmgpWorldRace
+{
+    public required int Round { get; init; }
+
+    /// <summary>The venue name ("San Marino", "Monaco") — the almanac lookup key.</summary>
+    public required string VenueName { get; init; }
+
+    /// <summary>True once the player has raced this venue — the legend is unlocked.</summary>
+    public required bool IsRevealed { get; init; }
+
+    /// <summary>A bold arcade headline for this circuit's legend; empty when unauthored.</summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>One line naming this world's circuit character/nickname; empty when unauthored.</summary>
+    public string Circuit { get; init; } = "";
+
+    /// <summary>The champion of record — "who the world remembers ruling here"; empty when unauthored.</summary>
+    public string Champion { get; init; } = "";
+
+    /// <summary>The circuit's SMGP-world legend, in paragraphs.</summary>
+    public IReadOnlyList<string> Body { get; init; } = [];
+
+    /// <summary>Punchy one-line lore bullets.</summary>
+    public IReadOnlyList<string> Notes { get; init; } = [];
+}
+
 /// <summary>Career-spanning records: bests, counts and totals aggregated from every season's
 /// per-round standings snapshots (wins/podiums/points/best finish/seasons).</summary>
 public sealed record CareerRecordsBook
@@ -532,12 +669,77 @@ public sealed record ResultDraft
     /// the raw envelope; never scored. Older producers omit it.</summary>
     public IReadOnlyList<string>? QualifyingOrder { get; init; }
 
+    /// <summary>The SMGP replica mode's rival declaration for this round (M3): who the player
+    /// named (or was force-challenged by) and, when the battle triggers a seat-swap offer, the
+    /// player's answer. Null = no rival this round — every non-smgp career and every declined
+    /// prompt. Stored verbatim in the raw envelope; the fold derives the battle from the result.</summary>
+    public Companion.Data.SmgpRivalCall? SmgpRival { get; init; }
+
     /// <summary>Additional race classifications for an authored TWO-race weekend (Increment 2): the
     /// PRIMARY race is this draft's own <see cref="Classified"/>/<see cref="DidNotFinish"/>/
     /// <see cref="Disqualified"/> (race index 0); each entry here is a further race (index 1…),
     /// scored on its own points table per the pack's <c>weekend.races</c>. Null/empty = today's
     /// single race, so the round scores + folds exactly as before. Older producers omit it.</summary>
     public IReadOnlyList<ExtraRaceResult>? AdditionalRaces { get; init; }
+}
+
+/// <summary>The SMGP briefing panel's data (M3 slice 5): the game's round header, the D.P.
+/// readout, the pit-crew line, the forced challenger (title-defense rounds) and every namable
+/// rival with its dossier facts. Null outside the mode (the panel never renders). Vocabulary
+/// strictly per docs/dev/smgp-design.md — nothing invented.</summary>
+public sealed record SmgpBriefingModel
+{
+    /// <summary>The game's Course Select header — "SAN MARINO · ROUND 1".</summary>
+    public required string RoundHeader { get; init; }
+
+    /// <summary>The player's points, the game's abbreviation — "12 D.P."</summary>
+    public required string PointsLine { get; init; }
+
+    /// <summary>The pit-crew advice line (the manual's own words).</summary>
+    public required string AdviceLine { get; init; }
+
+    /// <summary>Championships won in the mode so far (two = the replica is beaten).</summary>
+    public required int Titles { get; init; }
+
+    /// <summary>The Zeroforce game-over state — the panel shows it instead of a rival pick.</summary>
+    public required bool CareerOver { get; init; }
+
+    /// <summary>The title-defense challenger forced on the player this round, or null for a
+    /// free pick. When set, the pick is locked to him.</summary>
+    public string? ForcedChallengerDriverId { get; init; }
+
+    /// <summary>Every AI driver on this round's grid, in grid order — any of them can be named.</summary>
+    public required IReadOnlyList<SmgpRivalOption> Rivals { get; init; }
+}
+
+/// <summary>One namable rival: the dossier card's facts (docs/dev/smgp-design.md — team banner,
+/// MACHINE block, portrait slot, a deadpan quote) plus the two-wins ladder telegraphs.</summary>
+public sealed record SmgpRivalOption
+{
+    public required string DriverId { get; init; }
+
+    public required string DriverName { get; init; }
+
+    public required string TeamId { get; init; }
+
+    public required string TeamName { get; init; }
+
+    /// <summary>The MACHINE block line (the car, from the pack).</summary>
+    public required string MachineLine { get; init; }
+
+    /// <summary>The rival's arcade car-spec card (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars), or
+    /// null when no spec is authored for the car (the card then collapses). Display-only.</summary>
+    public CarSpecCardViewModel? CarSpec { get; init; }
+
+    /// <summary>The rival's deadpan one-liner (the game's own vocabulary).</summary>
+    public required string Quote { get; init; }
+
+    /// <summary>Beat him once more (without losing) and "you may get an offer to join his
+    /// team!" — the panel telegraphs it and asks for the standing answer.</summary>
+    public required bool OfferOnWin { get; init; }
+
+    /// <summary>Lose to him once more and he is offered YOUR seat.</summary>
+    public required bool ForfeitOnLoss { get; init; }
 }
 
 /// <summary>One additional race's classification in a two-race weekend (<see cref="ResultDraft.AdditionalRaces"/>),

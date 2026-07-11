@@ -2,6 +2,7 @@
   "year": 1978,
   "seriesName": "Formula One World Championship",
   "ams2Class": "F-Retro_Gen2",
+  "refuellingAllowed": false,
   "pointsSystem": {
     "racePoints": [
       9,
@@ -31,16 +32,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -55,31 +76,33 @@
       },
       "laps": 52,
       "grid": {
-        "size": 18,
+        "size": 20,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 19,
           "startTime": "14:00",
           "date": "1978-01-15",
           "weatherSlots": [
@@ -98,16 +121,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -122,31 +165,34 @@
       },
       "laps": 63,
       "grid": {
-        "size": 18,
+        "size": 21,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 20,
           "startTime": "14:00",
           "date": "1978-01-29",
           "weatherSlots": [
@@ -165,16 +211,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -189,31 +255,35 @@
       },
       "laps": 78,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-03-04",
           "weatherSlots": [
@@ -232,16 +302,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -256,31 +346,35 @@
       },
       "laps": 80,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-04-02",
           "weatherSlots": [
@@ -299,16 +393,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -317,7 +431,7 @@
       "championship": true,
       "track": {
         "realVenue": "Circuit de Monaco",
-        "id": "azure_circuit_88",
+        "id": "azure_circuit_2021",
         "isPlaceholder": false,
         "fallbacks": [
           "azure_circuit"
@@ -325,31 +439,35 @@
       },
       "laps": 75,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-05-07",
           "weatherSlots": [
@@ -368,16 +486,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -390,35 +528,44 @@
         "isPlaceholder": true,
         "fallbacks": [
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 74,
+          "isRealVenue": true
+        }
       },
       "laps": 43,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.alberto_colombo",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-05-21",
           "weatherSlots": [
@@ -437,16 +584,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -459,35 +626,44 @@
         "isPlaceholder": true,
         "fallbacks": [
           "estoril_1988"
-        ]
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 64,
+          "isRealVenue": false
+        }
       },
       "laps": 61,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.alberto_colombo",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-06-04",
           "weatherSlots": [
@@ -506,16 +682,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -528,35 +724,44 @@
         "isPlaceholder": true,
         "fallbacks": [
           "hockenheim_1977"
-        ]
+        ],
+        "alternate": {
+          "id": "fuji",
+          "laps": 72,
+          "isRealVenue": false
+        }
       },
       "laps": 60,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.keke_rosberg",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-06-17",
           "weatherSlots": [
@@ -575,16 +780,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -598,35 +823,44 @@
         "fallbacks": [
           "hockenheim_1988",
           "silverstone_1991"
-        ]
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 60,
+          "isRealVenue": false
+        }
       },
       "laps": 75,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.keke_rosberg",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-07-02",
           "weatherSlots": [
@@ -645,16 +879,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -669,31 +923,35 @@
       },
       "laps": 76,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.keke_rosberg",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-07-16",
           "weatherSlots": [
@@ -712,16 +970,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -738,31 +1016,35 @@
       },
       "laps": 45,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.jean_pierre_jarier",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-07-30",
           "weatherSlots": [
@@ -781,16 +1063,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Medium Cloud",
+            "Medium Cloud",
+            "Medium Cloud",
+            "Medium Cloud"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Overcast",
+              "Storm",
+              "Light Rain",
+              "Medium Cloud"
+            ]
           }
         ]
       },
@@ -807,31 +1109,35 @@
       },
       "laps": 54,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.hans_binder",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-08-13",
           "weatherSlots": [
@@ -850,16 +1156,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -873,35 +1199,44 @@
         "fallbacks": [
           "silverstone_1975",
           "brandshatch_gp"
-        ]
+        ],
+        "alternate": {
+          "id": "moravia",
+          "laps": 59,
+          "isRealVenue": false
+        }
       },
       "laps": 54,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
-          "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
-          "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
           "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.michael_bleekemolen",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
+          "driver.emerson_fittipaldi",
+          "driver.jean_pierre_jabouille",
+          "driver.hans_joachim_stuck",
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-08-27",
           "weatherSlots": [
@@ -920,16 +1255,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -944,31 +1299,35 @@
       },
       "laps": 40,
       "grid": {
-        "size": 18,
+        "size": 22,
         "starterDriverIds": [
+          "driver.niki_lauda",
+          "driver.john_watson",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
           "driver.mario_andretti",
           "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
-          "driver.niki_lauda",
-          "driver.jody_scheckter",
-          "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
           "driver.james_hunt",
           "driver.patrick_tambay",
+          "driver.harald_ertl",
+          "driver.michael_bleekemolen",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
           "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
+          "driver.jean_pierre_jabouille",
           "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
-          "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.vittorio_brambilla",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rene_arnoux",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 21,
           "startTime": "14:00",
           "date": "1978-09-10",
           "weatherSlots": [
@@ -987,16 +1346,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1013,31 +1392,34 @@
       },
       "laps": 59,
       "grid": {
-        "size": 18,
+        "size": 21,
         "starterDriverIds": [
-          "driver.mario_andretti",
-          "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
           "driver.niki_lauda",
-          "driver.jody_scheckter",
           "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
+          "driver.mario_andretti",
+          "driver.jean_pierre_jarier",
           "driver.james_hunt",
           "driver.patrick_tambay",
+          "driver.michael_bleekemolen",
+          "driver.keke_rosberg",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
           "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
+          "driver.jean_pierre_jabouille",
           "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
-          "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.rene_arnoux",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.rolf_stommelen"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 20,
           "startTime": "14:00",
           "date": "1978-10-01",
           "weatherSlots": [
@@ -1056,16 +1438,36 @@
       "weekend": {
         "practice": {
           "present": true,
-          "label": "Practice"
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "qualifying": {
           "present": true,
-          "label": "Qualifying"
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
         },
         "races": [
           {
             "id": "race",
-            "label": "Grand Prix"
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
           }
         ]
       },
@@ -1080,31 +1482,34 @@
       },
       "laps": 70,
       "grid": {
-        "size": 18,
+        "size": 21,
         "starterDriverIds": [
-          "driver.mario_andretti",
-          "driver.ronnie_peterson",
-          "driver.carlos_reutemann",
-          "driver.patrick_depailler",
-          "driver.gilles_villeneuve",
           "driver.niki_lauda",
-          "driver.jody_scheckter",
           "driver.john_watson",
-          "driver.jacques_laffite",
-          "driver.alan_jones",
+          "driver.didier_pironi",
+          "driver.patrick_depailler",
+          "driver.mario_andretti",
+          "driver.jean_pierre_jarier",
           "driver.james_hunt",
           "driver.patrick_tambay",
+          "driver.michael_bleekemolen",
+          "driver.keke_rosberg",
+          "driver.carlos_reutemann",
+          "driver.gilles_villeneuve",
           "driver.emerson_fittipaldi",
-          "driver.didier_pironi",
+          "driver.jean_pierre_jabouille",
           "driver.hans_joachim_stuck",
-          "driver.clay_regazzoni",
-          "driver.jochen_mass",
-          "driver.vittorio_brambilla"
+          "driver.rene_arnoux",
+          "driver.jody_scheckter",
+          "driver.hector_rebaque",
+          "driver.jacques_laffite",
+          "driver.alan_jones",
+          "driver.riccardo_patrese"
         ]
       },
       "setupGuide": {
         "session": {
-          "opponents": 17,
+          "opponents": 20,
           "startTime": "14:00",
           "date": "1978-10-08",
           "weatherSlots": [

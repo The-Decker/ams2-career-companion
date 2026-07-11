@@ -1,0 +1,1608 @@
+{
+  "year": 1990,
+  "seriesName": "Super Monaco GP World Championship",
+  "ams2Class": "F-Classic_Gen3",
+  "refuellingAllowed": false,
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "San Marino",
+      "date": "1990-03-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "history": {
+        "year": 1989,
+        "round": 2
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.eric_sambena",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-03-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "The game runs 5-lap sprints; full Grand Prix distance is authored here — race shorter in AMS2 for the arcade feel."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 2,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Brazil",
+      "date": "1990-03-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Internacional do Rio de Janeiro (Jacarepaguá)",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "history": {
+        "year": 1989,
+        "round": 1
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.eric_sambena",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-03-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 3,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "France",
+      "date": "1990-04-08",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Paul Ricard",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": []
+      },
+      "laps": 73,
+      "history": {
+        "year": 1989,
+        "round": 7
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.eric_sambena",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-04-08",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Paul Ricard - 80 laps / 305 km reproduced as 73 laps of Le Mans Circuit Bugatti. Keeps the French round at a French Grand Prix venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 4,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Hungary",
+      "date": "1990-04-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Hungaroring",
+        "id": "hungaroring_gp_2025",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 77,
+      "history": {
+        "year": 1989,
+        "round": 10
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-04-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 5,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "West Germany",
+      "date": "1990-05-06",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 45,
+      "history": {
+        "year": 1989,
+        "round": 9
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.eric_sambena",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-05-06",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 6,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "U.S.A.",
+      "date": "1990-05-20",
+      "championship": true,
+      "track": {
+        "realVenue": "Phoenix Street Circuit",
+        "id": "long_beach",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "adelaide_historic"
+        ]
+      },
+      "laps": 86,
+      "history": {
+        "year": 1989,
+        "round": 5
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.eric_sambena",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-05-20",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Phoenix Street Circuit - 72 laps / 273.6 km reproduced as 86 laps of Long Beach. Long Beach hosted the United States GP West 1976-1983 - the era's US street-race character; Adelaide already hosts this season's Australian round."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 7,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Canada",
+      "date": "1990-06-03",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "history": {
+        "year": 1989,
+        "round": 6
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-06-03",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 8,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Great Britain",
+      "date": "1990-06-17",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 64,
+      "history": {
+        "year": 1989,
+        "round": 8
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.eric_sambena",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-06-17",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 9,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Italy",
+      "date": "1990-07-01",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "history": {
+        "year": 1989,
+        "round": 12
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.ryan_cotman",
+          "driver.alef_delvaux",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-07-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 10,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Portugal",
+      "date": "1990-07-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo do Estoril",
+        "id": "estoril_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 61,
+      "history": {
+        "year": 1989,
+        "round": 13
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.eric_sambena",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-07-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 11,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Spain",
+      "date": "1990-07-29",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuito de Jerez",
+        "id": "jerez_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 73,
+      "history": {
+        "year": 1989,
+        "round": 14
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.alef_delvaux",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-07-29",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 12,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Mexico",
+      "date": "1990-08-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Autódromo Hermanos Rodríguez",
+        "id": "interlagos_1991",
+        "isPlaceholder": true,
+        "fallbacks": []
+      },
+      "laps": 71,
+      "history": {
+        "year": 1989,
+        "round": 4
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-08-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Autódromo Hermanos Rodríguez - 69 laps / 305 km reproduced as 71 laps of Interlagos 1991. The era-correct Latin-American venue AMS2 actually has — Jacarepaguá stays unique to the Brazilian round."
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 13,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Japan",
+      "date": "1990-08-26",
+      "championship": true,
+      "track": {
+        "realVenue": "Suzuka Circuit",
+        "id": "kansai_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 53,
+      "history": {
+        "year": 1989,
+        "round": 15
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.ryan_cotman",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-08-26",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 14,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Belgium",
+      "date": "1990-09-09",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 44,
+      "history": {
+        "year": 1989,
+        "round": 11
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.tristan_chardin",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-09-09",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 15,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Australia",
+      "date": "1990-09-23",
+      "championship": true,
+      "track": {
+        "realVenue": "Adelaide Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 81,
+      "history": {
+        "year": 1989,
+        "round": 16
+      },
+      "grid": {
+        "size": 26,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.marcel_moreau",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.jean_rampal",
+          "driver.eric_sambena",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 25,
+          "startTime": "14:00",
+          "date": "1990-09-23",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    },
+    {
+      "round": 16,
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Warm Up",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Preliminary Race",
+          "durationMinutes": 30,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      },
+      "name": "Monaco",
+      "date": "1990-10-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_2021",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 78,
+      "history": {
+        "year": 1989,
+        "round": 3
+      },
+      "grid": {
+        "size": 25,
+        "starterDriverIds": [
+          "driver.ayrton_senna",
+          "driver.alain_asselin",
+          "driver.felipe_elssler",
+          "driver.ivanazzio_germi",
+          "driver.giorgio_alberti",
+          "driver.nigel_jones",
+          "driver.alex_picos",
+          "driver.michael_blume",
+          "driver.jean_herbin",
+          "driver.miyagi_hamano",
+          "driver.gilles_gould",
+          "driver.esteban_pacheco",
+          "driver.willian_dehehe",
+          "driver.george_turner",
+          "driver.luca_dufay",
+          "driver.gilberto_ceara",
+          "driver.eddie_bellini",
+          "driver.keke_alfven",
+          "driver.bernie_miller",
+          "driver.julianno_nono",
+          "driver.park_arai",
+          "driver.ryan_cotman",
+          "driver.alef_delvaux",
+          "driver.bruno_salgado",
+          "driver.mika_larssen"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 24,
+          "startTime": "14:00",
+          "date": "1990-10-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {}
+    }
+  ]
+}

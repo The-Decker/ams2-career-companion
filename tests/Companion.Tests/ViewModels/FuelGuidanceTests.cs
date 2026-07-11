@@ -12,7 +12,46 @@ public class FuelGuidanceTests
     [Fact]
     public void UnknownClass_HasNoProfile_ReturnsNull()
     {
-        Assert.Null(FuelGuidance.Note("F-Classic_Gen2", 70, refuellingAllowed: false));
+        Assert.Null(FuelGuidance.Note("Not_A_Class", 70, refuellingAllowed: false));
+    }
+
+    [Fact]
+    public void EveryBundledPackClass_HasAProfile()
+    {
+        // The 19 shipped pack classes (m2 deep pass) — each must produce a fuel note.
+        string[] classes =
+        [
+            "F-Vintage_Gen1", "F-Vintage_Gen2", "F-Retro_Gen1", "F-Retro_Gen2", "F-Retro_Gen3",
+            "F-Classic_Gen1", "F-Classic_Gen2", "F-Classic_Gen3", "F-Classic_Gen4",
+            "F-Hitech_Gen1", "F-Hitech_Gen2", "FE-G1", "F-V10_Gen1", "F-V10_Gen2", "F-V10_Gen3",
+            "F-V8_Gen1", "F-V8_Gen2", "F-Ultimate_Gen1", "F-Ultimate",
+        ];
+        foreach (string cls in classes)
+            Assert.NotNull(FuelGuidance.Note(cls, 50, refuellingAllowed: null));
+    }
+
+    [Fact]
+    public void RefuelEra_ShortRace_OffersNoStopOrStrategy()
+    {
+        // 2005 V10 at a sub-tank distance: refuelling framed as the era-authentic option.
+        string? note = FuelGuidance.Note("F-V10_Gen3", laps: 44, refuellingAllowed: true);
+
+        Assert.NotNull(note);
+        Assert.Contains("Refuelling is allowed", note);
+        Assert.Contains("non-stop", note);
+        Assert.Contains("pit strategy", note);
+    }
+
+    [Fact]
+    public void RefuelEra_LongRace_RequiresAFuelStop_NeverFillToDistance()
+    {
+        // 2006 V8 (conservative est. tank): a GP distance is beyond one tank — plan a stop.
+        string? note = FuelGuidance.Note("F-V8_Gen1", laps: 60, refuellingAllowed: true);
+
+        Assert.NotNull(note);
+        Assert.Contains("likely needed", note);
+        Assert.Contains("at least one fuel stop", note);
+        Assert.DoesNotContain("full distance", note);
     }
 
     [Fact]
@@ -61,5 +100,29 @@ public class FuelGuidanceTests
     public void SafeLapBoundary_SwitchesGuidanceAtFiftyFive(int laps, string expected)
     {
         Assert.Contains(expected, FuelGuidance.Note(Vintage, laps, refuellingAllowed: false));
+    }
+
+    [Fact]
+    public void SafeToOneTankWindow_NeverContradictsItself()
+    {
+        // 59 laps sits in F-Retro_Gen3's SafeLaps(56)..OneTankLaps(59) window: the warning must
+        // quote the safe range it switched on, never "59 laps is beyond the ~59-lap range".
+        string? note = FuelGuidance.Note("F-Retro_Gen3", laps: 59, refuellingAllowed: false);
+
+        Assert.NotNull(note);
+        Assert.Contains("~56-lap safe range", note);
+        Assert.DoesNotContain("beyond the ~59-lap", note);
+    }
+
+    [Fact]
+    public void RefuelEra_SafeToOneTankWindow_QuotesTheSafeRange()
+    {
+        // Same window on the refuel branch: F-V10_Gen3 SafeLaps 52, OneTankLaps 55 → 53 laps.
+        string? note = FuelGuidance.Note("F-V10_Gen3", laps: 53, refuellingAllowed: true);
+
+        Assert.NotNull(note);
+        Assert.Contains("likely needed", note);
+        Assert.Contains("~52-lap safe range", note);
+        Assert.DoesNotContain("beyond the ~55-lap", note);
     }
 }

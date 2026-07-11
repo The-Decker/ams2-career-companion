@@ -19,6 +19,26 @@ public static class EraArtResolver
     /// specificity — real historical photos are usually JPEGs).</summary>
     private static readonly string[] Extensions = [".jpg", ".png"];
 
+    /// <summary>Era-art key for a career keyed by IDENTITY rather than year — the SMGP replica
+    /// mode's fictional world shares the 1990 career year with the f1-1990 pack, so it resolves its
+    /// own <c>smgp.jpg</c> (the SEGA Grand Prix art) instead of colliding on <c>1990.jpg</c>.</summary>
+    public const string SmgpArtKey = Companion.Core.Smgp.SmgpRules.CareerStyle;
+
+    /// <summary>The candidate file names for a bare identity KEY (e.g. <c>smgp.jpg</c>,
+    /// <c>smgp.png</c>) — the pack-identity path that beats the year for a career whose year is
+    /// not unique to it. Pure.</summary>
+    public static IReadOnlyList<string> CandidateFileNamesForKey(string key)
+    {
+        var names = new List<string>(Extensions.Length);
+        foreach (var ext in Extensions)
+            names.Add(key + ext);
+        return names;
+    }
+
+    /// <summary>The first identity-keyed candidate that exists on disk, or null.</summary>
+    public static string? ResolveKey(string eraArtDirectory, string key) =>
+        UserImageResolver.FirstExisting(eraArtDirectory, CandidateFileNamesForKey(key));
+
     /// <summary>The ordered candidate file names (relative to the era-art directory) for a season
     /// year, most-specific first: the year file (<c>1967.jpg</c>, <c>1967.png</c>) then the
     /// era-medium file (<c>telegram.jpg</c>, <c>telegram.png</c>). Pure — no filesystem access —

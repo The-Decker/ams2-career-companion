@@ -139,10 +139,26 @@ internal static class EraCardYear
     {
         Companion.ViewModels.Services.RecentCareer entry =>
             Companion.ViewModels.Services.EraArtResolver.YearForEntry(entry),
+        Companion.ViewModels.Services.DiscoveredPack pack => pack.SeasonYear,
         int y => y,
         string name => Companion.ViewModels.Services.EraArtResolver.YearFromText(name),
         _ => null,
     };
+
+    /// <summary>The identity art key ("smgp") when this value is an SMGP career/pack — it must
+    /// resolve its own art rather than collide on its (shared) 1990 year. Null otherwise.</summary>
+    public static string? IdentityKey(object? value)
+    {
+        string style = Companion.ViewModels.Services.EraArtResolver.SmgpArtKey;
+        return value switch
+        {
+            Companion.ViewModels.Services.DiscoveredPack pack when
+                string.Equals(pack.Manifest?.CareerStyle, style, System.StringComparison.Ordinal) => style,
+            Companion.ViewModels.Services.RecentCareer entry when
+                string.Equals(entry.CareerStyle, style, System.StringComparison.Ordinal) => style,
+            _ => null,
+        };
+    }
 }
 
 /// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era accent brush,
@@ -231,7 +247,15 @@ public sealed class EraImageConverter : IValueConverter
             return chosen;
         }
 
-        // 2) Otherwise the drop-in era art resolved by the career's STORED season year (name-parse
+        // 2) IDENTITY-keyed art (the SMGP fictional world's SEGA Grand Prix picture) beats the
+        //    year — SMGP shares 1990 with the f1-1990 pack, so it must not collide on 1990.jpg.
+        if (EraCardYear.IdentityKey(value) is { } key &&
+            Companion.ViewModels.Services.EraArtResolver.ResolveKey(EraArtDirectory, key) is { } keyedPath)
+        {
+            return LoadFrozen(keyedPath);
+        }
+
+        // 3) Otherwise the drop-in era art resolved by the career's STORED season year (name-parse
         //    fallback for legacy entries); a bare int/name keep the old contract so non-gallery
         //    callers are unaffected.
         if (EraCardYear.From(value) is not int resolvedYear)
@@ -308,20 +332,27 @@ public sealed class ExpandGlyphConverter : IValueConverter
 
 /// <summary>A key (string or int) → the drop-in user image for it, from the folder named by the
 /// <c>ConverterParameter</c> under <c>data/ams2/</c> — e.g. <c>ConverterParameter=history-art</c>
-/// resolves <c>data/ams2/history-art/&lt;key&gt;.{jpg,jpeg,png}</c>. The shared, reusable half of the
-/// user-asset convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>): one
-/// converter, any keyed image folder. Null when absent (the view hides the image); user art is
+/// resolves <c>data/ams2/history-art/&lt;key&gt;.{jpg,jpeg,png}</c>. The parameter may list several
+/// folders separated by <c>|</c> in preference order — <c>ConverterParameter=portraits|cars</c>
+/// tries <c>portraits/&lt;key&gt;</c> then falls back to <c>cars/&lt;key&gt;</c> — so a driver card
+/// shows the hand-supplied portrait when present, else the extracted car preview. The shared,
+/// reusable half of the user-asset convention (<see cref="Companion.ViewModels.Services.UserImageResolver"/>):
+/// one converter, any keyed image folder. Null when absent (the view hides the image); user art is
 /// untracked, like era art.</summary>
 public sealed class KeyedAssetImageConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is null || parameter is not string kind || string.IsNullOrWhiteSpace(kind))
+        if (value is null || parameter is not string kinds || string.IsNullOrWhiteSpace(kinds))
             return null;
         string key = value as string ?? System.Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
-        string dir = Path.Combine(AppContext.BaseDirectory, "data", "ams2", kind);
-        string? path = Companion.ViewModels.Services.UserImageResolver.ResolveByKey(dir, key);
-        return path is null ? null : FrozenImage.Load(path);
+        foreach (string kind in kinds.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            string dir = Path.Combine(AppContext.BaseDirectory, "data", "ams2", kind);
+            if (Companion.ViewModels.Services.UserImageResolver.ResolveByKey(dir, key) is { } path)
+                return FrozenImage.Load(path);
+        }
+        return null;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
@@ -374,14 +405,81 @@ public sealed class CircuitGeometryConverter : IValueConverter
             }
             if (group.Children.Count == 0)
                 return null;
-            group.Freeze();
-            return group;
+            Geometry leveled = LevelToHorizontal(group);
+            leveled.Freeze();
+            return leveled;
         }
         catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or FormatException or InvalidOperationException)
         {
             // A bad/unreadable circuit file must never crash a screen — just show no map.
             return null;
         }
+    }
+
+    /// <summary>Auto-levels a circuit map: f1db paths are drawn in geographic orientation, so a circuit
+    /// that runs diagonally looks tilted (Watkins Glen / Montreal render near-vertical). Flatten the
+    /// outline, find its principal axis (PCA of the point cloud), and rotate the geometry so that
+    /// longest axis is horizontal — a consistent, level look across every map. Two guards: a circuit
+    /// that is already near-level keeps its authored orientation, and a near-round shape (no dominant
+    /// axis — principal spread ratio under ~1.25) is left alone because its PCA angle is unstable.
+    /// Pure geometry at load time, cached by the caller, no data regen. Public like
+    /// <see cref="LoadFrom"/> so the render harness can prove the leveling on real shipped data.</summary>
+    public static Geometry LevelToHorizontal(Geometry geometry)
+    {
+        var points = new List<Point>();
+        foreach (var figure in geometry.GetFlattenedPathGeometry().Figures)
+        {
+            points.Add(figure.StartPoint);
+            foreach (var segment in figure.Segments)
+            {
+                if (segment is PolyLineSegment poly)
+                    points.AddRange(poly.Points);
+                else if (segment is LineSegment line)
+                    points.Add(line.Point);
+            }
+        }
+        if (points.Count < 3)
+            return geometry;
+
+        double mx = points.Average(p => p.X), my = points.Average(p => p.Y);
+        double sxx = 0, syy = 0, sxy = 0;
+        foreach (var p in points)
+        {
+            double dx = p.X - mx, dy = p.Y - my;
+            sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
+        }
+
+        // Eigenvalues of the 2×2 covariance = the spread along/across the principal axis. A shape
+        // without a dominant axis (ratio < ~1.25) has no stable "level", so keep it as authored.
+        double trace = sxx + syy;
+        double root = Math.Sqrt((sxx - syy) * (sxx - syy) + 4 * sxy * sxy);
+        double major = (trace + root) / 2, minor = (trace - root) / 2;
+        if (minor <= 0 || major / minor < 1.25)
+            return geometry;
+
+        // Principal-axis angle; rotating by its negative brings that axis to horizontal.
+        double angleDeg = 0.5 * Math.Atan2(2 * sxy, sxx - syy) * 180.0 / Math.PI;
+        if (Math.Abs(angleDeg) < 3.0)
+            return geometry; // already level enough — keep the authored orientation
+
+        var rotated = geometry.Clone();
+        var bounds = geometry.Bounds; // includes any existing transform
+        var level = new RotateTransform(
+            -angleDeg, bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+        // COMPOSE with an existing transform (assigning would silently replace it — the shipped
+        // circuit paths carry none, but the utility must be correct for any geometry).
+        if (rotated.Transform is { } existing && !existing.Value.IsIdentity)
+        {
+            var group = new TransformGroup();
+            group.Children.Add(existing);
+            group.Children.Add(level);
+            rotated.Transform = group;
+        }
+        else
+        {
+            rotated.Transform = level;
+        }
+        return rotated;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
@@ -407,6 +505,62 @@ public sealed class AspectRatioHeightConverter : IValueConverter
         return value is double width && width > 0 && !double.IsInfinity(width)
             ? width * ratio
             : DependencyProperty.UnsetValue;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>An ancestor's ActualWidth → a fraction of it (ConverterParameter = the fraction,
+/// default 0.7). Turns a hard-coded page cap (<c>MaxWidth="860"</c>) into a proportional one, so a
+/// column keeps a readable measure at 2560 wide yet fills a small or 130%-scaled window. Parameter
+/// accepts an optional floor and ceiling after "|"s ("0.7|520" = 70% but never under 520;
+/// "0.35|140|280" also never over 280). Returns UnsetValue until the ancestor has a real measured
+/// width.</summary>
+public sealed class WidthFractionConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double fraction = 0.7, floor = 0, ceiling = double.PositiveInfinity;
+        if (parameter is string s && s.Length > 0)
+        {
+            string[] parts = s.Split('|');
+            if (double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double f) && f > 0)
+                fraction = f;
+            if (parts.Length > 1 &&
+                double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedFloor))
+                floor = parsedFloor;
+            if (parts.Length > 2 &&
+                double.TryParse(parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedCeiling) &&
+                parsedCeiling > 0)
+                ceiling = parsedCeiling;
+        }
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? Math.Min(Math.Max(width * fraction, floor), ceiling)
+            : DependencyProperty.UnsetValue;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>An element's ActualWidth → how many UniformGrid columns fit (ConverterParameter = the
+/// target card width, default 360), clamped 2–6. Makes a card grid adaptive: ~2 columns at 920,
+/// 4 around 1440, 6 on an ultrawide — instead of a fixed count that cramps or balloons.</summary>
+public sealed class WidthToColumnsConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double cardWidth = 360;
+        if (parameter is string s &&
+            double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed) &&
+            parsed > 0)
+        {
+            cardWidth = parsed;
+        }
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? Math.Clamp((int)(width / cardWidth), 2, 6)
+            : 4;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

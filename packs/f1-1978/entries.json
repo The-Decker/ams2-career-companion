@@ -39,7 +39,14 @@
       "teamId": "team.lotus",
       "driverId": "driver.ronnie_peterson",
       "number": "6",
-      "rounds": "1-16",
+      "rounds": "1-14",
+      "ams2LiveryName": "Lotus-Ford Cosworth #6 R. Peterson"
+    },
+    {
+      "teamId": "team.lotus",
+      "driverId": "driver.jean_pierre_jarier",
+      "number": "6",
+      "rounds": "15-16",
       "ams2LiveryName": "Lotus-Ford Cosworth #6 R. Peterson"
     },
     {
@@ -60,8 +67,57 @@
       "teamId": "team.ats",
       "driverId": "driver.jochen_mass",
       "number": "9",
-      "rounds": "1-16",
+      "rounds": "1-13",
       "ams2LiveryName": "ATS-Ford Cosworth #9 J. Mass"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.harald_ertl",
+      "number": "9",
+      "rounds": "14",
+      "ams2LiveryName": "ATS-Ford Cosworth #9 J. Mass"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.michael_bleekemolen",
+      "number": "9",
+      "rounds": "15-16",
+      "ams2LiveryName": "ATS-Ford Cosworth #9 J. Mass"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.jean_pierre_jarier",
+      "number": "10",
+      "rounds": "1-5,11",
+      "ams2LiveryName": "ATS-Ford Cosworth #10 K. Rosberg"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.alberto_colombo",
+      "number": "10",
+      "rounds": "6-7",
+      "ams2LiveryName": "ATS-Ford Cosworth #10 K. Rosberg"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.keke_rosberg",
+      "number": "10",
+      "rounds": "8-10,15-16",
+      "ams2LiveryName": "ATS-Ford Cosworth #10 K. Rosberg"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.hans_binder",
+      "number": "10",
+      "rounds": "12",
+      "ams2LiveryName": "ATS-Ford Cosworth #10 K. Rosberg"
+    },
+    {
+      "teamId": "team.ats",
+      "driverId": "driver.michael_bleekemolen",
+      "number": "10",
+      "rounds": "13-14",
+      "ams2LiveryName": "ATS-Ford Cosworth #10 K. Rosberg"
     },
     {
       "teamId": "team.ferrari",
@@ -85,6 +141,13 @@
       "ams2LiveryName": "Copersucar-Ford Cosworth #14 E. Fittipaldi"
     },
     {
+      "teamId": "team.renault",
+      "driverId": "driver.jean_pierre_jabouille",
+      "number": "15",
+      "rounds": "1-16",
+      "ams2LiveryName": "Renault #15 J-P. Jabouille"
+    },
+    {
       "teamId": "team.shadow",
       "driverId": "driver.hans_joachim_stuck",
       "number": "16",
@@ -92,17 +155,17 @@
       "ams2LiveryName": "Shadow-Ford Cosworth #16 H-J. Stuck"
     },
     {
-      "teamId": "team.shadow",
-      "driverId": "driver.clay_regazzoni",
-      "number": "17",
-      "rounds": "1-16",
-      "ams2LiveryName": "Shadow-Ford Cosworth #17 C. Regazzoni"
-    },
-    {
       "teamId": "team.surtees",
       "driverId": "driver.vittorio_brambilla",
       "number": "19",
-      "rounds": "1-16",
+      "rounds": "1-14",
+      "ams2LiveryName": "Surtees-Ford Cosworth #19 V. Brambilla"
+    },
+    {
+      "teamId": "team.surtees",
+      "driverId": "driver.rene_arnoux",
+      "number": "19",
+      "rounds": "15-16",
       "ams2LiveryName": "Surtees-Ford Cosworth #19 V. Brambilla"
     },
     {
@@ -111,6 +174,13 @@
       "number": "20",
       "rounds": "1-16",
       "ams2LiveryName": "Wolf-Ford Cosworth #20 J. Scheckter"
+    },
+    {
+      "teamId": "team.lotus",
+      "driverId": "driver.hector_rebaque",
+      "number": "25",
+      "rounds": "1-16",
+      "ams2LiveryName": "Lotus-Ford Cosworth #25 H. Rebaque"
     },
     {
       "teamId": "team.ligier",
@@ -125,6 +195,27 @@
       "number": "27",
       "rounds": "1-16",
       "ams2LiveryName": "Williams-Ford Cosworth #27 A. Jones"
+    },
+    {
+      "teamId": "team.martini",
+      "driverId": "driver.rene_arnoux",
+      "number": "31",
+      "rounds": "3-14",
+      "ams2LiveryName": "Martini-Ford Cosworth #31 R. Arnoux"
+    },
+    {
+      "teamId": "team.arrows",
+      "driverId": "driver.riccardo_patrese",
+      "number": "35",
+      "rounds": "2-14,16",
+      "ams2LiveryName": "Arrows-Ford Cosworth #35 R. Patrese"
+    },
+    {
+      "teamId": "team.arrows",
+      "driverId": "driver.rolf_stommelen",
+      "number": "35",
+      "rounds": "15",
+      "ams2LiveryName": "Arrows-Ford Cosworth #35 R. Patrese"
     }
   ]
 }

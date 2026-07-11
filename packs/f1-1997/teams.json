@@ -1,169 +1,184 @@
 {
-  "teams": [
-    {
-      "id": "team.arrows",
-      "name": "Arrows-Yamaha",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.56,
-      "prestige": 2,
-      "budgetTier": 2
-    },
-    {
-      "id": "team.williams",
-      "name": "Williams-Renault",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.88,
-      "prestige": 5,
-      "budgetTier": 5
-    },
-    {
-      "id": "team.ferrari",
-      "name": "Ferrari",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.88,
-      "prestige": 5,
-      "budgetTier": 5
-    },
-    {
-      "id": "team.benetton",
-      "name": "Benetton-Renault",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.94,
-      "prestige": 4,
-      "budgetTier": 4
-    },
-    {
-      "id": "team.mclaren",
-      "name": "McLaren-Mercedes",
-      "carVehicleIds": [
-        "mclaren_mp4_12"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.71,
-      "prestige": 5,
-      "budgetTier": 4
-    },
-    {
-      "id": "team.jordan",
-      "name": "Jordan-Peugeot",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.82,
-      "prestige": 3,
-      "budgetTier": 3
-    },
-    {
-      "id": "team.prost",
-      "name": "Prost-Mugen Honda",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.71,
-      "prestige": 3,
-      "budgetTier": 3
-    },
-    {
-      "id": "team.sauber",
-      "name": "Sauber-Petronas",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.91,
-      "prestige": 2,
-      "budgetTier": 3
-    },
-    {
-      "id": "team.tyrrell",
-      "name": "Tyrrell-Ford",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.59,
-      "prestige": 2,
-      "budgetTier": 1
-    },
-    {
-      "id": "team.minardi",
-      "name": "Minardi-Hart",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.62,
-      "prestige": 2,
-      "budgetTier": 1
-    },
-    {
-      "id": "team.stewart",
-      "name": "Stewart-Ford",
-      "carVehicleIds": [
-        "formula_v10_g1"
-      ],
-      "performance": {
-        "weightScalar": 1,
-        "powerScalar": 1,
-        "dragScalar": 1
-      },
-      "reliability": 0.38,
-      "prestige": 2,
-      "budgetTier": 3
-    }
-  ]
+    "teams":  [
+                  {
+                      "id":  "team.arrows",
+                      "name":  "Arrows-Yamaha",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.56,
+                      "prestige":  2,
+                      "budgetTier":  2
+                  },
+                  {
+                      "id":  "team.williams",
+                      "name":  "Williams-Renault",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.ferrari",
+                      "name":  "Ferrari",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.88,
+                      "prestige":  5,
+                      "budgetTier":  5
+                  },
+                  {
+                      "id":  "team.benetton",
+                      "name":  "Benetton-Renault",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.94,
+                      "prestige":  4,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.mclaren",
+                      "name":  "McLaren-Mercedes",
+                      "carVehicleIds":  [
+                                            "mclaren_mp4_12"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.71,
+                      "prestige":  5,
+                      "budgetTier":  4
+                  },
+                  {
+                      "id":  "team.jordan",
+                      "name":  "Jordan-Peugeot",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.82,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.prost",
+                      "name":  "Prost-Mugen Honda",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.71,
+                      "prestige":  3,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.sauber",
+                      "name":  "Sauber-Petronas",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.91,
+                      "prestige":  2,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.tyrrell",
+                      "name":  "Tyrrell-Ford",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.59,
+                      "prestige":  2,
+                      "budgetTier":  1
+                  },
+                  {
+                      "id":  "team.minardi",
+                      "name":  "Minardi-Hart",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.62,
+                      "prestige":  2,
+                      "budgetTier":  1
+                  },
+                  {
+                      "id":  "team.stewart",
+                      "name":  "Stewart-Ford",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.38,
+                      "prestige":  2,
+                      "budgetTier":  3
+                  },
+                  {
+                      "id":  "team.lola",
+                      "name":  "MasterCard Lola",
+                      "carVehicleIds":  [
+                                            "formula_v10_g1"
+                                        ],
+                      "performance":  {
+                                          "weightScalar":  1,
+                                          "powerScalar":  1,
+                                          "dragScalar":  1
+                                      },
+                      "reliability":  0.5,
+                      "prestige":  1,
+                      "budgetTier":  1
+                  }
+              ]
 }

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<USER_OVERRIDES>
+
+	<!-- Tyrrell-Ford (Always Fixed) -->
+	<LIVERY_OVERRIDE LIVERY="51" NAME="Tyrrell-Ford #3 S. Nakajima" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview3.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body3.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="51" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Nakajima_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="51" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="52" NAME="Tyrrell-Ford #4 J. Alesi" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview4.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body4.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="52" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Alesi_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="52" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Tyrrell_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Arrows-Ford -->
+	<LIVERY_OVERRIDE LIVERY="53" NAME="Arrows-Ford #9 M. Alboreto" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview9.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body9.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="53" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Alboreto_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="53" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="54" NAME="Arrows-Ford #10 B. Schneider" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview10-schneider.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body10-schneider.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="54" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Schneider_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="54" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Arrows_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Brabham-Judd -->
+	<LIVERY_OVERRIDE LIVERY="55" NAME="Brabham-Judd #7 G. Foitek" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview7-usa.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body7-usa.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="55" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Foitek_helmet1.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="55" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\blue_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="56" NAME="Brabham-Judd #8 S. Modena" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview8-usa.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body8-usa.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="56" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Modena_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="56" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Brabham_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\blue_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Osella-Ford (backmarker) -->
+	<LIVERY_OVERRIDE LIVERY="57" NAME="Osella-Ford #14 O. Grouillard" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview14.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body14.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="57" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Grouillard_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="57" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Osella_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Osella_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Osella_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Osella_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Leyton House-Judd #15 (qualified) -->
+	<LIVERY_OVERRIDE LIVERY="58" NAME="Leyton House-Judd #15 M. Gugelmin" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview15.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body15.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="58" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Gugelmin_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="58" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_LeytonHouse_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_LeytonHouse_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_LeytonHouse_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_LeytonHouse_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<!-- Benetton-Ford -->
+	<LIVERY_OVERRIDE LIVERY="59" NAME="Benetton-Ford #19 A. Nannini" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview19.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body19.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="59" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Nannini_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="59" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+	<LIVERY_OVERRIDE LIVERY="60" NAME="Benetton-Ford #20 N. Piquet" BASELIVERY="Default">
+		<PREVIEWIMAGE PATH="F1_Season_1990\preview20.dds" />
+		<TEXTURE NAME="BODY" PATH="F1_Season_1990\body20.dds" />
+	</LIVERY_OVERRIDE>
+	<HELMET_OVERRIDE LIVERY="60" BASEHELMET="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Helmets\90_Piquet_helmet.dds" />
+		<TEXTURE NAME="BODY_SPEC" PATH="F1_Season_1990\Helmets\90_helmet_spec.dds" />
+	</HELMET_OVERRIDE>
+	<OUTFIT_OVERRIDE LIVERY="60" BASEOUTFIT="DEFAULT">
+		<TEXTURE NAME="BODY_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_body.dds" />
+		<TEXTURE NAME="ARMS_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_arms.dds" />
+		<TEXTURE NAME="GLOVES_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_gloves.dds" />
+		<TEXTURE NAME="LEGS_DIFF" PATH="F1_Season_1990\Suits\90_Benetton_legs.dds" />
+		<TEXTURE NAME="SEATBELTS_DIFF" PATH="F1_Season_1990\Suits\red_safety_harness.dds" />
+	</OUTFIT_OVERRIDE>
+
+</USER_OVERRIDES>

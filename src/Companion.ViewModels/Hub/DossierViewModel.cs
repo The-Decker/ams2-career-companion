@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Companion.Core.Character;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Wizard;
 
 namespace Companion.ViewModels.Hub;
 
@@ -29,9 +30,33 @@ public sealed partial class DossierViewModel : ObservableObject
     public string? TeamLine =>
         _session.PlayerTeamName() is { Length: > 0 } team ? $"{team}  ·  {_session.Summary.SeasonYear}" : null;
 
+    /// <summary>The team-coloured PLAYER portrait (<c>player.&lt;team&gt;</c>), keyed off the player's
+    /// current team so it follows a mid-season move. Null when the team is unknown.</summary>
+    [ObservableProperty]
+    private string? _playerImageKey;
+
+    /// <summary>The car the player currently drives — its preview image key
+    /// (<c>cars/&lt;driverId&gt;.png</c>). Null when the player's seat has no car-preview driver id.</summary>
+    [ObservableProperty]
+    private string? _playerCarKey;
+
+    /// <summary>The player's arcade car-spec card (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars),
+    /// or null when the car has no authored spec (the card then collapses).</summary>
+    [ObservableProperty]
+    private CarSpecCardViewModel? _playerCarSpec;
+
     public void Refresh()
     {
         Dossier = _session.CharacterDossier();
+
+        // The player's current seat gives the team (portrait + spec) and the car (preview image).
+        var playerSeat = _session.CurrentGrid().FirstOrDefault(s => s.IsPlayer);
+        PlayerImageKey = playerSeat?.TeamId is { Length: > 0 } teamId
+            ? GridSeatChoice.PlayerImageKey(teamId)
+            : null;
+        PlayerCarKey = playerSeat?.DriverId;
+        PlayerCarSpec = _session.PlayerCarSpec();
+
         OnPropertyChanged(nameof(HasCharacter));
         OnPropertyChanged(nameof(TeamLine));
     }

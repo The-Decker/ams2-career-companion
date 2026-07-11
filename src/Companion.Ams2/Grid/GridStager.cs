@@ -94,13 +94,18 @@ public static class GridStager
         WeatherTyreChanges = seat.Ratings.WeatherTyreChanges,
         AvoidanceOfForcedMistakes = seat.Ratings.AvoidanceOfForcedMistakes,
         FuelManagement = seat.Ratings.FuelManagement,
-        VehicleReliability = seat.Reliability,
+        VehicleReliability = seat.CarTuning?.VehicleReliability ?? seat.Reliability,
 
         // Physics scalars are written only when they deviate from neutral: an entry-less field
         // means "stock car", and the scalars also affect the PLAYER when driving the livery.
-        WeightScalar = ScalarOrNull(seat.WeightScalar),
-        PowerScalar = ScalarOrNull(seat.PowerScalar),
-        DragScalar = ScalarOrNull(seat.DragScalar),
+        // Per-driver car tuning (the juppo schema, staging-only) beats the team values.
+        WeightScalar = ScalarOrNull(seat.CarTuning?.WeightScalar ?? seat.WeightScalar),
+        PowerScalar = ScalarOrNull(seat.CarTuning?.PowerScalar ?? seat.PowerScalar),
+        DragScalar = ScalarOrNull(seat.CarTuning?.DragScalar ?? seat.DragScalar),
+
+        // Setup preference rides the ratings (optional; omitted when the pack authors none).
+        SetupDownforce = seat.Ratings.SetupDownforce,
+        SetupDownforceRandomness = seat.Ratings.SetupDownforceRandomness,
     };
 
     private static double? ScalarOrNull(double scalar) => scalar == 1.0 ? null : scalar;

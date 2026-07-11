@@ -1,0 +1,36 @@
+{
+  "packId": "smgp-1",
+  "name": "Super Monaco GP",
+  "version": "2.1.0",
+  "formatVersion": 1,
+  "skinSeason": "smgp",
+  "careerStyle": "smgp",
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Roster, ratings and liveries from SMGP SKINS V1 by rafaelcsanti (F-Classic_Gen3)",
+    "Season structure replicates Sega's Super Monaco GP (Mega Drive, 1990) — see docs/dev/smgp-design.md for the manual-sourced design"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "SMGP SKINS V1 (rafaelcsanti)",
+        "overridesFolder": "SMGP"
+      }
+    ]
+  },
+  "notes": [
+    "The 16 rounds run in the GAME's order (San Marino first, Monaco the finale), not any real F1 calendar; courses model the 1989 F1 circuits (per-round history pointers reference the 1989 season).",
+    "Points 9-6-4-3-2-1, top six, NO dropped scores — the raw leader after 16 races wins.",
+    "Qualifying is the game's one-lap \"Preliminary Race\"; weather is always ideal (verified).",
+    "The full field is 34 painted cars: 32 generic-model SMGP cars (ALL 22 teams, ten of them two-car — SMGP1's sixteen plus SMGP II's Joke, Lares, Feet, Serga, Cool, Moon) and the two McLaren MP4/5B LEVEL-A teams by Kobra Fleetworks (Iris #33 B. Salgado, Azalea #34 M. Larssen).",
+    "DYNAMIC DNQ (pre-qualifying): the F-Classic_Gen3 class shows at most 26 distinct liveries, so only ~26 of the 34 race each round — the slowest 8 (9 at Monaco, cap 25) DID NOT QUALIFY, and WHICH cars sit out rotates race to race (the strong always make it; the backmarkers swap in and out). Your own car never DNQs. Baked per round, so it is deterministic and replays identically.",
+    "The McLaren teams (Iris, Azalea) bind against the installed mclaren_mp45b mod car + the Kobra Fleetworks 'SMGP Iris & Azalea' livery override — install both so their cars show in-game.",
+    "Everyone drives their own painted car: G. Ceara RACES at Bullets #17 from round 1 and is still the title-defense challenger; B. Miller drives Minarae #20; E. Sambena drives Serga #25.",
+    "SKIN ACTIVATION: Lares #23 P. Arai and Feet #24 J. Rampal ship slot-INACTIVE in the skinpack — activate both in the Skins tab (cap-safe, backup-first) so their cars show in-game. A qualifying car whose skin is not active floors to a guaranteed base-game livery for that round.",
+    "New careers start in a LEVEL D car only (Rigel, Cool, Comet, Orchis, Moon, Zeroforce) — climb via the rival ladder.",
+    "Driver-name corrections per the design doc: F. Elssler (pack livery label \"Elsser\"), P. Klinger (pack livery label \"Kilnger\") — livery binding strings stay verbatim.",
+    "careerStyle \"smgp\" gates the replica mode (rival battles, two-wins seat swaps, the Ceara title defense, the LEVEL D four-loss career-over)."
+  ]
+}

@@ -97,6 +97,26 @@ public sealed record PackRound
     /// until a pack opts in. This is the parsed data model; the engine + result-entry wiring land
     /// in later Increment-2 slices.</summary>
     public PackWeekend? Weekend { get; init; }
+
+    /// <summary>Optional ORIGINAL-CIRCUIT pointer (v1.3, additive, DISPLAY-ONLY — the sim never
+    /// reads it): the season+round of the shipped <c>data/history</c> reference whose real event
+    /// this pack round's venue models. Needed by packs whose calendar does not run a real
+    /// season's order — the SMGP replica races the GAME's round order over circuits modelled on
+    /// the 1989 season — where the default same-numbered-round join shows the wrong circuit's
+    /// map, caption and facts on the Calendar/briefing. Null = the pack year's same-numbered
+    /// round (every historical pack, byte-identical).</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public PackRoundHistoryRef? History { get; init; }
+}
+
+/// <summary>A <see cref="PackRound.History"/> pointer into the shipped historical reference:
+/// season <see cref="Year"/>'s round <see cref="Round"/> is the real event whose circuit this
+/// pack round presents as its ORIGINAL venue.</summary>
+public sealed record PackRoundHistoryRef
+{
+    public required int Year { get; init; }
+
+    public required int Round { get; init; }
 }
 
 /// <summary>A round's weekend shape: an optional practice + qualifying session and 1–2 races.
@@ -199,6 +219,36 @@ public sealed record PackTrackRef
     /// <summary>Alternates when <see cref="Id"/> itself is missing locally (unowned DLC) —
     /// a different problem than placeholder substitution.</summary>
     public IReadOnlyList<string> Fallbacks { get; init; } = [];
+
+    /// <summary>Optional era/character-appropriate ALTERNATE venue for this round — a community MOD
+    /// track curated as a better stand-in than <see cref="Id"/>. OPT-IN ONLY: applied solely when the
+    /// player enables alternate tracks at career creation AND every required mod is confirmed
+    /// installed (the season falls back to <see cref="Id"/> otherwise, so the default never gains a
+    /// mod dependency). When applied, the creation-time transform swaps this round's <see cref="Id"/>
+    /// + <see cref="PackRound.Laps"/> to the alternate BEFORE the pack is pinned, so the fold reads the
+    /// transformed pinned pack and replays stay byte-identical. Null = no alternate offered.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public PackTrackAlternate? Alternate { get; init; }
+}
+
+/// <summary>An optional alternate mod-track venue for a round (see <see cref="PackTrackRef.Alternate"/>):
+/// the true on-disk mod tag (a <c>data/ams2/tracks.json</c> id with <c>isMod:true</c>) and the lap
+/// count that preserves the real race distance at that track's length — precomputed at authoring time
+/// by the same rule as placeholder distance preservation.</summary>
+public sealed record PackTrackAlternate
+{
+    /// <summary>The alternate AMS2 track id (a mod tag, e.g. "Heusden" for Zolder, "florence_gp" for
+    /// Mugello). Must resolve in the content library and be an installed mod for the alternate to apply.</summary>
+    public required string Id { get; init; }
+
+    /// <summary>Lap count at the alternate track that preserves the round's real race distance.</summary>
+    public required int Laps { get; init; }
+
+    /// <summary>True when the alternate IS the round's authentic historical venue now available as a
+    /// mod (e.g. the 1978 Belgian GP really ran at Zolder) — applying it clears
+    /// <see cref="PackTrackRef.IsPlaceholder"/>. False for a character/era filler, which stays a
+    /// labelled placeholder (the briefing keeps naming the stand-in honestly).</summary>
+    public bool IsRealVenue { get; init; }
 }
 
 /// <summary>Exact in-game custom-race session settings plus optional author notes.</summary>

@@ -10,6 +10,7 @@
         MinWidth="300" MinHeight="220"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
+        FontFamily="{StaticResource BodyFont}"
         FontSize="13">
     <DockPanel Margin="12,10">
         <!-- root UI-scale transform (settings: font scale) keeps this pop-out in step with the
@@ -46,9 +47,10 @@
                        VerticalAlignment="Center" ToolTip="{Binding Title}" />
         </DockPanel>
 
-        <!-- the same checklist state as the briefing screen (one shared viewmodel) -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-            <ItemsControl ItemsSource="{Binding Sections}">
+        <!-- the same checklist state as the briefing screen (one shared viewmodel); the label
+             column is shared-size Auto so it never clips yet all rows stay aligned -->
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+            <ItemsControl ItemsSource="{Binding Sections}" Grid.IsSharedSizeScope="True">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
@@ -60,11 +62,16 @@
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsChecked}" Margin="0,1"
                                                   HorizontalContentAlignment="Stretch">
-                                            <DockPanel Margin="6,1,0,1">
-                                                <TextBlock DockPanel.Dock="Left" Width="128" Text="{Binding Label}"
+                                            <Grid Margin="6,1,0,1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" MinWidth="90" MaxWidth="200"
+                                                                      SharedSizeGroup="CompactLabel" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,8,0"
                                                            Style="{StaticResource Muted}" FontSize="12"
                                                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{Binding Value}" FontFamily="Consolas" FontSize="15"
+                                                <TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="Consolas" FontSize="15"
                                                            FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -76,7 +83,7 @@
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                            </DockPanel>
+                                            </Grid>
                                         </CheckBox>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

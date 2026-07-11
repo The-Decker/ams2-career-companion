@@ -46,7 +46,6 @@ public sealed record PlayerPerkModifiers
     // ---- aging (player-local curve override) ----
 
     public double PeakShift { get; init; }
-    public double RiseMult { get; init; } = 1.0;
     public double DeclineAccelMult { get; init; } = 1.0;
 
     // ---- offers / economy ----
@@ -75,6 +74,12 @@ public sealed record PlayerPerkModifiers
     /// that trades a long plateau for a lower peak caps how high leveling can push a rating (e.g.
     /// −0.10 = no rating above 0.89). 0 = the full statCapPerRating.</summary>
     public double StatSoftCapDelta { get; init; }
+
+    /// <summary>One-Trick Pony's <c>lockToOne</c>: the single rating field the driver's chosen
+    /// specialism owns. When set, in-career level points may raise ONLY the talent stat that writes
+    /// this rating — every other talent stat is frozen at its creation value. Null = no lock (the
+    /// normal free-development model). Bound at creation to the profile's chosen flavor.</summary>
+    public string? LockedFlavorRating { get; init; }
 
     /// <summary>Round-conditional effects the fold applies only when the round meets the condition
     /// (wetRound, longRace, driverErrorDnf, …), so they can't be min-maxed into an unconditional

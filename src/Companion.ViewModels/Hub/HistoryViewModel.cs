@@ -76,6 +76,18 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
     partial void OnNextRacePreviewChanged(HistoricalRoundViewModel? value) =>
         OnPropertyChanged(nameof(HasNextRacePreview));
 
+    /// <summary>The SMGP-universe "What Really Happened" almanac (the fictional-world counterpart to the
+    /// per-card real-F1 panel) — the SEGA world's legend of every circuit, unlocked per race. Null for
+    /// every non-SMGP career; then the panel is hidden. Shown once per History tab (not per card), since
+    /// the replica mode is one continuous fictional world with a fixed set of circuits.</summary>
+    [ObservableProperty]
+    private SmgpWorldHistoryViewModel? _smgpWorld;
+
+    public bool HasSmgpWorld => SmgpWorld is not null;
+
+    partial void OnSmgpWorldChanged(SmgpWorldHistoryViewModel? value) =>
+        OnPropertyChanged(nameof(HasSmgpWorld));
+
     /// <summary>Re-project the whole scrapbook off current session state (on open and after
     /// every Apply). Idempotent: rebuilds every collection from scratch.</summary>
     public void Refresh()
@@ -87,8 +99,13 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
         // records book aggregates the whole lineage regardless of order. Each card also carries the
         // REAL historical results of its year (f1db-derived, read-only) so the player can see "what
         // really happened" next to their own diverged season — null when none is shipped for the year.
+        // A REPLICA-mode pack (SMGP) is a fictional world: revealing the real season's races round
+        // by round would be nonsense there, so its cards carry no historical documents at all.
+        bool fictionalSeason = string.Equals(
+            _session.Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
         foreach (var card in timeline.Seasons.Reverse())
-            Seasons.Add(new SeasonCardViewModel(card, _session.HistoricalSeason(card.SeasonYear)));
+            Seasons.Add(new SeasonCardViewModel(
+                card, fictionalSeason ? null : _session.HistoricalSeason(card.SeasonYear)));
 
         Records = new RecordsBookViewModel(timeline.Records);
 
@@ -109,9 +126,81 @@ public sealed partial class HistoryViewModel : InspectorHostViewModel
             NextRaceYear = 0;
         }
 
+        // The SMGP-universe almanac (fictional replica mode only) — the SEGA world's "what really
+        // happened" per circuit. Null everywhere else, so the panel is a no-op for normal careers.
+        var world = _session.SmgpWorldHistory();
+        SmgpWorld = world is not null ? new SmgpWorldHistoryViewModel(world) : null;
+
         OnPropertyChanged(nameof(IsEmpty));
         OnPropertyChanged(nameof(HasArticles));
     }
+}
+
+/// <summary>The SMGP-universe "What Really Happened" almanac for the History tab: the SEGA world's own
+/// legend of every circuit on the calendar, each unlocked once the player has raced it. Display-only
+/// projection of <see cref="SmgpWorldHistory"/>.</summary>
+public sealed class SmgpWorldHistoryViewModel
+{
+    public SmgpWorldHistoryViewModel(SmgpWorldHistory world)
+    {
+        ArgumentNullException.ThrowIfNull(world);
+        Races = world.Races.Select(r => new SmgpWorldRaceViewModel(r)).ToList();
+        RevealedCount = world.RevealedCount;
+        Total = world.Races.Count;
+    }
+
+    /// <summary>Every circuit, in the current season's round order — sealed until raced, then the legend.</summary>
+    public IReadOnlyList<SmgpWorldRaceViewModel> Races { get; }
+
+    public int RevealedCount { get; }
+
+    public int Total { get; }
+
+    /// <summary>"6 of 16 circuits unlocked" — the almanac's progress line.</summary>
+    public string ProgressText => $"{RevealedCount} of {Total} circuits unlocked";
+}
+
+/// <summary>One circuit's almanac entry. Before the player has raced it (<see cref="IsRevealed"/> =
+/// false) it is SEALED — the header shows the venue and a "sealed" tag, and expanding shows only a
+/// spoiler-free teaser. Once raced, expanding shows the SEGA world's full legend (title, circuit,
+/// champion of record, the story paragraphs, and lore notes).</summary>
+public sealed partial class SmgpWorldRaceViewModel : ObservableObject
+{
+    /// <summary>Whether this entry's detail is expanded (default off — the header always shows).</summary>
+    [ObservableProperty]
+    private bool _isExpanded;
+
+    [RelayCommand]
+    private void Toggle() => IsExpanded = !IsExpanded;
+
+    public SmgpWorldRaceViewModel(SmgpWorldRace race)
+    {
+        ArgumentNullException.ThrowIfNull(race);
+        IsRevealed = race.IsRevealed;
+        RoundLabel = $"R{race.Round}";
+        VenueName = race.VenueName;
+        Title = race.Title;
+        Circuit = race.Circuit;
+        Champion = race.Champion;
+        Body = race.Body;
+        Notes = race.Notes;
+    }
+
+    /// <summary>True once the player has raced this venue — the legend is unlocked.</summary>
+    public bool IsRevealed { get; }
+
+    public string RoundLabel { get; }
+    public string VenueName { get; }
+    public string Title { get; }
+    public string Circuit { get; }
+    public string Champion { get; }
+    public IReadOnlyList<string> Body { get; }
+    public IReadOnlyList<string> Notes { get; }
+
+    public bool HasChampion => Champion.Length > 0;
+    public bool HasCircuit => Circuit.Length > 0;
+    public bool HasTitle => Title.Length > 0;
+    public bool HasNotes => Notes.Count > 0;
 }
 
 /// <summary>One season's scrapbook card + its timeline node: the year headline, the player's
