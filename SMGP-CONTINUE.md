@@ -1,99 +1,97 @@
-# CONTINUE SMGP — optimize-the-mode megaprompt (paste into a new session)
+# CONTINUE SMGP — resume prompt (paste into a new session)
 
 Resume the **AMS2 Career Companion** SMGP work (`Z:\Claude Code\ams2-career-companion`, WPF /
-.NET 10, single self-contained exe, branch `hub/increment-4`). **DIRECTION (Mike, locked in
+.NET 10, single self-contained exe, branch **`hub/increment-4`**). **DIRECTION (Mike, locked in
 `docs/dev/smgp-design.md`): SMGP-ONLY until the Super Monaco GP replica mode is truly polished.**
-This thread is the **optimization pass** — make the mode feel complete: skins that light up, a
-fictional-universe history, the SEGA-style car card, and paddock news that reacts to your career.
 
 ## First: orient (do this before touching anything)
-1. **Read memory**: `MEMORY.md` → `ams2-hub-build-progress.md` (TOP blocks = current) →
-   `ams2-next-content-arc.md` → `ams2-mclaren-skin-pipeline.md`.
-2. **Verify against the live repo** — `git log --oneline -20`, `git status`, read the files. Treat
-   every path/line below as a hint to confirm; this repo moves fast.
-3. **Discipline every slice** (non-negotiable): keep the full suite + RenderHarness green (`dotnet
-   test Companion.slnx`); the **f1db oracle 77/77 is NEVER touched**; sim/fold changes are
-   envelope-versioned + per-career gated (replay byte-identical); pack/grid/data changes affect
-   **new careers only**; commit + push per slice; republish when the app is CLOSED (check
-   `Get-Process AMS2CareerCompanion`), back up `dist/AMS2CareerCompanion.exe.old-<ts>`, copy the
-   fresh exe from `src/Companion.App/bin/Release/net10.0-windows/win-x64/publish/`, sync ONLY
-   changed data files into `dist/` (NEVER wholesale-copy — it deletes Mike's untracked art). No
-   `gh` CLI — PRs via the cached git cred + `Z:\Claude Code\open-pr.ps1`.
+1. **Read memory**: `MEMORY.md` → `ams2-hub-build-progress.md` (TOP blocks = current, read the first
+   3-4) → `ams2-next-content-arc.md` → `mike-build-maximally.md` → `ams2-mclaren-skin-pipeline.md`.
+2. **Verify the repo**: `git log --oneline -8`, `git status`, **`git stash list`** (there is a
+   stashed WIP — see thread B). Treat every path/line below as a hint to confirm; this repo moves fast.
+3. **Discipline (non-negotiable)**: keep the full suite + RenderHarness green (`dotnet test
+   Companion.slnx`); **the f1db oracle is 77/77, NEVER touched**; **byte-identical replay is a LOCKED
+   invariant** — a sim/fold change that breaks `ReplayService.Resimulate` self-consistency does NOT
+   ship; sim/fold rows are envelope-versioned + per-career gated; pack/grid changes affect NEW careers
+   only; commit + push per slice; republish when the app is CLOSED (a background watcher pattern —
+   `until Get-Process AMS2CareerCompanion is gone; then cp publish exe → dist`, backup-first, sync ONLY
+   changed data, NEVER wholesale-copy dist). No `gh` CLI — PRs via the cached git cred + `Z:\Claude
+   Code\open-pr.ps1`. ⚠ A **babysit/auto-finalize pipeline** is live on this repo+memory (it commits,
+   pushes, republishes, and writes memory blocks on its own) — **verify HEAD before assuming state.**
 
-## What is DONE (head ~`<check git>`; suite 1784 + 45 render, oracle 77/77)
-- **34-car dynamic DNQ field** (`SmgpSeasonVariety` unaffected): 34 painted cars, per-round baked
-  `grid.starterDriverIds` = top-min(26,cap) by raceSkill+FNV perturbation; slowest pre-qualify out,
-  rotating race to race; player never DNQs; fold-inert. `tools/author_smgp.cs`, `SmgpDnqFieldTests`.
-- **Dynamic per-rival quotes**: `data/rules/smgp/rival-quotes.json` (all 34 drivers, 3 ladder
-  moods) via `Companion.Core.Smgp.SmgpRivalQuotes`; `CurrentSmgpBriefing` picks by tally + FNV seed.
-- **Rival dossier redesign**: portrait hero + car thumbnail + centered copy (BriefingView).
-- **Per-team player image** `player.<team>` (team helmet) on the Season's Grid "YOU" card + the
-  character screen (`GridSeatChoice.PortraitKey`, `NewCareerWizardViewModel.PlayerImageKey`);
-  README at `data/ams2/portraits/README.md`.
-- **Wizard flow** = select car → **create character → Season Grid** → confirm.
-- **Season Calendar** = a 4-in-a-row grid board (`CalendarView`) with circuit maps + facts.
-- **Season 2+ variety** (`SmgpSeasonVariety`): shuffled calendar + fresh weather each year, Monaco
-  finale kept; fold-inert, replay-safe.
-- **Fonts**: BodyFont = **Roboto** (app-wide, Apache-2.0); Microsport = Season's Grid cards; Race
-  Sport = season/career picker; Open Sans = character screen. (Retro Floral/Aeromove retired.)
+## What is DONE and shipped (head `65a59d3`)
+- **Item B — SMGP "What Really Happened" almanac** (`ff62523` + render pin `805027d`): per-race
+  fictional history unlocked on the History tab once you finish a race. `SmgpWhatReallyHappened` (Core)
+  + `data/rules/smgp/what-really-happened.json` (16 venues) + `ICareerSession.SmgpWorldHistory()` +
+  `HistoryViewModel.SmgpWorld`/`HistoryView`. Tests green (loader + all-16 drift guard + render pin).
+- **Item A — per-race skin activation → FIXED FULL SET** (`af9fadb` then `65a59d3`):
+  `Companion.Ams2.Skins.RoundLiveryActivator` + `LiveryOverrideWriter.Liveries/Activate/Deactivate`.
+  `65a59d3` changed staging from a per-round ROTATION to activating the FIXED FULL SET
+  (`ApplyRound(packLiveries, packLiveries, ...)` — activate every inactive SMGP livery, park none).
 
-## THE OPTIMIZATION QUEUE (Mike's asks — pick a slice, do it in slices)
+## THREAD A — SKINS still defaulting in-game (the LIVE issue Mike is testing)
+**Symptom:** ~6 cars pool-fill with stock drivers in AMS2 (Gino Mandelli / Ronaldo Moreira / Canio
+Leone / Nilton Pereira / Ivanti Castelli / Jean Alarie); the 6 SMGP second-cars (Blume / Gould /
+Alfven / Nono / Arai / Rampal) are absent. **Root cause (understood):** AMS2 loads a car model's
+custom liveries ONCE at LAUNCH, only the active (numeric-slot) ones; the OLD per-race rotation
+switched skins on AFTER launch → not in AMS2's loaded pool → pool-fill, restart-every-round.
+**Fix shipped (`65a59d3`, deployed to dist 10:52):** activate the fixed full set once → stable pool.
+**⚠ Mike uses RCM (a mod manager, NOT a skin tool) — it re-applies its own slot config on launch and
+UNDOES the app's activation.** Two more facts: AMS2's per-MODEL livery cap looks like ~10 (the mod
+uses slots 51-60 + `X..` placeholders for overflow), and **g3m4 has 15 liveries so ~5 can't fit at
+once** (a hard AMS2 limit); the old code even assigned slots >60 (61-64) which AMS2 won't load.
+**AWAITING MIKE'S TEST:** stage a round in the app → **fully quit AMS2** → **relaunch AMS2 DIRECTLY
+(not via RCM)** → load the race. If the fitting skins finally stick → SOLVED (accept ~5 g3m4 cars on
+base-game). If not → deeper AMS2 behavior; reconsider.
+**Also open (Mike's latest screenshot):** the New-career **content-verification** step warns **4
+liveries won't bind** — `Iris #33 B. Salgado` + `Azalea #34 M. Larssen` (the McLaren `mclaren_mp45b`
+mod cars) and `Millions #5 N. Jones` + `Millions #6 G. Alberti` (g3m3 pair). So the McLaren mod + the
+g3m3 skins aren't fully detected in the install (`GridPreflight`/livery scan). Fold into the skin work.
+**Mike's DIRECTION (deferred, validate the fix first):** wants the app to OWN the mods — bundle
+`C:\Users\KOBRA\Downloads\SMGP SKINS V1.rar` (extracts to **1.1 GB** of DDS!) + `Z:\Claude
+Code\mclaren-mp45b-skin\McLaren MP45B - SMGP Iris & Azalea (by KobraFleetworks) v1.2.zip`, delete the
+RCM mod, and re-install from inside the app with a correct fixed slot config + AI-name merge. I pushed
+back: bundling won't change AMS2's cap/launch-cache (an engine limit), and 1.1 GB is heavy — so PROVE
+the fixed-set fix on the existing install + a DIRECT launch first; build the bundled installer only if
+Mike still wants full ownership after it works. Archive layout: SMGP → `Automobilista 2/Vehicles/
+Textures/CustomLiveries/Overrides/formula_classic_g3m1..4/` + `UserData/CustomAIDrivers/
+F-Classic_Gen3.xml`; McLaren → `Overrides/mclaren_mp45b/` + `OPTIONAL .../F-Classic_Gen3_ADD-these-2-
+drivers.xml` (merge, don't overwrite).
 
-### ⭐ A. AUTO-ACTIVATE the round's skins — "there HAS to be a way!" (Mike, MAXIMUM RESEARCH, MAXIMUM POWER)
-The SMGP skins ship **INSTALLED — NOT ACTIVE** (letter/`##`-placeholder livery slots — e.g. Lares
-#23, Feet #24, and the reserves). Today the smart-binding FLOORS a not-active livery to a
-guaranteed base-game paint, and the user must hand-activate in the Skins tab. Mike wants it
-**AUTOMATIC**: for each round, activate exactly the round's ≤26 **qualifiers'** skins (the DNQ field
-already picks them — `grid.starterDriverIds`), so the grid shows the real painted cars, and the
-9-ish DNQ'd cars' slots stay inert. Ties directly into the 34-skins-vs-26-livery-cap problem
-(deferred "slice 3" in `ams2-next-content-arc.md`).
-- **RESEARCH (fan out a workflow, be exhaustive):** how AMS2 loads active custom liveries at
-  SESSION START vs the `Overrides\<model>\<model>.xml` files; whether rewriting those override files
-  to mark the round's 26 qualifiers ACTIVE (and the rest inactive) BEFORE the player launches the
-  race is enough to swap the active set per round **without a game restart** (the memory says a
-  freshly-written slot needs a restart — CONFIRM/REFUTE this against the real install + a live
-  test); the exact meaning of the `##` / letter-`X` placeholder slots and slot numbering (custom
-  slots run 51..(50+cap)); whether the class livery cap 26 is a hard render limit or just distinct
-  names. Read `src/Companion.Ams2/CustomAi/LiveryOverrideWriter.cs` (Activate exists, cap-safe,
-  backup-first), `Grid/GridStager.cs` (writes livery_name), `Grid/BaseGameLiveryBinder.cs` (the
-  floor), `SkinSeasonManager`, and the installed `Y:\SteamLibrary\...\Vehicles\Textures\
-  CustomLiveries\Overrides\`. Prior context: `8ae0aff` (staging auto-activation, later REMOVED in
-  `9673a81` because auto-activating a placeholder wrote a slot AMS2 hadn't loaded → pool-fill +
-  restart). The goal now is DIFFERENT: activate the ROUND'S QUALIFIERS deliberately at staging,
-  which is Mike's sanctioned per-race swap. Determine the safe mechanism, then build it
-  (per-race livery staging), tests + a live in-game verify.
+## THREAD B — SMGP CLEAN SEAT-SWAP (built, **STASHED**, NOT shipped)
+`git stash@{0}` on `hub/increment-4`, base **`af9fadb`**. **Mike's ask (chosen via AskUserQuestion =
+"Full clean model only"):** kill the seat-swap CASCADE — "when i beat park arai, he replaced the
+default zeroforce driver. the original driver should come back to that car i just left and the rival i
+beat disappears until you switch teams again — prevent grid chaos." **Design (correct):** the SMGP
+player becomes their OWN distinct driver (`RoundGridResolver.SyntheticPlayerDriverId`) instead of
+impersonating the seat's AI — so the AI whose car the player occupies BENCHES and RETURNS the moment
+the player moves on; everyone else keeps their home seat; NO `AiSeatOverrides`, no cascade. Files in
+the stash: `ResolvePlayerDriverId`→Synthetic for smgp (creation, NEW careers only); `PlayerSeat.DriverId`
++ `RoundGridResolver.ApplyPlayerSeat` stamps it + benches that car's AI; `CareerSessionService.ResolveGrid`
++ `ReplayService.ResolvePlayerGrid` clean path (seat directly at `smgp.CurrentSeatLivery`, no overrides);
+`SmgpBattleFold` ApplyAcceptedSwap/ApplyForfeit/title-defense + `SmgpSchedule.ChampionRollover` set
+`CurrentSeatLivery` only (drop all `WithAiSeatOverride`). **STATUS: core WORKS** — all 7
+`SmgpBattleFoldDeterminismTests` pass incl. byte-identical replay (the regular swap Mike asked for is
+correct). **⚠ BLOCKER (why stashed): 3 tests fail a byte-identical-replay REP divergence** —
+`SmgpStateSeedTests.SmgpCareer_...ReplaysByteIdentically` + 2 `SmgpTitleDefenseTests`
+(`stored championshipPosition=2, rep 37→47.5` vs `regenerated null, 37→37`). **Debug PROVED live+replay
+resolve IDENTICAL grids** (both clean path, smgpSeat + inputsPid=Synthetic) → it is NOT the grid; it's
+a rep/standings AGGREGATION that drops the distinct player's row ONLY in the state-seed/title-defense
+setup (which classify via `seats.Select(DriverId)` grid-order; the 7 passing tests classify via
+ApplyPlayerFirst/Last). Test-assertion updates for the clean model are ALREADY in the stash (rival
+benched not chained, `AiSeatOverrides` empty, replay `PlayerDriverId = SyntheticPlayerDriverId`,
+title-defense challenger given a REAL entry). **NEXT:** `git stash pop` → find why the state-seed/
+title-defense replay drops the distinct player's standings row (likely a lookup that assumes a pack
+driver id — grep the OPI/reputation/standings fold for `_playerDriverId`/pack-driver lookups) → 3 tests
+green → full suite green → ship (needs a NEW smgp career). **Design note to confirm with Mike:** the
+clean model drops the "Ceara takes Madonna" flourish on a lost title defense (Senna returns to Madonna
+instead) — keep clean, or special-case Ceara?
 
-### ⭐ B. SMGP-universe "WHAT REALLY HAPPENED" — per race, unlocked when you finish it (Mike #3)
-The History/Scrapbook already gates OFF the real-F1 "what really happened" for smgp packs (the
-fictional SEGA world must not reveal real 1990 races). SMGP needs its **OWN** version: after you
-apply/enter the result of a race, that race's **"What really happened"** unlocks and tells the
-**SMGP universe's** account of the race you just finished (its fictional history — who the SEGA
-world remembers winning there, the rivalry beats, the SMGP lore), NOT real F1. Design: author
-per-round SMGP history narratives (data file, e.g. `data/rules/smgp/what-really-happened.json` keyed
-by round), gated to reveal per-round once `MaxAppliedRound >= round` (read-side, no fold change —
-like the news corpora). Wire into the History/Scrapbook view for smgp careers. Fan out the
-narrative authoring (SEGA-arcade voice, matches `data/rules/news/smgp.json`).
-
-### C. PER-TEAM CAR SPECS card — the SMGP car-select screen (waiting on Mike's numbers)
-Mike will provide each team's **machine name / engine / max power / the ENG·T.M.·SUS·TIRE·BRA
-bars** (the classic SMGP car-select screen he sent as concept). When he does: add a spec panel to
-BOTH the **character screen** and the **rival screen**, beside the player image + car. Scaffold the
-layout now if useful (bars + labels), fill the data when it lands. Likely a per-team data file
-`data/ams2/smgp/car-specs.json` + a small stats-bar control.
-
-### D. SMGP NEWS PHASE 2 — rival-event headlines (makes the seat change VISIBLE)
-Read-side: extend `CareerSessionService.ReadFeed` to read the folded `smgp.seat`/`smgp.battle`/
-career-over journal events and compose SMGP-flavored articles ("PLAYER SEIZES THE MADONNA SEAT!").
-Add a `{rival}` token to `NewsFacts` (+ `FactTokens` in `NewsCorpusGuardTests`) and
-`smgp.seat|swap|forfeit`/`smgp.title`/`smgp.career` article types to `smgp.json`. No fold change.
-
-### E. Deferred SMGP tail
-Per-round pit-crew advice (still the constant "PASS THE CARS AT THE HAIRPIN TURN!"); CareerOver
-hard-stop UX; reshuffle-by-points between seasons; random AI-initiated challenges; two-titles
-celebration UI.
-
-## Mike's manual art drops (pending — the app shows framed placeholders until then)
-- **Player images per team**: `data/ams2/portraits/player.<team>.jpg` (see the README; the yellow
-  helmet = `player.minarae`).
-- **Rival/driver portraits**: `data/ams2/portraits/driver.<id>.jpg` (car previews already extract).
-- Car-spec numbers for card C.
+## Suggested order next session
+1. **Read Mike's skin test result** (thread A) — it decides everything about the skin fix.
+2. If the fixed-set works → optionally build the app-owned mod installer (Mike's direction) + fix the 4
+   non-binding liveries (McLaren + g3m3). If not → dig into AMS2's per-model cap / launch behavior.
+3. **Finish thread B** (pop the stash, fix the replay-determinism divergence, ship the clean swap).
+Also outstanding (parked behind SMGP): item C (per-team car-specs card, waiting on Mike's numbers),
+item D (SMGP news Phase 2). ⚠ pre-existing SUITE FLAKINESS under parallel xunit (random unrelated
+tests fail ~1 in 3 full runs, all green in isolation / on a clean run) — NOT from recent changes.
