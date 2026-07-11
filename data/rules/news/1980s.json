@@ -1,5 +1,5 @@
 {
-  "$comment": "Generative news-article corpus for the 1980s (turbo-age sports-desk voice: brash, punchy, headline-driven, big TV money and monster qualifying boost), parsed by Companion.Core.News.NewsArticleBank. Bodies under 'race.result|cause' compose fact tokens and {pool:name} references into 'pools'; champLine is appended to non-DNF bodies only. Allowed fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add eras/events by adding JSON only.",
+  "$comment": "Generative news-article corpus for the 1980s (brash, punchy sports-desk voice shaped by television, wire copy, back pages, pit boards and workshop debriefs), parsed by Companion.Core.News.NewsArticleBank. Bodies under 'race.result|cause' compose fact tokens and {pool:name} references into 'pools'. Copy remains valid for both turbocharged and naturally aspirated entries. Allowed fact tokens: {player} {team} {race} {year} {round} {position} {expected} {winner} {fieldSize} {champPosition} {champMove} {champLeader}. Add eras/events by adding JSON only.",
   "eras": [
     { "key": "1980s", "fromYear": 1980, "toYear": 1989 }
   ],
@@ -8,15 +8,15 @@
       "1980s": [
         "TRACKSIDE AT {race}, {year}. The wire's red-hot.",
         "SPORTS DESK — {race}, round {round}.",
-        "LIVE FROM {race}: cameras rolling, boost climbing.",
+        "LIVE FROM {race}: the result is through.",
         "FROM THE PIT WALL, {race}, {year}.",
-        "PADDOCK REPORT — {race}, and the turbos are screaming.",
-        "HOT OFF THE WIRE — {race}, {year}, and the boost gauges are pinned.",
-        "GRANDSTAND VIEW, {race}: full grid, full song, round {round}.",
-        "TELETYPE FROM {race} — {year}, and the turbos won't quit.",
-        "SATELLITE FEED, {race}: the world's tuning in, round {round}.",
+        "PADDOCK REPORT — {race}, and the classification is posted.",
+        "HOT OFF THE WIRE — {race}, {year}.",
+        "GRANDSTAND VIEW, {race}: round {round} is complete.",
+        "TELETYPE FROM {race} — the {year} result is in.",
+        "PRESS ROOM FEED, {race}: round {round}.",
         "PRESS ROOM, {race}, {year} — typewriters hammering, deadline looming.",
-        "STARTER'S ORDERS AT {race} — round {round}, and the wick's already up."
+        "CHEQUERED FLAG AT {race} — round {round} is in the books."
       ],
       "default": [
         "Report from {race}, {year}.",
@@ -27,17 +27,17 @@
     },
     "closeGood": {
       "1980s": [
-        "Crank the boost and let them chase — this one's in the book.",
-        "The sponsors will love the column inches. Cue the champagne.",
-        "Turn it up: nobody's touching {team} in this mood.",
-        "One for the highlight reel, and there'll be plenty more.",
-        "The TV gantry got its money's worth this afternoon.",
-        "Frame it, sell it, bank it — {team} won't stop grinning.",
-        "Wind it up again next week; on this evidence nobody's safe.",
-        "That's back-page gold, and the boardroom knows it.",
-        "Champagne on ice, boost still warm — vintage {team}.",
-        "The sponsors just got their money's worth and then some.",
-        "Roll the tape one more time; days like this pay the bills."
+        "The classification is posted and {team} has a result to study.",
+        "Another line goes into the {year} record.",
+        "The transporters move on; the timing sheet stays.",
+        "The paddock turns from headlines to the next round.",
+        "The team leaves with a completed race and a page of notes.",
+        "The result gives {team} a baseline for what comes next.",
+        "Back-page deadlines pass; the championship keeps moving.",
+        "The final order will travel with the team to the next debrief.",
+        "The flag settles the argument; the record keeps the result.",
+        "For {team}, the next job starts with this classification.",
+        "The tape is filed and the season rolls on."
       ],
       "default": [
         "A big afternoon for {team}.",
@@ -48,17 +48,17 @@
     },
     "closeBad": {
       "1980s": [
-        "Kill the boost. The team wants this weekend forgotten.",
         "Back to the drawing board, and fast.",
-        "The wick's turned down, and the mood in the garage with it.",
-        "No highlights, no headlines, just a long trip home.",
-        "The sponsors will want a word before the next round.",
-        "Pull the sheets, torch the notes, start again Monday.",
-        "A weekend to shred and never mention again.",
-        "The garage goes quiet, the boost goes cold, and nobody's smiling.",
-        "Load up, ship out, and pray the next one's kinder to {team}.",
-        "The debrief will be long, loud and short on laughs.",
-        "Not a frame worth keeping, and the sponsors know it."
+        "{team} has a difficult result to pick apart.",
+        "The garage turns to the debrief and the next round.",
+        "No highlight reel can change the classification.",
+        "The questions travel home with {team}.",
+        "Monday starts with the timing sheet and a long list.",
+        "The result is final; the response begins in the workshop.",
+        "The paddock moves on, but {team} has work to do.",
+        "Another round, another hard set of notes for the crew.",
+        "The debrief will be direct and the response plan deliberate.",
+        "The page is filed; the lessons still need writing."
       ],
       "default": [
         "A weekend to bin.",
@@ -88,35 +88,36 @@
     },
     "expectationBeat": {
       "1980s": [
-        "from a car the form guide had written off for {expected}",
-        "against a grid the pundits reckoned good only for {expected}",
-        "when the paperwork had pencilled in {expected} at best",
+        "against a form guide that had {expected} pencilled in",
+        "when the paddock preview called {expected}",
+        "with the paperwork pointing to {expected}",
+        "against a pre-race estimate of {expected}",
         "when the smart money had them down for {expected}",
-        "off a weekend the tipsters marked at {expected}",
-        "from grid slots the experts said were worth {expected} and no more",
+        "with the sports desks predicting {expected}",
+        "against a forecast of {expected}",
         "with the form book insisting on {expected}",
-        "though every column inch had predicted {expected}"
+        "though every preview had forecast {expected}"
       ],
       "default": [
-        "beyond the predicted {expected}",
-        "past an expected {expected}",
-        "clear of the tipped {expected}",
-        "ahead of a forecast {expected}"
+        "beyond a prediction of {expected}",
+        "past a target of {expected}",
+        "clear of the form-book mark at {expected}",
+        "ahead of an estimate of {expected}"
       ]
     },
-    "boostLine": {
+    "paceLine": {
       "1980s": [
-        "The turbo did the talking.",
-        "A thousand horsepower, pointed straight.",
-        "Boost to the limit and no apologies.",
-        "The wick was wound up all afternoon.",
-        "Full song, full commitment from the turbo.",
-        "Boost pinned, throttle wide, no lifting.",
-        "The turbo sang all afternoon and never missed a note.",
-        "Horsepower to spare and the nerve to use it.",
-        "Wound to the stop and held there.",
-        "The wastegate stayed shut and the results followed.",
-        "Turbo lag? Not today — just shove and go."
+        "The result, not the rhetoric, did the talking.",
+        "The stopwatch gave {team} its answer.",
+        "Race pace translated into a place on the sheet.",
+        "The machine and driver delivered the recorded result.",
+        "The timing sheet carries the proof.",
+        "The car had enough for the result it earned.",
+        "The final classification settles the performance.",
+        "The pace became a number in the record.",
+        "The flag turned the afternoon into a result.",
+        "The {team} entry reached the line with its place confirmed.",
+        "Whatever the noise, the order is now official."
       ],
       "default": [
         "The car had the pace.",
@@ -127,16 +128,16 @@
     },
     "mediaLine": {
       "1980s": [
-        "Millions watched it live.",
-        "Prime-time, coast to coast.",
-        "The cameras drank it in.",
-        "The highlight reel writes itself.",
-        "The networks got their money-shot.",
-        "Living rooms across the country saw every yard of it.",
-        "One for the six o'clock bulletins.",
-        "The gantry cameras couldn't get enough.",
-        "Prime-time gold, start to finish.",
-        "The wire services lit up before the flag dropped."
+        "The cameras caught the flag and the final order.",
+        "Press-room typewriters started before the cars stopped.",
+        "The result headed straight for the evening bulletins.",
+        "The gantry cameras stayed on the finish.",
+        "The wire services carried the classification.",
+        "The back-page desks had their headline.",
+        "The television crews turned from track to paddock.",
+        "The final order moved from timing sheet to newsroom.",
+        "The press room had its story for the night.",
+        "The photographs and classification went out together."
       ],
       "default": [
         "A result worth watching.",
@@ -147,14 +148,14 @@
     },
     "seasonClose": {
       "1980s": [
-        "Roll the season reel, cue the champagne — the boost cools now till spring.",
-        "The TV money's counted and the trophies polished; the winter belongs to next year's turbo.",
-        "Kill the boost and load the transporters — another turbo-age year goes in the book for {team}.",
-        "Cut the feed, chill the fizz — the turbos sleep now and {team} counts the winter down to spring.",
-        "Trophies in the cabinet, boost gauges at rest; another loud year done for {team}.",
-        "The transporters roll home, the TV cheques clear, and {team} already dreams of next year's monster qualifying boost.",
-        "Lights out on {year}: cover the cars, bank the reels, and let the turbo cool till the new season.",
-        "Season's a wrap — the highlight tapes go to the vault and {team} points the crew at winter."
+        "The transporters roll home and the winter work begins for {team}.",
+        "The final table is filed; attention turns to the next campaign.",
+        "The cameras are packed away and the workshops take over.",
+        "The {year} record is complete, with another season waiting beyond winter.",
+        "Trophies and timing sheets go into the cabinet; the planning starts again.",
+        "The last deadlines pass and {team} turns to the off-season.",
+        "The championship book closes; the next design brief opens.",
+        "The year is done, and the paddock's work moves behind closed doors."
       ],
       "default": [
         "The {year} season is done for {team}.",
@@ -162,20 +163,56 @@
         "That wraps {year} for {team}.",
         "The year is filed away."
       ]
+    },
+    "paddockNote": {
+      "1980s": [
+        "Typewriters hammered in the press room as the result came through.",
+        "Pit boards and timing sheets carried the final order along the lane.",
+        "The television crews had their pictures before the transporters were packed.",
+        "Across the paddock, team managers studied the classification.",
+        "Mechanics gathered around the timing sheet after the flag.",
+        "The result moved quickly from pit wall to press room.",
+        "Back-page deadlines waited for nobody once the order was official.",
+        "The cameras turned away only after the final classification was posted."
+      ],
+      "default": [
+        "The result circulated through the paddock.",
+        "The final order was posted.",
+        "Teams studied the classification.",
+        "The report moved on to the next round."
+      ]
+    },
+    "workshopNote": {
+      "1980s": [
+        "Back in the garage, the crew began a methodical inspection.",
+        "The car returned behind the screens for the mechanics to diagnose.",
+        "Tools came out as soon as the machine reached the {team} garage.",
+        "The engineers recorded the symptoms and turned to the strip-down.",
+        "A long evening of checks waited behind the pit shutters.",
+        "The mechanics gathered around the car and started with the basics.",
+        "The transporter would carry a full repair list back to the factory.",
+        "The garage changed from race mode to diagnosis without delay."
+      ],
+      "default": [
+        "The crew began its inspection.",
+        "The car returned for diagnosis.",
+        "The repair list started to grow.",
+        "The garage turned to the work ahead."
+      ]
     }
   },
   "bodies": {
     "race.result|win": {
       "1980s": [
-        "{pool:dateline} {player} WINS {race}! The {team} car led {fieldSize} rivals a merry dance and never once looked like losing. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Lights to flag, {player} owned the {year} {race}. {team} wound up the boost, checked out, and left the rest scrapping for the scenery. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} VICTORY for {player} at {race} — stop the presses. {team} were untouchable, {pool:expectationBeat} and the form book torn up. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} FLAG TO FLAG — {player} crushes the {year} {race}! {team} lit the boost off the line and never gave it back, {fieldSize} rivals left staring at the tailpipe. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} takes {race} and it wasn't close — {team} pulled clear, wound the wick and cruised home to a hero's roar. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} WINNER, {player}! The {team} car swatted {fieldSize} challengers aside at {race} {pool:expectationBeat}. Pure turbo theatre. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Job done at {race}: {player} led every lap that mattered and turned the {year} race into a {team} procession. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} GLORY for {player} — {race} belongs to {team} tonight, start to finish, boost to the ceiling. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} They came to beat {player} and left beaten: victory at {race}, {fieldSize} also-rans and one very happy {team} pit wall. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} WINS {race} for {team}, first in a field of {fieldSize}. The chequered flag confirms the headline. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} VICTORY for {player} at {race}. The final classification puts the {team} entry {position} in round {round}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} STOP THE PRESSES — {player} takes the {year} {race} for {team}. The winning result is official. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} is the {race} winner, delivering {team} the top finish among {fieldSize} starters. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} WINNER: {player}. At the flag it is {position} for {team} at {race}, with the race entered in the {year} record. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The back page has its name: {player} wins {race} for {team}. Round {round} belongs in the victory column. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Chequered flag and first place for {player} at {race}. {team} owns the winning line on the official sheet. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Round {round} result: {player} wins at {race}, heading the final order for {team}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} GLORY for {player} — victory at {race} for {team} in a field of {fieldSize}. The result is in. {pool:mediaLine} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
         "{player} won {race} for {team}, leading home a field of {fieldSize}. {pool:champLine} {pool:closeGood}",
@@ -184,79 +221,83 @@
     },
     "race.result|podium": {
       "1980s": [
-        "{pool:dateline} Podium for {player} — {position} at {race}, splitting a field of {fieldSize}. Only {winner} finished ahead. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} muscled the {team} machine onto the box, home {position} at {race} with champagne all round. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} ROSTRUM! {player} banks {position} at {race}, chasing {winner} home in front of the cameras. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} BOX FINISH! {player} wrestles the {team} car to {position} at {race}, only {winner} ahead when the boost cooled. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} climbs the rostrum at {race} — {position} it is, {winner} the only man in front and {fieldSize} strung out behind. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Champagne for {player}: a hard-charging {position} at {race}, chasing {winner} to the flag with the turbo howling. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} PODIUM, and a loud one — {player} banks {position} at {race}, {team} back among the big names. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} muscled through {fieldSize} runners to steal {position} at {race}, {winner} just out of reach. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Onto the box goes {player}, {position} at {race} and the {team} name back in lights behind {winner}. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} Podium for {player} — {position} at {race} for {team} in a field of {fieldSize}. {winner} took the win. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} puts the {team} machine on the box, home {position} at {race}. The classification lists {winner} first. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} ROSTRUM! {player} banks {position} at {race}; {winner} wins the day and {team} leaves with a top-three result. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} BOX FINISH for {player}: {position} at {race} for {team}. {winner} heads the official order. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} climbs the rostrum at {race} — {position} in a {fieldSize}-car classification. Victory goes to {winner}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Champagne for {player}: {position} at {race} for {team}, with {winner} recorded first. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} PODIUM — {player} banks {position} at {race}, putting {team} in the top three. {winner} won the race. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A top-three result for {player}: {position} at {race} from {fieldSize} starters. {winner} takes the victory. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Onto the box goes {player}, {position} at {race} for {team}. The winner's line belongs to {winner}. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} finished {position} at {race} for {team}, behind {winner}. {pool:champLine} {pool:closeGood}",
+        "At {race}, {player} took {position} for {team}; {winner} won. {pool:champLine} {pool:closeGood}",
         "{player} took {position} at {race} for {team}, in behind {winner}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|points": {
       "1980s": [
-        "{pool:dateline} {player} bagged the points at {race}, home {position} from {fieldSize} starters. {winner} took the win, but the {team} account keeps ticking over. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} No podium, no drama — {player} pocketed a tidy {position} at {race}. Points banked, sponsors kept sweet. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} pockets a workmanlike {position} at {race}, {winner} up front but the {team} points column ticking on. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} No fireworks, just points — {player} home {position} at {race} from {fieldSize} starters. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Quiet efficiency from {player}: {position} at {race}, the score banked and the sponsors content. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} grinds out {position} at {race} while {winner} takes the glory. Points are points, and {team} will take them. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A solid haul for {player} — {position} at {race}, the turbo kept honest and the numbers on the board. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Into the points goes {player}, {position} at {race} from a field of {fieldSize}. Nothing loud, everything useful. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} {player} bags points at {race}, home {position} for {team} from {fieldSize} starters. {winner} took the win. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No podium, but points for {player}: {position} at {race}, entered in the drivers' ledger. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} puts {position} on the board at {race}. {winner} wins while the championship total grows. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Points are the return for {player} at {race}, {position} from {fieldSize} starters. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The final sheet gives {player} {position} and a points finish for {team} at {race}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} scores at {race}, finishing {position} for {team} as {winner} takes the victory. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A points result for {player} — {position} at {race}, with the numbers now in the {year} ledger. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Into the points goes {player}, {position} at {race} from a field of {fieldSize}. The return is official. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} brings {team} a points finish at {race}, classified {position}. {winner} owns the win. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} scored points at {race}, finishing {position}. {pool:champLine} {pool:closeGood}",
+        "Points for {player} at {race}: {position} at the flag. {pool:champLine} {pool:closeGood}",
         "{player} came home {position} at {race} for {team}, points in the bag. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|overperformed": {
       "1980s": [
-        "{pool:dateline} GIANT-KILLER! {player} hauled the {team} car up to {position} at {race} {pool:expectationBeat}. The paddock is still rubbing its eyes. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} stole the show at {race}, {position} from a field of {fieldSize} and the drive everyone will be talking about on Monday. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} STOP THE PRESSES — {player} dragged the {team} car to {position} at {race} {pool:expectationBeat}. The paddock can't compute it. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} rewrote the script at {race}, {position} from a grid that promised nothing. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} OVERACHIEVER OF THE YEAR? {player} punched to {position} at {race} {pool:expectationBeat}, and every rival is furious. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A giant-killing shift from {player} — {position} at {race}, hauling {team} miles past what the form book allowed. {pool:boostLine} {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} made {fieldSize} faster cars look silly, home {position} at {race} {pool:expectationBeat}. Turbo-age magic. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Where did THAT come from? {player} snatched {position} at {race}, {team} punching a full weight class up. {pool:mediaLine} {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} GIANT-KILLER! {player} brings the {team} car home {position} at {race} {pool:expectationBeat}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} beats the pre-race estimate at {race}: {position} from {fieldSize} starters against a target of {expected}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} STOP THE PRESSES — {player} takes {position} at {race} for {team} {pool:expectationBeat}. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The form guide said {expected}; the flag says {position} for {player} and {team} at {race}. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} ABOVE THE BILLING: {player} finishes {position} at {race}, better than {team}'s pre-race target of {expected}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} moves the {team} entry beyond its forecast, {position} at {race} against {expected}. {pool:paceLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A result ahead of the form book for {player}: {position} at {race} from a field of {fieldSize}, with {expected} predicted. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Where did THAT come from? {player} records {position} at {race} when {team} had been marked for {expected}. {pool:mediaLine} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} outperforms the forecast at {race}, finishing {position} for {team} against a target of {expected}. {pool:paddockNote} {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} overdelivered at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}",
+        "{player} exceeded the pre-race line at {race}, taking {position}. {pool:champLine} {pool:closeGood}",
         "{player} beat the odds at {race}, {position} {pool:expectationBeat}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "race.result|underperformed": {
       "1980s": [
-        "{pool:dateline} Off the pace and out of sorts: {player} could manage only {position} at {race} when {expected} was the least {team} wanted. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} A flat afternoon for {player}, home {position} in a field of {fieldSize} while {winner} ran away up front. {team} will be hunting answers by Monday. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} Flat and forgettable: {player} could only wring {position} out of {race} when {expected} was the brief. {winner} was long gone. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} The boost was there, the result wasn't — {player} home {position} at {race}, well shy of {expected}. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} A weekend to bin for {player}: {position} at {race} from {fieldSize} starters, the {team} garage baffled. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} {player} never got going at {race}, trailing home {position} while {winner} ran the show. {expected} looks a long way off tonight. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} Off-key all afternoon, {player} settled for {position} at {race} when {expected} was the least anyone at {team} wanted. {pool:champLine} {pool:closeBad}",
-        "{pool:dateline} No spark, no speed — {player} classified {position} at {race}, a result that flatters nobody at {team}. {pool:champLine} {pool:closeBad}"
+        "{pool:dateline} Below the line: {player} finishes {position} at {race} when {expected} was the forecast for {team}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The form guide called {expected}; {player} reaches the flag {position} in a field of {fieldSize}. {winner} wins the race. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} A result short of the target for {player}: {position} at {race} against a forecast of {expected}. {pool:paddockNote} {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} is classified {position} at {race}, below a pre-race estimate of {expected} for {team}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The final order gives {player} {position} from {fieldSize} starters, with {team}'s forecast set at {expected}. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} {player} reaches the flag {position} at {race}; the form book had set {expected}. {winner} takes the win. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} Off-key on the result sheet, {player} settles for {position} at {race} when {expected} was the target. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The {team} forecast called {expected} at {race}; {player} is recorded {position}. The difference against that forecast is plain. {pool:champLine} {pool:closeBad}",
+        "{pool:dateline} The flag puts {player} {position} at {race}, short of a {team} forecast of {expected}. {pool:paddockNote} {pool:champLine} {pool:closeBad}"
       ],
       "default": [
-        "{player} was below par at {race}, only {position} when {expected} was expected. {pool:champLine} {pool:closeBad}",
+        "{player} fell short at {race}, finishing {position} against a forecast of {expected}. {pool:champLine} {pool:closeBad}",
         "{player} underdelivered at {race}, only {position} against a target of {expected}. {pool:champLine} {pool:closeBad}"
       ]
     },
     "race.result|dnf-mechanical": {
       "1980s": [
-        "{pool:dateline} BLOWN! The {team} turbo let go at {race} and took {player}'s afternoon with it — no fault of the driver, just a machine shoved past breaking point, {expected} up in smoke. {winner} cashed in. {pool:closeBad}",
-        "{pool:dateline} Smoke, then silence. {player} was running hard at {race} when the {team} engine cried enough and {expected} vanished in an instant. {pool:closeBad}",
-        "{pool:dateline} GRENADED! The {team} turbo detonated at {race} and {player}'s race died with it — pure mechanical murder, {expected} gone in a plume of smoke. {winner} said thank you. {pool:closeBad}",
-        "{pool:dateline} The wick was up and the car was flying when the {team} engine let go — {player} out of {race}, {expected} snatched away by a blown motor. {pool:closeBad}",
-        "{pool:dateline} Boost turned to bang: {player}'s {team} machine expired at {race} with nothing the driver could do, {expected} up in flames. {pool:closeBad}",
-        "{pool:dateline} A hose, a seal, a turbo pushed too far — {player} coasts to a halt at {race}, the {team} weekend in ruins and {expected} lost. {winner} cleaned up. {pool:closeBad}",
-        "{pool:dateline} Cruel mechanics at {race}: {player} was in the fight when the {team} car cried enough, {expected} evaporating on the spot. {pool:closeBad}",
-        "{pool:dateline} The turbo age bites again — {player} sidelined at {race} by a {team} failure, no blame on the driver, just metal at its limit and {expected} thrown away. {pool:closeBad}"
+        "{pool:dateline} OUT: a mechanical failure ends {player}'s {race} for {team}. A target of {expected} becomes a retirement while {winner} wins. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} Mechanical trouble stops {player} before the flag at {race}. The {team} entry is recorded as a retirement. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} A mechanical DNF for {player} at {race}; {team} loses the chance to convert a target of {expected}. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} {player} retires from {race} with a mechanical failure for {team}. {winner} takes the victory. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} The result sheet marks {player} out of {race} through mechanical trouble. The retirement enters the record. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} Mechanical failure, no finish: {player}'s {race} ends early for {team}, with {expected} left unrealised. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} {team} records a mechanical retirement for {player} at {race}. {winner} wins from a field of {fieldSize}. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} Reliability ends {player}'s afternoon at {race}; the official cause is mechanical for {team}. {pool:workshopNote} {pool:closeBad}",
+        "{pool:dateline} {player} is forced out of {race} by mechanical trouble, leaving {team} without a finish. {pool:workshopNote} {pool:closeBad}"
       ],
       "default": [
         "{player} retired from {race} with car trouble. {pool:closeBad}",
@@ -265,45 +306,49 @@
     },
     "race.result|dnf-driver-error": {
       "1980s": [
-        "{pool:dateline} INTO THE WALL! {player} binned the {team} car at {race} — a moment's greed on the boost and it was all over. {winner} led home {fieldSize} survivors. {pool:closeBad}",
-        "{pool:dateline} A costly mistake: {player} threw {race} away, off and out where {expected} had been there for the taking. {pool:closeBad}",
-        "{pool:dateline} OFF AND OUT! {player} asked too much of the boost at {race} and pitched the {team} car into the barriers. {winner} led {fieldSize} home. {pool:closeBad}",
-        "{pool:dateline} One mistake, one wall — {player} threw {race} away where {expected} had been sitting there for the taking. {pool:closeBad}",
-        "{pool:dateline} Greedy on the throttle, gone in a heartbeat: {player} spins the {team} machine out of {race} and into the scenery. {pool:closeBad}",
-        "{pool:dateline} A rush of blood at {race} and it was over — {player} in the gravel, {expected} in the bin, {winner} gratefully ahead. {pool:closeBad}",
-        "{pool:dateline} {player} lit the boost a corner too early at {race} and paid in full, the {team} car parked and the afternoon wrecked. {pool:closeBad}",
-        "{pool:dateline} CRUNCH. {player} clipped the limit at {race}, lost the {team} car, and handed {expected} to the chasing pack. {pool:closeBad}"
+        "{pool:dateline} OUT: driver error ends {player}'s {race} for {team}. {winner} takes the win from a field of {fieldSize}. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} A costly mistake leaves {player} out of {race}, with a target of {expected} unrealised for {team}. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} {player} records a driver-error DNF at {race}. The afternoon is over before the flag. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} Driver error stops {player} before the flag at {race}; {team} is left with a retirement. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} The official cause is driver error for {player} at {race}. {winner} wins the afternoon. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} {player}'s {race} ends through driver error, costing {team} the chance to reach a target of {expected}. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} No finish for {player} at {race}: a driver mistake ends the {team} run. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} {team} records a driver-error retirement for {player} at {race}, while {winner} takes victory. {pool:paddockNote} {pool:closeBad}",
+        "{pool:dateline} A driver mistake puts {player} out of {race}. The driver-error DNF is final. {pool:paddockNote} {pool:closeBad}"
       ],
       "default": [
-        "{player} crashed out of {race} through driver error. {pool:closeBad}",
-        "{player} threw {race} away with a mistake, out on the spot. {pool:closeBad}"
+        "Driver error ended {player}'s race at {race}. {pool:closeBad}",
+        "A driver mistake ended {player}'s race at {race}. {pool:closeBad}"
       ]
     },
     "race.result|midfield": {
       "1980s": [
-        "{pool:dateline} A quiet shift for {player}, {position} at {race} from {fieldSize} starters. Nothing for the highlight reel, but the {team} car saw the flag. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} slotted home {position} at {race}, well adrift of {winner}. Mid-pack anonymity for {team} this time out. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Anonymous but intact: {player} rolls home {position} at {race} from {fieldSize} starters, well behind {winner}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} No drama, no headlines — {player} banks {position} at {race}, the {team} car present if not prominent. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} A midfield grind for {player}, {position} at {race} while the cameras chased {winner} up front. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} {player} saw the flag {position} at {race}, lost in the pack but points-adjacent for {team}. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Quiet miles for {player} — {position} at {race} from a field of {fieldSize}, the boost kept sensible. {pool:champLine} {pool:closeGood}",
-        "{pool:dateline} Mid-pack and out of the spotlight: {player} home {position} at {race}, {team} filing this one under 'uneventful'. {pool:champLine} {pool:closeGood}"
+        "{pool:dateline} A quiet shift for {player}, {position} at {race} from {fieldSize} starters. The {team} car finishes outside the points. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} is classified {position} at {race}, outside the points for {team}. {winner} takes the win. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The flag finds {player} {position} at {race}, a midfield finish from {fieldSize} starters. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} No points this time: {player} brings the {team} entry home {position} at {race}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} A midfield result for {player}, {position} at {race} while {winner} records the victory. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} sees the flag {position} at {race}, outside the scoring places for {team}. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} The official order puts {player} {position} at {race} from a field of {fieldSize}. No points are added. {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} Mid-pack in the final classification: {player} home {position} at {race} for {team}. {pool:paddockNote} {pool:champLine} {pool:closeGood}",
+        "{pool:dateline} {player} finishes {position} at {race}, outside the points as {winner} wins the day. {pool:champLine} {pool:closeGood}"
       ],
       "default": [
-        "{player} ran to {position} at {race}, a quiet afternoon for {team}. {pool:champLine} {pool:closeGood}",
+        "{player} finished {position} at {race}, outside the points for {team}. {pool:champLine} {pool:closeGood}",
         "{player} ran home {position} at {race}, a quiet mid-pack day for {team}. {pool:champLine} {pool:closeGood}"
       ]
     },
     "season.digest|player-champion": {
       "1980s": [
-        "THE {year} TITLE IS {player}'S — and the whole world watched it happen. World champion, with the {team} name splashed across every back page and the champagne going up like a monster boost. {pool:seasonClose}",
-        "Cue the anthem and crank the volume: {player} is champion of {year}. A season {team} will be selling to the sponsors for a decade, headlines and highlight reels all the way. {pool:seasonClose}",
-        "CHAMPION OF {year} — {player}! The {team} boost outlasted the lot of them and the trophy's coming home in a blaze of flashbulbs. {pool:seasonClose}",
-        "IT'S {player}'S WORLD IN {year}. World champion, back pages booked for a month, and {team} basking in every watt of it. {pool:seasonClose}",
-        "Roll the anthem: {player} is the {year} champion, and {team} just turned a season of boost into immortality. {pool:seasonClose}",
-        "THE CROWN IS {player}'S. A {year} title for {team} that the sponsors will milk for a decade of highlight reels. {pool:seasonClose}",
-        "{player} closes {year} as champion of the world — the {team} name in lights and the turbo age with a new king. {pool:seasonClose}"
+        "THE {year} TITLE IS {player}'S. The {team} driver closes the final table as world champion. {pool:seasonClose}",
+        "Cue the anthem: {player} is champion of {year}, finishing the campaign {champPosition} for {team}. {pool:seasonClose}",
+        "CHAMPION OF {year} — {player}! The final drivers' standings put the {team} racer first. {pool:seasonClose}",
+        "IT'S {player}'S TITLE IN {year}. World champion is the line on the final table, with {team} beside the name. {pool:seasonClose}",
+        "The season closes with {player} as {year} world champion for {team}. The championship result is official. {pool:seasonClose}",
+        "THE CROWN IS {player}'S. Across {year}, the {team} driver earns the World Drivers' Championship. {pool:seasonClose}",
+        "{player} closes {year} as champion of the world, {champPosition} in the final standings for {team}. {pool:seasonClose}",
+        "WORLD CHAMPION: {player}. The final table of {year} puts the {team} driver first and the title is secured. {pool:seasonClose}",
+        "THE TITLE BELONGS TO {player}. The {year} drivers' championship ends with the {team} racer on top. {pool:seasonClose}"
       ],
       "default": [
         "{player} is the {year} champion, a title year for {team}. {pool:seasonClose}",
@@ -312,13 +357,15 @@
     },
     "season.digest|season-complete": {
       "1980s": [
-        "THE {year} CROWN GOES TO {champLeader}. {player} brings the {team} car home {champPosition} on the year — not the headline they wanted, but the boost lives to fight another season. {pool:seasonClose}",
-        "Final reckoning of {year}: {champLeader} takes the title, {player} classified {champPosition} for {team}. The transporters point at the winter and next year's turbo. {pool:seasonClose}",
-        "THE {year} TITLE STAYS WITH {champLeader}. {player} signs off {champPosition} for {team} — not the crown, but the boost lives to fight again. {pool:seasonClose}",
-        "Curtain down on {year}: {champLeader} takes the honours, {player} classified {champPosition}. {team} points the transporters at winter. {pool:seasonClose}",
-        "{champLeader} is champion of {year}; {player} brings {team} home {champPosition} on the board. Unfinished business for the spring. {pool:seasonClose}",
-        "Final tally of {year} — {champLeader} on top, {player} {champPosition} for {team}. The turbo cools, the ambition doesn't. {pool:seasonClose}",
-        "The {year} crown goes elsewhere, to {champLeader}, with {player} {champPosition} for {team}. Next year the boost climbs again. {pool:seasonClose}"
+        "THE {year} CROWN GOES TO {champLeader}. {player} ends the season {champPosition} for {team}. {pool:seasonClose}",
+        "Final reckoning of {year}: {champLeader} takes the title, with {player} classified {champPosition} for {team}. {pool:seasonClose}",
+        "THE {year} TITLE BELONGS TO {champLeader}. The final table records {player} {champPosition} for {team}. {pool:seasonClose}",
+        "Curtain down on {year}: {champLeader} takes the honours and {player} finishes {champPosition} for {team}. {pool:seasonClose}",
+        "{champLeader} is champion of {year}; {player} brings the campaign home {champPosition} for {team}. {pool:seasonClose}",
+        "Final tally of {year} — {champLeader} on top, {player} {champPosition} for {team}. The championship order is fixed. {pool:seasonClose}",
+        "The {year} crown goes to {champLeader}, with {player} ending the year {champPosition} for {team}. {pool:seasonClose}",
+        "{champLeader} is champion of {year}; {player} closes the campaign {champPosition} for {team}. The final table is set. {pool:seasonClose}",
+        "FINAL TABLE, {year}: {champLeader} takes the crown, with {player} {champPosition} for {team}. The result is filed. {pool:seasonClose}"
       ],
       "default": [
         "{champLeader} took the {year} title; {player} finished the year {champPosition}. {pool:seasonClose}",

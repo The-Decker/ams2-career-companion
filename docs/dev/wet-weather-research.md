@@ -83,6 +83,53 @@ No rain-affected races (all rounds independently verified dry).
 - source: https://en.wikipedia.org/wiki/1978_Austrian_Grand_Prix
 - source: https://www.grandprix.com/gpe/rr309.html
 
+## 1983
+
+Researched + independently checked 2026-07-11 against all 15 championship weekends. Monaco was
+the season's only rain-affected race. Belgium, Detroit, and Germany add materially wet timed
+qualifying sessions; the race slots for those rounds preserve their documented dry race-day sky.
+
+### R5 Monaco Grand Prix
+- race: Light Rain / Heavy Cloud / Medium Cloud / Light Cloud
+- qualifying: Rain / Rain / Heavy Rain / Rain
+- evidence: Saturday timed qualifying ran in persistent rain. Heavy Sunday-morning rain left a
+  damp grid and light precipitation at the start; most front-runners chose wets while Rosberg
+  gambled on slicks. The surface then dried and the rain did not return. Light Rain in slot 1 is
+  the minimum AMS2 setting that reproduces the wet-tyre start; the three cloud slots model the
+  documented drying race.
+- source: https://www.motorsportmagazine.com/archive/article/june-1983/28/monaco-grand-prix-11/
+
+### R6 Belgian Grand Prix
+- race: Clear / Light Cloud / Clear / Clear
+- qualifying: Clear / Heavy Cloud / Rain / Heavy Rain
+- evidence: Friday timed qualifying was warm and dry, while Saturday practice and qualifying ran
+  in pouring rain. Race day was warm and dry. The mixed qualifying sequence is a conservative
+  one-session composite of the two timed days.
+- source: https://www.motorsportmagazine.com/archive/article/june-1983/74/le-grand-prix-de-belgique/
+
+### R7 Detroit Grand Prix
+- race: Clear / Clear / Clear / Clear
+- qualifying: Rain / Heavy Rain / Heavy Cloud / Clear
+- evidence: Friday's running began on wet streets and afternoon qualifying took place in hard
+  rain; Saturday qualifying dried from grey conditions into sunshine. Sunday was clear and warm.
+  The qualifying sequence represents that wet-to-dry timed-session arc without inventing a wet
+  race.
+- source: https://www.motorsportmagazine.com/archive/article/july-1983/32/the-detroit-grand-prix/
+
+### R10 German Grand Prix
+- race: Overcast / Heavy Cloud / Heavy Cloud / Medium Cloud
+- qualifying: Heavy Cloud / Rain / Heavy Rain / Rain
+- evidence: Saturday practice and qualifying were wet throughout. Rain continued into Sunday
+  morning but stopped before warm-up, allowing the surface to dry for a rain-free race under a
+  grey sky. The race slots deliberately contain no precipitation.
+- source: https://www.motorsportmagazine.com/archive/article/september-1983/44/the-german-grand-prix-3/
+
+The remaining eleven rounds have no material rain slot. San Marino began with residual dampness
+after overnight rain but no session precipitation; Austria's shower arrived after Friday
+qualifying; the Netherlands report explicitly describes the trace rain as inconsequential. Those
+events stay out rather than manufacturing a wet session. All dates were cross-checked against:
+https://www.formula1.com/en/results/1983/races
+
 ## 1985
 
 ### R2 Portuguese Grand Prix

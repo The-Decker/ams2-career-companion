@@ -1,4 +1,4 @@
-# News corpus coverage audit (2026-07-10) — the deepening worklist
+# News corpus coverage audit (2026-07-11) — the deepening worklist
 
 Mission B baseline over `data/rules/news/{1960s..2010s}.json` (the generative article grammar,
 `NewsArticleBank`). Guarded by `tests/Companion.Tests/News/NewsCorpusGuardTests.cs`: era-banned
@@ -31,12 +31,12 @@ THE MADONNA SEAT!").
 
 | decade | bodies (min–max per key) | pools | signature pools | state |
 |--------|--------------------------|-------|-----------------|-------|
-| 1960s | 9–11 (was 7–10) | 7 | wire-report voice, **rivalLine (new)** | **deepened 2026-07-10** |
+| 1960s | 11 (was 7–10) | 9 | wire-report voice, **rivalLine (new)** | **deepened 2026-07-10** |
 | 1970s | 9–11 (was 7–8) | 9 | sponsorLine, techNote (wings/ground-effect), **rivalLine (new)** | **deepened 2026-07-10** |
-| 1980s | 7–9 | 8 | boostLine (turbo), mediaLine | healthy |
+| 1980s | 9 (was 7–9) | 10 | mediaLine, **paddockNote/workshopNote (new)** | **deepened 2026-07-11** |
 | 1990s | 9–11 (was 7–8) | 8 | techNote, rivalLine | **deepened 2026-07-10** |
-| 2000s | 8–9 | 7 | sectorNote | healthy; defaults thin (1 per body key) |
-| 2010s | 10–11 (was 6–8) | 9 | techNote, punditTake, **sillySeason (new)** | **deepened 2026-07-10** |
+| 2000s | 9 (was 8–9) | 9 | webDesk, **paddockNote/reviewNote (new)** | **deepened 2026-07-11**; defaults thin (1 per body key) |
+| 2010s | 8–11 (was 6–8) | 9 | techNote, punditTake, **sillySeason (new)** | **deepened 2026-07-10** |
 
 2010s pass added: +3 variants on every race cause, +2 on both season digests, the `sillySeason`
 pool (driver-market beats woven into points/overperformed/midfield), and top-ups to
@@ -45,11 +45,19 @@ expectationBeat/champLine/techNote/punditTake/seasonClose.
 1970s pass added: +3–4 variants on every race cause, +2 on both season digests, and the
 `rivalLine` pool (the era's front-of-field duels — woven into podium/points/midfield).
 
-1960s pass added: brought every body key to 10–11 (from 7–10) and both digests to 9, plus a
+1960s pass added: brought every body key and both digests to 11 (from 7–10), plus a
 wire-report `rivalLine` pool — same treatment as 1970s, in the telegram/STOP voice.
 
 1990s pass added: every body key to 10–11 (from 8) and both digests to 9, in the telemetry/
 professional-era voice (existing techNote + rivalLine pools reused, no new pool).
+
+1980s pass added: every race cause and both digests to 9, expanded the main existing pools to
+9–11 era variants, and added 8-variant `paddockNote` + `workshopNote` pools for grid-politics and
+reliability/debrief beats without assuming every car is turbocharged.
+
+2000s pass added: every race cause and both digests to 9, expanded the main existing era pools
+to 9–11 variants, and added 8-variant `paddockNote` + `reviewNote` pools for driver-market and
+post-race analysis beats. Era-neutral body defaults remain deliberately small but fully guarded.
 
 ## Known coarse-grain (accepted)
 
@@ -62,15 +70,15 @@ professional-era voice (existing techNote + rivalLine pools reused, no new pool)
 
 ## The grind queue (one slice per session, commit each)
 
-1. **1980s / 2000s deepen** — the last two at 7–9 bodies. Same treatment, thinnest first.
-   (1960s + 1970s + 1990s done 2026-07-10; the 2010s were done earlier that day.)
-3. **New article TYPE: title watch** (the megaprompt's championship-permutation beat). Wiring:
+1. ~~**1980s / 2000s deepen**~~ — DONE 2026-07-11: every key now has 9 era bodies, with two
+   additional pools per decade. All six historical corpora now clear the variety floor.
+2. **New article TYPE: title watch** (the megaprompt's championship-permutation beat). Wiring:
    read-side in `CareerSessionService.ReadFeed` — when late-season facts qualify (player top-2,
    tight gap), compose a second body via a distinct stream discriminator (`"title"`, precedent:
    `"season"`) against new `race.result|title-watch` templates and append. No fold change.
-4. **New TYPE: qualifying report** — blocked on facts: the envelope stores grid data, but no
+3. **New TYPE: qualifying report** — blocked on facts: the envelope stores grid data, but no
    `news.headline` row exists for qualifying; would need either a fold change (gated) or
    attaching a quali paragraph to the race body read-side (cheap version — do this first).
-5. **Transfer rumors as standalone silly-season articles** — the pool exists (2010s); a
+4. **Transfer rumors as standalone silly-season articles** — the pool exists (2010s); a
    standalone TYPE wants an offers/market journal source; revisit when the career-sim
    team/sponsor arc lands (PLAN.md).

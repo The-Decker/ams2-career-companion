@@ -1,0 +1,1432 @@
+{
+  "year": 1983,
+  "seriesName": "Formula One World Championship",
+  "ams2Class": "F-Retro_Gen3",
+  "refuellingAllowed": true,
+  "pointsSystem": {
+    "racePoints": [
+      9,
+      6,
+      4,
+      3,
+      2,
+      1
+    ],
+    "sharedDrivePolicy": "zero",
+    "driversBestN": {
+      "wholeSeason": 11
+    },
+    "constructors": {
+      "bestCarOnly": false,
+      "bestN": null
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "name": "Brazilian Grand Prix",
+      "date": "1983-03-13",
+      "championship": true,
+      "track": {
+        "realVenue": "Jacarepagu\u00E1",
+        "id": "jacarepagua_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 63,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1983-03-13",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 2,
+      "name": "United States Grand Prix West",
+      "date": "1983-03-27",
+      "championship": true,
+      "track": {
+        "realVenue": "Long Beach",
+        "id": "long_beach",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 75,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1983-03-27",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 3,
+      "name": "French Grand Prix",
+      "date": "1983-04-17",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Paul Ricard",
+        "id": "le_mans_bugatti",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "hockenheim_1988",
+          "silverstone_1991"
+        ],
+        "alternate": {
+          "id": "florence_gp",
+          "laps": 60,
+          "isRealVenue": false
+        }
+      },
+      "laps": 75,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1983-04-17",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Paul Ricard \u2014 54 laps / 313.7 km reproduced as 75 laps of Le Mans Circuit Bugatti. Le Mans Bugatti keeps the French GP at a French Grand Prix venue."
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 4,
+      "name": "San Marino Grand Prix",
+      "date": "1983-05-01",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "id": "imola_88",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 60,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1983-05-01",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 5,
+      "name": "Monaco Grand Prix",
+      "date": "1983-05-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Monaco",
+        "id": "azure_circuit_2021",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "azure_circuit"
+        ]
+      },
+      "laps": 76,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1983-05-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Rain",
+            "Rain",
+            "Heavy Rain",
+            "Rain"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Light Rain",
+              "Heavy Cloud",
+              "Medium Cloud",
+              "Light Cloud"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 6,
+      "name": "Belgian Grand Prix",
+      "date": "1983-05-22",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit de Spa-Francorchamps",
+        "id": "spa-francorchamps_1993",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 40,
+      "grid": {
+        "size": 23,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 22,
+          "startTime": "14:00",
+          "date": "1983-05-22",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Heavy Cloud",
+            "Rain",
+            "Heavy Rain"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Light Cloud",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 7,
+      "name": "Detroit Grand Prix",
+      "date": "1983-06-05",
+      "championship": true,
+      "track": {
+        "realVenue": "Detroit Street Circuit",
+        "id": "adelaide_historic",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "long_beach"
+        ]
+      },
+      "laps": 64,
+      "grid": {
+        "size": 23,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 22,
+          "startTime": "14:00",
+          "date": "1983-06-05",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Detroit Street Circuit \u2014 60 laps / 241.4 km reproduced as 64 laps of Adelaide Historic. Because the real Long Beach round already uses Long Beach, Adelaide 1988 is the default concrete-lined street stand-in and Long Beach remains the fallback."
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Rain",
+            "Heavy Rain",
+            "Heavy Cloud",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 8,
+      "name": "Canadian Grand Prix",
+      "date": "1983-06-12",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Gilles Villeneuve",
+        "id": "montrealhistoric",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 70,
+      "grid": {
+        "size": 23,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 22,
+          "startTime": "14:00",
+          "date": "1983-06-12",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 9,
+      "name": "British Grand Prix",
+      "date": "1983-07-16",
+      "championship": true,
+      "track": {
+        "realVenue": "Silverstone Circuit",
+        "id": "silverstone_1975",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "silverstone_1991"
+        ]
+      },
+      "laps": 67,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.stefan_johansson",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1983-07-16",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 10,
+      "name": "German Grand Prix",
+      "date": "1983-08-07",
+      "championship": true,
+      "track": {
+        "realVenue": "Hockenheimring",
+        "id": "hockenheim_1988",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 45,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.stefan_johansson",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1983-08-07",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Heavy Cloud",
+            "Rain",
+            "Heavy Rain",
+            "Rain"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Overcast",
+              "Heavy Cloud",
+              "Heavy Cloud",
+              "Medium Cloud"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 11,
+      "name": "Austrian Grand Prix",
+      "date": "1983-08-14",
+      "championship": true,
+      "track": {
+        "realVenue": "\u00D6sterreichring",
+        "id": "spielberg_historic",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "spielberg_vintage"
+        ]
+      },
+      "laps": 53,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.stefan_johansson",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1983-08-14",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 12,
+      "name": "Dutch Grand Prix",
+      "date": "1983-08-28",
+      "championship": true,
+      "track": {
+        "realVenue": "Circuit Zandvoort",
+        "id": "spielberg_vintage",
+        "isPlaceholder": true,
+        "fallbacks": [
+          "spielberg_historic",
+          "silverstone_1975",
+          "brandshatch_gp"
+        ],
+        "alternate": {
+          "id": "Heusden",
+          "laps": 76,
+          "isRealVenue": false
+        }
+      },
+      "laps": 52,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.stefan_johansson",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1983-08-28",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": "Placeholder for Circuit Zandvoort \u2014 72 laps / 306.1 km reproduced as 52 laps of Spielberg Vintage."
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 13,
+      "name": "Italian Grand Prix",
+      "date": "1983-09-11",
+      "championship": true,
+      "track": {
+        "realVenue": "Autodromo Nazionale Monza",
+        "id": "monza_1991",
+        "isPlaceholder": false,
+        "fallbacks": [
+          "monza_1971"
+        ]
+      },
+      "laps": 52,
+      "grid": {
+        "size": 24,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.johnny_cecotto",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.stefan_johansson",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 23,
+          "startTime": "14:00",
+          "date": "1983-09-11",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 14,
+      "name": "European Grand Prix",
+      "date": "1983-09-25",
+      "championship": true,
+      "track": {
+        "realVenue": "Brands Hatch",
+        "id": "brandshatch_gp",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 76,
+      "grid": {
+        "size": 23,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.stefan_johansson",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 22,
+          "startTime": "14:00",
+          "date": "1983-09-25",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "round": 15,
+      "name": "South African Grand Prix",
+      "date": "1983-10-15",
+      "championship": true,
+      "track": {
+        "realVenue": "Kyalami Racing Circuit",
+        "id": "kyalami_historic",
+        "isPlaceholder": false,
+        "fallbacks": []
+      },
+      "laps": 77,
+      "grid": {
+        "size": 22,
+        "starterDriverIds": [
+          "driver.nelson_piquet",
+          "driver.riccardo_patrese",
+          "driver.alain_prost",
+          "driver.rene_arnoux",
+          "driver.patrick_tambay",
+          "driver.keke_rosberg",
+          "driver.john_watson",
+          "driver.eddie_cheever",
+          "driver.andrea_de_cesaris",
+          "driver.niki_lauda",
+          "driver.jacques_laffite",
+          "driver.michele_alboreto",
+          "driver.nigel_mansell",
+          "driver.derek_warwick",
+          "driver.marc_surer",
+          "driver.mauro_baldi",
+          "driver.danny_sullivan",
+          "driver.elio_de_angelis",
+          "driver.thierry_boutsen",
+          "driver.jean_pierre_jarier",
+          "driver.raul_boesel",
+          "driver.manfred_winkelhock"
+        ]
+      },
+      "setupGuide": {
+        "session": {
+          "opponents": 21,
+          "startTime": "14:00",
+          "date": "1983-10-15",
+          "weatherSlots": [
+            "Clear"
+          ],
+          "timeProgression": "1x",
+          "mandatoryPitStop": false
+        },
+        "notes": ""
+      },
+      "guestEntries": [],
+      "aiOverrides": {},
+      "weekend": {
+        "practice": {
+          "present": true,
+          "label": "Practice",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "qualifying": {
+          "present": true,
+          "label": "Qualifying",
+          "durationMinutes": 60,
+          "weatherSlots": [
+            "Clear",
+            "Clear",
+            "Clear",
+            "Clear"
+          ]
+        },
+        "races": [
+          {
+            "id": "race",
+            "label": "Grand Prix",
+            "weatherSlots": [
+              "Clear",
+              "Clear",
+              "Clear",
+              "Clear"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
