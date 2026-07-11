@@ -39,6 +39,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <see cref="ResultDraft.QualifyingOrder"/>. Null when the round ran no qualifying session.</summary>
     private IReadOnlyList<string>? _capturedQualifyingOrder;
 
+    /// <summary>The starting-grid look shown AFTER qualifying and BEFORE the race — display-only, so
+    /// the player sees the grid pole-first before racing. Null except while on that step.</summary>
+    private StartingGridViewModel? _startingGrid;
+
     /// <summary>Races already confirmed this round (Increment 2e.3): as the player advances "Next
     /// race" each race is captured and LOCKED (exactly like the qualifying step); the final race
     /// stays live so confirm → back can re-edit it. Empty on a single race. Cleared on Apply.</summary>
@@ -138,7 +142,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(
         nameof(IsBriefingState), nameof(IsResultEntryState),
         nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
-        nameof(IsQualifyingStep), nameof(ConfirmButtonText))]
+        nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -150,6 +154,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     public bool IsStandingsState => CurrentContent is StandingsViewModel;
     public bool IsSeasonReviewState => CurrentContent is SeasonReviewViewModel;
 
+    /// <summary>True while the CURRENT content is the starting-grid look (after qualifying, before the
+    /// race). Drives the primary action's "Start the race" label.</summary>
+    public bool IsStartingGridState => CurrentContent is StartingGridViewModel;
+
     /// <summary>True while the CURRENT content is the weekend qualifying-order step (not the race
     /// result) — both reuse the result-entry grammar, so this drives the primary action's label
     /// and the "which step am I on" cues. Always false on single-race rounds.</summary>
@@ -160,6 +168,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// is not the round's last advances to the next race; the last (or only) race scores the round.</summary>
     public string ConfirmButtonText =>
         IsQualifyingStep ? "Set the grid  ⏎"
+        : IsStartingGridState ? "Start the race  ⏎"
         : IsResultEntryState && !IsLastRace ? "Next race  ⏎"
         : "Confirm result  ⏎";
 
@@ -233,6 +242,25 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         CurrentContent = _qualifyingEntry;
     }
 
+    /// <summary>Show the starting grid — the qualifying result laid out pole-first as driver + car
+    /// cards, a display-only look before the race (Increment 2 GUI: "see the starting grid"). Built
+    /// fresh each time from the captured order; never a fold input.</summary>
+    private void ShowStartingGrid()
+    {
+        var grid = OrderByQualifying(_session.CurrentGrid(), _capturedQualifyingOrder);
+        if (grid.Count == 0)
+        {
+            ContentError = "This round has no grid to show.";
+            ShowRaceEntry();
+            return;
+        }
+        _startingGrid = new StartingGridViewModel(
+            grid, Summary.PlayerDriverId,
+            WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null);
+        CurrentContent = _startingGrid;
+        ConfirmResultCommand.NotifyCanExecuteChanged();
+    }
+
     /// <summary>Show the race result entry — the shipped flow, now seeded pole-first from any
     /// captured qualifying order (a single-race round leaves the grid untouched).</summary>
     private void ShowRaceEntry()
@@ -286,7 +314,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             .ToArray();
     }
 
-    private bool CanConfirmResult => CurrentContent is ResultEntryViewModel { IsComplete: true };
+    private bool CanConfirmResult =>
+        CurrentContent is ResultEntryViewModel { IsComplete: true } or StartingGridViewModel;
 
     /// <summary>The result-entry primary action. On the qualifying step it locks the entered grid
     /// (no scoring) and advances to the race; on the race step it scores the draft into the Confirm
@@ -294,14 +323,21 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanConfirmResult))]
     private void ConfirmResult()
     {
-        // Qualifying step: lock the grid, hold the order, advance to the race (no confirm screen).
+        // Starting-grid step: the player has looked at the grid — go racing.
+        if (IsStartingGridState)
+        {
+            ShowRaceEntry();
+            return;
+        }
+
+        // Qualifying step: lock the grid, hold the order, show the starting grid before the race.
         if (IsQualifyingStep && _qualifyingEntry is { IsComplete: true } qualifying)
         {
             _capturedQualifyingOrder = qualifying.BuildDraft().Classified;
             _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
             _qualifyingEntry = null;
             ContentError = null;
-            ShowRaceEntry();
+            ShowStartingGrid();
             return;
         }
 
@@ -393,6 +429,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
         _capturedQualifyingOrder = null;
         _capturedRaces.Clear();
+        _startingGrid = null;
 
         Summary = _session.Summary;
         Briefing.Refresh();

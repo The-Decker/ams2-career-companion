@@ -59,11 +59,21 @@ public sealed class WeekendLoopTests
         Order(qualifying, "2", "1");
         Assert.True(home.ConfirmResultCommand.CanExecute(null)); // "Set the grid" is enabled
 
-        home.ConfirmResultCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null); // set the grid → the starting-grid look
+
+        // The starting grid shows the qualifying result pole-first BEFORE the race.
+        var startingGrid = Assert.IsType<StartingGridViewModel>(home.CurrentContent);
+        Assert.True(home.IsStartingGridState);
+        Assert.Equal("Start the race  ⏎", home.ConfirmButtonText);
+        Assert.Equal("driver.hulme", startingGrid.Slots[0].DriverId);   // pole-sitter leads the grid
+        Assert.Equal("driver.brabham", startingGrid.Slots[1].DriverId);
+
+        home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
         var race = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         Assert.NotSame(qualifying, race);
         Assert.False(home.IsQualifyingStep);
+        Assert.False(home.IsStartingGridState);
         Assert.Null(race.SessionLabel);
         Assert.Equal("Confirm result  ⏎", home.ConfirmButtonText);
         // The race grid is seeded from the qualifying order: pole-sitter Hulme leads Remaining.
@@ -79,7 +89,8 @@ public sealed class WeekendLoopTests
 
         home.EnterResultCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1"); // pole Hulme, then Brabham
-        home.ConfirmResultCommand.Execute(null);                     // set the grid → race
+        home.ConfirmResultCommand.Execute(null);                     // set the grid → starting grid
+        home.ConfirmResultCommand.Execute(null);                     // start the race → race entry
 
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1"); // race result
         home.ConfirmResultCommand.Execute(null);                     // → confirm interstitial
@@ -113,7 +124,8 @@ public sealed class WeekendLoopTests
         // Round 1: qualify + race + apply.
         home.EnterResultCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
-        home.ConfirmResultCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null); // set the grid → starting grid
+        home.ConfirmResultCommand.Execute(null); // start the race → race entry
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
         home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
@@ -147,7 +159,12 @@ public sealed class WeekendLoopTests
         home.EnterResultCommand.Execute(null);
         Assert.True(home.IsQualifyingStep);
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1");
-        home.ConfirmResultCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null); // set the grid → starting grid
+
+        // The starting grid names the first race (Feature) it precedes.
+        var grid = Assert.IsType<StartingGridViewModel>(home.CurrentContent);
+        Assert.Contains("Feature", grid.Title);
+        home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
         // Race 1 (Feature) — NOT the round's last, so the primary action advances to the next race.
         var feature = (ResultEntryViewModel)home.CurrentContent!;
