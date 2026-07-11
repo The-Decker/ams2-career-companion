@@ -88,6 +88,14 @@ public static class JournalPhases
     /// who now drives what. Emitted only when a battle actually moved seats.</summary>
     public const string SmgpSeat = "smgp.seat";
 
+    /// <summary>The player's post-race answer to a two-wins seat-swap offer, captured on the
+    /// promotion screen (3c-2, two-phase careers). A raw player-choice INPUT the fold cannot
+    /// re-derive — journaled here and PROVENANCE-EXCLUDED (the round fold never regenerates it),
+    /// then read back at re-fold to resolve the pending offer, exactly like the character spends.
+    /// Absent = the offer was left unresolved / a legacy career (the standing up-front answer
+    /// already applied inline).</summary>
+    public const string SmgpSwap = "smgp.swap";
+
     /// <summary>The SMGP season-end fold (M3 slice 4): the championship title increment + the
     /// Madonna title-defense arming (champion), or the between-seasons streak reset (everyone
     /// else, only when something actually reset). Absent for every non-smgp career.</summary>

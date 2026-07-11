@@ -174,6 +174,27 @@ public static class StateStore
             ("@state", DataJson.Serialize(state)));
     }
 
+    /// <summary>Replace an already-folded round's player state — the promotion screen's forward
+    /// resolution (3c-2) re-persists the round it belongs to after the deferred seat swap resolves.
+    /// The re-fold path re-derives this exact state, so replay stays byte-identical.</summary>
+    public static void UpdateRoundPlayerState(
+        CareerDatabase db,
+        long seasonId,
+        int round,
+        RoundPlayerState state,
+        SqliteTransaction? transaction = null)
+    {
+        db.Execute(
+            """
+            UPDATE round_player_state SET state_json = @state
+            WHERE season_id = @season AND round = @round;
+            """,
+            transaction,
+            ("@season", seasonId),
+            ("@round", round),
+            ("@state", DataJson.Serialize(state)));
+    }
+
     public static RoundPlayerState? ReadRoundPlayerState(
         CareerDatabase db, long seasonId, int round, SqliteTransaction? transaction = null)
     {

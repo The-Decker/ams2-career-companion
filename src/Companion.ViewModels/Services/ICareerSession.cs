@@ -37,6 +37,19 @@ public interface ICareerSession
     /// outside the mode, or when the season is complete. Additive default so fakes compile.</summary>
     SmgpBriefingModel? CurrentSmgpBriefing() => null;
 
+    /// <summary>The two-wins seat-swap offer awaiting the player's POST-RACE decision on the
+    /// promotion screen (3c-2), or null — outside the mode, a legacy (inline-apply) career, or no
+    /// offer pending this round. Non-null = show the promotion screen after confirm. Additive
+    /// default so fakes compile.</summary>
+    Companion.Core.Smgp.SmgpPendingOffer? CurrentSmgpPendingOffer() => null;
+
+    /// <summary>Resolve the pending two-wins offer (3c-2): ACCEPT moves the player into the offered
+    /// car (effective from the next round's grid); DECLINE keeps the current seat. Journals the
+    /// decision as the provenance-excluded <c>smgp.swap</c> input and re-persists the round it
+    /// belongs to, so replay re-derives the outcome byte-identically. Additive default: no-op so
+    /// fakes compile.</summary>
+    void ResolveSmgpOffer(bool accept) { }
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>

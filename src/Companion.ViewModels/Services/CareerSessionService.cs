@@ -447,7 +447,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // career is byte-identical. The player starts in the wizard-picked car.
             Smgp = smgpMode && string.Equals(
                     pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal)
-                ? new Companion.Core.Smgp.SmgpState { CurrentSeatLivery = playerLiveryName }
+                // TwoPhasePromotion (3c-2): new smgp careers DEFER a two-wins offer to the post-race
+                // promotion screen; omitted-when-false so every pre-3c-2 career keeps the inline path.
+                ? new Companion.Core.Smgp.SmgpState { CurrentSeatLivery = playerLiveryName, TwoPhasePromotion = true }
                 : null,
         };
 
@@ -1071,6 +1073,28 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             CurrentGridSelection(), applyWeekendForm: applyWeekendForm,
             seatOverrides: smgp?.AiSeatOverrides is { Count: > 0 } overrides ? overrides : null,
             playerSeatOverride: smgp?.CurrentSeatLivery);
+    }
+
+    /// <summary>The pending two-wins offer awaiting the promotion screen's decision (3c-2), or null.
+    /// Reads the latest folded state, so it appears the moment a round's battle deferred an offer and
+    /// clears the moment <see cref="ResolveSmgpOffer"/> answers it.</summary>
+    public Companion.Core.Smgp.SmgpPendingOffer? CurrentSmgpPendingOffer() =>
+        CurrentSmgpState()?.PendingSwap;
+
+    /// <summary>Resolve the pending offer on the last folded round (3c-2) — the promotion screen's
+    /// accept/decline. Delegates to the atomic <see cref="ReplayService.ResolveSmgpOffer"/>.</summary>
+    public void ResolveSmgpOffer(bool accept)
+    {
+        int round = MaxAppliedRound;
+        if (round <= 0 || CurrentSmgpState()?.PendingSwap is null)
+            throw new InvalidOperationException(
+                "There is no pending seat-swap offer to resolve on this career.");
+        ReplayService.ResolveSmgpOffer(_database, _seasonId, Pack, round, accept, NowUtc());
+
+        // The offer is now cleared: if it was deferred on the season's FINAL round, season end was
+        // held back (EnsureSeasonEnd) — fold it now, on the resolved seat, matching replay's order.
+        if (SeasonComplete)
+            EnsureSeasonEnd();
     }
 
     /// <summary>The SMGP mode's LATEST folded state — the last folded round's, else the season
@@ -2136,6 +2160,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var season = CareerStore.ReadSeasons(_database).FirstOrDefault(s => s.Id == _seasonId)
             ?? throw new InvalidOperationException($"Season {_seasonId} vanished from the career file.");
         if (string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal))
+            return;
+        // Two-phase (3c-2): a promotion offer deferred by the final round MUST be resolved on the
+        // screen BEFORE season end folds — replay resolves it inline (inside the round fold, ahead of
+        // season end), so running season end now (old seat, wrong journal order) would diverge on
+        // re-simulate. Hold season end until ResolveSmgpOffer clears the pending offer.
+        if (CurrentSmgpPendingOffer() is not null)
             return;
         ReplayService.RunSeasonEnd(_database, _seasonId, Pack, MasterSeedU, SimInputs(), NowUtc());
     }

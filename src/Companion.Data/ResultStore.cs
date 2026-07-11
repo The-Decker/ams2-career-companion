@@ -108,6 +108,24 @@ public sealed record SmgpRivalCall
     public bool? SeatSwapAccepted { get; init; }
 }
 
+/// <summary>The DeltaJson of an <c>smgp.swap</c> journal input row (3c-2): the player's post-race
+/// promotion-screen decision for a two-phase career. Provenance-excluded from the byte-compare and
+/// read back at re-fold to resolve the round's pending offer. Carries the rival + offered car for
+/// the Why? inspector; the resolution itself reads only <see cref="Accepted"/> (the pending offer's
+/// seat rides on the folded state).</summary>
+public sealed record SmgpSwapInput
+{
+    /// <summary>The rival whose seat was offered (pack driver id) — provenance only.</summary>
+    public string? Rival { get; init; }
+
+    /// <summary>The offered car (ams2LiveryName) — provenance only.</summary>
+    public string? OfferedSeat { get; init; }
+
+    /// <summary>True = the player ACCEPTED the promotion (move into the offered car); false =
+    /// declined (keep the current seat).</summary>
+    public required bool Accepted { get; init; }
+}
+
 public sealed record StoredRoundResult
 {
     public required int Round { get; init; }

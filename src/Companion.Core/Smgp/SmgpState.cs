@@ -56,6 +56,23 @@ public sealed record SmgpState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public SmgpBattleOutcome DefenseRound1 { get; init; }
 
+    /// <summary>The TWO-PHASE promotion seam (3c-2): a career created after this shipped defers a
+    /// two-wins seat-swap offer to the post-race PROMOTION SCREEN instead of applying it inline in
+    /// the battle fold. Seeded true at creation for new smgp careers; OMITTED when false so every
+    /// pre-3c-2 state cell parses as false and keeps the legacy inline-apply path — the byte-identical
+    /// gate. Carried forward each round (and across the season reset / champion rollover) like every
+    /// other state field.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool TwoPhasePromotion { get; init; }
+
+    /// <summary>A two-wins seat-swap offer AWAITING the player's post-race accept/decline on the
+    /// promotion screen (3c-2, two-phase careers only): the battle fold records it here INSTEAD of
+    /// moving the seat, and the resolution fold (driven by the journaled <c>smgp.swap</c> input,
+    /// default = the standing up-front answer) applies-or-clears it. Null (omitted) = no offer
+    /// pending — every non-smgp career, every legacy career, and every resolved round.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public SmgpPendingOffer? PendingSwap { get; init; }
+
     /// <summary>This rival's running tally (a rival never battled starts empty).</summary>
     public SmgpBattleTally TallyFor(string rivalDriverId) =>
         Tallies.TryGetValue(rivalDriverId, out var tally) ? tally : SmgpBattleTally.Empty;
@@ -76,6 +93,9 @@ public sealed record SmgpState
         TitleDefense = false,
         DefenseRound1 = SmgpBattleOutcome.Void,
         FloorLosses = 0,
+        // An offer never answered by season's end lapses — the new season's ladder starts clean.
+        // (TwoPhasePromotion is the gate, so it is NOT reset; it carries via `this with`.)
+        PendingSwap = null,
     };
 
     // STRUCTURAL equality — the record default compares the dictionaries by REFERENCE, which
@@ -95,6 +115,8 @@ public sealed record SmgpState
             && TitleDefense == other.TitleDefense
             && DefenseRound1 == other.DefenseRound1
             && FloorLosses == other.FloorLosses
+            && TwoPhasePromotion == other.TwoPhasePromotion
+            && Equals(PendingSwap, other.PendingSwap)
             && Tallies.SequenceEqual(other.Tallies)
             && AiSeatOverrides.SequenceEqual(other.AiSeatOverrides);
     }
@@ -108,6 +130,8 @@ public sealed record SmgpState
         hash.Add(TitleDefense);
         hash.Add(DefenseRound1);
         hash.Add(FloorLosses);
+        hash.Add(TwoPhasePromotion);
+        hash.Add(PendingSwap);
         foreach (var pair in Tallies)
         {
             hash.Add(pair.Key, StringComparer.Ordinal);
@@ -141,4 +165,19 @@ public sealed record SmgpState
             canonical[pair.Key] = pair.Value;
         return canonical;
     }
+}
+
+/// <summary>A two-wins seat-swap offer the battle fold deferred to the promotion screen (3c-2):
+/// the rival the player beat twice and the exact car (ams2LiveryName) they are offered — the seat
+/// the resolution moves the player into on ACCEPT. A plain value record: default structural equality
+/// is exact (both fields are ordinal strings), so <see cref="SmgpState"/>'s byte-identical replay
+/// gate compares it correctly.</summary>
+public sealed record SmgpPendingOffer
+{
+    /// <summary>The rival (pack driver id) the player beat twice to earn the offer.</summary>
+    public required string RivalDriverId { get; init; }
+
+    /// <summary>The car the player is offered — the rival's current seat (ams2LiveryName); the
+    /// resolution sets <see cref="SmgpState.CurrentSeatLivery"/> to this on accept.</summary>
+    public required string OfferedSeat { get; init; }
 }
