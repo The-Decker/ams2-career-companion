@@ -95,7 +95,14 @@
       "teamId": "team.ferrari",
       "driverId": "driver.chris_amon",
       "number": "11",
-      "rounds": "1-11",
+      "rounds": "1-7,9-11",
+      "ams2LiveryName": "Ferrari #11 C. Amon"
+    },
+    {
+      "teamId": "team.ferrari",
+      "driverId": "driver.ernesto_brambilla",
+      "number": "11",
+      "rounds": "8",
       "ams2LiveryName": "Ferrari #11 C. Amon"
     },
     {
@@ -167,6 +174,20 @@
       "number": "19",
       "rounds": "1-11",
       "ams2LiveryName": "Brabham-Repco #19 P. de Klerk"
+    },
+    {
+      "teamId": "team.brabham",
+      "driverId": "driver.richard_attwood",
+      "number": "29",
+      "rounds": "1-11",
+      "ams2LiveryName": "Brabham-Ford Cosworth #29 R. Attwood"
+    },
+    {
+      "teamId": "team.brabham",
+      "driverId": "driver.piers_courage",
+      "number": "32",
+      "rounds": "1-11",
+      "ams2LiveryName": "Brabham-Ford Cosworth #32 P. Courage"
     },
     {
       "teamId": "team.bmw",
