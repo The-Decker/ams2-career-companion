@@ -412,6 +412,12 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// <c>data/ams2/cars/&lt;driverId&gt;.png</c>). Null for an own entrant (no pack car).</summary>
     public string? PlayerCarKey => SelectedSeat?.DriverId;
 
+    /// <summary>The player's chosen driver name (the character step, defaulting to the seat driver
+    /// until edited) — replaces the AI driver's name on the player's own Season's-Grid card. Null
+    /// (character-less / empty) leaves the card on the seat driver's name.</summary>
+    private string? PlayerDisplayName =>
+        Character?.Name?.Trim() is { Length: > 0 } n ? n : null;
+
     /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
     /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path — a
     /// stable synthetic driver, a neutral car, character-shaped ratings), added to the grid rather than
@@ -549,15 +555,21 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         {
             var entry = group.OrderByDescending(e => RoundsCovered(pack, e.Rounds)).First();
             var liveries = group.Select(e => e.Ams2LiveryName).Distinct(StringComparer.Ordinal).ToList();
+            bool locked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal);
             var choice = new GridSeatChoice
             {
                 LiveryName = entry.Ams2LiveryName,
                 Liveries = liveries,
-                DriverName = driversById[entry.DriverId].Name,
+                // The player REPLACES this seat's driver — their own (locked) card shows the PLAYER's
+                // chosen name, not the AI driver whose car they took. Every other card keeps its
+                // driver. (In-career the resolver does the same swap by IsPlayer; this is the wizard.)
+                DriverName = locked && PlayerDisplayName is { } playerName
+                    ? playerName
+                    : driversById[entry.DriverId].Name,
                 TeamName = teamsById[entry.TeamId].Name,
                 DriverId = entry.DriverId,
                 TeamId = entry.TeamId,
-                IsLocked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal),
+                IsLocked = locked,
                 IsIncluded = true,
             };
             choice.PropertyChanged += OnGridChoiceChanged;

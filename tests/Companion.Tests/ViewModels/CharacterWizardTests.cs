@@ -184,6 +184,38 @@ public sealed class CharacterWizardTests : IDisposable
     // ---------- wizard integration ----------
 
     [Fact]
+    public void RenamingTheDriver_ReplacesTheSeatDriver_OnThePlayersOwnGridCard()
+    {
+        // Mike's bug: changing the driver name left the seat's original driver on the "YOU" card.
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), Path.Combine(_root, "packs", "pack"));
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+        var wizard = new NewCareerWizardViewModel(
+            environment, new FakeCareerFactory(),
+            packSearchRoots: [Path.Combine(_root, "packs")],
+            careersDirectory: Path.Combine(_root, "careers"),
+            seedSource: new Random(9));
+
+        wizard.SelectedPack = Assert.Single(wizard.Packs);
+        wizard.NextCommand.Execute(null);                 // -> Verification
+        if (wizard.HasWarnings) wizard.ProceedAnyway = true;
+        wizard.NextCommand.Execute(null);                 // -> SeatPick
+        var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.SelectedSeat = seat;
+        wizard.NextCommand.Execute(null);                 // -> Character
+        wizard.Character!.Name = "Renamed Driver";        // the player changes their name
+        wizard.NextCommand.Execute(null);                 // -> Grid (choices built on entry)
+
+        // The player REPLACES the seat's driver on their own (locked) card — new name, not the AI's.
+        var you = Assert.Single(wizard.GridChoices, c => c.IsLocked);
+        Assert.Equal("Renamed Driver", you.DriverName);
+        Assert.NotEqual(seat.DriverName, you.DriverName);
+        // Every other card keeps its own driver.
+        Assert.All(wizard.GridChoices.Where(c => !c.IsLocked), c => Assert.NotEqual("Renamed Driver", c.DriverName));
+    }
+
+    [Fact]
     public void Wizard_WithRules_ShowsTheCharacterStep_AndWritesTheCharacterIntoTheRequest()
     {
         TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), Path.Combine(_root, "packs", "pack"));
