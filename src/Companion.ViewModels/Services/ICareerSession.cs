@@ -199,6 +199,11 @@ public interface ICareerSession
     /// current team), or null when unknown. Additive default: null.</summary>
     string? PlayerTeamName() => null;
 
+    /// <summary>The player's current car spec card (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars),
+    /// resolved from the player's team/vehicle via the car-specs catalog; null when there is no
+    /// authored spec (or no rules). Display-only. Additive default: null.</summary>
+    CarSpecCardViewModel? PlayerCarSpec() => null;
+
     /// <summary>The player's driver dossier (character depth 3): name, the seven stats, the chosen
     /// perks with what they do, and progression (level + XP toward the next), projected from the
     /// current folded player state + the character rules. Null for a career with no character (or no

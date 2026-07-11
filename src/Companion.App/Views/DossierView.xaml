@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.DossierView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
     <!-- The Driver dossier (character depth 3). DataContext is a DossierViewModel; the character
          data is Dossier (a CharacterDossier). Read-only — this is the "see your driver" lens. -->
@@ -10,42 +11,83 @@
                     MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
                                Converter={StaticResource WidthFraction}, ConverterParameter=0.6|720|1100}">
 
-            <!-- identity + progression -->
-            <TextBlock Text="{Binding Name}" Style="{StaticResource H1}" />
-            <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
-                       Text="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       Visibility="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullCollapsed}}" />
-            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                <TextBlock Style="{StaticResource Muted}">
-                    <Run Text="Level" /><Run Text=" " /><Run Text="{Binding Level, Mode=OneWay}" FontWeight="SemiBold" />
-                </TextBlock>
-                <TextBlock Style="{StaticResource Muted}" Margin="16,0,0,0"
-                           Visibility="{Binding Age, Converter={StaticResource NullCollapsed}}">
-                    <Run Text="Age" /><Run Text=" " /><Run Text="{Binding Age, Mode=OneWay}" FontWeight="SemiBold" />
-                </TextBlock>
-                <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0">
-                    <Run Text="{Binding Xp, Mode=OneWay}" /><Run Text=" XP" />
-                </TextBlock>
-                <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0"
-                           Visibility="{Binding CpUnspent, Converter={StaticResource CountVisible}}">
-                    <Run Text="{Binding CpUnspent, Mode=OneWay}" /><Run Text=" points to spend" />
-                </TextBlock>
-            </StackPanel>
-            <TextBlock Margin="0,6,0,0">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding InjuryRisk}" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-                <Run Text="Injury risk: " /><Run Text="{Binding InjuryRisk, Mode=OneWay}" FontWeight="SemiBold"
-                     Foreground="{StaticResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
-            </TextBlock>
-            <ProgressBar Value="{Binding LevelProgress, Mode=OneWay}" Maximum="1" Height="6" Margin="0,8,0,0"
-                         ToolTip="Progress to the next level" />
+            <!-- header: driver portrait + team car on the left; identity, progression + car specs on the right -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- portrait (team-coloured player image) + the car you drive -->
+                <StackPanel Grid.Column="0" Margin="0,0,22,0" VerticalAlignment="Top">
+                    <Grid Width="150" Height="150"
+                          ToolTip="Drop your team player image at data\ams2\portraits\player.&lt;team&gt;.jpg (beside the exe)">
+                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border CornerRadius="10" ClipToBounds="True">
+                            <Image Stretch="UniformToFill"
+                                   Source="{Binding DataContext.PlayerImageKey, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                        </Border>
+                    </Grid>
+                    <Image Height="48" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,10,0,0"
+                           Source="{Binding DataContext.PlayerCarKey, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                </StackPanel>
+
+                <!-- identity + progression + car specs -->
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource H1}" />
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
+                               Text="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                               Visibility="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullCollapsed}}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <TextBlock Style="{StaticResource Muted}">
+                            <Run Text="Level" /><Run Text=" " /><Run Text="{Binding Level, Mode=OneWay}" FontWeight="SemiBold" />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource Muted}" Margin="16,0,0,0"
+                                   Visibility="{Binding Age, Converter={StaticResource NullCollapsed}}">
+                            <Run Text="Age" /><Run Text=" " /><Run Text="{Binding Age, Mode=OneWay}" FontWeight="SemiBold" />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0">
+                            <Run Text="{Binding Xp, Mode=OneWay}" /><Run Text=" XP" />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0"
+                                   Visibility="{Binding CpUnspent, Converter={StaticResource CountVisible}}">
+                            <Run Text="{Binding CpUnspent, Mode=OneWay}" /><Run Text=" points to spend" />
+                        </TextBlock>
+                    </StackPanel>
+                    <TextBlock Margin="0,6,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding InjuryRisk}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                        <Run Text="Injury risk: " /><Run Text="{Binding InjuryRisk, Mode=OneWay}" FontWeight="SemiBold"
+                             Foreground="{StaticResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
+                    </TextBlock>
+                    <ProgressBar Value="{Binding LevelProgress, Mode=OneWay}" Maximum="1" Height="6" Margin="0,8,0,0"
+                                 ToolTip="Progress to the next level" />
+
+                    <!-- the car you drive, as the arcade spec card — collapses when no spec is authored -->
+                    <ContentControl Content="{Binding DataContext.PlayerCarSpec, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    HorizontalAlignment="Left" MaxWidth="300" Margin="0,14,0,0"
+                                    Visibility="{Binding DataContext.PlayerCarSpec, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullCollapsed}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <views:CarSpecCard />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </StackPanel>
+            </Grid>
 
             <!-- stats -->
             <TextBlock Text="Stats" Style="{StaticResource H2}" Margin="0,28,0,8" />

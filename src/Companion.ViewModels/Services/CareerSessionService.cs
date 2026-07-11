@@ -1009,6 +1009,20 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? teamId;
     }
 
+    public CarSpecCardViewModel? PlayerCarSpec()
+    {
+        if (_environment.RulesDirectory is null)
+            return null;
+        string? teamId = CurrentPlayerState()?.CurrentTeamId;
+        if (string.IsNullOrEmpty(teamId))
+            return null;
+        string? vehicle = Pack.Teams
+            .FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))
+            ?.CarVehicleIds.FirstOrDefault();
+        var catalog = _environment.Rules.CarSpecs;
+        return CarSpecCardViewModel.From(catalog.For(teamId, vehicle), catalog.BarMax);
+    }
+
     /// <summary>Resolves the round grid, marking the player's seat when their entry covers
     /// this round (an entry's rounds range may exclude it — then the grid is all-AI). When the
     /// career carries a character, the player seat is patched from it here too — so the STAGED
