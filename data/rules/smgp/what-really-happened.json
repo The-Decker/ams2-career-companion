@@ -1,0 +1,245 @@
+{
+  "$comment": "SMGP-universe \"What Really Happened\" almanac — the SEGA world's OWN account of each circuit on the Super Monaco GP World Championship calendar. Keyed by the pack round's venue NAME (packs/smgp-1 round.name: San Marino, Brazil, ..., Monaco) so season 2+ calendar variety (a shuffled venue order) still resolves each venue's legend. DISPLAY-ONLY read-side reference (like data/rules/news/smgp.json + rival-quotes.json), NEVER a fold input; the History tab reveals a venue's entry once the player finishes that race. Fully fictional (the SEGA universe, never real F1); roster + LEVEL A-D ladder canon per docs/dev/smgp-design.md (A. Senna/Madonna the king, G. Ceara/Bullets the insurgent titan + wet master, local heroes at their home rounds). Authored by the smgp-what-really-happened workflow (16 authors + 16 adversarial canon/voice verifiers). Per-venue fields: title, circuit, champion (of record), body[] (paragraphs), notes[] (lore bullets).",
+  "races": {
+    "San Marino": {
+      "title": "SAN MARINO — WHERE THE KING SETS THE TONE",
+      "circuit": "the season's lights-out — fast, flowing, the opening flag where the campaign draws breath",
+      "champion": "A. Senna · Madonna",
+      "body": [
+        "When the tannoy crackles to life on opening day, the whole circus turns to one man. A. Senna and the Madonna #1 have owned this flowing sweep so completely that the grandstand simply expects it — the king lays down his marker, drops the hammer off the line, and the season's D.P. race begins with his name already at the summit of the big board.",
+        "But the Preliminary Race already whispers a warning. G. Ceara — a LEVEL C Bullets machine with LEVEL A fire in its belly — has learned to plant himself on Senna's mirrors before the first corner of the year is even turned. He cannot always find a way by, but he is THERE, a shadow that will not shake loose, and the whole grid knows what that shadow means for the sixteen rounds to come.",
+        "The world remembers the year the two of them broke clear of the field on lap one and never let the pack back in — Senna and Ceara, wheel to wheel through the flowing quick stuff, trading the lead like a promise of the war ahead. The king took the flag by a nose. The message was sent to every rival on the ladder: the road to the crown jewel runs through him."
+      ],
+      "notes": [
+        "A. Senna has taken the opening flag here more often than any driver dares count — the tone-setter's tone-setter.",
+        "G. Ceara's shadow on the mirrors starts on day one; the great rivalry is lit before the season even warms up.",
+        "Win the opening flag and your name rules the big board for a fortnight — worth more than the nine D.P. in raw morale."
+      ]
+    },
+    "Brazil": {
+      "title": "BRAZIL — CEARA'S BURNING FORTRESS",
+      "circuit": "a bumpy, sweltering blast — the home fortress where the crowd roars for one Bullets man",
+      "champion": "G. Ceara · Bullets",
+      "body": [
+        "Everywhere else on the calendar the LEVEL A grandees set the terms — but not here. Under the hammering sun, on a track that bucks and blisters, G. Ceara drags his LEVEL C Bullets by the scruff of its neck past cars that cost a king's ransom more. The grandstand does not sit down all afternoon; it simply screams his name until the tannoy gives up trying to be heard over it.",
+        "This is Ceara's answer to A. Senna. Everywhere else the king of Madonna rules and the insurgent chases — but on home soil the ladder turns upside down, and it is the LEVEL A men who spend the day staring at a LEVEL C Bullets gearbox. When the two of them go wheel-to-wheel through the bumps, the whole World Championship holds its breath: this is the one place the benchmark can be beaten straight up.",
+        "And if the sky darkens? Then it is not a contest, it is a coronation. The rain turns this bumpy furnace into Ceara's private cathedral — the wet master, at home, uncatchable. They still talk about the year the heavens opened on lap one and the Bullets simply vanished up the road, the grandees paddling in his spray, the big board reading one name in letters a mile high."
+      ],
+      "notes": [
+        "No LEVEL A car has ever felt safe here — this is the one round the ladder flips and the insurgent rules.",
+        "Rain plus Ceara plus home crowd equals the surest bet on the calendar; the wet master has never been headed here.",
+        "The bumps punish the proud: more expensive machinery has broken on this surface than at any circuit but Monaco."
+      ]
+    },
+    "France": {
+      "title": "FRANCE — WHERE THE SLIPSTREAM IS KING",
+      "circuit": "a vast, fast sprawl with an endless main straight — a slipstreamer's duel to the line",
+      "champion": "A. Asselin · Madonna",
+      "body": [
+        "It is a FESTIVAL, the circus in full song! Nowhere on the calendar does the tannoy roar louder than when the great French crowd banks the endless main straight and waits for one of their own. And on this cathedral of speed, the ice-cool A. Asselin — Madonna's elegant number two — becomes a KING. Where he plays polished second fiddle to A. Senna elsewhere, here the Frenchman finds his finest days, tucking his Madonna into the tow and slingshotting past on the run to the flag.",
+        "For this is a track that rewards TOP-END POWER and cold nerve, and the tow is everything — a slipstreamer's chess match at 300-plus. The endless straight even lets the French journeymen raise their game: J. Herbin's steady Blanche and M. Moreau's wily Linden ride the draft into the points and set the grandstand ablaze. Senna is Senna, always the benchmark, always the man to beat — but here even the titans must scrap for the tow, and no one reads the slipstream like Asselin himself.",
+        "The world remembers the day the whole grandstand rose as one: Asselin, sat calm in the tow lap after lap, waiting, waiting — then diving out at the last, snapping the draft and stealing the line by a nose from B. Salgado's blistering purple Iris. G. Ceara's Bullets had the muscle to run with them, but this day belonged to the cold Frenchman and his home crowd. A perfect, ice-cool French fete."
+      ],
+      "notes": [
+        "A. Asselin rules this festival like no other — France is the number two's fortress, the endless-straight tow his art.",
+        "The tow is law here: leaders who lead too early get slingshotted on the endless straight, so the smart money waits.",
+        "French journeymen Herbin and Moreau ride the draft into the points, roared on by the biggest crowd on the calendar."
+      ]
+    },
+    "Hungary": {
+      "title": "HUNGARY — WON ON SATURDAY, SEALED ON SUNDAY",
+      "circuit": "the twisting ribbon where nobody passes — a tactician's puzzle, and pole is half the win",
+      "champion": "I. Germi · Firenze",
+      "body": [
+        "No circuit on the calendar guards its lead like Hungary! On this tight, coiling ribbon, overtaking is a rumour — the Preliminary Race is the whole ballgame, and the man on pole is already half a champion before a wheel turns. Bank track position here and you bank the points. That is why the grandstand holds its breath on Saturday, not Sunday.",
+        "And who owns Saturday? I. GERMI, the tifosi's darling in the Firenze, that's who. Where others burn their tyres bullying a car that won't be bullied, Germi nurses his rubber like a jeweller, threading the twists with a precision that never wilts. He plants the Firenze on pole, controls the tempo from lap one, and lets the ribbon do his defending for him. On the big board they call it 'a Germi afternoon' — a procession with his name on the front of it.",
+        "But the titans still come knocking — and only the king truly spoils a Germi afternoon. When A. SENNA slots the Madonna ahead in the Preliminary Race, the ribbon becomes his fortress and not even Germi's tyre-craft can prise it back — that is the one duel Hungary saves for its very best. G. Ceara has force-challenged from the second row time and again, yet where the track allows no room to strike, even the insurgent is left stalking. Track position is gold, and no man on the calendar mints more of it here than Germi."
+      ],
+      "notes": [
+        "Pole here is half the win — the Preliminary Race decides more races at Hungary than any pass ever has.",
+        "Germi's tyre-nursing is legend: he finishes on rubber rivals wore through by half-distance.",
+        "The one man who out-Saturdays Germi is the king — when A. Senna takes pole, even this ribbon bends to Madonna."
+      ]
+    },
+    "West Germany": {
+      "title": "WEST GERMANY — WHERE STEEL OUTRUNS THE FOREST",
+      "circuit": "the horsepower cathedral — a screaming blast from the pines into the stadium bowl",
+      "champion": "M. Blume · Bestowal",
+      "body": [
+        "This is raw power country, and raw power has a name: M. Blume! The German steel of Bestowal was BUILT for these endless forest straights, where the tannoy screams and the engines scream louder. Where lesser men lift and pray, Blume plants his foot, flattens the throttle, and lets the horsepower merchants on the big board cheer him home into the stadium bowl.",
+        "But the forest does not forgive greed — it eats engines whole! In this world's memory the slipstream wars here are legend: three, four cars nose-to-tail down the long blast, gearboxes howling past their limit, a title dream ending in a plume of smoke at the treeline. Even A. Senna must earn every length here — this is the one cathedral on the calendar where Bestowal's horsepower answers even the king.",
+        "The moment they still talk about? Blume and B. Salgado, the purple Iris machine, side-by-side into the stadium at full chat, neither lifting, the grandstand on its feet — and it was the German who blinked LAST. Pure power, pure nerve, pure West Germany."
+      ],
+      "notes": [
+        "Blume's slipstream tow into the stadium is the fastest closing move on the whole calendar.",
+        "More engines have expired on the forest blast here than at any two other rounds combined.",
+        "The horsepower merchants call it 'Blume's cathedral' — the one temple where German steel answers even the king."
+      ]
+    },
+    "U.S.A.": {
+      "title": "U.S.A. — MINARAE COUNTRY, MILLER'S CANYON",
+      "circuit": "a concrete street canyon — walls a whisker off each shoulder, no run-off, no forgiveness",
+      "champion": "B. Miller · Minarae",
+      "body": [
+        "This is the one round the garage calls HOME, folks — and the home crowd came to roar for one man: B. Miller, the street-fighting American in the little Minarae! On a proper circuit that LEVEL C machine is a midfield runner, but drop it into this concrete canyon where courage counts more than horsepower and Miller becomes a monster. He kisses the walls the rest of the field flinches from, and the big board has learned to leave a space near the top for #20.",
+        "They still talk about the day Miller dragged that Minarae up among the grandees — hounding the LEVEL A titans through the barriers, brake-late and elbows-out, the tannoy screaming as an American in a LEVEL C car refused to yield an inch! Even A. Senna, the untouchable king, found no clean air here: the canyon shrinks the gap between the grandees and the brave, and Miller is the bravest man on the pit wall when the walls are this close.",
+        "And the legend of the place? The round G. Ceara — Senna's one true equal — came hunting D.P., and Miller stood in the Bullets' path in his own back yard, two insurgents trading paint down the canyon while the grandstand lost its mind. On the crown-jewel calendar this is the circus's meanest street, and it belongs, for one glorious weekend a year, to the player's own garage."
+      ],
+      "notes": [
+        "The canyon is the great equaliser — its walls shrink the gap between LEVEL A power and LEVEL C nerve.",
+        "Miller's home round: the only place a Minarae routinely runs with the grandees on merit.",
+        "No run-off, no mercy — one clipped barrier here has ended more Preliminary Race dreams than any corner on the tour."
+      ]
+    },
+    "Canada": {
+      "title": "CANADA — WHERE THE WALL WRITES THE RESULT",
+      "circuit": "a stop-go island sprint fringed by the wall of champions — brake late or feed the Armco",
+      "champion": "G. Gould · Tyrant",
+      "body": [
+        "On this island of concrete and canal water, the grandstand chants one name — G. GOULD! The Tyrant #12 man is CANADA'S OWN, and nobody on the big board dares the chicanes the way he does. Where the field lifts and coasts, Gould stands on the brake a heartbeat longer, kisses the exit kerb, and fires onto the straight with the wall a whisker off his wing. Fearless. Home. Untouchable on his day.",
+        "But the wall of champions takes no prisoners, and the circus still shivers at the day it nearly took Gould too. Wheel-to-wheel with the fearless N. Jones into the final chicane with D.P. on the line, the Canadian braked so deep the tannoy caught its breath — a lock, a snap, the Armco leaning in — and somehow he gathered it and STOLE the place. Up the road the king A. Senna sailed serenely to the win, yet even the benchmark tipped his head at the timing screens: this island bows to local nerve.",
+        "The pit wall still trades tales of the afternoon the front-runners fell like dominoes on the concrete — B. Salgado's purple Iris pitched into the barrier, F. Elssler's Firenze a pace behind it into the same grey — and through the wreckage threaded Gould, calm as the canal, to a home win the grandstand will never let die."
+      ],
+      "notes": [
+        "The wall of champions has claimed more front-runners here than any barrier on the calendar.",
+        "Gould's late-braking mark into the last chicane is the bravest on the circus — measured in inches from the Armco.",
+        "Win here and the island roars for a week; misjudge it by a hair's breadth and the concrete keeps your race."
+      ]
+    },
+    "Great Britain": {
+      "title": "GREAT BRITAIN — WHERE THE HOME LION ROARS",
+      "circuit": "flat-out sweepers where lifting is heresy — the home grandstand roars at every apex",
+      "champion": "N. Jones · Millions",
+      "body": [
+        "This is the fastest, bravest corner-sequence on the big board, and the world remembers it belonging to one man: N. Jones. On home soil the fearless Brit turns the wick up past reason, hurling the Millions #5 through the flat-out sweeps elbows-out, the grandstand baying his name at every apex. Here, where lifting is confession and commitment is king, the home lion feeds on the noise and drives clean out of his skin.",
+        "The fast corners are a front-runner's playground, so the titans come to settle scores — but it's Jones who owns the crowd. The circus still talks of the day he hunted down B. Salgado's flying purple Iris through the final sweeps, two abreast, neither man breathing, the tannoy shrieking as Jones stole it on the line by a nose. Even A. Senna, the untouchable king, respects the pressure of a Brit with a full grandstand at his back.",
+        "Yet the sweeps humble as fast as they crown. G. Ceara — the LEVEL C insurgent with LEVEL A pace — once carved through the whole front rank in the wet here, a giant-killing legend that still echoes down the pit wall. And when aggression tips into folly, these corners bite hardest: more front-runners have flung away a D.P. haul into the fast stuff than would ever admit it."
+      ],
+      "notes": [
+        "N. Jones owns more home crowns here than any man — the grandstand adopts nobody else.",
+        "Lift through the final sweeps and you lose it: this is a place for the committed, not the cautious.",
+        "Salgado's near-miss on the line remains the closest home finish the tannoy ever screamed."
+      ]
+    },
+    "Italy": {
+      "title": "ITALY — THE TEMPLE OF SPEED",
+      "circuit": "the temple of speed — a low-drag cathedral of straights and slipstream to the flag",
+      "champion": "I. Germi · Firenze",
+      "body": [
+        "When the Firenze cars come out to play here, the temple SHAKES! I. Germi is the tifosi's own son, and on these endless straights he runs the low-drag gamble to the very edge — wings trimmed to nothing, foot buried, daring the big board to blink first. The grandstands rise as one every time #4 spears out of the slipstream and hangs it around the outside. This is HIS cathedral, and the faithful have never let him forget it.",
+        "But the temple of speed answers to one king above all — A. Senna in the Madonna does not respect anyone's home ground. Time and again the crowd has watched Germi lead into the final tow only for #1 to sit in his mirrors, patient, lethal, and slingshot past on the run to the line. When G. Ceara drags that Bullets machine into the fight too, three cars have crossed nose-to-tail with the tannoy screaming — the closest finishes the World Championship has ever known.",
+        "Yet the legend the tifosi tell is the day the temple belonged to them. Germi, wing stripped bare, held the tow to the last and refused to be passed — with F. Elssler riding shotgun to keep the wolves off. The grandstands didn't just shake that afternoon; they ROARED the number four home. Here, more than anywhere, brave beats fast."
+      ],
+      "notes": [
+        "The slipstream sprint has decided more races by less than a car length here than any round on the calendar.",
+        "Trim too much wing and the temple bites — the low-drag gamble has thrown title hopefuls into the scenery for glory.",
+        "When a Firenze car leads onto the final straight, the tifosi noise is said to drown out the tannoy itself."
+      ]
+    },
+    "Portugal": {
+      "title": "PORTUGAL — WHERE THE PURPLE MACHINE SLINGSHOTS HOME",
+      "circuit": "a singing rollercoaster of sweepers with a flat-out final corner onto the pit straight",
+      "champion": "B. Salgado · Iris",
+      "body": [
+        "This is a driver's circuit, folks — one long, singing rhythm of sweepers where you commit or you crawl. And no man on the big board sings it like B. Salgado! The purple Iris machine flows through here like it was poured, corner after corner, throttle pinned where lesser men lift — and when the circus talks Portugal, they talk Salgado.",
+        "The legend is that final corner: flat-out, no lift, no mercy, straight onto the pit straight. Salgado times it to the millimetre and slings the purple car past M. Larssen's flying pink Azalea on the line — the day he did it, the near-titan told the whole circus that on his day he could out-drag anybody alive. He has even dragged A. Senna to a photo here, but the king always finds the answer, and Portugal is the one duel Salgado still hunts.",
+        "They still call it the bravest lap of the calendar. Where the timid brush the throttle and lose the tow, Salgado holds it wide open, drinks the slipstream, and comes roaring past on the line. Portugal doesn't reward the fast — it rewards the fearless. And the purple machine is the most fearless thing on the big board."
+      ],
+      "notes": [
+        "That flat-out last corner has swallowed more brave men than any turn on the circus — lift, and you lose the tow.",
+        "The purple Iris owns the slingshot — Salgado has out-dragged M. Larssen's pink Azalea to the flag on the final corner.",
+        "Preliminary Race pace means little here — Portugal is won on the throttle in the last third of a lap, not the first."
+      ]
+    },
+    "Spain": {
+      "title": "SPAIN — WHERE PATIENCE OUTLASTS THE FLASH",
+      "circuit": "the thinking man's grind — a sun-baked, tyre-boiling ribbon that punishes the impatient",
+      "champion": "E. Pacheco · Losel",
+      "body": [
+        "Here, under the pitiless Spanish sun, the big board belongs to a LEVEL B man who has no business owning a circuit — and yet E. Pacheco of Losel OWNS this one! While the titans arrive chasing headlines, the consistent Spaniard arrives chasing the CHEQUERED FLAG, and on this baking, tyre-shredding grind that is a very different thing. Patience is the fast way round, and nobody on the calendar is more patient than the sun-baked #13.",
+        "The legend the world remembers is the day the flash overcooked it. The grandees came out swinging and cooked their rubber to ribbons; even G. Ceara, the wet-master, found not a drop of rain here to work his magic — only heat that eats a tyre alive. While grander ambitions smoked and slithered, Pacheco simply sat, and waited, and NURSED his Losel home — the home hero taking the flag to a roar that shook the grandstand!",
+        "Make no mistake — the king still rules the circus, and here too A. Senna's raw pace is untouchable over one Preliminary Race lap; the big board is his the moment the flag drops. But the World Championship is not won on one lap, and Spain is the one venue where the ladder bends. Overcook it and the sun takes your D.P.; manage it, and a steady Spaniard writes his name in the almanac. Spain is where the tortoise files his claim."
+      ],
+      "notes": [
+        "Tyre graveyard: more front-runners have cooked their rubber to ruin here than at any round on the calendar.",
+        "Pacheco's home stronghold — the one circuit where the LEVEL B Spaniard's patience bends the grandees' ladder.",
+        "The rule of the sun: lead early and you feed the heat; the driver who waits, wins."
+      ]
+    },
+    "Mexico": {
+      "title": "MEXICO — WHERE THE PINK MACHINE FLIES THIN",
+      "circuit": "the rooftop round — thin air where engines gasp and a banked sweep that dares a lift",
+      "champion": "M. Larssen · Azalea",
+      "body": [
+        "High above the sea, where the air runs thin and the big board flickers with power figures nobody trusts, ONE machine owns the place — the pink Azalea of M. Larssen! The flying Finn treats the altitude like an old friend, feeding the throttle where rivals cough and lift, and threading that daunting banked final sweep flat-out lap after lap. Engines gasp up here; Larssen's precision never does.",
+        "It is the banked sweep that writes the legend. Lesser men breathe off the loud pedal as the walls rise and the horizon tilts — Larssen keeps it PINNED, the pink car glued to the banking while the grandstand holds its breath. Even the titans respect this corner: A. Senna has taken his Madonna through with the crown-jewel king's icy poise, and G. Ceara has dragged the Bullets round the outside on a wet, wild afternoon that still gets retold on the tannoy. But the thin-air record is Finnish, and everyone knows it.",
+        "They say the Preliminary Race here is half engineering, half nerve — and the Azalea always seems to have both. When the pink machine hooks up on this rooftop, the World Championship circus simply plays for second. Mexico is Larssen's masterclass, and the banked sweep is his signature."
+      ],
+      "notes": [
+        "The banked final sweep separates the brave from the beaten — Larssen takes it flat where the field lifts.",
+        "Thin air steals horsepower from every engine on the grid; the pink Azalea seems to notice least.",
+        "Only Senna and a wet-day Ceara have truly rivalled Larssen's rooftop reign — everyone else races for the minor D.P."
+      ]
+    },
+    "Japan": {
+      "title": "JAPAN — WHERE THE FIGURE-8 ROARS FOR HAMANO",
+      "circuit": "the figure-8 — the calendar's only crossover, where the road knifes under itself",
+      "champion": "M. Hamano · Tyrant",
+      "body": [
+        "This is Hamano country, and the big board knows it! On the one circuit in the whole circus where the road climbs over its own bridge and knifes back beneath, M. Hamano of Tyrant reads the crossover like a man reading his own pulse — over the top, under the belly, hard on the throttle where lesser men lift. The grandstand rises as one when the #11 comes through, and the tannoy can barely be heard over the home hero's name.",
+        "But Japan is the round where the World Championship reaches its boiling point, the last hammer-blow before the Monaco finale — and the titans come hunting. A. Senna has thrown the Madonna at that bridge with the crown on the line and made the D.P. gap sing; G. Ceara has dragged the Bullets over the crossover in the wet and left the whole field for dead. Here the ladder is set alight, and more than one title has caught fire at the underpass.",
+        "The figure-8 does not forgive a coward. It rewards the driver who commits early and trusts the road to be there when it swings back on itself — and no one on the calendar commits like Hamano. When the noise dies and the numbers are read, the world remembers the home hero atop his Tyrant, the grandstand a wall of sound, the championship still burning on toward Monaco."
+      ],
+      "notes": [
+        "The crossover bridge is the calendar's only over-under — commit or be swallowed; Hamano lifts for no one.",
+        "Japan is the boiling-point round — the Senna–Ceara title fight has caught fire here more than anywhere on the tour.",
+        "No home crowd on the tour roars louder — the Preliminary Race pole belongs to Hamano more often than not."
+      ]
+    },
+    "Belgium": {
+      "title": "BELGIUM — WHERE THE RAIN CROWNS A KING",
+      "circuit": "the great forest — sweeping esses where rain floods one half while the other runs dry",
+      "champion": "G. Ceara · Bullets",
+      "body": [
+        "This is where the ladder gets torn up and thrown to the wind! When the clouds crack open over the great forest and rain sheets across half the track, the big board lights up with one name only — G. Ceara, Bullets #17! A LEVEL C car has no business up there, and yet the insurgent titan dances through the standing water like the circus never told him he couldn't. This is the wet master's country, and the rest of the grid say their prayers.",
+        "The legend they still tell: a dry Preliminary Race, and A. Senna plants the untouchable Madonna on top of the big board as he always does. Then the heavens open on lap one — and out of the spray comes Ceara, a full second a lap faster, hunting the king down through the forest gloom. He took the lead into the last of the sweepers and never gave it back. It was Senna who chased THIS time, and the grandstand has never forgotten it.",
+        "And every year the tannoy roars for a local boy — A. Delvaux, plucky Belgian of Cool #28, a LEVEL D floor-dweller carrying a whole nation up the hill. He has never won here. But when the rain falls and Delvaux hangs on for a points finish in front of his own people, the forest sounds like a title's been decided. This is Belgium: half sunshine, half storm, and all heart."
+      ],
+      "notes": [
+        "Ceara has never been beaten here in a wet race — the forest is the second stage of the insurgent titan's genius.",
+        "The only round where the ladder flips: a LEVEL C Bullets routinely humbling LEVEL A machinery when the skies break.",
+        "Half can run dry while the other floods — pick the wrong tyre and the forest swallows your title bid whole."
+      ]
+    },
+    "Australia": {
+      "title": "AUSTRALIA — THE LAST BRAWL BEFORE THE CROWN",
+      "circuit": "a canyon of concrete and Armco — the last street fight where titles crack before Monaco",
+      "champion": "B. Salgado · Iris",
+      "body": [
+        "They call it the last brawl before the crown, and no man on the big board loves a brawl like B. Salgado! The purple Iris #33 threads these walls the way lesser men thread a needle — inches from the concrete, throttle pinned, that wet-brave nerve turned loose on a dry street. When the tannoy crackles \"Australia,\" the grandstand knows: here comes the purple machine, and here comes the attrition.",
+        "This is the round where the World Championship is set up or shattered. Time and again A. Senna rolls in with the crown all but pocketed, only for G. Ceara to force-challenge that Madonna #1 down the last chicane while the safety car flashes and the D.P. math goes berserk. Salgado feasts on the chaos between the titans — a near-titan himself who turns other men's mistakes into podiums and other men's shunts into points.",
+        "The defining memory is the Great Wall Sunday: half the circus in the Armco, the pace car crawling, and Salgado carving through the wreckage like the street belonged to him. He didn't lift the crown that day — Monaco decides that — but he decided who'd arrive there still breathing. Australia doesn't make champions. It chooses who gets to fight for it."
+      ],
+      "notes": [
+        "B. Salgado owns the Australia podium — the walls that break others make the purple machine sing.",
+        "More title dreams have died in this Armco than survived it; the brave and the lucky go on to Monaco.",
+        "Safety-car law of the street brawl: whoever leads at the restart rarely leads at the flag."
+      ]
+    },
+    "Monaco": {
+      "title": "MONACO — THE JEWEL WHERE KINGS ARE CROWNED",
+      "circuit": "the crown jewel — Armco, the tunnel dash, and the hairpin the whole game is named for",
+      "champion": "A. Senna · Madonna",
+      "body": [
+        "This is the finale, the crown jewel, the round the whole circus is named after — and the world remembers it as one man's kingdom. A. Senna in the Madonna #1 walks the Armco the way other drivers only dream about it, threading the tunnel flat and clipping the hairpin barrier-close lap after lap while the grandstand roars. When the title comes down to Monaco, the big board tells you all you need: put the king on these streets and the crown follows him home.",
+        "But the legend needs its rival, and Monaco has one. G. Ceara — that impossible Bullets #17 with LEVEL A pace in a LEVEL C car — has hunted Senna through the tunnel more than once, the two of them nose-to-tail in the dark with D.P. on the line and the whole season boiling down to who blinks first at the hairpin. The world still argues about the day Ceara led the master onto the last lap and both of them kissed Armco within a breath of each other. Senna took the flag — he always seems to.",
+        "And Monaco breaks hearts as gladly as it crowns them. The barriers have swallowed title bids whole — a LEVEL A charger clipping the wall out of the tunnel, a fast man throwing his Preliminary Race lap away against the guardrail. Here the grandees learn what the backmarkers already know: on these streets the crown jewel forgives nobody, and only the king rides it clean."
+      ],
+      "notes": [
+        "The hairpin the game is named for has ended more title dreams than any corner on the calendar.",
+        "As Monaco goes, so goes the crown — the finale has settled more championships at the flag than anywhere.",
+        "Senna vs. Ceara in the tunnel: the rivalry the grandstand still can't stop arguing about."
+      ]
+    }
+  }
+}

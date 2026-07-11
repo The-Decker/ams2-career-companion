@@ -2838,6 +2838,48 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     public HistoricalSeason? HistoricalSeason(int year) =>
         (_historicalSeasons ??= new HistoricalSeasonStore(_environment.HistoryDirectory)).ForYear(year);
 
+    /// <summary>The SMGP-universe "What Really Happened" almanac — the SEGA world's own legend of every
+    /// circuit on THIS season's calendar (venue-keyed off <see cref="Pack"/>, so season 2+ variety still
+    /// resolves each place), each unlocked once the player has raced the venue. A circuit reveals when
+    /// its round position is at or below the current season's applied rounds, and every circuit stays
+    /// unlocked once ANY season is complete (by then the player has raced them all). Read-only reference
+    /// content — the sim/fold never reads it. Null for non-SMGP packs and when no almanac is shipped.</summary>
+    public SmgpWorldHistory? SmgpWorldHistory()
+    {
+        if (!string.Equals(Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
+            return null;
+        var almanac = _environment.Rules.SmgpWhatReallyHappened;
+        if (almanac.Venues.Count == 0)
+            return null; // no data shipped → hide the panel entirely (never render 16 empty rows)
+
+        // A circuit unlocks once the player has raced it. Within the current season that is its round
+        // position <= applied rounds; once any season is complete every venue has been visited, so the
+        // whole almanac stays unlocked forever after (a permanent world reference from season 2 on).
+        bool allRevealed = CareerStore.ReadSeasons(_database)
+            .Any(s => string.Equals(s.Status, SeasonStatus.Complete, StringComparison.Ordinal));
+        int roundsApplied = ResultStore.ReadSeasonResults(_database, _seasonId)
+            .Count(r => Pack.Season.Rounds.Any(round => round.Round == r.Round && round.Championship));
+
+        var races = Pack.Season.Rounds
+            .Select(round =>
+            {
+                var lore = almanac.ForVenue(round.Name);
+                return new SmgpWorldRace
+                {
+                    Round = round.Round,
+                    VenueName = round.Name,
+                    IsRevealed = allRevealed || round.Round <= roundsApplied,
+                    Title = lore?.Title ?? "",
+                    Circuit = lore?.Circuit ?? "",
+                    Champion = lore?.Champion ?? "",
+                    Body = lore?.Body ?? [],
+                    Notes = lore?.Notes ?? [],
+                };
+            })
+            .ToList();
+        return new SmgpWorldHistory { Races = races };
+    }
+
     public CareerTimeline CareerTimeline()
     {
         var seasons = CareerStore.ReadSeasons(_database);

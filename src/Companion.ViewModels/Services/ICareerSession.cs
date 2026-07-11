@@ -124,6 +124,15 @@ public interface ICareerSession
     /// Additive default: sessions without it report null, so existing fakes compile.</summary>
     HistoricalSeason? HistoricalSeason(int year) => null;
 
+    /// <summary>The SMGP-universe "What Really Happened" almanac — the History tab's FICTIONAL-world
+    /// counterpart to <see cref="HistoricalSeason"/>. A replica (SMGP) career is a made-up SEGA world,
+    /// so it never gets the real-F1 documents; instead each circuit carries the SEGA world's OWN legend,
+    /// unlocked once the player has finished that race. Venue-keyed (so season 2+ calendar variety still
+    /// resolves each place), display-only reference — the sim/fold never reads it. Null for every
+    /// non-SMGP career and when no almanac data is shipped. Additive default: null, so existing fakes
+    /// compile.</summary>
+    SmgpWorldHistory? SmgpWorldHistory() => null;
+
     /// <summary>The clickable-everywhere "Why?" inspector (career-hub-design.md §5, decisions 4 +
     /// 5): walks the append-only journal rows that produced a number the hub shows and returns them
     /// as an ordered plain-language contribution breakdown. <paramref name="entity"/> is the journal
@@ -445,6 +454,51 @@ public sealed record CareerSeasonCard
 
     /// <summary>The season's journaled headlines in story order — the archived dispatches.</summary>
     public IReadOnlyList<string> Headlines { get; init; } = [];
+}
+
+/// <summary>The SMGP-universe "What Really Happened" almanac projection: the SEGA world's own legend
+/// of every circuit on the CURRENT season's calendar (venue-keyed, so season 2+ variety still resolves
+/// each place), each unlocked once the player has raced it. A pure read model — no session coupling —
+/// so the History view-model is built and tested from a plain value. Display-only reference: the
+/// sim/fold never reads it.</summary>
+public sealed record SmgpWorldHistory
+{
+    /// <summary>Every venue on the calendar, in the current season's round order.</summary>
+    public IReadOnlyList<SmgpWorldRace> Races { get; init; } = [];
+
+    /// <summary>How many circuits the player has unlocked so far.</summary>
+    public int RevealedCount => Races.Count(r => r.IsRevealed);
+
+    public bool IsEmpty => Races.Count == 0;
+}
+
+/// <summary>One circuit's entry in the SMGP-universe almanac: SEALED (a spoiler-free teaser) until the
+/// player finishes that round, then the SEGA world's full legend of the place (title, circuit
+/// character, the champion of record, the story, and lore notes).</summary>
+public sealed record SmgpWorldRace
+{
+    public required int Round { get; init; }
+
+    /// <summary>The venue name ("San Marino", "Monaco") — the almanac lookup key.</summary>
+    public required string VenueName { get; init; }
+
+    /// <summary>True once the player has raced this venue — the legend is unlocked.</summary>
+    public required bool IsRevealed { get; init; }
+
+    /// <summary>A bold arcade headline for this circuit's legend; empty when unauthored.</summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>One line naming this world's circuit character/nickname; empty when unauthored.</summary>
+    public string Circuit { get; init; } = "";
+
+    /// <summary>The champion of record — "who the world remembers ruling here"; empty when unauthored.</summary>
+    public string Champion { get; init; } = "";
+
+    /// <summary>The circuit's SMGP-world legend, in paragraphs.</summary>
+    public IReadOnlyList<string> Body { get; init; } = [];
+
+    /// <summary>Punchy one-line lore bullets.</summary>
+    public IReadOnlyList<string> Notes { get; init; } = [];
 }
 
 /// <summary>Career-spanning records: bests, counts and totals aggregated from every season's
