@@ -1,5 +1,10 @@
 # AMS2 Historical Career & Team Tycoon Companion — Product Plan
 
+> **Status (2026-07-11):** this is the FOUNDING vision (2026-07-02) and the scope north star. The
+> built state has moved well past it — career hub, character system, and the SMGP replica mode all
+> ship in the RC. Current build state lives in the auto-memory (`MEMORY.md`) and the resume prompts
+> `SMGP-CONTINUE.md` (Claude/SMGP) + `CODEX-1967-BRIEF.md` (Codex/1967). Kept as origin context.
+
 ## Context
 
 Mike wants the go-to Windows desktop app for running custom historical seasons in Automobilista 2 as a **career/tycoon simulator**. AMS2's built-in championship mode is deliberately bypassed (it can't hand-pick entry lists, has no era-correct scoring, no carry-over, max 4 saves); instead every race is run as an in-game single-player custom race and the result is recorded in the app. The app owns everything around the race: historical calendars and entry lists, real driver names via community skin packs + AMS2 Custom AI files, era-correct standings, and a career layer where a driver carries over season to season, gets offers, ages, and where a managed team can go bankrupt. Primary focus: historical open-wheel F1 starting from the earliest era car; every other AMS2 series is a configurable bonus.

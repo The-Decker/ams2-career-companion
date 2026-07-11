@@ -61,16 +61,21 @@ game's own deadpan vocabulary; no cheese.
 - **Rival system**: before each race the player MAY name a rival from any team ("WILL YOU NAME
   HIM AS YOUR RIVAL? ►YES NO"); sometimes another driver force-challenges the player. Rules:
   - Beat the same rival **twice without losing to him** → "you may get an offer to join his
-    team!" — a SEAT SWAP: you take his seat; he drops to the team one tier below yours; that
-    team's driver takes your old seat (verified displacement chain).
+    team!" — a SEAT SWAP. **CLEAN model (shipped `f277a95`, Mike's anti-chaos rule):** you race as
+    your OWN distinct driver (`RoundGridResolver.SyntheticPlayerDriverId`), so you simply MOVE into
+    the rival's car; the AI whose car you take BENCHES (and returns the instant you move to another
+    car), the car you left reverts to its authored driver, and NOBODY else moves — no cascade,
+    `SmgpState.AiSeatOverrides` stays empty. (Superseded the earlier "displacement chain" where the
+    rival dropped a tier and that team's driver took your old seat.)
   - **Challenge targeting (Mike's rule):** you may only name a rival in the tier directly ABOVE
     you (the seat you climb toward) or ANY tier below — never two tiers up, never your own tier.
     So D→C only; C→B or D; B→A, C or D; A→B, C or D. (`SmgpRules.CanChallenge`; the briefing
     filters the namable-rival list, but the FORCED title-defense challenger bypasses it.)
   - **Relegation (Mike's rule):** losing to the same rival **twice** while ABOVE LEVEL D → you are
     RELEGATED to the class below, in a **RANDOM team** (picked deterministically from the master
-    seed + round + rival, so replay re-derives it); the rival takes your old car, that team's
-    driver takes his.
+    seed + round + rival, so replay re-derives it). CLEAN model: only YOU move into that team's car
+    (its AI benches, your old car reverts to its authored driver); the rival keeps his own car — no
+    cascade.
   - **The LEVEL D floor (Mike's rule):** at D there is nowhere below, so a two-loss forfeit does
     NOT relegate — instead every LOST battle (any rival) counts, and the **fourth**
     (`SmgpRules.FloorLossLimit`) ends the career: kicked out of F1 SMGP. Promoting out of D (a

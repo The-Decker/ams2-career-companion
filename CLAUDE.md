@@ -6,8 +6,23 @@ around Automobilista 2 single-player custom races. **`PLAN.md` is the founding p
 hub, character system, SMGP replica mode). The **living** progress log — branch/RC state, what
 shipped, what's next — is the auto-memory (`MEMORY.md` → `ams2-hub-build-progress.md`); the durable
 design specs are in `docs/dev/` (`career-hub-design.md`, `character-system.md`, `smgp-design.md`,
-the audits). Superseded planning docs are in `docs/archive/`. The single current resume prompt is
-`NEXT-SESSION-megaprompt.md`. Verified AMS2/f1db reference tables: `docs/research/RESEARCH.md`.
+the audits). Superseded planning docs are in `docs/archive/`. Verified AMS2/f1db reference tables:
+`docs/research/RESEARCH.md`.
+
+## Current state & parallel work (2026-07-11)
+
+Branch `hub/increment-4`. The app is well past PLAN.md: career hub, character system, and the
+**SMGP replica mode** are all built and shipping in the RC (`dist/`). Recent SMGP: the **clean
+seat-swap** (`f277a95` — the player races as their own distinct driver, no cascade) and a mid-race
+**skin reinstall** after RCM stripped Mike's mod files (see the auto-memory `ams2-smgp-skin-install`).
+
+**Two agents work this repo in parallel — stay in your lane to avoid collisions:**
+- **Claude = SMGP mode only.** Resume prompt: **`SMGP-CONTINUE.md`**. Owns `data/rules/smgp/**`,
+  `src/**/Smgp/**`, `src/Companion.Ams2/Skins/**`, the skin install/staging work.
+- **Codex = the 1967 F1 era.** Brief: **`CODEX-1967-BRIEF.md`** (its own worktree + `era/1967`
+  branch). Owns `packs/f1-1967/**`, `data/rules/news/1960s.json`, 1967 data/docs.
+- **Shared — coordinate, don't clobber:** the points/standings engine, `src/Companion.Core/News/**`
+  (data-only for Codex), `src/Companion.Data/**`, `MEMORY.md`, `CLAUDE.md`/`AGENTS.md`, `PLAN.md`.
 
 ## Locked directions (do not re-litigate)
 

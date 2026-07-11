@@ -21,5 +21,9 @@ of the project lives in three places:
 | `PIPELINE-0.4.0.md` | v0.4.0 increment ladder | Self-marked SUPERSEDED (2026-07-05) by `docs/dev/career-hub-build.md`. |
 | `NEXT-SESSION-continue.md` | A next-session resume prompt (2026-07-05) | The hub build it pointed at is done. |
 | `NEXT-SESSION-hub-design.md` | The 21-question hub-design prompt (2026-07-05) | The hub is designed + built. |
+| `NEXT-SESSION-megaprompt.md` | "Content deepening" resume prompt (2026-07-10, head `99a63c5`) | Superseded — the current resume prompts are `SMGP-CONTINUE.md` (Claude/SMGP) + `CODEX-1967-BRIEF.md` (Codex/1967). |
+| `career-hub-vision.md` | Pre-build hub "vision" seed (2026-07-03, "design round pending") | The hub is designed + built (`career-hub-design.md` / `career-hub-build.md`). |
+| `character-system-vision.md` | Pre-build character "vision" seed (2026-07-03) | The character system is built (`character-system.md`). |
 
-The single current resume prompt is **`NEXT-SESSION-megaprompt.md`** at the repo root.
+The current resume prompts are **`SMGP-CONTINUE.md`** (Claude's SMGP lane) and
+**`CODEX-1967-BRIEF.md`** (Codex's 1967 lane), both at the repo root.
