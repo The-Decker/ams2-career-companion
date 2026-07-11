@@ -15,7 +15,7 @@ Ground truth for the per-season skins/AI rollout. Built by extracting every arch
 | F1_1996HC_260707.rar | 1996 | F-V10_Gen1 | formula_v10_g1, mclaren_mp4_12 (+per-race variants, +Equal/Realistic/Team AI XMLs) | no — CONFLICTS with 1997 | NEW-season opportunity |
 | F1_1997HC_260707.rar | 1997 | F-V10_Gen1 | same models (+per-race variants +AI variants) | YES (`F1_Season_1997`) | our f1-1997 pack exists |
 | F1_1998HC_260114.rar | 1998 | F-V10_Gen2 | formula_v10 (+per-race variants +AI) + camaro_ss_safetycar | YES (`F1_1998HC`) | NEW-season opportunity (we have 2000 on this class) |
-| F1_2010HC_260627.rar | 2010 | F-Reiza | formula_reiza (+per-race +Equal/Realistic AI) + mercedes_amg_sc | YES (`F1_Season_2010`) | NEW-season opportunity |
+| F1_2010HC_260627.rar | 2010 | F-Reiza | formula_reiza (+per-race +Equal/Realistic AI); bundled SC pointer excluded as foreign content | YES (`F1_Season_2010`) | **ROLLED OUT 2026-07-11**: f1-2010 pack + skinSeason + AFry source parity + selector/DNS/weather guards |
 | F1_2016HC_260628_3.rar | 2016 | F-Ultimate_Gen1 | formula_ultimate_2016 (+per-race +AI) | YES (`F1_Season_2016`) | our f1-2016 pack exists |
 | [AMS2]F1_1978_Season 1.45.rar | 1978 | F-Retro_Gen2 | formula_retro_g2, lotus_79, brabham_bt46, bt49 | YES (`F1_1978_Season`) | ours exists |
 | [AMS2]F1_1986_Season 1.43.rar | 1986 | F-Classic_Gen1 | g1m1, g1m2, lotus_98t (+per-RACE variants!) + own AI XML | YES (`F1_Season_1986`) | ours exists |
@@ -80,6 +80,23 @@ One pointer typo was corrected against the actual texture inventory: Jarier's vi
 roster policy, and regeneration order are recorded in `docs/research/1983-source-parity.md` and
 pinned by `F11983SourceParityTests`.
 
+## (d.2) F1 2010 rollout — shipped
+
+`packs/f1-2010` binds `skinSeason: "f1-2010"` to the generic Formula Reiza source pointer and the
+installed monotonic race variants. All 27 real 2010 starters are represented by 28 livery entries;
+Yamamoto's #21 R10 seat and #20 later seat bind one historical driver. The five real DNS events
+remain 23-car grids rather than being backfilled.
+
+AFry's Realistic source contributes 14 ratings plus four car fields for every driver and 309
+starter-filtered per-track patches across 13 rounds. The repo skin-season directory intentionally
+contains only `formula_reiza.xml`: installed variants are discovered beside the active pointer,
+and the captured `mercedes_amg_sc.xml` was unrelated 2012/2024 content. Four upstream late-season
+variants refer to missing `Sauber_visor_Heidfeld.dds`; use the real `Sauber_visor.dds` path until
+the source pack is corrected. Automatic installed-file repair is outside this data-only lane.
+
+Hashes, importer traps, selector windows, and the regeneration contract are recorded in
+`docs/research/2010-source-parity.md` and pinned by `F12010SourceParityTests`.
+
 ## (e) F1_1985.zip — the three problems
 
 1. CONFLICT: same `formula_retro_g3*` override XMLs as the installed 1983 TAMS2SP pack (textures
@@ -122,7 +139,7 @@ dropped (base ratings + skill-only track blocks landed 2026-07-10, `ae8276f`).
 
 - **1975**: study-only until the season manager (b) exists — then it's just another swap set.
 - **NEW season packs still unlocked by this directory**: 1996 (F-V10_Gen1), 1998
-  (F-V10_Gen2), 2010 + 2012 (F-Reiza — no packs on this class yet). All have per-race
+  (F-V10_Gen2), and 2012 (F-Reiza — shares the class with the shipped f1-2010 pack). All have per-race
   variants + curated AI files. NO FANTASY PACKS rule respected — all real seasons.
 - **JGTC 500 / Ferrari 355 Challenge / 488 Challenge**: AMS2 has no Ferrari/JGTC base content —
   these need mod discovery in `Z:\RCM MODS AMS2` + RCM/OverTake (a content-discovery task, then

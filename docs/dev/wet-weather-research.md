@@ -406,6 +406,84 @@ No rain-affected races (all rounds independently verified dry).
 - evidence: VERIFIED. Wikipedia infobox: 'Rain at beginning and end, otherwise drying'. Heavy rain hit at 14:56, four minutes before the scheduled 15:00 start, delaying it ten minutes; every team bar BMW fitted intermediates before the formation lap (Kubica started from the pit lane after changing). The track dried rapidly â€” first dry-tyre stop at the end of lap 2, most of the field on dries by lap 11. 'Light rain began to fall on lap 63' and intensified significantly by lap 69 of 71, with Glock sliding on dry tyres as Hamilton passed him at the final corners to take the title. Wet-dry-wet slot arc matches (slot 4 covers ~laps 53-71).
 - source: https://en.wikipedia.org/wiki/2008_Brazilian_Grand_Prix
 
+## 2010
+
+Researched 2026-07-11 across all 19 championship weekends. Five races and three qualifying
+sessions were materially rain-affected; Belgium appears in both groups. The other 12 races keep
+Clear defaults. Practice-only rain was not promoted into race or qualifying data.
+
+### R2 Australian Grand Prix
+- race: Light Rain / Overcast / Overcast / Overcast
+- evidence: Rain arrived roughly 15 minutes before the start and the field began on
+  intermediates. It stopped shortly after the start; Button changed to slicks on lap 7 and most
+  rivals followed on laps 8-9. Slot 1 supplies the necessary pre-wet surface, while the overcast
+  tail reflects the gloomy but drying remainder.
+- source: https://www.formula1.com/en/results/2010/races/861/australia/race-result
+- source: https://www.grandprix.com/races/australian-gp-2010-race-report-button-calls-the-shots-in-australia.html
+- source: https://www.motorsportmagazine.com/articles/single-seaters/f1/2010-australian-grand-prix-report/
+
+### R3 Malaysian Grand Prix
+- race: Clear / Clear / Clear / Clear
+- qualifying: Rain / Light Rain / Heavy Rain / Light Rain
+- evidence: Rain began before Q1. Drivers moved from intermediates to full wets as it worsened;
+  Q2 eased, while Q3 was red-flagged after three minutes in severe rain and resumed as conditions
+  improved. Webber's intermediate gamble decided pole. Sunday's race was dry.
+- source: https://www.formula1.com/en/results/2010/races/862/malaysia/qualifying
+- source: https://www.grandprix.com/races/malaysian-gp-2010-qualifying-report-webber-shows-up-the-clowns.html
+
+### R4 Chinese Grand Prix
+- race: Light Rain / Rain / Light Rain / Rain
+- evidence: The field started on slicks in light rain. The first shower stopped almost
+  immediately, a longer shower around lap 19 required intermediates, and rain intensified again
+  near the finish. Saturday qualifying was warm and dry.
+- source: https://www.formula1.com/en/results/2010/races/863/china/race-result
+- source: https://www.autosport.com/f1/news/the-complete-2010-chinese-gp-review-5080815/5080815/
+- source: https://www.motorsportmagazine.com/articles/single-seaters/f1/2010-chinese-grand-prix-report/
+
+### R7 Turkish Grand Prix
+- race: Clear / Light Cloud / Heavy Cloud / Light Rain
+- evidence: The race began hot and dry as cloud built from the west. Very light drizzle arrived
+  late; drivers were warned about reduced grip but remained on slicks. The final Light Rain slot
+  models the genuine marginal shower without turning the event into a wet-tyre race.
+- source: https://www.formula1.com/en/results/2010/races/866/turkey/race-result
+- source: https://www.autosport.com/f1/news/the-2010-formula-1-race-by-race-review-5081849/5081849/
+
+### R13 Belgian Grand Prix
+- race: Light Rain / Medium Cloud / Heavy Cloud / Rain
+- qualifying: Light Cloud / Light Rain / Medium Cloud / Light Rain
+- evidence: Qualifying began dry, but Petrov's red flag let a shower reach the circuit during Q1;
+  Q2 dried before spots returned late in Q3. The race had a lap-one shower, a long dry middle,
+  then a proper shower from lap 33 of 44 that forced late intermediate/full-wet stops.
+- source: https://www.formula1.com/en/results/2010/races/872/belgium/qualifying
+- source: https://www.formula1.com/en/results/2010/races/872/belgium/race-result
+- source: https://www.motorsportmagazine.com/articles/single-seaters/f1/2010-belgian-grand-prix-report/
+- source: https://www.autosport.com/f1/news/the-complete-2010-belgian-gp-review-5081561/5081561/
+
+### R17 Korean Grand Prix
+- race: Storm / Rain / Light Rain / Overcast
+- evidence: Standing water and near-zero visibility produced a safety-car start and red flag after
+  three laps. After a stoppage of more than 45 minutes, the race resumed behind the safety car on
+  full wets, moved to intermediates as rain eased, and never became dry enough for slicks before
+  darkness. Storm is reserved here for the undriveable opening water level.
+- source: https://www.formula1.com/en/results/2010/races/876/south-korea/race-result
+- source: https://www.autosport.com/f1/news/the-complete-2010-korean-gp-review-5081744/5081744/
+- source: https://www.motorsportmagazine.com/articles/single-seaters/f1/i-was-there-when-2010-korean-gp/
+
+### R18 Brazilian Grand Prix
+- race: Clear / Clear / Clear / Clear
+- qualifying: Light Rain / Light Rain / Overcast / Medium Cloud
+- evidence: Intermittent rain kept the field on intermediates through Q1, Q2, and the opening Q3
+  runs. A dry line finally formed and drivers switched to slicks for the last five minutes, when
+  Hülkenberg took pole. Sunday's race was dry.
+- source: https://www.formula1.com/en/results/2010/races/877/brazil/qualifying
+- source: https://www.grandprix.com/races/brazilian-gp-2010-qualifying-report-hulkenberg-takes-sensational-brazil-pole.html
+- source: https://www.theguardian.com/sport/2010/nov/06/williams-brazil-grand-prix
+
+False positives checked: German rain was practice-only; Singapore FP1 began on residual moisture;
+Abu Dhabi had a pre-FP1 shower; and Japan's washed-out Saturday qualifying produced no timed laps.
+The actual Japanese qualifying ran Sunday morning in dry sunshine, followed by a dry race:
+https://www.grandprix.com/races/japanese-gp-2010-sunday-qualifying-team-quotes.html.
+
 ## 2016
 
 ### R6 Monaco Grand Prix

@@ -11,10 +11,10 @@ Status legend: ✔ done · ◐ partial (see notes) · ✗ todo · — not applic
 
 ## The matrix (verified against the repo 2026-07-11, branch `era/1967`)
 
-Countable state (from `coverage_matrix.ps1`): **all 21 packs** have weekend authoring on every
+Countable state (from `coverage_matrix.ps1`): **all 22 packs** have weekend authoring on every
 round (durations + 4 weather slots), refuel flags correct (`true` only 1983/1995/1997/2000/2005/
 2006/2008), history docs + era-capped fun facts + parseable circuit maps on **every round**, and a
-news-era corpus. Era art is 21/21 in tracked `data/ams2/era-art/`; the script's `eraArt` column
+news-era corpus. Era art is 22/22 in tracked `data/ams2/era-art/`; the script's `eraArt` column
 still checks the publish-only `dist/` mirror, so it remains false until the next shared publish.
 
 | pack | ratings source | car scalars | per-track AI | form | wet races | alternates | skin season | notes |
@@ -37,27 +37,30 @@ still checks the publish-only `dist/` mirror, so it remains false until the next
 | f1-2005 | ◐ f1db only | ✗ | ✗ none | ✔ 19 rds | ✔ 1 | ✔ 6 (0 gaps) | — | ditto; livery cap < field history — deep-pass candidate |
 | f1-2006 | ◐ f1db only | ✗ | ✗ none | ✔ 18 rds | ✔ 2 | ✔ 6 (0 gaps) | — | ditto |
 | f1-2008 | ◐ f1db only | ✗ | ✗ none | ✔ 18 rds | ✔ 6 (Silverstone, Monza wet quali) | ◐ 8 (1 gap) | — | ditto |
+| f1-2010 | ✔ AFry Realistic XML | ✔ 27 | ✔ 13 rds | — dropped (import) | ✔ 5 wet races + 3 wet qualifying composites | ◐ 7 (2 street gaps) | ✔ f1-2010 | 27 drivers/28 selector entries; 309 active-livery source patches; Yamamoto #21→#20 swap + five DNS grids authored; external late-season Heidfeld visor source defect documented |
 | f1-2016 | ✔ f1db + Realistic skinpack | ✔ 24 | ✔ 13 rds | — dropped (import) | ✔ 3 (Interlagos Storm) | ◐ 9 (1 gap) | — | |
 | f1-2020 | ✔ f1db + Realistic skinpack | ✔ 23 | ✔ 10 rds | — dropped (import) | ✔ 3 (Istanbul) | ✔ 7 (0 gaps) | — | Hülkenberg/Fittipaldi/Aitken subs authored; news = the 2010s era [2010-2029] |
 | smgp-1 | ✔ SMGP CustomAIDrivers | ✔ 34 | — by design | — | — always ideal (verified) | — stand-ins by design | ✔ smgp | roster drift pinned by `SmgpRosterDriftTests`; 1989 history pointers on all 16 rounds |
 
-"1 street gap" = a placeholder round with **no sensible AMS2 alternate** (Detroit ×3, Phoenix ×2,
-Marina Bay ×2, Valencia) — audited twice, legitimately none; not a todo.
+"Street gap" = a placeholder round with **no sensible AMS2 alternate** (Detroit ×3, Phoenix ×2,
+Marina Bay ×3, Valencia ×2) — audited twice, legitimately none; not a todo.
 
 ## The open work this table surfaces
 
 1. ~~Wet-race research~~ — DONE. f1-1967 was completed 2026-07-10 (only the Canadian GP at
    Mosport was wet; the other 10 rounds verified dry, including a caught false-positive at
-   Zandvoort); the new f1-1983 pack adds a 15-round deep pass. See `wet-weather-research.md`.
+   Zandvoort); f1-1983 adds a 15-round deep pass and the new f1-2010 pack adds a 19-round pass.
+   See `wet-weather-research.md`.
    Every shipped pack's weather is researched.
 2. **2000s ratings depth (2000/2005/2006/2008)** — still f1db-only. A genuine GTIDustin/Alain
    Fry 2006 community release now exists on OverTake, but its pristine archive/XML is not local
    and the live `F-V8_Gen1.xml` is absent, so there is no non-circular import source yet. Acquire
    and hash the original archive before running `tools/import_jusk_ai.cs`; do not synthesize from
    a staged app output. No correct-class source is currently available for the other three.
-3. **Skin-season backlog** — ~~1983~~ DONE 2026-07-11: a full f1db pack now binds the four active
-   TAMS2SP pointer XMLs and pins their 24-livery intersection. Remaining unassigned sets/backlog
-   packs are 1996/1998/2010/2012. Keep 1975 parked until the season-conflict manager.
+3. **Skin-season backlog** — ~~1983~~ and ~~2010~~ DONE 2026-07-11. f1-1983 binds the four active
+   TAMS2SP pointers; f1-2010 adds the 27-driver/28-entry Formula Reiza pack, generic source pointer,
+   and monotonic race variants. Remaining unassigned pointer sets are 1996 and 2012; 1998 has no
+   committed skin-season set. Keep 1975 parked until the season-conflict manager.
 
 ## The repeatable per-season pipeline (bring any season to parity)
 

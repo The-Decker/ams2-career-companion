@@ -1,0 +1,760 @@
+{
+  "drivers": [
+    {
+      "id": "driver.jenson_button",
+      "name": "Jenson Button",
+      "country": "GBR",
+      "born": 1980,
+      "ratings": {
+        "raceSkill": 0.97,
+        "qualifyingSkill": 0.92,
+        "aggression": 0.31,
+        "defending": 0.38,
+        "stamina": 0.99,
+        "consistency": 1,
+        "startReactions": 1,
+        "wetSkill": 0.96,
+        "tyreManagement": 0.93,
+        "fuelManagement": 1,
+        "blueFlagConceding": 0.72,
+        "weatherTyreChanges": 0.39,
+        "avoidanceOfMistakes": 0.71,
+        "avoidanceOfForcedMistakes": 0.66
+      },
+      "car": {
+        "weightScalar": 1.002,
+        "powerScalar": 0.979,
+        "dragScalar": 1.03,
+        "vehicleReliability": 0.9
+      }
+    },
+    {
+      "id": "driver.lewis_hamilton",
+      "name": "Lewis Hamilton",
+      "country": "GBR",
+      "born": 1985,
+      "ratings": {
+        "raceSkill": 0.98,
+        "qualifyingSkill": 0.95,
+        "aggression": 0.77,
+        "defending": 0.77,
+        "stamina": 0.98,
+        "consistency": 0.97,
+        "startReactions": 0.95,
+        "wetSkill": 0.74,
+        "tyreManagement": 0.91,
+        "fuelManagement": 0.92,
+        "blueFlagConceding": 0.77,
+        "weatherTyreChanges": 0.59,
+        "avoidanceOfMistakes": 0.71,
+        "avoidanceOfForcedMistakes": 0.51
+      },
+      "car": {
+        "weightScalar": 1.002,
+        "powerScalar": 0.979,
+        "dragScalar": 1.03,
+        "vehicleReliability": 0.84
+      }
+    },
+    {
+      "id": "driver.michael_schumacher",
+      "name": "Michael Schumacher",
+      "country": "DEU",
+      "born": 1969,
+      "ratings": {
+        "raceSkill": 0.93,
+        "qualifyingSkill": 0.87,
+        "aggression": 0.74,
+        "defending": 0.92,
+        "stamina": 0.91,
+        "consistency": 0.89,
+        "startReactions": 0.87,
+        "wetSkill": 0.74,
+        "tyreManagement": 0.75,
+        "fuelManagement": 0.75,
+        "blueFlagConceding": 0.6,
+        "weatherTyreChanges": 0.81,
+        "avoidanceOfMistakes": 0.67,
+        "avoidanceOfForcedMistakes": 0.45
+      },
+      "car": {
+        "weightScalar": 1.004,
+        "powerScalar": 0.972,
+        "dragScalar": 1.032,
+        "vehicleReliability": 0.69
+      }
+    },
+    {
+      "id": "driver.nico_rosberg",
+      "name": "Nico Rosberg",
+      "country": "DEU",
+      "born": 1985,
+      "ratings": {
+        "raceSkill": 0.95,
+        "qualifyingSkill": 0.91,
+        "aggression": 0.74,
+        "defending": 0.78,
+        "stamina": 0.94,
+        "consistency": 0.95,
+        "startReactions": 0.92,
+        "wetSkill": 0.73,
+        "tyreManagement": 0.82,
+        "fuelManagement": 0.82,
+        "blueFlagConceding": 0.74,
+        "weatherTyreChanges": 0.84,
+        "avoidanceOfMistakes": 0.79,
+        "avoidanceOfForcedMistakes": 0.61
+      },
+      "car": {
+        "weightScalar": 1.004,
+        "powerScalar": 0.972,
+        "dragScalar": 1.032,
+        "vehicleReliability": 0.64
+      }
+    },
+    {
+      "id": "driver.sebastian_vettel",
+      "name": "Sebastian Vettel",
+      "country": "DEU",
+      "born": 1987,
+      "ratings": {
+        "raceSkill": 0.98,
+        "qualifyingSkill": 0.99,
+        "aggression": 0.93,
+        "defending": 0.8,
+        "stamina": 0.99,
+        "consistency": 1,
+        "startReactions": 0.83,
+        "wetSkill": 0.96,
+        "tyreManagement": 0.95,
+        "fuelManagement": 0.97,
+        "blueFlagConceding": 0.56,
+        "weatherTyreChanges": 0.81,
+        "avoidanceOfMistakes": 0.67,
+        "avoidanceOfForcedMistakes": 0.48
+      },
+      "car": {
+        "weightScalar": 1,
+        "powerScalar": 0.985,
+        "dragScalar": 1.025,
+        "vehicleReliability": 0.65
+      }
+    },
+    {
+      "id": "driver.mark_webber",
+      "name": "Mark Webber",
+      "country": "AUS",
+      "born": 1976,
+      "ratings": {
+        "raceSkill": 0.98,
+        "qualifyingSkill": 0.98,
+        "aggression": 0.79,
+        "defending": 0.91,
+        "stamina": 1,
+        "consistency": 0.98,
+        "startReactions": 0.67,
+        "wetSkill": 0.72,
+        "tyreManagement": 0.92,
+        "fuelManagement": 0.9,
+        "blueFlagConceding": 0.79,
+        "weatherTyreChanges": 0.34,
+        "avoidanceOfMistakes": 0.79,
+        "avoidanceOfForcedMistakes": 0.66
+      },
+      "car": {
+        "weightScalar": 1,
+        "powerScalar": 0.985,
+        "dragScalar": 1.025,
+        "vehicleReliability": 0.84
+      }
+    },
+    {
+      "id": "driver.felipe_massa",
+      "name": "Felipe Massa",
+      "country": "BRA",
+      "born": 1981,
+      "ratings": {
+        "raceSkill": 0.94,
+        "qualifyingSkill": 0.93,
+        "aggression": 0.58,
+        "defending": 0.5,
+        "stamina": 0.92,
+        "consistency": 0.9,
+        "startReactions": 0.84,
+        "wetSkill": 0.37,
+        "tyreManagement": 0.71,
+        "fuelManagement": 0.73,
+        "blueFlagConceding": 0.53,
+        "weatherTyreChanges": 0.86,
+        "avoidanceOfMistakes": 0.63,
+        "avoidanceOfForcedMistakes": 0.3
+      },
+      "car": {
+        "weightScalar": 1.001,
+        "powerScalar": 0.981,
+        "dragScalar": 1.028,
+        "vehicleReliability": 0.82
+      }
+    },
+    {
+      "id": "driver.fernando_alonso",
+      "name": "Fernando Alonso",
+      "country": "ESP",
+      "born": 1981,
+      "ratings": {
+        "raceSkill": 0.98,
+        "qualifyingSkill": 0.94,
+        "aggression": 0.76,
+        "defending": 0.98,
+        "stamina": 0.98,
+        "consistency": 0.99,
+        "startReactions": 0.95,
+        "wetSkill": 1,
+        "tyreManagement": 1,
+        "fuelManagement": 0.95,
+        "blueFlagConceding": 0.96,
+        "weatherTyreChanges": 0.5,
+        "avoidanceOfMistakes": 0.81,
+        "avoidanceOfForcedMistakes": 0.81
+      },
+      "car": {
+        "weightScalar": 1.001,
+        "powerScalar": 0.981,
+        "dragScalar": 1.028,
+        "vehicleReliability": 0.94
+      }
+    },
+    {
+      "id": "driver.rubens_barrichello",
+      "name": "Rubens Barrichello",
+      "country": "BRA",
+      "born": 1972,
+      "ratings": {
+        "raceSkill": 0.91,
+        "qualifyingSkill": 0.88,
+        "aggression": 0.51,
+        "defending": 0.57,
+        "stamina": 0.9,
+        "consistency": 0.89,
+        "startReactions": 0.86,
+        "wetSkill": 0.58,
+        "tyreManagement": 0.76,
+        "fuelManagement": 0.76,
+        "blueFlagConceding": 0.71,
+        "weatherTyreChanges": 0.57,
+        "avoidanceOfMistakes": 0.76,
+        "avoidanceOfForcedMistakes": 0.64
+      },
+      "car": {
+        "weightScalar": 1.007,
+        "powerScalar": 0.963,
+        "dragScalar": 1.036,
+        "vehicleReliability": 0.69
+      }
+    },
+    {
+      "id": "driver.nico_hulkenberg",
+      "name": "Nico H\u00FClkenberg",
+      "country": "DEU",
+      "born": 1987,
+      "ratings": {
+        "raceSkill": 0.9,
+        "qualifyingSkill": 0.86,
+        "aggression": 0.52,
+        "defending": 0.37,
+        "stamina": 0.87,
+        "consistency": 0.86,
+        "startReactions": 0.81,
+        "wetSkill": 0.75,
+        "tyreManagement": 0.67,
+        "fuelManagement": 0.68,
+        "blueFlagConceding": 0.56,
+        "weatherTyreChanges": 0.32,
+        "avoidanceOfMistakes": 0.66,
+        "avoidanceOfForcedMistakes": 0.31
+      },
+      "car": {
+        "weightScalar": 1.007,
+        "powerScalar": 0.963,
+        "dragScalar": 1.036,
+        "vehicleReliability": 0.65
+      }
+    },
+    {
+      "id": "driver.robert_kubica",
+      "name": "Robert Kubica",
+      "country": "POL",
+      "born": 1984,
+      "ratings": {
+        "raceSkill": 0.95,
+        "qualifyingSkill": 0.92,
+        "aggression": 0.75,
+        "defending": 0.72,
+        "stamina": 0.95,
+        "consistency": 0.94,
+        "startReactions": 0.96,
+        "wetSkill": 0.74,
+        "tyreManagement": 0.83,
+        "fuelManagement": 0.85,
+        "blueFlagConceding": 0.79,
+        "weatherTyreChanges": 0.4,
+        "avoidanceOfMistakes": 0.73,
+        "avoidanceOfForcedMistakes": 0.65
+      },
+      "car": {
+        "weightScalar": 1.006,
+        "powerScalar": 0.967,
+        "dragScalar": 1.034,
+        "vehicleReliability": 0.89
+      }
+    },
+    {
+      "id": "driver.vitaly_petrov",
+      "name": "Vitaly Petrov",
+      "country": "RUS",
+      "born": 1984,
+      "ratings": {
+        "raceSkill": 0.9,
+        "qualifyingSkill": 0.79,
+        "aggression": 0.33,
+        "defending": 0.32,
+        "stamina": 0.88,
+        "consistency": 0.86,
+        "startReactions": 0.62,
+        "wetSkill": 0.37,
+        "tyreManagement": 0.61,
+        "fuelManagement": 0.69,
+        "blueFlagConceding": 0.37,
+        "weatherTyreChanges": 0.29,
+        "avoidanceOfMistakes": 0.52,
+        "avoidanceOfForcedMistakes": 0.24
+      },
+      "car": {
+        "weightScalar": 1.006,
+        "powerScalar": 0.967,
+        "dragScalar": 1.034,
+        "vehicleReliability": 0.62
+      }
+    },
+    {
+      "id": "driver.adrian_sutil",
+      "name": "Adrian Sutil",
+      "country": "DEU",
+      "born": 1983,
+      "ratings": {
+        "raceSkill": 0.9,
+        "qualifyingSkill": 0.83,
+        "aggression": 0.59,
+        "defending": 0.59,
+        "stamina": 0.9,
+        "consistency": 0.91,
+        "startReactions": 0.81,
+        "wetSkill": 0.77,
+        "tyreManagement": 0.78,
+        "fuelManagement": 0.79,
+        "blueFlagConceding": 0.52,
+        "weatherTyreChanges": 0.39,
+        "avoidanceOfMistakes": 0.6,
+        "avoidanceOfForcedMistakes": 0.33
+      },
+      "car": {
+        "weightScalar": 1.009,
+        "powerScalar": 0.956,
+        "dragScalar": 1.038,
+        "vehicleReliability": 0.69
+      }
+    },
+    {
+      "id": "driver.vitantonio_liuzzi",
+      "name": "Vitantonio Liuzzi",
+      "country": "ITA",
+      "born": 1980,
+      "ratings": {
+        "raceSkill": 0.9,
+        "qualifyingSkill": 0.79,
+        "aggression": 0.36,
+        "defending": 0.39,
+        "stamina": 0.86,
+        "consistency": 0.87,
+        "startReactions": 0.65,
+        "wetSkill": 0.38,
+        "tyreManagement": 0.61,
+        "fuelManagement": 0.61,
+        "blueFlagConceding": 0.54,
+        "weatherTyreChanges": 0.43,
+        "avoidanceOfMistakes": 0.68,
+        "avoidanceOfForcedMistakes": 0.36
+      },
+      "car": {
+        "weightScalar": 1.009,
+        "powerScalar": 0.956,
+        "dragScalar": 1.038,
+        "vehicleReliability": 0.7
+      }
+    },
+    {
+      "id": "driver.sebastien_buemi",
+      "name": "S\u00E9bastien Buemi",
+      "country": "CHE",
+      "born": 1988,
+      "ratings": {
+        "raceSkill": 0.89,
+        "qualifyingSkill": 0.78,
+        "aggression": 0.54,
+        "defending": 0.57,
+        "stamina": 0.86,
+        "consistency": 0.87,
+        "startReactions": 0.65,
+        "wetSkill": 0.53,
+        "tyreManagement": 0.61,
+        "fuelManagement": 0.63,
+        "blueFlagConceding": 0.53,
+        "weatherTyreChanges": 0.64,
+        "avoidanceOfMistakes": 0.66,
+        "avoidanceOfForcedMistakes": 0.48
+      },
+      "car": {
+        "weightScalar": 1.012,
+        "powerScalar": 0.945,
+        "dragScalar": 1.042,
+        "vehicleReliability": 0.48
+      }
+    },
+    {
+      "id": "driver.jaime_alguersuari",
+      "name": "Jaime Alguersuari",
+      "country": "ESP",
+      "born": 1990,
+      "ratings": {
+        "raceSkill": 0.89,
+        "qualifyingSkill": 0.78,
+        "aggression": 0.56,
+        "defending": 0.58,
+        "stamina": 0.85,
+        "consistency": 0.86,
+        "startReactions": 0.67,
+        "wetSkill": 0.57,
+        "tyreManagement": 0.61,
+        "fuelManagement": 0.69,
+        "blueFlagConceding": 0.56,
+        "weatherTyreChanges": 0.48,
+        "avoidanceOfMistakes": 0.64,
+        "avoidanceOfForcedMistakes": 0.32
+      },
+      "car": {
+        "weightScalar": 1.012,
+        "powerScalar": 0.945,
+        "dragScalar": 1.042,
+        "vehicleReliability": 0.4
+      }
+    },
+    {
+      "id": "driver.jarno_trulli",
+      "name": "Jarno Trulli",
+      "country": "ITA",
+      "born": 1974,
+      "ratings": {
+        "raceSkill": 0.86,
+        "qualifyingSkill": 0.73,
+        "aggression": 0.55,
+        "defending": 0.8,
+        "stamina": 0.86,
+        "consistency": 0.87,
+        "startReactions": 0.67,
+        "wetSkill": 0.57,
+        "tyreManagement": 0.6,
+        "fuelManagement": 0.61,
+        "blueFlagConceding": 0.75,
+        "weatherTyreChanges": 0.27,
+        "avoidanceOfMistakes": 0.71,
+        "avoidanceOfForcedMistakes": 0.54
+      },
+      "car": {
+        "weightScalar": 1.02,
+        "powerScalar": 0.92,
+        "dragScalar": 1.06,
+        "vehicleReliability": 0.45
+      }
+    },
+    {
+      "id": "driver.heikki_kovalainen",
+      "name": "Heikki Kovalainen",
+      "country": "FIN",
+      "born": 1981,
+      "ratings": {
+        "raceSkill": 0.86,
+        "qualifyingSkill": 0.73,
+        "aggression": 0.3,
+        "defending": 0.57,
+        "stamina": 0.87,
+        "consistency": 0.87,
+        "startReactions": 0.65,
+        "wetSkill": 0.59,
+        "tyreManagement": 0.67,
+        "fuelManagement": 0.65,
+        "blueFlagConceding": 0.7,
+        "weatherTyreChanges": 0.57,
+        "avoidanceOfMistakes": 0.71,
+        "avoidanceOfForcedMistakes": 0.65
+      },
+      "car": {
+        "weightScalar": 1.02,
+        "powerScalar": 0.92,
+        "dragScalar": 1.06,
+        "vehicleReliability": 0.48
+      }
+    },
+    {
+      "id": "driver.karun_chandhok",
+      "name": "Karun Chandhok",
+      "country": "IND",
+      "born": 1984,
+      "ratings": {
+        "raceSkill": 0.86,
+        "qualifyingSkill": 0.66,
+        "aggression": 0.38,
+        "defending": 0.38,
+        "stamina": 0.82,
+        "consistency": 0.84,
+        "startReactions": 0.62,
+        "wetSkill": 0.35,
+        "tyreManagement": 0.6,
+        "fuelManagement": 0.52,
+        "blueFlagConceding": 0.37,
+        "weatherTyreChanges": 0.83,
+        "avoidanceOfMistakes": 0.59,
+        "avoidanceOfForcedMistakes": 0.33
+      },
+      "car": {
+        "weightScalar": 1.022,
+        "powerScalar": 0.915,
+        "dragScalar": 1.062,
+        "vehicleReliability": 0.4
+      }
+    },
+    {
+      "id": "driver.bruno_senna",
+      "name": "Bruno Senna",
+      "country": "BRA",
+      "born": 1983,
+      "ratings": {
+        "raceSkill": 0.85,
+        "qualifyingSkill": 0.68,
+        "aggression": 0.39,
+        "defending": 0.36,
+        "stamina": 0.81,
+        "consistency": 0.81,
+        "startReactions": 0.66,
+        "wetSkill": 0.4,
+        "tyreManagement": 0.59,
+        "fuelManagement": 0.6,
+        "blueFlagConceding": 0.34,
+        "weatherTyreChanges": 0.88,
+        "avoidanceOfMistakes": 0.59,
+        "avoidanceOfForcedMistakes": 0.21
+      },
+      "car": {
+        "weightScalar": 1.022,
+        "powerScalar": 0.915,
+        "dragScalar": 1.062,
+        "vehicleReliability": 0.5
+      }
+    },
+    {
+      "id": "driver.pedro_de_la_rosa",
+      "name": "Pedro de la Rosa",
+      "country": "ESP",
+      "born": 1971,
+      "ratings": {
+        "raceSkill": 0.89,
+        "qualifyingSkill": 0.85,
+        "aggression": 0.55,
+        "defending": 0.33,
+        "stamina": 0.87,
+        "consistency": 0.87,
+        "startReactions": 0.64,
+        "wetSkill": 0.3,
+        "tyreManagement": 0.68,
+        "fuelManagement": 0.63,
+        "blueFlagConceding": 0.35,
+        "weatherTyreChanges": 0.84,
+        "avoidanceOfMistakes": 0.56,
+        "avoidanceOfForcedMistakes": 0.37
+      },
+      "car": {
+        "weightScalar": 1.01,
+        "powerScalar": 0.952,
+        "dragScalar": 1.04,
+        "vehicleReliability": 0.64
+      }
+    },
+    {
+      "id": "driver.kamui_kobayashi",
+      "name": "Kamui Kobayashi",
+      "country": "JPN",
+      "born": 1986,
+      "ratings": {
+        "raceSkill": 0.91,
+        "qualifyingSkill": 0.8,
+        "aggression": 0.77,
+        "defending": 0.53,
+        "stamina": 0.91,
+        "consistency": 0.91,
+        "startReactions": 0.87,
+        "wetSkill": 0.53,
+        "tyreManagement": 0.74,
+        "fuelManagement": 0.73,
+        "blueFlagConceding": 0.6,
+        "weatherTyreChanges": 0.35,
+        "avoidanceOfMistakes": 0.63,
+        "avoidanceOfForcedMistakes": 0.37
+      },
+      "car": {
+        "weightScalar": 1.01,
+        "powerScalar": 0.952,
+        "dragScalar": 1.04,
+        "vehicleReliability": 0.65
+      }
+    },
+    {
+      "id": "driver.timo_glock",
+      "name": "Timo Glock",
+      "country": "DEU",
+      "born": 1982,
+      "ratings": {
+        "raceSkill": 0.85,
+        "qualifyingSkill": 0.7,
+        "aggression": 0.54,
+        "defending": 0.54,
+        "stamina": 0.87,
+        "consistency": 0.87,
+        "startReactions": 0.68,
+        "wetSkill": 0.38,
+        "tyreManagement": 0.69,
+        "fuelManagement": 0.7,
+        "blueFlagConceding": 0.6,
+        "weatherTyreChanges": 0.82,
+        "avoidanceOfMistakes": 0.66,
+        "avoidanceOfForcedMistakes": 0.49
+      },
+      "car": {
+        "weightScalar": 1.024,
+        "powerScalar": 0.912,
+        "dragScalar": 1.064,
+        "vehicleReliability": 0.47
+      }
+    },
+    {
+      "id": "driver.lucas_di_grassi",
+      "name": "Lucas di Grassi",
+      "country": "BRA",
+      "born": 1984,
+      "ratings": {
+        "raceSkill": 0.84,
+        "qualifyingSkill": 0.68,
+        "aggression": 0.37,
+        "defending": 0.38,
+        "stamina": 0.88,
+        "consistency": 0.88,
+        "startReactions": 0.62,
+        "wetSkill": 0.36,
+        "tyreManagement": 0.6,
+        "fuelManagement": 0.63,
+        "blueFlagConceding": 0.39,
+        "weatherTyreChanges": 0.44,
+        "avoidanceOfMistakes": 0.56,
+        "avoidanceOfForcedMistakes": 0.22
+      },
+      "car": {
+        "weightScalar": 1.024,
+        "powerScalar": 0.912,
+        "dragScalar": 1.064,
+        "vehicleReliability": 0.44
+      }
+    },
+    {
+      "id": "driver.sakon_yamamoto",
+      "name": "Sakon Yamamoto",
+      "country": "JPN",
+      "born": 1982,
+      "ratings": {
+        "raceSkill": 0.85,
+        "qualifyingSkill": 0.67,
+        "aggression": 0.12,
+        "defending": 0.14,
+        "stamina": 0.82,
+        "consistency": 0.83,
+        "startReactions": 0.28,
+        "wetSkill": 0.13,
+        "tyreManagement": 0.55,
+        "fuelManagement": 0.55,
+        "blueFlagConceding": 0.12,
+        "weatherTyreChanges": 0.49,
+        "avoidanceOfMistakes": 0.44,
+        "avoidanceOfForcedMistakes": 0.3
+      },
+      "car": {
+        "weightScalar": 1.022,
+        "powerScalar": 0.915,
+        "dragScalar": 1.062,
+        "vehicleReliability": 0.48
+      }
+    },
+    {
+      "id": "driver.christian_klien",
+      "name": "Christian Klien",
+      "country": "AUT",
+      "born": 1983,
+      "ratings": {
+        "raceSkill": 0.83,
+        "qualifyingSkill": 0.66,
+        "aggression": 0.56,
+        "defending": 0.56,
+        "stamina": 0.85,
+        "consistency": 0.85,
+        "startReactions": 0.67,
+        "wetSkill": 0.56,
+        "tyreManagement": 0.65,
+        "fuelManagement": 0.6,
+        "blueFlagConceding": 0.4,
+        "weatherTyreChanges": 0.69,
+        "avoidanceOfMistakes": 0.54,
+        "avoidanceOfForcedMistakes": 0.25
+      },
+      "car": {
+        "weightScalar": 1.022,
+        "powerScalar": 0.915,
+        "dragScalar": 1.062,
+        "vehicleReliability": 0.49
+      }
+    },
+    {
+      "id": "driver.nick_heidfeld",
+      "name": "Nick Heidfeld",
+      "country": "DEU",
+      "born": 1977,
+      "ratings": {
+        "raceSkill": 0.9,
+        "qualifyingSkill": 0.82,
+        "aggression": 0.59,
+        "defending": 0.6,
+        "stamina": 0.91,
+        "consistency": 0.91,
+        "startReactions": 0.61,
+        "wetSkill": 0.51,
+        "tyreManagement": 0.71,
+        "fuelManagement": 0.8,
+        "blueFlagConceding": 0.59,
+        "weatherTyreChanges": 0.36,
+        "avoidanceOfMistakes": 0.62,
+        "avoidanceOfForcedMistakes": 0.46
+      },
+      "car": {
+        "weightScalar": 1.01,
+        "powerScalar": 0.952,
+        "dragScalar": 1.04,
+        "vehicleReliability": 0.68
+      }
+    }
+  ]
+}
