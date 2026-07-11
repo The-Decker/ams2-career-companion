@@ -139,10 +139,26 @@ internal static class EraCardYear
     {
         Companion.ViewModels.Services.RecentCareer entry =>
             Companion.ViewModels.Services.EraArtResolver.YearForEntry(entry),
+        Companion.ViewModels.Services.DiscoveredPack pack => pack.SeasonYear,
         int y => y,
         string name => Companion.ViewModels.Services.EraArtResolver.YearFromText(name),
         _ => null,
     };
+
+    /// <summary>The identity art key ("smgp") when this value is an SMGP career/pack — it must
+    /// resolve its own art rather than collide on its (shared) 1990 year. Null otherwise.</summary>
+    public static string? IdentityKey(object? value)
+    {
+        string style = Companion.ViewModels.Services.EraArtResolver.SmgpArtKey;
+        return value switch
+        {
+            Companion.ViewModels.Services.DiscoveredPack pack when
+                string.Equals(pack.Manifest?.CareerStyle, style, System.StringComparison.Ordinal) => style,
+            Companion.ViewModels.Services.RecentCareer entry when
+                string.Equals(entry.CareerStyle, style, System.StringComparison.Ordinal) => style,
+            _ => null,
+        };
+    }
 }
 
 /// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era accent brush,
@@ -231,7 +247,15 @@ public sealed class EraImageConverter : IValueConverter
             return chosen;
         }
 
-        // 2) Otherwise the drop-in era art resolved by the career's STORED season year (name-parse
+        // 2) IDENTITY-keyed art (the SMGP fictional world's SEGA Grand Prix picture) beats the
+        //    year — SMGP shares 1990 with the f1-1990 pack, so it must not collide on 1990.jpg.
+        if (EraCardYear.IdentityKey(value) is { } key &&
+            Companion.ViewModels.Services.EraArtResolver.ResolveKey(EraArtDirectory, key) is { } keyedPath)
+        {
+            return LoadFrozen(keyedPath);
+        }
+
+        // 3) Otherwise the drop-in era art resolved by the career's STORED season year (name-parse
         //    fallback for legacy entries); a bare int/name keep the old contract so non-gallery
         //    callers are unaffected.
         if (EraCardYear.From(value) is not int resolvedYear)

@@ -85,7 +85,8 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     private void OnCareerCreated(object? sender, CareerCreatedEventArgs e)
     {
-        Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName, e.Session.Summary.SeasonYear);
+        Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName, e.Session.Summary.SeasonYear,
+            e.Session.Pack.Manifest.CareerStyle);
         _currentCareerPath = e.CareerFilePath;
         AttachHome(e.Session);
     }
@@ -106,7 +107,8 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
             return;
         }
 
-        Start.RecordCareer(path, session.Summary.CareerName, session.Summary.SeasonYear);
+        Start.RecordCareer(path, session.Summary.CareerName, session.Summary.SeasonYear,
+            session.Pack.Manifest.CareerStyle);
         _currentCareerPath = path;
         AttachHome(session);
     }

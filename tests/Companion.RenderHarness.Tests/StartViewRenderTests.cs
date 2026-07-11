@@ -24,7 +24,7 @@ public sealed class StartViewRenderTests
         ];
 
         public IReadOnlyList<RecentCareer> Load() => _careers;
-        public void Touch(string path, string careerName, int seasonYear = 0) { }
+        public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null) { }
         public void Remove(string path) { }
     }
 

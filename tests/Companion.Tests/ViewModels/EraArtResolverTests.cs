@@ -31,6 +31,20 @@ public sealed class EraArtResolverTests
     }
 
     [Fact]
+    public void IdentityKey_resolves_the_smgp_art_beside_a_colliding_year()
+    {
+        // SMGP shares 1990 with the f1-1990 pack, so it keys its own art by identity ("smgp"),
+        // never the year — CandidateFileNamesForKey is just <key>.jpg / <key>.png.
+        Assert.Equal("smgp", EraArtResolver.SmgpArtKey);
+        Assert.Equal(["smgp.jpg", "smgp.png"], EraArtResolver.CandidateFileNamesForKey("smgp"));
+
+        using var dir = new TempDir();
+        Assert.Null(EraArtResolver.ResolveKey(dir.Path, "smgp"));   // none present → placeholder
+        File.WriteAllText(Path.Combine(dir.Path, "smgp.jpg"), "x");
+        Assert.Equal(Path.Combine(dir.Path, "smgp.jpg"), EraArtResolver.ResolveKey(dir.Path, "smgp"));
+    }
+
+    [Fact]
     public void Resolve_returns_null_when_the_directory_is_missing()
     {
         string missing = Path.Combine(Path.GetTempPath(), "era-art-" + Guid.NewGuid().ToString("N"));

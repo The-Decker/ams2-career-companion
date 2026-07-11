@@ -687,7 +687,7 @@ public sealed class ShellNavigationTests
 
         public IReadOnlyList<RecentCareer> Load() => _entries.ToList();
 
-        public void Touch(string path, string careerName, int seasonYear = 0) =>
+        public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null) =>
             Touched.Add((path, careerName, seasonYear));
 
         public void Remove(string path) => _entries.RemoveAll(e => e.Path == path);

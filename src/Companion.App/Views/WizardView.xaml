@@ -204,17 +204,18 @@
                                             </Style>
                                         </Border.Style>
                                         <StackPanel>
-                                            <!-- 16:9 year-pic hero (era art keyed by the season name;
-                                                 coloured era placeholder when no image is present). The
-                                                 height tracks the card's own width at 16:9 so the hero
-                                                 scales as the responsive column flexes. -->
+                                            <!-- 16:9 year-pic hero (era art keyed by the season year, or
+                                                 by identity for SMGP — its SEGA Grand Prix art rather than
+                                                 the shared 1990 photo; coloured era placeholder when none).
+                                                 The image binds the whole pack so the converter sees the
+                                                 careerStyle; the accent still keys off the title text. -->
                                             <Grid MinHeight="120"
                                                   Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource AspectHeight}, ConverterParameter=0.5625}">
                                                 <Border CornerRadius="6,6,0,0"
                                                         Background="{Binding Title, Converter={StaticResource EraAccent}}" />
                                                 <Border CornerRadius="6,6,0,0">
                                                     <Border.Background>
-                                                        <ImageBrush ImageSource="{Binding Title, Converter={StaticResource EraImage}}"
+                                                        <ImageBrush ImageSource="{Binding Converter={StaticResource EraImage}}"
                                                                     Stretch="UniformToFill" />
                                                     </Border.Background>
                                                 </Border>

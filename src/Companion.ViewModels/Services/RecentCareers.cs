@@ -17,6 +17,13 @@ public sealed record RecentCareer
     /// older <c>recent.json</c> (which omits the property) reads it as the 0 default, back-compat.</summary>
     public int SeasonYear { get; init; }
 
+    /// <summary>The career's pack <c>careerStyle</c> (e.g. <c>"smgp"</c>), stored so the gallery can
+    /// resolve identity-keyed era art — the SMGP replica mode shares the 1990 career year with the
+    /// f1-1990 pack, so it must show its own art, not the year's. <c>null</c> (the JSON default) =
+    /// a normal historical career (resolve by year). Not <c>required</c> so an older
+    /// <c>recent.json</c> that omits it reads as null, back-compat.</summary>
+    public string? CareerStyle { get; init; }
+
     /// <summary>An optional user-chosen hero image for this career's gallery card (an absolute path
     /// the user picked with "Set card image…"), which OVERRIDES the year-resolved era art. <c>null</c>
     /// (the JSON default) means "no override — use the era art for the year". Not <c>required</c> so an
@@ -36,7 +43,7 @@ public interface IRecentCareersStore
     /// (the gallery then falls back to parsing the name). An existing entry's user-chosen
     /// <see cref="RecentCareer.CustomImagePath"/> is CARRIED FORWARD (re-touching a career — Continue,
     /// rename, re-open — never wipes the card image); set it with <see cref="SetCustomImage"/>.</summary>
-    void Touch(string path, string careerName, int seasonYear = 0);
+    void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null);
 
     void Remove(string path);
 
@@ -84,12 +91,13 @@ public sealed class RecentCareersStore : IRecentCareersStore
     public IReadOnlyList<RecentCareer> Load() =>
         ReadFile().Where(entry => _careerFileExists(entry.Path)).ToList();
 
-    public void Touch(string path, string careerName, int seasonYear = 0)
+    public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null)
     {
         var all = ReadFile();
-        // Carry the user's chosen card image forward across a re-touch (Continue / rename / re-open):
-        // only the explicit "Set card image…" action changes it, never an ordinary front-insert.
-        string? customImagePath = all.FirstOrDefault(entry => PathsEqual(entry.Path, path))?.CustomImagePath;
+        // Carry the user's chosen card image (and the pack careerStyle) forward across a re-touch
+        // (Continue / rename / re-open): only "Set card image…" changes the image, and a caller that
+        // doesn't know the style (a plain Continue) must not wipe a stored one.
+        var existing = all.FirstOrDefault(entry => PathsEqual(entry.Path, path));
         var entries = all
             .Where(entry => !PathsEqual(entry.Path, path))
             .ToList();
@@ -99,7 +107,8 @@ public sealed class RecentCareersStore : IRecentCareersStore
             CareerName = careerName,
             LastOpenedUtc = _clock.GetUtcNow(),
             SeasonYear = seasonYear,
-            CustomImagePath = customImagePath,
+            CustomImagePath = existing?.CustomImagePath,
+            CareerStyle = careerStyle ?? existing?.CareerStyle,
         });
         WriteFile(entries.Take(Capacity).ToList());
     }
