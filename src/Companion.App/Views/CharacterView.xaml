@@ -4,8 +4,10 @@
              FontFamily="{StaticResource OpenSansFont}"
              Focusable="False">
     <!-- The character-creation step (Increment 4a). DataContext is a CharacterViewModel. Every
-         control is keyboard-operable: the archetype list (arrows), the stat sliders (arrows), and
-         the perk checkboxes (Space) — decision 8 parity. -->
+         control is keyboard-operable: the archetype list (arrows), the Random button (Enter/Space),
+         the stat sliders (arrows), the perk checkboxes (Space), and the specialism combo — decision
+         8 parity. Three tiers of depth: pick an archetype (or roll a random build), free-customize
+         the sliders + perk shelf against a live meter, and reveal the raw numbers in "Advanced". -->
     <DockPanel>
         <!-- driver name: the identity the whole app uses -->
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
@@ -31,7 +33,7 @@
         <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Padding="12,8" Margin="0,12,0,0">
             <StackPanel>
                 <TextBlock>
-                    <Run Text="Talent: " /><Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text=" allocated   ·   Perks: " /><Run Text="{Binding SelectedPerkCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerks, Mode=OneWay}" /><Run Text="   ·   Perk points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerkPoints, Mode=OneWay}" /><Run Text=" (budget " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=")" />
+                    <Run Text="Talent: " /><Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text=" allocated   ·   Perks: " /><Run Text="{Binding SelectedPerkCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerks, Mode=OneWay}" /><Run Text="   ·   Perk points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerkPoints, Mode=OneWay}" /><Run Text=" spent · " /><Run Text="{Binding RemainingCp, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" left (budget " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=")" />
                 </TextBlock>
                 <TextBlock Foreground="{StaticResource ErrorBrush}" Margin="0,4,0,0" TextWrapping="Wrap"
                            Text="{Binding Invalidity}">
@@ -59,6 +61,12 @@
             <!-- archetype presets: one click = a complete, valid character -->
             <DockPanel Grid.Column="0" Margin="0,0,14,0">
                 <TextBlock DockPanel.Dock="Top" Text="Archetype" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,6" />
+                <!-- roll a complete random build — the other one-click way to a valid character -->
+                <Button DockPanel.Dock="Bottom" Margin="0,8,0,0" Padding="8,6"
+                        Command="{Binding RandomBuildCommand}"
+                        Content="🎲  Random balanced build"
+                        HorizontalContentAlignment="Center"
+                        ToolTip="Roll a random archetype and a fresh stat spread — always valid and in budget." />
                 <Border Style="{StaticResource Panel}" Padding="6">
                     <ListBox ItemsSource="{Binding Archetypes}" SelectedItem="{Binding SelectedArchetype}"
                              Background="Transparent" BorderThickness="0"
@@ -118,38 +126,45 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,4">
-                                    <TextBlock Text="{Binding Name}" Style="{StaticResource Faint}" Margin="0,0,0,2" />
+                                    <TextBlock Text="{Binding DisplayName}" Style="{StaticResource Faint}" Margin="0,0,0,2" />
                                     <ItemsControl ItemsSource="{Binding Perks}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="4,2">
-                                                    <CheckBox.ToolTip>
-                                                        <StackPanel MaxWidth="320">
-                                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
-                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
-                                                                       Margin="0,2,0,0" Opacity="0.85" />
-                                                            <ItemsControl ItemsSource="{Binding Benefits}" Margin="0,6,0,0">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBlock TextWrapping="Wrap"><Run Text="+  " FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
-                                                            <ItemsControl ItemsSource="{Binding Drawbacks}">
-                                                                <ItemsControl.ItemTemplate>
-                                                                    <DataTemplate>
-                                                                        <TextBlock TextWrapping="Wrap" Opacity="0.85"><Run Text="−  " FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
-                                                                    </DataTemplate>
-                                                                </ItemsControl.ItemTemplate>
-                                                            </ItemsControl>
+                                                <StackPanel Margin="4,2">
+                                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                                        <CheckBox.ToolTip>
+                                                            <StackPanel MaxWidth="320">
+                                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                                                                           Margin="0,2,0,0" Opacity="0.85" />
+                                                            </StackPanel>
+                                                        </CheckBox.ToolTip>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" />
+                                                            <TextBlock Text="{Binding CostLabel}" Style="{StaticResource Faint}"
+                                                                       Margin="8,0,0,0" />
                                                         </StackPanel>
-                                                    </CheckBox.ToolTip>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Name}" />
-                                                        <TextBlock Text="{Binding CostLabel}" Style="{StaticResource Faint}"
-                                                                   Margin="8,0,0,0" />
+                                                    </CheckBox>
+                                                    <!-- benefit/drawback inline once picked — keyboard-reachable,
+                                                         no hover required (decision-8 parity) -->
+                                                    <StackPanel Margin="22,2,0,4"
+                                                                Visibility="{Binding IsSelected, Converter={StaticResource BoolVisible}}">
+                                                        <ItemsControl ItemsSource="{Binding Benefits}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock TextWrapping="Wrap" FontSize="12"><Run Text="+  " FontWeight="Bold" Foreground="{StaticResource SuccessBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                        <ItemsControl ItemsSource="{Binding Drawbacks}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.9"><Run Text="−  " FontWeight="Bold" Foreground="{StaticResource ErrorBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
                                                     </StackPanel>
-                                                </CheckBox>
+                                                </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -157,6 +172,38 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <!-- One-Trick Pony: pick the single specialism its +0.30 lands on and locks to.
+                         Shown only when the perk is selected. -->
+                    <Border Style="{StaticResource Panel}" Padding="10,8" Margin="0,10,0,0"
+                            Visibility="{Binding IsOneTrickSelected, Converter={StaticResource BoolVisible}}">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,10,0"
+                                       Text="Your one weapon" FontWeight="SemiBold" />
+                            <ComboBox ItemsSource="{Binding EligibleFlavors}" SelectedItem="{Binding ChosenFlavor}"
+                                      DisplayMemberPath="Label" MinWidth="180"
+                                      AutomationProperties.Name="One-Trick specialism" />
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Advanced (tier 3): the raw stat → written-rating numbers, so the honesty
+                         constraint is loud — talent sets the sim's EXPECTATION of you, not secret pace. -->
+                    <Expander Header="Advanced — show the numbers" Margin="0,12,0,0" FontSize="13">
+                        <StackPanel Margin="4,6,0,0">
+                            <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,6"
+                                       Text="Each talent stat writes these AI-rating fields on your seat. They set how good the sim EXPECTS you to be (a stiffer bar to beat), never a secret in-race buff." />
+                            <ItemsControl ItemsSource="{Binding Stats}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,2">
+                                            <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="120" Style="{StaticResource Faint}" />
+                                            <TextBlock Text="{Binding WrittenPreview}" TextWrapping="Wrap" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Expander>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
