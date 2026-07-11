@@ -19,7 +19,16 @@ Resume the **AMS2 Career Companion** SMGP work (`Z:\Claude Code\ams2-career-comp
    Code\open-pr.ps1`. ⚠ A **babysit/auto-finalize pipeline** is live on this repo+memory (it commits,
    pushes, republishes, and writes memory blocks on its own) — **verify HEAD before assuming state.**
 
-## What is DONE and shipped (head `65a59d3`)
+## What is DONE and shipped (head `f277a95`)
+- **THREAD B — SMGP CLEAN SEAT-SWAP — SHIPPED** (`f277a95`, RC deployed to dist 11:32): the player is
+  their OWN distinct driver (`RoundGridResolver.SyntheticPlayerDriverId`), no cascade, `AiSeatOverrides`
+  always empty; NEW smgp careers only. Fixed the byte-identical-replay BLOCKER in
+  `ReplayService.SeasonPlayerDriverId` (clean-swap career scores under the synthetic id for the whole
+  season, don't walk the grid to the authored AI). Removed dead `OccupantOf`/`ChallengerHomeSeat`. A
+  3-lens verify workflow caught + I fixed two DISPLAY regressions (player win credited to the benched
+  AI; standings showed the raw id) via a `PlayerDisplayName()` seam. Suite 1799 + 46 green, replay
+  invariant solid. (A lost title defense now drops the "Ceara takes Madonna" flourish — clean model,
+  Mike's choice.) ⚠ `stash@{0}` still lingers (drop denied by the guard); its content IS in `f277a95`.
 - **Item B — SMGP "What Really Happened" almanac** (`ff62523` + render pin `805027d`): per-race
   fictional history unlocked on the History tab once you finish a race. `SmgpWhatReallyHappened` (Core)
   + `data/rules/smgp/what-really-happened.json` (16 venues) + `ICareerSession.SmgpWorldHistory()` +
@@ -58,40 +67,24 @@ Textures/CustomLiveries/Overrides/formula_classic_g3m1..4/` + `UserData/CustomAI
 F-Classic_Gen3.xml`; McLaren → `Overrides/mclaren_mp45b/` + `OPTIONAL .../F-Classic_Gen3_ADD-these-2-
 drivers.xml` (merge, don't overwrite).
 
-## THREAD B — SMGP CLEAN SEAT-SWAP (built, **STASHED**, NOT shipped)
-`git stash@{0}` on `hub/increment-4`, base **`af9fadb`**. **Mike's ask (chosen via AskUserQuestion =
-"Full clean model only"):** kill the seat-swap CASCADE — "when i beat park arai, he replaced the
-default zeroforce driver. the original driver should come back to that car i just left and the rival i
-beat disappears until you switch teams again — prevent grid chaos." **Design (correct):** the SMGP
-player becomes their OWN distinct driver (`RoundGridResolver.SyntheticPlayerDriverId`) instead of
-impersonating the seat's AI — so the AI whose car the player occupies BENCHES and RETURNS the moment
-the player moves on; everyone else keeps their home seat; NO `AiSeatOverrides`, no cascade. Files in
-the stash: `ResolvePlayerDriverId`→Synthetic for smgp (creation, NEW careers only); `PlayerSeat.DriverId`
-+ `RoundGridResolver.ApplyPlayerSeat` stamps it + benches that car's AI; `CareerSessionService.ResolveGrid`
-+ `ReplayService.ResolvePlayerGrid` clean path (seat directly at `smgp.CurrentSeatLivery`, no overrides);
-`SmgpBattleFold` ApplyAcceptedSwap/ApplyForfeit/title-defense + `SmgpSchedule.ChampionRollover` set
-`CurrentSeatLivery` only (drop all `WithAiSeatOverride`). **STATUS: core WORKS** — all 7
-`SmgpBattleFoldDeterminismTests` pass incl. byte-identical replay (the regular swap Mike asked for is
-correct). **⚠ BLOCKER (why stashed): 3 tests fail a byte-identical-replay REP divergence** —
-`SmgpStateSeedTests.SmgpCareer_...ReplaysByteIdentically` + 2 `SmgpTitleDefenseTests`
-(`stored championshipPosition=2, rep 37→47.5` vs `regenerated null, 37→37`). **Debug PROVED live+replay
-resolve IDENTICAL grids** (both clean path, smgpSeat + inputsPid=Synthetic) → it is NOT the grid; it's
-a rep/standings AGGREGATION that drops the distinct player's row ONLY in the state-seed/title-defense
-setup (which classify via `seats.Select(DriverId)` grid-order; the 7 passing tests classify via
-ApplyPlayerFirst/Last). Test-assertion updates for the clean model are ALREADY in the stash (rival
-benched not chained, `AiSeatOverrides` empty, replay `PlayerDriverId = SyntheticPlayerDriverId`,
-title-defense challenger given a REAL entry). **NEXT:** `git stash pop` → find why the state-seed/
-title-defense replay drops the distinct player's standings row (likely a lookup that assumes a pack
-driver id — grep the OPI/reputation/standings fold for `_playerDriverId`/pack-driver lookups) → 3 tests
-green → full suite green → ship (needs a NEW smgp career). **Design note to confirm with Mike:** the
-clean model drops the "Ceara takes Madonna" flourish on a lost title defense (Senna returns to Madonna
-instead) — keep clean, or special-case Ceara?
+## THREAD B — SMGP CLEAN SEAT-SWAP — ✅ SHIPPED (`f277a95`, RC deployed 11:32)
+Done this session. The blocker (3 byte-identical-replay failures) was `ReplayService.SeasonPlayerDriverId`
+resolving the livery's AUTHORED AI instead of the synthetic id → season-end reputation lookup missed the
+player (`championshipPosition` null on replay). Fix: a clean-swap career scores under the synthetic id for
+the whole season, return it straight. Removed dead `OccupantOf`/`ChallengerHomeSeat`. A 3-lens verify
+workflow found ZERO determinism siblings and TWO display regressions (player win credited to the benched
+AI; standings showed the raw `driver.player-entrant`) — fixed via a `CareerSessionService.PlayerDisplayName()`
+seam (`CharacterName() ?? (IsDistinctDriverPlayer ? "You" : null)`), routed through the grid card, skin
+crib, standings/review identity, race-news winner/leader, and the season digest. Regression test added.
+Suite 1799 + 46 green. Mike accepted the clean model dropping the "Ceara takes Madonna" flourish. NEW smgp
+career needed to see it. ⚠ `stash@{0}` still lingers (drop was guard-denied) — content is in `f277a95`.
 
 ## Suggested order next session
-1. **Read Mike's skin test result** (thread A) — it decides everything about the skin fix.
+1. **Read Mike's skin test result** (THREAD A) — the LIVE open issue; it decides everything about the skin
+   fix. (Stage → fully quit AMS2 → relaunch DIRECT, not via RCM → do the fitting skins stick?) Cannot be
+   run for Mike — it needs him in-game.
 2. If the fixed-set works → optionally build the app-owned mod installer (Mike's direction) + fix the 4
    non-binding liveries (McLaren + g3m3). If not → dig into AMS2's per-model cap / launch behavior.
-3. **Finish thread B** (pop the stash, fix the replay-determinism divergence, ship the clean swap).
-Also outstanding (parked behind SMGP): item C (per-team car-specs card, waiting on Mike's numbers),
-item D (SMGP news Phase 2). ⚠ pre-existing SUITE FLAKINESS under parallel xunit (random unrelated
-tests fail ~1 in 3 full runs, all green in isolation / on a clean run) — NOT from recent changes.
+3. Item C (per-team car-specs card, waiting on Mike's numbers), item D (SMGP news Phase 2).
+⚠ pre-existing SUITE FLAKINESS under parallel xunit (random unrelated tests fail ~1 in 3 full runs, all
+green in isolation / on a clean run) — NOT from recent changes.
