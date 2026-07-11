@@ -1072,7 +1072,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 MachineLine = machine + (team?.Performance.PowerScalar is { } power && power != 1.0
                     ? $" · POWER ×{power.ToString("0.###", CultureInfo.InvariantCulture)}"
                     : ""),
-                Quote = "IT'S INTERESTING.",
+                // His line varies by WHO he is and WHERE the ladder stands (first meeting, you a win
+                // up, or him a win up). Display-only, so a per-round seed just keeps it stable on re-open.
+                Quote = RivalQuote(seat.DriverId, tally, round),
                 OfferOnWin = tally.PlayerStreak == 1,
                 ForfeitOnLoss = tally.RivalStreak == 1,
             });
@@ -1098,6 +1100,37 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             ForcedChallengerDriverId = forcedChallenger,
             Rivals = rivals,
         };
+    }
+
+    /// <summary>The rival's dossier line: his OWN words for the ladder state — a first challenge,
+    /// the player one win up (the seat in sight), or him one win up. Data-driven
+    /// (<c>data/rules/smgp/rival-quotes.json</c>); the deadpan default when no rules folder or no
+    /// authored line. Display-only, so a per-round seed just keeps the same line on a re-open.</summary>
+    private string RivalQuote(string driverId, Companion.Core.Smgp.SmgpBattleTally tally, int round)
+    {
+        if (_environment.RulesDirectory is null)
+            return Companion.Core.Smgp.SmgpRivalQuotes.Default;
+
+        var mood = tally.PlayerStreak >= 1 ? Companion.Core.Smgp.SmgpRivalMood.PlayerLeads
+            : tally.RivalStreak >= 1 ? Companion.Core.Smgp.SmgpRivalMood.RivalLeads
+            : Companion.Core.Smgp.SmgpRivalMood.First;
+
+        return _environment.Rules.SmgpRivalQuotes.Line(driverId, mood, QuoteSeed(driverId, round));
+    }
+
+    /// <summary>A stable FNV-1a hash over (driver id, round) — picks a line without wobbling when the
+    /// same briefing is re-opened. The quote is never a fold input, so this seed carries no weight
+    /// beyond display.</summary>
+    private static uint QuoteSeed(string driverId, int round)
+    {
+        unchecked
+        {
+            uint h = 2166136261;
+            foreach (char c in driverId) { h ^= c; h *= 16777619; }
+            h ^= (uint)round;
+            h *= 16777619;
+            return h;
+        }
     }
 
     private Companion.Core.Grid.GridSelection? _gridSelection;

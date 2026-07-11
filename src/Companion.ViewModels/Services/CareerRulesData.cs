@@ -1,6 +1,7 @@
 using Companion.Core.Career;
 using Companion.Core.Character;
 using Companion.Core.News;
+using Companion.Core.Smgp;
 
 namespace Companion.ViewModels.Services;
 
@@ -31,6 +32,11 @@ public sealed record CareerRulesData
     /// eagerly like the other rules so the live and replay paths see the identical instance.</summary>
     public required CharacterRules Character { get; init; }
 
+    /// <summary>The SMGP rivals' per-driver, per-mood trash-talk (<c>data\rules\smgp\rival-quotes.json</c>).
+    /// DISPLAY-ONLY — the briefing quote is never a fold input; empty (the deadpan default) when the
+    /// file is absent, so a non-SMGP install or an un-updated data folder is unaffected.</summary>
+    public required SmgpRivalQuotes SmgpRivalQuotes { get; init; }
+
     public static CareerRulesData Load(string rulesDirectory) => new()
     {
         AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
@@ -38,6 +44,7 @@ public sealed record CareerRulesData
         Headlines = HeadlineBank.Parse(Read(rulesDirectory, "career-headline-templates.json")),
         NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
         Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
+        SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
     };
 
     private static string Read(string rulesDirectory, string fileName)
