@@ -15,7 +15,7 @@ Conflicting families covered:
 | formula_retro_g3, _te, mclaren_mp4_1c (+brabham_bt52 1983-only) | f1-1983 · f1-1985 |
 | formula_classic_g3m1–m4 (+mclaren_mp45b 1990-only) | f1-1990 · smgp |
 | formula_v10_g1, mclaren_mp4_12            | f1-1996 · f1-1997    |
-| formula_reiza, mercedes_amg_sc            | f1-2010 · f1-2012    |
+| formula_reiza (SC pointer is 2012-only)   | f1-2010 · f1-2012    |
 
 Provenance: extracted from the community skin packs in Mike's `Z:\SKINS 4 AI MUCH LOVE`
 directory (2026-07-10) — 1974/1975 F-Retro-G1 packs, TAMS2SP 1983 V2-2, Klukkluk F1_1985,
@@ -28,3 +28,10 @@ TAMS2SP liveries; the source archive's optional #33 Guerrero and #36 Giacomelli 
 active pointers. `formula_retro_g3.xml` contains one deliberate source repair: Jarier's visor-spec
 path is corrected from `83_Jarrier_visor_spec.dds` to the installed asset
 `83_Jarier_visor_spec.dds`. See `docs/research/1983-source-parity.md` for hashes and drift guards.
+
+`f1-2010` is assigned to the shipped pack as of 2026-07-11. Its repo-owned library contains only
+the generic 24-livery `formula_reiza.xml`; race variants remain installed beside the active pointer
+and bind by monotonic change point. The captured `mercedes_amg_sc.xml` was excluded because it
+points to 2012/2024 safety-car assets, not 2010 Formula content. See
+`docs/research/2010-source-parity.md` for hashes, selector policy, and the upstream Heidfeld visor
+path caveat.
