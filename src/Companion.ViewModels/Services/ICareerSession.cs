@@ -722,6 +722,10 @@ public sealed record SmgpRivalOption
     /// <summary>The MACHINE block line (the car, from the pack).</summary>
     public required string MachineLine { get; init; }
 
+    /// <summary>The rival's arcade car-spec card (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars), or
+    /// null when no spec is authored for the car (the card then collapses). Display-only.</summary>
+    public CarSpecCardViewModel? CarSpec { get; init; }
+
     /// <summary>The rival's deadpan one-liner (the game's own vocabulary).</summary>
     public required string Quote { get; init; }
 

@@ -399,7 +399,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public ObservableCollection<SeatOption> Seats { get; } = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(PlayerImageKey), nameof(PlayerCarKey))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(PlayerImageKey), nameof(PlayerCarKey), nameof(PlayerCarSpec))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private SeatOption? _selectedSeat;
 
@@ -411,6 +411,23 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// <summary>The car the player will drive — its preview image key (the seat's driver id keys
     /// <c>data/ams2/cars/&lt;driverId&gt;.png</c>). Null for an own entrant (no pack car).</summary>
     public string? PlayerCarKey => SelectedSeat?.DriverId;
+
+    /// <summary>The arcade car-spec card for the car the player will drive (machine/engine/power +
+    /// ENG-TM-SUS-TIRE-BRA bars), resolved from the chosen seat's team/vehicle. Null when there is no
+    /// character system, no seat, or no authored spec — the character screen then hides the card.</summary>
+    public CarSpecCardViewModel? PlayerCarSpec
+    {
+        get
+        {
+            if (SelectedSeat is null || _environment.RulesDirectory is null)
+                return null;
+            var catalog = _environment.Rules.CarSpecs;
+            string? vehicle = Pack?.Teams
+                .FirstOrDefault(t => string.Equals(t.Id, SelectedSeat.TeamId, StringComparison.Ordinal))
+                ?.CarVehicleIds.FirstOrDefault();
+            return CarSpecCardViewModel.From(catalog.For(SelectedSeat.TeamId, vehicle), catalog.BarMax);
+        }
+    }
 
     /// <summary>The player's chosen driver name (the character step, defaulting to the seat driver
     /// until edited) — replaces the AI driver's name on the player's own Season's-Grid card. Null

@@ -1130,6 +1130,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 MachineLine = machine + (team?.Performance.PowerScalar is { } power && power != 1.0
                     ? $" · POWER ×{power.ToString("0.###", CultureInfo.InvariantCulture)}"
                     : ""),
+                CarSpec = CarSpecCardViewModel.From(
+                    _environment.Rules.CarSpecs.For(seat.TeamId, vehicle),
+                    _environment.Rules.CarSpecs.BarMax),
                 // His line varies by WHO he is and WHERE the ladder stands (first meeting, you a win
                 // up, or him a win up). Display-only, so a per-round seed just keeps it stable on re-open.
                 Quote = RivalQuote(seat.DriverId, tally, round),

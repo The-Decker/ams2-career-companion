@@ -32,6 +32,8 @@
     <None Include="..\..\data\rules\career-*.json" Link="Fixtures\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Driver character / perk rules data, for the perk-balance audit test. -->
     <None Include="..\..\data\rules\perks.json" Link="Fixtures\rules\perks.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Arcade car-spec cards (display-only), for the catalog loader test + the on-real-data checks. -->
+    <None Include="..\..\data\rules\car-specs.json" Link="Fixtures\rules\car-specs.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- The generative news-article corpora (data\rules\news\*.json) for the news-feed tests. -->
     <None Include="..\..\data\rules\news\*.json" Link="Fixtures\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The SMGP rival-dossier trash-talk corpus, for the quote drift guard. -->

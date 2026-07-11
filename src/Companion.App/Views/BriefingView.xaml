@@ -508,6 +508,16 @@
                                         <Run Text="MACHINE  " FontWeight="SemiBold" />
                                         <Run Text="{Binding SelectedSmgpRival.MachineLine, Mode=OneWay}" />
                                     </TextBlock>
+                                    <!-- the arcade car-spec card — collapses when the car has no authored spec -->
+                                    <ContentControl Content="{Binding SelectedSmgpRival.CarSpec}"
+                                                    HorizontalAlignment="Center" Margin="0,8,0,0"
+                                                    Visibility="{Binding SelectedSmgpRival.CarSpec, Converter={StaticResource NullCollapsed}}">
+                                        <ContentControl.ContentTemplate>
+                                            <DataTemplate>
+                                                <views:CarSpecCard MaxWidth="260" />
+                                            </DataTemplate>
+                                        </ContentControl.ContentTemplate>
+                                    </ContentControl>
                                     <!-- his line — dynamic per character AND per ladder state (see SmgpRivalQuotes) -->
                                     <TextBlock Text="{Binding SelectedSmgpRival.Quote}" Style="{StaticResource Body}"
                                                FontStyle="Italic" Margin="0,8,0,0" TextWrapping="Wrap"

@@ -1,0 +1,36 @@
+{
+  "$comment": "CAR SPECS — the arcade car-select card (machine / engine / max power + the ENG-TM-SUS-TIRE-BRA bars) shown on the character and rival screens. DISPLAY-ONLY: never folded into the sim, exactly like the news and rival-quote corpora. Keyed by TEAM id (e.g. 'team.madonna') OR by VEHICLE id (e.g. 'formula_classic_g3m2'); a team-id row wins over its car's vehicle-id row, so you can give a single team its own machine name/bars while every other team on that car model falls back to the model default below. Any car with NO row here just hides the card (absent-tolerant), so this whole feature ships wired and the ONLY later edit is tuning these numbers. Each bar is 0..barMax. THE NUMBERS BELOW ARE PLACEHOLDER ESTIMATES for the five SMGP car models — replace freely with the real per-team values.",
+  "barMax": 8,
+  "cars": {
+    "mclaren_mp45b": {
+      "machineName": "MP4/5B",
+      "engine": "Honda V10",
+      "maxPowerHp": 690,
+      "bars": { "engine": 8, "transmission": 7, "suspension": 7, "tyre": 7, "brake": 8 }
+    },
+    "formula_classic_g3m1": {
+      "machineName": "Type G3-M1",
+      "engine": "V12",
+      "maxPowerHp": 660,
+      "bars": { "engine": 7, "transmission": 6, "suspension": 6, "tyre": 6, "brake": 6 }
+    },
+    "formula_classic_g3m2": {
+      "machineName": "Type G3-M2",
+      "engine": "V8",
+      "maxPowerHp": 590,
+      "bars": { "engine": 4, "transmission": 4, "suspension": 5, "tyre": 4, "brake": 4 }
+    },
+    "formula_classic_g3m3": {
+      "machineName": "Type G3-M3",
+      "engine": "V10",
+      "maxPowerHp": 630,
+      "bars": { "engine": 6, "transmission": 5, "suspension": 6, "tyre": 5, "brake": 5 }
+    },
+    "formula_classic_g3m4": {
+      "machineName": "Type G3-M4",
+      "engine": "V10",
+      "maxPowerHp": 610,
+      "bars": { "engine": 5, "transmission": 5, "suspension": 5, "tyre": 5, "brake": 5 }
+    }
+  }
+}

@@ -43,6 +43,11 @@ public sealed record CareerRulesData
     /// History panel then simply hides).</summary>
     public required SmgpWhatReallyHappened SmgpWhatReallyHappened { get; init; }
 
+    /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
+    /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
+    /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
+    public required CarSpecCatalog CarSpecs { get; init; }
+
     public static CareerRulesData Load(string rulesDirectory) => new()
     {
         AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
@@ -52,6 +57,7 @@ public sealed record CareerRulesData
         Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
         SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
         SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
+        CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 
     private static string Read(string rulesDirectory, string fileName)

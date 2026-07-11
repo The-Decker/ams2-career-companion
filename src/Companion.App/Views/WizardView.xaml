@@ -645,6 +645,15 @@
                     <Image Height="44" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,8,0,0"
                            Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    <!-- the car you'll drive, as the arcade spec card — collapses when no spec is authored -->
+                    <ContentControl Content="{Binding PlayerCarSpec}" HorizontalAlignment="Center" Margin="0,8,0,0"
+                                    Visibility="{Binding PlayerCarSpec, Converter={StaticResource NullCollapsed}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <views:CarSpecCard MaxWidth="260" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
                 </StackPanel>
                 <views:CharacterView DataContext="{Binding Character}" />
             </DockPanel>
