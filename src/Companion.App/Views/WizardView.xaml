@@ -54,7 +54,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="4 · Grid">
+                <TextBlock Text="4 · Season Grid">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
@@ -506,9 +506,9 @@
 
             <!-- c1. choose the grid (v0.6.0) -->
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Grid}}">
-                <TextBlock DockPanel.Dock="Top" Text="Choose your grid" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Text="The Season's Grid" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,4" TextWrapping="Wrap"
-                           Text="Your own car is always in — it's the row marked &quot;You&quot;. Uncheck any driver you don't want racing on the grid this season." />
+                           Text="The field you'll race — it carries across every season of the career. Your own car is always in (the card marked &quot;You&quot;). Uncheck any driver you don't want on the grid." />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap">
                     <Run Text="Your season field is " /><Run Text="{Binding IncludedCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" cars. Each race fields the ones that qualified — up to " /><Run Text="{Binding MaxRaceCars, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" on the grid. In AMS2 set " /><Run Text="AI Opponents" FontWeight="SemiBold" /><Run Text=" to " /><Run Text="{Binding AiOpponentCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" (the briefing before each race shows the exact number)." />
                 </TextBlock>
@@ -542,16 +542,17 @@
                                 <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,6,6" VerticalAlignment="Top">
                                     <StackPanel>
                                         <!-- the DRIVER PORTRAIT is the hero (data/ams2/portraits/<driverId>.jpg).
-                                             A framed placeholder (a person glyph) shows until the art is dropped
-                                             in, so the slot is always discoverable and every card keeps the same
-                                             height. -->
-                                        <Grid Height="160">
-                                            <Border CornerRadius="6,6,0,0" Background="{StaticResource SurfaceAltBrush}">
-                                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="46"
+                                             A centered SQUARE — the portrait art is square (1254×1254), so a
+                                             square frame shows the whole face; the old wide-and-short frame
+                                             cropped it to a band ("the face is wrong"). A framed person-glyph
+                                             placeholder shows until the art is dropped in. -->
+                                        <Grid Width="190" Height="190" HorizontalAlignment="Center" Margin="0,12,0,0">
+                                            <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
+                                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="52"
                                                            Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
                                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
-                                            <Border CornerRadius="6,6,0,0" ClipToBounds="True">
+                                            <Border CornerRadius="8" ClipToBounds="True">
                                                 <Image Stretch="UniformToFill"
                                                        Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
                                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
