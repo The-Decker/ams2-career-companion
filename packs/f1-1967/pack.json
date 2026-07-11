@@ -1,7 +1,7 @@
 {
   "packId": "f1-1967",
   "name": "Formula One 1967",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "formatVersion": 1,
   "gameVersionTested": "1.6.9.82",
   "license": "CC BY 4.0",
@@ -19,6 +19,7 @@
     ]
   },
   "notes": [
+    "Coverage-note scope: each 'entrant ... not included' line below refers to that exact f1db constructor/engine/round stint, not necessarily to the named driver. The max-grid roster may represent the driver through an available skinpack livery proxy while still omitting the exact historical car combination.",
     "Coverage: f1db 1967 entrant Bruce McLaren (eagle+weslake, rounds 5-7) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "Coverage: f1db 1967 entrant Ludovico Scarfiotti (eagle+weslake, rounds 9) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "Coverage: f1db 1967 entrant David Hobbs (brm+brm, rounds 6,8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
@@ -55,6 +56,7 @@
     "Coverage: f1db 1967 entrant Moisés Solana (lotus+ford, rounds 10-11) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "Coverage: f1db 1967 entrant Tom Jones (cooper+climax, rounds 8) has no livery in the referenced skinpack/AI set and is not included in this pack.",
     "Per-track AI overrides from the source custom-AI XML (tracks=\"...\" entries) are carried into the matching rounds' aiOverrides as absolute partial ratings patches. Entries authored against layouts this calendar does not drive (Azure_Circuit_2021, Watkins_Glen_S, Spa_Francorchamps_1993, Nordschleife_2020/_24hr) are mapped to the calendar round at the same venue (Monaco, Watkins Glen, Spa, Nurburgring).",
-    "v1.2.0: jusk's F-Vintage_Gen1.xml is the ratings SOURCE OF TRUTH. All 13 base rating dims per driver are taken from the XML's base blocks (superseding the earlier f1db-derived raceSkill/qualifyingSkill, which had narrowed the field's spread); every per-track override block is carried into its venue's round as an absolute aiOverrides patch, filtered to that round's actual starters (so orphan overrides for non-racing drivers are dropped). The earlier f1db-derived per-round driverForm overlay was removed in favour of jusk's hand-tuned per-track form, which encodes real 1967 results (Rodriguez at Kyalami, Hulme at Monaco, Gurney at Spa, Ickx on the Nordschleife, Hill at Watkins Glen, the Monza slipstream compression). Rebuilt via tools/import_jusk_ai.cs."
+    "v1.2.0: jusk's F-Vintage_Gen1.xml is the ratings SOURCE OF TRUTH for its 20 named livery drivers. All 13 base rating dimensions for those drivers are taken from the XML's base blocks (superseding the earlier f1db-derived raceSkill/qualifyingSkill, which had narrowed the field's spread); the eight later max-grid substitutes retain their f1db-derived raceSkill/qualifyingSkill and deliberately leave unauthored traits unset. Per-track source blocks are carried into matching rounds as absolute partial patches, filtered to starters. The earlier f1db-derived per-round driverForm overlay was removed in favour of jusk's hand-tuned per-track form. Rebuilt via tools/import_jusk_ai.cs.",
+    "v1.3.0: all 20 vehicle_reliability values from jusk's v0.3 F-Vintage_Gen1.xml are carried as staged per-driver car data. Historical substitute drivers inherit the value attached to their shared skinpack livery; Jo Bonnier's round-11 switch from the Rodriguez livery to the Rindt livery is represented by a round override. Scarfiotti's source-authored Monza rating patch is restored now that the max-grid roster includes him there. These staged values affect new careers only; the deterministic career sim continues to use team reliability."
   ]
 }

@@ -18,7 +18,7 @@ era corpus, and era-art present in `dist/` (uncommitted user art, Mike-managed).
 
 | pack | ratings source | car scalars | per-track AI | form | wet races | alternates | skin season | notes |
 |------|----------------|-------------|--------------|------|-----------|------------|-------------|-------|
-| f1-1967 | ✔ jusk XML import | ✗ none shipped | ✔ 6 rds | — dropped (jusk) | ✔ 1 (Canadian/Mosport; 10 verified dry) | ✔ 2 (0 gaps) | — | 20-car class cap (2×10 liveries); Bandini/Parkes/Peterson exits authored |
+| f1-1967 | ✔ jusk XML + f1db proxy pace | ✔ reliability 20/20 (no scalars in source) | ✔ 7 rds (6 ratings + 1 livery) | — dropped (jusk) | ✔ 1 (Canadian/Mosport; 10 verified dry) | ✔ 2 (0 gaps) | — | 20-car class cap (2×10 liveries); Bandini/Parkes/Ginther exits authored |
 | f1-1969 | ✔ jusk XML import | ✗ none shipped | ✔ 3 rds | — dropped (jusk) | ✔ verified all-dry | ✔ 4 (0 gaps) | — | jusk variant files = trimmed rosters, rating-identical (don't import) |
 | f1-1974 | ✔ f1db + Realistic skinpack | ✔ 26 | ✔ 5 rds | — dropped (import) | ✔ 3 | ✔ 5 (0 gaps) | ✔ f1-1974 | |
 | f1-1978 | ✔ f1db + skinpack | ✔ 22 | ✗ none | ✔ 16 rds | ✔ 1 | ✔ 5 (0 gaps) | — | |
