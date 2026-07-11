@@ -1498,15 +1498,47 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                         "slots swapped from the pack's alternates list (previous files backed up).");
             }
 
-            // NOTE — no auto-activation of inactive skins here (Mike's rule): a livery that ships
-            // as an INACTIVE placeholder (LIVERY="X1"/"##", e.g. the SMGP field's Lares #23 and
-            // Feet #24) must NOT be put on the grid until it READS active. Silently activating it
-            // at staging only writes a slot AMS2 has not loaded (it needs a restart), so the car
-            // still pool-fills that session while a base-game livery would have loaded cleanly.
-            // Instead the smart binding below floors any not-active livery onto a guaranteed
-            // base-game one; the player activates a skin deliberately in the Skins tab (which then
-            // reads active on the next stage and is kept). The activator lives in
-            // LiveryOverrideWriter for that user-driven path.
+            // PER-RACE SKIN ACTIVATION (SMGP, Mike's rule: "make sure EVERY CAR CAN SWITCH OFF AND
+            // ON FROM ACTIVE TO INACTIVE PERFECTLY"). The SMGP field rotates 34 painted cars through
+            // a ≤26-car grid via pre-qualifying; six second cars ship INSTALLED but INACTIVE
+            // (LIVERY="X.." placeholders — Bestowal #8, Tyrant #12, Dardan #19, Minarae #21, Lares
+            // #23, Feet #24). Switch on EXACTLY this round's qualifiers and park every other pack
+            // livery, per model override file (backup-first, cap-safe) — BEFORE the smart binding
+            // below scans active liveries, so all 26 grid cars read active and keep their real SMGP
+            // paint instead of being floored to a base-game livery (which AMS2 then pool-fills with a
+            // random stock driver — the "different names each load" bug). SMGP-only; every other pack
+            // is untouched. (This deliberately restores auto-activation removed in 9673a81, but done
+            // right: qualifiers ON + non-qualifiers OFF each race, not a blind placeholder activation.)
+            if (IsSmgpPack && _environment.LocateInstall() is { } smgpInstall)
+            {
+                var roundLiveries = plan.Seats
+                    .Select(s => s.Ams2LiveryName)
+                    .ToHashSet(StringComparer.Ordinal);
+                var packLiveries = Pack.Entries
+                    .Select(e => e.Ams2LiveryName)
+                    .ToHashSet(StringComparer.Ordinal);
+                int? smgpMaxSlot =
+                    _environment.ContentLibrary.LiveryCaps.TryGetValue(plan.Ams2Class, out int smgpCap)
+                        ? LiveryOverrideWriter.FirstCustomSlot + smgpCap - 1
+                        : null;
+                var smgpModelDirs = _environment.ContentLibrary.Vehicles.Values
+                    .Where(v => string.Equals(v.VehicleClass, plan.Ams2Class, StringComparison.Ordinal))
+                    .Select(v => v.Dir)
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+                var activation = RoundLiveryActivator.ApplyRound(
+                    smgpInstall.InstallOverridesDirectory, smgpModelDirs, roundLiveries, packLiveries,
+                    smgpMaxSlot, _environment.Clock.GetUtcNow());
+                if (activation.AnyChanged)
+                    messages.Add(
+                        $"Activated this round's skins — {activation.Activated} switched on, " +
+                        $"{activation.Deactivated} parked across {activation.ModelsChanged} car model(s), so every " +
+                        "grid car shows its real SMGP livery (previous files backed up). If any car still shows a " +
+                        "wrong or random driver, fully close and reopen AMS2 once so it reloads the new liveries.");
+                if (activation.Skipped.Count > 0)
+                    messages.Add(
+                        $"Note: {activation.Skipped.Count} skin(s) could not be switched on (the class livery limit " +
+                        $"was reached) and will show a base-game car: {string.Join(", ", activation.Skipped.Take(6))}.");
+            }
 
             // If the player picked a "bubble" car outside this round's active pool (1988 pre-qualifying:
             // a Coloni/Eurobrun DNQs some rounds), graft its skin into the slowest same-model qualifier's
@@ -2247,10 +2279,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// SEGA universe — its own teams, the rival ladder, the D.P. readout) rather than the
     /// historical 1990s outlet the 1990 career year would otherwise select. Null for every other
     /// career, which resolves its era by year as before.</summary>
-    private string? SmgpNewsEra => string.Equals(
-        Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal)
-        ? Companion.Core.Smgp.SmgpRules.CareerStyle
-        : null;
+    private string? SmgpNewsEra => IsSmgpPack ? Companion.Core.Smgp.SmgpRules.CareerStyle : null;
+
+    /// <summary>True for the SMGP replica mode (pack manifest careerStyle == "smgp") — gates the
+    /// per-race skin activation, the rival panel, the world almanac, and the news outlet.</summary>
+    private bool IsSmgpPack => string.Equals(
+        Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
 
     /// <summary>Projects one race round's facts for the news grammar from already-folded state:
     /// the player's expected/actual finish + cause (the <c>race.result</c> row), the field's

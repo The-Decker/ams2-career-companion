@@ -76,6 +76,30 @@ public static class LiveryOverrideWriter
         return slot;
     }
 
+    /// <summary>Every non-commented <c>LIVERY_OVERRIDE</c> in the file: its NAME and whether it is
+    /// ACTIVE (a numeric <c>LIVERY</c> slot AMS2 loads) vs an inactive placeholder. The read side of
+    /// <see cref="Activate"/>/<see cref="Deactivate"/> — the per-race activator uses it to decide which
+    /// liveries to switch on and which to park. Commented-out entries (AMS2 never loads them) are
+    /// skipped, exactly as the writer refuses to edit them.</summary>
+    public static IReadOnlyList<(string Name, bool Active)> Liveries(string xml)
+    {
+        var comments = CommentSpans(xml);
+        var list = new List<(string Name, bool Active)>();
+        foreach (Match tag in OverrideTag.Matches(xml))
+        {
+            if (IsInComment(tag.Index, comments))
+                continue;
+            var name = NameAttr.Match(tag.Value);
+            if (!name.Success)
+                continue;
+            var livery = LiveryAttr.Match(tag.Value);
+            bool active = livery.Success &&
+                int.TryParse(livery.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+            list.Add((name.Groups[1].Value, active));
+        }
+        return list;
+    }
+
     /// <summary>Whether the numeric slot is free (not already used by a NON-commented entry).</summary>
     public static bool SlotIsFree(string xml, int slot)
     {
