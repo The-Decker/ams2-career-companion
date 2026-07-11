@@ -7,6 +7,18 @@ game's own deadpan vocabulary; no cheese.
 
 ## Locked design constraints (Mike, 2026-07-10)
 
+- **SMGP-ONLY FOCUS until the mode is DONE** (Mike, evening 2026-07-10): all build effort goes to
+  Super Monaco GP until it is finished — no other packs/features until then.
+- **Full-race weekend, not the arcade sprint**: the app runs real GP distances, so the weekend is
+  a 60-min Warm Up (practice) + 30-min Preliminary Race (qualifying) + Grand Prix. The briefing
+  heads the qualifying section "Qualifying (Preliminary Race)" so it reads as qualifying.
+- **Rival ladder is two-wins-with-naming** (verified wired; see SmgpBattleFoldDeterminismTests):
+  name the rival BEFORE each race, beat him twice without losing, and you take his seat. The
+  briefing copy is streak-aware ("you have beaten him once — beat him again this race").
+- **The SMGP world has its OWN news outlet** (`data/rules/news/smgp.json`, routed via
+  `NewsFacts.PreferredEra="smgp"`) — the SEGA universe, never the historical 1990s corpus.
+
+
 - **SMGP is a SEPARATE CAREER ENTITY from the semi-historical F1 careers.** It is not just
   another pack in the season-picker gallery — the M4 main-menu landing must present it as its own
   mode ("Modes → Super Monaco GP") distinct from "Historical careers". Its rules (rival ladder,
