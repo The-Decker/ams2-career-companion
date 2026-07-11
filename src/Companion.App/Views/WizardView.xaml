@@ -11,6 +11,27 @@
             <Setter Property="Margin" Value="0,0,22,0" />
             <Setter Property="FontSize" Value="14" />
         </Style>
+
+        <!-- Season-grid card labels: a technical, motorsport-programme look — Bahnschrift is the
+             DIN-style condensed face Windows ships (falls back to Segoe UI Semibold), uppercase,
+             centered. The driver name reads like a race-entry board; the team is an accent tag. -->
+        <Style x:Key="GridDriverName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontFamily" Value="Bahnschrift SemiBold, Bahnschrift, Segoe UI Semibold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style x:Key="GridTeamName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontFamily" Value="Bahnschrift Condensed, Bahnschrift, Segoe UI" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,1,0,0" />
+        </Style>
     </UserControl.Resources>
 
     <DockPanel Margin="40,32">
@@ -520,61 +541,66 @@
                                Text="SUPER MONACO GP races the whole field — all sixteen cars are in (the rival ladder needs every seat)." />
                 </Border>
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <!-- adaptive multi-column grid (Mike's ask — one long column wasted the screen):
-                         ~340px per card ⇒ 6-7 columns at 2560, 5 at 1920, 2 at the 920 minimum.
-                         VerticalAlignment=Top stops the UniformGrid stretching rows to fill the
-                         viewport (the giant-empty-cards report). Each card carries a drop-in
-                         driver PORTRAIT slot: data/ams2/portraits/<driverId>.jpg — hidden when
-                         no art is present, so text-only cards stay compact. -->
+                    <!-- adaptive multi-column grid, ~230px per card so more portraits fit a screen
+                         (Mike's ask) while the 148px portrait + car keep their detail. The whole
+                         control is NOT disabled for SMGP anymore — the cards stay vibrant; only the
+                         per-card checkbox is hidden (SMGP forces the whole field). -->
                     <ItemsControl ItemsSource="{Binding GridChoices}" HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Top" IsEnabled="{Binding GridPickEnabled}">
+                                  VerticalAlignment="Top">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <UniformGrid VerticalAlignment="Top"
                                              Columns="{Binding ActualWidth,
                                                        RelativeSource={RelativeSource AncestorType=ItemsControl},
                                                        Converter={StaticResource WidthToColumns},
-                                                       ConverterParameter=340}" />
+                                                       ConverterParameter=230}" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,6,6" VerticalAlignment="Top">
-                                    <StackPanel>
-                                        <!-- the DRIVER PORTRAIT is the hero (data/ams2/portraits/<driverId>.jpg).
-                                             A centered SQUARE — the portrait art is square (1254×1254), so a
-                                             square frame shows the whole face; the old wide-and-short frame
-                                             cropped it to a band ("the face is wrong"). A framed person-glyph
-                                             placeholder shows until the art is dropped in. -->
-                                        <Grid Width="190" Height="190" HorizontalAlignment="Center" Margin="0,12,0,0">
-                                            <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
-                                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="52"
-                                                           Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
-                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            </Border>
-                                            <Border CornerRadius="8" ClipToBounds="True">
-                                                <Image Stretch="UniformToFill"
-                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                            </Border>
-                                        </Grid>
-                                        <!-- a smaller CAR thumbnail centered below the portrait
-                                             (data/ams2/cars/<driverId>.png, extracted from the livery by
-                                             tools/extract_car_previews.cs). Collapses when no preview exists. -->
-                                        <Image Height="44" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,7,0,1"
-                                               Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                        <DockPanel Margin="12,7,12,9">
-                                            <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsIncluded}"
-                                                      IsEnabled="{Binding IsUnlocked}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                                                       Text="You" Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}" />
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
-                                                <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}" />
+                                <Border Style="{StaticResource Panel}" Padding="0" Margin="0,0,5,5" VerticalAlignment="Top">
+                                    <Grid>
+                                        <StackPanel>
+                                            <!-- the DRIVER PORTRAIT is the hero (data/ams2/portraits/<driverId>.jpg):
+                                                 a centered SQUARE (the art is square 1254×1254). A framed
+                                                 person-glyph placeholder shows until the art is dropped in. -->
+                                            <Grid Width="148" Height="148" HorizontalAlignment="Center" Margin="0,10,0,0">
+                                                <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
+                                                    <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="44"
+                                                               Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <Border CornerRadius="8" ClipToBounds="True">
+                                                    <Image Stretch="UniformToFill"
+                                                           Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                                </Border>
+                                            </Grid>
+                                            <!-- a smaller CAR thumbnail centered below the portrait
+                                                 (data/ams2/cars/<driverId>.png). Collapses when absent. -->
+                                            <Image Height="40" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,6,0,0"
+                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                            <!-- CENTERED racing-style name + team (Bahnschrift, uppercase) -->
+                                            <StackPanel Margin="6,7,6,11" HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding DriverNameUpper}" Style="{StaticResource GridDriverName}" />
+                                                <TextBlock Text="{Binding TeamNameUpper}" Style="{StaticResource GridTeamName}" />
                                             </StackPanel>
-                                        </DockPanel>
-                                    </StackPanel>
+                                        </StackPanel>
+                                        <!-- season-field checkbox: ONLY for a normal career. SMGP forces the whole
+                                             field, so nothing is clickable there — the checkbox is hidden. Overlaid
+                                             top-left so the names stay centered. -->
+                                        <CheckBox VerticalAlignment="Top" HorizontalAlignment="Left" Margin="9,9,0,0"
+                                                  IsChecked="{Binding IsIncluded}" IsEnabled="{Binding IsUnlocked}"
+                                                  Visibility="{Binding DataContext.GridPickEnabled, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                                        <!-- the player's own car marker -->
+                                        <Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,9,9,0"
+                                                Background="{StaticResource AccentDimBrush}" CornerRadius="3" Padding="6,2"
+                                                Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}">
+                                            <TextBlock Text="YOU" FontFamily="Bahnschrift SemiBold, Segoe UI Semibold" FontSize="10"
+                                                       FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                        </Border>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

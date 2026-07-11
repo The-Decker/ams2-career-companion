@@ -33,6 +33,11 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
     public required string DriverName { get; init; }
     public required string TeamName { get; init; }
 
+    /// <summary>Uppercase name/team for the grid card's racing-style labels (WPF TextBlock has no
+    /// text-transform, so the casing is done here).</summary>
+    public string DriverNameUpper => DriverName.ToUpperInvariant();
+    public string TeamNameUpper => TeamName.ToUpperInvariant();
+
     /// <summary>The seat's primary driver id — keys the optional drop-in portrait
     /// (<c>data/ams2/portraits/&lt;driverId&gt;.jpg</c>) on the grid card. Empty (the own-entrant
     /// row) = no portrait slot.</summary>
