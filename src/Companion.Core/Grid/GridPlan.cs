@@ -16,6 +16,15 @@ public sealed record PlayerSeat
     /// <summary>EXACT livery display name (case-sensitive) of the entry the player takes over.</summary>
     public required string Ams2LiveryName { get; init; }
 
+    /// <summary>The player's OWN distinct driver id, when they race as their own entrant rather than
+    /// impersonating the livery's authored driver (the SMGP clean-swap model: the player is a separate
+    /// driver, so the AI whose car they occupy is BENCHED — and returns the moment the player moves to
+    /// another car). When set, the resolver stamps this id onto the car at <see cref="Ams2LiveryName"/>
+    /// and drops that car's authored AI; when null the historical behavior stands (the player wears the
+    /// seat's own driver id, marked <see cref="GridSeat.IsPlayer"/>), so every non-SMGP career and every
+    /// pre-change SMGP career resolves byte-identically.</summary>
+    public string? DriverId { get; init; }
+
     /// <summary>The player's character applied to this seat, or null for a pre-character career.
     /// When present, the resolver patches the seat's ratings and car scalars from it (see
     /// <see cref="PlayerCharacterPatch"/>); when null the seat is exactly what the pack/track/

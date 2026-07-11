@@ -34,9 +34,9 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     [Fact]
     public void TwoWins_AcceptedSwap_MovesTheThreeChainedSeats_AndReplaysByteIdentically()
     {
-        // Player (Seat C, tier C) beats the LEVEL A rival twice and accepts: player -> Seat A,
-        // the rival drops one tier below the player's OLD tier (D) -> Seat D, and Seat D's
-        // occupant takes the player's old Seat C. Nobody else moves.
+        // CLEAN swap (Mike): player (Seat C) beats the LEVEL A rival twice and accepts → the player
+        // simply MOVES into the rival's car (Seat A). Nobody else moves: the rival benches while the
+        // player holds his seat, and the player's old car reverts to its authored driver. No cascade.
         var (careerPath, seasonId) = FoldTwoBattleRounds(
             "swap.ams2career",
             playerWins: true,
@@ -45,9 +45,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         using var db = CareerDatabase.Open(careerPath);
         var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
         Assert.Equal(SeatA, smgp.CurrentSeatLivery);
-        Assert.Equal(SeatD, smgp.AiSeatOverrides["driver.a"]);
-        Assert.Equal(SeatC, smgp.AiSeatOverrides["driver.d"]);
-        Assert.Equal(2, smgp.AiSeatOverrides.Count);
+        Assert.Empty(smgp.AiSeatOverrides); // no cascade — the seat state IS just the player's car
         Assert.False(smgp.CareerOver);
         // The consumed trigger reset the streak (the ladder restarts after each offer).
         Assert.Equal(0, smgp.TallyFor("driver.a").PlayerStreak);
@@ -64,8 +62,9 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     [Fact]
     public void TwoLosses_AtMidLadder_DemotesThePlayerDownTheMirroredChain()
     {
-        // The LEVEL A rival beats the player (Seat C) twice: he takes Seat C, the player is
-        // demoted one tier below (D) -> Seat D, and Seat D's occupant takes the rival's old Seat A.
+        // CLEAN demotion: the LEVEL A rival beats the player (Seat C) twice → the player is dropped
+        // into the (only) team one tier below (D) -> Seat D. Only the player moves: Seat D's AI benches,
+        // the player's old car reverts to its authored driver, and the rival keeps his own car.
         var (careerPath, seasonId) = FoldTwoBattleRounds(
             "forfeit.ams2career",
             playerWins: false,
@@ -74,8 +73,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         using var db = CareerDatabase.Open(careerPath);
         var smgp = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player.Smgp!;
         Assert.Equal(SeatD, smgp.CurrentSeatLivery);
-        Assert.Equal(SeatC, smgp.AiSeatOverrides["driver.a"]);
-        Assert.Equal(SeatA, smgp.AiSeatOverrides["driver.d"]);
+        Assert.Empty(smgp.AiSeatOverrides); // no cascade
         Assert.False(smgp.CareerOver);
         Assert.Equal("seat-forfeit",
             Assert.Single(JournalStore.ReadSeason(db, seasonId), r => r.Phase == JournalPhases.SmgpSeat).Cause);
@@ -136,10 +134,10 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     [Fact]
     public void AfterAnAcceptedSwap_TheNextRound_SeatsTheSwappedCars_EverywhereTheSameWay()
     {
-        // M3 slice 3: the round AFTER the swap — the session grid (display + staging), the
-        // fold, and replay all seat the player on the rival's old car, the rival on the tier-D
-        // car, the displaced driver on the player's old car, and NOBODY else moves. Identities
-        // (driver ids) stay with the drivers; cars (team, livery) stay with the seats.
+        // CLEAN swap, the round AFTER: the session grid (display + staging), the fold, and replay all
+        // seat the player (their OWN distinct driver) on the rival's old car; the beaten rival is
+        // BENCHED; and everyone else keeps their home car (the player's old car reverts to its authored
+        // driver). No cascade — the whole grid is a fresh function of the player's current car.
         string packDirectory = Path.Combine(_root, "packs", "post-swap");
         TestPackBuilder.Write(LadderPack(), packDirectory);
         var environment = ViewModelTestData.Environment(
@@ -170,10 +168,11 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             var seats = session.CurrentGrid();
             var player = seats.Single(s => s.IsPlayer);
             Assert.Equal(SeatA, player.Ams2LiveryName);
-            Assert.Equal("driver.c", player.DriverId);   // identity rides with the player
+            Assert.Equal(PlayerId, player.DriverId);     // the player is their OWN distinct driver
             Assert.Equal("team.a", player.TeamId);       // the car's team rides with the car
-            Assert.Equal(SeatD, seats.Single(s => s.DriverId == "driver.a").Ams2LiveryName);
-            Assert.Equal(SeatC, seats.Single(s => s.DriverId == "driver.d").Ams2LiveryName);
+            Assert.DoesNotContain(seats, s => s.DriverId == "driver.a"); // the beaten rival is BENCHED
+            Assert.Equal(SeatC, seats.Single(s => s.DriverId == "driver.c").Ams2LiveryName); // driver.c returned home
+            Assert.Equal(SeatD, seats.Single(s => s.DriverId == "driver.d").Ams2LiveryName); // everyone else stays home
             Assert.Equal(SeatB, seats.Single(s => s.DriverId == "driver.b").Ams2LiveryName);
 
             // ...and the post-swap round FOLDS on that grid (the expected finish now measures
@@ -295,7 +294,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         // Relegated to ONE of the two C teams (a real class-below move), not the player's old seat.
         Assert.Contains(smgp.CurrentSeatLivery, new[] { SeatC, SeatC2 });
         Assert.NotEqual(SeatB, smgp.CurrentSeatLivery);
-        Assert.Equal(SeatB, smgp.AiSeatOverrides["driver.a"]); // the rival takes the player's old car
+        Assert.Empty(smgp.AiSeatOverrides); // CLEAN: the rival keeps his car; no cascade
         Assert.False(smgp.CareerOver);
 
         // Deterministic: the whole thing re-simulates byte-identically (the random pick re-derives)
@@ -306,7 +305,7 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
             AgingCurves = rules.AgingCurves,
             Archetypes = rules.Archetypes,
             Headlines = rules.Headlines,
-            PlayerDriverId = "driver.b",
+            PlayerDriverId = PlayerId,
             PlayerAge = 30,
             CharacterRules = rules.Character,
         });
@@ -498,7 +497,11 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         return (careerPath, CareerStore.ReadSeasons(db).Single().Id);
     }
 
-    private static void AssertResimulatesByteIdentically(CareerDatabase db, string playerDriverId = "driver.c")
+    // The SMGP clean-swap player is their OWN distinct driver (not the seat's authored AI), so replay
+    // scores them under the synthetic id — the same one creation assigned.
+    private const string PlayerId = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId;
+
+    private static void AssertResimulatesByteIdentically(CareerDatabase db, string playerDriverId = PlayerId)
     {
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
         var report = ReplayService.Resimulate(db, LadderPack(), unchecked((ulong)Seed), new ReplaySimInputs

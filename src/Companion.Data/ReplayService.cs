@@ -600,7 +600,7 @@ public static class ReplayService
             : null;
 
         var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch,
-            previous.Player.GridSelection, previous.Player.FormAware, previous.Player.Smgp);
+            previous.Player.GridSelection, previous.Player.FormAware, previous.Player.Smgp, inputs.PlayerDriverId);
         if (grid is null)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
@@ -776,7 +776,7 @@ public static class ReplayService
     private static GridPlan? ResolvePlayerGrid(
         SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null,
         GridSelection? gridSelection = null, bool applyWeekendForm = false,
-        Companion.Core.Smgp.SmgpState? smgp = null)
+        Companion.Core.Smgp.SmgpState? smgp = null, string? playerDriverId = null)
     {
         if (liveryName is null)
             return null;
@@ -791,6 +791,20 @@ public static class ReplayService
         // the ladder earned them; null (every other career) ⇒ byte-identical.
         try
         {
+            // SMGP CLEAN-SWAP model: a DISTINCT player driver id seats the player DIRECTLY on their
+            // current car (smgp.CurrentSeatLivery), so the FOLD scores them under that distinct id —
+            // exactly matching the live display path (CareerSessionService.ResolveGrid). Its authored
+            // AI benches; no overrides. Pre-change SMGP careers (player id == a pack driver) fall to
+            // the override path below (byte-identical).
+            if (smgp is not null &&
+                string.Equals(playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
+            {
+                return RoundGridResolver.Resolve(
+                    pack, round,
+                    new PlayerSeat { Ams2LiveryName = smgp.CurrentSeatLivery, DriverId = playerDriverId, Character = character },
+                    gridSelection, applyWeekendForm: applyWeekendForm);
+            }
+
             return RoundGridResolver.Resolve(
                 pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
                 gridSelection, applyWeekendForm: applyWeekendForm,
@@ -828,6 +842,15 @@ public static class ReplayService
     /// start state) or no seat resolves.</summary>
     private static string SeasonPlayerDriverId(SeasonPack pack, string? liveryName, string fallback)
     {
+        // SMGP clean-swap model: the player races as their OWN distinct driver on whatever car they
+        // currently hold, so they score under the synthetic id for the WHOLE season regardless of the
+        // start livery. Return it straight — walking the grid below would resolve the livery's AUTHORED
+        // AI (the default resolve path takes no driver id), and the standings never carry that AI, so the
+        // mismatch dropped the player's championship position on replay (rep season-final diverged). Only
+        // a clean-swap career carries this fallback; every other career keeps the historical walk.
+        if (string.Equals(fallback, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
+            return fallback;
+
         if (!string.IsNullOrEmpty(liveryName))
         {
             foreach (var round in pack.Season.Rounds)

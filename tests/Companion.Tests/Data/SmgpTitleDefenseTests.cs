@@ -23,7 +23,13 @@ public sealed class SmgpTitleDefenseTests : IDisposable
     private const string SeatB = "Stock Livery #2"; // team.b  LEVEL B
     private const string SeatC = "Stock Livery #3"; // team.c  LEVEL C  (the player's start)
     private const string SeatD = "Stock Livery #4"; // team.d  LEVEL D  (the floor)
-    private const string Challenger = "driver.zz_reserved"; // authored, NO entry — the Ceara slot
+    private const string SeatE = "Stock Livery #5"; // team.e  LEVEL C  (the challenger's own car)
+    // The forced title-defense challenger is a REAL authored entry (like smgp-1's G. Ceara at
+    // Bullets) — DefenseChallenger picks the authored Ceara id even with an entry, and the clean
+    // seat model needs him racing in his own car (it introduces nobody).
+    private const string Challenger = SmgpSchedule.CearaDriverId;
+    // The clean-swap player is their OWN distinct driver, so replay scores them under the synthetic id.
+    private const string PlayerId = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId;
     private const long Seed = 20260710;
 
     private readonly string _root = Directory.CreateTempSubdirectory("companion-smgp-title-").FullName;
@@ -50,18 +56,18 @@ public sealed class SmgpTitleDefenseTests : IDisposable
                 var start = StateStore.ReadPlayerState(db, season2, StateStore.StageStart)!.Smgp!;
                 Assert.Equal(1, start.Titles);
                 Assert.True(start.TitleDefense);
-                Assert.Equal(SeatA, start.CurrentSeatLivery);
-                Assert.Equal(SeatC, start.AiSeatOverrides["driver.a"]); // displaced champion
-                Assert.Equal(SeatD, start.AiSeatOverrides[Challenger]); // the introduction
-                Assert.Empty(start.Tallies);                            // streaks reset
+                Assert.Equal(SeatA, start.CurrentSeatLivery); // champion moved into Madonna's car
+                Assert.Empty(start.AiSeatOverrides);          // CLEAN: no cascade, no introduction
+                Assert.Empty(start.Tallies);                  // streaks reset
             }
 
-            // The season-2 grid seats all of it: the challenger REPLACED the floor driver.
+            // The season-2 grid: the player holds Madonna (Senna benched); the challenger races his
+            // OWN car; everyone else keeps their home seat.
             var seats = s2.CurrentGrid();
             Assert.Equal(SeatA, seats.Single(s => s.IsPlayer).Ams2LiveryName);
-            Assert.Equal(SeatD, seats.Single(s => s.DriverId == Challenger).Ams2LiveryName);
-            Assert.DoesNotContain(seats, s => s.DriverId == "driver.d");
-            Assert.Equal(4, seats.Count);
+            Assert.Equal(SeatE, seats.Single(s => s.DriverId == Challenger).Ams2LiveryName);
+            Assert.DoesNotContain(seats, s => s.DriverId == "driver.a"); // the champion car's AI benches
+            Assert.Equal(5, seats.Count);
 
             // R1: the forced challenge, player ahead — the defense is decided but resolves at R2.
             ApplyRound(s2, playerWins: true, rival: ForcedCall());
@@ -103,11 +109,10 @@ public sealed class SmgpTitleDefenseTests : IDisposable
             long season2 = CareerStore.ReadSeasons(db)[^1].Id;
             var after = StateStore.ReadRoundPlayerState(db, season2, 2)!.Player.Smgp!;
             Assert.False(after.TitleDefense);
-            // No team.dardan authored → the structural demotion: first seat one tier below A.
+            // No team.dardan authored → the structural demotion: first seat one tier below A (B).
+            // CLEAN: only the player moves — Madonna reverts to Senna, the challenger keeps his car.
             Assert.Equal(SeatB, after.CurrentSeatLivery);
-            Assert.Equal(SeatA, after.AiSeatOverrides[Challenger]);  // he takes the champion car
-            Assert.Equal(SeatD, after.AiSeatOverrides["driver.b"]);  // displaced to his old car
-            Assert.Equal(SeatC, after.AiSeatOverrides["driver.a"]);  // untouched from the rollover
+            Assert.Empty(after.AiSeatOverrides);
 
             Assert.Equal("defense-lost",
                 Assert.Single(JournalStore.ReadSeason(db, season2), r => r.Phase == JournalPhases.SmgpSeat).Cause);
@@ -143,7 +148,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
         Assert.Equal(SeatA, SmgpSchedule.ChampionSeat(pack));
         var already = SmgpSchedule.ChampionRollover(pack, armed);
         Assert.Equal(SeatA, already.CurrentSeatLivery);
-        Assert.Equal(SeatD, already.AiSeatOverrides[Challenger]); // still introduced
+        Assert.Empty(already.AiSeatOverrides); // CLEAN: the champion just holds Madonna, no introduction
     }
 
     // ---------- the ladder pack + drivers ----------
@@ -171,7 +176,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
             Manifest = basePack.Manifest with { CareerStyle = SmgpRules.CareerStyle },
             Teams =
             [
-                Team("team.a", 5), Team("team.b", 4), Team("team.c", 3), Team("team.d", 2),
+                Team("team.a", 5), Team("team.b", 4), Team("team.c", 3), Team("team.d", 2), Team("team.e", 3),
             ],
             Drivers =
             [
@@ -190,6 +195,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
                 TestPackBuilder.Entry("team.b", "driver.b", "2", SeatB),
                 TestPackBuilder.Entry("team.c", "driver.c", "3", SeatC),
                 TestPackBuilder.Entry("team.d", "driver.d", "4", SeatD),
+                TestPackBuilder.Entry("team.e", Challenger, "17", SeatE), // the challenger's own car
             ],
         };
     }
@@ -218,7 +224,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
                 [TestPackBuilder.VintageClass] = new()
                 {
                     Name = TestPackBuilder.VintageClass,
-                    StockLib1563 = [SeatA, SeatB, SeatC, SeatD],
+                    StockLib1563 = [SeatA, SeatB, SeatC, SeatD, SeatE],
                 },
             },
         };
@@ -284,7 +290,7 @@ public sealed class SmgpTitleDefenseTests : IDisposable
             AgingCurves = rules.AgingCurves,
             Archetypes = rules.Archetypes,
             Headlines = rules.Headlines,
-            PlayerDriverId = "driver.c",
+            PlayerDriverId = PlayerId,
             PlayerAge = 30,
             CharacterRules = rules.Character,
         });

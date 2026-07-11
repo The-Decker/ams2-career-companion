@@ -460,6 +460,40 @@ public static class RoundGridResolver
         int index = seats.FindIndex(s =>
             string.Equals(s.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
 
+        // DISTINCT-DRIVER player (the SMGP clean-swap model): the player is their OWN driver, not the
+        // authored occupant of the car they sit in. Stamp the player's id onto the car and DROP its
+        // authored AI (benched — he re-appears the moment the player moves to another car, because a
+        // FRESH resolve only ever benches the CURRENT seat's driver). Everyone else keeps their home
+        // seat, so a seat swap never cascades. Null DriverId keeps the historical "wear the seat's own
+        // driver id" behavior below (byte-identical for every non-SMGP / pre-change career).
+        if (playerSeat.DriverId is { } distinctId)
+        {
+            if (index >= 0)
+            {
+                seats[index] = seats[index] with { DriverId = distinctId, IsPlayer = true };
+                return seats;
+            }
+            // The player's car did not make this round's cut (pre-qualifying) — add it from its own
+            // entry with the player's id, so the player always races (CapToGridSize trims the slowest AI).
+            var ownEntry = pack.Entries.FirstOrDefault(e =>
+                string.Equals(e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal));
+            if (ownEntry is not null)
+            {
+                var driversById2 = IndexById(pack.Drivers, d => d.Id, pack, "drivers.json");
+                var teamsById2 = IndexById(pack.Teams, t => t.Id, pack, "teams.json");
+                var addedOwn = BuildSeat(
+                    pack, round,
+                    LookupDriver(driversById2, ownEntry.DriverId, pack, round),
+                    LookupTeam(teamsById2, ownEntry.TeamId, pack, round),
+                    ownEntry.Number, ownEntry.Ams2LiveryName, isGuest: false);
+                seats.Add(addedOwn with { DriverId = distinctId, IsPlayer = true });
+                return seats;
+            }
+            // A custom livery matching no entry: the player's own synthetic entrant.
+            seats.Add(SyntheticPlayerSeat(playerSeat.Ams2LiveryName) with { DriverId = distinctId, IsPlayer = true });
+            return seats;
+        }
+
         if (index < 0)
         {
             // The player takes over a real historical seat by livery, but the driver they replaced may

@@ -100,20 +100,19 @@ public static class SmgpBattleFold
             string playerSeat = state.CurrentSeatLivery;
             string? challengerSeat = CurrentSeatOf(context.Pack, state, context.RivalDriverId);
             string? demotionSeat = SmgpSchedule.DemotionSeat(context.Pack, playerSeat, challengerSeat);
-            if (demotionSeat is not null && challengerSeat is not null &&
-                !string.Equals(challengerSeat, playerSeat, StringComparison.Ordinal))
+            if (demotionSeat is not null &&
+                !string.Equals(demotionSeat, playerSeat, StringComparison.Ordinal))
             {
-                string? displacedDriver = OccupantOf(context.Pack, state, demotionSeat);
+                // CLEAN (Mike's anti-chaos rule): the player is fired into the demotion car (Dardan);
+                // Madonna reverts to its authored driver and the challenger keeps his own car. Only the
+                // player moves — no cascade. (The old chain's "the challenger takes Madonna" flourish is
+                // dropped in favour of a clean grid.)
                 state = state with { CurrentSeatLivery = demotionSeat };
-                state = state.WithAiSeatOverride(context.RivalDriverId, playerSeat);
-                if (displacedDriver is not null)
-                    state = state.WithAiSeatOverride(displacedDriver, challengerSeat);
                 events.Add(BattleEvent(context, outcome, state.TallyFor(context.RivalDriverId),
                     SmgpTrigger.None, state.CareerOver, cause: "defense-lost"));
                 events.Add(SeatEvent("defense-lost", playerSeat, demotionSeat,
-                    context.RivalDriverId, challengerSeat, playerSeat,
-                    displacedDriver, displacedDriver is null ? null : demotionSeat,
-                    displacedDriver is null ? null : challengerSeat));
+                    context.RivalDriverId, challengerSeat ?? "", challengerSeat ?? "",
+                    displacedDriverId: null, displacedFrom: null, displacedTo: null));
                 return new SmgpBattleFoldResult { State = state, Events = events };
             }
 
@@ -161,33 +160,26 @@ public static class SmgpBattleFold
         List<JournalEvent> seatEvents)
     {
         string playerSeat = state.CurrentSeatLivery;
-        char? playerTier = TierOf(ladder, playerSeat);
         string? rivalSeat = CurrentSeatOf(context.Pack, state, context.RivalDriverId);
-        if (playerTier is not { } tier || rivalSeat is null ||
-            string.Equals(rivalSeat, playerSeat, StringComparison.Ordinal))
+        if (rivalSeat is null || string.Equals(rivalSeat, playerSeat, StringComparison.Ordinal))
             return state;
 
-        var displacementByTier = new Dictionary<char, string>();
-        if (SmgpRules.TierBelow(tier) is { } below &&
-            FirstSeatAt(ladder, below, playerSeat, rivalSeat) is { } displacement)
-            displacementByTier[below] = displacement;
-
-        var swap = SmgpRules.PlayerSeatSwap(playerSeat, tier, rivalSeat, displacementByTier);
-
-        // Resolve the displaced occupant against the PRE-swap state, then move all three.
-        string? displacedDriver = swap.DisplacedSeat is { } displacedSeat
-            ? OccupantOf(context.Pack, state, displacedSeat)
-            : null;
-        state = state with { CurrentSeatLivery = swap.PlayerNewSeat };
-        state = state.WithAiSeatOverride(context.RivalDriverId, swap.RivalNewSeat);
-        if (displacedDriver is not null && swap.DisplacedDriverNewSeat is { } displacedTo)
-            state = state.WithAiSeatOverride(displacedDriver, displacedTo);
-
-        seatEvents.Add(SeatEvent("seat-swap", playerSeat, swap.PlayerNewSeat,
-            context.RivalDriverId, rivalSeat, swap.RivalNewSeat,
-            displacedDriver, swap.DisplacedSeat, swap.DisplacedDriverNewSeat));
+        // CLEAN swap (Mike: "the original driver should come back to that car i just left and the rival
+        // i beat disappears until you switch teams again"): the player simply MOVES into the rival's car.
+        // No AI seat overrides — the whole grid is a fresh function of the player's current car, so the
+        // rival benches while the player holds his seat, and the car the player just left reverts to its
+        // authored driver. Nobody else moves; the field never cascades. (The distinct-driver player id +
+        // the grid resolver do the rest — see RoundGridResolver.ApplyPlayerSeat.)
+        state = state with { CurrentSeatLivery = rivalSeat };
+        seatEvents.Add(SeatEvent("seat-swap", playerSeat, rivalSeat,
+            context.RivalDriverId, rivalSeat, Benched,
+            displacedDriverId: null, displacedFrom: null, displacedTo: null));
         return state;
     }
+
+    /// <summary>The rival's "to" seat when a clean swap benches him (he holds no car while the player
+    /// occupies his seat, and returns to it the moment the player moves on).</summary>
+    private const string Benched = "";
 
     /// <summary>The rival beat the player twice (above D): the player is RELEGATED to a team in
     /// the class BELOW, chosen at RANDOM (deterministically, from the master seed) among that
@@ -205,24 +197,20 @@ public static class SmgpBattleFold
             string.Equals(rivalSeat, playerSeat, StringComparison.Ordinal))
             return state;
 
-        // A RANDOM team in the class below (deterministic pick from the master seed + round +
-        // rival), excluding the player's and rival's seats. None resolvable → a straight swap.
+        // CLEAN demotion (Mike's anti-chaos rule): the player is dropped into a RANDOM team's car in the
+        // class below (deterministic pick from the master seed + round + rival). Only the player moves —
+        // that car's AI benches, the player's old car reverts to its authored driver, and the rival stays
+        // in his own car. No cascade. No lower seat to drop into → the loss still journals; the seat holds.
         string? target = SmgpRules.TierBelow(tier) is { } below
             ? RandomSeatAt(ladder, below, playerSeat, rivalSeat, context)
             : null;
-        target ??= rivalSeat;
+        if (target is null)
+            return state;
 
-        string? displacedDriver = string.Equals(target, rivalSeat, StringComparison.Ordinal)
-            ? null
-            : OccupantOf(context.Pack, state, target);
         state = state with { CurrentSeatLivery = target };
-        state = state.WithAiSeatOverride(context.RivalDriverId, playerSeat);
-        if (displacedDriver is not null)
-            state = state.WithAiSeatOverride(displacedDriver, rivalSeat);
-
         seatEvents.Add(SeatEvent("seat-forfeit", playerSeat, target,
-            context.RivalDriverId, rivalSeat, playerSeat,
-            displacedDriver, displacedDriver is null ? null : target, displacedDriver is null ? null : rivalSeat));
+            context.RivalDriverId, rivalSeat, rivalSeat,
+            displacedDriverId: null, displacedFrom: null, displacedTo: null));
         return state;
     }
 
@@ -334,25 +322,6 @@ public static class SmgpBattleFold
             state.AiSeatOverrides.Values.Contains(authored, StringComparer.Ordinal))
             return null;
         return authored;
-    }
-
-    /// <summary>Who currently occupies <paramref name="livery"/>: the player (null — callers
-    /// never displace the player), a swapped-in driver, or the seat's authored default when he
-    /// has not been moved elsewhere. Swap chains are closed, so every seat stays occupied.</summary>
-    internal static string? OccupantOf(SeasonPack pack, SmgpState state, string livery)
-    {
-        if (string.Equals(livery, state.CurrentSeatLivery, StringComparison.Ordinal))
-            return null;
-        foreach (var pair in state.AiSeatOverrides)
-        {
-            if (string.Equals(pair.Value, livery, StringComparison.Ordinal))
-                return pair.Key;
-        }
-        var entry = pack.Entries.FirstOrDefault(e =>
-            string.Equals(e.Ams2LiveryName, livery, StringComparison.Ordinal));
-        if (entry is null || state.AiSeatOverrides.ContainsKey(entry.DriverId))
-            return null;
-        return entry.DriverId;
     }
 }
 

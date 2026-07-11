@@ -467,6 +467,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     private static string ResolvePlayerDriverId(SeasonPack pack, string playerLiveryName)
     {
+        // SMGP clean-swap model: the player is their OWN distinct driver, NOT the authored occupant of
+        // the car they pick — so that occupant is a real AI who benches while the player holds the seat
+        // and RETURNS the moment the player swaps to another car (Mike: "the original driver should come
+        // back to that car i just left"). Every non-SMGP career keeps impersonating the seat's driver.
+        if (string.Equals(pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
+            return RoundGridResolver.SyntheticPlayerDriverId;
+
         var entry = pack.Entries.FirstOrDefault(e =>
             string.Equals(e.Ams2LiveryName, playerLiveryName, StringComparison.Ordinal));
         if (entry is not null)
@@ -797,10 +804,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (SeasonComplete)
             return [];
         var seats = ResolveGrid(CurrentRoundNumber).Seats;
-        // Show the player's chosen character name on their seat, not the historical driver they took
-        // over. Display only — the seat's DriverId (what results score under) and the staged AMS2 file
-        // (bound by livery) are untouched, so nothing about the sim or the AI file changes.
-        return CharacterName() is { } name
+        // Show the player's display name on their seat, not the historical driver they took over (nor,
+        // for the SMGP clean-swap player, the BENCHED AI whose car they hold). Display only — the seat's
+        // DriverId (what results score under) and the staged AMS2 file (bound by livery) are untouched,
+        // so nothing about the sim or the AI file changes.
+        return PlayerDisplayName() is { } name
             ? seats.Select(s => s.IsPlayer ? s with { DriverName = name } : s).ToList()
             : seats;
     }
@@ -855,9 +863,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         var result = SkinAssignmentResolver.Resolve(plan, scan.Liveries, _environment.ContentLibrary, aiNames);
 
-        // Show the player's chosen character name on their car (as CurrentGrid does) — display only,
+        // Show the player's display name on their car (as CurrentGrid does) — display only,
         // the livery NAME (the binding + what they pick in-game) is untouched.
-        if (CharacterName() is { } name && result.Assignments.Any(a => a.IsPlayer))
+        if (PlayerDisplayName() is { } name && result.Assignments.Any(a => a.IsPlayer))
         {
             var patched = result.Assignments
                 .Select(a => a.IsPlayer ? a with { DriverName = name } : a)
@@ -956,10 +964,28 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     public void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) =>
         StagingOverrideStore.Set(_database, _seasonId, liveryKey, seatOverride);
 
-    /// <summary>The player's driver id + character name for name-rendering screens, or null when the
-    /// career has no named character.</summary>
+    /// <summary>The player's driver id + display name for name-rendering screens, or null when there is
+    /// no name to show (a real-driver career with no character name — the call site falls back to the
+    /// seat's authored driver).</summary>
     public (string DriverId, string DisplayName)? PlayerIdentity() =>
-        CharacterName() is { } name ? (_playerDriverId, name) : null;
+        PlayerDisplayName() is { } name ? (_playerDriverId, name) : null;
+
+    /// <summary>The player-facing name for the grid card / news / standings / review screens: their
+    /// chosen character name, or — for a distinct-driver player (the SMGP clean-swap / own-entrant
+    /// model, whose synthetic id is NOT in pack.Drivers and whose occupied car still carries the BENCHED
+    /// AI's name) — a stable default so the player never renders as that AI (or the raw id). Null for a
+    /// real-driver career with no character name, so callers keep the seat's authored driver (the
+    /// historical driver the player wears) — every non-distinct career stays display-identical.</summary>
+    private string? PlayerDisplayName() =>
+        CharacterName() ?? (IsDistinctDriverPlayer ? PlayerDefaultName : null);
+
+    /// <summary>The player races as their OWN distinct entrant (SMGP clean-swap, or a custom-livery
+    /// own-entrant) rather than impersonating a pack driver — so their id is the synthetic one.</summary>
+    private bool IsDistinctDriverPlayer =>
+        string.Equals(_playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal);
+
+    /// <summary>Shown for a distinct-driver player who left the wizard's pre-seeded name blank.</summary>
+    private const string PlayerDefaultName = "You";
 
     /// <summary>The name of the team the player currently drives for, or null when unknown.</summary>
     public string? PlayerTeamName()
@@ -994,6 +1020,25 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // the fold all read the same swaps, so the car the player sees IS the car the sim scores
         // and the staged AMS2 file names the reseated drivers. Null outside the mode.
         var smgp = CurrentSmgpState();
+
+        // SMGP CLEAN-SWAP model (Mike): a career created with a DISTINCT player driver id seats the
+        // player DIRECTLY on their current car (smgp.CurrentSeatLivery) as their own driver — the car's
+        // authored AI benches, everyone else keeps their home seat, and the fresh resolve is the whole
+        // truth (no AI seat overrides, no cascade). The vacated car reverts to its authored AI for free.
+        // Pre-change SMGP careers (player id == a pack driver) keep the old override path below.
+        if (smgp is not null &&
+            string.Equals(_playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
+        {
+            return RoundGridResolver.Resolve(Pack, round,
+                new PlayerSeat
+                {
+                    Ams2LiveryName = smgp.CurrentSeatLivery,
+                    DriverId = _playerDriverId,
+                    Character = CurrentCharacterPatch(),
+                },
+                CurrentGridSelection(), applyWeekendForm: applyWeekendForm);
+        }
+
         return RoundGridResolver.Resolve(Pack, round,
             new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
             CurrentGridSelection(), applyWeekendForm: applyWeekendForm,
@@ -2372,7 +2417,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             PreferredEra = SmgpNewsEra,
             Round = round,
             RaceName = packRound?.Name ?? grid.RoundName,
-            PlayerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId,
+            PlayerName = PlayerDisplayName() ?? playerSeat?.DriverName ?? _playerDriverId,
             TeamName = playerSeat?.TeamName ?? "",
             PlayerFinish = actual,
             ExpectedFinish = expected,
@@ -2408,7 +2453,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var playerSeat = grid.Seats.FirstOrDefault(s =>
             string.Equals(s.DriverId, _playerDriverId, StringComparison.Ordinal));
         bool playerIsChampion = string.Equals(champion.DriverId, _playerDriverId, StringComparison.Ordinal);
-        string playerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId;
+        string playerName = PlayerDisplayName() ?? playerSeat?.DriverName ?? _playerDriverId;
         int? playerPosition = final.Drivers
             .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal))
             ?.Position;
@@ -2429,10 +2474,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         };
     }
 
-    private string DriverDisplayName(GridPlan grid, string driverId) =>
-        grid.Seats.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal))?.DriverName
-        ?? Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, driverId, StringComparison.Ordinal))?.Name
-        ?? driverId;
+    private string DriverDisplayName(GridPlan grid, string driverId)
+    {
+        // The distinct-driver player (SMGP clean-swap) sits in a car whose seat still carries the BENCHED
+        // occupant's authored name, and the synthetic id isn't in pack.Drivers — so resolving it the
+        // normal way would credit the AI the player displaced (a player win reported under "Ayrton Senna").
+        // Render the player's own name instead. Every real-driver id resolves exactly as before.
+        if (string.Equals(driverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
+            return PlayerDisplayName() ?? PlayerDefaultName;
+        return grid.Seats.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal))?.DriverName
+            ?? Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, driverId, StringComparison.Ordinal))?.Name
+            ?? driverId;
+    }
 
     /// <summary>Turn a <c>race.result</c> delta (expectedFinish / actualFinish / dnf) into the
     /// Why? chip's plain sentence. Empty when the delta cannot be read.</summary>

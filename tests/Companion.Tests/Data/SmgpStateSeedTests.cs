@@ -81,7 +81,9 @@ public sealed class SmgpStateSeedTests : IDisposable
             AgingCurves = rules.AgingCurves,
             Archetypes = rules.Archetypes,
             Headlines = rules.Headlines,
-            PlayerDriverId = "driver.hulme",
+            // The SMGP clean-swap player races as their OWN distinct driver, so replay scores them
+            // under the synthetic id (not the seat's authored driver).
+            PlayerDriverId = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId,
             PlayerAge = 30,
             CharacterRules = rules.Character,
         });
@@ -158,6 +160,46 @@ public sealed class SmgpStateSeedTests : IDisposable
             },
             environment);
         Assert.Null(normal.CurrentSmgpBriefing());
+    }
+
+    [Fact]
+    public void SmgpPlayer_WithNoCharacterName_ShowsAStableName_NotTheBenchedAiOrRawId()
+    {
+        // The SMGP clean-swap player is their OWN distinct synthetic driver (id not in pack.Drivers),
+        // sitting in a car whose authored AI is BENCHED. With no character name, every name-rendering
+        // screen must show a stable default — never the benched AI it displaced, never the raw id.
+        string packDirectory = Path.Combine(_root, "packs", "cleanswap-name");
+        TestPackBuilder.Write(SmgpPack(), packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "cleanswap-name"),
+            library: TestPackBuilder.Library());
+        using var session = CareerSessionService.CreateCareer(
+            new CareerCreationRequest
+            {
+                PackDirectory = packDirectory,
+                CareerFilePath = Path.Combine(_root, "careers", "cleanswap-name.ams2career"),
+                CareerName = "Clean Swap",
+                MasterSeed = Seed,
+                PlayerLiveryName = TestPackBuilder.StockLivery2,
+                SmgpMode = true,
+            },
+            environment);
+
+        string synthetic = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId;
+
+        // The standings/review seam: a non-null identity carrying the default name (it feeds
+        // StandingsViewModel's driverNames, so the Drivers tab + round matrix render "You", not
+        // the raw "driver.player-entrant").
+        var identity = session.PlayerIdentity();
+        Assert.NotNull(identity);
+        Assert.Equal(synthetic, identity!.Value.DriverId);
+        Assert.Equal("You", identity.Value.DisplayName);
+
+        // The grid-card seam: the player's own seat shows that name, NOT the benched AI whose car they
+        // hold (the seat scores under the synthetic id but reads as the player).
+        var playerSeat = Assert.Single(session.CurrentGrid(), s => s.IsPlayer);
+        Assert.Equal(synthetic, playerSeat.DriverId);
+        Assert.Equal("You", playerSeat.DriverName);
     }
 
     [Fact]
