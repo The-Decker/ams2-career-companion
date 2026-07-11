@@ -5,6 +5,7 @@ using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.ViewModels.Briefing;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Shell;
 
 namespace Companion.RenderHarness.Tests;
 
@@ -120,53 +121,52 @@ public sealed class BriefingSmgpRenderTests
     }
 
     [Fact]
-    public void BriefingView_RendersTheRivalPanel_WithADossierCard()
+    public void RivalScreenView_RendersTheDossierCard_OverTheSharedBriefing()
     {
         if (!WpfRenderHarness.IsSupported)
             return;
 
         WpfRenderHarness.RunSta(() =>
         {
-            var vm = new BriefingViewModel(new SmgpSession());
-            Assert.True(vm.SmgpActive);
-            Assert.True(vm.SmgpPickEnabled);          // a free pick
-            Assert.Null(vm.SelectedSmgpRival);        // fresh round: unnamed
+            // The rival step wraps the SHARED briefing — the pick / name-him state lives there and
+            // rides into the race draft at Apply, so moving the UI onto its own screen changes nothing.
+            var briefing = new BriefingViewModel(new SmgpSession());
+            Assert.True(briefing.SmgpActive);
+            Assert.True(briefing.SmgpPickEnabled);          // a free pick
+            Assert.Null(briefing.SelectedSmgpRival);        // fresh round: unnamed
 
-            // BROWSING commits nothing: selecting shows the dossier (car + portrait slots), but
-            // the draft carries no rival until YES names him.
-            vm.SelectedSmgpRival = vm.SmgpRivals[0];
-            Assert.True(vm.SmgpCanName);
-            Assert.Null(vm.BuildSmgpRival());
-            Assert.False(vm.SmgpSwapPromptVisible);
+            // BROWSING commits nothing: selecting shows the dossier, but the draft carries no rival
+            // until YES names him.
+            briefing.SelectedSmgpRival = briefing.SmgpRivals[0];
+            Assert.True(briefing.SmgpCanName);
+            Assert.Null(briefing.BuildSmgpRival());
+            Assert.False(briefing.SmgpSwapPromptVisible);
 
             // YES — the commitment the fold counts the two-wins ladder against.
-            vm.SmgpNameRivalCommand.Execute(null);
-            Assert.True(vm.SmgpRivalNamed);
-            Assert.False(vm.SmgpCanName);
-            Assert.True(vm.SmgpSwapPromptVisible);
-            Assert.NotNull(vm.BuildSmgpRival());
-            Assert.True(vm.BuildSmgpRival()!.SeatSwapAccepted);
+            briefing.SmgpNameRivalCommand.Execute(null);
+            Assert.True(briefing.SmgpRivalNamed);
+            Assert.False(briefing.SmgpCanName);
+            Assert.True(briefing.SmgpSwapPromptVisible);
+            Assert.NotNull(briefing.BuildSmgpRival());
+            Assert.True(briefing.BuildSmgpRival()!.SeatSwapAccepted);
 
-            var view = new BriefingView { DataContext = vm };
-            view.Measure(new Size(1000, 1200));
-            view.Arrange(new Rect(0, 0, 1000, 1200));
+            var view = new RivalScreenView { DataContext = new RivalScreenViewModel(briefing) };
+            view.Measure(new Size(1000, 1400));
+            view.Arrange(new Rect(0, 0, 1000, 1400));
             view.UpdateLayout();
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
 
-            // Pin the ACTUAL visibility (a Bool converter inversion renders fine and passes any
-            // height assertion — this is the check that catches it).
-            Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpPanel")).Visibility);
-            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
-            // Named: the YES button yields to the confirmation banner.
+            // Named: the YES button yields to the confirmation banner (pins the actual visibility,
+            // which a Bool-converter inversion would render fine but wrong).
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpNameRivalButton")).Visibility);
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpNamedBanner")).Visibility);
 
             // Withdrawing un-names: the draft goes back to carrying nothing.
-            vm.SmgpDeclineRivalCommand.Execute(null);
-            Assert.Null(vm.BuildSmgpRival());
-            Assert.False(vm.SmgpRivalNamed);
+            briefing.SmgpDeclineRivalCommand.Execute(null);
+            Assert.Null(briefing.BuildSmgpRival());
+            Assert.False(briefing.SmgpRivalNamed);
         });
     }
 

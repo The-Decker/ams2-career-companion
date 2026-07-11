@@ -1,0 +1,136 @@
+<UserControl x:Class="Companion.App.Views.RivalScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:Companion.App.Views"
+             Focusable="False">
+    <!-- The SMGP rival screen — its own step after race setup, before qualifying. DataContext is a
+         RivalScreenViewModel; the inner content binds to the shared BriefingViewModel (Briefing), so
+         the round header / D.P. readout / pick-a-rival / dossier / "name him" all reuse the exact
+         briefing state and commands (the naming rides into the race draft at Apply, unchanged). -->
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Your rival" Style="{StaticResource H2}" Margin="0,0,0,4" />
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,12" TextWrapping="Wrap"
+                   Text="Name a rival to challenge this round — finish ahead of the same driver twice without losing and you may take his seat. Or race with no rival named." />
+
+        <!-- primary action ("Continue"): binds up to the hosting HomeView, like the result entry -->
+        <Button DockPanel.Dock="Bottom" Style="{StaticResource AccentButton}" HorizontalAlignment="Right"
+                Margin="0,14,0,0" MinWidth="160"
+                Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='Continue  ⏎'}"
+                Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
+                ToolTip="Continue to qualifying" />
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+            <!-- the content DataContext is the shared briefing, so every Smgp* binding works verbatim -->
+            <Border Style="{StaticResource Panel}" DataContext="{Binding Briefing}">
+                <StackPanel>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Text="{Binding SmgpPointsLine}"
+                                   Foreground="{StaticResource AccentBrush}" FontWeight="Bold" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding SmgpRoundHeader}" FontWeight="Bold" FontSize="16" />
+                    </DockPanel>
+                    <TextBlock Text="{Binding SmgpAdviceLine}" Style="{StaticResource Body}"
+                               FontStyle="Italic" Margin="0,6,0,0" />
+
+                    <!-- optional round card art: data/ams2/smgp/rounds/<round>.jpg -->
+                    <Image MaxHeight="120" HorizontalAlignment="Left" Margin="0,8,0,0" Stretch="Uniform"
+                           Source="{Binding Briefing.Round.Round, Converter={StaticResource AssetImage}, ConverterParameter=smgp/rounds}"
+                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+
+                    <TextBlock Text="{Binding SmgpRivalPrompt}" FontWeight="SemiBold" Margin="0,12,0,4" />
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox MinWidth="260" ItemsSource="{Binding SmgpRivals}"
+                                  SelectedItem="{Binding SelectedSmgpRival}"
+                                  IsEnabled="{Binding SmgpPickEnabled}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding DriverName, Mode=OneWay}" FontWeight="SemiBold" />
+                                        <Run Text=" — " /><Run Text="{Binding TeamName, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button Content="No rival" Margin="8,0,0,0" MinWidth="80"
+                                Command="{Binding SmgpDeclineRivalCommand}"
+                                Visibility="{Binding SmgpPickEnabled, Converter={StaticResource BoolVisible}}"
+                                ToolTip="Race without naming a rival this round" />
+                    </StackPanel>
+
+                    <!-- the rival dossier card: banner, big driver PORTRAIT + car thumbnail, MACHINE
+                         block + arcade car-spec card, his line, the ladder telegraph, and the YES
+                         commitment (nothing rides the result until it is pressed). -->
+                    <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12" Margin="0,10,0,0"
+                            Visibility="{Binding SelectedSmgpRival, Converter={StaticResource NullCollapsed}}">
+                        <StackPanel>
+                            <Image MaxHeight="52" HorizontalAlignment="Center" Stretch="Uniform" Margin="0,0,0,4"
+                                   Source="{Binding SelectedSmgpRival.TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/banners}"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            <StackPanel HorizontalAlignment="Center" Margin="0,2,0,0">
+                                <Grid Width="200" Height="200" HorizontalAlignment="Center"
+                                      ToolTip="Drop the rival's portrait at data\ams2\portraits\&lt;driverId&gt;.jpg (beside the exe)">
+                                    <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
+                                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="60"
+                                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <Border CornerRadius="10" ClipToBounds="True">
+                                        <Image Stretch="UniformToFill"
+                                               Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                    </Border>
+                                </Grid>
+                                <Image Height="50" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,8,0,0"
+                                       Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}"
+                                       ToolTip="Drop the rival's car photo at data\ams2\cars\&lt;driverId&gt;.png (beside the exe)" />
+                            </StackPanel>
+                            <TextBlock FontWeight="Bold" FontSize="17" Margin="0,10,0,0"
+                                       HorizontalAlignment="Center" TextAlignment="Center">
+                                <Run Text="{Binding SelectedSmgpRival.DriverName, Mode=OneWay}" />
+                                <Run Text=" · " /><Run Text="{Binding SelectedSmgpRival.TeamName, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource Faint}" Margin="0,3,0,0"
+                                       HorizontalAlignment="Center" TextAlignment="Center">
+                                <Run Text="MACHINE  " FontWeight="SemiBold" />
+                                <Run Text="{Binding SelectedSmgpRival.MachineLine, Mode=OneWay}" />
+                            </TextBlock>
+                            <ContentControl Content="{Binding SelectedSmgpRival.CarSpec}"
+                                            HorizontalAlignment="Center" Margin="0,8,0,0"
+                                            Visibility="{Binding SelectedSmgpRival.CarSpec, Converter={StaticResource NullCollapsed}}">
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <views:CarSpecCard MaxWidth="280" />
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                            <TextBlock Text="{Binding SelectedSmgpRival.Quote}" Style="{StaticResource Body}"
+                                       FontStyle="Italic" Margin="0,8,0,0" TextWrapping="Wrap"
+                                       HorizontalAlignment="Center" TextAlignment="Center" />
+                            <TextBlock Text="{Binding SmgpLadderLine}" Foreground="{StaticResource AccentBrush}"
+                                       FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,8,0,0"
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       Visibility="{Binding SmgpLadderLine, Converter={StaticResource StringVisible}}" />
+
+                            <Button x:Name="SmgpNameRivalButton" Style="{StaticResource AccentButton}"
+                                    Content="YES — name him as my rival" MinWidth="220" Margin="0,12,0,0"
+                                    HorizontalAlignment="Center" FontWeight="Bold"
+                                    Command="{Binding SmgpNameRivalCommand}"
+                                    Visibility="{Binding SmgpCanName, Converter={StaticResource BoolVisible}}"
+                                    ToolTip="Commit this rival for the round — finish ahead of him twice without losing and you may take his seat" />
+                            <Border x:Name="SmgpNamedBanner" Background="{StaticResource SuccessDimBrush}" CornerRadius="6"
+                                    Padding="10,7" Margin="0,10,0,0"
+                                    Visibility="{Binding SmgpRivalNamed, Converter={StaticResource BoolVisible}}">
+                                <TextBlock Text="{Binding SmgpNamedLine}" Foreground="{StaticResource SuccessBrush}"
+                                           FontWeight="SemiBold" TextWrapping="Wrap" />
+                            </Border>
+                            <CheckBox Content="Join his team if the offer comes" IsChecked="{Binding SmgpSwapAccept}"
+                                      Margin="0,8,0,0"
+                                      Visibility="{Binding SmgpSwapPromptVisible, Converter={StaticResource BoolVisible}}"
+                                      ToolTip="Beat the same rival twice without losing and you may get an offer to join his team — this is your standing answer" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

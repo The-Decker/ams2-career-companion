@@ -31,12 +31,14 @@ explicit, screen by screen.
 - **Starting grid — SHIPPED** (`cb93e3f`, part of stage 5). After qualifying "Set the grid", the
   `StartingGridView` shows the grid pole-first (driver + car cards, two wide) with a "Start the race"
   button before the race entry.
-- **3b — Rival screen as its own step — TODO.** Extract the SMGP rival dossier (currently in
-  `BriefingView`, driven by `CurrentSmgpBriefing` / `SmgpRivalOption`, incl. the rival-naming
-  interaction) into its own `CurrentContent` step between race setup (briefing) and qualifying. SMGP-only
-  (non-SMGP careers have no rival step). Display + the existing "name your rival" action; the car-spec
-  card already renders on it. Add a `HomeViewModel` state (`IsRivalStep`) + a `RivalScreenView` + flow
-  wiring (briefing → rival → qualifying). Non-determinism-risky (display + the already-folded naming).
+- **3b — Rival screen as its own step — SHIPPED.** `RivalScreenViewModel` wraps the SHARED
+  `BriefingViewModel` (so the pick / "name him" state and `BuildSmgpRival()` are unchanged);
+  `RivalScreenView` holds the SMGP rival dossier moved out of `BriefingView` (expanded portrait + the
+  car-spec card). `HomeViewModel` gains `IsRivalStep` + `ShowRival()`; `EnterResult` shows it FIRST for
+  an SMGP career (gated on `Briefing.SmgpActive`), then "Continue" advances to qualifying —
+  briefing → rival → qualifying → grid → race → confirm. Non-SMGP careers skip it (byte-identical).
+  Also fixed: the starting-grid screen had no visible advance button (the confirm button lived only in
+  `ResultEntryView`) — added it to both the grid and rival screens.
 - **3c — Promotion / Demotion screen — TODO (biggest; determinism-sensitive).** After the confirm/apply,
   when the folded SMGP state produced a seat change this round, show a promotion/demotion screen:
   - Promotion (player beat the rival twice → `SmgpState` seat swap up a tier): the player **accepts or

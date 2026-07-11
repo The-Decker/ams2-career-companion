@@ -51,6 +51,9 @@
             <DataTemplate DataType="{x:Type shell:StartingGridViewModel}">
                 <views:StartingGridView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type shell:RivalScreenViewModel}">
+                <views:RivalScreenView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type briefing:BriefingViewModel}">
                 <views:BriefingView />
             </DataTemplate>

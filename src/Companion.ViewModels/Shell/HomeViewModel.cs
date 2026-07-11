@@ -43,6 +43,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// the player sees the grid pole-first before racing. Null except while on that step.</summary>
     private StartingGridViewModel? _startingGrid;
 
+    /// <summary>The SMGP rival screen — its own step AFTER race setup and BEFORE qualifying (a wrapper
+    /// over the shared Briefing so the naming persists). Null except while on that step.</summary>
+    private RivalScreenViewModel? _rivalScreen;
+
+    /// <summary>True once the rival step has been shown-and-passed this round, so re-entering the flow
+    /// (or a career with no rival) goes straight to qualifying. Reset on Apply.</summary>
+    private bool _rivalStepDone;
+
     /// <summary>Races already confirmed this round (Increment 2e.3): as the player advances "Next
     /// race" each race is captured and LOCKED (exactly like the qualifying step); the final race
     /// stays live so confirm → back can re-edit it. Empty on a single race. Cleared on Apply.</summary>
@@ -142,7 +150,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(
         nameof(IsBriefingState), nameof(IsResultEntryState),
         nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
-        nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(ConfirmButtonText))]
+        nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(IsRivalStep),
+        nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -158,6 +167,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// race). Drives the primary action's "Start the race" label.</summary>
     public bool IsStartingGridState => CurrentContent is StartingGridViewModel;
 
+    /// <summary>True while the CURRENT content is the SMGP rival screen (after race setup, before
+    /// qualifying). Drives the primary action's "Continue" label.</summary>
+    public bool IsRivalStep => CurrentContent is RivalScreenViewModel;
+
+    /// <summary>True when this round has an SMGP rival step to show (an active rival briefing). A
+    /// non-SMGP / character-free career has none, so the flow is byte-identical to the shipped loop.</summary>
+    private bool HasSmgpRivalStep => Briefing.SmgpActive;
+
     /// <summary>True while the CURRENT content is the weekend qualifying-order step (not the race
     /// result) — both reuse the result-entry grammar, so this drives the primary action's label
     /// and the "which step am I on" cues. Always false on single-race rounds.</summary>
@@ -167,7 +184,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>The primary confirm button's label: the qualifying step locks the grid; a race that
     /// is not the round's last advances to the next race; the last (or only) race scores the round.</summary>
     public string ConfirmButtonText =>
-        IsQualifyingStep ? "Set the grid  ⏎"
+        IsRivalStep ? "Continue  ⏎"
+        : IsQualifyingStep ? "Set the grid  ⏎"
         : IsStartingGridState ? "Start the race  ⏎"
         : IsResultEntryState && !IsLastRace ? "Next race  ⏎"
         : "Confirm result  ⏎";
@@ -202,6 +220,15 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     {
         ContentError = null;
 
+        // SMGP rival step: name your rival on its own screen, once per round, BEFORE qualifying
+        // (Mike's Upcoming Race loop). A non-SMGP / character-free career has no rival step, so the
+        // shipped loop stays byte-identical.
+        if (!_rivalStepDone && HasSmgpRivalStep)
+        {
+            ShowRival();
+            return;
+        }
+
         // Weekend qualifying step (Increment 2b.3): on a round whose weekend declares a qualifying
         // session, capture the grid order (pole first) BEFORE the race — once per round. A round
         // with no weekend / no qualifying skips straight to the race, so the shipped single-race
@@ -213,6 +240,16 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         ShowRaceEntry();
+    }
+
+    /// <summary>Show the SMGP rival screen — a wrapper over the shared Briefing so the pick / dossier
+    /// / "name him" state (consumed at Apply via BuildSmgpRival) is preserved. Its "Continue" advances
+    /// to qualifying.</summary>
+    private void ShowRival()
+    {
+        _rivalScreen ??= new RivalScreenViewModel(Briefing);
+        CurrentContent = _rivalScreen;
+        ConfirmResultCommand.NotifyCanExecuteChanged();
     }
 
     /// <summary>The current round's qualifying session when its weekend declares one present; null
@@ -315,7 +352,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     }
 
     private bool CanConfirmResult =>
-        CurrentContent is ResultEntryViewModel { IsComplete: true } or StartingGridViewModel;
+        CurrentContent is ResultEntryViewModel { IsComplete: true } or StartingGridViewModel or RivalScreenViewModel;
 
     /// <summary>The result-entry primary action. On the qualifying step it locks the entered grid
     /// (no scoring) and advances to the race; on the race step it scores the draft into the Confirm
@@ -323,6 +360,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanConfirmResult))]
     private void ConfirmResult()
     {
+        // Rival step: the player has named (or declined) their rival — continue to qualifying/race.
+        if (IsRivalStep)
+        {
+            _rivalStepDone = true;
+            EnterResult();
+            return;
+        }
+
         // Starting-grid step: the player has looked at the grid — go racing.
         if (IsStartingGridState)
         {
@@ -430,6 +475,8 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         _capturedQualifyingOrder = null;
         _capturedRaces.Clear();
         _startingGrid = null;
+        _rivalScreen = null;
+        _rivalStepDone = false;
 
         Summary = _session.Summary;
         Briefing.Refresh();

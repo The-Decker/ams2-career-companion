@@ -136,6 +136,55 @@ public sealed class WeekendLoopTests
         Assert.Equal("Qualifying", ((ResultEntryViewModel)home.CurrentContent!).SessionLabel);
     }
 
+    // ---------- SMGP rival step (Upcoming Race loop) ----------
+
+    [Fact]
+    public void Smgp_career_shows_the_rival_step_before_qualifying_then_continues()
+    {
+        var session = new WeekendSession
+        {
+            SmgpBriefing = new Companion.ViewModels.Services.SmgpBriefingModel
+            {
+                RoundHeader = "SAN MARINO · ROUND 1",
+                PointsLine = "9 D.P.",
+                AdviceLine = "PASS AT THE HAIRPIN!",
+                Titles = 0,
+                CareerOver = false,
+                Rivals =
+                [
+                    new Companion.ViewModels.Services.SmgpRivalOption
+                    {
+                        DriverId = "driver.brabham", DriverName = "Jack Brabham",
+                        TeamId = "team.bullets", TeamName = "Bullets",
+                        MachineLine = "g3m1", Quote = "IT'S INTERESTING.",
+                        OfferOnWin = false, ForfeitOnLoss = false,
+                    },
+                ],
+            },
+        };
+        using var home = new HomeViewModel(session);
+
+        // The rival screen is its OWN step, shown before qualifying.
+        home.EnterResultCommand.Execute(null);
+        Assert.True(home.IsRivalStep);
+        Assert.False(home.IsQualifyingStep);
+        Assert.Equal("Continue  ⏎", home.ConfirmButtonText);
+
+        // Continue advances to qualifying (the rival step is done for this round).
+        home.ConfirmResultCommand.Execute(null);
+        Assert.False(home.IsRivalStep);
+        Assert.True(home.IsQualifyingStep);
+    }
+
+    [Fact]
+    public void Non_smgp_career_has_no_rival_step()
+    {
+        using var home = new HomeViewModel(new WeekendSession()); // no SmgpBriefing
+        home.EnterResultCommand.Execute(null);
+        Assert.False(home.IsRivalStep);
+        Assert.True(home.IsQualifyingStep); // straight to qualifying, byte-identical to the shipped loop
+    }
+
     // ---------- two-race weekend (Increment 2e.3) ----------
 
     [Fact]
@@ -303,6 +352,12 @@ public sealed class WeekendLoopTests
         };
 
         public PackWeekend? CurrentWeekend() => Summary.SeasonComplete ? null : Weekend;
+
+        /// <summary>An SMGP rival briefing (null = a non-SMGP career, so no rival step fires).</summary>
+        public Companion.ViewModels.Services.SmgpBriefingModel? SmgpBriefing { get; init; }
+
+        public Companion.ViewModels.Services.SmgpBriefingModel? CurrentSmgpBriefing() =>
+            Summary.SeasonComplete ? null : SmgpBriefing;
 
         public BriefingModel? CurrentBriefing() => Summary.SeasonComplete
             ? null
