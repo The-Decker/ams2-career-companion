@@ -580,8 +580,11 @@
                                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                 </Border>
                                                 <Border CornerRadius="8" ClipToBounds="True">
+                                                    <!-- The player's own card shows the TEAM's player image (team-coloured
+                                                         helmet, data/ams2/portraits/player.<team>.jpg); every other card shows
+                                                         the seat driver's portrait. PortraitKey resolves which. -->
                                                     <Image Stretch="UniformToFill"
-                                                           Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                           Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
                                                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                                 </Border>
                                             </Grid>
@@ -622,6 +625,27 @@
                 <TextBlock DockPanel.Dock="Top" Text="Your driver" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
                            Text="Pick an archetype for a ready-made driver, or customise the stats and perks. Your choices set the sim's expectation of you — a faster driver is judged against a harder bar, never handed secret pace." />
+                <!-- YOU, front and centre: the team-coloured player image (drop art at
+                     data\ams2\portraits\player.<team>.jpg) with the car you'll drive beneath it. Both
+                     follow the team you joined; framed placeholders show until the art is dropped. -->
+                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,14">
+                    <Grid Width="168" Height="168" HorizontalAlignment="Center"
+                          ToolTip="Drop your team player image at data\ams2\portraits\player.&lt;team&gt;.jpg (beside the exe)">
+                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="52"
+                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border CornerRadius="10" ClipToBounds="True">
+                            <Image Stretch="UniformToFill"
+                                   Source="{Binding PlayerImageKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                        </Border>
+                    </Grid>
+                    <Image Height="44" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,8,0,0"
+                           Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                </StackPanel>
                 <views:CharacterView DataContext="{Binding Character}" />
             </DockPanel>
 

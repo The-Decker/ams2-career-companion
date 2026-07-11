@@ -396,9 +396,18 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public ObservableCollection<SeatOption> Seats { get; } = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(PlayerImageKey), nameof(PlayerCarKey))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private SeatOption? _selectedSeat;
+
+    /// <summary>The team-coloured PLAYER image for the character screen — the team the player is
+    /// joining (<c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, a team helmet), or a plain
+    /// "player" key for an own entrant. Updates when the chosen seat changes.</summary>
+    public string PlayerImageKey => GridSeatChoice.PlayerImageKey(SelectedSeat?.TeamId ?? "");
+
+    /// <summary>The car the player will drive — its preview image key (the seat's driver id keys
+    /// <c>data/ams2/cars/&lt;driverId&gt;.png</c>). Null for an own entrant (no pack car).</summary>
+    public string? PlayerCarKey => SelectedSeat?.DriverId;
 
     /// <summary>Optional escape hatch from the pack seats: type the exact name of a custom AMS2 livery
     /// you have installed and race as your OWN independent entrant (the player-as-own-entrant path — a
@@ -544,6 +553,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 DriverName = driversById[entry.DriverId].Name,
                 TeamName = teamsById[entry.TeamId].Name,
                 DriverId = entry.DriverId,
+                TeamId = entry.TeamId,
                 IsLocked = playerLivery is not null && liveries.Contains(playerLivery, StringComparer.Ordinal),
                 IsIncluded = true,
             };

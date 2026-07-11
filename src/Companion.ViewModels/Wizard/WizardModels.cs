@@ -43,8 +43,26 @@ public sealed partial class GridSeatChoice : CommunityToolkit.Mvvm.ComponentMode
     /// row) = no portrait slot.</summary>
     public string DriverId { get; init; } = "";
 
+    /// <summary>The seat's team id — keys the per-team PLAYER portrait on the locked "You" card.</summary>
+    public string TeamId { get; init; } = "";
+
     /// <summary>The player's own seat — always on the grid, its checkbox disabled.</summary>
     public bool IsLocked { get; init; }
+
+    /// <summary>The portrait key for this card's hero image. The player's own (locked) card shows
+    /// the TEAM's player image — <c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, the team-coloured
+    /// helmet (Mike: a different player image per team; "player.minarae") — instead of the AI driver's
+    /// face; every other card shows the seat driver's own portrait. Falls back to a plain "player" key
+    /// for the team-less own-entrant row.</summary>
+    public string PortraitKey => IsLocked ? PlayerImageKey(TeamId) : DriverId;
+
+    /// <summary>The per-team player-image key: <c>player.&lt;team&gt;</c> (the team id without its
+    /// "team." prefix), or plain <c>player</c> when there is no team.</summary>
+    public static string PlayerImageKey(string teamId)
+    {
+        string t = teamId.StartsWith("team.", StringComparison.Ordinal) ? teamId["team.".Length..] : teamId;
+        return t.Length > 0 ? "player." + t : "player";
+    }
 
     /// <summary>True when the seat can be toggled (i.e. NOT the locked player seat) — the checkbox's
     /// enabled state.</summary>
