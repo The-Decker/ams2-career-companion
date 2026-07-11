@@ -90,16 +90,19 @@ public sealed class CharacterDossierHubTests : IDisposable
     }
 
     [Fact]
-    public void UpcomingRaceTab_IsRenamed_AndLockedOutOfTheRail()
+    public void UpcomingRaceTab_IsRenamed_AndLeadsTheRail()
     {
         using var hub = new HubViewModel(CreateCareer(Character()));
 
         var raceTab = hub.Tabs.Single(t => t.Key == HubViewModel.RaceTabKey);
         Assert.Equal("Upcoming Race", raceTab.Title);
-        Assert.False(raceTab.ShowInRail); // reached only via the header loop buttons, not the rail
+        // The Upcoming Race tab now shows in the rail (the header loop buttons are gone — the top is
+        // reserved for the tycoon team mode) and leads it; its loop is walked with its own Continue.
+        Assert.True(raceTab.ShowInRail);
+        Assert.Same(raceTab, hub.Tabs[0]);
 
-        // Every other tab still shows in the rail.
-        Assert.All(hub.Tabs.Where(t => t.Key != HubViewModel.RaceTabKey), t => Assert.True(t.ShowInRail));
+        // Every tab shows in the rail now.
+        Assert.All(hub.Tabs, t => Assert.True(t.ShowInRail));
     }
 
     [Fact]

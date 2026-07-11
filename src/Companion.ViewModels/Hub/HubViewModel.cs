@@ -57,7 +57,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
 
         Tabs =
         [
-            new HubTabViewModel(RaceTabKey, "Upcoming Race", "", Home, showInRail: false),
+            new HubTabViewModel(RaceTabKey, "Upcoming Race", "", Home, showInRail: true),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
             new HubTabViewModel(CalendarTabKey, "Calendar", "", Calendar),
             new HubTabViewModel(SkinsTabKey, "Skins", "", Skins),
