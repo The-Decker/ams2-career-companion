@@ -67,3 +67,11 @@ the #11 value (0.81), with a round-11 `vehicleReliability: 0.24` override for th
 
 `F11967SourceParityTests` pins the complete-rating/proxy split, every active livery's reliability,
 the Bonnier livery switch, Scarfiotti's Monza patch, and the Bandini/Parkes/Ginther exit boundaries.
+
+## Regeneration warning
+
+Do not treat a plain rerun of `tools/import_jusk_ai.cs` as a complete regeneration path for this
+expanded roster. The importer resolves a duplicated livery to the first matching pack entry, so
+the shared Brabham #15 slot would bind Guy Ligier's source block to Bob Anderson. Rebuilding the
+round overrides would also drop Bonnier's manual round-11 livery-reliability switch. The parity
+tests deliberately pin both cases; preserve them in any future importer work.
