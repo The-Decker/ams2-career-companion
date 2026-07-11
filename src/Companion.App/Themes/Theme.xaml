@@ -27,18 +27,18 @@
     <SolidColorBrush x:Key="SelectionBrush" Color="#33415E" />
 
     <!-- root font size (the base body font) — every window binds via DynamicResource. 15 (a touch
-         up from 14) so the app-wide Aeromove body face reads comfortably and stays LARGER than the
+         up from 14) so the app-wide body face (Retro Floral) reads comfortably and stays LARGER than the
          Season's Grid card face (Mike's pick). -->
     <sys:Double x:Key="AppFontSize">15</sys:Double>
 
-    <!-- Bundled display faces (embedded as Resource in the App's Fonts\ folder, so the single exe
-         carries them). "Race Sport" = the career/season-name selector; "Aeromove" = the app-wide
-         REGULAR/body face (every window sets it as the base FontFamily; Mike's pick — a good text,
-         run a touch larger than the grid); "Microsport" = the Season's Grid card driver/team names
-         (the display face for that one screen). Segoe UI is the safe fallback if a face fails to
-         load. -->
+    <!-- Bundled faces (embedded as Resource in the App's Fonts\ folder, so the single exe carries
+         them). "BodyFont" (Retro Floral) = the app-wide REGULAR text — every window sets it as the
+         base FontFamily, so a future body-font swap is this one line. The two screens Mike keeps on
+         their own display faces: "Race Sport" = the season/career picker card titles, "Microsport"
+         = the Season's Grid card driver/team names. Segoe UI is the safe fallback if a face fails
+         to load. -->
+    <FontFamily x:Key="BodyFont">/Fonts/#Retro Floral</FontFamily>
     <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
-    <FontFamily x:Key="AeromoveFont">/Fonts/#AeromoveDemo</FontFamily>
     <FontFamily x:Key="MicrosportFont">/Fonts/#Microsport</FontFamily>
 
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform

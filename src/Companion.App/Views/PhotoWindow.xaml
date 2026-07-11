@@ -5,7 +5,7 @@
         WindowStartupLocation="CenterOwner"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
-        FontFamily="{StaticResource AeromoveFont}" FontSize="{DynamicResource AppFontSize}">
+        FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}">
     <!-- The image fills the window and scales with it (Stretch=Uniform): resize the window, the photo
          resizes with it. Whole-window UI-scale transform keeps it in step with the app's text size. -->
     <Grid>

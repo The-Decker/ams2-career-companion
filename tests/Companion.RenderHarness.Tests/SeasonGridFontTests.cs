@@ -4,9 +4,10 @@ using System.Windows.Media;
 namespace Companion.RenderHarness.Tests;
 
 /// <summary>
-/// The app bundles two personal-use display faces (Mike's picks): "Aeromove" is the app-wide
-/// regular/body font (every window's base FontFamily) and "Microsport" draws the Season's Grid card
-/// names. WPF silently falls back to Segoe UI when a <c>/Fonts/#Family</c> reference does not resolve
+/// The app bundles two personal-use display faces (Mike's picks): "Retro Floral" is the app-wide
+/// regular/body font (every window's base FontFamily, via the BodyFont resource) and "Microsport"
+/// draws the Season's Grid card names. WPF silently falls back to Segoe UI when a
+/// <c>/Fonts/#Family</c> reference does not resolve
 /// — a dropped Resource, a renamed file, or a family-name drift would go UNNOTICED by a plain render
 /// test. This guard proves each face is embedded in the app assembly AND that the theme references it
 /// by its true family name, so neither can silently regress to the fallback.
@@ -20,8 +21,8 @@ namespace Companion.RenderHarness.Tests;
 public sealed class SeasonGridFontTests
 {
     [Theory]
-    [InlineData("AeromoveFont", "AeromoveDemoRegular.ttf", "AeromoveDemo")] // app-wide body text
-    [InlineData("MicrosportFont", "Microsport Bold.ttf", "Microsport")]    // Season's Grid card names
+    [InlineData("BodyFont", "Retro Floral.ttf", "Retro Floral")]        // app-wide body text
+    [InlineData("MicrosportFont", "Microsport Bold.ttf", "Microsport")] // Season's Grid card names
     public void BundledFont_IsEmbedded_AndTheThemeReferenceMatchesItsFamilyName(
         string resourceKey, string fileName, string family)
     {

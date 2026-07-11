@@ -13,7 +13,7 @@
         </Style>
 
         <!-- Season-grid card labels in the bundled "Microsport" display face (Mike's pick for this
-             screen; the app's regular text is Aeromove, run a touch larger) — uppercase, centered;
+             screen; the app's regular text is Retro Floral, run a touch larger) — uppercase, centered;
              the driver name reads like a race-entry board and the team is an accent tag beneath it.
              Kept a step SMALLER than the 15pt body so the regular text stays the larger face. -->
         <Style x:Key="GridDriverName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">

@@ -11,7 +11,7 @@
         MinWidth="300" MinHeight="240"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
-        FontFamily="{StaticResource AeromoveFont}" FontSize="{DynamicResource AppFontSize}">
+        FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}">
     <!-- the SAME NewsViewModel as the hub's News tab (set as DataContext on open), so the
          torn-off window stays in sync as rounds apply. Read-only mirror → zero state cost.
          The root UI-scale transform (settings: font scale) keeps this pop-out in step with the
