@@ -1,4 +1,4 @@
-# SKINS + AI ROLLOUT AUDIT — `Z:\SKINS 4 AI MUCH LOVE` (2026-07-10)
+# SKINS + AI ROLLOUT AUDIT — `Z:\SKINS 4 AI MUCH LOVE` (through 2026-07-11)
 
 Ground truth for the per-season skins/AI rollout. Built by extracting every archive's XML metadata
 (no textures) into `scratchpad/skins-study/` and diffing against the live install
@@ -10,7 +10,7 @@ Ground truth for the per-season skins/AI rollout. Built by extracting every arch
 |---|---|---|---|---|---|
 | F-Retro-G1 - 1974 v.1.1.zip | 1974 | F-Retro_Gen1 | formula_retro, _v12, _v8, lotus_72e, mclaren_m23 | YES (`F1_1974` subdirs) | |
 | F-Retro-Gen1-1975-v1.1.7z | 1975 | F-Retro_Gen1 | SAME five models | no — CONFLICTS with 1974 | parked per Mike; identical override paths |
-| F-Retro-Gen3_TAMS2SP_1983 V2-2.zip | 1983 | F-Retro_Gen3 | formula_retro_g3, _te, mclaren_mp4_1c, brabham_bt52 | YES (`TAMS2SP` subdirs) | NEW-season opportunity (no f1-1983 pack yet) |
+| F-Retro-Gen3_TAMS2SP_1983 V2-2.zip | 1983 | F-Retro_Gen3 | formula_retro_g3, _te, mclaren_mp4_1c, brabham_bt52 | YES (`TAMS2SP` subdirs) | **ROLLED OUT 2026-07-11**: f1-1983 pack + skinSeason + 24 active pointers + Humpty AI parity |
 | F1_1985.zip | 1985 | F-Retro_Gen3 | formula_retro_g3, _te, mclaren_mp4_1c (NO bt52) | no — CONFLICTS with 1983 | see (e) |
 | F1_1996HC_260707.rar | 1996 | F-V10_Gen1 | formula_v10_g1, mclaren_mp4_12 (+per-race variants, +Equal/Realistic/Team AI XMLs) | no — CONFLICTS with 1997 | NEW-season opportunity |
 | F1_1997HC_260707.rar | 1997 | F-V10_Gen1 | same models (+per-race variants +AI variants) | YES (`F1_Season_1997`) | our f1-1997 pack exists |
@@ -67,6 +67,19 @@ CustomAIDrivers XML (1986, 1995 Equal/Realistic, 1996/1997/1998 incl. team varia
 2016, SMGP), import it as the ratings source (import_jusk_ai.cs works as-is; choose "Realistic"
 variants). Grid-size changes are pack data → NEW careers only; existing pins untouched.
 
+## (d.1) F1 1983 rollout — shipped
+
+`packs/f1-1983` now binds `skinSeason: "f1-1983"` to all four installed TAMS2SP pointer models.
+The source archive has 26 Humpty/mungopark Custom-AI profiles; the active pointer union has 24
+unique liveries, so the pack fields exactly that stageable intersection. Guerrero #33 and
+Giacomelli #36 remain documented optional-source omissions because enabling them would exceed
+the active set. Every staged driver carries all 13 source ratings plus reliability.
+
+One pointer typo was corrected against the actual texture inventory: Jarier's visor spec path is
+`83_Jarier_visor_spec.dds`, not the archive XML's `83_Jarrier_visor_spec.dds`. Source hashes,
+roster policy, and regeneration order are recorded in `docs/research/1983-source-parity.md` and
+pinned by `F11983SourceParityTests`.
+
 ## (e) F1_1985.zip — the three problems
 
 1. CONFLICT: same `formula_retro_g3*` override XMLs as the installed 1983 TAMS2SP pack (textures
@@ -108,8 +121,8 @@ dropped (base ratings + skill-only track blocks landed 2026-07-10, `ae8276f`).
 ## (h) Parked / future
 
 - **1975**: study-only until the season manager (b) exists — then it's just another swap set.
-- **NEW season packs unlocked by this directory**: 1983 (F-Retro_Gen3), 1996 (F-V10_Gen1),
-  1998 (F-V10_Gen2), 2010 + 2012 (F-Reiza — no packs on this class yet). All have per-race
+- **NEW season packs still unlocked by this directory**: 1996 (F-V10_Gen1), 1998
+  (F-V10_Gen2), 2010 + 2012 (F-Reiza — no packs on this class yet). All have per-race
   variants + curated AI files. NO FANTASY PACKS rule respected — all real seasons.
 - **JGTC 500 / Ferrari 355 Challenge / 488 Challenge**: AMS2 has no Ferrari/JGTC base content —
   these need mod discovery in `Z:\RCM MODS AMS2` + RCM/OverTake (a content-discovery task, then
