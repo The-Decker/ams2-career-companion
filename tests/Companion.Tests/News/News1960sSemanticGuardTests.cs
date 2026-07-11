@@ -92,6 +92,38 @@ public sealed class News1960sSemanticGuardTests
         Assert.True(offenders.Count == 0, string.Join(Environment.NewLine, offenders));
     }
 
+    [Fact]
+    public void Corpus_MeetsRicherDecadeDepthWithoutDuplicateVariants()
+    {
+        JsonObject corpus = LoadCorpus();
+        JsonObject bodies = corpus["bodies"]!.AsObject();
+        JsonObject pools = corpus["pools"]!.AsObject();
+
+        Assert.Equal(10, bodies.Count);
+        foreach (var (key, bodyNode) in bodies)
+        {
+            JsonArray variants = bodyNode!["1960s"]!.AsArray();
+            Assert.InRange(variants.Count, 9, 11);
+            Assert.Equal(variants.Count, variants
+                .Select(node => node!.GetValue<string>())
+                .Distinct(StringComparer.Ordinal)
+                .Count());
+        }
+
+        Assert.True(pools.Count >= 9,
+            $"1960s corpus has {pools.Count} pools; richer-decade parity requires at least 9.");
+        foreach (var (name, poolNode) in pools)
+        {
+            JsonArray fragments = poolNode!["1960s"]!.AsArray();
+            Assert.True(fragments.Count >= 8,
+                $"Pool {name} has {fragments.Count} 1960s fragments; expected at least 8.");
+            Assert.Equal(fragments.Count, fragments
+                .Select(node => node!.GetValue<string>())
+                .Distinct(StringComparer.Ordinal)
+                .Count());
+        }
+    }
+
     private static JsonObject LoadCorpus() =>
         JsonNode.Parse(File.ReadAllText(CorpusPath))!.AsObject();
 
