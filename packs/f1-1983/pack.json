@@ -1,0 +1,29 @@
+{
+  "packId": "f1-1983",
+  "name": "Formula One 1983",
+  "version": "1.1.0",
+  "formatVersion": 1,
+  "skinSeason": "f1-1983",
+  "gameVersionTested": "1.6.9.82",
+  "license": "CC BY 4.0",
+  "attribution": [
+    "Historical data derived from f1db (github.com/f1db/f1db, CC BY 4.0)",
+    "AI ratings and reliability from Humpty (mungopark)'s F-Retro_Gen3.xml, shipped with the TAMS2SP F1 1983 Skinpack V2.2"
+  ],
+  "requires": {
+    "dlc": [],
+    "skinPacks": [
+      {
+        "name": "TAMS2SP F1 1983 Skinpack V2.2",
+        "overridesFolder": "TAMS2SP"
+      }
+    ]
+  },
+  "notes": [
+    "Active-pointer coverage: f1db entrants Chico Serra, Alan Jones, Corrado Fabi, Piercarlo Ghinzani, Eliseo Salazar, Jean-Louis Schlesser, Jacques Villeneuve Sr., Kenny Acheson, and Jonathan Palmer have no profile in Humpty's active Custom-AI/pointer intersection and are omitted.",
+    "The source AI XML has 26 profiles but the committed pointer set exposes 24 active liveries. Theodore #33 Roberto Guerrero and Toleman #36 Bruno Giacomelli exist as source AI profiles and optional skin textures, but are not active pointers because AMS2 caps this override set at 24 liveries.",
+    "The 24-livery roster is a semi-historical playability policy. Twenty-one seats run rounds 1-15; Johnny Cecotto runs 1-13, Thierry Boutsen 6-15, and Stefan Johansson 9-14, matching their represented 1983 activity windows.",
+    "Placeholder venues (isPlaceholder=true): Paul Ricard -> Le Mans Bugatti, Detroit -> Adelaide Historic, and Zandvoort -> Spielberg Vintage. Lap counts are recomputed to preserve the real race distance.",
+    "Source archive SHA-256 C893BD32E7163C0F5853E97A6D2FB18EC6585C4B75B3A45CBD77065E02819FA2; embedded F-Retro_Gen3.xml SHA-256 542B1830ACF9BCA2777B2BA2D9A65187063E6248BA2977C88CD099CC0263F30E."
+  ]
+}

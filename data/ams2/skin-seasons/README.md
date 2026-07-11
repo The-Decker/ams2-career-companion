@@ -22,3 +22,9 @@ directory (2026-07-10) — 1974/1975 F-Retro-G1 packs, TAMS2SP 1983 V2-2, Klukkl
 IMG 1990 v1.4, SMGP SKINS V1 (rafaelcsanti), 1996HC/1997HC, 2010HC, IMG 2012 v2.08. Pointer
 XMLs only (small text files); textures are never committed. `*_dist.xml` distribution templates
 are deliberately not included (the game never reads them).
+
+`f1-1983` is assigned to the shipped pack as of 2026-07-11. Its four pointers expose 24 active
+TAMS2SP liveries; the source archive's optional #33 Guerrero and #36 Giacomelli profiles are not
+active pointers. `formula_retro_g3.xml` contains one deliberate source repair: Jarier's visor-spec
+path is corrected from `83_Jarrier_visor_spec.dds` to the installed asset
+`83_Jarier_visor_spec.dds`. See `docs/research/1983-source-parity.md` for hashes and drift guards.
