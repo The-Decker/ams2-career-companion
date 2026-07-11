@@ -149,4 +149,27 @@ public sealed class SmgpDnqFieldTests
         Assert.DoesNotContain("driver.paul_white", onGrid);
         Assert.Equal(Pack.Value.Season.Rounds.Single(r => r.Round == 1).Grid!.Size, plan.Seats.Count);
     }
+
+    /// <summary>The staging naming pass (phase 1 of the g3m2/g3m4 in-game pool-fill fix) enumerates the
+    /// WHOLE covering field via <c>ignoreStarters</c> — so every SMGP livery, including the per-race DNQ
+    /// tail (P. White etc.), gets a name in the AMS2 custom-AI file and no slot AMS2 fields can
+    /// stock-fill. The SIM grid (default resolve) is untouched — it still caps + DNQs, so the byte-
+    /// identical replay + f1db oracle never see this cosmetic enumeration.</summary>
+    [Fact]
+    public void ResolveWithIgnoreStarters_EnumeratesTheWholeField_IncludingTheDnqTail()
+    {
+        var full = RoundGridResolver.Resolve(
+            Pack.Value, round: 1, capToGridSize: false, ignoreStarters: true);
+        var onGrid = full.Seats.Select(s => s.DriverId).ToHashSet(StringComparer.Ordinal);
+
+        // The whole 34-car field enumerates — including the DNQ'd backmarker the sim grid drops.
+        Assert.Equal(Pack.Value.Entries.Count, full.Seats.Count);
+        Assert.Contains("driver.ayrton_senna", onGrid);
+        Assert.Contains("driver.paul_white", onGrid); // DNQ'd in the sim grid; present here for naming
+
+        // ...and the default (sim) resolve is unchanged — the DNQ tail stays off the capped grid.
+        var sim = RoundGridResolver.Resolve(Pack.Value, round: 1);
+        Assert.DoesNotContain("driver.paul_white", sim.Seats.Select(s => s.DriverId));
+        Assert.True(full.Seats.Count > sim.Seats.Count);
+    }
 }

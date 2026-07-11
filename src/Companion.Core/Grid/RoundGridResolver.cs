@@ -30,7 +30,8 @@ public static class RoundGridResolver
     public static GridPlan Resolve(
         SeasonPack pack, int round, PlayerSeat? playerSeat = null, GridSelection? selection = null,
         bool capToGridSize = true, bool applyWeekendForm = false,
-        IReadOnlyDictionary<string, string>? seatOverrides = null, string? playerSeatOverride = null)
+        IReadOnlyDictionary<string, string>? seatOverrides = null, string? playerSeatOverride = null,
+        bool ignoreStarters = false)
     {
         var packRound = pack.Season.Rounds.FirstOrDefault(r => r.Round == round)
             ?? throw new InvalidOperationException(
@@ -43,7 +44,10 @@ public static class RoundGridResolver
         // When the round has a historical grid, only its listed starters seat from entries.json;
         // covering entries whose driver did not start that round stay out of the grid (they remain
         // in the pack — available for one-off drives / divergence — but do not fill every round).
-        HashSet<string>? starters = packRound.Grid is { StarterDriverIds.Count: > 0 } grid
+        // ignoreStarters (staging-only) skips this so the WHOLE covering field enumerates — used to
+        // name every SMGP livery AMS2 could field (incl. the per-race DNQ tail) so no slot stock-fills;
+        // default false keeps the fold + f1db oracle byte-identical (they never pass it).
+        HashSet<string>? starters = !ignoreStarters && packRound.Grid is { StarterDriverIds.Count: > 0 } grid
             ? new HashSet<string>(grid.StarterDriverIds, StringComparer.Ordinal)
             : null;
 

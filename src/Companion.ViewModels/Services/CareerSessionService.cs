@@ -1653,6 +1653,58 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 }
             }
             catch (InvalidOperationException) { /* best-effort cosmetic pass — never blocks staging */ }
+
+            // SMGP full-coverage naming (the g3m2/g3m4 pool-fill fix). AMS2's grid generator picks
+            // base-livery SLOTS per model on its own; our override + custom-AI files only paint/name a
+            // slot it happens to pick, so ANY slot we do not name shows a STOCK/made-up driver. Name
+            // EVERY livery it can field: (1) all 34 SMGP customs — incl. the ones the per-race DNQ
+            // dropped (ignoreStarters enumerates the whole covering field) — and (2) every base-game
+            // class livery, mapped to an SMGP driver identity (weakest-first, so a base-paint slot reads
+            // as a backmarker, not a stranger). Cosmetic staging ONLY — the sim always scores the capped
+            // grid, and the f1db oracle + byte-identical replay never see it. Base-slot cars keep default
+            // PAINT until their slots are overridden (phase 2), but no car ever shows a stock driver.
+            if (IsSmgpPack)
+            {
+                try
+                {
+                    var smgpField = RoundGridResolver.Resolve(Pack, roundNumber, playerSeat: null,
+                        CurrentGridSelection(), capToGridSize: false, ignoreStarters: true);
+                    var identitiesWeakestFirst = smgpField.Seats
+                        .OrderBy(s => s.Ratings.RaceSkill)
+                        .Select(GridStager.SeatToDriver)
+                        .ToList();
+                    var named = file.Drivers.Select(d => d.LiveryName).ToHashSet(StringComparer.Ordinal);
+                    var addSmgp = new List<CustomAiDriver>();
+                    // (1) every SMGP custom the file does not already name (the DNQ'd cars).
+                    foreach (var driver in identitiesWeakestFirst)
+                        if (named.Add(driver.LiveryName))
+                            addSmgp.Add(driver);
+                    // (2) every base-game class livery, mapped to an SMGP identity so no stock name shows.
+                    if (identitiesWeakestFirst.Count > 0 &&
+                        _environment.ContentLibrary.OfficialLiveries.TryGetValue(plan.Ams2Class, out var official))
+                    {
+                        int i = 0;
+                        foreach (var baseName in official.Select(l => l.Name)
+                                     .Where(n => !string.IsNullOrWhiteSpace(n))
+                                     .Distinct(StringComparer.Ordinal))
+                        {
+                            if (!named.Add(baseName))
+                                continue;
+                            addSmgp.Add(identitiesWeakestFirst[i % identitiesWeakestFirst.Count] with { LiveryName = baseName });
+                            i++;
+                        }
+                    }
+                    if (addSmgp.Count > 0)
+                    {
+                        file = file with { Drivers = file.Drivers.Concat(addSmgp).ToList() };
+                        messages.Add(
+                            $"SMGP: named every livery AMS2 can field ({addSmgp.Count} more, incl. base-game " +
+                            "slots) so no grid car shows a stock driver. Cars on base-game slots keep the " +
+                            "default paint until those skins are added.");
+                    }
+                }
+                catch (InvalidOperationException) { /* best-effort cosmetic pass — never blocks staging */ }
+            }
         }
 
         Ams2Installation? installation = _environment.LocateInstall();
