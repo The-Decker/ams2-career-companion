@@ -43,6 +43,11 @@ public sealed record CareerRulesData
     /// History panel then simply hides).</summary>
     public required SmgpWhatReallyHappened SmgpWhatReallyHappened { get; init; }
 
+    /// <summary>Per-team SMGP-world quotes + multi-paragraph history (<c>data\rules\smgp\team-profiles.json</c>),
+    /// shown on the promotion/demotion screen when the player joins a team. DISPLAY-ONLY — never a fold
+    /// input; empty when the file is absent (the team story then simply omits).</summary>
+    public required SmgpTeamProfiles SmgpTeamProfiles { get; init; }
+
     /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
     /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
@@ -57,6 +62,7 @@ public sealed record CareerRulesData
         Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
         SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
         SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
+        SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
         CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 

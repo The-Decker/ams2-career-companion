@@ -39,7 +39,27 @@ explicit, screen by screen.
   briefing → rival → qualifying → grid → race → confirm. Non-SMGP careers skip it (byte-identical).
   Also fixed: the starting-grid screen had no visible advance button (the confirm button lived only in
   `ResultEntryView`) — added it to both the grid and rival screens.
-- **3c — Promotion / Demotion screen — TODO (biggest; determinism-sensitive).** After the confirm/apply,
+- **3c — Promotion / Demotion screen — IN PROGRESS.** Mike's calls: the screen **can override** the
+  up-front "Join his team" answer (a NEW folded decision); the screen is **full immersion** — a VERY
+  LARGE new-team photo + the team player image + a car preview under the player, plus the team's own
+  **quotes and ~5-paragraph history**.
+  - **3c-1 (team data) — the low-risk foundation (this slice):** `SmgpTeamProfiles` catalog
+    (`data/rules/smgp/team-profiles.json`, absent-tolerant, keyed by team id → `{name, motto,
+    history[5], quotes[]}`), registered on `CareerRulesData.SmgpTeamProfiles`. All 24 teams authored
+    (workflow) + a drift-guard test. DISPLAY-ONLY, no fold.
+  - **3c-2 (the override fold seam) — determinism-critical, design:** today the swap applies INLINE in
+    `SmgpBattleFold` (`:37`, `SeatSwapOfferToPlayer && SeatSwapAccepted==true`). For a post-race
+    override, make it TWO-PHASE: the battle fold records a PENDING offer on `SmgpState` (the offered
+    seat) instead of applying it; the promotion screen captures accept/decline as a NEW journaled input
+    (`smgp.swap`, provenance-excluded, default = the standing answer); a fold step applies-or-clears the
+    pending swap. Demotion stays FORCED (no decline). **Per-career gated** (new smgp careers only, like
+    the clean seat-swap) so existing careers replay byte-identically; covered by a promotion-career
+    (accept AND decline) + skip-everything replay test before it ships.
+  - **3c-3 (the screen):** shown after confirm when the folded state has a pending/just-applied seat
+    change; renders the team photo (`smgp/teams/<team>.jpg`) + player image + car preview + the
+    `SmgpTeamProfiles` story + accept/decline (promotion) or an acknowledge (forced demotion).
+
+- **(reference) original 3c note.** After the confirm/apply,
   when the folded SMGP state produced a seat change this round, show a promotion/demotion screen:
   - Promotion (player beat the rival twice → `SmgpState` seat swap up a tier): the player **accepts or
     declines** (a folded choice — must be journaled as an INPUT + provenance-excluded + replay-exact, like
