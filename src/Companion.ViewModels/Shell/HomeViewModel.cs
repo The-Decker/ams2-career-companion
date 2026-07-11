@@ -47,6 +47,12 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// over the shared Briefing so the naming persists). Null except while on that step.</summary>
     private RivalScreenViewModel? _rivalScreen;
 
+    /// <summary>The SMGP promotion / demotion screen (3c-3) — its own full-immersion step AFTER the
+    /// confirm, when the round produced a seat change (a two-wins offer to accept/decline, or a forced
+    /// relegation to acknowledge). Null except while on that step; the round does not advance until it
+    /// is answered (season end is held too — see CareerSessionService.EnsureSeasonEnd).</summary>
+    private PromotionViewModel? _promotion;
+
     /// <summary>True once the rival step has been shown-and-passed this round, so re-entering the flow
     /// (or a career with no rival) goes straight to qualifying. Reset on Apply.</summary>
     private bool _rivalStepDone;
@@ -151,7 +157,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         nameof(IsBriefingState), nameof(IsResultEntryState),
         nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
         nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(IsRivalStep),
-        nameof(ConfirmButtonText))]
+        nameof(IsPromotionStep), nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -170,6 +176,11 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>True while the CURRENT content is the SMGP rival screen (after race setup, before
     /// qualifying). Drives the primary action's "Continue" label.</summary>
     public bool IsRivalStep => CurrentContent is RivalScreenViewModel;
+
+    /// <summary>True while the CURRENT content is the SMGP promotion / demotion screen (after confirm,
+    /// when the round moved seats). Its own accept/decline buttons drive the flow, so the header's
+    /// primary confirm action is suppressed.</summary>
+    public bool IsPromotionStep => CurrentContent is PromotionViewModel;
 
     /// <summary>True when this round has an SMGP rival step to show (an active rival briefing). A
     /// non-SMGP / character-free career has none, so the flow is byte-identical to the shipped loop.</summary>
@@ -450,6 +461,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
     private void ApplyDraft(ResultDraft draft)
     {
+        // Captured BEFORE the fold so a forced demotion this round (a seat move with no pending
+        // offer) can be detected by the team changing. Null for every non-SMGP career.
+        string? smgpTeamBefore = _session.CurrentSmgpTeamId();
+
         try
         {
             _session.Apply(draft);
@@ -460,13 +475,36 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             return;
         }
 
+        ClearRoundEntryState();
+
+        Summary = _session.Summary;
+        Briefing.Refresh();
+
+        // SMGP promotion / demotion (3c-3): a seat change this round gets its own full-immersion
+        // screen BEFORE the round advances — a pending two-wins offer to accept/decline, or a forced
+        // relegation to acknowledge. Season end is held too until an offer resolves (3c-2). A
+        // non-SMGP / character-free career yields null for both, so the shipped loop is unchanged.
+        var promotion = _session.CurrentSmgpPromotion() ?? _session.CurrentSmgpDemotion(smgpTeamBefore);
+        if (promotion is not null)
+        {
+            ShowPromotion(promotion);
+            RefreshRoundCommands();
+            return;
+        }
+
+        AdvanceAfterRound();
+        RefreshRoundCommands();
+    }
+
+    /// <summary>Tears down the round's entry state (result / qualifying / grid / rival) once its
+    /// result is applied — the qualifying order + captured races were consumed by the fold.</summary>
+    private void ClearRoundEntryState()
+    {
         if (_resultEntry is not null)
         {
             _resultEntry.PropertyChanged -= OnResultEntryPropertyChanged;
             _resultEntry = null;
         }
-
-        // The weekend's qualifying order + captured races were consumed by this Apply — clear them.
         if (_qualifyingEntry is not null)
         {
             _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
@@ -477,18 +515,59 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         _startingGrid = null;
         _rivalScreen = null;
         _rivalStepDone = false;
+    }
 
-        Summary = _session.Summary;
-        Briefing.Refresh();
-
+    /// <summary>Move on from a finished round — the final standings review when the season is done,
+    /// else the next round's briefing.</summary>
+    private void AdvanceAfterRound()
+    {
+        _promotion = null;
         if (Summary.SeasonComplete)
             ShowSeasonReview();
         else
             CurrentContent = Briefing;
+    }
 
+    private void RefreshRoundCommands()
+    {
         ShowBriefingCommand.NotifyCanExecuteChanged();
         EnterResultCommand.NotifyCanExecuteChanged();
         ConfirmResultCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>Show the SMGP promotion / demotion screen (3c-3) — its own step after the confirm. Its
+    /// buttons resolve the offer (or acknowledge the drop) and then advance the round.</summary>
+    private void ShowPromotion(SmgpPromotionModel model)
+    {
+        ContentError = null;
+        _promotion = new PromotionViewModel(
+            model,
+            onAccept: () => ResolvePromotion(model, accept: true),
+            onDecline: () => ResolvePromotion(model, accept: false));
+        CurrentContent = _promotion;
+    }
+
+    /// <summary>Answer the promotion screen: a two-wins offer commits the accept/decline to the fold
+    /// (holding season end until now — 3c-2); a demotion is acknowledge-only. Then advance the round.</summary>
+    private void ResolvePromotion(SmgpPromotionModel model, bool accept)
+    {
+        if (model.Kind == SmgpPromotionKind.PromotionOffer)
+        {
+            try
+            {
+                _session.ResolveSmgpOffer(accept);
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+            {
+                ContentError = ex.Message;
+                return;
+            }
+        }
+
+        Summary = _session.Summary;
+        Briefing.Refresh();
+        AdvanceAfterRound();
+        RefreshRoundCommands();
     }
 
     [RelayCommand]

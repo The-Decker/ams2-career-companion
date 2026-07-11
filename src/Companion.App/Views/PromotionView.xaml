@@ -1,0 +1,105 @@
+<UserControl x:Class="Companion.App.Views.PromotionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- The SMGP promotion / demotion screen (3c-3) — its own full-immersion step after the confirm,
+         when the round moved seats. DataContext is a PromotionViewModel; its Model carries the new
+         team's photo, story and car, and its Accept/Decline commands resolve the offer (or acknowledge
+         a forced drop) and advance the round. A promotion offers accept/decline; a demotion only
+         acknowledges. All art is absent-tolerant (drop-in files beside the exe). -->
+    <DockPanel>
+
+        <!-- action bar: accept (promotion) / acknowledge (demotion), and decline only for an offer -->
+        <Border DockPanel.Dock="Bottom" Padding="0,14,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Stay put" MinWidth="120" Margin="0,0,10,0"
+                        Command="{Binding DeclineCommand}"
+                        Visibility="{Binding CanDecline, Converter={StaticResource BoolVisible}}"
+                        ToolTip="Decline the offer and keep your current seat" />
+                <Button Content="{Binding Model.AcceptLabel}" Style="{StaticResource AccentButton}"
+                        MinWidth="180" FontWeight="Bold" Command="{Binding AcceptCommand}"
+                        ToolTip="Move to the new team from next round" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <StackPanel MaxWidth="780" HorizontalAlignment="Center">
+
+                <!-- arcade headline + motto -->
+                <TextBlock Text="{Binding Model.Headline}" Style="{StaticResource H1}"
+                           TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Model.Motto}" Foreground="{StaticResource AccentBrush}"
+                           FontStyle="Italic" FontSize="15" TextAlignment="Center" TextWrapping="Wrap"
+                           Margin="0,4,0,0" HorizontalAlignment="Center"
+                           Visibility="{Binding Model.Motto, Converter={StaticResource StringVisible}}" />
+
+                <!-- the VERY LARGE new-team photo: data/ams2/smgp/teams/<team>.jpg (placeholder until dropped) -->
+                <Grid Height="300" Margin="0,16,0,0"
+                      ToolTip="Drop the team photo at data\ams2\smgp\teams\&lt;team&gt;.jpg (beside the exe)">
+                    <Border CornerRadius="12" Background="{StaticResource SurfaceAltBrush}">
+                        <TextBlock Text="&#xE7C5;" FontFamily="Segoe MDL2 Assets" FontSize="72"
+                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.4"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <Border CornerRadius="12" ClipToBounds="True">
+                        <Image Stretch="UniformToFill"
+                               Source="{Binding Model.TeamPhotoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/teams}"
+                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    </Border>
+                </Grid>
+
+                <TextBlock Text="{Binding Model.TeamName}" Style="{StaticResource H2}"
+                           TextAlignment="Center" HorizontalAlignment="Center" Margin="0,12,0,0" />
+
+                <!-- you (in the new colours) + the car you'll drive -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Grid Width="120" Height="120" Margin="0,0,18,0"
+                          ToolTip="Drop the team player image at data\ams2\portraits\player.&lt;team&gt;.jpg">
+                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE7C1;" FontFamily="Segoe MDL2 Assets" FontSize="42"
+                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border CornerRadius="10" ClipToBounds="True">
+                            <Image Stretch="UniformToFill"
+                                   Source="{Binding Model.PlayerImageKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                        </Border>
+                    </Grid>
+                    <Image Height="86" Stretch="Uniform" VerticalAlignment="Center"
+                           Source="{Binding Model.CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}"
+                           ToolTip="Drop the car photo at data\ams2\cars\&lt;driverId&gt;.png" />
+                </StackPanel>
+
+                <!-- the rival you beat (promotion only) -->
+                <TextBlock Margin="0,12,0,0" TextAlignment="Center" HorizontalAlignment="Center"
+                           Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap"
+                           Visibility="{Binding Model.RivalName, Converter={StaticResource StringVisible}}">
+                    <Run Text="You beat " /><Run Text="{Binding Model.RivalName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" twice without losing — the seat is yours if you want it." />
+                </TextBlock>
+
+                <!-- the team's SMGP-world story -->
+                <ItemsControl ItemsSource="{Binding Model.History}" Margin="0,18,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,10" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- team quotes -->
+                <ItemsControl ItemsSource="{Binding Model.Quotes}" Margin="0,2,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource Faint}" FontStyle="Italic" TextWrapping="Wrap" Margin="0,0,0,7">
+                                <Run Text="&#x201C;" /><Run Text="{Binding Mode=OneWay}" /><Run Text="&#x201D;" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

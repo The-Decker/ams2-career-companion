@@ -50,6 +50,22 @@ public interface ICareerSession
     /// fakes compile.</summary>
     void ResolveSmgpOffer(bool accept) { }
 
+    /// <summary>The full-immersion promotion screen's data (3c-3) when a two-wins offer is pending —
+    /// the new team's photo/name/motto/history/quotes + the player image + car preview + accept/
+    /// decline. Null outside the mode or when no offer is pending. Additive default so fakes compile.</summary>
+    SmgpPromotionModel? CurrentSmgpPromotion() => null;
+
+    /// <summary>The player's SMGP team id right now (its short ladder position follows seat swaps),
+    /// captured BEFORE applying a round so the shell can tell whether that round forced a DEMOTION
+    /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
+    string? CurrentSmgpTeamId() => null;
+
+    /// <summary>The demotion screen's data (3c-3) when the LAST applied round forced the player DOWN
+    /// a tier (a two-losses forfeit or a lost title defense) — i.e. the smgp team changed from
+    /// <paramref name="previousTeamId"/> with no pending offer. An acknowledge-only screen (a demotion
+    /// cannot be declined). Null when no forced move happened. Additive default so fakes compile.</summary>
+    SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId) => null;
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
@@ -723,6 +739,60 @@ public sealed record SmgpBriefingModel
 
     /// <summary>Every AI driver on this round's grid, in grid order — any of them can be named.</summary>
     public required IReadOnlyList<SmgpRivalOption> Rivals { get; init; }
+}
+
+/// <summary>Whether the promotion screen is a climb (offer to accept/decline) or a forced drop.</summary>
+public enum SmgpPromotionKind
+{
+    /// <summary>A two-wins offer to move UP into the rival's car — the player accepts or declines.</summary>
+    PromotionOffer,
+
+    /// <summary>A forced move DOWN a tier (a two-losses forfeit or a lost title defense) — already
+    /// applied; the screen only acknowledges it (no decline).</summary>
+    Demotion,
+}
+
+/// <summary>The full-immersion promotion / demotion screen's data (3c-3): the new team's photo,
+/// name, motto, ~5-paragraph history and quotes, plus the team-coloured player image and the car
+/// preview. Built display-only from the folded state + the <see cref="Companion.Core.Smgp.SmgpTeamProfiles"/>
+/// catalog (3c-1) — never a fold input. A promotion is accept/decline; a demotion only acknowledges.</summary>
+public sealed record SmgpPromotionModel
+{
+    public required SmgpPromotionKind Kind { get; init; }
+
+    /// <summary>The arcade banner headline — "AN OFFER FROM MADONNA" / "RELEGATED TO ZEROFORCE".</summary>
+    public required string Headline { get; init; }
+
+    /// <summary>The new team's display name.</summary>
+    public required string TeamName { get; init; }
+
+    /// <summary>The VERY LARGE team photo key — <c>data/ams2/smgp/teams/&lt;key&gt;.jpg</c> (the team
+    /// id without its "team." prefix). Absent-tolerant: the view hides the photo until art is dropped.</summary>
+    public required string TeamPhotoKey { get; init; }
+
+    /// <summary>The team-coloured player image key — <c>player.&lt;team&gt;</c>.</summary>
+    public required string PlayerImageKey { get; init; }
+
+    /// <summary>The car preview key (<c>cars/&lt;driverId&gt;.png</c>) for the new car, or null.</summary>
+    public string? CarKey { get; init; }
+
+    /// <summary>The team's one-line motto, or null when unauthored.</summary>
+    public string? Motto { get; init; }
+
+    /// <summary>The team's SMGP-world history — a few paragraphs. Empty when unauthored.</summary>
+    public IReadOnlyList<string> History { get; init; } = [];
+
+    /// <summary>A few in-character team quotes. Empty when unauthored.</summary>
+    public IReadOnlyList<string> Quotes { get; init; } = [];
+
+    /// <summary>The rival the player beat twice to earn the offer (promotion only), or null.</summary>
+    public string? RivalName { get; init; }
+
+    /// <summary>True for a promotion offer (the Decline button shows); false for a forced demotion.</summary>
+    public bool CanDecline => Kind == SmgpPromotionKind.PromotionOffer;
+
+    /// <summary>The accept/acknowledge button label.</summary>
+    public string AcceptLabel => Kind == SmgpPromotionKind.PromotionOffer ? "Take the seat" : "Onwards";
 }
 
 /// <summary>One namable rival: the dossier card's facts (docs/dev/smgp-design.md — team banner,

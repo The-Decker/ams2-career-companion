@@ -1097,6 +1097,67 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             EnsureSeasonEnd();
     }
 
+    /// <summary>The player's current SMGP team id (follows seat swaps), or null outside the mode —
+    /// the shell captures it before applying a round to detect a forced demotion afterwards.</summary>
+    public string? CurrentSmgpTeamId() =>
+        CurrentSmgpState() is { } state ? TeamOfLivery(state.CurrentSeatLivery) : null;
+
+    /// <summary>The promotion screen (3c-3): a pending two-wins offer's new-team story. Null when no
+    /// offer is pending (or outside the mode).</summary>
+    public SmgpPromotionModel? CurrentSmgpPromotion() =>
+        CurrentSmgpPendingOffer() is { } offer
+            ? BuildPromotion(SmgpPromotionKind.PromotionOffer, offer.OfferedSeat, offer.RivalDriverId)
+            : null;
+
+    /// <summary>The demotion screen (3c-3): shown when the last applied round forced the player down a
+    /// tier — the smgp team moved away from <paramref name="previousTeamId"/> with NO pending offer
+    /// (a promotion is deferred, so a team change without one is a forfeit / lost title defense).</summary>
+    public SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId)
+    {
+        if (CurrentSmgpState() is not { } state || CurrentSmgpPendingOffer() is not null)
+            return null;
+        string? teamNow = TeamOfLivery(state.CurrentSeatLivery);
+        return teamNow is not null && !string.Equals(teamNow, previousTeamId, StringComparison.Ordinal)
+            ? BuildPromotion(SmgpPromotionKind.Demotion, state.CurrentSeatLivery, rivalDriverId: null)
+            : null;
+    }
+
+    /// <summary>The team id a livery belongs to (its first authored entry), or null.</summary>
+    private string? TeamOfLivery(string livery) =>
+        Pack.Entries.FirstOrDefault(e => string.Equals(e.Ams2LiveryName, livery, StringComparison.Ordinal))?.TeamId;
+
+    /// <summary>Builds the promotion/demotion screen model from the target seat + the team-profiles
+    /// catalog (3c-1). Display-only; absent art / unauthored profile simply collapse their fields.</summary>
+    private SmgpPromotionModel BuildPromotion(SmgpPromotionKind kind, string seatLivery, string? rivalDriverId)
+    {
+        var entry = Pack.Entries.FirstOrDefault(e => string.Equals(e.Ams2LiveryName, seatLivery, StringComparison.Ordinal));
+        string? teamId = entry?.TeamId;
+        string teamName = Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name
+            ?? teamId ?? "";
+        string shortId = teamId is not null && teamId.StartsWith("team.", StringComparison.Ordinal)
+            ? teamId["team.".Length..] : teamId ?? "";
+        var profile = teamId is not null ? _environment.Rules.SmgpTeamProfiles.ForTeam(teamId) : null;
+        string? rivalName = rivalDriverId is not null
+            ? Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, rivalDriverId, StringComparison.Ordinal))?.Name ?? rivalDriverId
+            : null;
+
+        return new SmgpPromotionModel
+        {
+            Kind = kind,
+            Headline = kind == SmgpPromotionKind.PromotionOffer
+                ? $"AN OFFER FROM {teamName.ToUpperInvariant()}"
+                : $"RELEGATED TO {teamName.ToUpperInvariant()}",
+            TeamName = teamName,
+            TeamPhotoKey = shortId,
+            PlayerImageKey = Companion.ViewModels.Wizard.GridSeatChoice.PlayerImageKey(teamId ?? ""),
+            CarKey = entry?.DriverId,
+            Motto = profile?.Motto is { Length: > 0 } motto ? motto : null,
+            History = profile?.History ?? [],
+            Quotes = profile?.Quotes ?? [],
+            RivalName = rivalName,
+        };
+    }
+
     /// <summary>The SMGP mode's LATEST folded state — the last folded round's, else the season
     /// start's — or null outside the mode. Deliberately NOT cached: every folded round can move
     /// seats, and the next round's grid must show them.</summary>
