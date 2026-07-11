@@ -43,4 +43,23 @@ public sealed class AgingPerkTests
         // ...and its statPoints softCap drawback lowers the in-career stat-raise ceiling by 0.10.
         Assert.Equal(-0.10, PerkResolver.Resolve(["iron_constitution"], rules).StatSoftCapDelta, 6);
     }
+
+    [Fact]
+    public void DurabilityAgeShift_CourtsToughDriversLonger_AndFragileOnesShorter()
+    {
+        // §2.2: round(6·(durability−0.5)). A neutral 0.5 (and every character-free career) shifts
+        // nothing; a tough 1.0 is courted as if 3 years younger, a fragile 0.0 as if 3 older.
+        Assert.Equal(0, SeasonEndPipeline.DurabilityAgeShift(0.5));
+        Assert.Equal(3, SeasonEndPipeline.DurabilityAgeShift(1.0));
+        Assert.Equal(-3, SeasonEndPipeline.DurabilityAgeShift(0.0));
+        Assert.Equal(2, SeasonEndPipeline.DurabilityAgeShift(0.8));   // round(1.8)
+        Assert.Equal(-2, SeasonEndPipeline.DurabilityAgeShift(0.25)); // round(-1.5) away from zero
+
+        // The shift bites the offer-market age risk: a tough veteran faces LESS age penalty than a
+        // fragile one at the same real age (a lower risk means a higher offer score).
+        int peakEnd = 30;
+        double toughRisk = SeasonEndPipeline.PlayerAgeRisk(36 - SeasonEndPipeline.DurabilityAgeShift(0.9), peakEnd, null);
+        double fragileRisk = SeasonEndPipeline.PlayerAgeRisk(36 - SeasonEndPipeline.DurabilityAgeShift(0.1), peakEnd, null);
+        Assert.True(toughRisk < fragileRisk);
+    }
 }

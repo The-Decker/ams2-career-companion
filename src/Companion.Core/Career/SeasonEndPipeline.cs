@@ -107,6 +107,13 @@ public static class SeasonEndPipeline
         return Math.Max(0.0, playerAge + 1 - peakEnd) * (mods?.DeclineAccelMult ?? 1.0);
     }
 
+    /// <summary>How many years the Durability meta-stat shifts the driver's EFFECTIVE age in the offer
+    /// market (§2.2): <c>round(6·(durability−0.5))</c> — a tough 1.0 driver is courted as if 3 years
+    /// younger, a fragile 0.0 as if 3 older; a neutral 0.5 shifts nothing. Subtracted from the age fed
+    /// to <see cref="PlayerAgeRisk"/>.</summary>
+    public static int DurabilityAgeShift(double durabilityStat) =>
+        (int)Math.Round(6.0 * (durabilityStat - 0.5), MidpointRounding.AwayFromZero);
+
     public static SeasonEndResult Run(SeasonEndContext context)
     {
         var events = new List<JournalEvent>();
@@ -537,7 +544,14 @@ public static class SeasonEndPipeline
 
         // ---- step 6: player offers ------------------------------------------------------
         double salaryAsk = context.PlayerSalaryAskBu ?? Math.Max(1.0, finalRep / 10.0);
-        double ageRisk = PlayerAgeRisk(context.PlayerAge, curve.PeakAgeEnd, characterMods);
+        // Durability (a meta-stat) shifts the driver's EFFECTIVE age in the offer market: a tough
+        // driver is courted as if a few years younger (races ~3 yrs longer at 1.0), a fragile one as
+        // if older (§2.2). Deterministic — the stat is folded start-state, so live and replay compute
+        // the same shift; a neutral 0.5 (and every character-free career) shifts nothing.
+        int durabilityAgeShift = player.Character is { } durabilityChr
+            ? DurabilityAgeShift(durabilityChr.Stat("durability"))
+            : 0;
+        double ageRisk = PlayerAgeRisk(context.PlayerAge - durabilityAgeShift, curve.PeakAgeEnd, characterMods);
 
         // A veteran perk can relax the reputation floors so more (higher-tier) teams will talk to a
         // modestly-reputed driver (offerWeight/repFloorRelax). Null/identity mods = 0 tiers of relax
