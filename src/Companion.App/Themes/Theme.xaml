@@ -40,6 +40,11 @@
     <FontFamily x:Key="BodyFont">/Fonts/#Retro Floral</FontFamily>
     <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
     <FontFamily x:Key="MicrosportFont">/Fonts/#Microsport</FontFamily>
+    <!-- Clean, license-clean (Apache 2.0) sans families for dense/readable screens (the character
+         screen uses Open Sans; Roboto is ready to use). Full weight+style sets are bundled, so
+         FontWeight / FontStyle select the right face. -->
+    <FontFamily x:Key="OpenSansFont">/Fonts/#Open Sans</FontFamily>
+    <FontFamily x:Key="RobotoFont">/Fonts/#Roboto</FontFamily>
 
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
          multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings

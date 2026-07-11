@@ -4,9 +4,10 @@ using System.Windows.Media;
 namespace Companion.RenderHarness.Tests;
 
 /// <summary>
-/// The app bundles two personal-use display faces (Mike's picks): "Retro Floral" is the app-wide
-/// regular/body font (every window's base FontFamily, via the BodyFont resource) and "Microsport"
-/// draws the Season's Grid card names. WPF silently falls back to Segoe UI when a
+/// The app bundles several faces (Mike's picks): "Retro Floral" is the app-wide regular/body font
+/// (every window's base FontFamily, via the BodyFont resource), "Microsport" draws the Season's
+/// Grid card names, and "Open Sans" / "Roboto" (Apache 2.0) are the clean sans faces for readable
+/// screens (the character screen uses Open Sans). WPF silently falls back to Segoe UI when a
 /// <c>/Fonts/#Family</c> reference does not resolve
 /// — a dropped Resource, a renamed file, or a family-name drift would go UNNOTICED by a plain render
 /// test. This guard proves each face is embedded in the app assembly AND that the theme references it
@@ -23,6 +24,8 @@ public sealed class SeasonGridFontTests
     [Theory]
     [InlineData("BodyFont", "Retro Floral.ttf", "Retro Floral")]        // app-wide body text
     [InlineData("MicrosportFont", "Microsport Bold.ttf", "Microsport")] // Season's Grid card names
+    [InlineData("OpenSansFont", "OpenSans-Regular.ttf", "Open Sans")]   // character screen
+    [InlineData("RobotoFont", "Roboto-Regular.ttf", "Roboto")]          // bundled, available
     public void BundledFont_IsEmbedded_AndTheThemeReferenceMatchesItsFamilyName(
         string resourceKey, string fileName, string family)
     {

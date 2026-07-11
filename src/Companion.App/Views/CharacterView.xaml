@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.CharacterView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontFamily="{StaticResource OpenSansFont}"
              Focusable="False">
     <!-- The character-creation step (Increment 4a). DataContext is a CharacterViewModel. Every
          control is keyboard-operable: the archetype list (arrows), the stat sliders (arrows), and

@@ -24,6 +24,16 @@
     <Resource Include="Fonts\Race Sport.ttf" />
     <Resource Include="Fonts\Retro Floral.ttf" />
     <Resource Include="Fonts\Microsport Bold.ttf" />
+    <!-- Clean, license-clean (Apache 2.0) sans families for readable screens — the character screen
+         uses Open Sans; Roboto is bundled and available. Regular/Bold/Italic/BoldItalic each. -->
+    <Resource Include="Fonts\OpenSans-Regular.ttf" />
+    <Resource Include="Fonts\OpenSans-Bold.ttf" />
+    <Resource Include="Fonts\OpenSans-Italic.ttf" />
+    <Resource Include="Fonts\OpenSans-BoldItalic.ttf" />
+    <Resource Include="Fonts\Roboto-Regular.ttf" />
+    <Resource Include="Fonts\Roboto-Bold.ttf" />
+    <Resource Include="Fonts\Roboto-Italic.ttf" />
+    <Resource Include="Fonts\Roboto-BoldItalic.ttf" />
   </ItemGroup>
 
   <!-- Refreshable data beside the exe (never compiled in): the extracted AMS2 content
