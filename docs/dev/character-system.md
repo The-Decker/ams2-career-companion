@@ -630,3 +630,44 @@ but post-fix it takes three injury perks, so the injury system is **on by constr
 perk delivers **negative live real value** (real error/pace/rep tax) for its refund. It is a genuine
 high-variance gamble that "works out or not as the career unfolds" — exactly Mike's bar — not a strictly
 superior build.
+
+---
+
+## 12. Shipped reconciliation (what the built `perks.json` / code actually does, 2026-07-11)
+
+This spec is the 2026-07-05 design synthesis; the shipped build (increment 4a) retuned a few things. Where
+this section and the sections above disagree, **the shipped values here are authoritative** — the earlier
+prose is the original design intent, kept for context.
+
+- **CP economy (supersedes §4/§10/§11.4-5).** `creationBudget` is **6**, `maxRefundHeadroom` **3**, so net
+  perk spend lands in **[0, 9]** (not the design's 10 / +6 / [0,16]). Two ceilings the earlier §7.3 schema
+  omits are live: **`maxPerks` = 5** (an archetype is the identity; creation adds only a few more) and
+  **`statSumCap` = 4.2** (neutral is 3.5; redistribution below the cap is free, so no driver is great at
+  everything). The §11.5 "leftover for stats" column is illustrative only and no longer arithmetically
+  exact under the 6/3 economy.
+- **Level grant.** `characterPointsPerLevel` is **3** in the shipped `perks.json` (§3.2 said 2). Each CP
+  buys one +0.05 stat step (raise-only) or banks toward a perk; every 5th level grants a respec token.
+- **Stat→rating mapping.** There is **no separate `character-stats.json`** — the mapping is folded into
+  `perks.json → stats.talentStats` (each `{ id, mapsTo, writeBase, writeSpan, creationRange }`). §2.1/§9
+  references to that file mean the `stats` block.
+- **`riseMult` lever removed.** The `agingCurve/riseMult` lever had no consumer (the player's talent stats
+  don't age via a rise term), so late_bloomer's inert `riseMult −0.50` drawback was dropped — its live
+  `xpRate ageLtPeak −0.30` already *is* the "slow early growth". The lever is gone from the vocabulary
+  (`PlayerPerkModifiers`/`PerkResolver`/`PerkDescriber`); `peakShift` and `declineAccelMult` remain (consumed
+  at the offer-market age-risk, a deliberate deviation from the §6.1 "aging pass" site).
+- **`one_trick` is live (was inert).** `chosenFlavor` now binds at creation to a player-picked rating
+  (`CharacterProfile.ChosenFlavor`, default `wetSkill`) — the +0.30 lands there, and `lockToOne` freezes
+  every talent stat except the one that owns that rating. Picked in the creation UI (raceSkill excluded).
+- **`sponsor_magnet` is live.** Its `income/payBudgetBu +2.0` now feeds `OfferScore` as
+  `PayDriverWeight · payBudget / 100` (the AI seat-market scale), so sponsor money attracts pay-driver teams.
+- **`consummate_pro` is not shipped.** The `statPoints/perLevel` lever exists but no perk emits it and no
+  code consumes `StatPointsPerLevelBonus`; the `perks.json` "raisable by consummate_pro" note is aspirational
+  (the audit pins exactly 42 perks, so adding it means swapping one out).
+- **CI now enforces §4.1(d)/(e).** `PerkBalanceAuditTests` asserts the per-lever magnitude caps (statDelta
+  ±0.15 / signature ±0.30-with-drawback; carScalar ±0.015 / weather-conditional ±0.040) and stream/lever
+  consistency (injuryHazard ⇔ stream `injury`; the 7 injury perks pinned). The softer "±40% rate multiplier"
+  guidance is left to the cpEquivalent self-consistency check (xpRate/offerWeight/income carry larger honest
+  values).
+- **`form-swing` is declared, not implemented.** `opportunist`/`superstition` tag `stream: form-swing`, but
+  no code draws it (their effects fold as flat deterministic modifiers). The real form-swing mechanic is
+  **4c (life-sim) scope** — until then the tag is a forward marker, harmless to determinism (no draw).
