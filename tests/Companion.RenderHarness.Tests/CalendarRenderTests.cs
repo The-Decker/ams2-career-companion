@@ -86,11 +86,11 @@ public sealed class CalendarRenderTests
         });
     }
 
-    /// <summary>The expanded ORIGINAL-CIRCUIT detail is template-applied LAZILY: collapsed rounds
-    /// carry no detail subtree (no photo decode / geometry parse at tab open); expanding builds
-    /// it. And the overview strip renders one short-named chip per round.</summary>
+    /// <summary>The season board: every round is a card in the 4-column grid, its full name shown
+    /// once, and the round that carries circuit data shows its map caption + fun facts inline (no
+    /// lazy expand, no separate overview chips).</summary>
     [Fact]
-    public void CalendarView_DetailIsLazy_AndOverviewChipsRender()
+    public void CalendarView_RendersEveryRoundAsACard_WithCircuitDataInline()
     {
         if (!WpfRenderHarness.IsSupported)
             return;
@@ -98,31 +98,19 @@ public sealed class CalendarRenderTests
         WpfRenderHarness.RunSta(() =>
         {
             var vm = new CalendarViewModel(new CalendarSession());
-            vm.Rounds[1].IsExpanded = true;
 
             var view = new CalendarView { DataContext = vm };
-            view.Measure(new Size(1000, 2000));
-            view.Arrange(new Rect(0, 0, 1000, 2000));
+            view.Measure(new Size(1200, 2000));
+            view.Arrange(new Rect(0, 0, 1200, 2000));
             view.UpdateLayout();
 
-            // Only the EXPANDED round instantiated its detail template.
-            Assert.Equal(1, CountText(view, "ORIGINAL CIRCUIT"));
-
-            // The overview chips carry the SHORT names ("Belgian GP" -> "Belgian"); the card
-            // headers keep the full names — both present exactly once each.
-            Assert.Equal(1, CountText(view, "Belgian"));
+            // Every round's FULL name renders exactly once (there are no short-name chips now).
+            Assert.Equal(1, CountText(view, "Monaco GP"));
             Assert.Equal(1, CountText(view, "Belgian GP"));
-            Assert.Equal(1, CountText(view, "Dutch"));
+            Assert.Equal(1, CountText(view, "Dutch GP"));
 
-            // Expanding a second round builds its detail on demand.
-            vm.Rounds[2].IsExpanded = true;
-            view.UpdateLayout();
-            Assert.Equal(2, CountText(view, "ORIGINAL CIRCUIT"));
-
-            // Collapsing removes the template again (the subtree is released, not just hidden).
-            vm.Rounds[1].IsExpanded = false;
-            view.UpdateLayout();
-            Assert.Equal(1, CountText(view, "ORIGINAL CIRCUIT"));
+            // The round with circuit data shows its map caption inline (no expand needed).
+            Assert.Equal(1, CountText(view, "Zolder · 4.01 km · 10 turns"));
         });
     }
 

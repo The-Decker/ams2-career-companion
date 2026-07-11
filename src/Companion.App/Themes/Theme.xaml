@@ -32,17 +32,14 @@
     <sys:Double x:Key="AppFontSize">15</sys:Double>
 
     <!-- Bundled faces (embedded as Resource in the App's Fonts\ folder, so the single exe carries
-         them). "BodyFont" (Retro Floral) = the app-wide REGULAR text — every window sets it as the
-         base FontFamily, so a future body-font swap is this one line. The two screens Mike keeps on
-         their own display faces: "Race Sport" = the season/career picker card titles, "Microsport"
-         = the Season's Grid card driver/team names. Segoe UI is the safe fallback if a face fails
-         to load. -->
-    <FontFamily x:Key="BodyFont">/Fonts/#Retro Floral</FontFamily>
+         them). "BodyFont" (Roboto — Mike's pick for the clean, readable main text, Apache 2.0) =
+         the app-wide REGULAR text — every window sets it as the base FontFamily, so a body-font swap
+         is this one line. Display faces kept on specific screens: "Race Sport" = the season/career
+         picker card titles, "Microsport" = the Season's Grid card driver/team names, "Open Sans" =
+         the character screen. Segoe UI is the safe fallback if a face fails to load. -->
+    <FontFamily x:Key="BodyFont">/Fonts/#Roboto</FontFamily>
     <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
     <FontFamily x:Key="MicrosportFont">/Fonts/#Microsport</FontFamily>
-    <!-- Clean, license-clean (Apache 2.0) sans families for dense/readable screens (the character
-         screen uses Open Sans; Roboto is ready to use). Full weight+style sets are bundled, so
-         FontWeight / FontStyle select the right face. -->
     <FontFamily x:Key="OpenSansFont">/Fonts/#Open Sans</FontFamily>
     <FontFamily x:Key="RobotoFont">/Fonts/#Roboto</FontFamily>
 

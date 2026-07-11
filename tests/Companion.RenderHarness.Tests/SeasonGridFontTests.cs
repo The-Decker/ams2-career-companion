@@ -22,7 +22,7 @@ namespace Companion.RenderHarness.Tests;
 public sealed class SeasonGridFontTests
 {
     [Theory]
-    [InlineData("BodyFont", "Retro Floral.ttf", "Retro Floral")]        // app-wide body text
+    [InlineData("BodyFont", "Roboto-Regular.ttf", "Roboto")]            // app-wide body text (Mike's pick)
     [InlineData("MicrosportFont", "Microsport Bold.ttf", "Microsport")] // Season's Grid card names
     [InlineData("OpenSansFont", "OpenSans-Regular.ttf", "Open Sans")]   // character screen
     [InlineData("RobotoFont", "Roboto-Regular.ttf", "Roboto")]          // bundled, available
