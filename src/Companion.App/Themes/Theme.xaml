@@ -30,11 +30,11 @@
     <sys:Double x:Key="AppFontSize">14</sys:Double>
 
     <!-- Bundled display faces (embedded as Resource in the App's Fonts\ folder, so the single exe
-         carries them). "Race Sport" = the career/season-name selector; "Victory Striker Sans Demo"
-         = the Season's Grid card driver/team names. Segoe UI is the safe fallback if a face fails
-         to load. -->
+         carries them). "Race Sport" = the career/season-name selector; "Aeromove" = the Season's
+         Grid card driver/team names (Mike's pick — bolder than the earlier Victory Striker, which
+         read too skinny). Segoe UI is the safe fallback if a face fails to load. -->
     <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
-    <FontFamily x:Key="VictoryStrikerFont">/Fonts/#Victory Striker Sans Demo</FontFamily>
+    <FontFamily x:Key="AeromoveFont">/Fonts/#AeromoveDemo</FontFamily>
 
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
          multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings
