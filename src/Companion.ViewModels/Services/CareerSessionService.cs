@@ -85,13 +85,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         BaselineSource = baselineSource;
         _database = database;
         _environment = environment;
-        Pack = pack;
         CareerFilePath = careerFilePath;
         _seasonId = seasonId;
         // The season's real year (carryover-aware): the season row exists by now on both the
         // create and open paths. Fall back to the pack year only if it is somehow absent. Capture
         // the FIRST season's year too, so the driver's current age = created age + seasons since.
         var allSeasons = CareerStore.ReadSeasons(database);
+        // SMGP season 2+ runs a seeded per-season calendar (venues shuffled, fresh weather; Monaco
+        // stays the finale) — Mike's "second year is all random, weather much different". It is
+        // FOLD-INERT (venue + weather are display/staging-only and the grid/points/qualifiers stay
+        // with the round POSITION), so replay — which re-folds the stored raw results and never
+        // applies this — is byte-identical; only what the calendar shows and what the briefing tells
+        // you to set in AMS2 changes. Season 1 / non-SMGP → the pack verbatim.
+        int seasonOrdinal = 1;
+        for (int i = 0; i < allSeasons.Count; i++)
+            if (allSeasons[i].Id == seasonId) { seasonOrdinal = i + 1; break; }
+        Pack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed);
         _seasonYear = allSeasons.FirstOrDefault(s => s.Id == seasonId)?.Year ?? pack.Season.Year;
         _firstSeasonYear = allSeasons.Count > 0 ? allSeasons[0].Year : _seasonYear;
         _careerName = careerName;
