@@ -150,6 +150,49 @@ public sealed class PerkResolverTests
     }
 
     [Fact]
+    public void Resolve_OneTrick_BindsTheChosenFlavorRatingAndLocksToIt()
+    {
+        var rules = Rules();
+
+        // one_trick: statDelta "chosenFlavor" +0.30 (benefit) + statPoints "lockToOne" (drawback).
+        // The chosenFlavor placeholder resolves to the picked rating, and lockToOne records it as the
+        // ONE rating in-career development may raise — both were fully inert before the fix.
+        var picked = PerkResolver.Resolve(["one_trick"], rules, activeConditions: null, chosenFlavor: "tyreManagement");
+        Assert.Equal(0.30, picked.TalentDelta("tyreManagement"), 6);
+        Assert.Equal(0.0, picked.TalentDelta("wetSkill")); // only the picked flavor moves
+        Assert.Equal("tyreManagement", picked.LockedFlavorRating);
+
+        // No pick (a legacy profile) falls back to the fixed deterministic default, so live and
+        // replay resolve the same delta byte-for-byte.
+        var fallback = PerkResolver.Resolve(["one_trick"], rules);
+        Assert.Equal(0.30, fallback.TalentDelta(PerkResolver.DefaultChosenFlavor), 6);
+        Assert.Equal(PerkResolver.DefaultChosenFlavor, fallback.LockedFlavorRating);
+
+        // The profile overload threads the profile's own ChosenFlavor.
+        var profile = new CharacterProfile
+        {
+            Stats = new Dictionary<string, double>(),
+            PerkIds = ["one_trick"],
+            ChosenFlavor = "aggression",
+        };
+        var viaProfile = PerkResolver.Resolve(profile, rules);
+        Assert.Equal(0.30, viaProfile.TalentDelta("aggression"), 6);
+        Assert.Equal("aggression", viaProfile.LockedFlavorRating);
+
+        // A character WITHOUT one_trick never locks development.
+        Assert.Null(PerkResolver.Resolve(["sunday_driver"], rules).LockedFlavorRating);
+    }
+
+    [Fact]
+    public void Resolve_SponsorMagnet_CarriesThePayBudgetTheOfferMarketReads()
+    {
+        // sponsor_magnet's headline benefit is income/payBudgetBu +2.0 — dead before the fix (no
+        // consumer). It must now surface on the modifier so OfferScore's pay term reads it.
+        var mods = PerkResolver.Resolve(["sponsor_magnet"], Rules());
+        Assert.Equal(2.0, mods.PayBudgetBu, 6);
+    }
+
+    [Fact]
     public void Resolve_EveryShippedArchetype_ProducesAResolvableModifier()
     {
         // No archetype names a perk the resolver can't map — resolving each preset never throws and

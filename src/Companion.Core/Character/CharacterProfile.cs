@@ -31,6 +31,14 @@ public sealed record CharacterProfile
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int? Age { get; init; }
 
+    /// <summary>The rating field One-Trick Pony's specialism is bound to, picked at creation (e.g.
+    /// "wetSkill", "tyreManagement"). Gives the perk's +0.30 a concrete home and names the ONE stat
+    /// in-career level points may raise. Null when the character did not take One-Trick Pony (or a
+    /// legacy profile predating the pick, which then falls back to <see cref="PerkResolver.DefaultChosenFlavor"/>);
+    /// omitted from the JSON when null so a character without it serialises byte-for-byte unchanged.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? ChosenFlavor { get; init; }
+
     /// <summary>Character Points left over at CREATION (immutable) — the starting bank. The pool
     /// available to spend later is this plus level grants minus <see cref="CpSpent"/>
     /// (<see cref="CharacterProgress.AvailableCp"/>).</summary>
@@ -60,6 +68,7 @@ public sealed record CharacterProfile
             && CpSpent == other.CpSpent
             && Age == other.Age
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
+            && string.Equals(ChosenFlavor, other.ChosenFlavor, StringComparison.Ordinal)
             && PerkIds.SequenceEqual(other.PerkIds)
             && StatsEqual(Stats, other.Stats);
     }
@@ -71,6 +80,7 @@ public sealed record CharacterProfile
         hash.Add(CpSpent);
         hash.Add(Age);
         hash.Add(Name);
+        hash.Add(ChosenFlavor);
         foreach (string id in PerkIds)
             hash.Add(id);
         foreach (var (key, value) in Stats.OrderBy(kv => kv.Key, StringComparer.Ordinal))

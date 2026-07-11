@@ -593,7 +593,7 @@ public static class ReplayService
         }
 
         PlayerPerkModifiers? gridMods = hasCharacter
-            ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, gridConditions)
+            ? PerkResolver.Resolve(character!, inputs.CharacterRules!, gridConditions)
             : null;
         PlayerCharacterPatch? gridPatch = hasCharacter
             ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
@@ -662,7 +662,7 @@ public static class ReplayService
             if (hasCharacter && dnf == DnfCause.DriverError)
                 raceConditions = new HashSet<string>(roundConditions, StringComparer.Ordinal) { "driverErrorDnf" };
             var raceMods = hasCharacter
-                ? PerkResolver.Resolve(character!.PerkIds, inputs.CharacterRules!, raceConditions)
+                ? PerkResolver.Resolve(character!, inputs.CharacterRules!, raceConditions)
                 : null;
 
             // A driver-error DNF banks the perErrorAdd injury contribution toward the season injury

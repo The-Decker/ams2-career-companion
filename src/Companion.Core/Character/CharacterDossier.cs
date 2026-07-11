@@ -73,7 +73,7 @@ public sealed record CharacterDossier
         string? injuryRisk = null;
         if (InjuryModel.HasInjuryPerk(character, rules))
         {
-            double hazard = InjuryModel.Hazard(character.Stat("durability"), PerkResolver.Resolve(character.PerkIds, rules));
+            double hazard = InjuryModel.Hazard(character.Stat("durability"), PerkResolver.Resolve(character, rules));
             injuryRisk = hazard >= 0.30 ? "High" : hazard >= 0.16 ? "Moderate" : "Low";
         }
 

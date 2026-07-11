@@ -164,7 +164,7 @@ public static class SeasonEndPipeline
         // The player's character modifier (null for a character-free player or no rules → every
         // call below takes its exact shipped path, so the season end is byte-identical).
         PlayerPerkModifiers? characterMods = player.Character is { } chr && context.CharacterRules is { } crules
-            ? PerkResolver.Resolve(chr.PerkIds, crules)
+            ? PerkResolver.Resolve(chr, crules)
             : null;
         int? playerPosition = final.Drivers
             .FirstOrDefault(d => string.Equals(d.DriverId, context.PlayerDriverId, StringComparison.Ordinal))

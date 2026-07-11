@@ -328,4 +328,96 @@ public class PerkBalanceAuditTests
             previousCumulative = cumulative;
         }
     }
+
+    // ---------- per-lever magnitude caps (§4.1d) ----------
+
+    // The signature-specialism ratings a statDelta may reach ±0.30 on (else the cap is ±0.15).
+    private static readonly HashSet<string> SignatureFlavors =
+        new(StringComparer.Ordinal) { "wetSkill", "tyreManagement", "chosenFlavor" };
+
+    // The weather/distance conditions under which a carScalar may reach ±0.040 (else ±0.015),
+    // because it then bites only a calendar fraction so the weighted expectation stays in-envelope.
+    private static readonly HashSet<string> ConditionalScalarConditions =
+        new(StringComparer.Ordinal) { "wetRound", "dryRound", "longRace", "shortRace" };
+
+    [Fact]
+    public void EveryStatDeltaAndCarScalarIsWithinItsPerLeverMagnitudeCap()
+    {
+        // §4.1(d) — the levers that buy REAL pace/expectation are magnitude-capped so a community
+        // edit can't smuggle an outlier past the cpEquivalent self-consistency check. statDelta ±0.15
+        // (a signature-specialism wetSkill/tyreManagement/chosenFlavor may reach ±0.30 ONLY when the
+        // perk pairs it with a drawback); carScalar ±0.015 (a weather/distance-conditional may reach
+        // ±0.040). The softer "±40% rate multiplier" guidance is governed by the cpEquivalent audit,
+        // not a raw cap — xpRate/offerWeight/income are not multiplicative and carry larger honest
+        // values (student_of_the_craft, journeyman, sponsor_magnet). CharacterRules.Validate() names
+        // this test as the home of the balance/cap audit.
+        var root = Root();
+        foreach (var perk in Perks(root).EnumerateArray())
+        {
+            string id = perk.GetProperty("id").GetString()!;
+            var effects = EffectsOf(perk);
+            bool hasDrawback = effects.Any(e => e.Kind == "drawback");
+            foreach (var e in effects)
+            {
+                double m = Math.Abs(e.Magnitude);
+                switch (e.Lever)
+                {
+                    case "statDelta" when SignatureFlavors.Contains(e.Target ?? ""):
+                        Assert.True(m <= 0.30 + 1e-9,
+                            $"Perk '{id}' statDelta '{e.Target}' |{e.Magnitude}| exceeds the ±0.30 signature cap.");
+                        Assert.True(hasDrawback,
+                            $"Perk '{id}' uses a signature ±0.30 statDelta but pairs it with no drawback.");
+                        break;
+                    case "statDelta":
+                        Assert.True(m <= 0.15 + 1e-9,
+                            $"Perk '{id}' statDelta '{e.Target}' |{e.Magnitude}| exceeds the ±0.15 cap (non-signature).");
+                        break;
+                    case "carScalar":
+                        double cap = e.Condition is not null && ConditionalScalarConditions.Contains(e.Condition)
+                            ? 0.040 : 0.015;
+                        Assert.True(m <= cap + 1e-9,
+                            $"Perk '{id}' carScalar '{e.Target}' |{e.Magnitude}| exceeds the ±{cap} cap (condition '{e.Condition}').");
+                        break;
+                }
+            }
+        }
+    }
+
+    // ---------- stream / lever consistency (§4.1e, the §11.3 bug class) ----------
+
+    [Fact]
+    public void RandomnessLeversAreConsistentWithTheDeclaredStream()
+    {
+        // §4.1(e) / §11.3: an effect that rolls the injury stream (lever injuryHazard) may live ONLY
+        // on a perk whose stream is "injury"; a fully-deterministic ("none") perk may not name a
+        // randomness-bearing lever. This guards the exact §11.3 data-validity bug (hard_charger once
+        // declared stream "none" while an effect used the injury stream). The seven injury-stream
+        // perks are pinned so the auto-enable set (InjuryModel.HasInjuryPerk, which derives it from
+        // stream=="injury") cannot silently drift.
+        var expectedInjuryPerks = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "glass_cannon", "hard_charger", "safe_hands", "ironman",
+            "iron_constitution", "injury_prone", "hot_head",
+        };
+        var actualInjuryPerks = new HashSet<string>(StringComparer.Ordinal);
+
+        var root = Root();
+        foreach (var perk in Perks(root).EnumerateArray())
+        {
+            string id = perk.GetProperty("id").GetString()!;
+            string stream = perk.GetProperty("stream").GetString()!;
+            bool usesInjuryLever = EffectsOf(perk).Any(e => e.Lever == "injuryHazard");
+
+            if (usesInjuryLever)
+            {
+                Assert.True(stream == "injury",
+                    $"Perk '{id}' uses the injuryHazard lever but declares stream '{stream}' (must be 'injury').");
+                actualInjuryPerks.Add(id);
+            }
+            if (stream == "none")
+                Assert.DoesNotContain(EffectsOf(perk), e => e.Lever == "injuryHazard");
+        }
+
+        Assert.Equal(expectedInjuryPerks, actualInjuryPerks);
+    }
 }

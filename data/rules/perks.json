@@ -745,8 +745,7 @@
       "effects": [
         { "kind": "benefit",  "lever": "agingCurve", "target": "peakShift", "magnitude": 3, "cpEquivalent": 1.0, "note": "player-local PeakAgeStart/End +3 - decline starts later, a long career holds its expectedFinish" },
         { "kind": "benefit",  "lever": "xpRate", "target": "ageWindow", "magnitude": 0.25, "condition": "ageGtePeak", "cpEquivalent": 0.5, "note": "+25% XP once past peak - keep growing when others fade" },
-        { "kind": "drawback", "lever": "agingCurve", "target": "riseMult", "magnitude": -0.50, "cpEquivalent": -0.5, "note": "RisePerYear x0.5 pre-peak - slow early growth" },
-        { "kind": "drawback", "lever": "xpRate", "target": "ageWindow", "magnitude": -0.30, "condition": "ageLtPeak", "cpEquivalent": -0.5, "note": "-30% XP while young - an unremarkable youth; total XP ~neutral, back-loaded" }
+        { "kind": "drawback", "lever": "xpRate", "target": "ageWindow", "magnitude": -0.30, "condition": "ageLtPeak", "cpEquivalent": -0.5, "note": "-30% XP while young - an unremarkable youth (this IS the 'slow early growth'); total XP ~neutral, back-loaded" }
       ]
     },
     {

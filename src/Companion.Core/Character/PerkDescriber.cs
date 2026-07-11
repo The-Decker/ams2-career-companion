@@ -38,7 +38,7 @@ public static class PerkDescriber
             "income" => up ? "Brings sponsor money" : "Brings less money",
             "injuryHazard" => Injury(e.Target, e.Magnitude) ? "Higher injury risk" : "Lower injury risk",
             "xpRate" => up ? "Levels up faster" : "Levels up slower",
-            "statPoints" => up ? "Extra points each level" : "Fewer points each level",
+            "statPoints" => StatPoints(e.Target, up),
             _ => e.Note ?? "",
         };
         return phrase.Length == 0 ? phrase : phrase + Condition(e.Condition);
@@ -72,8 +72,14 @@ public static class PerkDescriber
     {
         "peakShift" => up ? "Peaks later in career" : "Peaks earlier",
         "declineAccelMult" => up ? "Fades faster with age" : "Ages more gracefully",
-        "riseMult" => up ? "Improves faster when young" : "Improves slower",
         _ => up ? "Ages better" : "Ages worse",
+    };
+
+    private static string StatPoints(string? target, bool up) => target switch
+    {
+        "lockToOne" => "Only your one specialism can ever be developed",
+        "softCap" => up ? "Raises the stat ceiling" : "Lowers the stat ceiling",
+        _ => up ? "Extra points each level" : "Fewer points each level",
     };
 
     private static string Offer(string? target, bool up) => target switch

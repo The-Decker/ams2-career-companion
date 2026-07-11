@@ -610,9 +610,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             if (!IsKnownStat(rules, spend.Target))
                 throw new InvalidOperationException($"Unknown stat '{spend.Target}'.");
             double step = rules.Levels.LevelGrants.StatStepValue;
+            var mods = PerkResolver.Resolve(character, rules);
+            // One-Trick Pony's lockToOne freezes every talent stat except the one that owns the
+            // chosen specialism rating — you can only ever develop your single weapon.
+            if (mods.LockedFlavorRating is { } locked)
+            {
+                bool isTalent = rules.Stats.TalentStats.Any(s =>
+                    string.Equals(s.Id, spend.Target, StringComparison.Ordinal));
+                bool ownsLocked = rules.Stats.TalentStats.Any(s =>
+                    string.Equals(s.Id, spend.Target, StringComparison.Ordinal)
+                    && s.MapsTo.Contains(locked, StringComparer.Ordinal));
+                if (isTalent && !ownsLocked)
+                    throw new InvalidOperationException(
+                        "One-Trick Pony locks development to your single specialism — that stat is frozen.");
+            }
             // A statPoints/softCap perk (iron_constitution) lowers the in-career raise ceiling.
-            double cap = rules.Levels.LevelGrants.StatCapPerRating
-                + PerkResolver.Resolve(character.PerkIds, rules).StatSoftCapDelta;
+            double cap = rules.Levels.LevelGrants.StatCapPerRating + mods.StatSoftCapDelta;
             int pendingSteps = PendingSpends().Count(s => s.Kind == "stat"
                 && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
             double current = character.Stat(spend.Target) + (pendingSteps * step);
@@ -1223,7 +1236,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             _characterPatch = new PlayerCharacterPatch
             {
                 Profile = character,
-                Modifiers = PerkResolver.Resolve(character.PerkIds, rules),
+                Modifiers = PerkResolver.Resolve(character, rules),
                 Rules = rules,
             };
         }

@@ -850,6 +850,55 @@ public sealed class CharacterFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void OneTrickPony_LocksBetweenSeasonDevelopmentToItsChosenSpecialismStat()
+    {
+        string packDirectory = Path.Combine(_root, "pack");
+        TestPackBuilder.Write(TestPackBuilder.TwoRoundPack(), packDirectory);
+        string careerPath = Path.Combine(_root, "careers", "onetrick.ams2career");
+
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs"),
+            library: TestPackBuilder.Library());
+
+        // One-Trick Pony bound to wetSkill (owned by the adaptability stat, which maps wetSkill +
+        // tyreManagement). lockToOne must let ONLY that owning stat be developed; every other talent
+        // stat is frozen. (Before the fix lockToOne was a dead lever — nothing was rejected.)
+        var character = new CharacterProfile
+        {
+            Name = "One Trick",
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.50, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+                ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
+            },
+            PerkIds = ["one_trick"],
+            ChosenFlavor = "wetSkill",
+            CpUnspent = 3,
+        };
+
+        using var session = CareerSessionService.CreateCareer(
+            new CareerCreationRequest
+            {
+                PackDirectory = packDirectory,
+                CareerFilePath = careerPath,
+                CareerName = "One Trick",
+                MasterSeed = 111,
+                PlayerLiveryName = TestPackBuilder.StockLivery2,
+                Character = character,
+            },
+            environment);
+
+        // The single specialism stat (adaptability owns wetSkill) develops fine.
+        session.SpendCharacterPoint(CharacterSpend.Stat("adaptability", 1));
+
+        // Every other talent stat is frozen — the spend is rejected.
+        Assert.Throws<InvalidOperationException>(
+            () => session.SpendCharacterPoint(CharacterSpend.Stat("pace", 1)));
+        Assert.Throws<InvalidOperationException>(
+            () => session.SpendCharacterPoint(CharacterSpend.Stat("craft", 1)));
+    }
+
+    [Fact]
     public void SetupGamble_CalledShot_ResolvesReputation_AndReplaysByteIdentically()
     {
         string packDirectory = Path.Combine(_root, "pack");
