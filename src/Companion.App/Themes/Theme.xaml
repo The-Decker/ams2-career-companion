@@ -29,6 +29,13 @@
     <!-- root font size (the base body font, 14) — MainWindow binds via DynamicResource. -->
     <sys:Double x:Key="AppFontSize">14</sys:Double>
 
+    <!-- Bundled display faces (embedded as Resource in the App's Fonts\ folder, so the single exe
+         carries them). "Race Sport" = the career/season-name selector; "Victory Striker Sans Demo"
+         = the Season's Grid card driver/team names. Segoe UI is the safe fallback if a face fails
+         to load. -->
+    <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
+    <FontFamily x:Key="VictoryStrikerFont">/Fonts/#Victory Striker Sans Demo</FontFamily>
+
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
          multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings
          and the tear-off windows included, not just inherited body text. App.ApplyAppearance

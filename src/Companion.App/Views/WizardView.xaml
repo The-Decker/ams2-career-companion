@@ -12,25 +12,23 @@
             <Setter Property="FontSize" Value="14" />
         </Style>
 
-        <!-- Season-grid card labels: a technical, motorsport-programme look — Bahnschrift is the
-             DIN-style condensed face Windows ships (falls back to Segoe UI Semibold), uppercase,
-             centered. The driver name reads like a race-entry board; the team is an accent tag. -->
+        <!-- Season-grid card labels in the bundled "Victory Striker" display face (Mike's pick) —
+             uppercase, centered; the driver name reads like a race-entry board and the team is an
+             accent tag beneath it. -->
         <Style x:Key="GridDriverName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontFamily" Value="Bahnschrift SemiBold, Bahnschrift, Segoe UI Semibold" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontFamily" Value="{StaticResource VictoryStrikerFont}" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
         <Style x:Key="GridTeamName" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontFamily" Value="Bahnschrift Condensed, Bahnschrift, Segoe UI" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontFamily" Value="{StaticResource VictoryStrikerFont}" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0,1,0,0" />
+            <Setter Property="Margin" Value="0,2,0,0" />
         </Style>
     </UserControl.Resources>
 
@@ -220,8 +218,8 @@
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
-                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"
-                                                       Margin="12,9,12,12" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Title}" FontFamily="{StaticResource RaceSportFont}"
+                                                       FontSize="18" Margin="12,10,12,13" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Foreground="{StaticResource ErrorBrush}" FontSize="12"
                                                        Margin="12,0,12,10" TextWrapping="Wrap"
                                                        Text="{Binding LoadError, StringFormat='pack.json unreadable: {0}'}"
@@ -598,8 +596,8 @@
                                         <Border VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,9,9,0"
                                                 Background="{StaticResource AccentDimBrush}" CornerRadius="3" Padding="6,2"
                                                 Visibility="{Binding IsLocked, Converter={StaticResource BoolVisible}}">
-                                            <TextBlock Text="YOU" FontFamily="Bahnschrift SemiBold, Segoe UI Semibold" FontSize="10"
-                                                       FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                            <TextBlock Text="YOU" FontFamily="{StaticResource VictoryStrikerFont}" FontSize="11"
+                                                       Foreground="{StaticResource AccentBrush}" />
                                         </Border>
                                     </Grid>
                                 </Border>
