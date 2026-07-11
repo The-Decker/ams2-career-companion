@@ -18,8 +18,8 @@
             <DockPanel>
                 <!-- always-visible primary loop actions (one click back to the loop from anywhere) -->
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="Race day" Command="{Binding GoToBriefingCommand}"
-                            ToolTip="Go to the race-day briefing for the current round">
+                    <Button Content="Upcoming Race" Command="{Binding GoToBriefingCommand}"
+                            ToolTip="Go to the upcoming race — set it up, then run the weekend">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource HubLoopButton}">
                                 <Style.Triggers>
@@ -98,8 +98,11 @@
                         <DataTemplate>
                             <!-- the row = a full-width select button, with a small tear-off ⧉ on the
                                  read-only lenses (Standings/Driver/History/Skins) that pops the tab
-                                 into an always-on-top companion window over AMS2. -->
-                            <Grid Margin="0,2">
+                                 into an always-on-top companion window over AMS2. The Upcoming Race
+                                 screen is locked out of the rail (ShowInRail=false) — reached only
+                                 via the header loop buttons. -->
+                            <Grid Margin="0,2"
+                                  Visibility="{Binding ShowInRail, Converter={StaticResource BoolVisible}}">
                                 <Button Padding="12,9" HorizontalContentAlignment="Left"
                                         AutomationProperties.Name="{Binding Title}"
                                         ToolTip="{Binding Title}"

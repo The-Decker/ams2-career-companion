@@ -90,6 +90,19 @@ public sealed class CharacterDossierHubTests : IDisposable
     }
 
     [Fact]
+    public void UpcomingRaceTab_IsRenamed_AndLockedOutOfTheRail()
+    {
+        using var hub = new HubViewModel(CreateCareer(Character()));
+
+        var raceTab = hub.Tabs.Single(t => t.Key == HubViewModel.RaceTabKey);
+        Assert.Equal("Upcoming Race", raceTab.Title);
+        Assert.False(raceTab.ShowInRail); // reached only via the header loop buttons, not the rail
+
+        // Every other tab still shows in the rail.
+        Assert.All(hub.Tabs.Where(t => t.Key != HubViewModel.RaceTabKey), t => Assert.True(t.ShowInRail));
+    }
+
+    [Fact]
     public void CharacterFreeCareer_HubHasNoDriverTab()
     {
         using var hub = new HubViewModel(CreateCareer(character: null));

@@ -10,18 +10,24 @@ namespace Companion.ViewModels.Hub;
 /// </summary>
 public sealed partial class HubTabViewModel : ObservableObject
 {
-    public HubTabViewModel(string key, string title, string glyph, ObservableObject content)
+    public HubTabViewModel(string key, string title, string glyph, ObservableObject content, bool showInRail = true)
     {
         Key = key;
         Title = title;
         Glyph = glyph;
         _content = content;
+        ShowInRail = showInRail;
     }
 
     /// <summary>Stable identity (not localized) — number-key + auto-select target.</summary>
     public string Key { get; }
 
     public string Title { get; }
+
+    /// <summary>True when this tab appears as a clickable entry in the left rail. The Upcoming Race
+    /// screen sets this false — it is the loop itself, reached only via the header loop buttons
+    /// ("Upcoming Race" / "Enter result"), never freely selected from the rail (Mike's ask).</summary>
+    public bool ShowInRail { get; }
 
     /// <summary>Segoe MDL2 Assets glyph shown on the rail.</summary>
     public string Glyph { get; }
