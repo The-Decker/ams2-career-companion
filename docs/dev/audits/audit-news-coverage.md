@@ -13,6 +13,20 @@ underperformed / dnf-mechanical / dnf-driver-error / midfield) and `season.diges
 (player-champion / season-complete). Bodies attach read-side to `news.headline` journal rows —
 nothing folded, so corpus growth changes display copy only and needs no determinism gate.
 
+## SMGP fictional-world outlet (2026-07-10)
+
+`data/rules/news/smgp.json` is a DEDICATED corpus for the Super Monaco GP replica mode's SEGA
+universe (its own teams, the LEVEL A–D rival ladder, the D.P. driver-points readout, the hairpin,
+the big board) in a bold retro-arcade tabloid voice — much more colorful than the historical
+outlet. It is selected by `NewsFacts.PreferredEra = "smgp"` (set in `CareerSessionService` for
+`careerStyle: "smgp"` careers), NEVER by year: its era range is a sentinel (`9000–9099`) no real
+career hits, so a historical 1990 F1 career keeps the 1990s outlet (`SmgpEra_IsSelectedByOverride
+Only_NeverByYear` pins this). Covers every race cause + both digests (10/8/7-ish variants each) +
+SMGP-flavor pools (`ladderBuzz`, `rivalTalk`). NEXT for it: SMGP-specific article TYPES for the
+folded rival events — `smgp.battle` (rival beaten/lost), `smgp.seat` (seat swap / relegation),
+title defense — wired through `ReadFeed` so a seat change becomes a NEWS HEADLINE ("PLAYER SEIZES
+THE MADONNA SEAT!").
+
 ## Volume snapshot (era-keyed variants per body key / pools)
 
 | decade | bodies (min–max per key) | pools | signature pools | state |

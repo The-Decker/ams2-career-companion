@@ -2201,6 +2201,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return dispatches;
     }
 
+    /// <summary>The SMGP replica mode routes its news to the fictional-world "smgp" corpus (the
+    /// SEGA universe — its own teams, the rival ladder, the D.P. readout) rather than the
+    /// historical 1990s outlet the 1990 career year would otherwise select. Null for every other
+    /// career, which resolves its era by year as before.</summary>
+    private string? SmgpNewsEra => string.Equals(
+        Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal)
+        ? Companion.Core.Smgp.SmgpRules.CareerStyle
+        : null;
+
     /// <summary>Projects one race round's facts for the news grammar from already-folded state:
     /// the player's expected/actual finish + cause (the <c>race.result</c> row), the field's
     /// winner + size (the raw envelope), and the player's championship standing after the round
@@ -2288,6 +2297,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             Phase = resultRow.Phase,
             Cause = resultRow.Cause,
             Year = _seasonYear,
+            PreferredEra = SmgpNewsEra,
             Round = round,
             RaceName = packRound?.Name ?? grid.RoundName,
             PlayerName = CharacterName() ?? playerSeat?.DriverName ?? _playerDriverId,
@@ -2336,6 +2346,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             Phase = "season.digest",
             Cause = playerIsChampion ? "player-champion" : "season-complete",
             Year = _seasonYear,
+            PreferredEra = SmgpNewsEra,
             Round = 0,
             PlayerName = playerName,
             TeamName = playerSeat?.TeamName ?? "",
