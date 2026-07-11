@@ -4,25 +4,26 @@ using System.Windows.Media;
 namespace Companion.RenderHarness.Tests;
 
 /// <summary>
-/// The Season's Grid card labels are drawn in the bundled "Aeromove" display face (Mike's pick,
-/// replacing the earlier Victory Striker that read too skinny). WPF silently falls back to Segoe UI
-/// when a <c>/Fonts/#Family</c> reference does not resolve — a dropped Resource, a renamed file, or
-/// a family-name drift would go UNNOTICED by a plain render test. This guard proves the font is
-/// embedded in the app assembly AND that the theme references it by its true family name, so the
-/// swap can never silently regress to the fallback.
+/// The app bundles two personal-use display faces (Mike's picks): "Aeromove" is the app-wide
+/// regular/body font (every window's base FontFamily) and "Microsport" draws the Season's Grid card
+/// names. WPF silently falls back to Segoe UI when a <c>/Fonts/#Family</c> reference does not resolve
+/// — a dropped Resource, a renamed file, or a family-name drift would go UNNOTICED by a plain render
+/// test. This guard proves each face is embedded in the app assembly AND that the theme references it
+/// by its true family name, so neither can silently regress to the fallback.
 ///
 /// (We assert against the EMBEDDED resource via its full pack URI, which is what the real app's
-/// startup base-URI expands <c>/Fonts/#AeromoveDemo</c> to. Building a glyph typeface from a
-/// theme-loaded FontFamily's RELATIVE source needs the app's startup base URI, which the off-screen
-/// harness does not establish — the known-good Race Sport face fails that path here too — so it
-/// cannot distinguish a real break from the harness limitation. The embedded-resource load can.)
+/// startup base-URI expands <c>/Fonts/#Family</c> to. Building a glyph typeface from a theme-loaded
+/// FontFamily's RELATIVE source needs the app's startup base URI, which the off-screen harness does
+/// not establish — even the shipping Race Sport face fails that path here — so it cannot distinguish
+/// a real break from the harness limitation. The embedded-resource load can.)
 /// </summary>
 public sealed class SeasonGridFontTests
 {
-    private const string Family = "AeromoveDemo"; // the name the theme references after '#'
-
-    [Fact]
-    public void AeromoveFont_IsEmbedded_AndTheThemeReferenceMatchesItsFamilyName()
+    [Theory]
+    [InlineData("AeromoveFont", "AeromoveDemoRegular.ttf", "AeromoveDemo")] // app-wide body text
+    [InlineData("MicrosportFont", "Microsport Bold.ttf", "Microsport")]    // Season's Grid card names
+    public void BundledFont_IsEmbedded_AndTheThemeReferenceMatchesItsFamilyName(
+        string resourceKey, string fileName, string family)
     {
         if (!WpfRenderHarness.IsSupported)
             return;
@@ -33,22 +34,22 @@ public sealed class SeasonGridFontTests
             try
             {
                 glyph = new GlyphTypeface(new Uri(
-                    "pack://application:,,,/AMS2CareerCompanion;component/Fonts/AeromoveDemoRegular.ttf"));
+                    "pack://application:,,,/AMS2CareerCompanion;component/Fonts/" + fileName));
             }
             catch (Exception ex)
             {
                 Assert.Fail(
-                    "AeromoveDemoRegular.ttf did not load as an embedded resource — check the " +
-                    "<Resource Include=\"Fonts\\AeromoveDemoRegular.ttf\" /> in Companion.App.csproj. " + ex.Message);
+                    $"{fileName} did not load as an embedded resource — check the " +
+                    $"<Resource Include=\"Fonts\\{fileName}\" /> in Companion.App.csproj. " + ex.Message);
                 return;
             }
 
             // The embedded face's family name must be exactly what the theme references after '#',
-            // else /Fonts/#AeromoveDemo binds nothing and the cards fall back to Segoe UI.
-            Assert.Contains(Family, glyph.Win32FamilyNames.Values);
+            // else /Fonts/#<family> binds nothing and the text falls back to Segoe UI.
+            Assert.Contains(family, glyph.Win32FamilyNames.Values);
 
-            var themeFamily = (FontFamily)Application.Current.Resources["AeromoveFont"];
-            Assert.Equal("/Fonts/#" + Family, themeFamily.Source);
+            var themeFamily = (FontFamily)Application.Current.Resources[resourceKey];
+            Assert.Equal("/Fonts/#" + family, themeFamily.Source);
         });
     }
 }

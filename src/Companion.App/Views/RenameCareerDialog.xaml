@@ -4,6 +4,7 @@
         Title="Rename career"
         Width="420" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        FontFamily="{StaticResource AeromoveFont}" FontSize="{DynamicResource AppFontSize}"
         Background="{StaticResource SurfaceBrush}">
     <!-- keyboard parity: the textbox is focused on open, Enter = OK (IsDefault),
          Esc = Cancel (IsCancel) — fully operable without the mouse. -->

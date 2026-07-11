@@ -10,6 +10,7 @@
         MinWidth="300" MinHeight="220"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
+        FontFamily="{StaticResource AeromoveFont}"
         FontSize="13">
     <DockPanel Margin="12,10">
         <!-- root UI-scale transform (settings: font scale) keeps this pop-out in step with the

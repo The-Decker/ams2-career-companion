@@ -10,7 +10,7 @@
         MinWidth="340" MinHeight="280"
         Background="{StaticResource BgBrush}"
         Foreground="{StaticResource TextBrush}"
-        FontFamily="Segoe UI" FontSize="13">
+        FontFamily="{StaticResource AeromoveFont}" FontSize="{DynamicResource AppFontSize}">
     <!-- A generic tear-off companion window (career-hub-design.md §2.1, "own windows"): its
          DataContext is a hub TAB view-model, and it hosts that tab's Content through the app-wide
          VM→View DataTemplates. Because the tab's Content is observable, a lens whose view-model is

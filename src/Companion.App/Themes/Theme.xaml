@@ -26,15 +26,20 @@
     <SolidColorBrush x:Key="ErrorDimBrush" Color="#3A2226" />
     <SolidColorBrush x:Key="SelectionBrush" Color="#33415E" />
 
-    <!-- root font size (the base body font, 14) — MainWindow binds via DynamicResource. -->
-    <sys:Double x:Key="AppFontSize">14</sys:Double>
+    <!-- root font size (the base body font) — every window binds via DynamicResource. 15 (a touch
+         up from 14) so the app-wide Aeromove body face reads comfortably and stays LARGER than the
+         Season's Grid card face (Mike's pick). -->
+    <sys:Double x:Key="AppFontSize">15</sys:Double>
 
     <!-- Bundled display faces (embedded as Resource in the App's Fonts\ folder, so the single exe
-         carries them). "Race Sport" = the career/season-name selector; "Aeromove" = the Season's
-         Grid card driver/team names (Mike's pick — bolder than the earlier Victory Striker, which
-         read too skinny). Segoe UI is the safe fallback if a face fails to load. -->
+         carries them). "Race Sport" = the career/season-name selector; "Aeromove" = the app-wide
+         REGULAR/body face (every window sets it as the base FontFamily; Mike's pick — a good text,
+         run a touch larger than the grid); "Microsport" = the Season's Grid card driver/team names
+         (the display face for that one screen). Segoe UI is the safe fallback if a face fails to
+         load. -->
     <FontFamily x:Key="RaceSportFont">/Fonts/#Race Sport</FontFamily>
     <FontFamily x:Key="AeromoveFont">/Fonts/#AeromoveDemo</FontFamily>
+    <FontFamily x:Key="MicrosportFont">/Fonts/#Microsport</FontFamily>
 
     <!-- root UI scale (settings: font scale 90–130% ÷ 100). Every window's root LayoutTransform
          multiplies by this, so ALL text + spacing scales uniformly — inline font sizes, headings

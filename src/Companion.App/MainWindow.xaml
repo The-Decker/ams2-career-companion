@@ -7,7 +7,7 @@
         MinWidth="920" MinHeight="620"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BgBrush}"
-        FontFamily="Segoe UI" FontSize="{DynamicResource AppFontSize}"
+        FontFamily="{StaticResource AeromoveFont}" FontSize="{DynamicResource AppFontSize}"
         TextOptions.TextFormattingMode="Display"
         PreviewKeyDown="OnPreviewKeyDown">
     <DockPanel>
