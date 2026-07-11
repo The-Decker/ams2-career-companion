@@ -108,11 +108,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.SeatPick:
-                BuildGridChoices();
-                Step = WizardStep.Grid;
-                break;
-
-            case WizardStep.Grid:
+                // Flow (Mike): select car → create character → see the grid → confirm. Create the
+                // character first (when the mode has one), then the grid reveal is the last look.
                 if (HasCharacterStep)
                 {
                     PrepareCharacter();
@@ -120,12 +117,17 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 }
                 else
                 {
-                    PrepareConfirm();
-                    Step = WizardStep.Confirm;
+                    BuildGridChoices();
+                    Step = WizardStep.Grid;
                 }
                 break;
 
             case WizardStep.Character:
+                BuildGridChoices();
+                Step = WizardStep.Grid;
+                break;
+
+            case WizardStep.Grid:
                 PrepareConfirm();
                 Step = WizardStep.Confirm;
                 break;
@@ -141,10 +143,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (!CanGoBack)
             return;
-        // Confirm steps back over the (possibly skipped) character step to the grid step.
+        // The grid step precedes confirm and follows the (possibly skipped) character step; step
+        // back over character straight to seat pick when the mode has no character.
         Step = Step switch
         {
-            WizardStep.Confirm => HasCharacterStep ? WizardStep.Character : WizardStep.Grid,
+            WizardStep.Grid => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
             _ => Step - 1,
         };
     }

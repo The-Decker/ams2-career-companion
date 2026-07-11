@@ -11,10 +11,13 @@ public enum WizardStep
     SeasonPick = 0,
     Verification = 1,
     SeatPick = 2,
+    /// <summary>Create your driver. Present only when character rules are loaded. Comes BEFORE the
+    /// Season's Grid (Mike's flow: select car → create character → see the grid → confirm), so the
+    /// grid reveal — where YOU already have a car and a character — is the last look before confirm.</summary>
+    Character = 3,
     /// <summary>Choose the season's field — which seats are on the grid (v0.6.0). Always present;
     /// defaults to the whole pack, so leaving it untouched is byte-identical to before.</summary>
-    Grid = 3,
-    Character = 4,
+    Grid = 4,
     Confirm = 5,
 }
 

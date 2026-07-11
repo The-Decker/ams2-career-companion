@@ -74,11 +74,12 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="4 · Season Grid">
+                <TextBlock Text="4 · Driver"
+                           Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Character}">
                                     <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                 </DataTrigger>
@@ -86,12 +87,11 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="5 · Driver"
-                           Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
+                <TextBlock Text="5 · Season Grid">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Character}">
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
                                     <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
                                 </DataTrigger>

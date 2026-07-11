@@ -53,15 +53,15 @@ public sealed class OwnEntrantWizardTests : IDisposable
         Assert.True(wizard.IsOwnEntrant);
         Assert.True(wizard.NextCommand.CanExecute(null));
 
-        wizard.NextCommand.Execute(null);                 // -> Grid
+        wizard.NextCommand.Execute(null);                 // -> Character (rules present)
+        Assert.Equal(WizardStep.Character, wizard.Step);
+        wizard.NextCommand.Execute(null);                 // -> Grid (built on entry)
 
         // The grid shows exactly one locked row — the player's own entrant, on the typed livery.
         var locked = Assert.Single(wizard.GridChoices, c => c.IsLocked);
         Assert.Equal("My Privateer Skin", locked.LiveryName);
         Assert.Contains("own entrant", locked.DriverName);
 
-        wizard.NextCommand.Execute(null);                 // -> Character (rules present)
-        Assert.Equal(WizardStep.Character, wizard.Step);
         wizard.NextCommand.Execute(null);                 // -> Confirm
         wizard.NextCommand.Execute(null);                 // Create
 
@@ -76,12 +76,12 @@ public sealed class OwnEntrantWizardTests : IDisposable
         var seat = wizard.Seats.First();
         wizard.SelectedSeat = seat;
         Assert.False(wizard.IsOwnEntrant);
-        wizard.NextCommand.Execute(null);                 // -> Grid
+        wizard.NextCommand.Execute(null);                 // -> Character
+        wizard.NextCommand.Execute(null);                 // -> Grid (built on entry)
 
         // The locked row is the picked seat, and no synthetic own-entrant row appears.
         Assert.DoesNotContain(wizard.GridChoices, c => c.DriverName.Contains("own entrant"));
 
-        wizard.NextCommand.Execute(null);                 // -> Character
         wizard.NextCommand.Execute(null);                 // -> Confirm
         wizard.NextCommand.Execute(null);                 // Create
 
@@ -98,8 +98,8 @@ public sealed class OwnEntrantWizardTests : IDisposable
         wizard.CustomLiveryName = "  Override Skin  "; // trimmed on use
         Assert.True(wizard.IsOwnEntrant);
 
-        wizard.NextCommand.Execute(null);                 // -> Grid
         wizard.NextCommand.Execute(null);                 // -> Character
+        wizard.NextCommand.Execute(null);                 // -> Grid
         wizard.NextCommand.Execute(null);                 // -> Confirm
         wizard.NextCommand.Execute(null);                 // Create
 
