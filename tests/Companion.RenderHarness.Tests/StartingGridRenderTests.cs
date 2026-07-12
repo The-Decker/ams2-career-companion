@@ -37,10 +37,33 @@ public sealed class StartingGridRenderTests
 
     // A tiny binding-only host is enough to exercise the view's canonical mode gate without adding
     // replica state to StartingGridViewModel: HomeView.DataContext.Session.Pack.Manifest.CareerStyle.
-    private sealed class ModeHost { public ModeSession Session { get; } = new(); }
+    private sealed class ModeHost
+    {
+        public ModeSession Session { get; } = new();
+        public ModeBriefingView Briefing { get; } = new();
+    }
     private sealed class ModeSession { public ModePack Pack { get; } = new(); }
-    private sealed class ModePack { public ModeManifest Manifest { get; } = new(); }
+    private sealed class ModePack
+    {
+        public ModeManifest Manifest { get; } = new();
+        public ModeSeason Season { get; } = new();
+    }
     private sealed class ModeManifest { public string CareerStyle => SmgpRules.CareerStyle; }
+    private sealed class ModeSeason { public bool? RefuellingAllowed => false; }
+    private sealed class ModeBriefingView
+    {
+        public ModeBriefing Briefing { get; } = new();
+        public string FuelNote => "One tank covers the race; conserve fuel or shorten the distance.";
+        public string SmgpAdviceLine => "Pass at the hairpin and protect the exit.";
+    }
+    private sealed class ModeBriefing { public ModeRound Round { get; } = new(); }
+    private sealed class ModeRound
+    {
+        public int Laps => 61;
+        public ModeSetupGuide SetupGuide { get; } = new();
+    }
+    private sealed class ModeSetupGuide { public ModeRaceSession Session { get; } = new(); }
+    private sealed class ModeRaceSession { public bool MandatoryPitStop => false; }
 
     private static GridSeat SmgpSeat(
         string id, string name, string teamId, string teamName, string number, bool isPlayer = false) => new()
@@ -138,6 +161,12 @@ public sealed class StartingGridRenderTests
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpPixelTrack")).Visibility);
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("DesktopConditionsPanel")).Visibility);
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("DnqStrip")).Visibility);
+            Assert.Equal("61", ((TextBlock)view.FindName("SmgpLapCount")).Text);
+            Assert.Contains("One tank", ((TextBlock)view.FindName("SmgpStrategyText")).Text);
+            Assert.Contains("hairpin", ((TextBlock)view.FindName("SmgpTacticalAdvice")).Text);
+            Assert.Equal("PIT STOP  ·  OPTIONAL", ((TextBlock)view.FindName("SmgpPitRule")).Text);
+            Assert.Equal("REFUELLING  ·  NOT ALLOWED", ((TextBlock)view.FindName("SmgpRefuelRule")).Text);
+            Assert.True(((FrameworkElement)view.FindName("SmgpRacePlanPanel")).ActualHeight > 0);
 
             var slots = (ItemsControl)view.FindName("SmgpSlotList");
             var dnqList = (ItemsControl)view.FindName("DnqList");

@@ -75,6 +75,13 @@ original compact two-row carousel.
   previews work immediately.
 - Driver flags resolve from `smgp/flags/<driverId>.png`. The synthetic player hides the flag because
   the character model does not author nationality; never show the replaced AI driver’s flag as theirs.
+- Put the authored race length in the top chrome as `N LAPS`, bound to the active pinned
+  `HomeView.DataContext.Briefing.Briefing.Round.Laps`. Keep `LapDistanceLabel` as the circuit’s per-lap
+  kilometres; never derive total laps from it.
+- Show `PIT WALL · POTENTIAL STRATEGIES` from the current briefing’s authored `SmgpAdviceLine` plus
+  existing `FuelNote`; the latter is already class-, lap-, and refuelling-rule-aware. Show explicit
+  mandatory-stop and refuelling rule chips from the pinned round/season. Never invent tyre compounds,
+  exact fuel quantities, pit windows, or timing deltas, and do not restore the removed fuel-percentage gauge.
 - Do not invent qualifying times or deltas: the result model stores qualifying order only.
 - Keep the seeded DNQ strip, live conditions, global fuel removal, and historical grid behavior intact.
 
