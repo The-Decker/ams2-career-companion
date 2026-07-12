@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Companion.Core.Character;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Wizard;
@@ -22,6 +23,35 @@ public sealed partial class DossierViewModel : ObservableObject
 
     [ObservableProperty]
     private CharacterDossier? _dossier;
+
+    /// <summary>One-shot level-up signal. Slice 0 publishes the bind contract; detection lands in Slice 4.</summary>
+    [ObservableProperty]
+    private bool _levelUpPending;
+
+    /// <summary>How many levels were gained in the unacknowledged level-up moment.</summary>
+    [ObservableProperty]
+    private int _levelsGained;
+
+    /// <summary>The bindable skill-tree lanes. Empty until the rules-backed projection lands.</summary>
+    [ObservableProperty]
+    private IReadOnlyList<SkillBranchViewModel> _skillTree = [];
+
+    /// <summary>The in-career spend currency. Skill Points are numerically the existing Available CP.</summary>
+    public int SkillPointsAvailable => _session.AvailableCharacterCp();
+
+    /// <summary>Milestone respec tokens currently available.</summary>
+    public int RespecTokens => _session.RespecTokensAvailable();
+
+    /// <summary>The five talent stats which directly shape driving ratings.</summary>
+    public IReadOnlyList<DossierStat> TalentStatsView =>
+        Dossier?.Stats.Where(stat => stat.Talent).ToList() ?? [];
+
+    /// <summary>The marketability and durability meta stats.</summary>
+    public IReadOnlyList<DossierStat> MetaStatsView =>
+        Dossier?.Stats.Where(stat => !stat.Talent).ToList() ?? [];
+
+    /// <summary>The driver's current availability, ready for display.</summary>
+    public string AvailabilityLabel => Dossier?.AvailabilityLabel ?? "Fit";
 
     /// <summary>True when this career has a character to show — the hub adds the Driver tab only then.</summary>
     public bool HasCharacter => Dossier is not null;
@@ -58,9 +88,30 @@ public sealed partial class DossierViewModel : ObservableObject
     /// <summary>True when there is an SMGP career story to show (the Driver tab renders the timeline).</summary>
     public bool HasSmgpNarrative => Timeline.Count > 0 || NarrativeIntro.Length > 0;
 
+    /// <summary>Dismisses the one-shot level-up moment.</summary>
+    [RelayCommand]
+    public void AcknowledgeLevelUp()
+    {
+        LevelUpPending = false;
+        LevelsGained = 0;
+    }
+
+    /// <summary>Slice-0 command stub; unlock behavior lands after the tree projection.</summary>
+    [RelayCommand]
+    private void UnlockNode(SkillNodeViewModel? node)
+    {
+    }
+
+    /// <summary>Slice-0 command stub; respec behavior lands in Slice 5.</summary>
+    [RelayCommand]
+    private void RespecNode(SkillNodeViewModel? node)
+    {
+    }
+
     public void Refresh()
     {
         Dossier = _session.CharacterDossier();
+        SkillTree = [];
 
         // The player's current seat gives the team (portrait + spec) and the car (preview image).
         var playerSeat = _session.CurrentGrid().FirstOrDefault(s => s.IsPlayer);
@@ -78,5 +129,10 @@ public sealed partial class DossierViewModel : ObservableObject
         OnPropertyChanged(nameof(HasCharacter));
         OnPropertyChanged(nameof(TeamLine));
         OnPropertyChanged(nameof(HasSmgpNarrative));
+        OnPropertyChanged(nameof(SkillPointsAvailable));
+        OnPropertyChanged(nameof(RespecTokens));
+        OnPropertyChanged(nameof(TalentStatsView));
+        OnPropertyChanged(nameof(MetaStatsView));
+        OnPropertyChanged(nameof(AvailabilityLabel));
     }
 }
