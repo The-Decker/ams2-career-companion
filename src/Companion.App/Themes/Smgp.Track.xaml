@@ -101,6 +101,123 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
+    <!-- Pixel grandstand: concrete tiers, rails, and a deliberately varied arcade crowd. -->
+    <DrawingBrush x:Key="SmgpGrandstandBrush" TileMode="Tile"
+                  Viewport="0,0,96,96" ViewportUnits="Absolute"
+                  Viewbox="0,0,96,96" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#252A30">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,96,96" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#4A5159">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,14,96,8" />
+                            <RectangleGeometry Rect="0,46,96,8" />
+                            <RectangleGeometry Rect="0,78,96,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#AEB8C2">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,12,96,2" />
+                            <RectangleGeometry Rect="0,44,96,2" />
+                            <RectangleGeometry Rect="0,76,96,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#C9343D">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="5,3,10,8" /><RectangleGeometry Rect="51,3,10,8" />
+                            <RectangleGeometry Rect="27,35,10,8" /><RectangleGeometry Rect="73,35,10,8" />
+                            <RectangleGeometry Rect="5,67,10,8" /><RectangleGeometry Rect="51,67,10,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#D8A92C">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="17,3,10,8" /><RectangleGeometry Rect="63,3,10,8" />
+                            <RectangleGeometry Rect="39,35,10,8" /><RectangleGeometry Rect="85,35,8,8" />
+                            <RectangleGeometry Rect="17,67,10,8" /><RectangleGeometry Rect="63,67,10,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#3E78B8">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="29,3,10,8" /><RectangleGeometry Rect="75,3,10,8" />
+                            <RectangleGeometry Rect="5,35,10,8" /><RectangleGeometry Rect="51,35,10,8" />
+                            <RectangleGeometry Rect="29,67,10,8" /><RectangleGeometry Rect="75,67,10,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#E2E5E8">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="41,3,8,8" /><RectangleGeometry Rect="87,3,6,8" />
+                            <RectangleGeometry Rect="17,35,8,8" /><RectangleGeometry Rect="63,35,8,8" />
+                            <RectangleGeometry Rect="41,67,8,8" /><RectangleGeometry Rect="87,67,6,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- Repeating garage fronts + painted pit boxes. The vertical repeat reads as one box per car. -->
+    <DrawingBrush x:Key="SmgpPitLaneBrush" TileMode="Tile"
+                  Viewport="0,0,96,96" ViewportUnits="Absolute"
+                  Viewbox="0,0,96,96" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#2F3439">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,96,96" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#171B20">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,96,31" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#59616A">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="5,5,38,21" />
+                            <RectangleGeometry Rect="53,5,38,21" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#252A30">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="10,9,28,17" />
+                            <RectangleGeometry Rect="58,9,28,17" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#E6E2D8">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,38,96,3" />
+                            <RectangleGeometry Rect="8,49,42,2" />
+                            <RectangleGeometry Rect="8,49,2,24" />
+                            <RectangleGeometry Rect="48,49,2,24" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#E4B52D">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,79,34,3" />
+                            <RectangleGeometry Rect="48,79,34,3" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
     <DrawingBrush x:Key="SmgpCurbBrush" TileMode="Tile"
                   Viewport="0,0,18,64" ViewportUnits="Absolute"
                   Viewbox="0,0,18,64" ViewboxUnits="Absolute">

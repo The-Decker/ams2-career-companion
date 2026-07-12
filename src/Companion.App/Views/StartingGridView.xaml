@@ -126,7 +126,28 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid x:Name="SmgpPortraitFrame" Width="54" Height="54"
-                              HorizontalAlignment="Left" VerticalAlignment="Center">
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              RenderTransformOrigin="0.5,0.5">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <!-- Preserve the measured 54 px layout contract while making the
+                                         authored portrait read larger inside the compact card. -->
+                                    <Setter Property="RenderTransform">
+                                        <Setter.Value>
+                                            <ScaleTransform ScaleX="1.08" ScaleY="1.08" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <ScaleTransform ScaleX="1.16" ScaleY="1.16" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
                             <Border CornerRadius="4" Background="{DynamicResource OverlaySurfaceAltBrush}">
                                 <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="22"
                                            Foreground="{DynamicResource TextMutedBrush}" Opacity="0.55"
@@ -366,30 +387,42 @@
                               AutomationProperties.Name="Scroll through the SMGP starting order">
                     <Grid x:Name="SmgpTrackSurface" HorizontalAlignment="Stretch"
                           Background="{StaticResource SmgpGrassBrush}">
-                        <!-- Proportional verges preserve the pixel track at minimum size while giving
-                             portrait + car + identity enough width in each of the two grid bays. -->
+                        <!-- The venue remains grass-edge-to-grass-edge at every width, but the active
+                             racing strip is deliberately narrow. Scenery absorbs wide-screen space;
+                             the road minimum protects portrait + car + identity at compact sizes. -->
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.08*" />
+                            <ColumnDefinition Width="0.12*" />
+                            <ColumnDefinition Width="0.63*" />
                             <ColumnDefinition Width="14" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" MinWidth="420" MaxWidth="900" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="0.63*" />
                             <ColumnDefinition Width="14" />
-                            <ColumnDefinition Width="0.08*" />
+                            <ColumnDefinition Width="0.12*" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Background="{StaticResource SmgpGrassBrush}" />
-                        <Border Grid.Column="1" Background="{StaticResource SmgpCurbBrush}" />
-                        <Border Grid.Column="2" Background="{StaticResource SmgpAsphaltBrush}" />
-                        <Border Grid.Column="3" Background="{StaticResource SmgpCurbBrush}" />
-                        <Border Grid.Column="4" Background="{StaticResource SmgpGrassBrush}" />
+                        <Border Grid.Column="1" Background="{StaticResource SmgpGrandstandBrush}" />
+                        <Border Grid.Column="2" Background="{StaticResource SmgpCurbBrush}" />
+                        <Border Grid.Column="3" Background="{StaticResource SmgpAsphaltBrush}" />
+                        <Border Grid.Column="4" Background="{StaticResource SmgpFenceBrush}"
+                                BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
+                        <Border Grid.Column="5" Background="{StaticResource SmgpPitLaneBrush}" />
+                        <Border Grid.Column="6" Background="{StaticResource SmgpCurbBrush}" />
+                        <Border Grid.Column="7" Background="{StaticResource SmgpGrassBrush}" />
 
-                        <!-- Compact pixel fence rails at the outside edges. -->
+                        <!-- Compact rails retain the grass boundaries and separate spectators from
+                             the live track. The ten-pixel pit wall is its own venue column above. -->
                         <Border Grid.Column="0" Width="10" HorizontalAlignment="Left" Margin="4,0,0,0"
                                 Background="{StaticResource SmgpFenceBrush}"
                                 BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
-                        <Border Grid.Column="4" Width="10" HorizontalAlignment="Right" Margin="0,0,4,0"
+                        <Border Grid.Column="1" Width="8" HorizontalAlignment="Right"
+                                Background="{StaticResource SmgpFenceBrush}"
+                                BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
+                        <Border Grid.Column="7" Width="10" HorizontalAlignment="Right" Margin="0,0,4,0"
                                 Background="{StaticResource SmgpFenceBrush}"
                                 BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
 
-                        <StackPanel Grid.Column="2" Margin="8,14,8,24">
+                        <StackPanel Grid.Column="3" Margin="8,14,8,24">
                             <!-- The authored race length and the existing class/lap/rules-aware fuel
                                  advisory are already owned by the Race Day briefing. Bind through the
                                  HomeView ancestor so this view adds presentation, never strategy logic. -->
