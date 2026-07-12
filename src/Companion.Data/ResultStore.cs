@@ -28,7 +28,7 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 7;
+    public const int CurrentVersion = 8;
 
     public int Version { get; init; } = CurrentVersion;
 
@@ -70,6 +70,14 @@ public sealed record RoundResultEnvelope
     /// binary behavior". Slice 2 captures it only; NOTHING consumes it yet, so a round carrying a severity
     /// still replays BYTE-IDENTICALLY. Slice 3 folds it into the d500 injury roll.</summary>
     public AccidentSeverity? PlayerAccidentSeverity { get; init; }
+
+    /// <summary>True for an AUTO-SIMULATED round the injured player SAT OUT (character death &amp; injury §5,
+    /// v8). A raw marker the sim cannot re-derive (only the app knows the player was unavailable), so it is
+    /// stored: the fold reads it to skip the player's update (OPI-neutral), heal one race of suspension,
+    /// and emit the derived DNS row, while the stored <see cref="Result"/> carries the auto-simulated AI
+    /// field (which advances the championship). False on every pre-v8 save and every player-driven round —
+    /// the fold then runs the ordinary player update, so those rounds stay byte-identical.</summary>
+    public bool PlayerDidNotStart { get; init; }
 
     /// <summary>The round's qualifying order — pack driver ids, pole first — when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying (every pre-weekend

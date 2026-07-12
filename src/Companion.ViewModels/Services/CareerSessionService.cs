@@ -4943,6 +4943,91 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     }
 
     /// <inheritdoc />
+    public SitOutStatus? CurrentSitOut()
+    {
+        if (_careerFileDeleted || SeasonComplete)
+            return null;
+        var player = CurrentPlayerState();
+        if (player is null || player.Deceased)
+            return null;
+        if (player.SeasonEndingInjury)
+            return new SitOutStatus
+            {
+                RaceSuspensionRemaining = 0,
+                SeasonEnding = true,
+                Headline = "SEASON OVER — recovering",
+            };
+        if (player.RaceSuspensionRemaining > 0)
+            return new SitOutStatus
+            {
+                RaceSuspensionRemaining = player.RaceSuspensionRemaining,
+                SeasonEnding = false,
+                Headline = $"INJURED — auto-simulating round ({player.RaceSuspensionRemaining} remaining)",
+            };
+        return null;
+    }
+
+    /// <inheritdoc />
+    public void AutoSimulateRound()
+    {
+        if (_careerFileDeleted)
+            throw new InvalidOperationException("This career has ended — the driver was killed (Hardcore).");
+        var player = CurrentPlayerState();
+        if (player?.Deceased == true)
+            throw new InvalidOperationException("The driver has died — the career is over.");
+        if (SeasonComplete)
+            throw new InvalidOperationException("The season is complete — there is no round to simulate.");
+        if (player is null || (player.RaceSuspensionRemaining == 0 && !player.SeasonEndingInjury))
+            throw new InvalidOperationException("The driver is fit — enter this round's result manually.");
+
+        int roundNumber = CurrentRoundNumber;
+        var packRound = RoundByNumber(roundNumber);
+        // The AI field races the round the injured player sits out — a deterministic classification with
+        // the player EXCLUDED (DNS). The order is generated now and STORED (so the championship advances
+        // for the AI); the fold reads the PlayerDidNotStart flag to keep the player OPI-neutral + heal.
+        var aiOrder = AutoRaceModel.ClassifiedOrder(
+            ResolveGrid(roundNumber).Seats, MasterSeedU, Pack.Season.Year, roundNumber);
+        var draft = new ResultDraft
+        {
+            Classified = aiOrder,
+            DidNotFinish = new Dictionary<string, string>(StringComparer.Ordinal),
+            Disqualified = [],
+        };
+        var envelope = new RoundResultEnvelope
+        {
+            Result = ToRoundResult(draft, roundNumber, packRound),
+            PlayerDidNotStart = true,
+            SliderUsed = ReplayService.NeutralSlider,
+        };
+        string nowUtc = NowUtc();
+        ReplayService.ImportAndFoldRound(
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc);
+
+        JournalStore.Append(_database, _seasonId, roundNumber,
+            new JournalEvent
+            {
+                Phase = DataJournalPhases.ResultProvenance,
+                Entity = "round",
+                DeltaJson = JsonSerializer.Serialize(
+                    new ResultAppliedDelta
+                    {
+                        Round = roundNumber,
+                        RoundName = packRound.Name,
+                        WinnerDriverId = aiOrder.Count > 0 ? aiOrder[0] : null,
+                        ClassifiedCount = aiOrder.Count,
+                        DnfCount = 0,
+                        DsqCount = 0,
+                    },
+                    CoreJson.Options),
+                Cause = "auto-simulated",
+            },
+            nowUtc);
+
+        if (SeasonComplete)
+            EnsureSeasonEnd();
+    }
+
+    /// <inheritdoc />
     public IReadOnlyList<SaveSlotInfo> SaveSlots() =>
         SavesEnabled ? SaveSlotStore.List(CareerFilePath) : [];
 

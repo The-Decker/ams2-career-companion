@@ -24,6 +24,12 @@ public static class CareerStreams
     /// career consumes zero new draws and stays byte-identical. A round-level companion to the season-level
     /// <see cref="Injury"/> stream, keyed (accident, year, round, "player").</summary>
     public const string Accident = "accident";
+
+    /// <summary>The per-ROUND auto-simulated field jitter (character death &amp; injury §5): drawn per
+    /// non-player seat ONLY when the injured player sits a round out and the app must simulate the race.
+    /// Keyed (auto-race, year, round, driverId) — a fresh generator per seat, so no other stream shifts
+    /// and a career that is never injured draws zero from it and stays byte-identical.</summary>
+    public const string AutoRace = "auto-race";
 }
 
 /// <summary>Journal phase names emitted by the career sim. Part of the save format (the news
@@ -73,6 +79,13 @@ public static class JournalPhases
     /// none/minor-injury/season-ending/death ladder. Absent for every other career, so their journal
     /// sequence is unchanged; DERIVED, so it is byte-compared (never provenance-excluded).</summary>
     public const string PlayerAccident = "player.accident";
+
+    /// <summary>An AUTO-SIMULATED skipped round (character death &amp; injury §5): a DERIVED row emitted only
+    /// when the injured player sat a round out (the stored <c>PlayerDidNotStart</c> envelope flag). The
+    /// AI field raced (its standings advance); the player is OPI-neutral (no player.opi/reputation rows).
+    /// Carries { round, reason, suspensionRemaining }. Absent for every uninjured career, so their journal
+    /// sequence is unchanged; DERIVED, so it is byte-compared (never provenance-excluded).</summary>
+    public const string PlayerDidNotStart = "player.dns";
 
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>

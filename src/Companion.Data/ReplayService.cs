@@ -727,6 +727,37 @@ public static class ReplayService
         bool playerRaced = false;
         int? battlePlayerFinish = null;
 
+        // Auto-simulated skipped round (character death & injury §5): the injured player sat this round
+        // out, so the AI field raced without them (the stored Result carries the auto-simulated field —
+        // its standings already advanced via RoundStandingsEvents above). NO player fold — carry the
+        // state forward VERBATIM (OPI-neutral: no player.opi/reputation/pace rows), but heal one race of
+        // a minor suspension. Emit a DERIVED DNS row. Gated on the stored PlayerDidNotStart flag, so an
+        // ordinary player-driven round never enters here and stays byte-identical.
+        if (envelope.PlayerDidNotStart)
+        {
+            var healed = player.RaceSuspensionRemaining > 0
+                ? player with { RaceSuspensionRemaining = player.RaceSuspensionRemaining - 1 }
+                : player;
+            events.Add(new JournalEvent
+            {
+                Phase = JournalPhases.PlayerDidNotStart,
+                Entity = "player",
+                DeltaJson = DataJson.Serialize(new
+                {
+                    round,
+                    reason = healed.SeasonEndingInjury ? "season-ending" : "injury",
+                    suspensionRemaining = healed.RaceSuspensionRemaining,
+                }),
+                Cause = "did-not-start",
+            });
+            return new RoundFoldOutcome(
+                events,
+                new RoundPlayerState { Player = healed, RecommendedSlider = previous.RecommendedSlider },
+                PlayerRaced: false,
+                null,
+                null);
+        }
+
         for (int i = 0; i < raceSessions.Count; i++)
         {
             var outcome = PlayerOutcomeIn(raceSessions[i], envelope, playerDriverId);

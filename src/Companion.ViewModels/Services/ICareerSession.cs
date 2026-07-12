@@ -326,6 +326,20 @@ public interface ICareerSession
         CareerFileDeleted = false,
     };
 
+    /// <summary>The player's SIT-OUT status when an injury forces the CURRENT round to be auto-simulated
+    /// (character death &amp; injury §5), or null when the player races this round normally. The shell shows
+    /// the sit-out screen (an "INJURED — auto-simulating" / "SEASON OVER — recovering" banner) with a
+    /// single Continue that calls <see cref="AutoSimulateRound"/>. Additive default: null.</summary>
+    SitOutStatus? CurrentSitOut() => null;
+
+    /// <summary>Auto-simulates the CURRENT round the injured player must sit out (§5): generates the AI
+    /// field deterministically (the player is DNS — OPI-neutral, zero points), folds it, and heals one
+    /// race of a minor suspension. AMS2 cannot spectate a single-player race, so an unavailable round is
+    /// simulated rather than driven. Throws when the player is fit (enter the result manually), deceased,
+    /// or the season is over. Additive default: throws, so fakes compile.</summary>
+    void AutoSimulateRound() => throw new NotSupportedException(
+        "This career session does not support auto-simulated rounds.");
+
     /// <summary>True when the FILE-level save &amp; reload surface is available — <c>Normal</c> mode ONLY.
     /// Off (no death to undo) and Hardcore (no saves, ever) both report false. When false, the slot
     /// list is empty and <see cref="SaveToSlot"/>/<see cref="RestoreSlot"/> throw. Additive default:
@@ -504,6 +518,21 @@ public sealed record PlayerMortalityStatus
 
     /// <summary>Fit to race normally (not injured, season-ended, or deceased).</summary>
     public bool IsFit => !Deceased && !SeasonEndingInjury && RaceSuspensionRemaining == 0;
+}
+
+/// <summary>The player's sit-out banner for an auto-simulated (injured) round (character death &amp;
+/// injury §5) — a plain value the shell renders with a single Continue.</summary>
+public sealed record SitOutStatus
+{
+    /// <summary>Races the driver still sits out from a minor injury (0 for a season-ending injury).</summary>
+    public required int RaceSuspensionRemaining { get; init; }
+
+    /// <summary>True for a season-ending injury (out until next year) vs a countable minor suspension.</summary>
+    public required bool SeasonEnding { get; init; }
+
+    /// <summary>The banner headline, e.g. "INJURED — auto-simulating round (2 remaining)" or
+    /// "SEASON OVER — recovering".</summary>
+    public required string Headline { get; init; }
 }
 
 public sealed record CareerSummary
