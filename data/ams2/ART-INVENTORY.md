@@ -27,6 +27,7 @@ Regenerate the present/expected counts any time:
 | **team logos** (`smgp/logos/team.<team>.png`) | 0 | 24 | ○ waiting for the final team palette |
 | **round cards** (`smgp/rounds/<round>.jpg`) | 0 | 16 | ○ missing |
 | **team photos** (`smgp/teams/<team>.jpg`) | 0 | 24 | ○ missing |
+| **campaign finale secrets** (`smgp/finale/special.jpg`, `ultimate.jpg`) | 0 | 2 | 🔒 secret — the 17-season reward images (Mike supplies) |
 | **track-art** (`<trackId>.jpg`) | 0 | optional (one per AMS2 track id) | ○ none — optional drop-in, clean fallback |
 | **history-art** (`<year>.jpg`) | 0 | optional (one per season year) | ○ none — optional drop-in, clean fallback |
 
@@ -64,6 +65,23 @@ transparent RGBA PNGs with consistent framing, a three-quarter overhead arcade v
 pointing right to match the live side-preview fallback. Keep them driver-keyed: the 34 entries use
 five body silhouettes, and teammate liveries/numbers can differ. Never replace the canonical side
 previews to add these.
+
+## SMGP campaign finale — 🔒 0/2 (secret reward images)
+
+The 17-season grand campaign's "final final screen" (Mike's spec, `docs/dev/smgp-17-seasons.md`) is
+built around two **secret** hero images that the app loads ONLY on the finale screen and ONLY once
+the campaign is beaten — the `HeroImageKey` is emitted solely by `CareerSessionService.SmgpFinale()`
+when the unlock predicate holds, so no other screen ever binds them:
+
+- **`smgp/finale/special.jpg`** — unlocked by COMPLETING all 17 seasons (surviving to the end without
+  the career ending on the Level-D floor). "It's so special that no one can access it until you beat
+  all 17."
+- **`smgp/finale/ultimate.jpg`** — the deeper secret: unlocked only by being CHAMPION in all 17
+  seasons (a flawless 17-from-17 run). Almost no one will ever see it — that's the point.
+
+Both are absent-tolerant: a missing file just shows a sealed-vault placeholder on the finale screen
+(the UNLOCK is the achievement, the image is the payoff). Drop them into
+`dist/data/ams2/smgp/finale/` like every other art asset.
 
 ## track-art / history-art — ○ optional, none yet
 

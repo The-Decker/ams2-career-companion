@@ -54,6 +54,8 @@ public sealed class BriefingSmgpRenderTests
             CareerLine = "CAREER  2 WINS · 1 POLE",
             AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
             Titles = 0,
+            SeasonOrdinal = 1,
+            SeasonsTotal = Companion.Core.Smgp.SmgpRules.CampaignSeasons,
             CareerOver = false,
             ForcedChallengerDriverId = Forced ? "driver.gilberto_ceara" : null,
             Rivals =

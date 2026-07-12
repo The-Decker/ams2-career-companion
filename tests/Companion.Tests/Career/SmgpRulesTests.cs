@@ -137,4 +137,33 @@ public sealed class SmgpRulesTests
         Assert.False(SmgpRules.IsComplete(1));
         Assert.True(SmgpRules.IsComplete(2));
     }
+
+    // ---------- the 17-season grand campaign ----------
+
+    [Fact]
+    public void CampaignSeasons_IsSeventeen() => Assert.Equal(17, SmgpRules.CampaignSeasons);
+
+    [Theory]
+    // Short of 17 → not complete, whatever the CareerOver state.
+    [InlineData(1, false, false)]
+    [InlineData(16, false, false)]
+    // Reached the summit, survived → completed (special.jpg unlocks).
+    [InlineData(17, false, true)]
+    [InlineData(18, false, true)] // carrying on past the summit stays "completed"
+    // Reached 17 but the career ended on the D-floor → NOT completed (the game-over screen shows instead).
+    [InlineData(17, true, false)]
+    public void CampaignComplete_NeedsSeventeenSeasonsAndNotCareerOver(int seasonOrdinal, bool careerOver, bool expected) =>
+        Assert.Equal(expected, SmgpRules.CampaignComplete(seasonOrdinal, careerOver));
+
+    [Theory]
+    // Completed all 17 but only 16 titles → survivor, NOT flawless.
+    [InlineData(17, 16, false, false)]
+    // Champion in all 17 → the flawless emperor (ultimate.jpg unlocks).
+    [InlineData(17, 17, false, true)]
+    // 17 titles but the career ended on the floor → not even completed, so not flawless.
+    [InlineData(17, 17, true, false)]
+    // Short of the summit → never flawless, even with a perfect record so far.
+    [InlineData(10, 10, false, false)]
+    public void CampaignFlawless_NeedsCompletionPlusEveryTitle(int seasonOrdinal, int titles, bool careerOver, bool expected) =>
+        Assert.Equal(expected, SmgpRules.CampaignFlawless(seasonOrdinal, titles, careerOver));
 }

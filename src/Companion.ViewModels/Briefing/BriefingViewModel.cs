@@ -190,7 +190,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
         nameof(SmgpSeasonLine), nameof(SmgpCareerLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
-        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled))]
+        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled), nameof(SmgpCampaignLine))]
     private SmgpBriefingModel? _smgpBriefing;
 
     /// <summary>The picker unlocks only for a free pick (forced challenges lock to the challenger).</summary>
@@ -247,6 +247,10 @@ public sealed partial class BriefingViewModel : ObservableObject
     };
 
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
+
+    /// <summary>The grand-campaign progress line — "SEASON 6 / 17" (Mike's 17-season SMGP arc). Empty
+    /// outside the mode.</summary>
+    public string SmgpCampaignLine => SmgpBriefing is { } b ? $"SEASON {b.SeasonOrdinal} / {b.SeasonsTotal}" : "";
 
     /// <summary>The player's live SEASON standing line for the readout (was the "D.P." points line).</summary>
     public string SmgpSeasonLine => SmgpBriefing?.SeasonLine ?? "";

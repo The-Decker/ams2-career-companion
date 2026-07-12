@@ -27,7 +27,13 @@
                                        TextAlignment="Right" Margin="0,2,0,0"
                                        Visibility="{Binding SmgpCareerLine, Converter={StaticResource StringVisible}}" />
                         </StackPanel>
-                        <TextBlock Text="{Binding SmgpRoundHeader}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding SmgpRoundHeader}" FontWeight="Bold" FontSize="16" />
+                            <!-- Mike's 17-season grand campaign: "SEASON n / 17" -->
+                            <TextBlock Text="{Binding SmgpCampaignLine}" Style="{StaticResource Faint}"
+                                       FontWeight="SemiBold" Margin="0,2,0,0"
+                                       Visibility="{Binding SmgpCampaignLine, Converter={StaticResource StringVisible}}" />
+                        </StackPanel>
                     </DockPanel>
                     <TextBlock Text="{Binding SmgpAdviceLine}" Style="{StaticResource Body}"
                                FontStyle="Italic" Margin="0,6,0,0" />

@@ -53,6 +53,11 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// is answered (season end is held too — see CareerSessionService.EnsureSeasonEnd).</summary>
     private PromotionViewModel? _promotion;
 
+    /// <summary>The 17-season SMGP campaign FINALE (Mike's "final final screen") — its own full-immersion
+    /// step shown ONCE at the fold that completes the campaign, before the final season review. Null
+    /// except while on that step; its Continue command advances into the review. Display-only.</summary>
+    private SmgpFinaleViewModel? _finale;
+
     /// <summary>True once the rival step has been shown-and-passed this round, so re-entering the flow
     /// (or a career with no rival) goes straight to qualifying. Reset on Apply.</summary>
     private bool _rivalStepDone;
@@ -157,7 +162,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         nameof(IsBriefingState), nameof(IsResultEntryState),
         nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
         nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(IsRivalStep),
-        nameof(IsPromotionStep), nameof(ConfirmButtonText))]
+        nameof(IsPromotionStep), nameof(IsFinaleStep), nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -181,6 +186,11 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// when the round moved seats). Its own accept/decline buttons drive the flow, so the header's
     /// primary confirm action is suppressed.</summary>
     public bool IsPromotionStep => CurrentContent is PromotionViewModel;
+
+    /// <summary>True while the CURRENT content is the 17-season SMGP campaign finale (Mike's "final final
+    /// screen"). Its own Continue button drives the flow, so the header's primary confirm is suppressed
+    /// exactly like the promotion step.</summary>
+    public bool IsFinaleStep => CurrentContent is SmgpFinaleViewModel;
 
     /// <summary>True when this round has an SMGP rival step to show (an active rival briefing). A
     /// non-SMGP / character-free career has none, so the flow is byte-identical to the shipped loop.</summary>
@@ -607,9 +617,39 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     {
         _promotion = null;
         if (Summary.SeasonComplete)
+        {
+            // The 17-season SMGP campaign FINALE (Mike's "final final screen"): when the season that
+            // just completed is a beaten campaign summit, show the locked special.jpg / ultimate.jpg
+            // celebration ONCE before the review. Display-only (SmgpFinale() is a pure read — no fold,
+            // no journal). Its Continue callback goes straight to the review, so it never re-enters
+            // here. Null for every non-summit season, so the shipped end-of-season flow is unchanged.
+            if (_finale is null && _session.SmgpFinale() is { } finale)
+            {
+                ShowFinale(finale);
+                return;
+            }
             ShowSeasonReview();
+        }
         else
             CurrentContent = Briefing;
+    }
+
+    /// <summary>Show the 17-season campaign finale (Mike's "final final screen") — its own step before
+    /// the final season review. Continue acknowledges it and advances into the review. The finale is
+    /// a pure display projection, so no <c>ICareerSession</c> write happens here (unlike the promotion
+    /// screen, which journals the offer decision).</summary>
+    private void ShowFinale(SmgpFinaleModel model)
+    {
+        ContentError = null;
+        _finale = new SmgpFinaleViewModel(
+            model,
+            onContinue: () =>
+            {
+                _finale = null;
+                ShowSeasonReview();
+                RefreshRoundCommands();
+            });
+        CurrentContent = _finale;
     }
 
     private void RefreshRoundCommands()

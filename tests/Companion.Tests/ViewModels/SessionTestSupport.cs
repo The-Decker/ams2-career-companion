@@ -284,7 +284,16 @@ internal sealed class FakeCareerSession : ICareerSession
         Headline = "fake headline",
     };
 
-    public void Apply(ResultDraft draft) => Applied.Add(draft);
+    /// <summary>When set, an Apply flips <see cref="Summary"/>.SeasonComplete true — so a wiring test
+    /// can drive the shell into the season-complete branch (season review / campaign finale).</summary>
+    public bool CompletesSeasonOnApply { get; set; }
+
+    public void Apply(ResultDraft draft)
+    {
+        Applied.Add(draft);
+        if (CompletesSeasonOnApply)
+            Summary = Summary with { SeasonComplete = true };
+    }
 
     public StandingsSnapshot? CurrentStandings() => Snapshots.Count > 0 ? Snapshots[^1] : null;
 
@@ -394,6 +403,12 @@ internal sealed class FakeCareerSession : ICareerSession
     public SmgpPromotionModel? Demotion { get; set; }
 
     public SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId) => Demotion;
+
+    /// <summary>The 17-season campaign finale this fake surfaces once the season completes (null = none),
+    /// returned by <see cref="SmgpFinale"/> — for the finale wiring tests.</summary>
+    public SmgpFinaleModel? Finale { get; set; }
+
+    public SmgpFinaleModel? SmgpFinale() => Finale;
 
     /// <summary>The player's smgp team id captured before an apply (null outside the mode).</summary>
     public string? SmgpTeamId { get; set; }

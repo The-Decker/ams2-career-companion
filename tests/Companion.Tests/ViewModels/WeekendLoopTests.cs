@@ -150,6 +150,8 @@ public sealed class WeekendLoopTests
                 CareerLine = "",
                 AdviceLine = "PASS AT THE HAIRPIN!",
                 Titles = 0,
+                SeasonOrdinal = 1,
+                SeasonsTotal = Companion.Core.Smgp.SmgpRules.CampaignSeasons,
                 CareerOver = false,
                 Rivals =
                 [

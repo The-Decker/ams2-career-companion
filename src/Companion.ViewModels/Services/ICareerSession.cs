@@ -55,6 +55,14 @@ public interface ICareerSession
     /// decline. Null outside the mode or when no offer is pending. Additive default so fakes compile.</summary>
     SmgpPromotionModel? CurrentSmgpPromotion() => null;
 
+    /// <summary>The locked 17-season campaign FINALE (the "final final screen") when the current SMGP
+    /// season is a COMPLETED campaign summit — reaching the end of all <see cref="Companion.Core.Smgp.SmgpRules.CampaignSeasons"/>
+    /// seasons unlocks the secret <c>special.jpg</c>; being champion in all of them unlocks the deeper
+    /// <c>ultimate.jpg</c>. Null in every other case (outside the mode, mid-campaign, or a career ended
+    /// on the D-floor). Pure DISPLAY-ONLY read over folded state — never a fold input. Additive default
+    /// so fakes compile.</summary>
+    SmgpFinaleModel? SmgpFinale() => null;
+
     /// <summary>The SMGP Paddock lens: the whole grid's drivers (bio + predetermined career stats +
     /// team) and teams (motto + history + quotes + roster), for the driver/team-preview rail tab.
     /// DISPLAY-ONLY (reads the pack roster + the SMGP reference data). Null outside the SMGP mode or
@@ -741,6 +749,14 @@ public sealed record SmgpBriefingModel
     /// <summary>Championships won in the mode so far (two = the replica is beaten).</summary>
     public required int Titles { get; init; }
 
+    /// <summary>The current season's 1-based ordinal within the 17-season grand campaign (season 1 … 17).
+    /// Surfaced as "SEASON n / 17". DISPLAY-ONLY.</summary>
+    public required int SeasonOrdinal { get; init; }
+
+    /// <summary>The grand campaign length (<see cref="Companion.Core.Smgp.SmgpRules.CampaignSeasons"/> = 17)
+    /// — the denominator of "SEASON n / 17".</summary>
+    public required int SeasonsTotal { get; init; }
+
     /// <summary>The Zeroforce game-over state — the panel shows it instead of a rival pick.</summary>
     public required bool CareerOver { get; init; }
 
@@ -888,6 +904,35 @@ public sealed record SmgpPromotionModel
 
     /// <summary>The accept/acknowledge button label.</summary>
     public string AcceptLabel => Kind == SmgpPromotionKind.PromotionOffer ? "Take the seat" : "Onwards";
+}
+
+/// <summary>The locked 17-season campaign FINALE screen's data (Mike's "final final screen with a
+/// special image that has its own name, special.jpg ... no one can access it until you beat all 17").
+/// A pure DISPLAY-ONLY projection over folded state (season count + <see cref="Companion.Core.Smgp.SmgpState.Titles"/>
+/// + <see cref="Companion.Core.Smgp.SmgpState.CareerOver"/>) — never a fold input, never journaled.
+/// The secret hero image is loaded ONLY on this screen and ONLY when the campaign is beaten: the
+/// <see cref="HeroImageKey"/> is emitted solely by <see cref="ICareerSession.SmgpFinale"/> when the
+/// unlock predicate holds, so no other screen ever binds it and the art stays sealed until earned.</summary>
+public sealed record SmgpFinaleModel
+{
+    /// <summary>The triumphant arcade banner headline — the survivor vs. flawless-emperor register.</summary>
+    public required string Headline { get; init; }
+
+    /// <summary>The sub-headline / dedication line under the hero.</summary>
+    public required string Subhead { get; init; }
+
+    /// <summary>True for the FLAWLESS run (champion in all 17) — the screen reveals <c>ultimate.jpg</c>
+    /// instead of <c>special.jpg</c>.</summary>
+    public required bool IsFlawless { get; init; }
+
+    /// <summary>The SECRET hero image key — <c>"special"</c> (completed all 17) or <c>"ultimate"</c>
+    /// (champion in all 17). Loaded from <c>data/ams2/smgp/finale/&lt;key&gt;.jpg</c> and emitted ONLY
+    /// when unlocked, so the art is unreachable anywhere else in the app. Absent-tolerant: a missing
+    /// file simply hides the hero — the UNLOCK is the achievement, the image is the payoff.</summary>
+    public required string HeroImageKey { get; init; }
+
+    /// <summary>The campaign record lines (seasons conquered, titles won) shown beside the hero.</summary>
+    public IReadOnlyList<string> Record { get; init; } = [];
 }
 
 /// <summary>One namable rival: the dossier card's facts (docs/dev/smgp-design.md — team banner,

@@ -53,6 +53,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// season's year for display and for computing the next year.</summary>
     private readonly int _seasonYear;
     private readonly int _firstSeasonYear;
+    /// <summary>The 1-based ordinal of the current season within the career (season 1, 2, … 17) —
+    /// the position of <see cref="_seasonId"/> in the id-ordered season list. Drives the SMGP calendar
+    /// variety, the per-season DNQ re-roll, and the "SEASON n / 17" campaign display. DISPLAY/PINNED —
+    /// never a fold input (the fold keys off the round, not the ordinal).</summary>
+    private readonly int _seasonOrdinal;
     private readonly string _careerName;
     private readonly string _playerLiveryName;
     private readonly string _playerDriverId;
@@ -100,6 +105,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         int seasonOrdinal = 1;
         for (int i = 0; i < allSeasons.Count; i++)
             if (allSeasons[i].Id == seasonId) { seasonOrdinal = i + 1; break; }
+        _seasonOrdinal = seasonOrdinal;
         Pack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed);
         _seasonYear = allSeasons.FirstOrDefault(s => s.Id == seasonId)?.Year ?? pack.Season.Year;
         _firstSeasonYear = allSeasons.Count > 0 ? allSeasons[0].Year : _seasonYear;
@@ -1175,6 +1181,42 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         };
     }
 
+    /// <summary>The locked 17-season campaign FINALE (Mike's "final final screen"), or null. Non-null
+    /// ONLY when the current SMGP season is a COMPLETED campaign summit — the player reached the end of
+    /// all <see cref="Companion.Core.Smgp.SmgpRules.CampaignSeasons"/> seasons without the career ending
+    /// on the D-floor. A champion-of-all-17 run is flagged flawless (revealing <c>ultimate.jpg</c> over
+    /// <c>special.jpg</c>). Pure DISPLAY-ONLY read over folded state (season ordinal + Titles + CareerOver):
+    /// no fold change, no journal row, no seed — the byte-identical replay gate is untouched. The secret
+    /// hero key is emitted ONLY here and ONLY when unlocked, so the art is unreachable everywhere else.</summary>
+    public SmgpFinaleModel? SmgpFinale()
+    {
+        if (!string.Equals(Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
+            return null;
+        // CurrentSmgpState() reads the latest folded state REGARDLESS of completion (unlike
+        // CurrentSmgpBriefing, which returns null once complete), so Titles/CareerOver are available at
+        // the season-17 fold moment. SeasonComplete gates to the summit fold, not mid-season.
+        if (!SeasonComplete || CurrentSmgpState() is not { } state)
+            return null;
+        if (!Companion.Core.Smgp.SmgpRules.CampaignComplete(_seasonOrdinal, state.CareerOver))
+            return null;
+
+        bool flawless = Companion.Core.Smgp.SmgpRules.CampaignFlawless(_seasonOrdinal, state.Titles, state.CareerOver);
+        return new SmgpFinaleModel
+        {
+            Headline = flawless ? "THE FLAWLESS EMPEROR" : "SEVENTEEN SEASONS CONQUERED",
+            Subhead = flawless
+                ? "Champion of every season across the whole SEGA world. No one has driven what you have driven."
+                : "You went the distance — all seventeen seasons survived. The replica is truly beaten.",
+            IsFlawless = flawless,
+            HeroImageKey = flawless ? "ultimate" : "special",
+            Record =
+            [
+                $"{_seasonOrdinal} SEASONS CONQUERED",
+                $"{state.Titles} {(state.Titles == 1 ? "CHAMPIONSHIP" : "CHAMPIONSHIPS")}",
+            ],
+        };
+    }
+
     /// <summary>The SMGP mode's LATEST folded state — the last folded round's, else the season
     /// start's — or null outside the mode. Deliberately NOT cached: every folded round can move
     /// seats, and the next round's grid must show them.</summary>
@@ -1283,6 +1325,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             CareerLine = careerLine,
             AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
             Titles = state.Titles,
+            SeasonOrdinal = _seasonOrdinal,
+            SeasonsTotal = Companion.Core.Smgp.SmgpRules.CampaignSeasons,
             CareerOver = state.CareerOver,
             ForcedChallengerDriverId = forcedChallenger,
             Rivals = rivals,
