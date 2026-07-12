@@ -3490,6 +3490,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (beforePlayer?.Deceased == true)
             throw new InvalidOperationException(
                 "The driver has died — the career is over. In Normal mode, restore a save to continue.");
+        // The SMGP LEVEL-D floor knock-out is terminal too — a career kicked out of F1 SMGP takes no more
+        // rounds. Previously CareerOver only suppressed the battle re-fold + season-end rollover, so a floored
+        // player could still enter results; this closes that (SmgpState.CareerOver's own doc promised it).
+        if (beforePlayer?.Smgp?.CareerOver == true)
+            throw new InvalidOperationException(
+                "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to apply.");
 
@@ -5107,6 +5113,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (player?.Deceased == true)
             throw new InvalidOperationException("The driver has died — the career is over.");
+        if (player?.Smgp?.CareerOver == true)
+            throw new InvalidOperationException(
+                "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to simulate.");
         if (player is null || (player.RaceSuspensionRemaining == 0 && !player.SeasonEndingInjury))

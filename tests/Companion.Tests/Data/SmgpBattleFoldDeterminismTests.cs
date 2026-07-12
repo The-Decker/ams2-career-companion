@@ -299,6 +299,44 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void AfterTheFloorKnockOut_TheCareerRefusesFurtherRounds()
+    {
+        // The LEVEL-D floor knock-out is TERMINAL: once the career is over, no further weekend can be folded
+        // — manual entry OR auto-sim — mirroring a fatal-accident Deceased career. (Roadmap #1 hard-stop.)
+        // LadderPack has 5 rounds, so round 5 exists; only the CareerOver guard stops it.
+        string packDirectory = Path.Combine(_root, "packs", "floor-stop");
+        TestPackBuilder.Write(LadderPack(), packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "floor-stop"),
+            library: FourSeatLibrary());
+        string careerPath = Path.Combine(_root, "careers", "floor-stop.ams2career");
+
+        using var session = CareerSessionService.CreateCareer(
+            new CareerCreationRequest
+            {
+                PackDirectory = packDirectory,
+                CareerFilePath = careerPath,
+                CareerName = "floor-stop",
+                MasterSeed = Seed,
+                PlayerLiveryName = SeatD,
+                SmgpMode = true,
+            },
+            environment);
+
+        // Lose to driver.c four times at the floor → knocked out of F1 SMGP.
+        for (int round = 1; round <= 4; round++)
+            ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" });
+
+        // A fifth round is refused at the fold entry — both paths, specifically for the SMGP floor.
+        var manual = Assert.Throws<InvalidOperationException>(() =>
+            ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" }));
+        Assert.Contains("SMGP career is over", manual.Message);
+
+        var auto = Assert.Throws<InvalidOperationException>(() => session.AutoSimulateRound());
+        Assert.Contains("SMGP career is over", auto.Message);
+    }
+
+    [Fact]
     public void AfterAnAcceptedSwap_TheNextRound_SeatsTheSwappedCars_EverywhereTheSameWay()
     {
         // CLEAN swap, the round AFTER: the session grid (display + staging), the fold, and replay all
