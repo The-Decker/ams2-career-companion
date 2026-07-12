@@ -279,6 +279,10 @@ public interface ICareerSession
     /// existing fake compiles.</summary>
     CharacterDossier? CharacterDossier() => null;
 
+    /// <summary>The driver's skill-tree projection. Slice 0 returns the empty snapshot so the GUI can
+    /// bind the complete contract before the additive tree rules and unlock logic land.</summary>
+    SkillTreeSnapshot? SkillTree() => SkillTreeSnapshot.Empty;
+
     /// <summary>Character points the driver has available to spend on between-season development
     /// (character depth 4): creation leftover + level grants − already spent, minus this season's
     /// pending spends. 0 for a career with no character. Additive default: 0.</summary>
@@ -295,6 +299,13 @@ public interface ICareerSession
     /// its real cost and plain-language benefits/drawbacks. Empty for a career with no character or no
     /// points to spend. Additive default: empty.</summary>
     IReadOnlyList<PurchasablePerk> PurchasablePerks() => [];
+
+    /// <summary>Milestone respec tokens available to the driver. Additive default: none.</summary>
+    int RespecTokensAvailable() => 0;
+
+    /// <summary>Respecs an owned tree node. Slice 0 publishes the contract; behavior lands in Slice 5.</summary>
+    void RespecNode(string nodeId) => throw new NotSupportedException(
+        "This career session does not support skill-tree respecs.");
 
     /// <summary>The whole season's TRACK schedule, up front and spoiler-free (the Calendar lens): one
     /// entry per round with its real venue, the ACTUAL AMS2 track that will be driven (after any opt-in
