@@ -18,6 +18,13 @@ auto-memory ams2-hub-build-progress.md TOP block. Branch off the latest hub/incr
 (src/Companion.App/** only), keep the theme contract + render harness green (add a render test per new view/control),
 both light AND dark legible. Round 4:
 
+0. TOP PRIORITY — rebuild the SMGP STARTING GRID as a top-down track (Mike's explicit ask). See the full spec in
+   docs/dev/codex-grid-rework-brief.md: a top-down race start with GRANDSTANDS on the LEFT, the kerbed track +
+   staggered two-file grid boxes with cars sitting IN the boxes in the CENTER, and a PITLANE on the RIGHT — and
+   REGENERATE all 34 car sprites (cars/<driverId>.png) as TOP-DOWN, team-liveried, nose-up. All data is already on
+   StartingGridViewModel (Slots/TopRow/BottomRow, TeamColor, CarKey, Number, IsPlayer, Conditions, Dnq) — no Claude
+   work needed.
+
 1. FINISH wiring every Task-3 bind target Claude already shipped (all populated, display-only):
    - Standings: StandingsRow.IsPlayer / IsRival — highlight the player row + the named-rival row (reuse ErrorBrush
      for the rival accent).
