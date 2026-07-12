@@ -58,6 +58,11 @@ public sealed record CareerRulesData
     /// input; empty when the file is absent (stats then simply omit).</summary>
     public required SmgpDriverStats SmgpDriverStats { get; init; }
 
+    /// <summary>The SMGP-universe SPONSOR board — fictional brands with stories/logos + the teams they back
+    /// (<c>data\rules\smgp\sponsors.json</c>), shown on the Paddock's Sponsors tab (and the seed of the
+    /// future Tycoon mode). DISPLAY-ONLY — never a fold input; empty when the file is absent.</summary>
+    public required SmgpSponsors SmgpSponsors { get; init; }
+
     /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
     /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
@@ -75,6 +80,7 @@ public sealed record CareerRulesData
         SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
         SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
         SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
+        SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
         CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 

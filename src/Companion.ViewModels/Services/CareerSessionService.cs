@@ -1467,7 +1467,28 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             .ThenBy(c => c.Name, StringComparer.Ordinal)
             .ToList();
 
-        return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams };
+        // The sponsor board (Mike's Paddock Sponsors tab; seed of Tycoon mode): every authored sponsor as
+        // a card, its backed-team ids resolved to display names from the pack. Empty when none authored.
+        string TeamName(string teamId) =>
+            teamsById.TryGetValue(teamId, out var t) ? t.Name : teamProfiles.ForTeam(teamId)?.Name ?? teamId;
+        var sponsors = _environment.Rules.SmgpSponsors.All
+            .Select(s => new SmgpSponsorCard
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Industry = s.Industry,
+                Tier = s.Tier,
+                Tagline = s.Tagline,
+                Story = s.Story,
+                BrandColorHex = s.BrandColorHex,
+                LogoKey = s.Id.StartsWith("sponsor.", StringComparison.Ordinal) ? s.Id["sponsor.".Length..] : s.Id,
+                FoundedFlavor = s.FoundedFlavor,
+                TeamIds = s.Teams,
+                TeamNames = s.Teams.Select(TeamName).ToList(),
+            })
+            .ToList();
+
+        return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams, Sponsors = sponsors };
     }
 
     /// <summary>The player's OWN Paddock bio — the one card that is not authored but generated live, so

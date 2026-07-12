@@ -778,6 +778,32 @@ public sealed record SmgpPaddockModel
 
     /// <summary>Every team on the grid, highest prestige first.</summary>
     public required IReadOnlyList<SmgpTeamCard> Teams { get; init; }
+
+    /// <summary>The SMGP sponsor board — fictional brands with stories/logos + the teams they back
+    /// (the Paddock's Sponsors tab; seed of the future Tycoon mode). Empty when no sponsors are authored.</summary>
+    public IReadOnlyList<SmgpSponsorCard> Sponsors { get; init; } = [];
+}
+
+/// <summary>One sponsor's Paddock card: identity + industry/tier + brand colour + logo key + story + the
+/// teams it backs (with names for the roster line). DISPLAY-ONLY — the seed of the future Tycoon mode.</summary>
+public sealed record SmgpSponsorCard
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public required string Industry { get; init; }
+    /// <summary>Backing tier: title / major / minor / struggling.</summary>
+    public required string Tier { get; init; }
+    public required string Tagline { get; init; }
+    public required IReadOnlyList<string> Story { get; init; }
+    /// <summary>Brand colour "#RRGGBB" (accents the card).</summary>
+    public required string BrandColorHex { get; init; }
+    /// <summary>Logo art key — <c>smgp/sponsors/&lt;id-without-prefix&gt;.png</c> (absent-tolerant).</summary>
+    public required string LogoKey { get; init; }
+    public required string FoundedFlavor { get; init; }
+    /// <summary>The team ids this sponsor backs.</summary>
+    public required IReadOnlyList<string> TeamIds { get; init; }
+    /// <summary>The backed teams' display names (for the "backs: …" roster line).</summary>
+    public required IReadOnlyList<string> TeamNames { get; init; }
 }
 
 /// <summary>One driver's Paddock card: identity + team + drop-in art keys + bio + predetermined stats.</summary>
