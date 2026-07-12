@@ -302,10 +302,20 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             ShowRaceEntry();
             return;
         }
+        // The car the player actually drives: their seat is stamped with the synthetic distinct-driver
+        // id (SMGP clean-swap), which has no car art — so resolve the car from the livery they took over
+        // to the authored driver on that entry, whose car art IS that team's car. Null (a custom
+        // own-entrant livery matching no entry, or no player seat) leaves the card's fallback.
+        var playerSeat = grid.FirstOrDefault(s => s.IsPlayer);
+        string? playerCarArtDriverId = playerSeat is null ? null
+            : _session.Pack.Entries
+                .FirstOrDefault(e => string.Equals(
+                    e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal))
+                ?.DriverId;
         _startingGrid = new StartingGridViewModel(
             grid, Summary.PlayerDriverId,
             WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null,
-            BuildGridConditions());
+            BuildGridConditions(), playerCarArtDriverId);
         CurrentContent = _startingGrid;
         ConfirmResultCommand.NotifyCanExecuteChanged();
     }

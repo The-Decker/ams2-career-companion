@@ -14,7 +14,7 @@ public sealed class StartingGridViewModel : ObservableObject
 {
     public StartingGridViewModel(
         IReadOnlyList<GridSeat> orderedGrid, string playerDriverId, string? sessionTitle,
-        GridConditions? conditions = null)
+        GridConditions? conditions = null, string? playerCarArtDriverId = null)
     {
         Title = string.IsNullOrEmpty(sessionTitle) ? "Starting grid" : $"Starting grid  ·  {sessionTitle}";
         Conditions = conditions ?? GridConditions.Unknown;
@@ -27,10 +27,14 @@ public sealed class StartingGridViewModel : ObservableObject
             Number: seat.Number,
             IsPlayer: seat.IsPlayer,
             // The player's own card shows the team-coloured player image (like the Season's Grid);
-            // every other card shows the seat driver's portrait. The car preview is keyed by the
-            // seat's driver either way.
+            // every other card shows the seat driver's portrait.
             PortraitKey: seat.IsPlayer ? GridSeatChoice.PlayerImageKey(seat.TeamId) : seat.DriverId,
-            CarKey: seat.DriverId)).ToList();
+            // The car preview keys off the seat's driver — EXCEPT the player, whose distinct-driver id
+            // (driver.player-entrant, the SMGP clean-swap synthetic) has no car art, so their card
+            // rendered a blank car. The player physically drives the car they took over, so key their
+            // preview to that car's authored driver (passed in) — the exact team car they chose. Falls
+            // back to the seat id (a custom own-entrant livery with no authored car still shows nothing).
+            CarKey: seat.IsPlayer ? (playerCarArtDriverId ?? seat.DriverId) : seat.DriverId)).ToList();
     }
 
     /// <summary>Heading — "Starting grid" plus the session label on a multi-race weekend.</summary>
