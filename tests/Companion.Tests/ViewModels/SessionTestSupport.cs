@@ -267,7 +267,11 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public int? CurrentExpectedFinish() => ExpectedFinish;
 
-    public ConfirmModel Preview(ResultDraft draft) => new()
+    /// <summary>The confirm model this fake previews (null = the default empty one) — lets a test
+    /// drive the confirm screen's points / movement name rendering.</summary>
+    public ConfirmModel? PreviewModel { get; set; }
+
+    public ConfirmModel Preview(ResultDraft draft) => PreviewModel ?? new()
     {
         RoundPoints = [],
         Movements = [],

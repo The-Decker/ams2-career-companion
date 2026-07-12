@@ -109,6 +109,62 @@ public sealed class SmgpPromotionScreenTests : IDisposable
         Assert.True(home.IsBriefingState); // the shipped loop, unchanged
     }
 
+    [Fact]
+    public void ConfirmScreen_ShowsThePlayersName_NotTheRawSyntheticId()
+    {
+        // BUG: the clean-swap player is the synthetic "driver.player-entrant" (absent from the pack),
+        // so the confirm screen's points / movements echoed the raw id. The resolver must map it to
+        // the player's name.
+        const string playerId = "driver.player-entrant";
+        var session = FakeWithGrid();
+        session.Summary = session.Summary with { PlayerDriverId = playerId };
+        session.Identity = (playerId, "Nova Reyes");
+        session.PreviewModel = new ConfirmModel
+        {
+            RoundPoints = [(playerId, new Companion.Core.Numerics.Rational(9)), ("driver.brabham", new Companion.Core.Numerics.Rational(6))],
+            Movements = [(playerId, 2, 1)],
+            Headline = "x",
+        };
+        using var home = new HomeViewModel(session);
+
+        home.EnterResultCommand.Execute(null);
+        var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+        entry.Input = "1";
+        entry.SubmitCommand.Execute(null);
+        entry.Input = "2";
+        entry.SubmitCommand.Execute(null);
+        home.ConfirmResultCommand.Execute(null);
+
+        var confirm = Assert.IsType<ConfirmViewModel>(home.CurrentContent);
+        Assert.Equal("Nova Reyes", confirm.RoundPoints.Single(r => r.DriverId == playerId).DisplayName);
+        Assert.Equal("Nova Reyes", confirm.Movements.Single(m => m.DriverId == playerId).DisplayName);
+    }
+
+    [Fact]
+    public void TakingTheSeat_NotifiesSummary_SoTheHubLensesRefresh()
+    {
+        // BUG: taking the seat moved the fold's seat but the CareerSummary value is unchanged (same
+        // round), so the observable setter no-oped and the hub never re-projected the Driver / Skins
+        // lenses (they kept showing the old team). Resolving must fire the Summary notification.
+        var session = FakeWithGrid();
+        session.Promotion = Offer("AN OFFER FROM MADONNA");
+        using var home = new HomeViewModel(session);
+        ApplyARound(home);
+        Assert.IsType<PromotionViewModel>(home.CurrentContent);
+
+        int summaryNotifications = 0;
+        home.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(HomeViewModel.Summary))
+                summaryNotifications++;
+        };
+
+        ((PromotionViewModel)home.CurrentContent!).AcceptCommand.Execute(null);
+
+        Assert.True(summaryNotifications >= 1,
+            "resolving the promotion must notify Summary so the hub refreshes the Driver + Skins lenses");
+    }
+
     // ---------- the session projection (real career, real pending offer) ----------
 
     [Fact]

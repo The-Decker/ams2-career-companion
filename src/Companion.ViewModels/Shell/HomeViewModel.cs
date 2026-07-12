@@ -465,8 +465,21 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             model,
             onApply: () => ApplyDraft(draft),
             onBack: () => CurrentContent = _resultEntry,
-            displayName: PackDisplayNames.ResolverFor(_session.Pack),
+            displayName: PlayerAwareNames(),
             minimalNarrative: _settings?.Current.MinimalNarrative ?? false);
+    }
+
+    /// <summary>A driver-id → display-name resolver that knows the PLAYER: an SMGP clean-swap player
+    /// is a synthetic driver ("driver.player-entrant") absent from the pack, so the pack resolver
+    /// would echo the raw id in the round's points / movements. This maps the player's id to their
+    /// name (character name, else "You") and defers to the pack resolver for everyone else.</summary>
+    private Func<string, string> PlayerAwareNames()
+    {
+        var packNames = PackDisplayNames.ResolverFor(_session.Pack);
+        var player = _session.PlayerIdentity();
+        return id => player is { } p && string.Equals(id, p.DriverId, StringComparison.Ordinal)
+            ? p.DisplayName
+            : packNames(id);
     }
 
     /// <summary>Assembles the round's draft from the captured races (locked) plus the final race
@@ -601,6 +614,11 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         Summary = _session.Summary;
+        // Taking the seat moves the player's team/car but does NOT change the CareerSummary value
+        // (same round, same season-start livery), so the observable setter above no-ops and the hub
+        // never re-projects. Force the notification the hub listens on so the Driver + Skins lenses
+        // pick up the new team (else they keep showing the pre-promotion seat).
+        OnPropertyChanged(nameof(Summary));
         Briefing.Refresh();
         AdvanceAfterRound();
         RefreshRoundCommands();
