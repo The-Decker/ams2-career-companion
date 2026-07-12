@@ -179,6 +179,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private PlayerMortalityStatus? _careerOver;
 
+    /// <summary>The RICH death-screen projection (Slice 5) — an in-world obituary, the career record, the
+    /// fatal accident's cause/venue, and (Normal) the restorable save slots. Set alongside
+    /// <see cref="CareerOver"/>; the death screen binds this for the obituary + record and falls back to
+    /// <see cref="CareerOver"/> for the bare status. Also DB-free on the Hardcore path (captured before
+    /// deletion).</summary>
+    [ObservableProperty]
+    private DeathScreenModel? _deathScreen;
+
     public bool IsBriefingState => CurrentContent is BriefingViewModel;
     public bool IsResultEntryState => CurrentContent is ResultEntryViewModel;
     public bool IsConfirmState => CurrentContent is ConfirmViewModel;
@@ -612,6 +620,9 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         if (mortality.Deceased || mortality.CareerFileDeleted)
         {
             CareerOver = mortality;
+            // The richer obituary/record model rides alongside — also DB-free after a Hardcore death
+            // (captured pre-deletion), so this is safe even once the file is gone.
+            DeathScreen = _session.DeathScreen();
             return;
         }
 

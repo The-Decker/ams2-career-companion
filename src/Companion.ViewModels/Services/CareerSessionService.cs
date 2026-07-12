@@ -72,6 +72,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// is then spent — the shell must show the permadeath screen and never touch the session again.</summary>
     private bool _careerFileDeleted;
 
+    /// <summary>The death-screen model (Slice 5), memoised on first read after a death — and, on a Hardcore
+    /// death, captured just BEFORE the file is deleted so it renders with no DB. Null while the driver
+    /// lives. Immutable once the driver is dead (a dead career takes no more rounds).</summary>
+    private DeathScreenModel? _deathScreen;
+
     public SeasonPack Pack { get; }
 
     public string CareerFilePath { get; }
@@ -3490,6 +3495,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         bool justDied = beforePlayer?.Deceased != true && CurrentPlayerState()?.Deceased == true;
         if (justDied && _mortality == MortalityMode.Hardcore)
         {
+            // Capture the death screen (Slice 5) from the intact DB BEFORE it is destroyed — the permadeath
+            // screen renders from this with no session/DB access (the DeathScreenHandoffTests contract).
+            if (CurrentPlayerState() is { } deadPlayer)
+                _deathScreen = BuildDeathScreen(deadPlayer);
             _database.Dispose();
             SaveSlotStore.DeleteCareerAndAllSaves(CareerFilePath);
             _careerFileDeleted = true;
@@ -4941,6 +4950,92 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             RaceSuspensionRemaining = player?.RaceSuspensionRemaining ?? 0,
             CareerFileDeleted = false,
         };
+    }
+
+    /// <inheritdoc />
+    public DeathScreenModel? DeathScreen()
+    {
+        // Hardcore permadeath: the file is gone — return the snapshot captured just before deletion. DB-free
+        // by construction, mirroring the PlayerMortality guard (the shell must not touch the DB here).
+        if (_careerFileDeleted)
+            return _deathScreen;
+
+        var player = CurrentPlayerState();
+        if (player?.Deceased != true)
+            return null;
+        // Normal (or a not-yet-deleted) death: build live from the intact DB — this also covers reopening a
+        // dead-but-restorable Normal career. Memoised: a dead career takes no more rounds, so it never changes.
+        return _deathScreen ??= BuildDeathScreen(player);
+    }
+
+    /// <summary>Assemble the death-screen model from the folded journal + state: the fatal
+    /// <c>player.accident</c> row (severity + venue), the whole career record, and (Normal) the restore
+    /// slots. A pure read — no fold change, no new persistence, so replay stays byte-identical. Called with
+    /// the DB still open (live, or on the Hardcore path just before the file is deleted).</summary>
+    private DeathScreenModel BuildDeathScreen(PlayerCareerState player)
+    {
+        AccidentSeverity? severity = null;
+        int? fatalRound = null;
+        string? venue = null;
+
+        // The fatal accident is always in the current season (a death is terminal — the career never advances
+        // past it). Take the last death-outcome player.accident row, mirroring the headline read-back pattern.
+        var fatal = JournalStore.ReadSeason(_database, _seasonId)
+            .LastOrDefault(r =>
+                string.Equals(r.Phase, JournalPhases.PlayerAccident, StringComparison.Ordinal) &&
+                IsFatalAccidentDelta(r.DeltaJson));
+        if (fatal is not null)
+        {
+            fatalRound = fatal.Round;
+            severity = AccidentSeverityFromDelta(fatal.DeltaJson);
+            if (fatal.Round is { } rn)
+                venue = VenueForRound(rn);
+        }
+
+        var timeline = CareerTimeline();
+        string name = player.Character?.Name is { Length: > 0 } n ? n : PlayerDisplayName() ?? "The driver";
+        int? age = player.Character?.Age is { } startAge ? startAge + (_seasonYear - _firstSeasonYear) : null;
+
+        return DeathScreenModel.Build(
+            _mortality, name, age, severity, venue, fatalRound,
+            timeline.Records, timeline.Seasons, SaveSlots());
+    }
+
+    /// <summary>The venue label for a round of the CURRENT season pack — the real historical venue when the
+    /// track carries one, else the round's display name.</summary>
+    private string? VenueForRound(int round)
+    {
+        var packRound = Pack.Season.Rounds.FirstOrDefault(r => r.Round == round);
+        if (packRound is null)
+            return null;
+        return packRound.Track.RealVenue is { Length: > 0 } realVenue ? realVenue : packRound.Name;
+    }
+
+    /// <summary>True when a <c>player.accident</c> delta records a fatal (death) outcome.</summary>
+    private static bool IsFatalAccidentDelta(string deltaJson)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(deltaJson);
+            return doc.RootElement.TryGetProperty("outcome", out var o) &&
+                o.ValueKind == JsonValueKind.String &&
+                string.Equals(o.GetString(), "death", StringComparison.Ordinal);
+        }
+        catch (JsonException) { return false; }
+    }
+
+    /// <summary>Read the accident severity (camelCase enum string) back off a <c>player.accident</c> delta.</summary>
+    private static AccidentSeverity? AccidentSeverityFromDelta(string deltaJson)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(deltaJson);
+            if (doc.RootElement.TryGetProperty("severity", out var s) && s.ValueKind == JsonValueKind.String &&
+                Enum.TryParse<AccidentSeverity>(s.GetString(), ignoreCase: true, out var severity))
+                return severity;
+        }
+        catch (JsonException) { }
+        return null;
     }
 
     /// <inheritdoc />
