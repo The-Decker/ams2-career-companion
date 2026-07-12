@@ -56,6 +56,10 @@ public static class JournalPhases
     /// <see cref="PlayerCharacter"/>.</summary>
     public const string PlayerStatSpend = "player.statSpend";
 
+    /// <summary>A milestone-token respec choice, re-applied at the next transition. INPUT and
+    /// provenance-excluded; its carried CharacterProfile effect is checked in the next start state.</summary>
+    public const string PlayerRespec = "player.respec";
+
     /// <summary>The player's character XP update for the round — a DERIVED fold output (a pure
     /// function of the result), emitted only for a character career after the reputation row, so a
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>

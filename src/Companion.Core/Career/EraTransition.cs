@@ -99,11 +99,12 @@ public static class EraTransition
         IReadOnlyList<CharacterSpend>? spends = null,
         CharacterRules? characterRules = null,
         int? fromYearOverride = null,
-        int? toYearOverride = null) =>
+        int? toYearOverride = null,
+        IReadOnlyList<CharacterRespec>? respecs = null) =>
         Build(
             fromPack, toPack, seasonEndResult.Drivers, seasonEndResult.Teams,
             playerState, acceptedOffer, streams, agingCurves, canonRetirements, spends, characterRules,
-            fromYearOverride, toYearOverride);
+            fromYearOverride, toYearOverride, respecs);
 
     /// <summary>State-list overload for callers that persisted the season's end states and
     /// no longer hold the <see cref="SeasonEndResult"/> (the app's sign-and-continue flow).</summary>
@@ -120,7 +121,8 @@ public static class EraTransition
         IReadOnlyList<CharacterSpend>? spends = null,
         CharacterRules? characterRules = null,
         int? fromYearOverride = null,
-        int? toYearOverride = null)
+        int? toYearOverride = null,
+        IReadOnlyList<CharacterRespec>? respecs = null)
     {
         ArgumentNullException.ThrowIfNull(fromPack);
         ArgumentNullException.ThrowIfNull(toPack);
@@ -354,9 +356,13 @@ public static class EraTransition
         // Between-season development (character depth 4): apply the player's spends to the carried
         // character. These are journaled player.statSpend INPUTs, re-applied identically on replay so
         // the evolving driver reproduces byte-for-byte. No spends (or no character) → unchanged.
-        if (spends is { Count: > 0 } && characterRules is not null && player.Character is { } devCharacter)
+        if (characterRules is not null && player.Character is { } devCharacter)
         {
-            player = player with { Character = CharacterProgress.ApplyAll(devCharacter, spends, characterRules) };
+            if (respecs is { Count: > 0 })
+                devCharacter = CharacterProgress.ApplyRespecs(devCharacter, respecs);
+            if (spends is { Count: > 0 })
+                devCharacter = CharacterProgress.ApplyAll(devCharacter, spends, characterRules);
+            player = player with { Character = devCharacter };
         }
 
         return new TransitionPlan

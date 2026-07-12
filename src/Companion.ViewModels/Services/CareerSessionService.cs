@@ -619,6 +619,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// before any round) — the one source of the current character, level and XP.</summary>
     private PlayerCareerState? CurrentPlayerState()
     {
+        // Once the season-end pipeline has run, its stage=end row owns the final XP/Level and
+        // injury state. Development happens on the review screen, so tree gates and milestone
+        // tokens must read that state rather than the last per-round snapshot.
+        if (SeasonComplete &&
+            StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageEnd) is { } ended)
+            return ended;
         var states = StateStore.ReadRoundPlayerStates(_database, _seasonId);
         return states.Count > 0
             ? states[^1].State.Player
@@ -639,11 +645,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         int? currentAge = character.Age is { } startAge
             ? startAge + (_seasonYear - _firstSeasonYear)
             : null;
+        var rules = _environment.Rules.Character;
+        var projectedCharacter = CharacterProgress.ApplyRespecs(character, PendingRespecs());
         var dossier = Companion.Core.Character.CharacterDossier.Build(
-            character, player.Level, player.Xp, _environment.Rules.Character, currentAge,
+            projectedCharacter, player.Level, player.Xp, rules, currentAge,
             player.RaceSuspensionRemaining, player.SeasonEndingInjury, player.Deceased,
             character.ProgressionVersion >= 1
-                ? _environment.Rules.Character.Levels.SoftCapForYear(Pack.Season.Year)
+                ? rules.Levels.SoftCapForYear(Pack.Season.Year)
                 : null);
         // Reflect spends made this season but not yet applied at a transition.
         int pending = PendingSpends().Sum(s => s.Cost);
@@ -655,6 +663,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private IReadOnlyList<CharacterSpend> PendingSpends() =>
         ReplayService.ReadCharacterSpends(_database, _seasonId);
 
+    private IReadOnlyList<CharacterRespec> PendingRespecs() =>
+        ReplayService.ReadCharacterRespecs(_database, _seasonId);
+
     /// <summary>The rules-backed skill-tree snapshot, including this season's pending development
     /// inputs so a just-bought node immediately projects as owned.</summary>
     public SkillTreeSnapshot? SkillTree()
@@ -665,7 +676,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (player?.Character is not { } character)
             return null;
         var rules = _environment.Rules.Character;
-        var projected = CharacterProgress.ApplyAll(character, PendingSpends(), rules);
+        var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
+        projected = CharacterProgress.ApplyAll(projected, PendingSpends(), rules);
         return Companion.Core.Character.SkillTree.Build(
             projected, player.Level, AvailableCharacterCp(), rules);
     }
@@ -677,7 +689,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (_environment.RulesDirectory is null || player?.Character is not { } character)
             return 0;
-        return CharacterProgress.AvailableCp(character, player.Level, _environment.Rules.Character)
+        var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
+        return CharacterProgress.AvailableCp(projected, player.Level, _environment.Rules.Character)
                - PendingSpends().Sum(s => s.Cost);
     }
 
@@ -694,7 +707,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             throw new InvalidOperationException("This career has no character to develop.");
         var rules = _environment.Rules.Character;
         var pendingSpends = PendingSpends();
-        var projectedCharacter = CharacterProgress.ApplyAll(character, pendingSpends, rules);
+        var projectedCharacter = CharacterProgress.ApplyRespecs(character, PendingRespecs());
+        projectedCharacter = CharacterProgress.ApplyAll(projectedCharacter, pendingSpends, rules);
         string journalTarget = spend.Target;
 
         // Derive the AUTHORITATIVE cost from the rules and never trust the caller's Cost. Otherwise a
@@ -813,7 +827,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return [];
 
         var rules = _environment.Rules.Character;
-        var projected = CharacterProgress.ApplyAll(character, PendingSpends(), rules);
+        var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
+        projected = CharacterProgress.ApplyAll(projected, PendingSpends(), rules);
         var unlockable = Companion.Core.Character.SkillTree.Build(projected, player.Level, available, rules)
             .Branches.SelectMany(branch => branch.Nodes)
             .Where(node => node.Kind == "perk" && node.State == SkillNodeState.Unlockable)
@@ -834,6 +849,52 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 Drawbacks = PerkDescriber.Drawbacks(p),
             })
             .ToList();
+    }
+
+    public int RespecTokensAvailable()
+    {
+        if (_environment.RulesDirectory is null)
+            return 0;
+        var player = CurrentPlayerState();
+        if (player?.Character is null)
+            return 0;
+        var rules = _environment.Rules.Character;
+        int spent = JournalStore.ReadAll(_database).Count(row =>
+            string.Equals(row.Phase, JournalPhases.PlayerRespec, StringComparison.Ordinal));
+        return CharacterRespecMath.AvailableTokens(player.Level, spent, rules);
+    }
+
+    public void RespecNode(string nodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(nodeId);
+        if (_environment.RulesDirectory is null)
+            throw new InvalidOperationException("No character rules are loaded.");
+        var player = CurrentPlayerState();
+        if (player?.Character is not { } character)
+            throw new InvalidOperationException("This career has no character to respec.");
+        if (RespecTokensAvailable() <= 0)
+            throw new InvalidOperationException("No respec token is available.");
+
+        var rules = _environment.Rules.Character;
+        if (!rules.TryGetPerk(nodeId, out var perk) || perk.Cost <= 0)
+            throw new InvalidOperationException("Only an earned, positive-cost perk can be respecced.");
+        if (!character.PerkIds.Contains(nodeId, StringComparer.Ordinal))
+            throw new InvalidOperationException("That perk is not owned.");
+        var creationPerks = character.CreationPerkIds ?? character.PerkIds;
+        if (rules.Respec.PerksLockedAtCreation && creationPerks.Contains(nodeId, StringComparer.Ordinal))
+            throw new InvalidOperationException("Perks chosen at creation are locked.");
+        if (PendingRespecs().Any(input => string.Equals(input.NodeId, nodeId, StringComparison.Ordinal)))
+            throw new InvalidOperationException("That perk is already pending respec.");
+
+        var input = new CharacterRespec { NodeId = nodeId, Refund = perk.Cost };
+        using var transaction = _database.Connection.BeginTransaction();
+        Execute(_database.Connection, transaction,
+            "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
+            "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'development');",
+            ("@utc", NowUtc()), ("@season", _seasonId),
+            ("@phase", JournalPhases.PlayerRespec),
+            ("@delta", JsonSerializer.Serialize(input, CoreJson.Options)));
+        transaction.Commit();
     }
 
     private int RoundCount => Pack.Season.Rounds.Count;
@@ -3841,6 +3902,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // The spends journaled this season develop the character as it rolls into next year —
         // applied identically on the live and replay paths so the evolving driver re-derives.
         var spends = ReplayService.ReadCharacterSpends(_database, _seasonId);
+        var respecs = ReplayService.ReadCharacterRespecs(_database, _seasonId);
 
         if (next.IsCarryover)
         {
@@ -3849,7 +3911,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // replay re-derives through SeasonRollover — byte-identical by construction.
             string? livery = EraTransition.ResolveSeatLivery(Pack, teamId) ?? playerEnd.LiveryName;
             var startStates = SeasonRollover.Derive(
-                playerEnd, driversEnd, teamsEnd, teamId, livery, spends, simInputs.CharacterRules);
+                playerEnd, driversEnd, teamsEnd, teamId, livery,
+                spends, simInputs.CharacterRules, respecs);
             CareerStore.StartCarryoverSeason(
                 _database, startStates, next.SeasonYear,
                 Pack.Manifest.PackId, Pack.Manifest.Version, NowUtc());
@@ -3864,7 +3927,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             simInputs.CanonRetirements, spends, simInputs.CharacterRules,
             // Drive the boundary off the real SEASON years: after a carryover the finished season's
             // year runs ahead of this pack's nominal year, and the transition must start from it.
-            fromYearOverride: _seasonYear, toYearOverride: next.SeasonYear);
+            fromYearOverride: _seasonYear, toYearOverride: next.SeasonYear,
+            respecs: respecs);
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
 

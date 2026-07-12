@@ -5,6 +5,12 @@ namespace Companion.Tests.Data;
 
 public class ReplayServiceTests
 {
+    [Fact]
+    public void PlayerRespec_IsAProvenanceExcludedInputPhase()
+    {
+        Assert.True(DataJournalPhases.IsProvenance(JournalPhases.PlayerRespec));
+    }
+
     private static (CareerDatabase Db, long SeasonId, Companion.Core.Packs.SeasonPack Pack) PlayedCareer(TempDb tmp)
     {
         var db = CareerDatabase.Open(tmp.Path);

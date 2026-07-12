@@ -22,6 +22,28 @@ public sealed record CharacterSpend
     public static CharacterSpend Perk(string perkId, int cost) => new() { Kind = "perk", Target = perkId, Cost = cost };
 }
 
+/// <summary>A milestone-token respec input: unlearn one post-creation perk and refund its authored
+/// cost into the shared Skill Point pool. The source perk is journaled as player.respec.</summary>
+public sealed record CharacterRespec
+{
+    public required string NodeId { get; init; }
+    public required int Refund { get; init; }
+}
+
+public static class CharacterRespecMath
+{
+    public static int AvailableTokens(int level, int used, CharacterRules rules)
+    {
+        int every = rules.Levels.LevelGrants.MilestoneEveryLevels;
+        if (every <= 0 || !string.Equals(
+                rules.Levels.LevelGrants.MilestoneGrant, "respecToken", StringComparison.Ordinal))
+            return 0;
+        int granted = (Math.Max(0, level) / every)
+            * Math.Max(0, rules.Respec.RespecTokenGrantsPerMilestone);
+        return Math.Max(0, granted - Math.Max(0, used));
+    }
+}
+
 /// <summary>Pure character-progression helpers: how much CP a driver has to spend, and how a spend
 /// evolves the character.</summary>
 public static class CharacterProgress
@@ -77,6 +99,26 @@ public static class CharacterProgress
     {
         foreach (var spend in spends)
             character = Apply(character, spend, rules);
+        return character;
+    }
+
+    /// <summary>Applies respec inputs before the replacement spends at a season boundary.</summary>
+    public static CharacterProfile ApplyRespecs(
+        CharacterProfile character,
+        IReadOnlyList<CharacterRespec> respecs)
+    {
+        foreach (var respec in respecs)
+        {
+            if (!character.PerkIds.Contains(respec.NodeId, StringComparer.Ordinal))
+                continue;
+            character = character with
+            {
+                PerkIds = character.PerkIds
+                    .Where(id => !string.Equals(id, respec.NodeId, StringComparison.Ordinal))
+                    .ToList(),
+                CpSpent = Math.Max(0, character.CpSpent - Math.Max(0, respec.Refund)),
+            };
+        }
         return character;
     }
 }

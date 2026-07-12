@@ -120,4 +120,31 @@ public sealed class CharacterSpendTests
         Assert.Contains("rain_man", after.PerkIds);
         Assert.Equal(3, after.CpSpent);
     }
+
+    [Fact]
+    public void RespecTokens_ArriveAtMilestones_AndAreConsumed()
+    {
+        var rules = Rules();
+
+        Assert.Equal(0, CharacterRespecMath.AvailableTokens(level: 4, used: 0, rules));
+        Assert.Equal(1, CharacterRespecMath.AvailableTokens(level: 5, used: 0, rules));
+        Assert.Equal(0, CharacterRespecMath.AvailableTokens(level: 5, used: 1, rules));
+        Assert.Equal(1, CharacterRespecMath.AvailableTokens(level: 10, used: 1, rules));
+    }
+
+    [Fact]
+    public void ApplyRespecs_RemovesThePerkAndRefundsItsSpend()
+    {
+        var character = Character(spent: 2) with
+        {
+            PerkIds = ["sunday_driver", "rain_man"],
+            CreationPerkIds = ["sunday_driver"],
+        };
+
+        var after = CharacterProgress.ApplyRespecs(character,
+            [new CharacterRespec { NodeId = "rain_man", Refund = 1 }]);
+
+        Assert.Equal(["sunday_driver"], after.PerkIds);
+        Assert.Equal(1, after.CpSpent);
+    }
 }

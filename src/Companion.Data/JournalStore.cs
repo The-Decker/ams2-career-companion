@@ -45,6 +45,7 @@ public static class DataJournalPhases
         // player.statSpend is a between-season player choice re-applied at the transition (character
         // depth 4) — an INPUT the round fold never regenerates, so exclude it too.
         || string.Equals(phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal)
+        || string.Equals(phase, JournalPhases.PlayerRespec, StringComparison.Ordinal)
         // player.gridSelection is the creation-time chosen field (v0.6.0) — its data rides in the
         // start player state (survives WipeDerived); the round fold never regenerates it, so exclude.
         || string.Equals(phase, JournalPhases.PlayerGridSelection, StringComparison.Ordinal)
