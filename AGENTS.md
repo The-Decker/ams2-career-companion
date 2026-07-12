@@ -3,26 +3,33 @@
 Windows desktop app (WPF, .NET 10, single self-contained exe) that runs historical career seasons
 around Automobilista 2 single-player custom races. **`PLAN.md`** is the founding product vision
 (2026-07-02) — still the scope north star, though the built state has moved well past it (career
-hub, character system, SMGP replica mode). The durable design specs are in `docs/dev/`
-(`career-hub-design.md`, `character-system.md`, `smgp-design.md`, the audits, `season-coverage.md`).
-Superseded planning docs live in `docs/archive/`. Verified AMS2/f1db reference tables:
-`docs/research/RESEARCH.md`.
+hub, character system, SMGP replica mode). **`docs/PROJECT.md` is the master onboarding guide — the
+whole project in one place; read it first.** The durable design specs are in `docs/dev/`
+(`character-rpg-rework.md`, `smgp-finish-roadmap.md`, `career-hub-design.md`, `character-system.md`,
+`smgp-design.md`, the audits). Superseded planning docs live in `docs/archive/`. Verified AMS2/f1db
+reference tables: `docs/research/RESEARCH.md`.
 
-## ⚠ YOUR LANE (Codex) — read `CODEX-1967-BRIEF.md` first
+## ⚠ YOUR LANE (Codex) — dual-role handoff, read your charter first
 
-Two agents share this repo. **Claude = SMGP mode only. You (Codex) = the 1967 F1 era.** To avoid
-clobbering each other:
+While Claude (the usual Head of Coding) is out until it resets **Wednesday 2026-07-16**, Codex holds
+BOTH roles, run as **two parallel instances** against a strict lane boundary. Read your charter:
 
-- **Work in your OWN git worktree + branch `era/1967`** — NOT the same working directory Claude is
-  editing. `git worktree add "Z:\Claude Code\ams2-worktrees\era-1967" -b era/1967 hub/increment-4`.
-- **You own:** `packs/f1-1967/**`, `data/rules/news/1960s.json`, `data/history/1967.json`, 1967
-  docs/research. Start from `docs/dev/season-coverage.md` to find 1967's real gaps.
-- **Do NOT touch (Claude's / shared):** `data/rules/smgp/**`, `src/**/Smgp/**`,
-  `src/Companion.Ams2/Skins/**`, `SMGP-CONTINUE.md`; the points/standings engine and
-  `src/Companion.Core/News/**` are **data-only for you** (flag Mike if you truly need a code change);
-  `MEMORY.md`/`CLAUDE.md`/`AGENTS.md`/`PLAN.md` are coordinate-don't-clobber.
-
-Full details, guardrails, and the mission are in **`CODEX-1967-BRIEF.md`**.
+- **Head of Coding** — charter **`docs/dev/codex-head-of-coding.md`**. Owns `src/Companion.Core/**`,
+  `src/Companion.ViewModels/**`, `src/Companion.Data/**`, `src/Companion.Ams2/**`, `data/rules/**`,
+  `tests/**` (except the render stand-ins). **Held temporarily** — when Claude resets it resumes Head
+  of Coding and this instance reverts to GUI-only.
+- **Head of GUI** — charter **`docs/dev/codex-head-of-gui.md`**. Owns `src/Companion.App/**`
+  (Views/Themes/Converters/Assets) + `tests/Companion.RenderHarness.Tests`. **Permanent** — stays Head
+  of GUI after Claude returns.
+- **Strict, load-bearing boundary:** the coding instance NEVER edits `src/Companion.App/**`; the GUI
+  instance NEVER edits Core/ViewModels/Data/tests (except its own render stand-in). This is what lets
+  two agents share the repo without clobbering. `MEMORY.md`/`CLAUDE.md`/`AGENTS.md`/`PLAN.md` are
+  coordinate-don't-clobber.
+- **Current priority (both):** the character/RPG rework (`docs/dev/character-rpg-rework.md` — coding
+  ships the Slice-0 stub bind contract FIRST so GUI can bind names), then the death/injury screens
+  (`docs/dev/codex-gui-round5-brief.md`) and the SMGP finish queue (`docs/dev/smgp-finish-roadmap.md`).
+- The **f1db oracle is sacred (77/77, never touched)**; the determinism/replay contract in
+  `docs/PROJECT.md` §3 is non-negotiable. News changes must pass `NewsCorpusGuardTests`.
 
 ## Locked directions (do not re-litigate)
 
