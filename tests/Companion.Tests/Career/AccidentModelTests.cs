@@ -17,22 +17,26 @@ public sealed class AccidentModelTests
         AccidentModel.Resolve(severity, roll, Durability, mods ?? PlayerPerkModifiers.Identity, Rules);
 
     [Fact]
-    public void LightShunt_AlmostNeverHurts()
+    public void LightShunt_IsMostlyHarmless_AndNeverFatalOrSeasonEnding()
     {
+        // Decision B (2026-07-12): a light crash is MOSTLY HARMLESS — none for the vast majority, at worst a
+        // single missed race, and NEVER a death or a season-ender, even on the very top roll.
         Assert.Equal(AccidentOutcomeKind.None, Resolve(AccidentSeverity.Light, 1).Kind);
-        Assert.Equal(AccidentOutcomeKind.None, Resolve(AccidentSeverity.Light, 480).Kind);
-        // Only the single top unit kills on a light shunt (0.2%).
-        Assert.Equal(AccidentOutcomeKind.Death, Resolve(AccidentSeverity.Light, 500).Kind);
+        Assert.Equal(AccidentOutcomeKind.None, Resolve(AccidentSeverity.Light, 490).Kind);
+
+        var top = Resolve(AccidentSeverity.Light, 500);
+        Assert.Equal(AccidentOutcomeKind.MinorInjury, top.Kind);
+        Assert.Equal(1, top.MissRaces);
     }
 
     [Fact]
-    public void LightMinorInjuryBands_MissTheRightNumberOfRaces()
+    public void MediumMinorInjuryBands_MissTheRightNumberOfRaces()
     {
-        var miss1 = Resolve(AccidentSeverity.Light, 481);
+        var miss1 = Resolve(AccidentSeverity.Medium, 411);
         Assert.Equal(AccidentOutcomeKind.MinorInjury, miss1.Kind);
         Assert.Equal(1, miss1.MissRaces);
 
-        var miss2 = Resolve(AccidentSeverity.Light, 497);
+        var miss2 = Resolve(AccidentSeverity.Medium, 471);
         Assert.Equal(AccidentOutcomeKind.MinorInjury, miss2.Kind);
         Assert.Equal(2, miss2.MissRaces);
     }
@@ -93,7 +97,8 @@ public sealed class AccidentModelTests
         Assert.Equal(1, safe.EffectiveRoll);
         Assert.Equal(AccidentOutcomeKind.None, safe.Kind);
 
-        var doomed = Resolve(AccidentSeverity.Light, 1, superReckless);
+        // A heavy shunt still has a death ceiling the clamp lands on (a light one no longer does).
+        var doomed = Resolve(AccidentSeverity.Heavy, 1, superReckless);
         Assert.Equal(500, doomed.EffectiveRoll);
         Assert.Equal(AccidentOutcomeKind.Death, doomed.Kind);
     }
@@ -145,11 +150,17 @@ public sealed class AccidentModelTests
         Assert.True(glass > average, "a glass_cannon heavy shunt must be deadlier than an average driver's");
         Assert.True(prone >= glass, "injury_prone must be the most fragile of all");
 
-        // A heavier shunt is never safer than a lighter one, for every profile.
+        // Decision B: a LIGHT crash is mostly harmless — it NEVER kills (or ends a season), even for the most
+        // fragile build on the worst roll (the safety-offset clamp can at most cost them one race). And a
+        // heavier shunt is never safer than a lighter one, for every profile.
         foreach (var a in Archetypes)
+        {
+            Assert.Equal(0, OutcomeCount(AccidentSeverity.Light, a.Durability, a.Mods, AccidentOutcomeKind.Death));
+            Assert.Equal(0, OutcomeCount(AccidentSeverity.Light, a.Durability, a.Mods, AccidentOutcomeKind.SeasonEnding));
             Assert.True(
                 OutcomeCount(AccidentSeverity.Heavy, a.Durability, a.Mods, AccidentOutcomeKind.Death)
                     >= OutcomeCount(AccidentSeverity.Light, a.Durability, a.Mods, AccidentOutcomeKind.Death),
                 $"a heavy shunt must be at least as deadly as a light one for {a.Name}");
+        }
     }
 }

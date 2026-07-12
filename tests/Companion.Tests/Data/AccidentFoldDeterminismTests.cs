@@ -107,9 +107,11 @@ public sealed class AccidentFoldDeterminismTests : IDisposable
     {
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
         Assert.NotNull(rules.Character.Accident);
-        Assert.Equal(4, rules.Character.Accident!.Light.Count);
+        Assert.Equal(2, rules.Character.Accident!.Light.Count); // light is harmless: none + a 1-race injury, no death
         Assert.Equal(5, rules.Character.Accident.Medium.Count);
         Assert.Equal(500, rules.Character.Accident.Heavy[^1].UpTo);
+        // A light crash's last band is never fatal (decision B).
+        Assert.NotEqual("death", rules.Character.Accident.Light[^1].Outcome);
     }
 
     [Fact]

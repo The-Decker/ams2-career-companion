@@ -133,9 +133,15 @@ d500, so 1 unit = 0.2%. Grounded in "heavy crashes hurt; deaths are rare even th
 
 | Severity | None | Minor (miss 1) | Minor (miss 2-3) | Season-ending | Death |
 |---|---|---|---|---|---|
-| **Light** | 1–480 (96%) | 481–496 (3.2%) | 497–499 (0.6%) | — | 500 (0.2%) |
+| **Light** | 1–490 (98%) | 491–500 (2%) | — | — | — |
 | **Medium** | 1–410 (82%) | 411–470 (12%) | 471–490 (4%) | 491–497 (1.4%) | 498–500 (0.6%) |
 | **Heavy** | 1–250 (50%) | 251–380 (26%) | 381–450 (14%) | 451–485 (7%) | 486–500 (3%) |
+
+**Light is intentionally never fatal or season-ending (decision B, resolved 2026-07-12: "light crashes are
+mostly harmless").** A light crash's worst outcome is one missed race — and because its top band is a minor
+injury, the safety-offset clamp (which piles a reckless driver's overflow rolls onto the last band) can only
+ever cost a fragile driver a race, never their life. Death + season-ending fragility live on Medium/Heavy,
+where the clamp amplification is the intended glass-cannon risk.
 
 `safetyOffset` shifts `effective` up (safer) for high durability / protective perks and down for reckless
 ones, so a `glass_cannon` heavy shunt is meaningfully deadlier than an `ironman`'s. Exact numbers are
@@ -258,9 +264,12 @@ Slices 1-2 are pure infra/input (low risk); 3-4 are the determinism-critical cor
 - **D — Skipped rounds are AUTO-SIMULATED** (§5), since AMS2 can't spectate a single-player race — a
   deterministic field-result generator, player DNS.
 
+- **B — Probability bands (RESOLVED 2026-07-12).** Mike: "light crashes are mostly harmless." Light no longer
+  has a death or season-ending band — worst case is one missed race (§3.4). Medium/Heavy keep their death
+  bands + the safety-offset clamp amplification (a glass_cannon heavy shunt ~7.8% fatal vs an ironman ~0%).
+  The whole table stays tunable data (`perks.json` accident block) + the `AccidentModel.DefaultRules` fallback.
+
 **Still open (defaulting; Mike can tune):**
-- **B — Probability bands.** The §3.4 d500 table is the proposed default; it lives in tunable data, so it
-  can change without a rebuild. Will confirm exact numbers with Mike when Slice 3 lands.
 - **E — Save-slot UX (Normal).** Proposed: a few named manual slots + a rolling autosave ring. Low-risk;
   will default and refine.
 

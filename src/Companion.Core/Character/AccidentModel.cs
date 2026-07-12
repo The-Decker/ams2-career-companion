@@ -75,12 +75,14 @@ public static class AccidentModel
     {
         SafetyDurabilityScale = 80.0,
         SafetyBaseAddScale = 200.0,
+        // Light crashes are MOSTLY HARMLESS (Mike, decision B, 2026-07-12): a light shunt NEVER kills and
+        // never ends a season — worst case is a single missed race. No death band, so the safety-offset clamp
+        // (which piles a reckless driver's top rolls onto the last band) can only ever cost a fragile driver
+        // one race, not their life.
         Light =
         [
-            new() { UpTo = 480, Outcome = "none" },
-            new() { UpTo = 496, Outcome = "minorInjury", MissRaces = 1 },
-            new() { UpTo = 499, Outcome = "minorInjury", MissRaces = 2 },
-            new() { UpTo = 500, Outcome = "death" },
+            new() { UpTo = 490, Outcome = "none" },
+            new() { UpTo = 500, Outcome = "minorInjury", MissRaces = 1 },
         ],
         Medium =
         [

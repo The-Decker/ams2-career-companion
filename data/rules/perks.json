@@ -99,10 +99,8 @@
     "safetyDurabilityScale": 80,
     "safetyBaseAddScale": 200,
     "light": [
-      { "upTo": 480, "outcome": "none" },
-      { "upTo": 496, "outcome": "minorInjury", "missRaces": 1 },
-      { "upTo": 499, "outcome": "minorInjury", "missRaces": 2 },
-      { "upTo": 500, "outcome": "death" }
+      { "upTo": 490, "outcome": "none" },
+      { "upTo": 500, "outcome": "minorInjury", "missRaces": 1 }
     ],
     "medium": [
       { "upTo": 410, "outcome": "none" },
