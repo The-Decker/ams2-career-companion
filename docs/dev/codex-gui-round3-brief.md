@@ -173,3 +173,28 @@ All additive, display-only, already populated by `CareerSessionService.SmgpPaddo
   the Driver tab.
 - **Rival dossier** (`SmgpRivalOption`): `HeadToHead` (`SmgpHeadToHead?`), `Tier`/`TierLabel`/`TierColorHex`,
   `Pronouns` — for the deeper rival screen + the coloured class picker.
+
+## Contract — Task 4 (SMGP living-world dispatches) LANDED, ready to bind
+
+All display-only projections over the folded results (never a fold input; deterministic bodies off the master
+seed, replay byte-identical). This is the data spine for the NEWS TICKER / dispatch cards + the paddock rumor
+line the round-4 brief (§3 immersion surfaces) calls for.
+
+**New VM data to bind:**
+- **`ICareerSession.SmgpDispatches()`** → `IReadOnlyList<SmgpDispatch>`, **newest first**, empty off-SMGP.
+  Each `SmgpDispatch` = `{ WhenLabel (string, "Season 3 · Monaco"), Kind (SmgpDispatchKind), Headline (string,
+  bold arcade), Body (string, 1-3 sentence story), DriverArtKey (string — a driver id for
+  `portraits/<id>.jpg`, or ""), TeamArtKey (string — a team id for `smgp/teams/<team>.jpg`, or ""),
+  SortSeason/SortRound/SortSeq (ints, already sorted) }`.
+  - `SmgpDispatchKind`: `Milestone` (green accent — the player's firsts/promotions/titles/rivalry-won/finale),
+    `RaceResult`, `Setback` (amber — DNF/demotion/rivalry-lost/near-miss/career-over), `RivalWatch` (a rival's
+    win streak / the A. Senna benchmark), `TitleRace` (leader change / title tightening / P2 turnover),
+    `SeasonDigest`. Key the card's accent + icon on this. Use `DriverArtKey` to show a face when present
+    (rivalry + world dispatches carry one).
+  - Render as a scrollable dispatch feed / ticker. `WhenLabel` is the dateline; `Headline` the bold line;
+    `Body` the story. A rivalry dispatch's `Body` already ends with the rival's own quoted trash-talk.
+- **Paddock rumor** (`SmgpPaddockModel.PaddockRumor`, string, from `SmgpPaddock()`): a rotating one-line
+  "paddock rumor" for the Paddock tab (seeded, stable on re-open, empty when no corpus). Bind as a flavour
+  strip on the Paddock.
+- Corpus lives at `data/rules/smgp/dispatches.json` (art-free — pure copy). No new art keys are *required*;
+  `DriverArtKey`/`TeamArtKey` reuse the existing `portraits/`/`smgp/teams/` sets.

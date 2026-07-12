@@ -18,6 +18,22 @@ public sealed record SmgpCareerBeat
 
     /// <summary>A sentence of colour/detail.</summary>
     public required string Detail { get; init; }
+
+    // ---- Structured ordering + subject (additive, default 0/"" so existing beat consumers/tests are
+    //      unaffected). Populated by Detect so the living-world dispatch feed can sort chronologically and
+    //      attach a rival's face/voice; the terse timeline card ignores them. ----
+
+    /// <summary>The 1-based campaign season this beat belongs to (0 on a beat built without season context).</summary>
+    public int Season { get; init; }
+
+    /// <summary>The round within the season (0 for a season-level beat — arrival, title, finale — which
+    /// have no single round).</summary>
+    public int Round { get; init; }
+
+    /// <summary>The beat's subject driver id when it names one (the rival for a
+    /// <see cref="SmgpBeatKind.RivalryEarned"/>/<see cref="SmgpBeatKind.RivalryLost"/> beat), else empty —
+    /// lets a consumer attach the rival's portrait / their own words.</summary>
+    public string SubjectId { get; init; } = "";
 }
 
 /// <summary>The kind of career milestone a <see cref="SmgpCareerBeat"/> marks.</summary>
@@ -62,6 +78,10 @@ public sealed record SmgpNarrativeRound
     /// <summary>The venue label for this round (the WhenLabel's location part).</summary>
     public required string Venue { get; init; }
 
+    /// <summary>The pack round number — additive (default 0) so the dispatch feed can key a beat to its
+    /// round for chronological ordering; the beat-content tests leave it 0.</summary>
+    public int Round { get; init; }
+
     /// <summary>The player's race finishing position, or null when they did not finish / were unclassified.</summary>
     public int? Finish { get; init; }
 
@@ -87,6 +107,13 @@ public sealed record SmgpNarrativeRound
     /// <c>trigger == playerSeatForfeit</c>), or null. Its consequence (a tier drop, or a step toward the
     /// floor) is folded into this one beat rather than also emitting a bare demotion.</summary>
     public string? RivalryLostTo { get; init; }
+
+    /// <summary>The DRIVER ID of the rival named in <see cref="RivalryWonOver"/> — additive (default null)
+    /// so the dispatch feed can attach the rival's portrait + their own trash-talk to the story.</summary>
+    public string? RivalryWonOverId { get; init; }
+
+    /// <summary>The DRIVER ID of the rival named in <see cref="RivalryLostTo"/> — additive (default null).</summary>
+    public string? RivalryLostToId { get; init; }
 
     /// <summary>Cumulative LEVEL-D floor losses after this round (a near-miss approaches the floor limit).</summary>
     public int FloorLosses { get; init; }
@@ -156,18 +183,26 @@ public static class SmgpCareerBeats
         bool arrived = false;
         bool careerEnded = false;
 
+        // The (season, round) the current beat belongs to — stamped onto every emitted beat so the
+        // living-world dispatch feed can order it chronologically. A season-level beat uses the START/END
+        // round sentinels so arrivals sort before, and titles/finales after, the season's scored rounds.
+        int curSeason = 0, curRound = 0;
+        void Emit(SmgpCareerBeat beat) => beats.Add(beat with { Season = curSeason, Round = curRound });
+
         foreach (var season in seasons)
         {
             if (careerEnded)
                 break; // nothing happens after the floor kicks the player out
 
             string seasonLabel = $"Season {season.Ordinal}";
+            curSeason = season.Ordinal;
+            curRound = SmgpDispatch.SeasonStartRound;
 
             // Season-boundary seat: arrival (season 1) or a between-seasons move (a season-review promotion
             // that climbed a tier, or a lost title defense that dropped one).
             if (!arrived)
             {
-                beats.Add(new SmgpCareerBeat
+                Emit(new SmgpCareerBeat
                 {
                     WhenLabel = seasonLabel,
                     Kind = SmgpBeatKind.Arrived,
@@ -180,7 +215,7 @@ public static class SmgpCareerBeats
             }
             else
             {
-                beats.Add(new SmgpCareerBeat
+                Emit(new SmgpCareerBeat
                 {
                     WhenLabel = seasonLabel,
                     Kind = SmgpBeatKind.SeasonMilestone,
@@ -190,9 +225,9 @@ public static class SmgpCareerBeats
                         : $"A new season begins, still with {season.StartSeatTeamName}.",
                 });
                 if (Climbed(prevPrestige, season.StartSeatPrestige))
-                    beats.Add(SeatMove(seasonLabel, up: true, season.StartSeatTeamName, offSeason: true));
+                    Emit(SeatMove(seasonLabel, up: true, season.StartSeatTeamName, offSeason: true));
                 else if (Dropped(prevPrestige, season.StartSeatPrestige))
-                    beats.Add(SeatMove(seasonLabel, up: false, season.StartSeatTeamName, offSeason: true));
+                    Emit(SeatMove(seasonLabel, up: false, season.StartSeatTeamName, offSeason: true));
             }
             prevPrestige = season.StartSeatPrestige;
 
@@ -201,11 +236,12 @@ public static class SmgpCareerBeats
             foreach (var round in season.Rounds)
             {
                 string when = $"{seasonLabel} · {round.Venue}";
+                curRound = round.Round;
 
                 if (!firstStart)
                 {
                     firstStart = true;
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.FirstStart, Headline = "FIRST START",
                         Detail = "Lights out on the first race of the career.",
@@ -217,7 +253,7 @@ public static class SmgpCareerBeats
                 if (!firstPoints && round.ScoredPointsCumulative)
                 {
                     firstPoints = true;
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.FirstPoints, Headline = "FIRST POINTS",
                         Detail = "On the championship board for the first time.",
@@ -228,7 +264,7 @@ public static class SmgpCareerBeats
                     if (!firstTop5 && pos <= 5)
                     {
                         firstTop5 = true;
-                        beats.Add(new SmgpCareerBeat
+                        Emit(new SmgpCareerBeat
                         {
                             WhenLabel = when, Kind = SmgpBeatKind.FirstTop5, Headline = "FIRST TOP 5",
                             Detail = $"A first top-five — P{pos}.",
@@ -237,7 +273,7 @@ public static class SmgpCareerBeats
                     if (!firstPodium && pos <= 3)
                     {
                         firstPodium = true;
-                        beats.Add(new SmgpCareerBeat
+                        Emit(new SmgpCareerBeat
                         {
                             WhenLabel = when, Kind = SmgpBeatKind.FirstPodium, Headline = "FIRST PODIUM",
                             Detail = $"The rostrum, at last — P{pos}.",
@@ -246,7 +282,7 @@ public static class SmgpCareerBeats
                     if (!firstWin && pos == 1)
                     {
                         firstWin = true;
-                        beats.Add(new SmgpCareerBeat
+                        Emit(new SmgpCareerBeat
                         {
                             WhenLabel = when, Kind = SmgpBeatKind.FirstWin, Headline = "FIRST WIN",
                             Detail = "The first victory the SEGA world will remember.",
@@ -256,7 +292,7 @@ public static class SmgpCareerBeats
                 if (!firstPole && round.Pole)
                 {
                     firstPole = true;
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.FirstPole, Headline = "FIRST POLE",
                         Detail = "Fastest of all in qualifying for the first time.",
@@ -265,11 +301,12 @@ public static class SmgpCareerBeats
 
                 // A two-wins offer earned this round (from the journal trigger, since the streak resets).
                 if (round.RivalryWonOver is { Length: > 0 } wonOver)
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.RivalryEarned,
                         Headline = "RIVALRY WON",
                         Detail = $"Beat {wonOver} twice — the offer of his seat is on the table.",
+                        SubjectId = round.RivalryWonOverId ?? "",
                     });
 
                 // A two-losses forfeit this round: emit the rivalry-lost beat, and FOLD the tier drop it
@@ -280,11 +317,12 @@ public static class SmgpCareerBeats
                     string dest = droppedTier && !string.IsNullOrWhiteSpace(round.SeatTeamName)
                         ? $" — forced down to {round.SeatTeamName}"
                         : "";
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.RivalryLost,
                         Headline = "RIVALRY LOST",
                         Detail = $"Lost to {lostTo} twice{dest}.",
+                        SubjectId = round.RivalryLostToId ?? "",
                     });
                 }
                 else
@@ -292,15 +330,15 @@ public static class SmgpCareerBeats
                     // Seat moves not tied to a rivalry loss this round (a battle-fold climb, or an
                     // off-a-round move that the state sequence exposes).
                     if (Climbed(prevPrestige, round.SeatPrestige))
-                        beats.Add(SeatMove(when, up: true, round.SeatTeamName, offSeason: false));
+                        Emit(SeatMove(when, up: true, round.SeatTeamName, offSeason: false));
                     else if (droppedTier)
-                        beats.Add(SeatMove(when, up: false, round.SeatTeamName, offSeason: false));
+                        Emit(SeatMove(when, up: false, round.SeatTeamName, offSeason: false));
                 }
                 prevPrestige = round.SeatPrestige;
 
                 // A brush with the floor: crossing to one loss from career-over.
                 if (round.FloorLosses >= NearMissThreshold && prevFloorLosses < NearMissThreshold && !round.CareerOver)
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.NearMiss,
                         Headline = "ON THE BRINK",
@@ -310,7 +348,7 @@ public static class SmgpCareerBeats
 
                 if (round.CareerOver)
                 {
-                    beats.Add(new SmgpCareerBeat
+                    Emit(new SmgpCareerBeat
                     {
                         WhenLabel = when, Kind = SmgpBeatKind.Demotion,
                         Headline = "OUT OF THE SMGP",
@@ -321,8 +359,11 @@ public static class SmgpCareerBeats
                 }
             }
 
+            // Season-END beats (a title, the finale) sort AFTER every scored round of the season.
+            curRound = SmgpDispatch.SeasonEndRound;
+
             if (season.Complete && season.PlayerChampion)
-                beats.Add(new SmgpCareerBeat
+                Emit(new SmgpCareerBeat
                 {
                     WhenLabel = seasonLabel, Kind = SmgpBeatKind.Title,
                     Headline = "CHAMPION",
@@ -330,7 +371,7 @@ public static class SmgpCareerBeats
                 });
 
             if (season.Complete && season.CampaignComplete)
-                beats.Add(new SmgpCareerBeat
+                Emit(new SmgpCareerBeat
                 {
                     WhenLabel = seasonLabel, Kind = SmgpBeatKind.Finale,
                     Headline = season.CampaignFlawless ? "THE EMPEROR RUN" : "SEVENTEEN CONQUERED",

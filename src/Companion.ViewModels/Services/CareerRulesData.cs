@@ -63,6 +63,11 @@ public sealed record CareerRulesData
     /// future Tycoon mode). DISPLAY-ONLY — never a fold input; empty when the file is absent.</summary>
     public required SmgpSponsors SmgpSponsors { get; init; }
 
+    /// <summary>The SMGP "living world" dispatch corpus (<c>data\rules\smgp\dispatches.json</c>): templated
+    /// in-world news bodies for the reactive per-round dispatch feed (Task 4). DISPLAY-ONLY — never a fold
+    /// input; empty when the file is absent (the feed then falls back to each milestone's own detail line).</summary>
+    public required SmgpDispatchCorpus SmgpDispatchCorpus { get; init; }
+
     /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
     /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
@@ -81,6 +86,7 @@ public sealed record CareerRulesData
         SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
         SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
         SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
+        SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
         CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 

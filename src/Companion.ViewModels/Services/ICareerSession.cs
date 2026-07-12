@@ -69,6 +69,16 @@ public interface ICareerSession
     /// when no rules are loaded. Additive default so fakes compile.</summary>
     SmgpPaddockModel? SmgpPaddock() => null;
 
+    /// <summary>The SMGP "living world" DISPATCH feed (Task 4): reactive in-world news stories the career
+    /// generates as it unfolds — the player's wins / firsts / promotions / titles / rivalries / setbacks
+    /// (from <see cref="Companion.Core.Smgp.SmgpCareerBeats"/>) plus AI-world stories (a rival's win streak,
+    /// the A. Senna benchmark, the title race tightening, a standings move — from
+    /// <see cref="Companion.Core.Smgp.SmgpWorldStories"/>), voiced through the dispatch corpus. Newest first.
+    /// A pure DISPLAY-ONLY projection over the folded results (deterministic body selection off the master
+    /// seed) — never a fold input, so replay stays byte-identical. Empty outside the SMGP mode / before any
+    /// round. Additive default so fakes compile.</summary>
+    IReadOnlyList<Companion.Core.Smgp.SmgpDispatch> SmgpDispatches() => [];
+
     /// <summary>The player's SMGP team id right now (its short ladder position follows seat swaps),
     /// captured BEFORE applying a round so the shell can tell whether that round forced a DEMOTION
     /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
@@ -861,6 +871,11 @@ public sealed record SmgpPaddockModel
     /// <summary>The SMGP sponsor board — fictional brands with stories/logos + the teams they back
     /// (the Paddock's Sponsors tab; seed of the future Tycoon mode). Empty when no sponsors are authored.</summary>
     public IReadOnlyList<SmgpSponsorCard> Sponsors { get; init; } = [];
+
+    /// <summary>A rotating "paddock rumor" line for the Paddock (Task 4) — a seeded, DISPLAY-ONLY flavour
+    /// line drawn from the dispatch corpus, stable on a re-open and rotating slowly across the career.
+    /// Empty when no rumor pool is authored.</summary>
+    public string PaddockRumor { get; init; } = "";
 }
 
 /// <summary>One sponsor's Paddock card: identity + industry/tier + brand colour + logo key + story + the

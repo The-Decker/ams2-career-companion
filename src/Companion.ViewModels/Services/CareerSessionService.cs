@@ -1574,7 +1574,21 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             .ThenBy(c => c.Name, StringComparer.Ordinal)
             .ToList();
 
-        return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams, Sponsors = sponsors };
+        // A rotating "paddock rumor" line (Task 4) — seeded off the applied-round count so it changes as the
+        // career progresses yet stays stable on a re-open. DISPLAY-ONLY flavour, grounded in real grid facts.
+        string leaderName = standings?.Drivers.FirstOrDefault(d => d.Position == 1) is { } lead
+            ? DriverDisplayName(lead.DriverId) : "";
+        var rumorTokens = DispatchTokens(PlayerDisplayName() ?? PlayerDefaultName, playerTeam?.Name ?? "",
+            rival: "", venue: "", season: _seasonOrdinal, number: 0, subject: "", other: "",
+            leader: leaderName, benchmark: DriverDisplayName(ResolveBenchmarkDriverId()));
+        var rumorStream = new StreamFactory(MasterSeedU)
+            .CreateStream(DispatchStream, _seasonOrdinal, standings?.AfterRound ?? 0, "rumor");
+        string rumor = _environment.Rules.SmgpDispatchCorpus.Rumor(rumorTokens, rumorStream);
+
+        return new SmgpPaddockModel
+        {
+            Drivers = orderedDrivers, Teams = orderedTeams, Sponsors = sponsors, PaddockRumor = rumor,
+        };
     }
 
     /// <summary>The player's OWN Paddock bio — the one card that is not authored but generated live, so
@@ -1961,6 +1975,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private (IReadOnlyList<Companion.Core.Smgp.SmgpCareerBeat> Beats, string Intro) BuildPlayerTimeline(
         SmgpCareerStats? playerCareer, SmgpSeasonStats? playerSeason, string playerTeamName)
     {
+        var beats = Companion.Core.Smgp.SmgpCareerBeats.Detect(BuildSmgpNarrativeSeasons());
+        return (beats, BuildNarrativeIntro(playerCareer, playerSeason, playerTeamName));
+    }
+
+    /// <summary>Shapes the per-season/per-round facts the milestone detector AND the living-world dispatch
+    /// feed both read (Task 2 timeline + Task 4 dispatches) — one walk over the career's seasons rehydrating
+    /// each pinned pack + scoring, reading the stored results, the SMGP seat sequence and the journaled battle
+    /// triggers. A pure display-only projection over the immutable results; never a fold input.</summary>
+    private IReadOnlyList<Companion.Core.Smgp.SmgpNarrativeSeason> BuildSmgpNarrativeSeasons()
+    {
         var seasonsInput = new List<Companion.Core.Smgp.SmgpNarrativeSeason>();
         int ordinal = 0;
         foreach (var season in CareerStore.ReadSeasons(_database))
@@ -1988,6 +2012,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // title-defense rows carry trigger "none" and are skipped.
             var wonByRound = new Dictionary<int, string>();
             var lostByRound = new Dictionary<int, string>();
+            var wonIdByRound = new Dictionary<int, string>();
+            var lostIdByRound = new Dictionary<int, string>();
             foreach (var row in JournalStore.ReadSeason(_database, season.Id))
             {
                 if (!string.Equals(row.Phase, JournalPhases.SmgpBattle, StringComparison.Ordinal) || row.Round is not { } jr)
@@ -2000,9 +2026,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     string? rival = root.TryGetProperty("rival", out var rvv) ? rvv.GetString() : null;
                     string rivalName = rival is not null ? driverNames.GetValueOrDefault(rival, rival) : "a rival";
                     if (string.Equals(trigger, "seatSwapOfferToPlayer", StringComparison.Ordinal))
+                    {
                         wonByRound[jr] = rivalName;
+                        if (rival is { Length: > 0 }) wonIdByRound[jr] = rival;
+                    }
                     else if (string.Equals(trigger, "playerSeatForfeit", StringComparison.Ordinal))
+                    {
                         lostByRound[jr] = rivalName;
+                        if (rival is { Length: > 0 }) lostIdByRound[jr] = rival;
+                    }
                 }
                 catch (System.Text.Json.JsonException)
                 {
@@ -2061,6 +2093,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 rounds.Add(new Companion.Core.Smgp.SmgpNarrativeRound
                 {
                     Venue = venueByRound.GetValueOrDefault(s.Round) ?? $"Round {s.Round}",
+                    Round = s.Round,
                     Finish = finish,
                     Pole = pole,
                     ScoredPointsCumulative = running > 0,
@@ -2068,6 +2101,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     SeatPrestige = seatPrestige,
                     RivalryWonOver = wonByRound.GetValueOrDefault(s.Round),
                     RivalryLostTo = lostByRound.GetValueOrDefault(s.Round),
+                    RivalryWonOverId = wonIdByRound.GetValueOrDefault(s.Round),
+                    RivalryLostToId = lostIdByRound.GetValueOrDefault(s.Round),
                     FloorLosses = smgp?.FloorLosses ?? 0,
                     CareerOver = smgp?.CareerOver ?? false,
                 });
@@ -2086,8 +2121,303 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             });
         }
 
-        var beats = Companion.Core.Smgp.SmgpCareerBeats.Detect(seasonsInput);
-        return (beats, BuildNarrativeIntro(playerCareer, playerSeason, playerTeamName));
+        return seasonsInput;
+    }
+
+    /// <summary>The named RNG subsystem for the living-world dispatch feed — a DISPLAY-ONLY stream (never a
+    /// fold input), so it needs no <see cref="CareerStreams"/> registration; it just keys deterministic
+    /// corpus selection off the master seed so the same career shows the same stories on every open.</summary>
+    private const string DispatchStream = "smgp-dispatch";
+
+    /// <summary>The SMGP "living world" dispatch feed (Task 4): the reactive in-world news the career writes
+    /// as it unfolds. Two sources, both pure projections over the folded results: the player's own milestones
+    /// (<see cref="Companion.Core.Smgp.SmgpCareerBeats"/>) and the AI-world stories around them
+    /// (<see cref="Companion.Core.Smgp.SmgpWorldStories"/>), each voiced through the dispatch corpus with a
+    /// deterministic per-(season, round) stream. Newest first. Empty outside the mode. Never a fold input, so
+    /// replay stays byte-identical (the bodies are DERIVED from the seed, never stored).</summary>
+    public IReadOnlyList<Companion.Core.Smgp.SmgpDispatch> SmgpDispatches()
+    {
+        if (_environment.RulesDirectory is null ||
+            !string.Equals(Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
+            return [];
+
+        var corpus = _environment.Rules.SmgpDispatchCorpus;
+        var factory = new StreamFactory(MasterSeedU);
+        string playerName = PlayerDisplayName() ?? PlayerDefaultName;
+        string playerTeam = CurrentPlayerTeamName();
+        string benchmarkId = ResolveBenchmarkDriverId();
+        string benchmarkName = DriverDisplayName(benchmarkId);
+        string leaderName = CurrentStandings()?.Drivers.FirstOrDefault(d => d.Position == 1) is { } ld
+            ? DriverDisplayName(ld.DriverId) : "";
+
+        var dispatches = new List<Companion.Core.Smgp.SmgpDispatch>();
+        int seq = 0;
+
+        // --- Player milestone dispatches (reuse the Task-2 beat detector; render a news body per beat) ---
+        foreach (var beat in Companion.Core.Smgp.SmgpCareerBeats.Detect(BuildSmgpNarrativeSeasons()))
+        {
+            var (key, kind) = MapBeatToDispatch(beat);
+            if (key is null)
+                continue;
+            string venue = VenueFromWhenLabel(beat.WhenLabel);
+            string rivalName = beat.SubjectId is { Length: > 0 } rid ? DriverDisplayName(rid) : "";
+            var tokens = DispatchTokens(playerName, playerTeam, rivalName, venue, beat.Season, 0,
+                subject: "", other: "", leader: leaderName, benchmark: benchmarkName);
+            var stream = factory.CreateStream(DispatchStream, beat.Season, beat.Round, key + "|" + beat.SubjectId);
+            string body = corpus.Render(key, tokens, stream, fallback: beat.Detail);
+
+            // Escalating RIVAL VOICE: a rivalry dispatch speaks in the rival's own (mood-aware) words.
+            if (beat.Kind == Companion.Core.Smgp.SmgpBeatKind.RivalryEarned && beat.SubjectId is { Length: > 0 } wonId)
+                body = AppendRivalVoice(body, wonId, rivalName, Companion.Core.Smgp.SmgpRivalMood.PlayerLeads, beat.Round);
+            else if (beat.Kind == Companion.Core.Smgp.SmgpBeatKind.RivalryLost && beat.SubjectId is { Length: > 0 } lostId)
+                body = AppendRivalVoice(body, lostId, rivalName, Companion.Core.Smgp.SmgpRivalMood.RivalLeads, beat.Round);
+
+            dispatches.Add(new Companion.Core.Smgp.SmgpDispatch
+            {
+                WhenLabel = beat.WhenLabel, Kind = kind, Headline = beat.Headline, Body = body,
+                DriverArtKey = beat.SubjectId, TeamArtKey = "",
+                SortSeason = beat.Season, SortRound = beat.Round, SortSeq = seq++,
+            });
+        }
+
+        // --- AI-world dispatches (a rival's streak, the benchmark, leader/second-place turnover, tightening) ---
+        foreach (var story in Companion.Core.Smgp.SmgpWorldStories.Detect(BuildSmgpWorldRounds(), _playerDriverId, benchmarkId))
+        {
+            var (key, kind, headline) = MapWorldStory(story);
+            var tokens = DispatchTokens(playerName, playerTeam, rival: "", venue: story.Venue, season: story.Season,
+                number: story.Number, subject: story.SubjectName, other: story.OtherName,
+                leader: leaderName, benchmark: benchmarkName);
+            var stream = factory.CreateStream(DispatchStream, story.Season, story.Round, key + "|" + story.SubjectId);
+            string body = corpus.Render(key, tokens, stream, fallback: headline);
+            dispatches.Add(new Companion.Core.Smgp.SmgpDispatch
+            {
+                WhenLabel = $"Season {story.Season} · {story.Venue}", Kind = kind, Headline = headline, Body = body,
+                DriverArtKey = story.SubjectId, TeamArtKey = story.SubjectTeamId,
+                SortSeason = story.Season, SortRound = story.Round, SortSeq = seq++,
+            });
+        }
+
+        // Chronological, then newest first — a stable, deterministic order.
+        dispatches.Sort((a, b) =>
+        {
+            int c = a.SortSeason.CompareTo(b.SortSeason);
+            if (c != 0) return c;
+            c = a.SortRound.CompareTo(b.SortRound);
+            return c != 0 ? c : a.SortSeq.CompareTo(b.SortSeq);
+        });
+        dispatches.Reverse();
+        return dispatches;
+    }
+
+    /// <summary>Maps a milestone beat to its dispatch corpus key + kind. Returns a null key for a beat that
+    /// gets no dispatch (none today — every kind maps, but the null keeps the switch total).</summary>
+    private static (string? Key, Companion.Core.Smgp.SmgpDispatchKind Kind) MapBeatToDispatch(
+        Companion.Core.Smgp.SmgpCareerBeat beat) => beat.Kind switch
+    {
+        Companion.Core.Smgp.SmgpBeatKind.Arrived => ("milestone.arrived", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.FirstStart => ("milestone.first-start", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.FirstPoints => ("milestone.first-points", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.FirstTop5 => ("milestone.first-top5", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.FirstPole => ("milestone.first-pole", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.FirstPodium => ("milestone.first-podium", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.FirstWin => ("milestone.first-win", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.SeasonMilestone => ("milestone.season", Companion.Core.Smgp.SmgpDispatchKind.SeasonDigest),
+        Companion.Core.Smgp.SmgpBeatKind.Promotion => ("milestone.promotion", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.Title => ("milestone.title", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.RivalryEarned => ("milestone.rivalry-won", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.Finale => ("milestone.finale", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+        Companion.Core.Smgp.SmgpBeatKind.RivalryLost => ("setback.rivalry-lost", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        Companion.Core.Smgp.SmgpBeatKind.NearMiss => ("setback.near-miss", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        // The floor kicking the player OUT reuses the Demotion kind but a distinct "out" headline.
+        Companion.Core.Smgp.SmgpBeatKind.Demotion => beat.Headline.Contains("OUT OF", StringComparison.Ordinal)
+            ? ("setback.career-over", Companion.Core.Smgp.SmgpDispatchKind.Setback)
+            : ("setback.demotion", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        _ => (null, Companion.Core.Smgp.SmgpDispatchKind.Milestone),
+    };
+
+    /// <summary>Maps a world story to its dispatch corpus key + kind + a synthesised arcade headline (also
+    /// the render fallback when the corpus lacks the key).</summary>
+    private static (string Key, Companion.Core.Smgp.SmgpDispatchKind Kind, string Headline) MapWorldStory(
+        Companion.Core.Smgp.SmgpWorldStory s)
+    {
+        var ci = CultureInfo.InvariantCulture;
+        return s.Kind switch
+        {
+            Companion.Core.Smgp.SmgpWorldStoryKind.RivalStreak => ("world.rival-streak",
+                Companion.Core.Smgp.SmgpDispatchKind.RivalWatch,
+                string.Create(ci, $"{s.SubjectName.ToUpperInvariant()} — {s.Number} IN A ROW")),
+            Companion.Core.Smgp.SmgpWorldStoryKind.Benchmark => ("world.benchmark",
+                Companion.Core.Smgp.SmgpDispatchKind.RivalWatch, "THE BENCHMARK"),
+            Companion.Core.Smgp.SmgpWorldStoryKind.LeaderChange => ("world.leader-change",
+                Companion.Core.Smgp.SmgpDispatchKind.TitleRace, "NEW CHAMPIONSHIP LEADER"),
+            Companion.Core.Smgp.SmgpWorldStoryKind.TitleTightens => ("world.title-tightens",
+                Companion.Core.Smgp.SmgpDispatchKind.TitleRace, "TITLE RACE TIGHTENS"),
+            Companion.Core.Smgp.SmgpWorldStoryKind.StandingsMove => ("world.standings-move",
+                Companion.Core.Smgp.SmgpDispatchKind.TitleRace,
+                string.Create(ci, $"{s.SubjectName.ToUpperInvariant()} TAKES SECOND")),
+            _ => ("", Companion.Core.Smgp.SmgpDispatchKind.TitleRace, ""),
+        };
+    }
+
+    /// <summary>The dispatch corpus token dictionary — every slot a template might name, with a neutral
+    /// fallback for the ones a given dispatch does not carry (so a body never prints a raw token).</summary>
+    private static IReadOnlyDictionary<string, string> DispatchTokens(
+        string player, string team, string rival, string venue, int season, int number,
+        string subject, string other, string leader, string benchmark)
+    {
+        var ci = CultureInfo.InvariantCulture;
+        return new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["player"] = string.IsNullOrEmpty(player) ? "the newcomer" : player,
+            ["team"] = string.IsNullOrEmpty(team) ? "the team" : team,
+            ["rival"] = string.IsNullOrEmpty(rival) ? "the rival" : rival,
+            ["venue"] = string.IsNullOrEmpty(venue) ? "the World Championship" : venue,
+            ["season"] = season.ToString(ci),
+            ["number"] = number.ToString(ci),
+            ["subject"] = string.IsNullOrEmpty(subject) ? "a driver" : subject,
+            ["other"] = string.IsNullOrEmpty(other) ? "the field" : other,
+            ["leader"] = string.IsNullOrEmpty(leader) ? "the leader" : leader,
+            ["benchmark"] = string.IsNullOrEmpty(benchmark) ? "the benchmark" : benchmark,
+        };
+    }
+
+    /// <summary>Appends the rival's OWN mood-aware trash-talk to a rivalry dispatch (surfacing the escalating
+    /// rival voice reactively). Uses the same per-round quote seed as the briefing, so it is stable.</summary>
+    private string AppendRivalVoice(
+        string body, string rivalId, string rivalName, Companion.Core.Smgp.SmgpRivalMood mood, int round)
+    {
+        string line = _environment.Rules.SmgpRivalQuotes.Line(rivalId, mood, QuoteSeed(rivalId, round));
+        if (string.IsNullOrWhiteSpace(line))
+            return body;
+        string who = string.IsNullOrWhiteSpace(rivalName) ? "The rival" : rivalName;
+        return $"{body} {who}: \"{line}\"";
+    }
+
+    /// <summary>The venue part of a beat's "Season n · Venue" WhenLabel, or empty for a season-level label.</summary>
+    private static string VenueFromWhenLabel(string whenLabel)
+    {
+        const string sep = " · ";
+        int i = whenLabel.IndexOf(sep, StringComparison.Ordinal);
+        return i >= 0 ? whenLabel[(i + sep.Length)..] : "";
+    }
+
+    /// <summary>A driver's display name against the CURRENT pack: the player's chosen name for the player id,
+    /// else the authored profile name, else the pack roster name, else the id.</summary>
+    private string DriverDisplayName(string driverId)
+    {
+        if (string.IsNullOrEmpty(driverId))
+            return "";
+        if (string.Equals(driverId, _playerDriverId, StringComparison.Ordinal))
+            return PlayerDisplayName() ?? PlayerDefaultName;
+        return _environment.Rules.SmgpDriverProfiles.ForDriver(driverId)?.Name is { Length: > 0 } n
+            ? n
+            : Pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, driverId, StringComparison.Ordinal))?.Name ?? driverId;
+    }
+
+    /// <summary>The player's current team name (from the live seat, else the folded SMGP team), or empty.</summary>
+    private string CurrentPlayerTeamName()
+    {
+        string? teamId = (SeasonComplete ? null : CurrentGrid().FirstOrDefault(s => s.IsPlayer)?.TeamId)
+            ?? CurrentSmgpTeamId();
+        return teamId is null ? ""
+            : Pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? "";
+    }
+
+    /// <summary>The always-OP benchmark driver (A. Senna / Madonna #1): the AI on the highest-prestige team,
+    /// ties broken by driver id so it is deterministic. Empty when no non-player entry resolves.</summary>
+    private string ResolveBenchmarkDriverId()
+    {
+        var prestige = Pack.Teams.ToDictionary(t => t.Id, t => t.Prestige, StringComparer.Ordinal);
+        string best = "";
+        int bestPrestige = int.MinValue;
+        foreach (var e in Pack.Entries.OrderBy(e => e.DriverId, StringComparer.Ordinal))
+        {
+            if (string.Equals(e.DriverId, _playerDriverId, StringComparison.Ordinal))
+                continue;
+            int p = prestige.GetValueOrDefault(e.TeamId, 0);
+            if (p > bestPrestige)
+            {
+                bestPrestige = p;
+                best = e.DriverId;
+            }
+        }
+        return best;
+    }
+
+    /// <summary>Shapes each scored CHAMPIONSHIP round of the whole career into the grid-level facts the
+    /// world-story detector reads — the race winner and the championship order after the round. Mirrors
+    /// <see cref="BuildSmgpNarrativeSeasons"/>'s per-season loop (rehydrate pack + scoring, re-read stored
+    /// results). Each driver id is normalized onto <c>_playerDriverId</c> when it is that season's player,
+    /// so the player is excluded consistently as a story subject. A pure read over immutable results.</summary>
+    private IReadOnlyList<Companion.Core.Smgp.SmgpWorldRound> BuildSmgpWorldRounds()
+    {
+        var result = new List<Companion.Core.Smgp.SmgpWorldRound>();
+        int ordinal = 0;
+        foreach (var season in CareerStore.ReadSeasons(_database))
+        {
+            ordinal++;
+            var pack = SeasonPackFor(season);
+            string seasonPlayerId = PlayerDriverIdFor(season, pack);
+            string Key(string id) =>
+                string.Equals(id, seasonPlayerId, StringComparison.Ordinal) ? _playerDriverId : id;
+            var venueByRound = pack.Season.Rounds.ToDictionary(r => r.Round, VenueLabel);
+            var entryTeam = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (var e in pack.Entries)
+                entryTeam.TryAdd(e.DriverId, e.TeamId);
+
+            var stored = ResultStore.ReadSeasonResults(_database, season.Id).OrderBy(r => r.Round).ToList();
+            var champStored = stored
+                .Where(r => pack.Season.Rounds.FirstOrDefault(rd => rd.Round == r.Round)?.Championship ?? false)
+                .ToList();
+            if (champStored.Count == 0)
+                continue;
+            var scoring = ChampionshipCalendar.ResolveScoring(pack);
+            var snapshots = StandingsEngine.ComputeSeason(scoring, champStored.Select(r => r.ToRoundResult()).ToList()).Snapshots;
+            var snapByRound = snapshots.ToDictionary(s => s.AfterRound);
+
+            string WorldName(string origId) => string.Equals(origId, seasonPlayerId, StringComparison.Ordinal)
+                ? PlayerDisplayName() ?? PlayerDefaultName
+                : _environment.Rules.SmgpDriverProfiles.ForDriver(origId)?.Name is { Length: > 0 } n
+                    ? n
+                    : pack.Drivers.FirstOrDefault(d => string.Equals(d.Id, origId, StringComparison.Ordinal))?.Name ?? origId;
+
+            int index = 0;
+            foreach (var r in champStored)
+            {
+                index++;
+                var envelope = r.ToEnvelope();
+                var race = envelope.Result.Sessions.FirstOrDefault(x => x.Kind == Companion.Core.Scoring.SessionKind.Race)
+                    ?? envelope.Result.Sessions.FirstOrDefault();
+                string? winnerOrig = race?.Entries
+                    .FirstOrDefault(e => e.Status == FinishStatus.Classified && e.Position == 1)?.DriverId;
+
+                var standings = new List<Companion.Core.Smgp.SmgpWorldStanding>();
+                if (snapByRound.TryGetValue(r.Round, out var snap))
+                    foreach (var d in snap.Drivers.OrderBy(d => d.Position ?? int.MaxValue))
+                        standings.Add(new Companion.Core.Smgp.SmgpWorldStanding
+                        {
+                            Position = d.Position ?? 0,
+                            DriverId = Key(d.DriverId),
+                            Name = WorldName(d.DriverId),
+                            Points = (int)Math.Round(d.CountedPoints.ToDouble()),
+                            TeamId = entryTeam.GetValueOrDefault(d.DriverId, ""),
+                        });
+
+                result.Add(new Companion.Core.Smgp.SmgpWorldRound
+                {
+                    Season = ordinal,
+                    Round = r.Round,
+                    Venue = venueByRound.GetValueOrDefault(r.Round) ?? $"Round {r.Round}",
+                    RoundIndex = index,
+                    SeasonRounds = champStored.Count,
+                    WinnerId = winnerOrig is null ? null : Key(winnerOrig),
+                    WinnerName = winnerOrig is null ? "" : WorldName(winnerOrig),
+                    WinnerTeamId = winnerOrig is not null ? entryTeam.GetValueOrDefault(winnerOrig, "") : "",
+                    Standings = standings,
+                });
+            }
+        }
+        return result;
     }
 
     /// <summary>The rival's dossier line: his OWN words for the ladder state — a first challenge,
