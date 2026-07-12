@@ -85,6 +85,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
         if (_summary.SeasonComplete)
             ShowSeasonReview();
+        else if (_session.CurrentSitOut() is { } sitOut)
+            // Opened onto an injured round (e.g. reopened mid-suspension): the player sits out, so the
+            // auto-sim screen leads — never manual result entry. (Character death & injury §5.)
+            _currentContent = MakeSitOut(sitOut);
         else if (_settings?.Current.AutoOpenBriefing ?? true)
             _currentContent = Briefing;
         else
@@ -162,7 +166,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         nameof(IsBriefingState), nameof(IsResultEntryState),
         nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
         nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(IsRivalStep),
-        nameof(IsPromotionStep), nameof(IsFinaleStep), nameof(ConfirmButtonText))]
+        nameof(IsPromotionStep), nameof(IsFinaleStep), nameof(IsSitOutStep), nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -198,6 +202,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// screen"). Its own Continue button drives the flow, so the header's primary confirm is suppressed
     /// exactly like the promotion step.</summary>
     public bool IsFinaleStep => CurrentContent is SmgpFinaleViewModel;
+
+    /// <summary>True on the INJURED sit-out step (character death &amp; injury §5): the player is
+    /// unavailable, so the round is auto-simulated instead of entered manually.</summary>
+    public bool IsSitOutStep => CurrentContent is SitOutViewModel;
 
     /// <summary>True when this round has an SMGP rival step to show (an active rival briefing). A
     /// non-SMGP / character-free career has none, so the flow is byte-identical to the shipped loop.</summary>
@@ -247,6 +255,15 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     private void EnterResult()
     {
         ContentError = null;
+
+        // Injured: the player sits this round out (AMS2 cannot spectate a single-player race), so it is
+        // auto-simulated — never a manual result. Show the sit-out screen instead. (Character death &
+        // injury §5; this is the guard the normal advance path also routes through.)
+        if (_session.CurrentSitOut() is { } sitOut)
+        {
+            ShowSitOut(sitOut);
+            return;
+        }
 
         // SMGP rival step: name your rival on its own screen, once per round, BEFORE qualifying
         // (Mike's Upcoming Race loop). A non-SMGP / character-free career has no rival step, so the
@@ -657,8 +674,44 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             }
             ShowSeasonReview();
         }
+        else if (_session.CurrentSitOut() is { } sitOut)
+            // The next round is one the injured player must sit out — go straight to the auto-sim screen
+            // (its Continue folds it and re-advances), never the briefing/manual entry. (§5.)
+            ShowSitOut(sitOut);
         else
             CurrentContent = Briefing;
+    }
+
+    /// <summary>Builds the injured sit-out screen: its Continue folds the auto-simulated round and
+    /// advances (chaining to the next sit-out, the briefing, or the season review). (§5.)</summary>
+    private SitOutViewModel MakeSitOut(SitOutStatus status) =>
+        new(status, AutoSimulateInjuredRound);
+
+    private void ShowSitOut(SitOutStatus status)
+    {
+        ContentError = null;
+        CurrentContent = MakeSitOut(status);
+    }
+
+    /// <summary>Fold the round the injured player sat out (the AI field is auto-simulated, the player is
+    /// DNS — OPI-neutral), heal one race of a minor suspension, and advance. No manual result is entered.</summary>
+    private void AutoSimulateInjuredRound()
+    {
+        try
+        {
+            _session.AutoSimulateRound();
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            ContentError = ex.Message;
+            return;
+        }
+
+        ClearRoundEntryState();
+        Summary = _session.Summary; // an auto-sim never kills, so the DB is always live here
+        Briefing.Refresh();
+        AdvanceAfterRound();
+        RefreshRoundCommands();
     }
 
     /// <summary>Show the 17-season campaign finale (Mike's "final final screen") — its own step before
