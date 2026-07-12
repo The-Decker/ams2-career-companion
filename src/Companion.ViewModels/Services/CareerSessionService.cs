@@ -1464,11 +1464,23 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return null;
         string root = installation.InstallDirectory;
 
+        // The selector's season sub-menu for THIS pack's year (":1996"). A class's selector can serve
+        // several years off one bat ([F1_1996-1997]…FV10G1 has both :1996 and :1997), so the year both
+        // picks the right bat and scopes BatScenarioReader to the right menu — without it a 1997 career
+        // would read 1996's rounds (or none, when the default ":1988" menu is absent).
+        string seasonLabel = ":" + Pack.Season.Year.ToString(CultureInfo.InvariantCulture);
+
         string? batPath;
         try
         {
-            batPath = Directory.EnumerateFiles(root, "*.bat", SearchOption.TopDirectoryOnly)
-                .FirstOrDefault(f => BatManagesClass(f, Pack.Season.Ams2Class));
+            var managingClass = Directory.EnumerateFiles(root, "*.bat", SearchOption.TopDirectoryOnly)
+                .Where(f => BatManagesClass(f, Pack.Season.Ams2Class))
+                .ToList();
+            // Prefer a bat that actually carries this season's menu; fall back to the first that manages
+            // the class (older single-season selectors whose menu label is not the bare year still parse
+            // — an absent menu yields no swaps and the caller falls back to the variant binder).
+            batPath = managingClass.FirstOrDefault(f => BatHasSeasonLabel(f, seasonLabel))
+                ?? managingClass.FirstOrDefault();
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -1479,7 +1491,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         try
         {
-            var map = BatScenarioReader.Parse(File.ReadAllText(batPath));
+            var map = BatScenarioReader.Parse(File.ReadAllText(batPath), seasonLabel);
             return map.TryGetValue(round, out var swaps)
                 ? ScenarioApplier.Apply(root, swaps, _environment.Clock.GetUtcNow())
                 : null;
@@ -1498,6 +1510,24 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         try
         {
             return File.ReadAllText(batPath).Contains(vehicleClass, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>True when the selector has a season sub-menu labelled <paramref name="seasonLabel"/>
+    /// (e.g. <c>:1996</c>) — how a multi-year selector like <c>[F1_1996-1997]…</c> is disambiguated to
+    /// the career's year before parsing.</summary>
+    private static bool BatHasSeasonLabel(string batPath, string seasonLabel)
+    {
+        try
+        {
+            foreach (var line in File.ReadLines(batPath))
+                if (line.Trim().Equals(seasonLabel, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            return false;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
