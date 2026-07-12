@@ -455,10 +455,11 @@
                     DataContext="{Binding SelectedInspector}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                        <Button DockPanel.Dock="Right" Content="Close" VerticalAlignment="Top"
-                                Style="{StaticResource SubtleButton}"
+                        <Button DockPanel.Dock="Right" VerticalAlignment="Top"
+                                Style="{StaticResource CloseButton}"
+                                AutomationProperties.Name="Close history inspector"
                                 Command="{Binding DataContext.CloseInspectorCommand,
-                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
                                 ToolTip="Close (Esc)" />
                         <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
                     </DockPanel>

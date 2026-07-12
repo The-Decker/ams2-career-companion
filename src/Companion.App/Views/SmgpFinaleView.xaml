@@ -26,7 +26,7 @@
                         Background="{DynamicResource AccentBrush}"
                         Visibility="{Binding Model.IsFlawless, Converter={StaticResource BoolVisible}}">
                     <TextBlock Text="&#x2605;  T H E   U L T I M A T E   S E C R E T  &#x2605;"
-                               Foreground="White" FontWeight="Bold" FontSize="13" />
+                               Foreground="{DynamicResource OnAccentBrush}" FontWeight="Bold" FontSize="13" />
                 </Border>
 
                 <!-- triumphant arcade headline -->

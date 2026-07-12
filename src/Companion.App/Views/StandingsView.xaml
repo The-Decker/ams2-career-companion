@@ -41,31 +41,37 @@
                     <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Style="{StaticResource HeaderButton}"
-                        Content="{Binding PositionHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="position" />
+                         Content="{Binding PositionHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="position"
+                         ToolTip="Championship position — click to sort; click again to reverse" />
                 <Button Grid.Column="1" Style="{StaticResource HeaderButton}" HorizontalAlignment="Stretch"
-                        Content="{Binding NameHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="name" />
+                         Content="{Binding NameHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="name"
+                         ToolTip="Driver or constructor — click to sort alphabetically" />
                 <Button Grid.Column="2" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding DroppedHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="dropped"
-                        Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding DroppedHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="dropped"
+                         ToolTip="Dropped rounds: scores excluded by the season's best-N rule"
+                         Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
                 <Button Grid.Column="3" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding GrossHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="gross"
-                        Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding GrossHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="gross"
+                         ToolTip="Gross points: total before the best-N rule removes dropped scores"
+                         Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
                 <Button Grid.Column="4" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding PerRoundHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="perRound"
-                        Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding PerRoundHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="perRound"
+                         ToolTip="P/R: average counted points per applied round"
+                         Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
                 <Button Grid.Column="5" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding CountedHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="counted"
-                        Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding CountedHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="counted"
+                         ToolTip="Counted points: championship total after dropped rounds"
+                         Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
             </Grid>
         </DataTemplate>
 
@@ -289,10 +295,11 @@
                     DataContext="{Binding SelectedInspector}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                        <Button DockPanel.Dock="Right" Content="Close" VerticalAlignment="Top"
-                                Style="{StaticResource SubtleButton}"
+                        <Button DockPanel.Dock="Right" VerticalAlignment="Top"
+                                Style="{StaticResource CloseButton}"
+                                AutomationProperties.Name="Close standings inspector"
                                 Command="{Binding DataContext.CloseInspectorCommand,
-                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
                                 ToolTip="Close (Esc)" />
                         <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
                     </DockPanel>

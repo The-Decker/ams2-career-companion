@@ -8,18 +8,42 @@
         <StackPanel>
             <TextBlock Text="{Binding MachineName}" FontWeight="SemiBold" FontSize="20" />
             <TextBlock Text="{Binding SubHeader}" Style="{StaticResource Faint}" FontSize="14" Margin="0,2,0,10"
-                       Visibility="{Binding SubHeader, Converter={StaticResource StringVisible}}" />
+                       Visibility="{Binding SubHeader, Converter={StaticResource StringVisible}}"
+                       ToolTip="Engine configuration and advertised maximum power" />
             <ItemsControl ItemsSource="{Binding Bars}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <DockPanel Margin="0,4">
                             <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="58"
-                                       VerticalAlignment="Center" Style="{StaticResource Faint}" FontSize="14" />
+                                       VerticalAlignment="Center" FontSize="14">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Label}" Value="ENG">
+                                                <Setter Property="ToolTip" Value="Engine: power delivery and usable performance" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Label}" Value="TM">
+                                                <Setter Property="ToolTip" Value="Transmission: gearbox response and drivetrain quality" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Label}" Value="SUS">
+                                                <Setter Property="ToolTip" Value="Suspension: chassis balance and mechanical grip" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Label}" Value="TIRE">
+                                                <Setter Property="ToolTip" Value="Tires: grip window and tire-life potential" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Label}" Value="BRA">
+                                                <Setter Property="ToolTip" Value="Brakes: stopping performance and consistency" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <TextBlock DockPanel.Dock="Right" Width="34" TextAlignment="Right"
                                        VerticalAlignment="Center" Style="{StaticResource Faint}" FontSize="14"
                                        Text="{Binding Value, Mode=OneWay}" />
                             <ProgressBar Minimum="0" Maximum="{Binding Max}" Value="{Binding Value, Mode=OneWay}"
-                                         Height="14" VerticalAlignment="Center" Margin="8,0" />
+                                         Height="14" VerticalAlignment="Center" Margin="8,0"
+                                         ToolTip="{Binding Label, StringFormat='{}{0} rating — hover the abbreviation for its meaning'}" />
                         </DockPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

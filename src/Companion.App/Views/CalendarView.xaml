@@ -31,6 +31,9 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
+                        <Button Command="{Binding ToggleCommand}" Style="{StaticResource SubtleButton}"
+                                HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                Padding="0" Margin="0" ToolTip="Open this round's circuit almanac">
                         <Border Style="{StaticResource Panel}" Margin="0,0,8,8" Padding="12,10" VerticalAlignment="Stretch">
                             <StackPanel>
                                 <!-- header: round + name, with the kind badge -->
@@ -113,8 +116,24 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </StackPanel>
+
+                                <!-- Full almanac is click-to-reveal; the map/caption/facts stay inline for
+                                     scanability and for the established calendar render contract. -->
+                                <Border Style="{StaticResource AccentCallout}" Margin="0,8,0,0" Padding="9,7"
+                                        Visibility="{Binding IsExpanded, Converter={StaticResource BoolVisible}}">
+                                    <StackPanel>
+                                        <TextBlock Text="CIRCUIT ALMANAC" Style="{StaticResource Eyebrow}" Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}"
+                                                   FontSize="11" TextWrapping="Wrap"
+                                                   Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+                                        <TextBlock Text="No additional circuit history is filed for this round yet."
+                                                   Style="{StaticResource Faint}" TextWrapping="Wrap"
+                                                   Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolCollapsed}}" />
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </Border>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

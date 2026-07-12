@@ -1,23 +1,42 @@
 <Window x:Class="Companion.App.Views.RenameCareerDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="clr-namespace:Companion.App"
         Title="Rename career"
-        Width="420" SizeToContent="Height" ResizeMode="NoResize"
+        Width="420" SizeToContent="Height" ResizeMode="NoResize" WindowStyle="None"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}"
         Background="{DynamicResource SurfaceBrush}">
     <!-- keyboard parity: the textbox is focused on open, Enter = OK (IsDefault),
          Esc = Cancel (IsCancel) — fully operable without the mouse. -->
-    <StackPanel Margin="20">
-        <TextBlock Text="New career name" Style="{StaticResource Body}" Margin="0,0,0,6" />
-        <TextBox x:Name="NameBox" FontSize="15"
-                 AutomationProperties.Name="New career name" />
-        <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
-                   Text="The .ams2career file is renamed to match." />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-            <Button Content="Rename" Style="{StaticResource AccentButton}" MinWidth="90"
-                    IsDefault="True" Click="OnRename" />
-            <Button Content="Cancel" MinWidth="90" Margin="8,0,0,0" IsCancel="True" />
-        </StackPanel>
-    </StackPanel>
+    <Grid Background="{StaticResource AppTextureBrush}">
+        <Border Background="{StaticResource AppVignetteBrush}" IsHitTestVisible="False" />
+        <Border BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" Height="34" Background="{DynamicResource SurfaceAltBrush}"
+                        BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,0,0,1"
+                        app:WindowChromeAssist.IsDragRegion="True">
+                    <DockPanel Margin="10,2,3,2">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource CloseButton}"
+                                app:WindowChromeAssist.IsCloseButton="True"
+                                AutomationProperties.Name="Close rename dialog" />
+                        <TextBlock Text="RENAME CAREER" Style="{StaticResource Eyebrow}" FontSize="11"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+                <StackPanel Margin="20">
+                    <TextBlock Text="New career name" Style="{StaticResource Body}" Margin="0,0,0,6" />
+                    <TextBox x:Name="NameBox" FontSize="15"
+                             AutomationProperties.Name="New career name" />
+                    <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
+                               Text="The .ams2career file is renamed to match." />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                        <Button Content="Rename" Style="{StaticResource AccentButton}" MinWidth="90"
+                                IsDefault="True" Click="OnRename" />
+                        <Button Content="Cancel" MinWidth="90" Margin="8,0,0,0" IsCancel="True" />
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
 </Window>

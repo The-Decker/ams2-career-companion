@@ -137,6 +137,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="16" />
+        <Setter Property="Effect" Value="{StaticResource PanelElevationEffect}" />
     </Style>
     <Style x:Key="Chip" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
@@ -212,6 +213,8 @@
     <Style TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="420" />
+        <Setter Property="ToolTipService.ShowDuration" Value="12000" />
         <!-- every button radiates a click-point ripple (fails safe; see MotionAssist) -->
         <Setter Property="app:MotionAssist.Ripple" Value="True" />
         <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
@@ -232,21 +235,29 @@
                          neighbouring controls — the button just feels like it moves. -->
                     <Grid RenderTransformOrigin="0.5,0.5">
                         <Grid.RenderTransform>
-                            <ScaleTransform x:Name="PressScale" ScaleX="1" ScaleY="1" />
+                            <TransformGroup>
+                                <ScaleTransform x:Name="PressScale" ScaleX="1" ScaleY="1" />
+                                <TranslateTransform x:Name="PressTranslate" Y="0" />
+                            </TransformGroup>
                         </Grid.RenderTransform>
                         <Border x:Name="Chrome"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5" />
+                                CornerRadius="5"
+                                Effect="{StaticResource ControlElevationEffect}" />
                         <Border x:Name="HoverOverlay"
                                 Background="{DynamicResource ControlHoverOverlayBrush}"
                                 Opacity="0" CornerRadius="5" />
+                        <Border x:Name="PressedInset"
+                                BorderBrush="{DynamicResource ShadowBrush}"
+                                BorderThickness="0,2,0,0" Opacity="0" CornerRadius="5" />
                         <!-- click-point ripple host (behaviour-driven; see MotionAssist.Ripple) -->
                         <Border x:Name="RippleHost" CornerRadius="5" ClipToBounds="True" />
                         <ContentPresenter Margin="{TemplateBinding Padding}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"
                                           RecognizesAccessKey="True" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -255,18 +266,20 @@
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.07" Duration="0:0:0.15" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.03" Duration="0:0:0.16" EasingFunction="{StaticResource EaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.03" Duration="0:0:0.16" EasingFunction="{StaticResource EaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.08" Duration="0:0:0.11" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0:0:0.11" EasingFunction="{StaticResource EaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0:0:0.11" EasingFunction="{StaticResource EaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="-1" Duration="0:0:0.11" EasingFunction="{StaticResource EaseOut}" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
                             <Trigger.ExitActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.22" EasingFunction="{StaticResource EaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.22" EasingFunction="{StaticResource EaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.10" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.10" EasingFunction="{StaticResource EaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.10" EasingFunction="{StaticResource EaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.10" EasingFunction="{StaticResource EaseOut}" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
@@ -276,18 +289,22 @@
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.16" Duration="0:0:0.08" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="0.93" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="0.93" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.17" Duration="0:0:0.09" />
+                                        <DoubleAnimation Storyboard.TargetName="PressedInset" Storyboard.TargetProperty="Opacity" To="0.48" Duration="0:0:0.09" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="0.99" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="0.99" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="1" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
                             <Trigger.ExitActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.07" Duration="0:0:0.15" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.03" Duration="0:0:0.45" EasingFunction="{StaticResource SpringOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.03" Duration="0:0:0.45" EasingFunction="{StaticResource SpringOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.08" Duration="0:0:0.10" />
+                                        <DoubleAnimation Storyboard.TargetName="PressedInset" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.10" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0:0:0.18" EasingFunction="{StaticResource SpringOutSoft}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0:0:0.18" EasingFunction="{StaticResource SpringOutSoft}" />
+                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="-1" Duration="0:0:0.12" EasingFunction="{StaticResource EaseOut}" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
@@ -328,7 +345,16 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Padding" Value="8,5" />
     </Style>
-
+    <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="Content" Value="&#xE8BB;" />
+        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Padding" Value="6,4" />
+        <Setter Property="ToolTip" Value="Close" />
+    </Style>
     <!-- ===== text box ===== -->
     <Style TargetType="TextBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
@@ -368,15 +394,21 @@
     <Style TargetType="ComboBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="Padding" Value="10,7" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
                     <Border x:Name="Chrome" Background="Transparent" CornerRadius="4" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter TextElement.Foreground="{DynamicResource TextBrush}" />
+                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SelectionBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -385,6 +417,8 @@
     </Style>
     <Style TargetType="ComboBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="420" />
+        <Setter Property="ToolTipService.ShowDuration" Value="12000" />
         <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="8,6" />
@@ -400,9 +434,10 @@
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
-                                    <Border Background="{TemplateBinding Background}"
+                                    <Border x:Name="ToggleChrome" Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
+                                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"
+                                            Effect="{StaticResource ControlElevationEffect}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -412,6 +447,18 @@
                                                   Data="M0,0 L8,0 L4,5 Z" Fill="{DynamicResource TextMutedBrush}" />
                                         </Grid>
                                     </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ToggleChrome" Property="BorderBrush" Value="{DynamicResource EdgeStrongBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="ToggleChrome" Property="Margin" Value="0,1,0,-1" />
+                                            <Setter TargetName="ToggleChrome" Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="ToggleChrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
@@ -460,8 +507,12 @@
     </Style>
     <Style TargetType="ListBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="420" />
+        <Setter Property="ToolTipService.ShowDuration" Value="12000" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="10,7" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
@@ -471,7 +522,11 @@
                              selection stays instant on the Chrome underneath -->
                         <Border x:Name="HoverOverlay" Background="{DynamicResource SurfaceAltBrush}"
                                 Opacity="0" CornerRadius="4" />
-                        <ContentPresenter Margin="10,7" />
+                        <Border x:Name="SelectionEdge" Width="3" HorizontalAlignment="Left"
+                                Background="{DynamicResource AccentBrush}" Opacity="0" CornerRadius="2" />
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          TextElement.Foreground="{TemplateBinding Foreground}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -497,6 +552,9 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SelectionBrush}" />
                             <Setter TargetName="HoverOverlay" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="SelectionEdge" Property="Opacity" Value="1" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -528,6 +586,8 @@
          the Drivers, Constructors and Round-matrix tabs could only be reached with the mouse.) -->
     <Style TargetType="TabItem">
         <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="420" />
+        <Setter Property="ToolTipService.ShowDuration" Value="12000" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="IsTabStop" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -563,12 +623,16 @@
     <!-- ===== check box ===== -->
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="420" />
+        <Setter Property="ToolTipService.ShowDuration" Value="12000" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="Padding" Value="3" />
+        <Setter Property="MinHeight" Value="26" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
-                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                    <StackPanel Orientation="Horizontal" Background="Transparent" Margin="{TemplateBinding Padding}">
                         <Border x:Name="Box" Width="17" Height="17" CornerRadius="3"
                                 Background="{DynamicResource FieldBrush}"
                                 BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
@@ -614,6 +678,55 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Radio options share the checkbox hit target but use a physical circular well. -->
+    <Style TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="420" />
+        <Setter Property="ToolTipService.ShowDuration" Value="12000" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="Padding" Value="3" />
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <StackPanel Orientation="Horizontal" Background="Transparent" Margin="{TemplateBinding Padding}">
+                        <Border x:Name="Well" Width="18" Height="18" CornerRadius="9"
+                                Background="{DynamicResource FieldBrush}"
+                                BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1"
+                                VerticalAlignment="Center">
+                            <Ellipse x:Name="Dot" Width="8" Height="8" Fill="{DynamicResource AccentBrush}"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0" />
+                        </Border>
+                        <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"
+                                          RecognizesAccessKey="True" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Well" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="Well" Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                            <Setter TargetName="Dot" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Well" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Dot" Property="Width" Value="6" />
+                            <Setter TargetName="Dot" Property="Height" Value="6" />
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.4" />
                         </Trigger>
@@ -629,6 +742,20 @@
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
         <Setter Property="Padding" Value="8,5" />
+        <Setter Property="HasDropShadow" Value="True" />
+        <Setter Property="Placement" Value="Mouse" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                            CornerRadius="5" Padding="{TemplateBinding Padding}"
+                            Effect="{StaticResource ControlElevationEffect}">
+                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ===== rating bar (wizard seat pick: skills as bars, raw numbers on hover) ===== -->
