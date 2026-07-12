@@ -55,10 +55,10 @@ Fold repeated markup into shared styles/templates. Watch render cost.
 
 Work `docs/dev/asset-inventory.md` to zero. Current top gaps: **team logos (24)**, team photos (24),
 round cards (16), banners (24). Style = 16-bit SEGA arcade (see the inventory for paths/sizes).
-⚠ **Art-location decision is pending with Mike** — several assets currently live only in `dist/data/ams2/`
-(gitignored = not version-controlled). Don't add more art until Claude + Mike settle whether art is
-committed to tracked `data/ams2/` (safe, reproducible) or kept in `dist` (e.g. for licensing of
-AMS2-derived files). Hold new art drops on that call.
+✅ **Art-location decision (Mike, 2026-07-12): `dist/data/ams2/` IS canonical.** That's where Mike drops
+his art, and it's where you add yours — proceed. It's gitignored on purpose (some assets are AMS2-derived).
+Add art directly to `dist/data/ams2/<kind>/`, keep the inventory ticked off, and don't copy it back into
+tracked `data/ams2/`.
 
 ## 4. Fonts — the type system (researched; all OFL, safe to bundle)
 
@@ -77,12 +77,16 @@ The recommended **primary stack** (a sim-racing / esports-HUD system):
 **Press Start 2P** + **Silkscreen** for an optional "arcade mode" (pixel-on-pixel — reserve for chrome,
 not dense tables).
 
-⚠ **WPF gotcha:** Orbitron / JetBrains Mono / Saira are **variable** fonts — classic WPF/DirectWrite only
-renders the default ~400 weight. Claude will bundle **static instances** (specific Bold/Black weights, or
-OFL static builds) into `src/Companion.App/Fonts/`. Once the files land + the picks are locked, you:
-declare `FontFamily` keys in the theme dicts (like `MicrosportFont` → `/Fonts/#Microsport`) and apply the
-hierarchy across screens. Fonts are **theme-agnostic** (they don't change with light/dark). Confirmed:
-Claude can fetch these (test-downloaded Press Start 2P + Chakra Petch OK).
+✅ **The fonts are already bundled** — Mike approved the set, and Claude downloaded them (static instances,
+so `FontWeight` works despite the variable-font/WPF caveat) into `src/Companion.App/Fonts/` and added them
+to the csproj as `<Resource>` (see `Fonts/LICENSES.md` — all SIL OFL). Files: `Orbitron-{Bold,Black}`,
+`Inter-{Regular,SemiBold,Bold}`, `JetBrainsMono-{Regular,Bold}`, `PressStart2P-Regular`, plus the alts
+`ChakraPetch-Bold`, `Saira-{Regular,SemiBold}`, `Silkscreen-Regular`.
+
+**Your part:** declare the `FontFamily` resource keys in the theme dicts (like `MicrosportFont` →
+`/Fonts/#Microsport`; you'll need each font's internal family name — check by loading it) and apply the
+hierarchy across screens (Orbitron titles, Inter body/stats, Press Start 2P badges, JetBrains Mono
+numbers). Fonts are **theme-agnostic** (they don't change with light/dark).
 
 ---
 

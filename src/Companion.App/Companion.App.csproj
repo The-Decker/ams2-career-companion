@@ -34,6 +34,22 @@
     <Resource Include="Fonts\Roboto-Bold.ttf" />
     <Resource Include="Fonts\Roboto-Italic.ttf" />
     <Resource Include="Fonts\Roboto-BoldItalic.ttf" />
+    <!-- The 2026-07 type-system upgrade (all SIL OFL-1.1; see Fonts\LICENSES.md). Display=Orbitron,
+         body=Inter, pixel badges=Press Start 2P, tabular numbers=JetBrains Mono; alt display/body =
+         Chakra Petch / Saira, alt pixel = Silkscreen. Variable faces are bundled as STATIC instances
+         (WPF/DirectWrite only renders a variable font's default weight). Codex wires FontFamily keys. -->
+    <Resource Include="Fonts\Orbitron-Bold.ttf" />
+    <Resource Include="Fonts\Orbitron-Black.ttf" />
+    <Resource Include="Fonts\Inter-Regular.ttf" />
+    <Resource Include="Fonts\Inter-SemiBold.ttf" />
+    <Resource Include="Fonts\Inter-Bold.ttf" />
+    <Resource Include="Fonts\JetBrainsMono-Regular.ttf" />
+    <Resource Include="Fonts\JetBrainsMono-Bold.ttf" />
+    <Resource Include="Fonts\PressStart2P-Regular.ttf" />
+    <Resource Include="Fonts\ChakraPetch-Bold.ttf" />
+    <Resource Include="Fonts\Saira-Regular.ttf" />
+    <Resource Include="Fonts\Saira-SemiBold.ttf" />
+    <Resource Include="Fonts\Silkscreen-Regular.ttf" />
   </ItemGroup>
 
   <!-- Refreshable data beside the exe (never compiled in): the extracted AMS2 content
