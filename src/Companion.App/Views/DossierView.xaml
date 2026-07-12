@@ -22,9 +22,9 @@
                 <StackPanel Grid.Column="0" Margin="0,0,22,0" VerticalAlignment="Top">
                     <Grid Width="150" Height="150"
                           ToolTip="Drop your team player image at data\ams2\portraits\player.&lt;team&gt;.jpg (beside the exe)">
-                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
-                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="48"
-                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                        <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="48"
+                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <Border CornerRadius="10" ClipToBounds="True">
@@ -71,7 +71,7 @@
                             </Style>
                         </TextBlock.Style>
                         <Run Text="Injury risk: " /><Run Text="{Binding InjuryRisk, Mode=OneWay}" FontWeight="SemiBold"
-                             Foreground="{StaticResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
+                             Foreground="{DynamicResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
                     </TextBlock>
                     <ProgressBar Value="{Binding LevelProgress, Mode=OneWay}" Maximum="1" Height="6" Margin="0,8,0,0"
                                  ToolTip="Progress to the next level" />
@@ -125,7 +125,7 @@
                                 <ItemsControl ItemsSource="{Binding Benefits}" Margin="0,6,0,0">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock TextWrapping="Wrap" Style="{StaticResource Faint}"><Run Text="+  " Foreground="{StaticResource AccentBrush}" FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                            <TextBlock TextWrapping="Wrap" Style="{StaticResource Faint}"><Run Text="+  " Foreground="{DynamicResource AccentTextBrush}" FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>

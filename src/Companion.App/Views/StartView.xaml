@@ -69,10 +69,10 @@
 
                 <!-- Open-career picker pre-flight error (blank/missing path). A file that exists but
                      will not open is reported by the shell's own StatusError banner instead. -->
-                <Border Background="{StaticResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
+                <Border Background="{DynamicResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
                         Margin="0,12,0,0"
                         Visibility="{Binding OpenError, Converter={StaticResource NullCollapsed}}">
-                    <TextBlock Text="{Binding OpenError}" Foreground="{StaticResource ErrorBrush}"
+                    <TextBlock Text="{Binding OpenError}" Foreground="{DynamicResource ErrorBrush}"
                                TextWrapping="Wrap" />
                 </Border>
 
@@ -81,10 +81,10 @@
                 <!-- gallery file-operation failure (delete/rename/duplicate on a locked file,
                      permissions, or an invalid rename target). The entry stays in the gallery
                      because the file is still on disk. -->
-                <Border Background="{StaticResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
+                <Border Background="{DynamicResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
                         Margin="0,0,0,8"
                         Visibility="{Binding GalleryError, Converter={StaticResource NullCollapsed}}">
-                    <TextBlock Text="{Binding GalleryError}" Foreground="{StaticResource ErrorBrush}"
+                    <TextBlock Text="{Binding GalleryError}" Foreground="{DynamicResource ErrorBrush}"
                                TextWrapping="Wrap" />
                 </Border>
 
@@ -93,17 +93,17 @@
                         Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C1;" FontSize="20"
-                                       Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"
+                            <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7C1;" FontSize="20"
+                                       Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center"
                                        Margin="0,0,12,0" />
                             <TextBlock Text="No careers yet" FontWeight="SemiBold" FontSize="15"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBlock Style="{StaticResource Body}" Margin="0,8,0,0">
-                            <Run FontFamily="Segoe MDL2 Assets" Text="&#xE74A;"
-                                 Foreground="{StaticResource AccentBrush}" /><Run
+                            <Run FontFamily="{StaticResource IconFont}" Text="&#xE74A;"
+                                 Foreground="{DynamicResource AccentTextBrush}" /><Run
                                  Text="  Start with " /><Run Text="New career" FontWeight="SemiBold"
-                                 Foreground="{StaticResource AccentBrush}" /><Run
+                                 Foreground="{DynamicResource AccentTextBrush}" /><Run
                                  Text=" above — pick a season pack, verify it against your install, pick your seat, race." />
                         </TextBlock>
                         <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
@@ -145,8 +145,8 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border Width="288" CornerRadius="7"
-                                            Background="{StaticResource SurfaceAltBrush}"
-                                            BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                                            Background="{DynamicResource SurfaceAltBrush}"
+                                            BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
                                             ToolTip="{Binding Path}">
                                         <DockPanel>
                                             <!-- YEAR-PIC HERO band (16:9 for the 288-wide card → 162 tall):
@@ -173,22 +173,17 @@
                                                 </Border>
                                                 <!-- bottom scrim so the era label + the card seam stay
                                                      legible over a bright photo -->
-                                                <Border CornerRadius="6,6,0,0" Height="56" VerticalAlignment="Bottom">
-                                                    <Border.Background>
-                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                            <GradientStop Offset="0" Color="#00000000" />
-                                                            <GradientStop Offset="1" Color="#96000000" />
-                                                        </LinearGradientBrush>
-                                                    </Border.Background>
-                                                </Border>
+                                                <Border CornerRadius="6,6,0,0" Height="56" VerticalAlignment="Bottom"
+                                                        Background="{DynamicResource MediaCaptionGradientBrush}" />
                                                 <TextBlock Text="{Binding Converter={StaticResource EraLabel}}"
-                                                           Foreground="#F2FFFFFF" FontWeight="Bold" FontSize="12"
+                                                           Foreground="{DynamicResource OnMediaMutedBrush}"
+                                                           FontWeight="Bold" FontSize="12"
                                                            VerticalAlignment="Bottom" HorizontalAlignment="Left"
                                                            Margin="12,0,0,8"
                                                            Visibility="{Binding DataContext.EraThemingEnabled, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource BoolVisible}}" />
                                                 <Button Content="&#xE711;" Style="{StaticResource IconButton}"
                                                         VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4"
-                                                        Foreground="#F2FFFFFF"
+                                                        Foreground="{DynamicResource OnMediaMutedBrush}"
                                                         ToolTip="Remove from this list (the career file stays)"
                                                         AutomationProperties.Name="Remove from recent careers"
                                                         Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
@@ -213,8 +208,8 @@
         </ScrollViewer>
 
         <!-- install detection status from the shell -->
-        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,1,0,0">
+        <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,1,0,0">
             <TextBlock Margin="16,8" Style="{StaticResource Faint}" TextWrapping="Wrap"
                        Text="{Binding DataContext.InstallStatus, RelativeSource={RelativeSource AncestorType=Window}}" />
         </Border>

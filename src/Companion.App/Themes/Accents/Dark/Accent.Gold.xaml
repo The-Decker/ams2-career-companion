@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Gold · dark-base accessible preset. -->
+    <SolidColorBrush x:Key="AccentBrush" Color="#F4B942" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FFD064" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#F4C35D" />
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#33F4B942" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#4DF4B942" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#101318" />
+</ResourceDictionary>

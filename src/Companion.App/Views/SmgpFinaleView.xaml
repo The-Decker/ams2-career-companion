@@ -23,7 +23,7 @@
 
                 <!-- the FLAWLESS ribbon (champion in all 17) — the deeper secret -->
                 <Border Margin="0,0,0,6" Padding="14,4" CornerRadius="10" HorizontalAlignment="Center"
-                        Background="{StaticResource AccentBrush}"
+                        Background="{DynamicResource AccentBrush}"
                         Visibility="{Binding Model.IsFlawless, Converter={StaticResource BoolVisible}}">
                     <TextBlock Text="&#x2605;  T H E   U L T I M A T E   S E C R E T  &#x2605;"
                                Foreground="White" FontWeight="Bold" FontSize="13" />
@@ -36,10 +36,10 @@
                 <!-- the SECRET hero image: data/ams2/smgp/finale/<special|ultimate>.jpg (sealed until earned) -->
                 <Grid Height="380" Margin="0,16,0,0"
                       ToolTip="The reward image lives at data\ams2\smgp\finale\&lt;key&gt;.jpg (beside the exe)">
-                    <Border CornerRadius="14" Background="{StaticResource SurfaceAltBrush}">
+                    <Border CornerRadius="14" Background="{DynamicResource SurfaceAltBrush}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="88"
-                                       Foreground="{StaticResource AccentBrush}" Opacity="0.55"
+                            <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="88"
+                                       Foreground="{DynamicResource AccentTextBrush}" Opacity="0.55"
                                        HorizontalAlignment="Center" />
                             <TextBlock Text="A SECRET UNLOCKED" Style="{StaticResource Faint}"
                                        HorizontalAlignment="Center" Margin="0,8,0,0" />
@@ -53,7 +53,7 @@
                 </Grid>
 
                 <!-- dedication line -->
-                <TextBlock Text="{Binding Model.Subhead}" Foreground="{StaticResource AccentBrush}"
+                <TextBlock Text="{Binding Model.Subhead}" Foreground="{DynamicResource AccentTextBrush}"
                            FontStyle="Italic" FontSize="15" TextAlignment="Center" TextWrapping="Wrap"
                            Margin="0,16,0,0" HorizontalAlignment="Center" />
 

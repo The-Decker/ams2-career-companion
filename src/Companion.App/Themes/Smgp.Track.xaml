@@ -1,0 +1,103 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Invariant SMGP pixel-track art. These colors describe asphalt, scenery and paint rather
+         than application chrome, so they intentionally do not follow the app base or accent. -->
+    <DrawingBrush x:Key="SmgpAsphaltBrush" TileMode="Tile"
+                  Viewport="0,0,32,32" ViewportUnits="Absolute"
+                  Viewbox="0,0,32,32" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#34383B">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#2D3134">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="3,5,3,2" /><RectangleGeometry Rect="19,2,2,3" />
+                            <RectangleGeometry Rect="10,20,2,2" /><RectangleGeometry Rect="26,24,3,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#414549">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="12,8,2,2" /><RectangleGeometry Rect="28,11,2,2" />
+                            <RectangleGeometry Rect="4,27,2,2" /><RectangleGeometry Rect="21,18,3,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="SmgpGrassBrush" TileMode="Tile"
+                  Viewport="0,0,24,24" ViewportUnits="Absolute"
+                  Viewbox="0,0,24,24" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#426C16">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,24,24" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#31570F">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="2,4,4,3" /><RectangleGeometry Rect="14,1,3,4" />
+                            <RectangleGeometry Rect="8,15,3,3" /><RectangleGeometry Rect="19,18,4,3" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#6F941F">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="9,6,3,2" /><RectangleGeometry Rect="20,9,2,3" />
+                            <RectangleGeometry Rect="3,20,3,2" /><RectangleGeometry Rect="15,13,2,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="SmgpCurbBrush" TileMode="Tile"
+                  Viewport="0,0,18,64" ViewportUnits="Absolute"
+                  Viewbox="0,0,18,64" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#F1EEE7">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,64" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#C52A23">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,32" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#771A18">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,28,18,4" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="SmgpCheckeredBrush" TileMode="Tile"
+                  Viewport="0,0,32,32" ViewportUnits="Absolute"
+                  Viewbox="0,0,32,32" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#EEECE5">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#17191B">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,0,16,16" />
+                            <RectangleGeometry Rect="16,16,16,16" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <SolidColorBrush x:Key="SmgpFenceBrush" Color="#2A332F" />
+    <SolidColorBrush x:Key="SmgpFenceEdgeBrush" Color="#9AA39E" />
+    <SolidColorBrush x:Key="SmgpGridBayEdgeBrush" Color="#AAB9BCBD" />
+    <SolidColorBrush x:Key="SmgpGridMarkingBrush" Color="#F1EEE7" />
+</ResourceDictionary>

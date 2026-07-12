@@ -23,7 +23,7 @@
             <Button MinWidth="170" Command="{Binding BackCommand}"
                     ToolTip="Back to the entered order — the draft is kept (Esc works too)">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72B;" FontSize="13"
+                    <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE72B;" FontSize="13"
                                VerticalAlignment="Center" Margin="0,1,8,0" />
                     <TextBlock Text="Back to result entry" />
                 </StackPanel>
@@ -48,8 +48,8 @@
                             <DataTemplate>
                                 <DockPanel Margin="2,3">
                                     <TextBlock DockPanel.Dock="Right" Text="{Binding PointsText}"
-                                               FontWeight="SemiBold" FontFamily="Consolas" />
-                                    <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextSecondaryBrush}" />
+                                               FontWeight="SemiBold" FontFamily="{StaticResource MonoFont}" />
+                                    <TextBlock Text="{Binding DisplayName}" Foreground="{DynamicResource TextSecondaryBrush}" />
                                 </DockPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -70,11 +70,11 @@
                                     <TextBlock DockPanel.Dock="Left" Width="52" Text="{Binding Glyph}"
                                                FontWeight="SemiBold"
                                                Foreground="{Binding Glyph, Converter={StaticResource GlyphBrush}}" />
-                                    <TextBlock DockPanel.Dock="Right" FontFamily="Consolas"
-                                               Foreground="{StaticResource TextMutedBrush}">
+                                    <TextBlock DockPanel.Dock="Right" FontFamily="{StaticResource MonoFont}"
+                                               Foreground="{DynamicResource TextMutedBrush}">
                                         <Run Text="{Binding FromText, Mode=OneWay}" /><Run Text=" → " /><Run Text="{Binding ToText, Mode=OneWay}" />
                                     </TextBlock>
-                                    <TextBlock Text="{Binding DisplayName}" Foreground="{StaticResource TextSecondaryBrush}" />
+                                    <TextBlock Text="{Binding DisplayName}" Foreground="{DynamicResource TextSecondaryBrush}" />
                                 </DockPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

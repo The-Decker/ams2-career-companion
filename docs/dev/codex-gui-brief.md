@@ -13,7 +13,8 @@ and adds the driver’s national flag, name, team, position, number, and `YOU` s
 Your jobs now, in priority order:
 
 1. **Fill the remaining art** — see `docs/dev/asset-inventory.md`. Portraits, car previews, player
-   images, and SMGP driver flags are complete in canonical `dist`; team logos are the next large gap.
+   images, SMGP driver flags, and all 24 team logos are complete in canonical `dist`; Mike's first
+   promotion-photo batch is installed at 15/24.
 2. **Enhance the Paddock view** (§3) — make the driver/team preview beautiful.
 3. **Run a consistency / optimization pass** (§4) across every SMGP screen.
 
@@ -23,7 +24,7 @@ Your jobs now, in priority order:
 
 - Branch off `hub/increment-4`; keep diffs to **Views XAML + styles + art**; rebase before handing back
   because Claude commits to the same base. Run `dotnet build` / `dotnet test` from the repo root
-  (`Companion.slnx`, .NET 10 — no `.sln`). Current green floor: **1943 unit + 52 render**.
+  (`Companion.slnx`, .NET 10 — no `.sln`). Current green floor: **1969 unit + 64 render**.
 - Verify visually on an **SMGP career**. San Marino · Round 1 is the canonical test screen.
 - The render harness (`tests/Companion.RenderHarness.Tests`) exercises these screens. Run it after XAML
   changes and strengthen structural/layout assertions when the change is intentional.
@@ -53,10 +54,12 @@ The current completed SMGP fundamentals are:
 - 34/34 side-profile car previews
 - 24/24 per-team player images
 - 34/34 driver-keyed national flags
+- 24/24 team logos (transparent pixel-painted team crests)
+- 15/24 promotion team photos from Mike's canonical batch
 
-Next priority: team logos, team photos, round cards, and optional banners. Purpose-built overhead/three-
-quarter grid cars remain an optional upgrade because the complete canonical side previews are the live
-fallback.
+Next priority: Mike's nine remaining team photos, round cards, and optional banners. Purpose-built
+overhead/three-quarter grid cars remain an optional upgrade because the complete canonical side previews
+are the live fallback.
 
 ---
 
