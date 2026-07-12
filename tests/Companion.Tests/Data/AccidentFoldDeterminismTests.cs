@@ -113,6 +113,16 @@ public sealed class AccidentFoldDeterminismTests : IDisposable
     }
 
     [Fact]
+    public void CharacterRules_RejectsAnUnknownAccidentBandOutcome_AtLoad()
+    {
+        // A hand-authored typo in a band's outcome would otherwise silently resolve a fatal band to
+        // "none"; the load-time gate must reject it (like an archetype referencing an unknown perk id).
+        string json = File.ReadAllText(Path.Combine(ViewModelTestData.RulesDirectory, "perks.json"))
+            .Replace("\"outcome\": \"death\"", "\"outcome\": \"deathh\"");
+        Assert.Throws<System.Text.Json.JsonException>(() => CharacterRules.Parse(json));
+    }
+
+    [Fact]
     public void MortalityCareer_SurvivesAnAccident_EmitsDerivedRow_AndReplaysByteIdentically()
     {
         // A hugely durable driver ALWAYS survives (offset floors the effective roll at None) — so the

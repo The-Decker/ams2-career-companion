@@ -168,6 +168,13 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private string? _contentError;
 
+    /// <summary>Non-null once a fatal accident ENDS the career (character death &amp; injury §3.3): the driver
+    /// died (Normal — the death screen offers a restore) or a Hardcore death just deleted the save. The
+    /// shell routes to the death / permadeath screen from this (Slice 5 renders it). DB-FREE — for a
+    /// Hardcore death the session's DB is already disposed, so nothing may query it once this is set.</summary>
+    [ObservableProperty]
+    private PlayerMortalityStatus? _careerOver;
+
     public bool IsBriefingState => CurrentContent is BriefingViewModel;
     public bool IsResultEntryState => CurrentContent is ResultEntryViewModel;
     public bool IsConfirmState => CurrentContent is ConfirmViewModel;
@@ -578,6 +585,18 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         ClearRoundEntryState();
+
+        // Character death & injury (Slice 3): a fatal accident ENDS the career. For a Hardcore death the
+        // session's DB is already disposed and the file deleted, so we must NOT touch Summary/Briefing/
+        // commands (they query the DB) — hand off to the death screen from the DB-FREE mortality status
+        // instead. Normal death keeps the file (the death screen offers a restore). Reads the guarded
+        // PlayerMortality(), never the DB, so it is safe even after the file is gone.
+        var mortality = _session.PlayerMortality();
+        if (mortality.Deceased || mortality.CareerFileDeleted)
+        {
+            CareerOver = mortality;
+            return;
+        }
 
         Summary = _session.Summary;
         Briefing.Refresh();

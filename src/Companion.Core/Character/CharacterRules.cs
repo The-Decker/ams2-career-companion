@@ -115,6 +115,16 @@ public sealed record CharacterRules
                 if (band.UpTo < previous)
                     throw new JsonException($"accident.{name} bands must have non-decreasing upTo bounds.");
                 previous = band.UpTo;
+                // A hand-authored typo in the outcome (e.g. "deathh", "SeasonEnding") would otherwise
+                // silently resolve to "none" (AccidentModel.ParseKind's fallback), nullifying a fatal
+                // band — so reject an unknown outcome at load, like the archetype→perk-id gate above.
+                if (band.Outcome is not ("none" or "minorInjury" or "seasonEnding" or "death"))
+                    throw new JsonException(
+                        $"accident.{name} band has unknown outcome '{band.Outcome}' " +
+                        "(expected none | minorInjury | seasonEnding | death).");
+                if (string.Equals(band.Outcome, "minorInjury", StringComparison.Ordinal) && band.MissRaces < 1)
+                    throw new JsonException(
+                        $"accident.{name} minorInjury band must miss at least one race (missRaces >= 1).");
             }
             if (bands[^1].UpTo < 500)
                 throw new JsonException($"accident.{name}'s last band must cover the full d500 range (upTo >= 500).");
