@@ -14,11 +14,11 @@ public sealed class SmgpCareerBeatsTests
     private static SmgpNarrativeRound Round(
         string venue, int? finish = null, bool pole = false, bool scored = false,
         string team = "Bullets", int prestige = 3, string? won = null, string? lost = null,
-        int floorLosses = 0, bool careerOver = false) => new()
+        int floorLosses = 0, bool careerOver = false, string? accident = null, int missRaces = 0) => new()
     {
         Venue = venue, Finish = finish, Pole = pole, ScoredPointsCumulative = scored,
         SeatTeamName = team, SeatPrestige = prestige, RivalryWonOver = won, RivalryLostTo = lost,
-        FloorLosses = floorLosses, CareerOver = careerOver,
+        FloorLosses = floorLosses, CareerOver = careerOver, AccidentOutcome = accident, AccidentMissRaces = missRaces,
     };
 
     private static SmgpNarrativeSeason Season(
@@ -215,5 +215,54 @@ public sealed class SmgpCareerBeatsTests
 
         var finale = Assert.Single(beats, b => b.Kind == SmgpBeatKind.Finale);
         Assert.Equal("THE EMPEROR RUN", finale.Headline);
+    }
+
+    [Theory]
+    [InlineData(1, "out of the next race")]
+    [InlineData(3, "out for 3 races")]
+    public void A_minor_injury_this_round_fires_an_injured_beat(int missRaces, string detailFragment)
+    {
+        var beats = SmgpCareerBeats.Detect(
+        [
+            Season(1, [Round("Monaco", finish: 8, accident: "minorInjury", missRaces: missRaces)]),
+        ]);
+
+        var injured = Assert.Single(beats, b => b.Kind == SmgpBeatKind.Injured);
+        Assert.Equal("Season 1 · Monaco", injured.WhenLabel);   // venue rides along → {venue} resolves
+        Assert.Contains(detailFragment, injured.Detail);
+    }
+
+    [Fact]
+    public void A_season_ending_injury_fires_its_beat_but_does_not_end_the_career()
+    {
+        var beats = SmgpCareerBeats.Detect(
+        [
+            Season(1, [Round("Monaco", accident: "seasonEnding"), Round("Spa", finish: 4, scored: true)]),
+        ]);
+
+        Assert.Single(beats, b => b.Kind == SmgpBeatKind.SeasonEndingInjury);
+        Assert.Contains(beats, b => b.WhenLabel.Contains("Spa"));   // the career continues that season
+    }
+
+    [Fact]
+    public void A_fatal_accident_ends_the_timeline_with_a_tragedy_beat()
+    {
+        var beats = SmgpCareerBeats.Detect(
+        [
+            Season(1,
+            [
+                Round("Monaco", finish: 3, scored: true),
+                Round("Spa", accident: "death"),
+                Round("Monza"), // never reached — the driver died
+            ]),
+            Season(2, [Round("Interlagos")]), // never reached
+        ]);
+
+        var tragedy = Assert.Single(beats, b => b.Kind == SmgpBeatKind.Died);
+        Assert.Equal("TRAGEDY", tragedy.Headline);
+        Assert.Equal("Season 1 · Spa", tragedy.WhenLabel);
+        // Nothing after the death.
+        Assert.DoesNotContain(beats, b => b.WhenLabel.Contains("Monza"));
+        Assert.DoesNotContain(beats, b => b.WhenLabel == "Season 2");
     }
 }

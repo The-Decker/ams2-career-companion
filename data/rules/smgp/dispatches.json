@@ -26,6 +26,13 @@
       "One to shake off before the next circuit.",
       "The garage wheels the car away with long faces."
     ],
+    "mourning": [
+      "The whole paddock falls silent.",
+      "Flags fly at half-mast over the pit lane.",
+      "The SEGA world will not forget this name.",
+      "A hush settles over the big board.",
+      "The circus stops, and remembers one of its own."
+    ],
     "rumor": [
       "Word on the pit wall is that {benchmark} has never looked more untouchable at the top of the ladder.",
       "The paddock is whispering about who dares name {benchmark} at the next round.",
@@ -103,6 +110,18 @@
     "setback.career-over": [
       "{pool:dateline} THE FLOOR CLAIMS ANOTHER. {player} is out of F1 SMGP - the LEVEL D losses ran out the clock on the career. The big board goes dark on the dream. {pool:groan}",
       "{pool:dateline} It is over for {player}: knocked out of the SMGP world at the LEVEL D floor, the campaign ended before its summit. {pool:groan}"
+    ],
+    "setback.injured": [
+      "{pool:dateline} {player} IS HURT. A crash pitches the {team} car into the barriers and leaves the driver battered - sidelined while the injuries mend. {pool:groan}",
+      "{pool:dateline} A heavy shunt for {player}: carried from the wreck and ruled out of the coming rounds. The {team} seat waits for its driver to heal. {pool:groan}"
+    ],
+    "setback.season-ending-injury": [
+      "{pool:dateline} SEASON OVER IN THE BARRIERS. {player}'s campaign ends in the wall - a crash bad enough to close out the year. The {team} car waits until next season for its driver. {pool:groan}",
+      "{pool:dateline} The barriers claim {player}'s season: an accident too severe to come back from this year. The climb pauses, but the driver will return. {pool:groan}"
+    ],
+    "setback.died": [
+      "{pool:dateline} TRAGEDY. {player} has been killed in an accident here. The SMGP world loses one of its own, and the circus falls silent. {pool:mourning}",
+      "{pool:dateline} The darkest day: {player} lost their life in the crash. The big board goes dark, and the paddock mourns a driver taken too soon. {pool:mourning}"
     ],
     "world.rival-streak": [
       "{pool:dateline} {subject} MAKES IT {number} IN A ROW! The {venue} win extends a run that has the whole ladder on notice. The rest of the grid can only chase.",

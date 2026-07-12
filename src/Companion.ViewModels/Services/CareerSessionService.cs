@@ -2156,6 +2156,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 if (rps.Player.Smgp is { } sm)
                     smgpByRound[rnd] = sm;
 
+            // The season's journal, read once and walked for both the battle triggers and the accidents below.
+            var journalRows = JournalStore.ReadSeason(_database, season.Id);
+
             // Journaled battle triggers → the round a two-wins offer was earned / a two-losses forfeit
             // happened. Read from the journal (NOT the streak, which resets to 0 in the same triggering fold);
             // title-defense rows carry trigger "none" and are skipped.
@@ -2163,7 +2166,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             var lostByRound = new Dictionary<int, string>();
             var wonIdByRound = new Dictionary<int, string>();
             var lostIdByRound = new Dictionary<int, string>();
-            foreach (var row in JournalStore.ReadSeason(_database, season.Id))
+            foreach (var row in journalRows)
             {
                 if (!string.Equals(row.Phase, JournalPhases.SmgpBattle, StringComparison.Ordinal) || row.Round is not { } jr)
                     continue;
@@ -2183,6 +2186,33 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     {
                         lostByRound[jr] = rivalName;
                         if (rival is { Length: > 0 }) lostIdByRound[jr] = rival;
+                    }
+                }
+                catch (System.Text.Json.JsonException)
+                {
+                    // A malformed delta cell never breaks the display timeline.
+                }
+            }
+
+            // Journaled player accidents → the round an INJURING/FATAL accident happened (character death &
+            // injury §6). Only injuring outcomes drive a Setback dispatch; a survived accident ("none") is
+            // skipped. Reuses the journal already read above (same DERIVED player.accident row set).
+            var accidentByRound = new Dictionary<int, string>();
+            var accidentMissByRound = new Dictionary<int, int>();
+            foreach (var row in journalRows)
+            {
+                if (!string.Equals(row.Phase, JournalPhases.PlayerAccident, StringComparison.Ordinal) || row.Round is not { } ar)
+                    continue;
+                try
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(row.DeltaJson);
+                    var root = doc.RootElement;
+                    string? outcome = root.TryGetProperty("outcome", out var ov) ? ov.GetString() : null;
+                    if (outcome is "minorInjury" or "seasonEnding" or "death")
+                    {
+                        accidentByRound[ar] = outcome;
+                        if (root.TryGetProperty("missRaces", out var mv) && mv.ValueKind == System.Text.Json.JsonValueKind.Number)
+                            accidentMissByRound[ar] = mv.GetInt32();
                     }
                 }
                 catch (System.Text.Json.JsonException)
@@ -2254,6 +2284,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     RivalryLostToId = lostIdByRound.GetValueOrDefault(s.Round),
                     FloorLosses = smgp?.FloorLosses ?? 0,
                     CareerOver = smgp?.CareerOver ?? false,
+                    AccidentOutcome = accidentByRound.GetValueOrDefault(s.Round),
+                    AccidentMissRaces = accidentMissByRound.GetValueOrDefault(s.Round),
                 });
             }
 
@@ -2379,6 +2411,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         Companion.Core.Smgp.SmgpBeatKind.Finale => ("milestone.finale", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
         Companion.Core.Smgp.SmgpBeatKind.RivalryLost => ("setback.rivalry-lost", Companion.Core.Smgp.SmgpDispatchKind.Setback),
         Companion.Core.Smgp.SmgpBeatKind.NearMiss => ("setback.near-miss", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        // Character death & injury (§6): an accident's setback voiced in the living-world feed.
+        Companion.Core.Smgp.SmgpBeatKind.Injured => ("setback.injured", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        Companion.Core.Smgp.SmgpBeatKind.SeasonEndingInjury => ("setback.season-ending-injury", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        Companion.Core.Smgp.SmgpBeatKind.Died => ("setback.died", Companion.Core.Smgp.SmgpDispatchKind.Setback),
         // The floor kicking the player OUT reuses the Demotion kind but a distinct "out" headline.
         Companion.Core.Smgp.SmgpBeatKind.Demotion => beat.Headline.Contains("OUT OF", StringComparison.Ordinal)
             ? ("setback.career-over", Companion.Core.Smgp.SmgpDispatchKind.Setback)
