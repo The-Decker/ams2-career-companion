@@ -7,11 +7,16 @@ a standing role, not a one-off. Claude keeps building SMGP **features + logic**;
 **looks** and the **art assets**. This brief is the mission; work through it, and keep it + the asset
 inventory current as you go.
 
-Your four jobs, in priority order:
-1. **Fill the missing art** — see `docs/dev/asset-inventory.md` (133 assets missing; **cars/** is the big one).
-2. **Refresh the starting-grid view** — make it the cinematic screen from Mike's AAA mockup.
-3. **Enhance the Paddock view** — make the driver/team preview beautiful.
-4. **Rival screen + a consistency/optimization pass** across every screen.
+**Round 1 merged (`bd5b01c`, 2026-07-12):** ✅ starting grid refreshed (the SMGP pixel starting
+straight) and ✅ rival screen hero-sized + Continue moved below "YES". Good work — reviewed clean.
+
+Your jobs now, in priority order:
+1. **Fill the missing art** — see `docs/dev/asset-inventory.md` (133 missing). **`cars/` (all 34) is the
+   top win**: the pixel grid, rival dossier and Paddock all show blank car bays until those land.
+   ⚠ Drop art into the tracked **`data/ams2/<kind>/`** (commit it) AND copy to `dist/data/ams2/<kind>/`
+   for the running RC — `dist/` is gitignored, so art dropped only there is NOT saved.
+2. **Enhance the Paddock view** (§3) — make the driver/team preview beautiful.
+3. **A consistency / optimization pass** (§4) across every screen.
 
 ---
 
