@@ -1,0 +1,471 @@
+{
+    "$comment":  "SMGP-world sponsor board (id, name, industry, tier, tagline, 2-3 para story, brand colour, backed team ids, founded flavour). Fully fictional SEGA universe. DISPLAY-ONLY (never a fold input), like team-profiles/driver-profiles. Shown on the Paddock Sponsors tab; the seed of the future Tycoon mode. Authored 2026-07-12 by a 27-agent workflow + coherence critic; HTML entities decoded, ASCII punctuation, one name collision + one placeholder industry fixed.",
+    "sponsors":  [
+                     {
+                         "id":  "sponsor.aurelian",
+                         "name":  "Maison Aurelian",
+                         "industry":  "Haute Horlogerie",
+                         "tier":  "title",
+                         "tagline":  "THE HOUR IS ALREADY WON.",
+                         "story":  [
+                                       "Maison Aurelian did not begin by selling time - it began by keeping it. For a century and a half the atelier wound the palace clocks, certified the tower bells, and stamped the single movement against which every other clock in the realm was judged. A guilloche dial the deep blue of a royal night, a balance wheel tuned to a hundredth of a second, a case-back engraved by one man who has never signed his name twice - this is a house that does not measure the hour so much as decide it. When Aurelian says a second has passed, the second has the good manners to agree.",
+                                       "So of course the crown\u0027s watch belongs on the crown\u0027s car. Madonna does not enter a season to compete; it enters to confirm the order of things, and Aurelian has spent generations doing precisely that with a mainspring and a hairspring. The number one leaves the box, the field arranges itself behind it, and the whole spectacle runs like a movement under glass - every gear where it was always going to be. To put the blue Aurelian mark beside that yellow and red is not sponsorship. It is two dynasties recognizing the same inevitability in each other, and shaking hands over it in front of the world.",
+                                       "What the Maison wants from the SMGP is not attention - it has never needed to be seen, only to be trusted. It wants to be the thing that certifies the outcome: the podium clock that reads exactly what the house intended, the fastest lap timed to the instant it was destined to fall, the crown\u0027s victory notarized in sapphire and steel. Let the insurgents chase the pass and the money teams buy the front row. Aurelian is content to sit on the flawless car and remind the grid of the one truth it cannot outbrake - time runs in a single direction, and it runs toward the crown."
+                                   ],
+                         "brandColorHex":  "#14224E",
+                         "teams":  [
+                                       "team.madonna"
+                                   ],
+                         "foundedFlavor":  "Est. 1874 - the only house ever permitted to set the palace clocks."
+                     },
+                     {
+                         "id":  "sponsor.casa-corvino",
+                         "name":  "Casa Corvino",
+                         "industry":  "Luxury Fashion \u0026 Wine House",
+                         "tier":  "title",
+                         "tagline":  "OLD BLOOD, DARK WINE, AND THE FINEST SECOND PLACE MONEY CANNOT BUY",
+                         "story":  [
+                                       "Casa Corvino was cutting cloth for coronations while the grand prix was still a rumor between coaching inns. A Florentine dynasty of couturiers and vintners, it dresses the old houses of the establishment and bottles the wine-dark vintages they toast one another with - the deep, almost-black Corvino red that gave the family its raven name. The Corvino tailor does not measure a client so much as read a bloodline; the Corvino cellar does not sell a bottle so much as lend it, for a century or two, to a name it deems worthy. Nothing in the atelier is new. Everything in it is eternal. That, the house will tell you over a glass you did not order, is the whole difference between fashion and taste.",
+                                       "It backs one car and always has: team.firenze. No other house on the grid carries the breeding to wear the Corvino crest - the wine-and-gold, the ivory nose, the heraldic lily that could have come off a Corvino evening coat. When Germi threads a hairpin like a needle through silk, the Corvino box rises as one, because it is watching its own philosophy driven at three hundred: artistry over aggression, restraint over noise, centuries over seasons. The two are aristocrats of the same wound - the finest thing in the room that is somehow, maddeningly, still not the first.",
+                                       "For Casa Corvino wants exactly what Firenze wants and will admit to neither. Publicly it wants only for the world to see that elegance outlasts every trophy, that a crown you inherit is furniture and a wine-dark second place worn with grace is worth more than a vulgar win. Privately, in the cellar after the lights, the old house aches for Senna\u0027s crown as fiercely as the team it dresses - and dreams of the season Germi finally reaches up and STEALS the one thing breeding was never quite able to buy."
+                                   ],
+                         "brandColorHex":  "#6E1B2D",
+                         "teams":  [
+                                       "team.firenze"
+                                   ],
+                         "foundedFlavor":  "Since 1498 - couture and vintages for houses that were already old when the sport was born."
+                     },
+                     {
+                         "id":  "sponsor.meridian-reserve",
+                         "name":  "Meridian Reserve",
+                         "industry":  "Investment Bank / Finance",
+                         "tier":  "title",
+                         "tagline":  "CAPITAL NEVER LIFTS.",
+                         "story":  [
+                                       "Meridian Reserve does not keep a garage - it keeps a vault, and the vault is older than the sport it now bankrolls. Chartered in the marble hush of the old exchange district, it spent a century as the quiet institution behind other men\u0027s fortunes: the name on no letterhead, the signature at the bottom of every ruinous deal, the cold well that empires drew from until they drowned. It has no colours, no anthem, no crowd - only a balance sheet that has never, in living memory, closed in the red. When it finally turned its gaze to the Super Monaco grid, it was not shopping for a sport. It was looking for an appetite that matched its own.",
+                                       "It found Millions. Where the team is all noise - mirror-chrome, gold leaf, N. Jones bellowing out of the #5 - Meridian is the silence underneath, the bottomless account the whole gaudy circus is drawn against. Millions spends; the Reserve is the well that never runs dry. Every out-bid engineer, every hoarded wind-tunnel hour, every front-row seat invoiced out from under the establishment clears through Meridian, which treats the g3-M3 not as a race car but as a line on a ledger it fully intends to profit from. The team supplies the swagger; the bank supplies the limitless, loveless capital that makes the swagger true.",
+                                       "And the Reserve wants precisely one thing the grid keeps denying it - the only line item its money has never managed to close. It has purchased the fastest of very nearly everything, and still the crown sits one length up the road, yellow-and-red, A. Senna serene and unpriced, a title that answers to no cheque. This is the cold that drives Meridian: not passion, not glory, but the intolerable fact of an asset it cannot acquire. So it funds another season, and a bigger one after that, betting that capital pushed far enough turns even a throne into something with a price - and that when the number is at last large enough, Madonna\u0027s crown becomes just one more thing the Reserve already owns."
+                                   ],
+                         "brandColorHex":  "#0B3D2E",
+                         "teams":  [
+                                       "team.millions"
+                                   ],
+                         "foundedFlavor":  "Chartered in the old exchange district generations before the first green flag - the counting-house that has outlived every fortune it ever bankrolled."
+                     },
+                     {
+                         "id":  "sponsor.sable-dynamics",
+                         "name":  "Sable Dynamics",
+                         "industry":  "Aerospace \u0026 Defense",
+                         "tier":  "title",
+                         "tagline":  "WE ENGINEER THE INEVITABLE",
+                         "story":  [
+                                       "Sable Dynamics was not founded so much as commissioned - a cluster of wind tunnels, black hangars, and non-disclosure agreements that grew up around a government airfield no atlas prints. For decades it built the things nations do not discuss at press conferences: guidance packages, radar-swallowing skins, alloys that hold their shape at speeds men were never meant to survive. It never needed a logo. Then it decided it wanted one on the fastest cars in the world.",
+                                       "Bestowal was the natural recipient. The team\u0027s name is the whole arrangement in a single word - what Sable grants, Bestowal receives: the same computational fluid dynamics that shapes a cruise missile, the same telemetry doctrine that flies a drone across a border in silence. The house does not chatter to sponsors or beg for a livery deal; it simply arrives each season a fraction sharper than physics should allow, and the paddock learns, again, that quiet money engineers louder results than any oil baron\u0027s roar.",
+                                       "What Sable wants is the shop window - a proving ground under television lights where deniable technology can be watched winning by every ministry that might one day sign a purchase order. A championship for Bestowal is a brochure no rival can classify. Sable Dynamics does not chase the crown at Madonna; it studies it, measures it, and builds - patiently, government-grade - the machine that will one day take it."
+                                   ],
+                         "brandColorHex":  "#232C36",
+                         "teams":  [
+                                       "team.bestowal"
+                                   ],
+                         "foundedFlavor":  "Commissioned 1949, at an airfield that appears on no map."
+                     },
+                     {
+                         "id":  "sponsor.maison-lumiere",
+                         "name":  "Maison Lumiere",
+                         "industry":  "Cosmetics \u0026 Perfume",
+                         "tier":  "title",
+                         "tagline":  "SHINE LIKE THEY\u0027RE ALL WATCHING - BECAUSE THEY ARE.",
+                         "story":  [
+                                       "Maison Lumiere began as one bottle and one grin. Its founder, a broke carnival perfumer named Fabien Lumiere, distilled orris root - the ghost-violet heart of the iris flower - into a single scent, then sold it from a mirrored caravan lit like a stage, promising every buyer they would walk out looking watched. The caravan became a salon, the salon became an empire of footlights and velvet, and the House of Light never once stopped performing. Its rival was born the same season, from Fabien\u0027s own sister, who took the colder half of the family recipe and built a hushed, frost-white perfumery on patience where Lumiere built on spectacle. Two houses, one bloodline, forever measured against each other - the loud sister and the glacial one.",
+                                       "When the House of Light went looking for a car to wear its name, it found its own reflection idling in the LEVEL A paddock. Iris - mirror-bright, cut like glass, a slash of violet down the flank, a crown team with a showman\u0027s grin - was Lumiere rendered in steel. The maison poured its treasury into the number, gilding the bodywork to a vanity-mirror shine and turning every qualifying lap into a runway walk. The violet on that car is the maison\u0027s own house color; the polish is its cosmetic gospel made metal. As title patron it asks only that Iris be the most beautiful thing on the grid and the most impossible to look away from - because a face nobody watches, Fabien always said, is only a face.",
+                                       "What Maison Lumiere wants from this world is not merely to unseat Madonna\u0027s crown - it wants to out-dazzle it, to make the grand nights belong to the violet jewel and the perfume that shares its flower. But the truest hunger is older than any grid. Somewhere across the paddock the frost half of the family whispers its patience into Azalea\u0027s magenta petals, and Lumiere cannot bear that the cold sister might bloom last and loudest. So it spends, and it shines, and it grins - determined that when the floodlights burn their brightest, it is the House of Light, and Iris, that the whole world is watching."
+                                   ],
+                         "brandColorHex":  "#B5179E",
+                         "teams":  [
+                                       "team.iris"
+                                   ],
+                         "foundedFlavor":  "Since the season a broke carnival perfumer bottled the ghost of an iris and sold the crowd its own reflection."
+                     },
+                     {
+                         "id":  "sponsor.nivalis-optik",
+                         "name":  "Nivalis Optik",
+                         "industry":  "Precision Optics \u0026 Electronics",
+                         "tier":  "title",
+                         "tagline":  "THE COLDEST GLASS SEES THE TITLE FIRST",
+                         "story":  [
+                                       "Nivalis Optik was not assembled - it was grown, one lens at a time, in a frost-sealed glasshouse on the cold edge of the map. The house made its name grinding optics for observatories and long-range timing arrays, glass so exact that a single wasted micron sent the blank back to the furnace. Its founders held that the eye must be colder than the thing it watches, and they built an empire on that belief - lenses, sensors, and the photo-finish gear that settles a race to the thousandth, every piece cut clean and kept at temperature until the exact moment it is needed.",
+                                       "When Nivalis went looking for a grid to wear its magenta, it walked past the loud houses without a glance and stopped at the one car raised the way its lenses are - cultivated panel by panel behind glass, cold to the touch, built to open only when the lights burn brightest. Azalea and Nivalis are the same instinct in two forms: patience ground to a perfect edge, then bloomed on the night that counts. The frost-and-magenta flank now carries the optics house that taught the paddock what precision costs, and neither party pretends the pairing was anything but inevitable.",
+                                       "It backs Azalea to LEVEL A and to nothing less, because a title house grinds glass for a single purpose - to be the eye that watches a season decided under floodlights, and to have its magenta on the car that decides it. Let the spring rounds blur past uncounted. When the final night comes and the crown is close enough to touch, Nivalis wants its coating on Larssen\u0027s visor, its timing beam on the line, and its cold bloom opening over a field that still believed a flower could not see them coming."
+                                   ],
+                         "brandColorHex":  "#C81E82",
+                         "teams":  [
+                                       "team.azalea"
+                                   ],
+                         "foundedFlavor":  "Ground its first lens in a frost-sealed glasshouse the winter Azalea first bloomed."
+                     },
+                     {
+                         "id":  "sponsor.candor-clinical",
+                         "name":  "Candor Clinical",
+                         "industry":  "Pharmaceuticals / Clinical",
+                         "tier":  "major",
+                         "tagline":  "CLEAN HANDS. CLEAN LAPS. NO MARGIN FOR ERROR.",
+                         "story":  [
+                                       "Candor Clinical grew out of a windowless compounding lab where a single speck of dust could void a year\u0027s work. Its founders built the brand on a promise no rival pharmacist would dare make - zero contamination, every batch, every time - and the white-gowned discipline that keeps that promise became the whole company. In an industry that buries its failures, Candor sells the opposite: a record clean enough to eat off of.",
+                                       "When its directors first walked the SMGP pit lane, they found the one garage that already felt like home. Blanche mopped its floor between sessions, logged every bolt, and sent its cars back onto the transporter without a mark on the paint - a team that ran a race weekend like a clean room. Candor signed as major backer that same winter, and now the whitecoats in the Blanche box answer to two masters who want precisely the same thing: a car that arrives spotless and leaves spotless, one pass short of the crown and closing.",
+                                       "What Candor wants from this world is vindication. The paddock calls Blanche the prettiest runner-up on the grid and mistakes cleanliness for caution. Candor means to prove the reverse - that a team held to a clinical standard does not crack, does not stain, and does not blink - and that on the day white finally takes the flag ahead of Madonna, every rival who sneered at the mop will understand that spotless was never timid. It was the cure they never saw coming."
+                                   ],
+                         "brandColorHex":  "#EEF4F8",
+                         "teams":  [
+                                       "team.blanche"
+                                   ],
+                         "foundedFlavor":  "Compounded since 1911 in a laboratory with no windows, no dust, and no excuses."
+                     },
+                     {
+                         "id":  "sponsor.overvolt",
+                         "name":  "OVERVOLT",
+                         "industry":  "Energy Drinks",
+                         "tier":  "major",
+                         "tagline":  "OBEY THE JOLT - OR EAT THE WALL",
+                         "story":  [
+                                       "OVERVOLT was never brewed in a laboratory - it was mixed in the back of a haulage depot by night-shift mechanics who had a double to survive and hated everything soft about the drinks on the machine. They cut it too strong on purpose, canned it in gunmetal and acid-green, and sold it off tailgates to men who worked with their hands and their tempers. It reached the paddock the way a fist reaches a door: fast, loud, and leaving a dent. Major money now, sure - but not one drop of it polite.",
+                                       "Every glossy label on the grid chases the crown, buying a well-mannered corner of some Madonna or Firenze nose. OVERVOLT wanted none of those manners. It walked straight into LEVEL B and slapped its cheque on the one garage that actually scares people - Tyrant. The gunmetal slab, the iron fist stamped on the flank, the brakes driven a heartbeat past sense: that is the brand in sheet metal. When the #11 and #12 come hunting and dare the Armco to argue, an OVERVOLT can rides the sidepod, and V. Kessler\u0027s pit wall likes it exactly that way. No charm, no apology, just voltage and menace.",
+                                       "What the brand wants is simple, and it wants it at full volume: the shut door of LEVEL A kicked clean off its hinges, with an OVERVOLT can in shot when it goes. Let the aristocrats keep their heritage and their soft paint - this money backs the raid, not the reign. Pour it down the throat of the whole midfield, point them at the wall of kings, and see who is still standing once the caffeine and the oxblood clear. Too much, on purpose, every single weekend."
+                                   ],
+                         "brandColorHex":  "#C6FF00",
+                         "teams":  [
+                                       "team.tyrant"
+                                   ],
+                         "foundedFlavor":  "Cut too strong since a 1979 diesel-yard night shift, and never once apologized."
+                     },
+                     {
+                         "id":  "sponsor.molywerk",
+                         "name":  "Molywerk",
+                         "industry":  "Industrial Lubricants \u0026 Chemicals",
+                         "tier":  "major",
+                         "tagline":  "GRADE, NOT GUESSWORK",
+                         "story":  [
+                                       "Molywerk started as a single blending shed on the wrong side of a foundry town, packing molybdenum paste into unmarked tins for machinists who could not afford to lose a bearing. There was no showroom and no slogan - just a hand-lettered viscosity chart nailed to the wall and a founder who tested every batch by running it until it failed, then writing down the number. Sixty years later the tins have become drums stacked to the rafters of a hundred cold garages, but the creed has not moved a millimetre: measure it, grade it, prove it, ship it. Molywerk does not advertise magic. It advertises the number stamped on the barrel.",
+                                       "When Molywerk went looking for a race team, it walked past the aristocrats and the money houses and stopped at the coldest garage on the grid. Losel did not want a mascot - it wanted a supplier that could hand over a data sheet without flinching, and Molywerk is the only chemical house that ships one thicker than the manual. The blue car runs on Molywerk extreme-pressure grade because both outfits believe the same heresy: passion loses tenths, and the answer is always in the numbers. It is a major backer, not a title patron - the drum-amber flash on a gunmetal flank, the workmanlike money that keeps a LEVEL B garage grinding through the DNQ cluster winter after winter.",
+                                       "What Molywerk wants from the SMGP world is vindication by proof. Every season Losel qualifies a whisker off promotion, and every season the crown stays parked behind Madonna\u0027s history - and Molywerk takes that personally, the way an engineer takes a failed tolerance personally. They are betting the barrel that friction is just a problem nobody has graded hard enough yet: run the blend cool enough, hold the line true enough, and the almost-team finally kicks the LEVEL A door off its hinges. Until then the drums keep coming, the chart on the wall keeps filling, and the amber stays bolted to the coldest, most stubborn car on the grid."
+                                   ],
+                         "brandColorHex":  "#B5651A",
+                         "teams":  [
+                                       "team.losel"
+                                   ],
+                         "foundedFlavor":  "Since 1931 - the unmarked tin of moly paste in every machinist\u0027s drawer."
+                     },
+                     {
+                         "id":  "sponsor.meadowlark-athletic",
+                         "name":  "Meadowlark Athletic",
+                         "industry":  "Sportswear \u0026 Apparel",
+                         "tier":  "major",
+                         "tagline":  "WORN BY EVERYONE STILL CLIMBING",
+                         "story":  [
+                                       "Meadowlark Athletic started as a fold-out table by a spring-market gate - two sewing machines, a crate of green track jackets, and a founder who timed the local road race from the finish line every Sunday. It grew the way a field grows: fast, warm, and all at once. By the time the big houses noticed, half the grandstand was already wearing the little bird on their sleeves, and Meadowlark had become the people\u0027s kit - the label you earn on your feet, not the one you inherit.",
+                                       "It backs May because it sees itself in the green machine. Both wake at dawn with the doors open; both wave at the crowd and then take your afternoon at the hairpin. The crown houses were never going to call - Meadowlark does not dress aristocrats, it dresses the ones still climbing - so it stitched its name down the flank of the one car in the paddock that climbs for a living. A major sponsor now, big enough to fill a grandstand\u0027s worth of green, ambitious enough to spend it all on LEVEL B.",
+                                       "What it wants is simple and a little cheeky: to be worn on a podium May was told it would never reach. Azalea says blossoms blow away - Meadowlark stitches for the season that keeps arriving anyway. Dress the climb, outfit the whistle in the pit lane, and ride shotgun with a champion who is made, not bought. SPRING NEVER STOPS CLIMBING - and neither does the label on its sleeve."
+                                   ],
+                         "brandColorHex":  "#34B84A",
+                         "teams":  [
+                                       "team.may"
+                                   ],
+                         "foundedFlavor":  "Since \u002771 - first sold off a fold-out table by the spring-market gate."
+                     },
+                     {
+                         "id":  "sponsor.kazoo-broadcasting",
+                         "name":  "Kazoo Broadcasting Company",
+                         "industry":  "Comedy \u0026 Novelty Entertainment",
+                         "tier":  "major",
+                         "tagline":  "IF THEY LAUGH, WE WIN",
+                         "story":  [
+                                       "Kazoo Broadcasting Company began as a single low-band variety channel wedged between the weather report and the wrestling, famous for its prize wheels, its pie-in-the-face game shows, and confetti cannons loud enough to drown out its own closing credits. By the time SMGP went to colour, Kazoo owned nine channels, a fleet of blimp cameras, and the most infamous laugh track in the paddock - a company that never sold a product so much as it sold a grin.",
+                                       "When the big networks bid for the crown houses, Kazoo let Madonna and Firenze go to the banks and the watch-houses, and instead bought the one seat nobody else wanted: the Joke team. It was the shrewdest buy on pit lane. A Level B car that pirouettes at the hairpin and claws its way back to eighth earns Kazoo more airtime than any metronome leading flag to flag. The grandstand adores the gag, the gag adores the camera, and the camera belongs to Kazoo.",
+                                       "It does not chase silverware. It chases the roar - the crowd on its feet, the driver clowning on the slow-down lap, the near-miss that is a highlight reel by dinner. Its executives will tell you, dead straight, that a lap record is forgotten by Tuesday but a good pratfall runs forever. Give Kazoo one season of spectacle and it swears it will make the Joke team the most-watched car on the whole grid, crown or no crown."
+                                   ],
+                         "brandColorHex":  "#B5179E",
+                         "teams":  [
+                                       "team.joke"
+                                   ],
+                         "foundedFlavor":  "Since 1971 - the network that once aired an entire Grand Prix in reverse, just for the laugh"
+                     },
+                     {
+                         "id":  "sponsor.riotgrade",
+                         "name":  "RIOTGRADE",
+                         "industry":  "Rebel Streetwear",
+                         "tier":  "minor",
+                         "tagline":  "GUNMETAL NEVER KNEELS",
+                         "story":  [
+                                       "RIOTGRADE started on salvaged pit-crew coveralls and hauler tarp, because nobody in the cheap seats could afford a single stitch of Madonna gold. The look was never a design choice - it was what the leftovers made: raw seams, gunmetal grey, a stencil you could read from clear across a grandstand. Within a few seasons the crews were wearing it on purpose, the outfit stopped being a joke, and the grey started to read like a flag.",
+                                       "There was only ever one car worth sewing the patch onto. Bullets read LEVEL C on the paperwork and LEVEL A on the stopwatch, and RIOTGRADE reads exactly the same off a receipt - undersized, underfunded, aimed straight at the crown. When G. Ceara chambers that stripped-down machine under a black sky and drags Senna onto the final lap, every kid in a gunmetal hood is fighting the same war: let the establishment keep the gold, we will keep the fight.",
+                                       "The brand does not want a title house and could not buy one if it tried. It wants the upset - the lap where the little gun barks on its home straight and a whole grandstand of grey stands up at once. Every season Ceara scratches the crown, RIOTGRADE sells out by the next round, and that is the entire business plan: dress the side that was never invited to the podium, and be the first thing photographed when they crash it anyway."
+                                   ],
+                         "brandColorHex":  "#2E353B",
+                         "teams":  [
+                                       "team.bullets"
+                                   ],
+                         "foundedFlavor":  "Stitched on a fold-out table behind the LEVEL C paddock, est. the season the cheap seats found their color."
+                     },
+                     {
+                         "id":  "sponsor.marrok-concrete-haul",
+                         "name":  "Marrok Concrete \u0026 Haul",
+                         "industry":  "Construction \u0026 Logistics",
+                         "tier":  "minor",
+                         "tagline":  "POUR IT DEEP. HAUL IT HOME.",
+                         "story":  [
+                                       "Marrok Concrete \u0026 Haul was poured, not launched - dragged into being by Osk Marrok and a crew of crane-men and gravel-haulers working the same hard hills that later forged Dardan. It began with one cement mixer, one borrowed flatbed, and a rule the yard still lives by: the load does not care how you feel, so bear it or get out from under it. Season by season the outfit grew from a single pour into the firm that lays half the region\u0027s foundations and runs the freight that keeps its roads breathing - unglamorous, unhurried, and stubbornly unbreakable.",
+                                       "It backs Dardan because it recognizes its own trade in that garage. Both are clan work, hammered together rather than bankrolled; both would sooner come home dented and honest than spotless and soft. So Marrok stamps its amber crane-mark low on the oxblood flank of the #18 and #19 - no gloss, no gleam, just the plain word of a firm that pours load-bearing concrete standing behind the one team on the grid that never kneels. When the aristocrats sneer that a haulage badge has no business on a race car, the Marrok crew only shrug: somebody has to carry the weight.",
+                                       "Marrok wants nothing the marble houses want. It has no dream of Madonna\u0027s crown and no patience for Firenze\u0027s velvet second place. What it wants is to watch the bronze spear kick the Level B door clean off its hinges - because a firm built on bearing loads believes, to its bones, that the ones who carry weight are the ones who deserve to rise. Pour it deep, haul it home, and ride shotgun with Bellini and Alfven until the timing screens finally admit what the yard has always known."
+                                   ],
+                         "brandColorHex":  "#E39A12",
+                         "teams":  [
+                                       "team.dardan"
+                                   ],
+                         "foundedFlavor":  "Since one mixer and a borrowed flatbed - Marrok has borne the load ever since."
+                     },
+                     {
+                         "id":  "sponsor.grafton-mutual",
+                         "name":  "Grafton Mutual",
+                         "industry":  "Insurance",
+                         "tier":  "minor",
+                         "tagline":  "THE PRUDENT ALWAYS FINISH",
+                         "story":  [
+                                       "Grafton Mutual was raised in the ledger-houses of a working harbour, founded by a knot of clerks who made their living pricing the risk no one else would touch - timber yards, fishing keels, the slow and unglamorous cargo of ordinary lives. They grew comfortable on a single unfashionable creed: the safe bet, held long enough, always pays. No towers, no fanfare, just a green-baize desk and a book of policies that had never once cracked in a storm. In a sport drunk on the crown, Grafton is the quiet firm that reads the actuarial tables and smiles.",
+                                       "The house underwrites half the crash cover on the Super Monaco grid, and in all its careful years exactly one policy has never returned a claim - the deep forest-green Linden number 22. Where the aristocrats gamble whole seasons on a wild setup, Marcel Moreau simply brings the old wood home, lap after patient lap, until Grafton\u0027s assessors stopped bothering to watch him. So the firm did the only sensible thing a cautious house can do: it bolted its name to the surest bet on the calendar. Sponsoring Linden is not romance to Grafton - it is arithmetic, and it is love.",
+                                       "What Grafton wants from this world is not a trophy it would have to bet the whole book to steal. It wants the grid to learn what its ledgers already know - that flash burns and prudence endures, that a car which never smokes against the Armco is worth more than any pole. Let Bullets hurl itself at the crown and file its claims in a shower of carbon; Grafton will keep its steady green machine in the points, keep the premiums low, and grow its book one unhurried season at a time. The prudent always finish - that is the whole business."
+                                   ],
+                         "brandColorHex":  "#1D3B5C",
+                         "teams":  [
+                                       "team.linden"
+                                   ],
+                         "foundedFlavor":  "Since 1931 - underwriting the harbour\u0027s timber yards, and every quiet bet since."
+                     },
+                     {
+                         "id":  "sponsor.everline-mobile",
+                         "name":  "Everline Mobile",
+                         "industry":  "Telecom / Mobile",
+                         "tier":  "minor",
+                         "tagline":  "EVERY LINE LEADS HOME.",
+                         "story":  [
+                                       "Everline Mobile never chased the flagship cities. It grew the other way - a plain chain of relay masts strung along the backwater circuits and canyon roads nobody else bothered to wire: the marshal\u0027s post past the last hairpin, the far paddock, the crackling receiver in a garage where a rookie\u0027s family waited by for news. No slogan, no flash. Just the one bar of reception that was quietly, reliably, always there.",
+                                       "It backs Minarae because the two are the same honest trade in different metal. Minarae is the starting line every champion passes through; Everline is the signal already humming in the wall before the driver ever arrives. A crown house wants a name that shouts down the straight - Everline wants the name nobody remembers to thank. So it rides the plain, dependable number 20 not to be seen winning, but to be the line home when the little car limps back to the pits with its nose bent and its pride intact.",
+                                       "What it wants from the grid is not a podium - it is to be the connection under everything. To have carried the call when the champion was still a nobody buckling into a Minarae, so that years later, when they lift the crown at Monaco, the signal that first reached them was already Everline\u0027s. Every champion started in a Minarae. Every one of them, Everline was already listening."
+                                   ],
+                         "brandColorHex":  "#13A8B5",
+                         "teams":  [
+                                       "team.minarae"
+                                   ],
+                         "foundedFlavor":  "Since the season the first relay mast went up on the canyon rim - one bar of signal where the map showed none."
+                     },
+                     {
+                         "id":  "sponsor.vesta-homesteads",
+                         "name":  "Vesta Homesteads",
+                         "industry":  "Home \u0026 Real Estate",
+                         "tier":  "minor",
+                         "tagline":  "A KEY FOR EVERY DRIVER, A HEARTH FOR EVERY SEASON!",
+                         "story":  [
+                                       "Vesta Homesteads started as a two-desk estate office wedged between a bakery and the family workshop where the Lares race team was first hammered together - same street, same season, same stubborn idea about what a home is for. It never sold palaces. It sold honest terraced houses to working families: a good hearth, a dry roof, a small garden out back, a key that turned every time. Over the years it grew into a modest regional homebuilder, well enough off to letter its name on a car but far too sensible to dream of a crown-house billboard. Around the district folks say a Vesta house is like a Lares car - never the flashiest on the row, but the one still standing warm when the fancy ones have gone cold.",
+                                       "It backs Lares because the two houses preach the very same gospel - shelter, warmth, and the plain miracle of coming home in one piece. A homebuilder wants its name on the machine that always finishes, not the one that dazzles for three laps and smokes into the wall; a car that circulates loyally to the flag is the finest advert a property man could ever buy. So the modest amber decal - a little key crossed over a hearth - sits tucked beside the cream stripe on that deep hearth-red bodywork, unglamorous and proud, riding home lap after lap in the warm middle of the grid where both of them belong.",
+                                       "What Vesta wants from the SMGP world is not to conquer it but to be remembered kindly by it. When a broke rookie climbs up out of LEVEL D with no seat and nowhere to sleep, Lares opens a door - and more than once it is a Vesta clerk who quietly finds that kid a first small flat near the paddock. The firm asks for nothing back but the nod. Let Madonna keep the crown and Bullets keep sprinting; Vesta Homesteads just wants the ladder to keep one warm rung in the middle, and its little amber key still turning under the lights when the checkered flag falls."
+                                   ],
+                         "brandColorHex":  "#C46A2E",
+                         "teams":  [
+                                       "team.lares"
+                                   ],
+                         "foundedFlavor":  "Since \u002771 - built on the corner lot behind the old Lares workshop"
+                     },
+                     {
+                         "id":  "sponsor.heel-and-toe",
+                         "name":  "Heel \u0026 Toe",
+                         "industry":  "Footwear",
+                         "tier":  "minor",
+                         "tagline":  "HEEL DOWN, TOE IN, ALWAYS ON YOUR FEET.",
+                         "story":  [
+                                       "Heel \u0026 Toe was a cobbler\u0027s bench long before it was ever a sponsor - a narrow leather shop that hand-lasted work boots for men who spend their lives standing on cold concrete. For a whole generation it shod the mechanics of half the Super Monaco paddock without a single logo on a single car; a Heel \u0026 Toe boot was simply what you laced up when the day was going to be spent under a machine instead of up in a grandstand. The name is the oldest joke in the pit lane and the shop has never once tried to live it down - heel-and-toe is the little dance a driver\u0027s feet do on the pedals, and heel-to-toe is how a good boot is measured on the last, so the grafters kept the pun, stamped it into the leather, and let the paddock enjoy it.",
+                                       "So when a crew of tool-hardened men rolled a barely-stickered car out of a rented lock-up and let the wits christen it Feet, there was only ever one badge that belonged on that steel-blue flank. A bootmaker backing the team called Feet, its mark riding beside the worn workboot stencilled where richer outfits splash a champagne name - the whole grid laughed, and both sides took the laugh as the compliment it was. Heel \u0026 Toe is no champagne name and does not pretend to be one; its backing is a modest leather stipend and a standing promise that no hand in the Feet garage ever works a race weekend in a boot that leaks. It is a minor mark on a minor team, and the two of them wear that word \u0027minor\u0027 like a clean pair of laces.",
+                                       "What the old shop wants from this circus is exactly what Feet wants and not one inch more - to graft its way up the ladder one honest rung at a time until the grandees have to shuffle over and make room. It does not dream of the crown, because crowns are not sold by cobblers, but it dreams of the afternoon \u0027Old Boots\u0027 finally claws into LEVEL B with a boot painted on her door, so every apprentice who ever stood on a workshop floor can jab a greasy finger at the timing screen and say the working man\u0027s leather got there on pure merit. Until that day Heel \u0026 Toe does what it has always done: keeps the garage shod, keeps its head down, and keeps every last man on the team standing squarely on his own two feet."
+                                   ],
+                         "brandColorHex":  "#6F4327",
+                         "teams":  [
+                                       "team.feet"
+                                   ],
+                         "foundedFlavor":  "Hand-lasting grafters\u0027 work boots on Cobbler\u0027s Row since long before Feet had a car - or a name."
+                     },
+                     {
+                         "id":  "sponsor.coinsprite",
+                         "name":  "Coinsprite",
+                         "industry":  "Arcade \u0026 Video Games",
+                         "tier":  "minor",
+                         "tagline":  "INSERT COIN. GO FLAT OUT.",
+                         "story":  [
+                                       "Coinsprite started as a single coin-op cabinet in the back of a valley-town cafe in Andorra, the kind of machine a mountain kid feeds his pocket money into between welding jobs. That kid was Eric Sambena. The cabinet took his coins for years; the little company that built it grew into a modest string of arcades and a maker of coin-op racing machines - never a boardroom brand, never big, just neon warming the cold mountain towns where nobody expects the future to turn up first.",
+                                       "When Sambena welded his own dream into the #25 and the paddock demanded to know who backed him, the honest answer stayed \u0027nobody.\u0027 Coinsprite is the one exception the grey car allows, and only because it is not the establishment - it is the arcade that raised him. The decal on the flank is small and hand-applied, paid in cabinets and credits and belief rather than a cheque that would buy a say. Serga keeps its self-made story intact; Coinsprite just gets to point at the crooked number 25 and tell every kid at the machine, that one is ours.",
+                                       "What Coinsprite wants from this championship is the oldest thing in the arcade: the underdog run, the impossible comeback, the whole crowd leaning into the glass on the last lap. A factory juggernaut is a boring game. A hand-built privateer filling a champion\u0027s mirrors at the hairpin is the best coin-op story ever coded, and every time the #25 out-drags a car worth ten of it, another kid drops a credit and picks the grey car. That is the only return the arcade is chasing - not the crown, just proof that the outsider is always the one worth playing."
+                                   ],
+                         "brandColorHex":  "#7A2BF5",
+                         "teams":  [
+                                       "team.serga"
+                                   ],
+                         "foundedFlavor":  "Since \u002781 - one cabinet in the back of a valley-town cafe, coins still warm."
+                     },
+                     {
+                         "id":  "sponsor.halloway-spares",
+                         "name":  "Halloway Spares",
+                         "industry":  "Budget Auto Parts",
+                         "tier":  "struggling",
+                         "tagline":  "GOOD-AS-NEW, HALF THE PRICE",
+                         "story":  [
+                                       "Halloway Spares is a reclamation yard with a little shop bolted onto the front of it, three streets back from anywhere anyone races. Ferro Halloway started it stripping dead cars for the parts that still had life left in them, and the trade never got grander than that - reconditioned alternators, salvaged uprights, a bin of mismatched bolts sold by the handful, all at a fraction of what a factory charges for the same metal cast new. The sign over the till is not aspiration, it is arithmetic: why buy new when good-as-new will get you home?",
+                                       "Every other firm on the grid chases a top house and a bright decal. Halloway chases the one team its parts actually fit. Rigel does not rebuild - Rigel restores, coaxing another clean lap out of a car nobody else remembers how to mend - and that is Halloway\u0027s whole trade written across a pit wall. Ferro was a boy in the cheap seats the famous night the blue car led before the engine let go, and he has kept that same shade of machine alive ever since, one reconditioned box at a time. It is a marriage of two stubborn operations that refuse to let old, beautiful things die just because the money did.",
+                                       "Halloway is not dreaming of the crown - it would not know what to do with one. What Ferro wants is smaller and harder: the midnight car crossing the line under its own power on a Halloway water pump, the little rust-orange decal on the sidepod catching one television camera, and the timing screen finally proving what he has argued across the counter for thirty years - that a make-do part driven flat out will beat an unused fortune sitting in a crate. One points finish, the yard\u0027s name in the results, and every skeptic who ever called the place a bin of junk can come in and buy a bracket."
+                                   ],
+                         "brandColorHex":  "#B5651D",
+                         "teams":  [
+                                       "team.rigel"
+                                   ],
+                         "foundedFlavor":  "Est. three streets back, in a yard of dead cars and the parts that outlived them."
+                     },
+                     {
+                         "id":  "sponsor.frostcan",
+                         "name":  "FrostCan",
+                         "industry":  "Refrigeration \u0026 Soft Drinks",
+                         "tier":  "struggling",
+                         "tagline":  "COLDEST CAN IN THE PADDOCK",
+                         "story":  [
+                                       "FrostCan started as a single humming ice cabinet at the back of a paddock canteen, the kind of chest cooler that rattles all night and sells warm-country crowds a can of blue fizz for pocket change. Old man Calder ran the compressors, mixed the syrup himself, and stamped every can with a snowflake that never quite printed straight. It was never a rich brand - it was a cheap-cold-drink brand, the taste of a race day when you could not afford much else, and it wore that honestly.",
+                                       "It backs team.cool because nobody else on LEVEL D would take Calder\u0027s money and nobody up the grid would take his call. Cool runs on the floor, one bad weekend from the paddock gates, and FrostCan runs on the same razor - one bad summer from the compressors going quiet. They found each other at the bottom and shook on it: the ice brand and the ice team, snowflake on the sidepod, both of them stubborn, both of them broke, both of them refusing to admit the cold might finally win.",
+                                       "What FrostCan wants is small and enormous at once. Not the crown, not Madonna\u0027s marble, just one dry Sunday where a Cool car finishes ahead of a car that cost ten times as much - and a photo of that snowflake in the points, so the canteen crowd buys the next round and the compressors keep humming one more season. Stay cold. Stay in. That is the whole dream, sold by the can."
+                                   ],
+                         "brandColorHex":  "#4FC3E8",
+                         "teams":  [
+                                       "team.cool"
+                                   ],
+                         "foundedFlavor":  "Since the summer the canteen cooler first rattled to life - cheap, cold, and never once warm."
+                     },
+                     {
+                         "id":  "sponsor.lustro",
+                         "name":  "Lustro Soapworks",
+                         "industry":  "Household Cleaning Products",
+                         "tier":  "struggling",
+                         "tagline":  "SUDS UP, SHINE ON, BURN BRIGHT",
+                         "story":  [
+                                       "Lustro started as three copper kettles in a back lane behind the Comet garages, where a widow named Ottavia Renni boiled soap from tallow and citrus rind and sold it door to door down the paddock. The mechanics bought it by the crate to cut the oil off their hands, and one of them, half as a joke, scrubbed the tail of the old Nero Cometa with a Lustro bar until the black paint threw the sun straight back. That was the year the team flew. Ottavia\u0027s grandchildren still swear the shine had something to do with it.",
+                                       "They have backed the Comet team every season since - through the long fall from that one blaze all the way down to the LEVEL D floor - because a soap firm and a floor team turn out to want the same impossible thing: for something worn out and cheap to come up gleaming. Lustro cannot pay a tenth of what Millions pays. What it can do is keep the crew in suds, hand-polish #29 until Tornio\u0027s beaten old car looks like the fastest thing in the pit lane, and put its little bubble-and-star badge on the one machine that still remembers how to burn.",
+                                       "It does not dream of a crown; it dreams of a clean bright Sunday and enough orders on Monday to fire the kettles again. Give Lustro one podium - one photograph of that black comet gleaming on a step it has no business standing on - and every kitchen in the principality will know the name by supper. Suds and shine, comet-bright, and never quite out of the red: that is the whole business plan, and they would not trade it for anyone\u0027s fortune."
+                                   ],
+                         "brandColorHex":  "#16B7D4",
+                         "teams":  [
+                                       "team.comet"
+                                   ],
+                         "foundedFlavor":  "Since the year the sky burned - three copper kettles in a back lane behind the Comet garages."
+                     },
+                     {
+                         "id":  "sponsor.bloomwick",
+                         "name":  "Bloomwick Nurseries",
+                         "industry":  "Horticulture / Garden Supply",
+                         "tier":  "struggling",
+                         "tagline":  "PLANT LIKE THE FROST ISN\u0027T COMING",
+                         "story":  [
+                                       "Bloomwick began as a single lean-to glasshouse on the frost-line behind the Orchis works - a wood stove, a bench of clay pots, and a family that refused to let one cold night take a whole year. They never grew for the grand houses; the crowns wanted cut roses by the crate. Bloomwick grew the delicate things nobody else would risk - the orchids, the out-of-season blooms, the seedlings a single bad draught could kill. Every packet of seed they ever sold was a small bet that spring would come back around.",
+                                       "So when the Orchis garage next door could not cover a new nose cone, it was no stranger who stepped in. Two frost-scared neighbours, both living one perfect afternoon at a time, both praying the cold holds off until the flag - of course Bloomwick painted its name down the sidepod for the price of a winter\u0027s heating oil. A single orchid rides the delicate car now, and the deal is honest to the penny: one good Sunday on the broadcast sells enough seed to keep both greenhouses lit.",
+                                       "They do not ask the SMGP for a crown - crowns are for houses that were never one hard frost from closing. Bloomwick asks for exactly what Orchis asks for: one more bloom before the winter, one clean cool afternoon where the little flower opens in front of the whole world, and the takings to carry them round to next season. Sow small. Bloom anyway. Survive the frost, and count that as the championship."
+                                   ],
+                         "brandColorHex":  "#4F7A3A",
+                         "teams":  [
+                                       "team.orchis"
+                                   ],
+                         "foundedFlavor":  "Est. 1959 - one lean-to glasshouse, one wood stove, one growing season at a time."
+                     },
+                     {
+                         "id":  "sponsor.lunette-lamps",
+                         "name":  "Lunette Lamps",
+                         "industry":  "Lamps \u0026 Lunar Lighting",
+                         "tier":  "struggling",
+                         "tagline":  "KEEP ONE LAMP BURNING",
+                         "story":  [
+                                       "Lunette Lamps began as a two-bench workshop on the harbor road, where old Sabo Reyes wound filaments by hand and sold crescent-shaped desk lamps to dock clerks working the graveyard shift. The moon on the box was never a gimmick - it was simply the only customer that stayed open as late as he did. Three generations on, the shop still smells of hot brass and lamp oil, and still runs on the same stubborn theory: as long as one window is lit, the night has not won.",
+                                       "When Moon slid to Level D and the big houses stopped returning their calls, Lunette was the only name that answered - not out of strategy, but out of kinship. A back-marker team and a back-street lamp-maker, both wearing the same silver crescent, both kept alive by people who refuse to quit after dark. The sponsorship costs more than the shop can honestly spare; every race the little lamp painted on the sidepod is paid for in unsold stock and skipped wages, and every race it goes out there anyway.",
+                                       "Lunette does not ask Moon to win - it knows better than to hope for the crown. It asks only that when Madonna\u0027s lights blaze across the front row and the cameras crowd the aristocrats, one modest glow holds steady at the very back of the grid, refusing to be switched off. Let Senna have the sun. Lunette will keep the last lamp burning where the field goes dark."
+                                   ],
+                         "brandColorHex":  "#C8912F",
+                         "teams":  [
+                                       "team.moon"
+                                   ],
+                         "foundedFlavor":  "Since \u002771 - one lit window on the harbor road that never closed."
+                     },
+                     {
+                         "id":  "sponsor.ashfield-foundry",
+                         "name":  "Ashfield Foundry",
+                         "industry":  "Metal Foundry \u0026 Castings",
+                         "tier":  "struggling",
+                         "tagline":  "STILL LIT, STILL POURING, STILL HERE",
+                         "story":  [
+                                       "Ashfield Foundry was the grey town\u0027s beating heart once - three furnaces roaring day and night, pouring manifolds and gate-hinges and the iron door-numbers bolted to half the houses in the valley. That was a long time ago. Two of the furnaces have gone cold and been sold for scrap; the third still burns, barely, fed by old man Halloran and a skeleton crew who weld through the night because the alternative is a padlock and a memory. They are proud people. They are also, by any honest ledger, finished - one bad winter, one cracked crucible, one final plume of smoke from the exit.",
+                                       "So when the grid\u0027s grey little box came looking for a backer nobody else would touch, Ashfield said yes before the cheque was even discussed - because there was no cheque. What the foundry gives Zeroforce is not money it does not have, but the one thing it still can: patch panels cut by hand, exhaust collars poured overnight, a weld that holds when the factory part would have cost a whole season\u0027s budget. The dying-furnace howl of that number\u0027s engine and the last furnace in Ashfield are, near enough, the same sound - two of the town\u0027s last stubborn things, refusing in unison to go out.",
+                                       "It does not want the crown; the crown was never on offer down here. It wants its faded name to ride one more Sunday on a car that actually reaches the flag - to be read aloud once by the timing booth, to matter to somebody beyond the valley for the length of a single lap. Every race Zeroforce finishes, Ashfield finishes too. And every weekend they both survive, the old furnace stays lit one more week. That is the whole ambition. Down here, staying lit is the win."
+                                   ],
+                         "brandColorHex":  "#9A3B18",
+                         "teams":  [
+                                       "team.zeroforce"
+                                   ],
+                         "foundedFlavor":  "Pouring iron in Ashfield since before the grid had numbers - and not stopped yet."
+                     },
+                     {
+                         "id":  "sponsor.pyron",
+                         "name":  "Pyron",
+                         "industry":  "Fuel \u0026 Oil Giant (series-wide)",
+                         "tier":  "title",
+                         "tagline":  "FUEL THE FRONT",
+                         "story":  [
+                                       "Pyron began as a single cracking tower on the refinery coast, burning off the night in a column of orange that sailors set their bearings by. Within a decade its heat was everywhere - the flame on the forecourt, the drum in the harbour, the smell of the paddock at dawn. In the SMGP world there is no such thing as a tank that has never held Pyron; the brand simply is the fuel, and it wears that ubiquity like a crown of its own.",
+                                       "As series-wide title sponsor it refuses to gamble on one house, so it pours for the whole sharp end at once. It fuels Madonna because the crown must be seen to run on the best, and Senna\u0027s laps are the finest billboard heat can buy. It fuels Firenze because the wine-dark aristocrats have finished second for a generation, and Pyron means to be in the tank the year that finally breaks. And it fuels Bullets because Ceara\u0027s insurgency is the future, and a fuel giant that only backs kings is a fuel giant waiting to go cold.",
+                                       "What Pyron wants is total: to be the heat under every result, so that whoever lifts the trophy lifts a can of Pyron with it. Let the houses fight over the flag - Pyron has already won every finish that matters, because every finish burned its fire to get there."
+                                   ],
+                         "brandColorHex":  "#E23B0E",
+                         "teams":  [
+                                       "team.madonna",
+                                       "team.firenze",
+                                       "team.bullets"
+                                   ],
+                         "foundedFlavor":  "Poured since the very first green flag, and in every front-runner\u0027s tank ever since."
+                     },
+                     {
+                         "id":  "sponsor.vulcana",
+                         "name":  "Vulcana",
+                         "industry":  "Tyre Supplier (series-wide)",
+                         "tier":  "major",
+                         "tagline":  "GRIP IS A GAMBLE - WE ARE THE HOUSE.",
+                         "story":  [
+                                       "VULCANA was cured, not founded - mixed and pressed in the harbor foundries the first year cars ever screamed along the Monaco front, back when a tyre was a black secret a handful of men in leather aprons kept to themselves. The name is the old fire-god\u0027s, and so is the trade: raw rubber married to heat and sulphur until it becomes the one thing the whole grid cannot do without. Every house on the ladder buys the best it can afford - the best engine, the best driver, the best wing - but they all roll out of the pit lane on the same four black circles, and Vulcana makes them. Grip, the foundry likes to say, is the one advantage no chequebook ever fully owns.",
+                                       "That is why the compound house spreads its name deliberately down the ladder rather than up it - one banner at every altitude, a living proof that its rubber wins wherever it is bolted. On Millions it rides the gaudiest, richest car in the paddock, where soft rubber and a fat budget chase the one-lap qualifying glory the gold so badly craves. On Tyrant it takes the cruellest beating on the grid, brakes stamped late into the walls until the rubber screams - if a compound survives the iron fist, it survives anything. On Dardan it works the tight, walled knife-fights of LEVEL C, where a scrapper on the right gamble can still steal a bronze-nosed result from machinery worth ten times as much. And on Rigel, down at the floor beside oblivion, it keeps a promise older than most of the drivers - because the faded blue star\u0027s one storied night, the podium it never quite reached, was run on Vulcana black, and the foundry does not forget who it burned bright with.",
+                                       "Vulcana does not chase the crown, and you will never see its mark on Madonna\u0027s yellow-and-red - the king does not need a tyre partner, and the foundry does not need the king. What it wants is simpler and greedier than a title: it wants the whole grid to know that whoever crosses the line first crossed it on Vulcana rubber, from the richest cockpit to the poorest. Soft or hard, one stop or three, grip bought today and paid for in wear tomorrow - the compound gamble is the only bet on the calendar where the house takes a cut of every hand. Grip is a gamble. Vulcana is the house."
+                                   ],
+                         "brandColorHex":  "#E45C2A",
+                         "teams":  [
+                                       "team.millions",
+                                       "team.tyrant",
+                                       "team.dardan",
+                                       "team.rigel"
+                                   ],
+                         "foundedFlavor":  "Cured in the Monaco harbor foundries since the first green flag - rubber older than the ladder itself."
+                     },
+                     {
+                         "id":  "sponsor.primelight",
+                         "name":  "Primelight Broadcast",
+                         "industry":  "SMGP Broadcaster / TV Partner",
+                         "tier":  "major",
+                         "tagline":  "OWN THE NIGHT, OWN THE SHOW",
+                         "story":  [
+                                       "Primelight signed on the air the night the SMGP first ran under floodlights, back when the series was still arguing whether a night finale was a gamble or a gift. It ran the cable, hung the lamps, and pointed the cameras - and the sport has not gone dark since. It is not the richest badge on the grid and it does not pretend to be; it is simply the one you see. The glow on every visor, the flare down every straight, the voice over every last lap - all of it comes home on Primelight\u0027s feed.",
+                                       "A broadcaster does not need to own the crown - Madonna wears that with or without anyone\u0027s help - so Primelight buys the arc of the show instead of its apex. It backs Bestowal at the sharp end for the glamour the front of the grid demands, May in the midfield for the week-in, week-out drama of a house that always might, and Serga down the order for the underdog the cameras adore. Three teams, three storylines, a beginning and a middle and an end - a whole season cut to fit a broadcast.",
+                                       "What it wants is simple and total: the finale under its floodlights, the last corner in its frame, the closing music over its footage every single year. The cameras never blink. Give Primelight the night and it will give the SMGP back to the world in full colour - and quietly make certain the show it paid for is the one everyone remembers."
+                                   ],
+                         "brandColorHex":  "#F2A20C",
+                         "teams":  [
+                                       "team.bestowal",
+                                       "team.may",
+                                       "team.serga"
+                                   ],
+                         "foundedFlavor":  "On the air since the SMGP first raced under lights - the finale has never gone dark."
+                     }
+                 ]
+}

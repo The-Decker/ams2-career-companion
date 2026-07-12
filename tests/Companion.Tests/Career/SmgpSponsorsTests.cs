@@ -1,3 +1,4 @@
+using System.IO;
 using Companion.Core.Smgp;
 
 namespace Companion.Tests.Career;
@@ -53,5 +54,44 @@ public sealed class SmgpSponsorsTests
 
         Assert.Empty(SmgpSponsors.Empty.All);
         Assert.Empty(SmgpSponsors.Empty.ForTeam("team.madonna"));
+    }
+
+    // Coherence guard over the SHIPPED sponsors.json: every SMGP team has at least one sponsor, every
+    // referenced team id is real, no HTML entities leaked through, and each sponsor is complete.
+    private static readonly string[] AllTeams =
+    [
+        "team.madonna", "team.firenze", "team.millions", "team.bestowal", "team.iris", "team.azalea",
+        "team.blanche", "team.tyrant", "team.losel", "team.may", "team.joke",
+        "team.bullets", "team.dardan", "team.linden", "team.minarae", "team.lares", "team.feet", "team.serga",
+        "team.rigel", "team.cool", "team.comet", "team.orchis", "team.moon", "team.zeroforce",
+    ];
+
+    [Fact]
+    public void ShippedSponsors_CoverEveryTeam_WithRealRefs_AndAreComplete()
+    {
+        string path = Path.Combine(RepoRoot(), "data", "rules", "smgp", "sponsors.json");
+        var board = SmgpSponsors.Parse(File.ReadAllText(path));
+        Assert.NotEmpty(board.All);
+
+        var real = new HashSet<string>(AllTeams, StringComparer.Ordinal);
+        foreach (var s in board.All)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(s.Name), $"{s.Id} has no name");
+            Assert.False(string.IsNullOrWhiteSpace(s.Industry), $"{s.Id} has no industry");
+            Assert.NotEmpty(s.Story);
+            Assert.All(s.Teams, t => Assert.Contains(t, real)); // no phantom team ids
+            Assert.DoesNotContain("&amp;", s.Industry);         // entities decoded
+        }
+        // Every team is backed by at least one sponsor.
+        foreach (var team in AllTeams)
+            Assert.True(board.ForTeam(team).Count > 0, $"no sponsor backs {team}");
+    }
+
+    private static string RepoRoot()
+    {
+        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
+            if (Directory.Exists(Path.Combine(dir.FullName, "data", "rules", "smgp")))
+                return dir.FullName;
+        throw new DirectoryNotFoundException("Could not find data/rules/smgp above " + AppContext.BaseDirectory);
     }
 }

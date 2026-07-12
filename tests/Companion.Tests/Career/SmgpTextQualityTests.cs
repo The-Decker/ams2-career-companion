@@ -18,6 +18,7 @@ public sealed class SmgpTextQualityTests
     [InlineData("team-profiles.json")]
     [InlineData("rival-quotes.json")]
     [InlineData("what-really-happened.json")]
+    [InlineData("sponsors.json")]
     public void SmgpAuthoredText_HasNoDoubleEncodingMojibake(string fileName)
     {
         string path = Path.Combine(RepoRoot(), "data", "rules", "smgp", fileName);
@@ -34,6 +35,7 @@ public sealed class SmgpTextQualityTests
     [InlineData("team-profiles.json")]
     [InlineData("rival-quotes.json")]
     [InlineData("what-really-happened.json")]
+    [InlineData("sponsors.json")]
     public void SmgpAuthoredText_IsWellFormedJson(string fileName)
     {
         string path = Path.Combine(RepoRoot(), "data", "rules", "smgp", fileName);
