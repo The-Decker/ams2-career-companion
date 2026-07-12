@@ -34,11 +34,21 @@ public sealed record CharacterDossier
     /// when the character has no injury-stream perk (and so is never exposed to the roll).</summary>
     public string? InjuryRisk { get; init; }
 
+    /// <summary>The driver's CURRENT availability, folded from the accident/injury state
+    /// (docs/dev/character-death-injury.md §6): Fit / Injured / Season over / Deceased. A healthy
+    /// driver — and every Off-mortality career, whose injury fields are always default — reads Fit.</summary>
+    public AvailabilityStatus Availability { get; init; }
+
+    /// <summary>A ready-to-show label for <see cref="Availability"/> ("Fit", "Injured — out 2 races",
+    /// "Season over — recovering", "Deceased"); mirrors the fold in <c>PlayerMortalityStatus.IsFit</c>.</summary>
+    public string AvailabilityLabel { get; init; } = "Fit";
+
     /// <summary>Progress through the current level, 0..1 (1 at the max level).</summary>
     public double LevelProgress => XpForNextLevel <= 0 ? 1.0 : Math.Clamp((double)XpIntoLevel / XpForNextLevel, 0.0, 1.0);
 
     public static CharacterDossier Build(
-        CharacterProfile character, int level, long xp, CharacterRules rules, int? age = null)
+        CharacterProfile character, int level, long xp, CharacterRules rules, int? age = null,
+        int raceSuspensionRemaining = 0, bool seasonEndingInjury = false, bool deceased = false)
     {
         var curve = rules.Levels.XpCurve;
 
@@ -77,6 +87,15 @@ public sealed record CharacterDossier
             injuryRisk = hazard >= 0.30 ? "High" : hazard >= 0.16 ? "Moderate" : "Low";
         }
 
+        // Availability — the SAME precedence as PlayerMortalityStatus.IsFit (deceased > season-ending
+        // > suspended > fit). Off-mortality careers carry all-default fields, so they read Fit.
+        var (availability, availabilityLabel) =
+            deceased ? (AvailabilityStatus.Deceased, "Deceased")
+            : seasonEndingInjury ? (AvailabilityStatus.SeasonOver, "Season over — recovering")
+            : raceSuspensionRemaining > 0
+                ? (AvailabilityStatus.Injured, $"Injured — out {raceSuspensionRemaining} race{(raceSuspensionRemaining == 1 ? "" : "s")}")
+                : (AvailabilityStatus.Fit, "Fit");
+
         return new CharacterDossier
         {
             Name = character.Name,
@@ -89,8 +108,28 @@ public sealed record CharacterDossier
             Stats = stats,
             Perks = perks,
             InjuryRisk = injuryRisk,
+            Availability = availability,
+            AvailabilityLabel = availabilityLabel,
         };
     }
+}
+
+/// <summary>The driver's current availability for the next round — the display projection of the
+/// accident/injury fold state (docs/dev/character-death-injury.md §6). Ordered by severity so the
+/// default (0) is the healthy state.</summary>
+public enum AvailabilityStatus
+{
+    /// <summary>Available to race normally.</summary>
+    Fit = 0,
+
+    /// <summary>Sitting out one or more rounds with a minor accident injury (heals as rounds pass).</summary>
+    Injured = 1,
+
+    /// <summary>Out for the rest of the season with a season-ending injury (returns next season).</summary>
+    SeasonOver = 2,
+
+    /// <summary>Killed in an accident — terminal; the career is over.</summary>
+    Deceased = 3,
 }
 
 /// <summary>One stat row of the dossier: id, display label, current value, and whether it is a
