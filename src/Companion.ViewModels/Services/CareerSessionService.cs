@@ -177,6 +177,23 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             pack = files.Parse();
         }
 
+        // SMGP DYNAMIC DNQ (Mike: "a random generator should determine the bottom 8 ... who stays and
+        // who goes"): the field's DNQ tail is a SEEDED PER-CAREER roll, not the pack's baked default — a
+        // random generator picks which backmarkers make each round's grid, so the rotation differs per
+        // playthrough (revealed race by race via the starting-grid DNQ strip). Generated here at creation
+        // and pinned into season.json, so the fold reads the seeded starters and replays stay byte-
+        // identical (no fold change, no seed threading); existing careers keep their pinned starters.
+        if (string.Equals(pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal) &&
+            Companion.Core.Smgp.SmgpDnqField.HasDnqField(pack))
+        {
+            var starters = Companion.Core.Smgp.SmgpDnqField.Generate(pack, unchecked((ulong)request.MasterSeed));
+            files = files with
+            {
+                SeasonJson = Companion.Core.Smgp.SmgpDnqField.ApplyToSeasonJson(files.SeasonJson, starters),
+            };
+            pack = files.Parse();
+        }
+
         string playerDriverId = ResolvePlayerDriverId(pack, request.PlayerLiveryName);
 
         if (File.Exists(request.CareerFilePath))
