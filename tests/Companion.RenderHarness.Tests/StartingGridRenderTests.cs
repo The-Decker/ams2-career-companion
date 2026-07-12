@@ -208,6 +208,60 @@ public sealed class StartingGridRenderTests
     }
 
     [Fact]
+    public void StartingGridView_SmgpTrackExpandsWithTheAvailableViewport()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            GridSeat[] grid = Enumerable.Range(1, 26)
+                .Select(position => SmgpSeat(
+                    $"driver.responsive_{position}",
+                    $"Responsive Driver {position}",
+                    $"team.responsive_{(position + 1) / 2}",
+                    $"Responsive Team {(position + 1) / 2}",
+                    position.ToString()))
+                .ToArray();
+            var vm = new StartingGridViewModel(
+                grid, grid[0].DriverId, "Preliminary Race",
+                new GridConditions
+                {
+                    LapDistanceKm = 5.040,
+                    Weather = "Clear",
+                    TrackTempC = 29,
+                    AirTempC = 23,
+                });
+            var view = new StartingGridView { DataContext = vm };
+            var home = new HomeView { DataContext = new ModeHost(), Content = view };
+
+            (double TrackWidth, double ViewportWidth, double ScrollableWidth) MeasureAt(double width)
+            {
+                home.Measure(new Size(width, 800));
+                home.Arrange(new Rect(0, 0, width, 800));
+                home.UpdateLayout();
+
+                var track = (FrameworkElement)view.FindName("SmgpTrackSurface");
+                var scroll = (ScrollViewer)view.FindName("SmgpGridScroll");
+                Assert.Same(track, scroll.Content);
+                return (track.ActualWidth, scroll.ViewportWidth, scroll.ScrollableWidth);
+            }
+
+            var compact = MeasureAt(720);
+            var wide = MeasureAt(1600);
+
+            Assert.InRange(Math.Abs(compact.TrackWidth - compact.ViewportWidth), 0, 1);
+            Assert.InRange(Math.Abs(wide.TrackWidth - wide.ViewportWidth), 0, 1);
+            Assert.Equal(0, compact.ScrollableWidth);
+            Assert.Equal(0, wide.ScrollableWidth);
+            Assert.True(wide.TrackWidth > 1400,
+                $"Expected the SMGP track to fill a wide monitor, but it measured {wide.TrackWidth:0.#}px.");
+            Assert.True(wide.TrackWidth > compact.TrackWidth * 2,
+                $"Expected responsive growth from {compact.TrackWidth:0.#}px to {wide.TrackWidth:0.#}px.");
+        });
+    }
+
+    [Fact]
     public void StartingGridView_RendersTheDnqStrip()
     {
         if (!WpfRenderHarness.IsSupported)
