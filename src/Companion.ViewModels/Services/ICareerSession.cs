@@ -79,6 +79,14 @@ public interface ICareerSession
     /// round. Additive default so fakes compile.</summary>
     IReadOnlyList<Companion.Core.Smgp.SmgpDispatch> SmgpDispatches() => [];
 
+    /// <summary>The TYCOON TEAM MODE read-only DATA SPINE (Task 5) for the reserved top-header team mode: the
+    /// player's team dashboard (roster + sponsors + ladder tier + derived constructors' standing + SMGP-world
+    /// history) plus the whole grid of teams ranked as the competitive landscape, and a flavour "team of the
+    /// season" seed for the future economy. A pure DISPLAY-ONLY projection over the folded results + the SMGP
+    /// reference data (builds on <see cref="SmgpPaddock"/> + <see cref="CurrentStandings"/>) — NO team-management
+    /// fold mechanics, so it is replay-safe. Null outside the SMGP mode. Additive default so fakes compile.</summary>
+    SmgpTeamDashboard? SmgpTeamDashboard() => null;
+
     /// <summary>The player's SMGP team id right now (its short ladder position follows seat swaps),
     /// captured BEFORE applying a round so the shell can tell whether that round forced a DEMOTION
     /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
@@ -1077,6 +1085,74 @@ public sealed record SmgpTeamSponsorRef
     public required string Name { get; init; }
     public required string Tier { get; init; }
     public required string BrandColorHex { get; init; }
+}
+
+/// <summary>The TYCOON TEAM MODE read-only DATA SPINE (Task 5): the player's team dashboard plus the whole
+/// grid of teams ranked as the competitive landscape, and a flavour "team of the season" seed. A pure
+/// DISPLAY-ONLY projection (no fold mechanics yet → replay-safe) — the read foundation the reserved top-header
+/// team mode + the future economy build on.</summary>
+public sealed record SmgpTeamDashboard
+{
+    /// <summary>The PLAYER's own team, fully detailed (also present in <see cref="Teams"/>, flagged).</summary>
+    public required SmgpTeamDashboardEntry PlayerTeam { get; init; }
+
+    /// <summary>EVERY team, ranked by the derived constructors' standing (then prestige) — the tycoon's
+    /// competitive landscape / "grid of teams". The player's team carries <see cref="SmgpTeamDashboardEntry.IsPlayerTeam"/>.</summary>
+    public required IReadOnlyList<SmgpTeamDashboardEntry> Teams { get; init; }
+
+    /// <summary>The rival teams — <see cref="Teams"/> without the player's — for a "the field" table. Ranked.</summary>
+    public IReadOnlyList<SmgpTeamDashboardEntry> RivalTeams => Teams.Where(t => !t.IsPlayerTeam).ToList();
+
+    /// <summary>A flavour "team of the season" seed (the biggest over-achiever vs its budget, else the
+    /// constructors' leader) — clearly labelled flavour, NO real economy yet. Null before any round scores.</summary>
+    public SmgpTeamOfSeasonFlavour? TeamOfSeason { get; init; }
+}
+
+/// <summary>One team on the tycoon dashboard: identity + ladder tier/palette + the live roster + the sponsors
+/// that back it + the SMGP-world history + a DERIVED constructors' standing (the team's drivers' points
+/// summed — SMGP is driver-focused, so this is a display read, not an official constructors' title) + a
+/// flavour budget-tier label. DISPLAY-ONLY.</summary>
+public sealed record SmgpTeamDashboardEntry
+{
+    public required string TeamId { get; init; }
+    public required string Name { get; init; }
+    public required bool IsPlayerTeam { get; init; }
+    public required int Prestige { get; init; }
+    /// <summary>"Level A" (top house) … "Level D" (the floor).</summary>
+    public required string Tier { get; init; }
+    /// <summary>Team accent colour "#RRGGBB".</summary>
+    public required string PaletteHex { get; init; }
+    public required string Motto { get; init; }
+    /// <summary>Team logo key — <c>smgp/logos/&lt;teamId&gt;.png</c>.</summary>
+    public required string LogoKey { get; init; }
+    /// <summary>The SMGP-world history — a few paragraphs. Empty when unauthored.</summary>
+    public required IReadOnlyList<string> History { get; init; }
+    /// <summary>The live roster (each seated driver's season + career line), reusing the paddock's lines.</summary>
+    public required IReadOnlyList<SmgpTeamRosterLine> Roster { get; init; }
+    /// <summary>The sponsors backing the team (brand colour, tier), from the sponsor board.</summary>
+    public required IReadOnlyList<SmgpTeamSponsorRef> Sponsors { get; init; }
+    /// <summary>The team's DERIVED constructors' position (its drivers' counted points summed, ranked), or
+    /// null before any round is scored.</summary>
+    public required int? ChampionshipPosition { get; init; }
+    /// <summary>The team's derived constructors' points this season (its drivers' counted points summed).</summary>
+    public required int ChampionshipPoints { get; init; }
+    /// <summary>A FLAVOUR budget-tier label derived from prestige (Blue-chip … Shoestring) — the seed of the
+    /// future economy, NOT a real budget number.</summary>
+    public required string BudgetTier { get; init; }
+}
+
+/// <summary>The flavour "team of the season" seed (Task 5): the grid's biggest over-achiever relative to its
+/// budget (else the constructors' leader). DISPLAY-ONLY, derived from prestige + results — no economy model
+/// yet, and clearly labelled as flavour in <see cref="Note"/>.</summary>
+public sealed record SmgpTeamOfSeasonFlavour
+{
+    public required string TeamId { get; init; }
+    public required string Name { get; init; }
+    public required string PaletteHex { get; init; }
+    /// <summary>The arcade banner headline ("OVERACHIEVER OF THE SEASON" / "TEAM OF THE SEASON").</summary>
+    public required string Headline { get; init; }
+    /// <summary>A flavour sentence, explicitly noting there is no economy model yet.</summary>
+    public required string Note { get; init; }
 }
 
 /// <summary>Whether the promotion screen is a climb (offer to accept/decline) or a forced drop.</summary>

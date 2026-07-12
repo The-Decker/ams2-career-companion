@@ -1591,6 +1591,122 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         };
     }
 
+    /// <summary>The Tycoon Team Mode read-only DATA SPINE (Task 5): the player's team dashboard + every team
+    /// ranked as the competitive landscape + a flavour team-of-the-season seed. Builds on <see cref="SmgpPaddock"/>
+    /// (reusing its team cards' roster/sponsors/tier/history) and the live standings for a DERIVED constructors'
+    /// ranking (SMGP is driver-focused, so team points = its drivers' counted points summed — a display read,
+    /// not an official constructors' title). Pure DISPLAY-ONLY: no fold mechanics, so replay stays byte-identical.
+    /// Null outside the mode.</summary>
+    public SmgpTeamDashboard? SmgpTeamDashboard()
+    {
+        var paddock = SmgpPaddock();
+        if (paddock is null || paddock.Teams.Count == 0)
+            return null;
+
+        // The player's current team id (live seat, else the folded SMGP team).
+        string? playerTeamId = (SeasonComplete ? null : CurrentGrid().FirstOrDefault(s => s.IsPlayer)?.TeamId)
+            ?? CurrentSmgpTeamId();
+
+        // DERIVED constructors' points: sum each team's drivers' counted points from the live standings. The
+        // player's synthetic driver maps to their current team; every AI driver via its pack entry.
+        var standings = CurrentStandings();
+        var driverTeam = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var e in Pack.Entries)
+            driverTeam.TryAdd(e.DriverId, e.TeamId);
+        if (!string.IsNullOrEmpty(playerTeamId))
+            driverTeam[_playerDriverId] = playerTeamId;
+
+        var teamPoints = new Dictionary<string, int>(StringComparer.Ordinal);
+        if (standings is not null)
+            foreach (var d in standings.Drivers)
+                if (driverTeam.TryGetValue(d.DriverId, out var tid))
+                    teamPoints[tid] = teamPoints.GetValueOrDefault(tid) + (int)Math.Round(d.CountedPoints.ToDouble());
+
+        // Rank every team for the constructors' position: points desc, then prestige desc, then name.
+        var ranked = paddock.Teams
+            .OrderByDescending(t => teamPoints.GetValueOrDefault(t.TeamId))
+            .ThenByDescending(t => t.Prestige)
+            .ThenBy(t => t.Name, StringComparer.Ordinal)
+            .ToList();
+        var champPos = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int i = 0; i < ranked.Count; i++)
+            champPos[ranked[i].TeamId] = i + 1;
+
+        // Prestige rank (for the over-achiever flavour): the highest-prestige team is rank 1.
+        var byPrestige = paddock.Teams
+            .OrderByDescending(t => t.Prestige)
+            .ThenBy(t => t.Name, StringComparer.Ordinal)
+            .ToList();
+        var prestigeRank = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int i = 0; i < byPrestige.Count; i++)
+            prestigeRank[byPrestige[i].TeamId] = i + 1;
+
+        SmgpTeamDashboardEntry Entry(SmgpTeamCard c) => new()
+        {
+            TeamId = c.TeamId,
+            Name = c.Name,
+            IsPlayerTeam = !string.IsNullOrEmpty(playerTeamId)
+                && string.Equals(c.TeamId, playerTeamId, StringComparison.Ordinal),
+            Prestige = c.Prestige,
+            Tier = c.Tier,
+            PaletteHex = c.PaletteHex,
+            Motto = c.Motto,
+            LogoKey = c.LogoKey,
+            History = c.History,
+            Roster = c.Roster,
+            Sponsors = c.Sponsors,
+            ChampionshipPosition = standings is null ? null : champPos.GetValueOrDefault(c.TeamId),
+            ChampionshipPoints = teamPoints.GetValueOrDefault(c.TeamId),
+            BudgetTier = BudgetTierFlavour(c.Prestige),
+        };
+
+        var entries = ranked.Select(Entry).ToList();
+        var playerEntry = entries.FirstOrDefault(e => e.IsPlayerTeam) ?? entries[0];
+
+        // FLAVOUR "team of the season" (seed of the future economy): the biggest over-achiever vs its prestige
+        // budget (a constructors' position better than its prestige rank), else the constructors' leader. Only
+        // once a round has scored. Clearly labelled flavour — there is no real budget model yet.
+        SmgpTeamOfSeasonFlavour? tos = null;
+        if (teamPoints.Values.Any(p => p > 0))
+        {
+            var best = ranked
+                .Select(t => (Team: t, Over: prestigeRank[t.TeamId] - champPos[t.TeamId],
+                    Pts: teamPoints.GetValueOrDefault(t.TeamId)))
+                .OrderByDescending(x => x.Over)
+                .ThenByDescending(x => x.Pts)
+                .ThenBy(x => x.Team.Name, StringComparer.Ordinal)
+                .First();
+            bool overachiever = best.Over > 0;
+            tos = new SmgpTeamOfSeasonFlavour
+            {
+                TeamId = best.Team.TeamId,
+                Name = best.Team.Name,
+                PaletteHex = best.Team.PaletteHex,
+                Headline = overachiever ? "OVERACHIEVER OF THE SEASON" : "TEAM OF THE SEASON",
+                Note = overachiever
+                    ? string.Create(CultureInfo.InvariantCulture, $"{best.Team.Name} are punching above their {best.Team.Tier} budget - P{champPos[best.Team.TeamId]} in the constructors' running on {best.Pts} pts. (Flavour only; no economy model yet.)")
+                    : string.Create(CultureInfo.InvariantCulture, $"{best.Team.Name} lead the constructors' running on {best.Pts} pts, as their {best.Team.Tier} standing suggests. (Flavour only; no economy model yet.)"),
+            };
+        }
+
+        return new SmgpTeamDashboard
+        {
+            PlayerTeam = playerEntry,
+            Teams = entries,
+            TeamOfSeason = tos,
+        };
+    }
+
+    /// <summary>A FLAVOUR budget-tier label from a team's prestige — the seed of the future Tycoon economy,
+    /// NOT a real budget number.</summary>
+    private static string BudgetTierFlavour(int prestige) => prestige switch
+    {
+        >= 5 => "Blue-chip",
+        4 => "Well-backed",
+        3 => "Mid-budget",
+        _ => "Shoestring",
+    };
+
     /// <summary>The player's OWN Paddock bio — the one card that is not authored but generated live, so
     /// it reflects who you are RIGHT NOW: your team, how far into the 17-season campaign you are, and the
     /// record you have built from zero (honestly - a blank sheet reads as a blank sheet). Grows with the

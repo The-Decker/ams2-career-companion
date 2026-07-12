@@ -198,3 +198,28 @@ line the round-4 brief (§3 immersion surfaces) calls for.
   strip on the Paddock.
 - Corpus lives at `data/rules/smgp/dispatches.json` (art-free — pure copy). No new art keys are *required*;
   `DriverArtKey`/`TeamArtKey` reuse the existing `portraits/`/`smgp/teams/` sets.
+
+## Contract — Task 5 (Tycoon Team Mode read-only DATA SPINE) LANDED, ready to bind
+
+The read-only foundation for the **reserved top-header TYCOON TEAM MODE**. All display-only (no fold mechanics
+yet → replay-safe); the actual economy is a later increment. This is the data the tycoon dashboard shell (the
+round-4 brief §3) binds.
+
+**New VM data to bind:**
+- **`ICareerSession.SmgpTeamDashboard()`** → `SmgpTeamDashboard?` (null off-SMGP) =
+  `{ PlayerTeam (SmgpTeamDashboardEntry), Teams (IReadOnlyList<SmgpTeamDashboardEntry> — EVERY team, ranked by
+  the derived constructors' standing, player flagged), RivalTeams (Teams minus the player, ranked),
+  TeamOfSeason (SmgpTeamOfSeasonFlavour? — null before any round) }`.
+- **`SmgpTeamDashboardEntry`** = `{ TeamId, Name, IsPlayerTeam (bool), Prestige (int), Tier ("Level A".."D"),
+  PaletteHex ("#RRGGBB"), Motto, LogoKey (smgp/logos/<teamId>.png), History (paragraphs),
+  Roster (IReadOnlyList<SmgpTeamRosterLine> — reused from the Paddock: DriverId/Name/IsPlayer/SeasonLine/
+  CareerLine), Sponsors (IReadOnlyList<SmgpTeamSponsorRef> — Id/Name/Tier/BrandColorHex),
+  ChampionshipPosition (int?, null pre-race), ChampionshipPoints (int), BudgetTier (string flavour:
+  Blue-chip/Well-backed/Mid-budget/Shoestring) }`.
+  - Build the PLAYER dashboard (roster + sponsors + tier + standing + history) from `PlayerTeam`, and the
+    "grid of teams" competitive table from `Teams` (highlight the flagged player row; colour rows by
+    `PaletteHex`, chip the `Tier`/`BudgetTier`, show `ChampionshipPosition`/`ChampionshipPoints`).
+- **`SmgpTeamOfSeasonFlavour`** = `{ TeamId, Name, PaletteHex, Headline ("OVERACHIEVER OF THE SEASON" /
+  "TEAM OF THE SEASON"), Note (flavour sentence, already says "no economy model yet") }` — a banner card.
+  Clearly a FLAVOUR seed of the future economy — do not present it as a real budget/finance number.
+- No new art or data files. Reuses the Paddock's team cards + the live standings.
