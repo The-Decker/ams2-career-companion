@@ -2,10 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
+             xmlns:smgp="clr-namespace:Companion.Core.Smgp;assembly=Companion.Core"
              Focusable="False">
-    <!-- The cinematic starting grid (Phase 1 of Mike's vision): the qualifying result laid out
-         pole-first as team-coloured driver + car cards in a staggered two-row grid (odds front /
-         evens a half-car back), paged horizontally, framed by the race conditions. Display-only. -->
+    <!-- The display-only starting grid after qualifying: historical careers retain the compact,
+         horizontally paged two-row cards; SMGP alone switches to the vertically scrolling pixel
+         starting straight with one keyed miniature car per driver. -->
     <UserControl.Resources>
         <!-- one grid card: team-coloured position box + name, portrait + car, team edge. -->
         <DataTemplate x:Key="GridCard">
@@ -66,6 +67,191 @@
             </Border>
         </DataTemplate>
 
+        <!-- SMGP-only pixel track: code-native repeating textures scale cleanly through the full
+             34-car field. The supplied reference establishes the top-down asphalt/grass/kerb look;
+             driver art stays keyed to canonical dist assets instead of being baked into a bitmap. -->
+        <DrawingBrush x:Key="SmgpAsphaltBrush" TileMode="Tile"
+                      Viewport="0,0,32,32" ViewportUnits="Absolute"
+                      Viewbox="0,0,32,32" ViewboxUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#34383B">
+                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#2D3134">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="3,5,3,2" /><RectangleGeometry Rect="19,2,2,3" />
+                                <RectangleGeometry Rect="10,20,2,2" /><RectangleGeometry Rect="26,24,3,2" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#414549">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="12,8,2,2" /><RectangleGeometry Rect="28,11,2,2" />
+                                <RectangleGeometry Rect="4,27,2,2" /><RectangleGeometry Rect="21,18,3,2" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <DrawingBrush x:Key="SmgpGrassBrush" TileMode="Tile"
+                      Viewport="0,0,24,24" ViewportUnits="Absolute"
+                      Viewbox="0,0,24,24" ViewboxUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#426C16">
+                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,24,24" /></GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#31570F">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="2,4,4,3" /><RectangleGeometry Rect="14,1,3,4" />
+                                <RectangleGeometry Rect="8,15,3,3" /><RectangleGeometry Rect="19,18,4,3" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#6F941F">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="9,6,3,2" /><RectangleGeometry Rect="20,9,2,3" />
+                                <RectangleGeometry Rect="3,20,3,2" /><RectangleGeometry Rect="15,13,2,2" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <DrawingBrush x:Key="SmgpCurbBrush" TileMode="Tile"
+                      Viewport="0,0,18,64" ViewportUnits="Absolute"
+                      Viewbox="0,0,18,64" ViewboxUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#F1EEE7">
+                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,64" /></GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#C52A23">
+                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,32" /></GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#771A18">
+                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,28,18,4" /></GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <DrawingBrush x:Key="SmgpCheckeredBrush" TileMode="Tile"
+                      Viewport="0,0,32,32" ViewportUnits="Absolute"
+                      Viewbox="0,0,32,32" ViewboxUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#EEECE5">
+                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#17191B">
+                        <GeometryDrawing.Geometry>
+                            <GeometryGroup>
+                                <RectangleGeometry Rect="0,0,16,16" />
+                                <RectangleGeometry Rect="16,16,16,16" />
+                            </GeometryGroup>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <DataTemplate x:Key="SmgpGridSlot">
+            <Border Height="150" Margin="6,5" CornerRadius="6" UseLayoutRounding="True"
+                    RenderOptions.BitmapScalingMode="NearestNeighbor">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#C51B1F22" />
+                        <Setter Property="BorderBrush"
+                                Value="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
+                        <Setter Property="BorderThickness" Value="2" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderThickness" Value="4" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid Margin="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24" />
+                        <RowDefinition Height="68" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel>
+                        <Border DockPanel.Dock="Left" MinWidth="38" CornerRadius="4" Padding="6,2"
+                                Background="{Binding TeamColor, Converter={StaticResource HexBrush}}">
+                            <TextBlock Text="{Binding PositionLabel}" Foreground="White" FontWeight="Bold"
+                                       FontFamily="{StaticResource MicrosportFont}" FontSize="12"
+                                       HorizontalAlignment="Center" />
+                        </Border>
+                        <Border DockPanel.Dock="Right" CornerRadius="4" Padding="6,2"
+                                Background="{StaticResource AccentBrush}"
+                                Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
+                            <TextBlock Text="YOU" Foreground="{StaticResource BgBrush}" FontWeight="Bold"
+                                       FontFamily="{StaticResource MicrosportFont}" FontSize="10" />
+                        </Border>
+                        <TextBlock Text="{Binding NumberLabel}" Margin="4,0" VerticalAlignment="Center"
+                                   HorizontalAlignment="Right" FontFamily="Consolas" FontWeight="Bold"
+                                   Foreground="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
+                    </DockPanel>
+
+                    <!-- The bay prefers a future purpose-built overhead sprite, then falls back to
+                         the driver's real canonical side-profile preview so every car works now. -->
+                    <Grid x:Name="SmgpCarBay" Grid.Row="1" Margin="4,2,4,0">
+                        <Border BorderBrush="#AAB9BCBD" BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" />
+                        <Border Width="18" Height="3" Margin="0,-1,0,0" VerticalAlignment="Top"
+                                HorizontalAlignment="Center" Background="#F1EEE7" />
+                        <Image MaxWidth="200" MaxHeight="64" Stretch="Uniform" HorizontalAlignment="Stretch"
+                               VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
+                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="4,2,4,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="38" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="34" Height="34" HorizontalAlignment="Left">
+                            <Border CornerRadius="4" Background="#D826292D">
+                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="16"
+                                           Foreground="{StaticResource TextMutedBrush}" Opacity="0.55"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border CornerRadius="4" ClipToBounds="True">
+                                <Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                       Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            </Border>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="6,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding DriverNameUpper}" FontWeight="Bold" FontSize="13"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding TeamNameUpper}" FontSize="10" Margin="0,1,0,0"
+                                       Foreground="{Binding TeamColor, Converter={StaticResource HexBrush}}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <ItemsPanelTemplate x:Key="SmgpGridPanel">
+            <UniformGrid Columns="2" />
+        </ItemsPanelTemplate>
+
         <!-- a horizontal row of cards (the panel both grid rows reuse) -->
         <ItemsPanelTemplate x:Key="RowPanel">
             <StackPanel Orientation="Horizontal" />
@@ -81,9 +267,22 @@
                            Text="Your grid for the race — pole first. Start the race when you're ready." />
             </StackPanel>
 
-            <Border HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="8" Padding="4"
+            <Border x:Name="DesktopConditionsPanel" HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="8" Padding="4"
                     Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
                     DataContext="{Binding Conditions}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding DataContext.Session.Pack.Manifest.CareerStyle,
+                                                  RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}}}"
+                                Value="{x:Static smgp:SmgpRules.CareerStyle}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Margin="14,6" MinWidth="76">
                         <TextBlock Text="LAP DISTANCE" Style="{StaticResource Faint}" FontSize="10" />
@@ -116,12 +315,12 @@
         <StackPanel DockPanel.Dock="Bottom">
           <!-- the dynamic per-race DNQ field: the cars that missed this round's cut (SMGP rotates the
                slowest 8-9 out each race). Hidden for a full-field pack. -->
-          <Border Margin="0,10,0,0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}"
+          <Border x:Name="DnqStrip" Margin="0,10,0,0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}"
                   BorderThickness="1" CornerRadius="8" Padding="12,8"
                   Visibility="{Binding HasDnq, Converter={StaticResource BoolVisible}}">
               <StackPanel>
                   <TextBlock Text="{Binding DnqHeader}" Style="{StaticResource Faint}" FontSize="10.5" Margin="0,0,0,6" />
-                  <ItemsControl ItemsSource="{Binding Dnq}">
+                  <ItemsControl x:Name="DnqList" ItemsSource="{Binding Dnq}">
                       <ItemsControl.ItemsPanel>
                           <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
                       </ItemsControl.ItemsPanel>
@@ -160,26 +359,113 @@
           </Border>
         </StackPanel>
 
-        <!-- ===== the staggered grid, paged horizontally ===== -->
+        <!-- ===== mode-specific grid surface: historical cards OR the SMGP pixel track ===== -->
         <Grid Margin="0,14,0,0">
-            <ScrollViewer x:Name="GridScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
-                          Focusable="False" Padding="36,0">
-                <StackPanel>
-                    <ItemsControl ItemsSource="{Binding TopRow}" ItemTemplate="{StaticResource GridCard}"
-                                  ItemsPanel="{StaticResource RowPanel}" />
-                    <!-- the back row sits a half-car to the right, like a real grid -->
-                    <ItemsControl ItemsSource="{Binding BottomRow}" ItemTemplate="{StaticResource GridCard}"
-                                  ItemsPanel="{StaticResource RowPanel}" Margin="139,4,0,0" />
-                </StackPanel>
-            </ScrollViewer>
+            <!-- Preserve the original shared/historical grid exactly. Unknown modes fail safely here. -->
+            <Grid x:Name="HistoricalCardGrid">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding DataContext.Session.Pack.Manifest.CareerStyle,
+                                                  RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}}}"
+                                Value="{x:Static smgp:SmgpRules.CareerStyle}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
 
-            <!-- carousel arrows -->
-            <Button x:Name="ScrollLeftButton" Click="OnScrollLeft" HorizontalAlignment="Left" VerticalAlignment="Center"
-                    Width="30" Height="52" Content="&#xE76B;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                    Style="{StaticResource SubtleButton}" ToolTip="Earlier on the grid" />
-            <Button x:Name="ScrollRightButton" Click="OnScrollRight" HorizontalAlignment="Right" VerticalAlignment="Center"
-                    Width="30" Height="52" Content="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                    Style="{StaticResource SubtleButton}" ToolTip="Further down the grid" />
+                <ScrollViewer x:Name="GridScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                              Focusable="False" Padding="36,0">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding TopRow}" ItemTemplate="{StaticResource GridCard}"
+                                      ItemsPanel="{StaticResource RowPanel}" />
+                        <!-- the back row sits a half-car to the right, like a real grid -->
+                        <ItemsControl ItemsSource="{Binding BottomRow}" ItemTemplate="{StaticResource GridCard}"
+                                      ItemsPanel="{StaticResource RowPanel}" Margin="139,4,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- carousel arrows -->
+                <Button x:Name="ScrollLeftButton" Click="OnScrollLeft" HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Width="30" Height="52" Content="&#xE76B;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                        Style="{StaticResource SubtleButton}" ToolTip="Earlier on the grid" />
+                <Button x:Name="ScrollRightButton" Click="OnScrollRight" HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Width="30" Height="52" Content="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                        Style="{StaticResource SubtleButton}" ToolTip="Further down the grid" />
+            </Grid>
+
+            <!-- SMGP alone gets the long, vertically scrolling pixel-art starting straight. -->
+            <Grid x:Name="SmgpPixelTrack" RenderOptions.BitmapScalingMode="NearestNeighbor"
+                  SnapsToDevicePixels="True" AutomationProperties.Name="SMGP pixel starting grid">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding DataContext.Session.Pack.Manifest.CareerStyle,
+                                                  RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}}}"
+                                Value="{x:Static smgp:SmgpRules.CareerStyle}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <ScrollViewer x:Name="SmgpGridScroll" HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto" Focusable="True" IsTabStop="True"
+                              HorizontalContentAlignment="Stretch"
+                              AutomationProperties.Name="Scroll through the SMGP starting order">
+                    <Grid MaxWidth="900" HorizontalAlignment="Stretch" Background="{StaticResource SmgpGrassBrush}">
+                        <!-- Repeating scenery fills whatever height the 34-entry field needs. -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="76" />
+                                <ColumnDefinition Width="18" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="18" />
+                                <ColumnDefinition Width="76" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="{StaticResource SmgpGrassBrush}" />
+                            <Border Grid.Column="1" Background="{StaticResource SmgpCurbBrush}" />
+                            <Border Grid.Column="2" Background="{StaticResource SmgpAsphaltBrush}" />
+                            <Border Grid.Column="3" Background="{StaticResource SmgpCurbBrush}" />
+                            <Border Grid.Column="4" Background="{StaticResource SmgpGrassBrush}" />
+
+                            <!-- Compact pixel fence rails at the outside edges. -->
+                            <Border Grid.Column="0" Width="14" HorizontalAlignment="Left" Margin="12,0,0,0"
+                                    Background="#2A332F" BorderBrush="#9AA39E" BorderThickness="2,0" />
+                            <Border Grid.Column="4" Width="14" HorizontalAlignment="Right" Margin="0,0,12,0"
+                                    Background="#2A332F" BorderBrush="#9AA39E" BorderThickness="2,0" />
+                        </Grid>
+
+                        <StackPanel Margin="94,14,94,24">
+                            <Border Background="#DC171A1D" Padding="8,4" Margin="0,0,0,4"
+                                    DataContext="{Binding Conditions}">
+                                <TextBlock TextAlignment="Center" TextWrapping="Wrap" FontSize="11"
+                                           Foreground="{StaticResource TextMutedBrush}">
+                                    <Run Text="{Binding LapDistanceLabel, Mode=OneWay}" />
+                                    <Run Text="  ·  " /><Run Text="{Binding Weather, Mode=OneWay}" />
+                                    <Run Text="  ·  TRACK " /><Run Text="{Binding TrackTempLabel, Mode=OneWay}" />
+                                    <Run Text="  ·  AIR " /><Run Text="{Binding AirTempLabel, Mode=OneWay}" />
+                                </TextBlock>
+                            </Border>
+                            <Border Height="20" Background="{StaticResource SmgpCheckeredBrush}"
+                                    BorderBrush="#EAE7DF" BorderThickness="0,2" />
+                            <Border Background="#DC171A1D" Padding="8,4" Margin="0,0,0,4">
+                                <TextBlock Text="SUPER MONACO GP · STARTING ORDER" TextAlignment="Center"
+                                           FontFamily="{StaticResource MicrosportFont}" FontSize="12"
+                                           Foreground="{StaticResource AccentBrush}" />
+                            </Border>
+                            <ItemsControl x:Name="SmgpSlotList" ItemsSource="{Binding Slots}"
+                                          ItemTemplate="{StaticResource SmgpGridSlot}"
+                                          ItemsPanel="{StaticResource SmgpGridPanel}" />
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
         </Grid>
     </DockPanel>
 </UserControl>

@@ -22,7 +22,7 @@ Two agents, one repo. Ownership for this phase:
 |---|---|
 | `src/Companion.App/Views/**.xaml` (layout, sizes, fonts, colours, styles) | `src/Companion.App/Views/**.xaml.cs` code-behind logic *(ask before touching)* |
 | `src/Companion.App/**/Styles*.xaml`, resource dictionaries, converters styling | `src/Companion.ViewModels/**` (all ViewModels, records, keys) |
-| `data/ams2/portraits/**`, `data/ams2/cars/**`, `data/ams2/smgp/**` (ART files) | `src/Companion.Core/**`, `src/Companion.Data/**` (domain/sim/fold) |
+| `dist/data/ams2/portraits/**`, `dist/data/ams2/cars/**`, `dist/data/ams2/smgp/**` (canonical ART files) | `src/Companion.Core/**`, `src/Companion.Data/**` (domain/sim/fold) |
 | `docs/` GUI notes | `data/rules/smgp/**` (driver-profiles, team-profiles, stats — *data*) |
 
 - If a GUI change needs a **new bound property or a rename**, DON'T add it yourself — leave a note in
@@ -71,40 +71,35 @@ i.e. bottom-right of the whole screen. Mike wants it **directly under the YES bu
   IS selected it naturally sits just under YES; when not, it sits under the pick row. Keep the "No rival"
   button working. Verify: pick a rival → Continue under YES; pick "No rival" → Continue still visible.
 
-### Task C — Starting grid: make cards MUCH bigger + remove the fuel gauge
+### Task C — Starting grid: SMGP pixel starting straight (historical grid otherwise unchanged)
+
+**Mike update, 2026-07-11:** the earlier oversized-card direction is superseded. This treatment is
+**SMGP-only**. Historical careers retain the original compact two-row card carousel.
 
 File: **`src/Companion.App/Views/StartingGridView.xaml`**.
 
-| Element | XAML anchor | Now | Target |
-|---|---|---|---|
-| **Grid card** width | `Border Width="264"` (~L12) | 264 | **~380–440** |
-| Portrait+car row height | `Grid Height="112"` (~L42) | 112 | **~180–210** |
-| Position box | `Width="44" Height="44"` (~L27) | 44 | **~60** |
-| Position font | `FontSize="21"` (~L30) | 21 | ~28 |
-| Driver name | `FontSize="15"` (~L33) | 15 | ~20 |
-| Team name | `FontSize="11.5"` (~L35) | 11.5 | ~14 |
-| Back-row stagger offset | `Margin="139,4,0,0"` (~L144) | 139 | **≈ half the new card width** |
-| Card margins / carousel arrow hit-size | L12, L149–154 | — | scale to match |
+- Gate the alternate surface from the canonical mode identity:
+  `HomeView.DataContext.Session.Pack.Manifest.CareerStyle == SmgpRules.CareerStyle`.
+- Recreate the supplied overhead pixel-racing reference as a vertically scrolling starting straight:
+  speckled asphalt, grass verges, red/white kerbs, fence rails, checker line, and two grid bays per row.
+- Each bay shows position, number, portrait, driver/team, an unmistakable `YOU` state, and a miniature
+  of the exact car that driver uses.
+- Prefer `smgp/grid-cars/<driverId>.png`; fall back to the canonical side preview in
+  `cars/<driverId>.png`, so all 34 cars render immediately while bespoke overhead sprites are produced.
+- Leave the historical grid visuals, dimensions, arrows, and stagger unchanged.
 
-**Fuel gauge removal — ✅ DONE by Claude** (while restructuring the bottom strip for the DNQ display,
-commit after `f1f4ec2`). The fuel readout is gone; the `FuelLabel`/`FuelPct` on `GridConditions` are now
-unused (harmless — leave the model alone). Nothing for you to do here.
+**Fuel gauge removal — ✅ DONE by Claude** while restructuring the bottom strip for the dynamic DNQ
+display. The fuel readout is gone in every mode; `FuelLabel`/`FuelPct` on `GridConditions` are now unused
+and should remain untouched.
 
-**Player card is now correct data-side.** Claude fixed the bug where the player's card showed a blank car
-(it keyed art off the synthetic `driver.player-entrant` id). The player's card now resolves the **actual
-car they took over**, so once you enlarge the car preview it will render. Two GUI asks while you're here:
-- Make the player's card unmistakable — it already gets an accent border (`IsPlayer` trigger, ~L17–20);
-  consider a "YOU" tag on the position box or a glow.
-- Consider **auto-scrolling the carousel to the player's card** on load (code-behind `OnScrollLeft/Right`
-  pattern exists) so the player isn't hunting for themselves down a 20-car grid. *(If this needs a VM
-  signal for "which index is the player", request it below — don't reach into the VM.)*
+Claude's player-car fix remains the data contract: the synthetic player entrant resolves the authored
+driver whose car the player took over, so both the fallback preview and a future overhead sprite represent
+the player's actual machine.
 
-### Task D — "0 D.P." readout → becoming a STATS readout (Claude owns; don't restyle the content yet)
+### Task D — Rival live STATS readout (✅ landed by Claude)
 
-The rival screen's top-right `"0 D.P."` (bound `SmgpPointsLine`) is being **replaced by Claude** with a
-driver-stats readout (career wins / points / poles / top-5s, per Mike). **Leave the text/binding to
-Claude.** You may style the *container* (it'll grow into a small stat strip) once Claude lands the new VM
-shape — coordinate before restyling this specific region.
+The rival screen's former `"0 D.P."` line has been replaced by `SmgpSeasonLine` and `SmgpCareerLine`.
+Preserve those bindings while styling the surrounding dossier.
 
 ---
 
@@ -112,12 +107,15 @@ shape — coordinate before restyling this specific region.
 
 The app resolves images by **key** from `{exe}\data\ams2\<kind>\<key>.{jpg|jpeg|png}` (the
 `KeyedAssetImageConverter`, `ConverterParameter=<kind>`; multiple folders may be `|`-separated for
-fallback, e.g. `portraits|cars`). Drop a correctly-named file and it appears — no rebuild.
+fallback, e.g. `portraits|cars`). In this repo, **`dist/data/ams2/` is the canonical art root and
+anything there wins**. Drop a correctly-named file there and it appears — no rebuild. Never copy a
+tracked `data/ams2/` art file over its `dist` counterpart.
 
 | Asset | Folder (`<kind>`) | Key | Example file | Used by |
 |---|---|---|---|---|
 | Driver **portrait** | `portraits` | `<driverId>` | `portraits/driver.ayrton_senna.jpg` | grid, rival, dossier, driver tab |
 | Driver **car** (side profile) | `cars` | `<driverId>` | `cars/driver.ayrton_senna.png` | grid, rival |
+| SMGP **grid car** (optional overhead) | `smgp/grid-cars` | `<driverId>` | `smgp/grid-cars/driver.ayrton_senna.png` | SMGP pixel starting grid; falls back to `cars` |
 | **Player** image (per team) | `portraits` | `player.<team>` | `portraits/player.madonna.jpg` | player's grid/dossier card |
 | Team **banner** | `smgp/banners` | `<teamId>` | `smgp/banners/team.madonna.png` | rival dossier header |
 | Team **photo** (big) | `smgp/teams` | `<team>` (no `team.`) | `smgp/teams/madonna.jpg` | promotion screen |
@@ -131,9 +129,12 @@ fallback, e.g. `portraits|cars`). Drop a correctly-named file and it appears —
 - **Style:** match the existing arcade look in the screenshots — **16-bit SEGA "Super Monaco GP" pixel/
   painted portraits**, cars as clean side-profile arcade renders in team colours. Portraits ~square
   (grid/rival crop `UniformToFill`); cars transparent PNG, side-on.
-- **Priority for art:** (1) the 34 driver portraits, (2) the 34 car side-profiles, (3) the 24 team
-  logos, (4) `player.<team>` images (Mike noted ~11 still missing), (5) team photos for the promotion
-  screen. `smgp/banners` optional.
+- **Canonical `dist` inventory:** the 34 driver portraits, 34 car side-profiles, and all 24
+  `player.<team>` images are complete. Next priority is the 24 team logos after Mike supplies the
+  final palette, then 34 optional overhead grid-car sprites, team photos, and round cards.
+  `smgp/banners` remain optional. Grid-car sprites should be 384×256 transparent RGBA, consistently
+  framed with the nose pointing right, driver-keyed (not merely team-keyed), and preserve each
+  preview's livery and car number.
 
 ---
 
@@ -160,5 +161,10 @@ sends the palette, Claude wires the file; your cards pick it up automatically.
 
 ## 6. Requests to Claude (leave notes here; Claude wires the VM/data side)
 
-- _(e.g. "need `StartingGridViewModel.PlayerIndex` so the carousel can auto-scroll to the player")_
-- _(e.g. "need a bound `bool ShowFuel` if the fuel removal should be a toggle instead of a delete")_
+- **SMGP player auto-scroll:** after `SmgpGridScroll` completes layout, scroll vertically to the slot
+  whose existing `IsPlayer` flag is true so a player starting deep in the 34-car field is not hunting
+  for the `YOU` bay. `Slots` already exposes the target; no new VM property is required. Keep the
+  historical `GridScroll`/`PageStep` behavior unchanged.
+- **Canonical-art preservation:** release/build work must preserve `dist/data/ams2/**` byte-for-byte.
+  Do not add copy globs that overwrite canonical `dist` art from tracked `data/ams2` files. If a
+  secondary archive is needed, it must be derived outward from `dist`, never synced into it.
