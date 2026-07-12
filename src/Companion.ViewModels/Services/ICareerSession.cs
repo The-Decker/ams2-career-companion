@@ -312,6 +312,20 @@ public interface ICareerSession
     /// file. Additive default: <see cref="Companion.Core.Career.MortalityMode.Off"/>, so fakes compile.</summary>
     Companion.Core.Career.MortalityMode Mortality => Companion.Core.Career.MortalityMode.Off;
 
+    /// <summary>The player's current mortality/availability status (character death &amp; injury §3.3): the
+    /// mode, whether the driver is injured (sitting out N races), out for the season, or deceased, and
+    /// whether a Hardcore death has already deleted the career file (the session is then spent — the shell
+    /// shows the permadeath screen and must not touch the session again). Additive default: a fit
+    /// Off-mode career, so fakes compile.</summary>
+    PlayerMortalityStatus PlayerMortality() => new()
+    {
+        Mode = Companion.Core.Career.MortalityMode.Off,
+        Deceased = false,
+        SeasonEndingInjury = false,
+        RaceSuspensionRemaining = 0,
+        CareerFileDeleted = false,
+    };
+
     /// <summary>True when the FILE-level save &amp; reload surface is available — <c>Normal</c> mode ONLY.
     /// Off (no death to undo) and Hardcore (no saves, ever) both report false. When false, the slot
     /// list is empty and <see cref="SaveToSlot"/>/<see cref="RestoreSlot"/> throw. Additive default:
@@ -468,6 +482,28 @@ public sealed record NextSeasonInfo
     /// for consecutive years). With year-by-year carryover this is always empty — every year is
     /// played, either on a dedicated pack or as a carryover — so no year is silently bridged.</summary>
     public required IReadOnlyList<int> BridgedYears { get; init; }
+}
+
+/// <summary>The player's mortality/availability snapshot (character death &amp; injury §3.3), a plain value
+/// the shell reads after a round to route to the injury / season-over / death screens.</summary>
+public sealed record PlayerMortalityStatus
+{
+    public required Companion.Core.Career.MortalityMode Mode { get; init; }
+
+    /// <summary>The character has died — terminal. In Hardcore the file is (or is about to be) deleted.</summary>
+    public required bool Deceased { get; init; }
+
+    /// <summary>Out for the rest of the season with a season-ending injury (returns next year).</summary>
+    public required bool SeasonEndingInjury { get; init; }
+
+    /// <summary>Races the driver must still sit out from a minor injury (0 = fit).</summary>
+    public required int RaceSuspensionRemaining { get; init; }
+
+    /// <summary>A Hardcore death has physically deleted the career file — the session is spent.</summary>
+    public required bool CareerFileDeleted { get; init; }
+
+    /// <summary>Fit to race normally (not injured, season-ended, or deceased).</summary>
+    public bool IsFit => !Deceased && !SeasonEndingInjury && RaceSuspensionRemaining == 0;
 }
 
 public sealed record CareerSummary

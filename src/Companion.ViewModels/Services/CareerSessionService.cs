@@ -68,6 +68,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// table at create/open. Gates the Normal-only save &amp; reload surface. (Slice 1.)</summary>
     private readonly MortalityMode _mortality;
 
+    /// <summary>Set once a Hardcore death has physically DELETED this career's file (Slice 3): the session
+    /// is then spent — the shell must show the permadeath screen and never touch the session again.</summary>
+    private bool _careerFileDeleted;
+
     public SeasonPack Pack { get; }
 
     public string CareerFilePath { get; }
@@ -3436,6 +3440,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// the final round lands, the season-end pipeline runs off the folded player state.</summary>
     public void Apply(ResultDraft draft)
     {
+        if (_careerFileDeleted)
+            throw new InvalidOperationException(
+                "This career has ended — the driver was killed (Hardcore) and the save was deleted.");
+        // A dead driver takes no more rounds — terminal, like the SMGP CareerOver floor. (Slice 3.)
+        var beforePlayer = CurrentPlayerState();
+        if (beforePlayer?.Deceased == true)
+            throw new InvalidOperationException(
+                "The driver has died — the career is over. In Normal mode, restore a save to continue.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to apply.");
 
@@ -3470,7 +3482,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             },
             nowUtc);
 
-        if (SeasonComplete)
+        // Character death & injury (Slice 3): detect a REAL Deceased transition this round. A Hardcore
+        // death is the ONE destructive file op — physically delete the career file + every snapshot,
+        // guarded hard (only Hardcore, only on a genuine alive→dead transition, and NEVER on replay,
+        // which runs ReplayService directly and never this path). The session is then spent.
+        bool justDied = beforePlayer?.Deceased != true && CurrentPlayerState()?.Deceased == true;
+        if (justDied && _mortality == MortalityMode.Hardcore)
+        {
+            _database.Dispose();
+            SaveSlotStore.DeleteCareerAndAllSaves(CareerFilePath);
+            _careerFileDeleted = true;
+            return; // the file is gone — the season-end pipeline must not run against it
+        }
+
+        // A dead driver (Normal) banks no title and rolls no offers — the season does not "complete";
+        // the death screen (Slice 5) offers a restore instead.
+        if (SeasonComplete && !justDied)
             EnsureSeasonEnd();
     }
 
@@ -4889,6 +4916,31 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     /// <inheritdoc />
     public bool SavesEnabled => _mortality == MortalityMode.Normal;
+
+    /// <inheritdoc />
+    public PlayerMortalityStatus PlayerMortality()
+    {
+        // After a Hardcore death the file is gone — report the terminal status WITHOUT touching the DB.
+        if (_careerFileDeleted)
+            return new PlayerMortalityStatus
+            {
+                Mode = _mortality,
+                Deceased = true,
+                SeasonEndingInjury = false,
+                RaceSuspensionRemaining = 0,
+                CareerFileDeleted = true,
+            };
+
+        var player = CurrentPlayerState();
+        return new PlayerMortalityStatus
+        {
+            Mode = _mortality,
+            Deceased = player?.Deceased ?? false,
+            SeasonEndingInjury = player?.SeasonEndingInjury ?? false,
+            RaceSuspensionRemaining = player?.RaceSuspensionRemaining ?? 0,
+            CareerFileDeleted = false,
+        };
+    }
 
     /// <inheritdoc />
     public IReadOnlyList<SaveSlotInfo> SaveSlots() =>

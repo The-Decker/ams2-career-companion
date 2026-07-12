@@ -794,6 +794,36 @@ public static class ReplayService
         if (!playerRaced)
             return new RoundFoldOutcome(events, previous, PlayerRaced: false, null, null);
 
+        // The accident injury/death roll (character death & injury §3.2/§3.3): a DERIVED per-round
+        // outcome. QUADRUPLE gate — the career opted into mortality, is not already deceased, has a
+        // character (so durability + injury perks exist), AND this round captured an accident severity
+        // (Slice 2). An Off / no-character / non-accident round draws ZERO from the accident stream and
+        // emits no row, so it stays byte-identical to a pre-feature save. The severity is a raw envelope
+        // input (excluded from the byte-compare by mechanism); the roll + outcome ARE byte-compared.
+        if (player.Mortality != MortalityMode.Off
+            && !player.Deceased
+            && character is { } accidentChar
+            && inputs.CharacterRules is not null
+            && envelope.PlayerAccidentSeverity is { } accidentSeverity)
+        {
+            var accident = AccidentFold.Apply(new AccidentFoldContext
+            {
+                Player = player,
+                Severity = accidentSeverity,
+                Durability = accidentChar.Stat("durability"),
+                Modifiers = gridMods ?? Companion.Core.Character.PlayerPerkModifiers.Identity,
+                Rules = inputs.CharacterRules.Accident ?? Companion.Core.Character.AccidentModel.DefaultRules,
+                MasterSeed = masterSeed,
+                Year = grid.Year,
+                Round = round,
+                PlayerName = string.IsNullOrEmpty(accidentChar.Name)
+                    ? playerSeat.DriverName ?? string.Empty
+                    : accidentChar.Name,
+            });
+            events.AddRange(accident.Events);
+            player = accident.State;
+        }
+
         // The SMGP rival battle (M3 slice 2): BOTH gates — the round's raw envelope stored a
         // rival call AND the career carries the mode's folded state (never over). No call / no
         // state / a finished career → no event, no state change → byte-identical, which is every

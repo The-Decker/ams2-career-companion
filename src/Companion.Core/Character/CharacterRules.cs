@@ -29,6 +29,11 @@ public sealed record CharacterRules
 
     public required IReadOnlyList<Perk> Perks { get; init; }
 
+    /// <summary>The tunable accident bands + safety-offset scales (character death &amp; injury §3.4),
+    /// or null when perks.json ships no <c>accident</c> block — the fold then falls back to
+    /// <see cref="AccidentModel.DefaultRules"/>. Optional so every pre-feature fixture parses unchanged.</summary>
+    public AccidentRules? Accident { get; init; }
+
     private Dictionary<string, Perk>? _perksById;
 
     /// <summary>Perk lookup by id (case-sensitive, matching the snake_case save-format keys).
@@ -86,6 +91,34 @@ public sealed record CharacterRules
             throw new JsonException("levels.xpCurve.baseXpToLevel2 must be positive.");
         if (Levels.XpCurve.MaxLevel < 2)
             throw new JsonException("levels.xpCurve.maxLevel must be at least 2.");
+
+        if (Accident is { } accident)
+            ValidateAccidentBands(accident);
+    }
+
+    /// <summary>Each severity's bands must be non-empty, have non-decreasing UpTo bounds, and the last
+    /// band must cover the top of the d500 range (500) — otherwise a high roll would resolve to nothing.</summary>
+    private static void ValidateAccidentBands(AccidentRules accident)
+    {
+        foreach (var (name, bands) in new (string, IReadOnlyList<AccidentBand>)[]
+                 {
+                     ("light", accident.Light),
+                     ("medium", accident.Medium),
+                     ("heavy", accident.Heavy),
+                 })
+        {
+            if (bands.Count == 0)
+                throw new JsonException($"accident.{name} defines no bands.");
+            int previous = 0;
+            foreach (var band in bands)
+            {
+                if (band.UpTo < previous)
+                    throw new JsonException($"accident.{name} bands must have non-decreasing upTo bounds.");
+                previous = band.UpTo;
+            }
+            if (bands[^1].UpTo < 500)
+                throw new JsonException($"accident.{name}'s last band must cover the full d500 range (upTo >= 500).");
+        }
     }
 }
 

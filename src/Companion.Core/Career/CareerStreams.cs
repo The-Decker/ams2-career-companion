@@ -17,6 +17,13 @@ public static class CareerStreams
     /// carrying an injury-stream perk, so a default career consumes zero new draws and stays
     /// replay-compatible with pre-character saves. Keyed (injury, year, 0, "player").</summary>
     public const string Injury = "injury";
+
+    /// <summary>The per-ROUND accident d500 roll (character death &amp; injury §3.2): drawn ONLY when the
+    /// career opted into mortality (<see cref="MortalityMode"/> != Off), has a character, AND this round
+    /// is the player's own accident-DNF with a captured severity — so an Off / no-character / non-accident
+    /// career consumes zero new draws and stays byte-identical. A round-level companion to the season-level
+    /// <see cref="Injury"/> stream, keyed (accident, year, round, "player").</summary>
+    public const string Accident = "accident";
 }
 
 /// <summary>Journal phase names emitted by the career sim. Part of the save format (the news
@@ -59,6 +66,13 @@ public static class JournalPhases
     /// setback to standing, never a finishing position. Absent for every other career, so their
     /// journal sequence is unchanged.</summary>
     public const string PlayerInjury = "player.injury";
+
+    /// <summary>An in-race ACCIDENT resolution (character death &amp; injury §3.2/§3.3): a DERIVED row
+    /// emitted only when a mortality-enabled character has an accident-DNF with a captured severity and
+    /// the d500 roll is folded. Carries { severity, roll, effectiveRoll, outcome, missRaces } — the
+    /// none/minor-injury/season-ending/death ladder. Absent for every other career, so their journal
+    /// sequence is unchanged; DERIVED, so it is byte-compared (never provenance-excluded).</summary>
+    public const string PlayerAccident = "player.accident";
 
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>

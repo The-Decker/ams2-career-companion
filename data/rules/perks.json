@@ -90,7 +90,34 @@
     "$comment": "New named PCG32 streams (same construction as CareerStreams: SplitMix64(Fnv1a64(subsystem|year|round|entity) XOR masterSeed)). Register as consts in CareerStreams.cs when building. All are gated/opt-in so a default career consumes ZERO new draws and stays replay-compatible with pre-character saves.",
     "injury": "injury",
     "form-swing": "form-swing",
-    "character-gen": "character-gen"
+    "character-gen": "character-gen",
+    "accident": "accident"
+  },
+
+  "accident": {
+    "$comment": "Character death & injury §3.4: the accident d500 outcome bands (1 unit = 0.2%) + safety-offset scales. upTo = inclusive upper bound on the SAFETY-ADJUSTED effective roll (higher = more dangerous); the first band the effective roll does not exceed wins, and the last band must cover 500. safetyDurabilityScale shifts the roll toward safety by (durability + injury-durability perks); safetyBaseAddScale shifts it toward danger by a reckless injury baseAdd (e.g. hot_head). Mirrors AccidentModel.DefaultRules — omit this whole block to fall back to that code default.",
+    "safetyDurabilityScale": 80,
+    "safetyBaseAddScale": 200,
+    "light": [
+      { "upTo": 480, "outcome": "none" },
+      { "upTo": 496, "outcome": "minorInjury", "missRaces": 1 },
+      { "upTo": 499, "outcome": "minorInjury", "missRaces": 2 },
+      { "upTo": 500, "outcome": "death" }
+    ],
+    "medium": [
+      { "upTo": 410, "outcome": "none" },
+      { "upTo": 470, "outcome": "minorInjury", "missRaces": 1 },
+      { "upTo": 490, "outcome": "minorInjury", "missRaces": 2 },
+      { "upTo": 497, "outcome": "seasonEnding" },
+      { "upTo": 500, "outcome": "death" }
+    ],
+    "heavy": [
+      { "upTo": 250, "outcome": "none" },
+      { "upTo": 380, "outcome": "minorInjury", "missRaces": 1 },
+      { "upTo": 450, "outcome": "minorInjury", "missRaces": 2 },
+      { "upTo": 485, "outcome": "seasonEnding" },
+      { "upTo": 500, "outcome": "death" }
+    ]
   },
 
   "creation": {

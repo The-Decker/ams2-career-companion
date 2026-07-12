@@ -154,6 +154,25 @@ public sealed record PlayerCareerState
     /// so an Off career — and a Normal/Hardcore one — re-simulates exactly as before.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public MortalityMode Mortality { get; init; }
+
+    /// <summary>Races the driver must still SIT OUT from a minor accident injury (character death &amp;
+    /// injury §3.3). Set by the accident fold; decremented as the driver sits (Slice 4 auto-simulates
+    /// those rounds). 0 = fit. Omitted when 0 (WhenWritingDefault) so a non-injured career is
+    /// byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int RaceSuspensionRemaining { get; init; }
+
+    /// <summary>The driver is out for the REST of the season with a season-ending injury (§3.3). Skips
+    /// every remaining round of the season (Slice 4 auto-simulates them); cleared at the season reset so
+    /// the driver returns next season. Omitted when false so an uninjured career is byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool SeasonEndingInjury { get; init; }
+
+    /// <summary>The character DIED in an accident (§3.3) — TERMINAL. The career stops accepting rounds
+    /// (mirrors the SMGP CareerOver floor); in Hardcore the career file is physically deleted. Carried
+    /// forward verbatim (never reset). Omitted when false so a living career is byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Deceased { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller
