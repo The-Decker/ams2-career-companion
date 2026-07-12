@@ -804,10 +804,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         foreach (var round in Pack.Season.Rounds)
         {
             // The backmarkers the pack PINNED out of this round's grid (SMGP's per-race DNQ field),
-            // fastest-first — every covering entry whose driver id is not in the pinned starters.
+            // fastest-first. Only entries actually ENTERED this round (whose rounds-range covers it) and
+            // de-duplicated by driver id — mirrors RoundGridResolver's covering-entry rule, so a partial-season
+            // entrant or a mid-season team switch (historical packs) never leaks a phantom/duplicate DNQ row.
             IReadOnlyList<ScheduleDnqEntry> dnq = round.Grid is { StarterDriverIds.Count: > 0 } grid
                 ? Pack.Entries
+                    .Where(e => RoundsRange.TryParse(e.Rounds, out var rr) && rr.Contains(round.Round))
                     .Where(e => !grid.StarterDriverIds.Contains(e.DriverId, StringComparer.Ordinal))
+                    .GroupBy(e => e.DriverId, StringComparer.Ordinal)
+                    .Select(g => g.First())
                     .OrderByDescending(e => driverById.TryGetValue(e.DriverId, out var dd) ? dd.Ratings.QualifyingSkill : 0.0)
                     .Select(e => new ScheduleDnqEntry(
                         driverById.TryGetValue(e.DriverId, out var dn) ? dn.Name : e.DriverId,

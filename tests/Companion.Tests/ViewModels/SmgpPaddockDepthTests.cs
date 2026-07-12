@@ -57,6 +57,47 @@ public sealed class SmgpPaddockDepthTests : IDisposable
     }
 
     [Fact]
+    public void SeasonSchedule_DNQ_lists_only_covering_non_starters_deduped()
+    {
+        // A NON-SMGP career (so the SMGP per-race DNQ re-roll doesn't overwrite the pinned grid) with a
+        // round-1 grid that seats only a/b/c, and Ceara entered for round 2 ONLY.
+        var basePack = LadderPack();
+        var round1 = basePack.Season.Rounds[0] with
+        {
+            Grid = new PackRoundGrid { Size = 3, StarterDriverIds = ["driver.a", "driver.b", "driver.c"] },
+        };
+        var pack = basePack with
+        {
+            Manifest = basePack.Manifest with { CareerStyle = "" }, // not SMGP → no DNQ re-roll on create
+            Season = basePack.Season with { Rounds = [round1, basePack.Season.Rounds[1]] },
+            Entries =
+            [
+                TestPackBuilder.Entry("team.a", "driver.a", "1", "Stock Livery #1"),
+                TestPackBuilder.Entry("team.bullets", "driver.b", "2", "Stock Livery #2"),
+                TestPackBuilder.Entry("team.c", "driver.c", "3", SeatC),
+                TestPackBuilder.Entry("team.d", "driver.d", "4", "Stock Livery #4"),
+                // Ceara races ONLY round 2 — must NOT show as a round-1 DNQ despite being a non-starter.
+                TestPackBuilder.Entry("team.e", SmgpSchedule.CearaDriverId, "17", "Stock Livery #5") with { Rounds = "2" },
+            ],
+        };
+        string packDir = Path.Combine(PacksRoot, "dnq-pack");
+        TestPackBuilder.Write(pack, packDir);
+        using var session = CareerSessionService.CreateCareer(new CareerCreationRequest
+        {
+            PackDirectory = packDir, CareerFilePath = CareerPath, CareerName = "DNQ",
+            MasterSeed = Seed, PlayerLiveryName = SeatC, SmgpMode = false,
+        }, Environment());
+
+        var r1 = session.SeasonSchedule().Single(e => e.Round == 1);
+        Assert.Equal(3, r1.GridSize);
+        var names = r1.Dnq.Select(d => d.Name).ToList();
+        Assert.Contains("driver.d", names);                       // a non-starter entered this round
+        Assert.DoesNotContain(SmgpSchedule.CearaDriverId, names);  // entered round 2 only → not a round-1 DNQ
+        Assert.DoesNotContain("driver.a", names);                  // a starter is not DNQ'd
+        Assert.Equal(names.Count, names.Distinct().Count());       // no duplicate driver rows
+    }
+
+    [Fact]
     public void SeasonSchedule_carries_clickable_round_detail_and_progress()
     {
         using var session = NewCareer();
@@ -106,6 +147,9 @@ public sealed class SmgpPaddockDepthTests : IDisposable
         Assert.Contains(rivals, r => r.DriverId == "driver.b" && r.Tier == "B");        // one tier up
         Assert.Contains(rivals, r => r.DriverId == SmgpSchedule.CearaDriverId && r.Tier == "C"); // OWN tier (new rule)
         Assert.DoesNotContain(rivals, r => r.DriverId == "driver.a");                    // team.a is tier A — two up
+        // The own-tier rule now admits same-tier rivals, so the TEAMMATE exclusion is the sole guard against
+        // naming your own team — no rival from the player's own team (team.c) appears.
+        Assert.DoesNotContain(rivals, r => r.TeamId == "team.c");
 
         // Each option carries a coloured CLASS chip for the picker dropdown.
         var b = rivals.Single(r => r.DriverId == "driver.b");

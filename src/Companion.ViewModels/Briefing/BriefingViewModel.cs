@@ -208,7 +208,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// Null = no rival named. Reset each round; survives same-round re-navigation.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpNamedRivalQuote),
-        nameof(SmgpCanName), nameof(SmgpSwapPromptVisible))]
+        nameof(SmgpCanName), nameof(SmgpSwapPromptVisible), nameof(SmgpSwapAcceptLabel))]
     private SmgpRivalOption? _namedSmgpRival;
 
     /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
@@ -303,6 +303,11 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// <summary>The standing swap answer is only asked once a rival whose offer can arise this
     /// round has been NAMED.</summary>
     public bool SmgpSwapPromptVisible => NamedSmgpRival?.OfferOnWin == true;
+
+    /// <summary>The swap-accept checkbox label — gender-aware ("Join her team if the offer comes"). Bound by
+    /// RivalScreenView so a female named rival (Mika) is not misgendered.</summary>
+    public string SmgpSwapAcceptLabel =>
+        $"Join {NamedSmgpRival?.Pronouns.Possessive ?? "their"} team if the offer comes";
 
     /// <summary>The YES button: commit the previewed rival — this is what the result fold
     /// counts the two-wins ladder against when the round's result lands.</summary>

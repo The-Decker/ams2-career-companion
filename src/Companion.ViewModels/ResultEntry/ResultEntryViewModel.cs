@@ -102,8 +102,11 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// readout is unchanged for every unmarked driver. Display-only.</summary>
     public Companion.Core.Smgp.SmgpPronouns RivalPronouns { get; init; } = Companion.Core.Smgp.SmgpPronouns.Default;
 
-    /// <summary>True when a draggable driver row is the named rival — the seam a row template binds to for
-    /// the red RIVAL badge. Null/empty rival (every non-SMGP round) → always false. Display-only.</summary>
+    /// <summary>True when a driver id is the named rival — the LOGIC behind the red RIVAL badge (the row
+    /// template can't call this from a DataTemplate, so it renders the badge via an equivalent
+    /// <c>StringsEqualVisible</c> MultiBinding of <see cref="RivalDriverId"/> vs the row's DriverId; this
+    /// predicate is the unit-testable form of that same gate). Null/empty rival (every non-SMGP round) →
+    /// always false. Display-only.</summary>
     public bool IsRival(string? driverId) =>
         !string.IsNullOrEmpty(RivalDriverId) && string.Equals(driverId, RivalDriverId, StringComparison.Ordinal);
 

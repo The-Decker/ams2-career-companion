@@ -165,10 +165,10 @@
                                                HorizontalAlignment="Center" TextAlignment="Center" />
                                 </StackPanel>
                             </Border>
-                            <CheckBox Content="Join his team if the offer comes" IsChecked="{Binding SmgpSwapAccept}"
+                            <CheckBox Content="{Binding SmgpSwapAcceptLabel}" IsChecked="{Binding SmgpSwapAccept}"
                                       Margin="0,12,0,0" FontSize="17"
                                       Visibility="{Binding SmgpSwapPromptVisible, Converter={StaticResource BoolVisible}}"
-                                      ToolTip="Beat the same rival twice without losing and you may get an offer to join his team — this is your standing answer" />
+                                      ToolTip="Beat the same rival twice without losing and you may get an offer to join their team — this is your standing answer" />
                         </StackPanel>
                     </Border>
 

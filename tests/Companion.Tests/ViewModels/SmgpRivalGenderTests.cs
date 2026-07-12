@@ -56,6 +56,17 @@ public sealed class SmgpRivalGenderTests
     }
 
     [Fact]
+    public void The_swap_accept_checkbox_label_is_gender_aware()
+    {
+        var vm = NewVm();
+        vm.NamedSmgpRival = Rival(SmgpPronouns.She, offerOnWin: true);
+        Assert.Equal("Join her team if the offer comes", vm.SmgpSwapAcceptLabel);
+
+        vm.NamedSmgpRival = Rival(SmgpPronouns.Default, offerOnWin: true);
+        Assert.Equal("Join his team if the offer comes", vm.SmgpSwapAcceptLabel);
+    }
+
+    [Fact]
     public void An_unmarked_rival_keeps_the_he_him_default()
     {
         var vm = NewVm();
