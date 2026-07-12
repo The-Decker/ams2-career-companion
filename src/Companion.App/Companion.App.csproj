@@ -24,6 +24,9 @@
     <!-- Original generated key art for the full-bleed Formula-style game menu. Embedded so the
          single-file build never depends on a loose image beside the executable. -->
     <Resource Include="Assets\MainMenu\grand-prix-blue-hour.png" />
+    <!-- Authored SMGP start-straight environment. Live cars, portraits and grid markings remain
+         data-bound WPF overlays; only the static grandstand/track/pit complex is raster art. -->
+    <Resource Include="Assets\StartingGrid\smgp-start-straight.png" />
     <Resource Include="Fonts\Race Sport.ttf" />
     <Resource Include="Fonts\Retro Floral.ttf" />
     <Resource Include="Fonts\Microsport Bold.ttf" />

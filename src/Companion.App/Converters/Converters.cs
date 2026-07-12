@@ -962,6 +962,31 @@ public sealed class WidthToColumnsConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>Starting-grid viewport width to the authored venue crop or its matching three-band
+/// layout. Wide screens retain the grandstand/track/pit composition; at the narrow shell viewport
+/// the image crops farther into the straight and the live two-file grid receives enough asphalt to
+/// keep both cars and portraits legible. The crop and column ratios deliberately change together so
+/// dynamic overlays never drift onto scenery.</summary>
+public sealed class StartingGridViewportConverter : IValueConverter
+{
+    private const double CompactBreakpoint = 640;
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        bool compact = value is double width && width > 0 && width < CompactBreakpoint;
+        return (parameter as string) switch
+        {
+            "plate" => compact ? new Rect(0.25, 0, 0.50, 1) : new Rect(0.12, 0, 0.76, 1),
+            "left" or "right" => new GridLength(compact ? 10 : 24, GridUnitType.Star),
+            "center" => new GridLength(compact ? 80 : 52, GridUnitType.Star),
+            _ => DependencyProperty.UnsetValue,
+        };
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Movement glyph (▲2 / ▼1 / –) → up-green / down-red / muted brush.</summary>
 public sealed class GlyphBrushConverter : IValueConverter
 {
