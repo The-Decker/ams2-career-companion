@@ -26,6 +26,16 @@ public sealed class CharacterRulesTests
         Assert.Equal(3, rules.Levels.LevelGrants.CharacterPointsPerLevel);
         Assert.Equal(5, rules.Stats.TalentStats.Count);
         Assert.Equal(2, rules.Stats.MetaStats.Count);
+        Assert.Equal(9, rules.SkillTree.BranchOrder.Count);
+        Assert.Equal(["physical", "business", "media"], rules.SkillTree.MetaBranches);
+        Assert.Equal(15, rules.SkillTree.StatNodes.Count);
+        Assert.Equal(5, rules.Levels.LevelGrants.MilestoneEveryLevels);
+        Assert.Equal(1, rules.Respec.RespecTokenGrantsPerMilestone);
+
+        var lateBraker = rules.PerkById("late_braker");
+        Assert.Equal(2, lateBraker.Tier);
+        Assert.Equal(6, lateBraker.UnlockLevel);
+        Assert.Equal(["engineers_favorite"], lateBraker.Requires);
     }
 
     [Fact]
@@ -139,5 +149,28 @@ public sealed class CharacterRulesTests
 
         var rules = CharacterRules.Parse(json);
         Assert.Single(rules.Perks);
+    }
+
+    [Fact]
+    public void Validate_RejectsUnknownSkillTreeDependency()
+    {
+        string json = CareerTestData.ReadRules("perks.json")
+            .Replace("\"requires\": [\"engineers_favorite\"]",
+                "\"requires\": [\"ghost_perk\"]", StringComparison.Ordinal);
+
+        var ex = Assert.Throws<JsonException>(() => CharacterRules.Parse(json));
+        Assert.Contains("ghost_perk", ex.Message);
+    }
+
+    [Fact]
+    public void Validate_RejectsNonMonotonicDependencyTier()
+    {
+        string json = CareerTestData.ReadRules("perks.json")
+            .Replace("\"branch\": \"pace\", \"tier\": 2, \"unlockLevel\": 6, \"requires\": [\"engineers_favorite\"]",
+                "\"branch\": \"pace\", \"tier\": 1, \"unlockLevel\": 6, \"requires\": [\"engineers_favorite\"]",
+                StringComparison.Ordinal);
+
+        var ex = Assert.Throws<JsonException>(() => CharacterRules.Parse(json));
+        Assert.Contains("tier must exceed", ex.Message);
     }
 }
