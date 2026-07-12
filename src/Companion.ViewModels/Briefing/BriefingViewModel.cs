@@ -206,8 +206,8 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// forced challenger) — the commitment the result fold counts the two-wins ladder against.
     /// Null = no rival named. Reset each round; survives same-round re-navigation.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpCanName),
-        nameof(SmgpSwapPromptVisible))]
+    [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpNamedRivalQuote),
+        nameof(SmgpCanName), nameof(SmgpSwapPromptVisible))]
     private SmgpRivalOption? _namedSmgpRival;
 
     /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
@@ -245,6 +245,11 @@ public sealed partial class BriefingViewModel : ObservableObject
             "without losing to him — and you take his seat.",
         null => "",
     };
+
+    /// <summary>The named rival's own words back at you (the mood-aware trash-talk from
+    /// <c>rival-quotes.json</c>) — shown as their REACTION once you commit them, not as a static line under
+    /// the stats. Empty until a rival is named.</summary>
+    public string SmgpNamedRivalQuote => NamedSmgpRival?.Quote ?? "";
 
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
 

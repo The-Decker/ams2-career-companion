@@ -113,6 +113,16 @@
                            Text="{Binding SessionLabel}" />
             </Border>
 
+            <!-- named SMGP rival readout: where your rival is as you place cars (Mike: "a lot more
+                 places where you can see where your rival is"). Hidden when no rival is named. -->
+            <Border CornerRadius="6" Background="{StaticResource AccentDimBrush}" BorderThickness="1"
+                    BorderBrush="{StaticResource AccentBrush}" Padding="12,8" Margin="0,0,0,10"
+                    HorizontalAlignment="Left"
+                    Visibility="{Binding RivalStatusLine, Converter={StaticResource StringVisible}}">
+                <TextBlock Text="{Binding RivalStatusLine}" Foreground="{StaticResource AccentBrush}"
+                           FontWeight="Bold" FontSize="15" />
+            </Border>
+
             <!-- first-run coach mark: type OR drag (ux-round §4) -->
             <Border Style="{StaticResource CoachMark}" Margin="0,0,0,10"
                     Visibility="{Binding DataContext.CoachMarks.ShowResultEntryTypeOrDrag,

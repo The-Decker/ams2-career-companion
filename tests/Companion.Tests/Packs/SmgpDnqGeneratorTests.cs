@@ -128,6 +128,28 @@ public sealed class SmgpDnqGeneratorTests
     }
 
     [Fact]
+    public void ForSeason_IsVarietyInvariant_LiveAndReplayResolveTheSameField()
+    {
+        // The live fold applies ForSeason to the SmgpSeasonVariety-transformed pack; replay applies it to
+        // the RAW pinned pack. Because SmgpSeasonVariety is fold-inert (it keeps the grid + round number
+        // with the round POSITION), both paths MUST resolve the identical StarterDriverIds — the invariant
+        // the byte-identical replay of a per-season re-roll depends on. (Adversarial-verify guard.)
+        var pack = Pack.Value;
+        const ulong seed = 7777;
+        const int ord = 3;
+        var varied = SmgpSeasonVariety.ForSeason(pack, ord, unchecked((long)seed));
+        var live = SmgpDnqField.ForSeason(varied, ord, seed);   // live path
+        var replay = SmgpDnqField.ForSeason(pack, ord, seed);   // replay path (no variety)
+
+        foreach (var r in replay.Season.Rounds)
+        {
+            Assert.Equal(
+                r.Grid!.StarterDriverIds.ToHashSet(StringComparer.Ordinal),
+                live.Season.Rounds.Single(x => x.Round == r.Round).Grid!.StarterDriverIds.ToHashSet(StringComparer.Ordinal));
+        }
+    }
+
+    [Fact]
     public void ForSeason_ReRolledField_StaysExactFit_AndKeepsTheStrong()
     {
         var pack = Pack.Value;

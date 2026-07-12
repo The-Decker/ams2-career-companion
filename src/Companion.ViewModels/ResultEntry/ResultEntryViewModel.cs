@@ -90,6 +90,43 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// single-race loop. Display only; the grammar itself is identical for every session.</summary>
     public string? SessionLabel { get; init; }
 
+    /// <summary>The named SMGP rival's driver id for this entry, or null. Set by the shell on an SMGP
+    /// round so the qualifying / finishing-order grammar surfaces WHERE the rival is as cars are placed
+    /// (Mike: "a lot more places where you can see where your rival is"). Display-only.</summary>
+    public string? RivalDriverId { get; init; }
+
+    /// <summary>The named rival's display name (paired with <see cref="RivalDriverId"/>).</summary>
+    public string? RivalName { get; init; }
+
+    /// <summary>A live readout of the named rival's position as results are entered — "RIVAL  G. CEARA
+    /// finishes P3 · you are AHEAD". Empty when no rival is named (every non-SMGP round). Recomputed on
+    /// every placement via <see cref="RaiseStateChanged"/>.</summary>
+    public string RivalStatusLine
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(RivalDriverId))
+                return "";
+            string who = (RivalName ?? "Your rival").ToUpperInvariant();
+            string verb = string.Equals(SessionLabel, "Qualifying", StringComparison.OrdinalIgnoreCase)
+                ? "qualifies" : "finishes";
+
+            int rivalPos = _classified.FindIndex(s => string.Equals(s.DriverId, RivalDriverId, StringComparison.Ordinal));
+            if (rivalPos >= 0)
+            {
+                int playerPos = _classified.FindIndex(s => string.Equals(s.DriverId, _playerDriverId, StringComparison.Ordinal));
+                string rel = playerPos < 0 ? ""
+                    : playerPos < rivalPos ? "  ·  you are AHEAD" : "  ·  you are BEHIND";
+                return $"RIVAL  {who} {verb} P{rivalPos + 1}{rel}";
+            }
+            if (_dnfs.Any(d => string.Equals(d.Seat.DriverId, RivalDriverId, StringComparison.Ordinal)))
+                return $"RIVAL  {who} is OUT — beat him home to bank the win";
+            if (_disqualified.Any(s => string.Equals(s.DriverId, RivalDriverId, StringComparison.Ordinal)))
+                return $"RIVAL  {who} — DISQUALIFIED";
+            return $"RIVAL  {who} — not placed yet";
+        }
+    }
+
     // ---------- observable state ----------
 
     /// <summary>Slider value assumed before any recommendation exists (neutral 100%).</summary>
@@ -538,6 +575,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
         Recompute();
         OnPropertyChanged(nameof(Classified));
         OnPropertyChanged(nameof(Remaining));
+        OnPropertyChanged(nameof(RivalStatusLine));
         OnPropertyChanged(nameof(Dnfs));
         OnPropertyChanged(nameof(Disqualified));
         OnPropertyChanged(nameof(ResolvedCount));

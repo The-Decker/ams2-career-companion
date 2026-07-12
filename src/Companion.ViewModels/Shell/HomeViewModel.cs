@@ -293,6 +293,9 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _qualifyingEntry = new ResultEntryViewModel(grid, Summary.PlayerDriverId, _clock)
             {
                 SessionLabel = QualifyingSession?.Label ?? "Qualifying",
+                // Surface where the named SMGP rival qualifies as the grid is entered (null = no rival).
+                RivalDriverId = Briefing.NamedSmgpRival?.DriverId,
+                RivalName = Briefing.NamedSmgpRival?.DriverName,
             };
             _qualifyingEntry.PropertyChanged += OnResultEntryPropertyChanged;
             ConfirmResultCommand.NotifyCanExecuteChanged();
@@ -408,6 +411,9 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 // Name the race only on a two-race weekend (Feature/Sprint); a single race keeps
                 // the null label, so its screen is byte-identical to the shipped loop.
                 SessionLabel = WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null,
+                // Surface where the named SMGP rival finishes as the order is entered (null = no rival).
+                RivalDriverId = Briefing.NamedSmgpRival?.DriverId,
+                RivalName = Briefing.NamedSmgpRival?.DriverName,
                 // Prefill the slider prompt with the pace-anchor recommendation (the same
                 // value the briefing showed); before the anchor calibrates, the settings
                 // screen's default difficulty (neutral 100 out of the box).
