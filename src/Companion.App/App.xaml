@@ -63,6 +63,9 @@
             <DataTemplate DataType="{x:Type shell:SmgpFinaleViewModel}">
                 <views:SmgpFinaleView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type shell:SitOutViewModel}">
+                <views:SitOutView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type briefing:BriefingViewModel}">
                 <views:BriefingView />
             </DataTemplate>

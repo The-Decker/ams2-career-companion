@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
              xmlns:b="clr-namespace:Companion.App.Behaviors"
+             xmlns:career="clr-namespace:Companion.Core.Career;assembly=Companion.Core"
              PreviewKeyDown="OnPreviewKeyDown"
              PreviewMouseUp="OnPreviewMouseUp"
              Focusable="False">
@@ -11,6 +12,15 @@
              EDIT state's editor. The inverted twin drives the compact DISPLAY state. -->
         <b:StringsEqualToVisibilityConverter x:Key="StringsEqualVisible" />
         <b:StringsEqualToVisibilityConverter x:Key="StringsEqualHidden" Invert="True" />
+
+        <!-- The VM intentionally exposes no duplicate options collection: severity is a fixed
+             domain enum, so the view supplies the three display choices and binds the selected
+             value straight back to PlayerAccidentSeverity. -->
+        <x:Array x:Key="AccidentSeverityOptions" Type="{x:Type career:AccidentSeverity}">
+            <x:Static Member="career:AccidentSeverity.Light" />
+            <x:Static Member="career:AccidentSeverity.Medium" />
+            <x:Static Member="career:AccidentSeverity.Heavy" />
+        </x:Array>
 
         <!-- a seat line: number, name, team; players get a marker -->
         <DataTemplate x:Key="SeatLine">
@@ -429,6 +439,104 @@
                                    Foreground="{DynamicResource WarningBrush}" Text="DNF — drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="Multi-select drops retire in bulk; pick the reason on the dropped row" />
+                        <!-- Only the player's own accident DNF needs an impact report. Keep this at
+                             the DNF-zone root (the ResultEntryViewModel DataContext), not inside a
+                             DnfEntry template, so the nullable enum remains a direct two-way bind.
+                             The existing free-text Other-cause editor below remains independent. -->
+                        <Border DockPanel.Dock="Top" Margin="4,0,4,7" Padding="8,7"
+                                Background="{DynamicResource WarningDimBrush}"
+                                BorderBrush="{DynamicResource WarningBrush}" BorderThickness="1"
+                                CornerRadius="5"
+                                Visibility="{Binding PlayerHasAccidentDnf, Converter={StaticResource BoolVisible}}">
+                            <StackPanel>
+                                <TextBlock Text="YOUR ACCIDENT — IMPACT SEVERITY" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource WarningBrush}" />
+                                <ListBox ItemsSource="{StaticResource AccidentSeverityOptions}"
+                                         SelectedItem="{Binding PlayerAccidentSeverity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         SelectionMode="Single" HorizontalContentAlignment="Stretch" Margin="0,5,0,0"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                         AutomationProperties.Name="Player accident impact severity">
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="1" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                            <Setter Property="Padding" Value="0" />
+                                            <Setter Property="Margin" Value="0,0,4,0" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="AutomationProperties.Name" Value="{Binding}" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="7,5" CornerRadius="4" BorderThickness="1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource EdgeStrongBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Light}">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Medium}">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Heavy}">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                                                            </DataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Light}" />
+                                                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                                                                <Setter Property="BorderThickness" Value="2" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Medium}" />
+                                                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                                                <Setter Property="BorderThickness" Value="2" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Heavy}" />
+                                                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                                                                <Setter Property="BorderThickness" Value="2" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding}" FontWeight="Bold" TextAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Light}">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Medium}">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static career:AccidentSeverity.Heavy}">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </Border>
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
                             <ItemsControl ItemsSource="{Binding Dnfs}"
                                           b:ListDragDropBehavior.Role="dnf"

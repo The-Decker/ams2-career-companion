@@ -1,8 +1,29 @@
 <UserControl x:Class="Companion.App.Views.HubView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
     <Grid x:Name="HubStage">
+    <!-- Remove the ordinary Hub from BOTH layout and binding scope once CareerOver lands. That
+         matters in Hardcore: collapsed controls still keep WPF bindings alive, while clearing this
+         subtree's DataContext guarantees no hidden lens/converter can query the disposed session. -->
+    <Grid x:Name="LiveHubSurfaces">
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Visibility" Value="Collapsed" />
+                <Setter Property="DataContext" Value="{x:Null}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding DataContext.Home.CareerOver,
+                                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                 Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Setter Property="DataContext"
+                                Value="{Binding DataContext,
+                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
     <DockPanel x:Name="HubContent">
         <!-- persistent global career header (glanceable from EVERY tab) -->
         <Border DockPanel.Dock="Top" Background="{DynamicResource SurfaceBrush}"
@@ -24,6 +45,22 @@
                             <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}"
                                        VerticalAlignment="Center" Margin="0,0,8,0" />
                             <TextBlock Text="TEAM HQ" FontFamily="{StaticResource DisplayFont}"
+                                       FontWeight="Bold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Normal mortality only. SaveManagerWindow performs whole-file snapshots and
+                         reopens through the shell after restore, so this button owns no game logic. -->
+                    <Button x:Name="ManageSavesButton" DockPanel.Dock="Right" Margin="0,0,8,0"
+                            Style="{StaticResource SubtleButton}" Padding="13,8"
+                            Click="OnManageSaves"
+                            Visibility="{Binding Home.Session.SavesEnabled, Converter={StaticResource BoolVisible}}"
+                            ToolTip="Create, restore, or delete whole-career save points"
+                            AutomationProperties.Name="Manage career save points">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE74E;" FontFamily="{StaticResource IconFont}"
+                                       VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBlock Text="SAVES" FontFamily="{StaticResource DisplayFont}"
                                        FontWeight="Bold" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
@@ -347,5 +384,22 @@
                 </ScrollViewer>
             </Grid>
         </Border>
+    </Grid>
+
+        <!-- Fatal-career takeover. Its inner view binds only Home.DeathScreen/CareerOver, both
+             captured before Hardcore deletes the database; the ordinary Hub is collapsed above. -->
+        <views:DeathScreenView Panel.ZIndex="20" DataContext="{Binding Home}"
+                               RestoreRequested="OnDeathRestoreRequested">
+            <views:DeathScreenView.Style>
+                <Style TargetType="views:DeathScreenView">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CareerOver}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </views:DeathScreenView.Style>
+        </views:DeathScreenView>
     </Grid>
 </UserControl>

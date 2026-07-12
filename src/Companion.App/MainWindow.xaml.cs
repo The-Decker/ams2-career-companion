@@ -37,6 +37,12 @@ public partial class MainWindow : Window
         if (e.Handled || DataContext is not ShellViewModel shell)
             return;
 
+        // A fatal result replaces the whole Hub with the DB-free death screen. In Hardcore the
+        // career database is already disposed and deleted, so no global Esc/tab accelerator may
+        // reach hidden Hub/Home commands behind that terminal surface.
+        if (shell.Current is HubViewModel { Home.CareerOver: not null })
+            return;
+
         var hubView = FindVisualDescendant<HubView>(this);
 
         // MainWindow is the top of PreviewKeyDown's tunnel. Give the modal Team HQ first refusal

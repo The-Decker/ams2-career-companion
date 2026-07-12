@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Shell;
 using Companion.ViewModels.Start;
 using Microsoft.Win32;
 
@@ -106,6 +107,37 @@ public partial class StartView : UserControl
         {
             vm.ContinueCommand.Execute(career);
         }
+    }
+
+    /// <summary>Start-gallery save action: open the selected career through the app's tracking
+    /// factory, then show the surface only when the session reports Normal-mode SavesEnabled.</summary>
+    private void OnRecentManageSaves(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            Application.Current is not App { TrackedCareerFactory: { } factory } ||
+            Window.GetWindow(this)?.DataContext is not ShellViewModel shell)
+            return;
+
+        try
+        {
+            var session = factory.Open(career.Path);
+            if (!SaveManagerWindow.ShowIfEnabled(
+                    Window.GetWindow(this), session, career.Path, shell, ownsSession: true))
+            {
+                MessageBox.Show(Window.GetWindow(this),
+                    "Save points are available only for careers created with Normal mortality.\n\n" +
+                    "Off mode has no deaths to undo; Hardcore has no rollback.",
+                    "Career saves", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            MessageBox.Show(Window.GetWindow(this),
+                $"Career save points could not be opened:\n\n{ex.Message}",
+                "Career saves", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        e.Handled = true;
     }
 
     /// <summary>Right-click MRU → Remove from list (the career file stays on disk).</summary>

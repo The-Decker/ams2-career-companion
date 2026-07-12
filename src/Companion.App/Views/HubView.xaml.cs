@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Companion.Data;
 using Companion.ViewModels.Hub;
+using Companion.ViewModels.Shell;
 
 namespace Companion.App.Views;
 
@@ -35,6 +38,47 @@ public partial class HubView : UserControl
         var news = hub.Tabs.FirstOrDefault(tab => tab.Key == HubViewModel.NewsTabKey);
         if (news is not null && hub.SelectTabCommand.CanExecute(news))
             hub.SelectTabCommand.Execute(news);
+    }
+
+    private void OnManageSaves(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not HubViewModel hub ||
+            Application.Current is not App { TrackedCareerFactory: { } factory } ||
+            Window.GetWindow(this)?.DataContext is not ShellViewModel shell)
+            return;
+
+        try
+        {
+            string path = factory.GetCareerPath(hub.Home.Session);
+            SaveManagerWindow.ShowIfEnabled(Window.GetWindow(this), hub.Home.Session, path, shell);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            MessageBox.Show(Window.GetWindow(this),
+                $"Career save points could not be opened:\n\n{ex.Message}",
+                "Career saves", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void OnDeathRestoreRequested(object? sender, SaveSlotInfo slot)
+    {
+        if (DataContext is not HubViewModel hub ||
+            Application.Current is not App { TrackedCareerFactory: { } factory } ||
+            Window.GetWindow(this)?.DataContext is not ShellViewModel shell)
+            return;
+
+        try
+        {
+            string path = factory.GetCareerPath(hub.Home.Session);
+            SaveManagerWindow.RestoreAndReopen(
+                Window.GetWindow(this), hub.Home.Session, path, shell, slot);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            MessageBox.Show(Window.GetWindow(this),
+                $"That save point could not be restored:\n\n{ex.Message}",
+                "Restore career", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 
     private void OnToggleTycoonDashboard(object sender, RoutedEventArgs e) =>

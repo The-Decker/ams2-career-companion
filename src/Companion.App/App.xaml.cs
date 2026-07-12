@@ -24,6 +24,10 @@ public partial class App : Application
 {
     private ShellViewModel? _shell;
 
+    /// <summary>App-layer path registry used by the save UI to reopen a session after a whole-file
+    /// restore. Render-only hosts never construct the composition root, so callers treat it as optional.</summary>
+    internal TrackingCareerFactory? TrackedCareerFactory { get; private set; }
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -41,7 +45,8 @@ public partial class App : Application
                 .. PackDiscovery.DefaultSearchRoots(environment.DocumentsDirectory),
                 .. settings.Current.PackFolders,
             ];
-            var factory = new CareerSessionFactory(environment);
+            var factory = new TrackingCareerFactory(new CareerSessionFactory(environment));
+            TrackedCareerFactory = factory;
             var recentCareers = RecentCareersStore.CreateDefault();
 
             ApplyTheme(settings.Current);
