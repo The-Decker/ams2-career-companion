@@ -117,33 +117,32 @@ public sealed class SettingsServiceTests
     }
 
     [Fact]
-    public void AccentPreset_AppliesItsHex()
+    public void AccentPreset_AppliesItsName()
     {
         var (service, _) = NewService();
         var vm = new SettingsViewModel(service, documentsDirectory: Path.GetTempPath());
 
-        var preset = vm.AccentPresets.First(p => p.Hex != AppSettings.DefaultAccentColor);
+        var preset = vm.AccentPresets.First(p => p.PresetName != AppSettings.DefaultAccentName);
         vm.SelectAccentCommand.Execute(preset);
 
-        Assert.Equal(preset.Hex, vm.AccentHex);
-        Assert.Equal(AppSettings.NormalizeAccentColor(preset.Hex), service.Current.AccentColor);
-        Assert.False(vm.AccentHexInvalid);
+        Assert.Equal(preset.PresetName, vm.AccentName);
+        Assert.Equal(preset.PresetName, service.Current.AccentName);   // persisted as the named preset key
+        Assert.Contains(preset.PresetName, AppSettings.AccentNames);   // a real, loadable accent dict
     }
 
     [Fact]
-    public void InvalidHex_IsFlagged_AndNotApplied()
+    public void LightThemeToggle_PersistsTheBaseTheme()
     {
         var (service, _) = NewService();
         var vm = new SettingsViewModel(service, documentsDirectory: Path.GetTempPath());
+        Assert.False(vm.IsLightTheme);                          // dark by default
+        Assert.Equal(AppSettings.ThemeDark, service.Current.Theme);
 
-        vm.AccentHex = "#12";
+        vm.IsLightTheme = true;
+        Assert.Equal(AppSettings.ThemeLight, service.Current.Theme);
 
-        Assert.True(vm.AccentHexInvalid);
-        Assert.Equal(AppSettings.DefaultAccentColor, service.Current.AccentColor); // unchanged
-
-        vm.AccentHex = "#3E9B6E";
-        Assert.False(vm.AccentHexInvalid);
-        Assert.Equal("#3E9B6E", service.Current.AccentColor);
+        vm.IsLightTheme = false;
+        Assert.Equal(AppSettings.ThemeDark, service.Current.Theme);
     }
 
     [Fact]

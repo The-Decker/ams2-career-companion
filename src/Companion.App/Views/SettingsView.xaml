@@ -44,7 +44,7 @@
                     <StackPanel>
                         <TextBlock Text="Appearance" Style="{StaticResource SectionTitle}" />
                         <TextBlock Style="{StaticResource SectionHint}"
-                                   Text="Tune the accent and interface scale. Base-theme selection is ready for the appearance service to expose." />
+                                   Text="Pick a base theme and an accent — both apply live across every screen. Each accent is tuned for legibility on light and dark." />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -57,8 +57,18 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Accent color" />
-                            <StackPanel Grid.Row="0" Grid.Column="1">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Theme" />
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                <RadioButton Content="Dark" GroupName="BaseTheme" VerticalAlignment="Center" Margin="0,0,18,0"
+                                             IsChecked="{Binding IsLightTheme, Converter={StaticResource InverseBool}}"
+                                             ToolTip="The default dark, cinematic interface" />
+                                <RadioButton Content="Light" GroupName="BaseTheme" VerticalAlignment="Center"
+                                             IsChecked="{Binding IsLightTheme}"
+                                             ToolTip="A light interface — every accent stays contrast-correct" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Accent color" Margin="0,12,0,0" />
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,12,0,0">
                                 <ItemsControl ItemsSource="{Binding AccentPresets}" VerticalAlignment="Center">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -78,16 +88,6 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                            </StackPanel>
-
-                            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Custom hex" Margin="0,10,0,0" />
-                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,10,0,0">
-                                <TextBox Width="110" FontFamily="{StaticResource MonoFont}"
-                                         Text="{Binding AccentHex, UpdateSourceTrigger=PropertyChanged}"
-                                         ToolTip="Any #RRGGBB color — applies as you type" />
-                                <TextBlock Style="{StaticResource RowLabel}" Margin="10,0,0,0"
-                                           Foreground="{DynamicResource WarningBrush}" Text="not a valid #RRGGBB color"
-                                           Visibility="{Binding AccentHexInvalid, Converter={StaticResource BoolVisible}}" />
                             </StackPanel>
 
                             <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Font scale" Margin="0,14,0,0" />

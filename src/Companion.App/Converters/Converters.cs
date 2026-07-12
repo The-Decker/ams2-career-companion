@@ -41,6 +41,14 @@ public sealed class BoolToVisibilityConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>Negates a bool both ways (two-way) — e.g. a "Dark" radio bound to the inverse of IsLightTheme.</summary>
+public sealed class NegateBoolConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value is not true;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => value is not true;
+}
+
 /// <summary>count > 0 → Visible (Invert: count == 0 → Visible).</summary>
 public sealed class CountToVisibilityConverter : IValueConverter
 {

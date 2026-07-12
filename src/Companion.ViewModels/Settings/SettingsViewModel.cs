@@ -5,8 +5,9 @@ using Companion.Core.Career;
 
 namespace Companion.ViewModels.Settings;
 
-/// <summary>One accent-color preset chip on the settings screen.</summary>
-public sealed record AccentPreset(string Name, string Hex);
+/// <summary>One accent preset chip on the settings screen: a friendly label, the accent-dictionary key
+/// (<see cref="AppSettings.AccentNames"/>), and a representative swatch color.</summary>
+public sealed record AccentPreset(string Name, string PresetName, string Hex);
 
 /// <summary>One selectable news-verbosity option in the Immersion section's picker.</summary>
 public sealed record NewsDetailOption(NewsDetailLevel Level, string Label, string Description);
@@ -44,37 +45,41 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     // ---------- appearance ----------
 
+    /// <summary>The 7 named accent presets (each with a contrast-tuned dark + light variant). Order +
+    /// keys match <see cref="AppSettings.AccentNames"/>; the Hex is a representative swatch color.</summary>
     public IReadOnlyList<AccentPreset> AccentPresets { get; } =
     [
-        new("Companion blue", AppSettings.DefaultAccentColor),
-        new("Racing red", "#E05A5A"),
-        new("Papaya", "#FF8A3D"),
-        new("British racing green", "#3E9B6E"),
-        new("Gold leaf", "#D9A83C"),
-        new("Violet", "#9B7BFF"),
+        new("SMGP red", "SmgpRed", "#E10600"),
+        new("Royal blue", "RoyalBlue", "#4F8CFF"),
+        new("Teal", "Teal", "#17B0A0"),
+        new("Green", "Green", "#3E9B6E"),
+        new("Gold", "Gold", "#D9A83C"),
+        new("Orange", "Orange", "#FF8A3D"),
+        new("Magenta", "Magenta", "#D14BB0"),
     ];
 
+    /// <summary>The selected accent preset key (one of <see cref="AppSettings.AccentNames"/>).</summary>
     [ObservableProperty]
-    private string _accentHex = AppSettings.DefaultAccentColor;
+    private string _accentName = AppSettings.DefaultAccentName;
 
-    /// <summary>True while the typed hex is not a valid #RRGGBB color (nothing applied).</summary>
-    [ObservableProperty]
-    private bool _accentHexInvalid;
-
-    partial void OnAccentHexChanged(string value)
-    {
-        string? normalized = AppSettings.NormalizeAccentColor(value);
-        AccentHexInvalid = normalized is null;
-        if (normalized is not null)
-            Apply(s => s with { AccentColor = normalized });
-    }
+    partial void OnAccentNameChanged(string value) =>
+        Apply(s => s with { AccentName = AppSettings.NormalizeAccentName(value) });
 
     [RelayCommand]
     private void SelectAccent(AccentPreset? preset)
     {
         if (preset is not null)
-            AccentHex = preset.Hex;
+            AccentName = preset.PresetName;
     }
+
+    /// <summary>True = the LIGHT base theme, false = DARK. Applies live (the appearance service swaps the
+    /// base + accent ResourceDicts, and every view consumes them via DynamicResource, so it recolors
+    /// instantly). Codex's theme contract keeps both bases contrast-correct.</summary>
+    [ObservableProperty]
+    private bool _isLightTheme;
+
+    partial void OnIsLightThemeChanged(bool value) =>
+        Apply(s => s with { Theme = value ? AppSettings.ThemeLight : AppSettings.ThemeDark });
 
     public int MinFontScalePercent => AppSettings.MinFontScalePercent;
 
@@ -216,8 +221,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         _loading = true;
         try
         {
-            AccentHex = settings.AccentColor;
-            AccentHexInvalid = false;
+            AccentName = AppSettings.NormalizeAccentName(settings.AccentName);
+            IsLightTheme = string.Equals(settings.Theme, AppSettings.ThemeLight, StringComparison.OrdinalIgnoreCase);
             FontScalePercent = settings.FontScalePercent;
             DefaultDifficulty = settings.DefaultDifficulty;
             MinimalNarrative = settings.MinimalNarrative;

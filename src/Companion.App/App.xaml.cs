@@ -44,8 +44,13 @@ public partial class App : Application
             var factory = new CareerSessionFactory(environment);
             var recentCareers = RecentCareersStore.CreateDefault();
 
+            ApplyTheme(settings.Current);
             ApplyAppearance(settings.Current);
-            settings.Changed += (_, current) => Dispatcher.Invoke(() => ApplyAppearance(current));
+            settings.Changed += (_, current) => Dispatcher.Invoke(() =>
+            {
+                ApplyTheme(current);
+                ApplyAppearance(current);
+            });
 
             _shell = new ShellViewModel(
                 environment,
@@ -77,41 +82,44 @@ public partial class App : Application
     /// text. Mutating the brush instances / replacing the resources updates every reference live.</summary>
     private void ApplyAppearance(AppSettings settings)
     {
-        var accent = ParseColor(settings.AccentColor) ?? ParseColor(AppSettings.DefaultAccentColor)!.Value;
-        SetBrushColor("AccentBrush", accent);
-        SetBrushColor("AccentDimBrush", Blend(accent, (Color)ColorConverter.ConvertFromString("#1B1B1F"), 0.24));
         // The base body font stays 14; the root UI-scale transform applies the scale (so an inline
         // FontSize scales the same as an inherited one, and there is no double-scaling).
         Resources["AppFontSize"] = 14.0;
         Resources["AppUiScale"] = settings.FontScalePercent / 100.0;
     }
 
-    private void SetBrushColor(string key, Color color)
+    // The two runtime-swappable theme slots (Codex's theme contract): a BASE palette
+    // (Theme.Dark/Light.xaml — the 32 semantic brushes) and an ACCENT (Accents/<base>/Accent.<name>.xaml
+    // — the 6 accent brushes). Merged AFTER Theme.xaml so they win, and every view consumes the brushes
+    // via DynamicResource, so replacing these recolors every open screen + tear-off window live.
+    private ResourceDictionary? _baseThemeDict;
+    private ResourceDictionary? _accentDict;
+
+    /// <summary>Loads the base + accent ResourceDicts for the chosen theme/accent and swaps them into the
+    /// app's merged dictionaries. Light/Dark selection + the 7 named accents both flow through here.</summary>
+    private void ApplyTheme(AppSettings settings)
     {
-        if (Resources[key] is SolidColorBrush { IsFrozen: false } brush)
-            brush.Color = color;
-        else
-            Resources[key] = new SolidColorBrush(color);
+        string baseName = string.Equals(settings.Theme, AppSettings.ThemeLight, StringComparison.OrdinalIgnoreCase)
+            ? "Light" : "Dark";
+        string accentName = AppSettings.NormalizeAccentName(settings.AccentName);
+
+        var baseDict = LoadThemeDictionary($"Theme.{baseName}.xaml");
+        var accentDict = LoadThemeDictionary($"Accents/{baseName}/Accent.{accentName}.xaml");
+
+        var merged = Resources.MergedDictionaries;
+        if (_baseThemeDict is not null)
+            merged.Remove(_baseThemeDict);
+        if (_accentDict is not null)
+            merged.Remove(_accentDict);
+        merged.Add(baseDict);      // base first…
+        merged.Add(accentDict);    // …then accent, so its 6 brushes override the base defaults
+        _baseThemeDict = baseDict;
+        _accentDict = accentDict;
     }
 
-    private static Color? ParseColor(string hex)
-    {
-        try
-        {
-            return (Color)ColorConverter.ConvertFromString(
-                hex.StartsWith('#') ? hex : "#" + hex);
-        }
-        catch (FormatException)
-        {
-            return null;
-        }
-    }
-
-    /// <summary>fraction of <paramref name="accent"/> over <paramref name="background"/>.</summary>
-    private static Color Blend(Color accent, Color background, double fraction) => Color.FromRgb(
-        (byte)(background.R + (accent.R - background.R) * fraction),
-        (byte)(background.G + (accent.G - background.G) * fraction),
-        (byte)(background.B + (accent.B - background.B) * fraction));
+    private static ResourceDictionary LoadThemeDictionary(string relativePath) =>
+        (ResourceDictionary)LoadComponent(
+            new Uri("/AMS2CareerCompanion;component/Themes/" + relativePath, UriKind.Relative));
 
     protected override void OnExit(ExitEventArgs e)
     {

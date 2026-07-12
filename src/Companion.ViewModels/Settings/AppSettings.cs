@@ -75,15 +75,31 @@ public sealed record AppSettings
     public const int MinFontScalePercent = 90;
     public const int MaxFontScalePercent = 130;
 
+    /// <summary>The base theme names the appearance service can load (Theme.&lt;name&gt;.xaml).</summary>
+    public const string ThemeDark = "dark";
+    public const string ThemeLight = "light";
+
+    /// <summary>The named accent presets (each has a contrast-tuned Dark + Light ResourceDict —
+    /// <c>Themes/Accents/&lt;Dark|Light&gt;/Accent.&lt;name&gt;.xaml</c>). Order = the settings-screen swatch order.</summary>
+    public static readonly IReadOnlyList<string> AccentNames =
+        ["SmgpRed", "RoyalBlue", "Teal", "Green", "Gold", "Orange", "Magenta"];
+
+    public const string DefaultAccentName = "RoyalBlue";
+
     public int Version { get; init; } = CurrentVersion;
 
     // ---------- appearance ----------
 
-    /// <summary>"dark" today; the key exists so a light theme can arrive without a
-    /// settings-file migration.</summary>
-    public string Theme { get; init; } = "dark";
+    /// <summary>The base theme: <see cref="ThemeDark"/> or <see cref="ThemeLight"/>. Drives which
+    /// <c>Theme.&lt;name&gt;.xaml</c> (and which accent variant) the appearance service loads.</summary>
+    public string Theme { get; init; } = ThemeDark;
 
-    /// <summary>Accent color as "#RRGGBB" (presets or custom hex).</summary>
+    /// <summary>The named accent preset (<see cref="AccentNames"/>) — the appearance service loads
+    /// <c>Accents/&lt;base&gt;/Accent.&lt;name&gt;.xaml</c>. Replaces the old custom-hex accent.</summary>
+    public string AccentName { get; init; } = DefaultAccentName;
+
+    /// <summary>Legacy custom-hex accent (superseded by <see cref="AccentName"/>); kept so old settings
+    /// files round-trip. No longer drives the runtime accent.</summary>
     public string AccentColor { get; init; } = DefaultAccentColor;
 
     /// <summary>UI font scale in percent (90–130), applied to the root FontSize resource.</summary>
@@ -166,12 +182,26 @@ public sealed record AppSettings
         return match.Success ? "#" + match.Groups["hex"].Value.ToUpperInvariant() : null;
     }
 
+    /// <summary>The base theme clamped to a known value (<see cref="ThemeDark"/>/<see cref="ThemeLight"/>).</summary>
+    public static string NormalizeTheme(string? value) =>
+        string.Equals(value?.Trim(), ThemeLight, StringComparison.OrdinalIgnoreCase) ? ThemeLight : ThemeDark;
+
+    /// <summary>The accent preset clamped to a known name (case-insensitive), else the default.</summary>
+    public static string NormalizeAccentName(string? value)
+    {
+        foreach (var name in AccentNames)
+            if (string.Equals(value?.Trim(), name, StringComparison.OrdinalIgnoreCase))
+                return name;
+        return DefaultAccentName;
+    }
+
     /// <summary>Every field clamped/sanitized into its legal range — what the store returns
     /// after any load and what the service persists after any update.</summary>
     public AppSettings Normalized() => this with
     {
         Version = CurrentVersion,
-        Theme = string.IsNullOrWhiteSpace(Theme) ? "dark" : Theme.Trim(),
+        Theme = NormalizeTheme(Theme),
+        AccentName = NormalizeAccentName(AccentName),
         AccentColor = NormalizeAccentColor(AccentColor) ?? DefaultAccentColor,
         FontScalePercent = Math.Clamp(FontScalePercent, MinFontScalePercent, MaxFontScalePercent),
         DefaultDifficulty = double.IsFinite(DefaultDifficulty)

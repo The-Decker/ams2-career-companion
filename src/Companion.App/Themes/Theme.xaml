@@ -46,6 +46,7 @@
     <conv:NullToVisibilityConverter x:Key="NullCollapsed" />
     <conv:BoolToVisibilityConverter x:Key="BoolVisible" />
     <conv:BoolToVisibilityConverter x:Key="BoolCollapsed" Invert="True" />
+    <conv:NegateBoolConverter x:Key="InverseBool" />
     <conv:CountToVisibilityConverter x:Key="CountVisible" />
     <conv:CountToVisibilityConverter x:Key="CountCollapsed" Invert="True" />
     <conv:StringToVisibilityConverter x:Key="StringVisible" />
