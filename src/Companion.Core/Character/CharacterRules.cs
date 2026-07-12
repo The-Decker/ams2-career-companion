@@ -29,6 +29,12 @@ public sealed record CharacterRules
 
     public required IReadOnlyList<Perk> Perks { get; init; }
 
+    /// <summary>The additive in-career skill-tree layout. Absent in older rules files => no tree.</summary>
+    public SkillTreeRules SkillTree { get; init; } = SkillTreeRules.Empty;
+
+    /// <summary>The additive milestone-respec policy. Absent in older rules files => respec disabled.</summary>
+    public RespecRules Respec { get; init; } = new();
+
     /// <summary>The tunable accident bands + safety-offset scales (character death &amp; injury §3.4),
     /// or null when perks.json ships no <c>accident</c> block — the fold then falls back to
     /// <see cref="AccidentModel.DefaultRules"/>. Optional so every pre-feature fixture parses unchanged.</summary>
@@ -92,8 +98,91 @@ public sealed record CharacterRules
         if (Levels.XpCurve.MaxLevel < 2)
             throw new JsonException("levels.xpCurve.maxLevel must be at least 2.");
 
+        ValidateSkillTree(ids);
+
         if (Accident is { } accident)
             ValidateAccidentBands(accident);
+    }
+
+    private void ValidateSkillTree(IReadOnlySet<string> perkIds)
+    {
+        var branchIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string branch in SkillTree.BranchOrder)
+        {
+            if (!branchIds.Add(branch))
+                throw new JsonException($"skillTree.branchOrder repeats branch '{branch}'.");
+        }
+        foreach (string meta in SkillTree.MetaBranches)
+        {
+            if (!branchIds.Contains(meta))
+                throw new JsonException($"skillTree.metaBranches references unknown branch '{meta}'.");
+        }
+
+        foreach (var perk in Perks)
+        {
+            if (perk.Tier is < 1 or > 4)
+                throw new JsonException($"Perk '{perk.Id}' tier must be between 1 and 4.");
+            if (perk.UnlockLevel < 1)
+                throw new JsonException($"Perk '{perk.Id}' unlockLevel must be positive.");
+            if (branchIds.Count > 0 && !branchIds.Contains(perk.EffectiveBranch))
+                throw new JsonException($"Perk '{perk.Id}' references unknown branch '{perk.EffectiveBranch}'.");
+            foreach (string requiredId in perk.Requires)
+            {
+                if (!perkIds.Contains(requiredId))
+                    throw new JsonException($"Perk '{perk.Id}' requires unknown perk '{requiredId}'.");
+                if (PerkById(requiredId).Tier >= perk.Tier)
+                    throw new JsonException(
+                        $"Perk '{perk.Id}' tier must exceed required perk '{requiredId}' tier.");
+            }
+        }
+
+        var visit = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var perk in Perks)
+            VisitPerk(perk, visit);
+
+        var allNodeIds = new HashSet<string>(perkIds, StringComparer.Ordinal);
+        var knownStats = Stats.TalentStats.Select(s => s.Id)
+            .Concat(Stats.MetaStats.Select(s => s.Id))
+            .ToHashSet(StringComparer.Ordinal);
+        foreach (var node in SkillTree.StatNodes)
+        {
+            if (!allNodeIds.Add(node.Id))
+                throw new JsonException($"Duplicate skill-tree node id '{node.Id}'.");
+            if (!knownStats.Contains(node.Stat))
+                throw new JsonException($"Stat node '{node.Id}' references unknown stat '{node.Stat}'.");
+            if (node.Tier is < 1 or > 4 || node.UnlockLevel < 1 || node.Cost <= 0)
+                throw new JsonException(
+                    $"Stat node '{node.Id}' needs tier 1..4, positive unlockLevel, and positive cost.");
+            if (branchIds.Count > 0 && !branchIds.Contains(node.Branch))
+                throw new JsonException($"Stat node '{node.Id}' references unknown branch '{node.Branch}'.");
+        }
+        foreach (var node in SkillTree.StatNodes)
+        {
+            foreach (string requiredId in node.Requires)
+            {
+                if (!allNodeIds.Contains(requiredId))
+                    throw new JsonException($"Stat node '{node.Id}' requires unknown node '{requiredId}'.");
+                var required = SkillTree.StatNodes.FirstOrDefault(n =>
+                    string.Equals(n.Id, requiredId, StringComparison.Ordinal));
+                if (required is not null && required.Tier >= node.Tier)
+                    throw new JsonException(
+                        $"Stat node '{node.Id}' tier must exceed required node '{requiredId}' tier.");
+            }
+        }
+    }
+
+    private void VisitPerk(Perk perk, IDictionary<string, int> visit)
+    {
+        if (visit.TryGetValue(perk.Id, out int state))
+        {
+            if (state == 1)
+                throw new JsonException($"Perk dependency cycle reaches '{perk.Id}'.");
+            return;
+        }
+        visit[perk.Id] = 1;
+        foreach (string requiredId in perk.Requires)
+            VisitPerk(PerkById(requiredId), visit);
+        visit[perk.Id] = 2;
     }
 
     /// <summary>Each severity's bands must be non-empty, have non-decreasing UpTo bounds, and the last
@@ -187,6 +276,33 @@ public sealed record LevelRules
     public required XpCurve XpCurve { get; init; }
     public required XpSources XpSources { get; init; }
     public required LevelGrants LevelGrants { get; init; }
+
+    /// <summary>Era key to maximum reachable level. Empty keeps the global XP-curve cap.</summary>
+    public IReadOnlyDictionary<string, JsonElement> SoftCapByEra { get; init; } =
+        new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+
+    public int LevelForTotalXp(long totalXp, int year, bool useEraSoftCap)
+    {
+        int level = XpCurve.LevelForTotalXp(totalXp);
+        int? cap = useEraSoftCap ? SoftCapForYear(year) : null;
+        return cap is { } value ? Math.Min(level, value) : level;
+    }
+
+    public int? SoftCapForYear(int year)
+    {
+        string key = year switch
+        {
+            <= 1969 => "golden-age",
+            <= 1979 => "seventies",
+            <= 1989 => "eighties",
+            <= 1999 => "nineties",
+            <= 2013 => "two-thousands",
+            _ => "hybrid",
+        };
+        return SoftCapByEra.TryGetValue(key, out var value) && value.ValueKind == JsonValueKind.Number
+            ? value.GetInt32()
+            : null;
+    }
 }
 
 public sealed record XpCurve
@@ -253,6 +369,8 @@ public sealed record LevelGrants
     public double StatStepValue { get; init; } = 0.05;
     public int StatStepCpCost { get; init; } = 1;
     public double StatCapPerRating { get; init; } = 0.99;
+    public int MilestoneEveryLevels { get; init; }
+    public string? MilestoneGrant { get; init; }
 }
 
 public sealed record CreationRules
@@ -281,11 +399,52 @@ public sealed record Perk
     public int Cost { get; init; }
     public string Description { get; init; } = "";
 
+    /// <summary>Additive skill-tree metadata; absent values preserve the historical flat-list behavior.</summary>
+    public int Tier { get; init; } = 1;
+    public IReadOnlyList<string> Requires { get; init; } = [];
+    public int UnlockLevel { get; init; } = 1;
+    public string? Branch { get; init; }
+    public string EffectiveBranch => Branch is { Length: > 0 } branch ? branch : Category;
+
     /// <summary>The registered PCG32 stream a randomness effect names, or "none" for a fully
     /// deterministic perk.</summary>
     public string Stream { get; init; } = "none";
 
     public required IReadOnlyList<PerkEffect> Effects { get; init; }
+}
+
+public sealed record SkillTreeRules
+{
+    public static SkillTreeRules Empty { get; } = new();
+
+    public IReadOnlyList<string> BranchOrder { get; init; } = [];
+    public IReadOnlyList<string> MetaBranches { get; init; } = [];
+    public IReadOnlyList<StatNodeRule> StatNodes { get; init; } = [];
+
+    public StatNodeRule? TryGetStatNode(string id) =>
+        StatNodes.FirstOrDefault(node => string.Equals(node.Id, id, StringComparison.Ordinal));
+}
+
+public sealed record StatNodeRule
+{
+    public required string Id { get; init; }
+    public required string Stat { get; init; }
+    public string? Name { get; init; }
+    public required string Branch { get; init; }
+    public int Tier { get; init; } = 1;
+    public int UnlockLevel { get; init; } = 1;
+    public int Cost { get; init; } = 1;
+    public IReadOnlyList<string> Requires { get; init; } = [];
+}
+
+public sealed record RespecRules
+{
+    public bool PerksLockedAtCreation { get; init; }
+    public bool StatPointsBankable { get; init; }
+    public bool StatPointsLockedOnSpend { get; init; }
+    public int RespecTokenGrantsPerMilestone { get; init; }
+    public string RespecTokenScope { get; init; } = "";
+    public bool RespecForbidsCreationBudgetChange { get; init; }
 }
 
 /// <summary>One machine-readable effect of a perk on a named sim lever. Benefit and drawback are
