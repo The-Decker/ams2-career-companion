@@ -34,11 +34,14 @@ public sealed class PaddockRenderTests
                     CarKey = "driver.ayrton_senna", Epithet = "THE UNTOUCHABLE KING",
                     Bio = ["The king.", "Serene and inevitable.", "The crown never slips."],
                     Quotes = ["I set the time they fail to reach."],
-                    Stats = new SmgpDriverStatLine
+                    IsPlayer = false,
+                    Career = new SmgpCareerStats
                     {
-                        DriverId = "driver.ayrton_senna", CareerStarts = 142, CareerWins = 69,
-                        CareerPodiums = 118, CareerPoles = 72, CareerTop5s = 134, CareerPoints = 1012,
-                        Championships = 6,
+                        Starts = 142, Wins = 69, Podiums = 118, Poles = 72, Top5s = 134, Points = 1012, Titles = 6,
+                    },
+                    Season = new SmgpSeasonStats
+                    {
+                        Position = 1, Points = 40, Wins = 3, Poles = 4, Podiums = 5, Top5s = 6, Starts = 6,
                     },
                     Prestige = 5,
                 },
@@ -48,7 +51,9 @@ public sealed class PaddockRenderTests
                     TeamName = "Bullets", Number = "17", PortraitKey = "driver.gilberto_ceara",
                     CarKey = "driver.gilberto_ceara", Epithet = "THE INSURGENT",
                     Bio = ["The outsider.", "Clawing up.", "The number one seat has his name on it."],
-                    Quotes = ["A crown you steal is a crown."], Stats = null, Prestige = 3,
+                    Quotes = ["A crown you steal is a crown."], IsPlayer = false,
+                    Career = new SmgpCareerStats { Starts = 86, Wins = 6, Podiums = 16, Poles = 5, Top5s = 34, Points = 172, Titles = 0 },
+                    Season = null, Prestige = 3,
                 },
             ],
             Teams =

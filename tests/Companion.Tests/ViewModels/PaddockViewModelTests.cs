@@ -12,7 +12,9 @@ public sealed class PaddockViewModelTests
     {
         DriverId = id, Name = name, TeamId = teamId, TeamName = teamName, Number = "1",
         PortraitKey = id, CarKey = id, Epithet = "THE " + name.ToUpperInvariant(),
-        Bio = ["p1", "p2", "p3"], Quotes = ["q"], Stats = null, Prestige = prestige,
+        Bio = ["p1", "p2", "p3"], Quotes = ["q"], IsPlayer = false,
+        Career = new SmgpCareerStats { Starts = 10, Wins = 2, Podiums = 4, Poles = 1, Top5s = 6, Points = 50, Titles = 0 },
+        Season = null, Prestige = prestige,
     };
 
     private static SmgpTeamCard Team(string id, string name) => new()

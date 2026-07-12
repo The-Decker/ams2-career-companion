@@ -115,56 +115,67 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- predetermined career stats -->
-                <Border Margin="0,16,0,0" Visibility="{Binding Stats, Converter={StaticResource NullCollapsed}}">
-                    <StackPanel>
-                        <TextBlock Text="CAREER" Style="{StaticResource Faint}" Margin="0,0,0,8" />
-                        <WrapPanel>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.Championships}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
-                                    <TextBlock Text="TITLES" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.CareerWins}" FontSize="22" FontWeight="Bold" />
-                                    <TextBlock Text="WINS" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.CareerPodiums}" FontSize="22" FontWeight="Bold" />
-                                    <TextBlock Text="PODIUMS" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.CareerPoles}" FontSize="22" FontWeight="Bold" />
-                                    <TextBlock Text="POLES" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.CareerTop5s}" FontSize="22" FontWeight="Bold" />
-                                    <TextBlock Text="TOP 5" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.CareerPoints}" FontSize="22" FontWeight="Bold" />
-                                    <TextBlock Text="POINTS" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource StatTile}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Stats.CareerStarts}" FontSize="22" FontWeight="Bold" />
-                                    <TextBlock Text="STARTS" Style="{StaticResource Faint}" FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                        </WrapPanel>
-                    </StackPanel>
-                </Border>
+                <!-- this season (live) + all-time career -->
+                <StackPanel Margin="0,16,0,0" Visibility="{Binding Career, Converter={StaticResource NullCollapsed}}">
+                    <!-- the live season line, once a round has been scored -->
+                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12,8" Margin="0,0,0,12"
+                            Visibility="{Binding Season, Converter={StaticResource NullCollapsed}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="THIS SEASON" Style="{StaticResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0" />
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="P" /><Run Text="{Binding Season.Position, Mode=OneWay}" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+                                <Run Text="   " /><Run Text="{Binding Season.Points, Mode=OneWay}" FontWeight="Bold" /><Run Text=" pts" />
+                                <Run Text="   " /><Run Text="{Binding Season.Wins, Mode=OneWay}" FontWeight="Bold" /><Run Text=" W" />
+                                <Run Text="   " /><Run Text="{Binding Season.Poles, Mode=OneWay}" FontWeight="Bold" /><Run Text=" pole" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="CAREER" Style="{StaticResource Faint}" Margin="0,0,0,8" />
+                    <WrapPanel>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Titles}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+                                <TextBlock Text="TITLES" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Wins}" FontSize="22" FontWeight="Bold" />
+                                <TextBlock Text="WINS" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Podiums}" FontSize="22" FontWeight="Bold" />
+                                <TextBlock Text="PODIUMS" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Poles}" FontSize="22" FontWeight="Bold" />
+                                <TextBlock Text="POLES" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Top5s}" FontSize="22" FontWeight="Bold" />
+                                <TextBlock Text="TOP 5" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Points}" FontSize="22" FontWeight="Bold" />
+                                <TextBlock Text="POINTS" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource StatTile}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Career.Starts}" FontSize="22" FontWeight="Bold" />
+                                <TextBlock Text="STARTS" Style="{StaticResource Faint}" FontSize="10" />
+                            </StackPanel>
+                        </Border>
+                    </WrapPanel>
+                </StackPanel>
 
                 <!-- biography -->
                 <ItemsControl ItemsSource="{Binding Bio}" Margin="0,16,0,0">

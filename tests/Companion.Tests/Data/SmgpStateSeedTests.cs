@@ -140,7 +140,8 @@ public sealed class SmgpStateSeedTests : IDisposable
         var briefing = session.CurrentSmgpBriefing();
         Assert.NotNull(briefing);
         Assert.Equal("ROUND 1 · ROUND 1", briefing!.RoundHeader); // the test round's name IS "Round 1"
-        Assert.Equal("0 D.P.", briefing.PointsLine);
+        Assert.Equal("SEASON  —", briefing.SeasonLine); // no round scored yet
+        Assert.Equal("", briefing.CareerLine);           // the player has no record yet
         Assert.False(briefing.CareerOver);
         Assert.Null(briefing.ForcedChallengerDriverId);
         var rival = Assert.Single(briefing.Rivals);
@@ -160,6 +161,61 @@ public sealed class SmgpStateSeedTests : IDisposable
             },
             environment);
         Assert.Null(normal.CurrentSmgpBriefing());
+    }
+
+    [Fact]
+    public void PlayerStats_AccrueFromResults_IntoTheRivalReadout_AndPaddock()
+    {
+        // A fresh SMGP career, then the player wins round 1 from pole — their live record must appear in
+        // the rival readout (which retired "D.P.") and in their own Paddock card, built from zero.
+        string packDirectory = Path.Combine(_root, "packs", "accrue");
+        TestPackBuilder.Write(SmgpPack(), packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "accrue"),
+            library: TestPackBuilder.Library());
+        using var session = CareerSessionService.CreateCareer(
+            new CareerCreationRequest
+            {
+                PackDirectory = packDirectory,
+                CareerFilePath = Path.Combine(_root, "careers", "accrue.ams2career"),
+                CareerName = "Accrue",
+                MasterSeed = Seed,
+                PlayerLiveryName = TestPackBuilder.StockLivery2,
+                SmgpMode = true,
+            },
+            environment);
+
+        // Before any round: the readout is blank and the player's Paddock card is at zero.
+        Assert.Equal("SEASON  —", session.CurrentSmgpBriefing()!.SeasonLine);
+        Assert.Equal(0, session.SmgpPaddock()!.Drivers.First(d => d.IsPlayer).Career!.Wins);
+
+        // Round 1: the player wins from pole (order them first; the AI second).
+        var order = session.CurrentGrid()
+            .OrderByDescending(s => s.IsPlayer)
+            .Select(s => s.DriverId)
+            .ToList();
+        session.Apply(new ResultDraft
+        {
+            Classified = order,
+            QualifyingOrder = order,
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+        });
+
+        // The rival readout (now round 2) shows the player's live season standing + career record.
+        var briefing = session.CurrentSmgpBriefing()!;
+        Assert.StartsWith("SEASON  P", briefing.SeasonLine);
+        Assert.Contains("1 WIN", briefing.CareerLine);
+        Assert.Contains("1 POLE", briefing.CareerLine);
+
+        // The Paddock shows the player's own card, built from zero + the win/pole they just took.
+        var player = session.SmgpPaddock()!.Drivers.First(d => d.IsPlayer);
+        Assert.Equal(1, player.Career!.Wins);
+        Assert.Equal(1, player.Career.Poles);
+        Assert.Equal(1, player.Career.Podiums);
+        Assert.Equal(0, player.Career.Titles); // the season is not complete
+        Assert.NotNull(player.Season);
+        Assert.Equal(1, player.Season!.Wins);
     }
 
     [Fact]

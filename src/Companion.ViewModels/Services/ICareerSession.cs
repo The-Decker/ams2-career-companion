@@ -727,8 +727,13 @@ public sealed record SmgpBriefingModel
     /// <summary>The game's Course Select header — "SAN MARINO · ROUND 1".</summary>
     public required string RoundHeader { get; init; }
 
-    /// <summary>The player's points, the game's abbreviation — "12 D.P."</summary>
-    public required string PointsLine { get; init; }
+    /// <summary>The player's live SEASON standing — "SEASON  P3 · 18 PTS" (or "SEASON —" before any
+    /// round). Replaces the old "D.P." points abbreviation with the player's real running stats.</summary>
+    public required string SeasonLine { get; init; }
+
+    /// <summary>The player's live CAREER record — "CAREER  2 WINS · 1 POLE · 5 TOP-5" (empty until they
+    /// have something to show). They build this from zero; the AI carry their pre-history.</summary>
+    public required string CareerLine { get; init; }
 
     /// <summary>The pit-crew advice line (the manual's own words).</summary>
     public required string AdviceLine { get; init; }
@@ -777,10 +782,43 @@ public sealed record SmgpDriverCard
     public required IReadOnlyList<string> Bio { get; init; }
     /// <summary>In-character quotes (empty when unauthored).</summary>
     public required IReadOnlyList<string> Quotes { get; init; }
-    /// <summary>Predetermined pre-player-era career stats, or null when unauthored.</summary>
-    public required Companion.Core.Smgp.SmgpDriverStatLine? Stats { get; init; }
+    /// <summary>True for the player's own card — they build their record from zero (no pre-history).</summary>
+    public required bool IsPlayer { get; init; }
+    /// <summary>All-time career totals: for an AI driver, the predetermined baseline PLUS what they have
+    /// accrued since the player arrived; for the player, purely what they have accrued (they start at
+    /// zero). Null only when the mode has no stats data at all.</summary>
+    public required SmgpCareerStats? Career { get; init; }
+    /// <summary>This season's live tally (championship position + points + wins/poles/podiums/top-5s),
+    /// or null before any round has been scored this season.</summary>
+    public required SmgpSeasonStats? Season { get; init; }
     /// <summary>The driver's team prestige (5 = top house … 2 = the floor) — grouping/order.</summary>
     public required int Prestige { get; init; }
+}
+
+/// <summary>A driver's all-time career totals — the predetermined baseline grown by live results
+/// (the player's baseline is zero). DISPLAY-ONLY.</summary>
+public sealed record SmgpCareerStats
+{
+    public required int Starts { get; init; }
+    public required int Wins { get; init; }
+    public required int Podiums { get; init; }
+    public required int Poles { get; init; }
+    public required int Top5s { get; init; }
+    public required int Points { get; init; }
+    public required int Titles { get; init; }
+}
+
+/// <summary>A driver's live tally for the CURRENT season, from the folded results. DISPLAY-ONLY.</summary>
+public sealed record SmgpSeasonStats
+{
+    /// <summary>Championship position this season, or null before it computes.</summary>
+    public required int? Position { get; init; }
+    public required int Points { get; init; }
+    public required int Wins { get; init; }
+    public required int Poles { get; init; }
+    public required int Podiums { get; init; }
+    public required int Top5s { get; init; }
+    public required int Starts { get; init; }
 }
 
 /// <summary>One team's Paddock card: identity + logo + motto/history/quotes + its roster.</summary>

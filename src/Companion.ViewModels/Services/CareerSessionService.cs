@@ -1240,9 +1240,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             });
         }
 
-        string points = CurrentStandings()?.Drivers
-            .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal))
-            ?.CountedPoints.ToString() ?? "0";
+        // The player's live readout (replaces the old "D.P." points abbreviation): their season standing
+        // plus the career record they are building from zero (the AI carry their pre-history).
+        var playerStanding = CurrentStandings()?.Drivers
+            .FirstOrDefault(d => string.Equals(d.DriverId, _playerDriverId, StringComparison.Ordinal));
+        var (playerCareer, playerSeason) = BuildDriverStats(
+            _playerDriverId, isPlayer: true,
+            AccrueSeasonCounts().GetValueOrDefault(_playerDriverId) ?? Companion.Core.Smgp.SmgpAccruedStats.Empty,
+            playerStanding, seasonComplete: false, champion: null, baseline: null);
+        string seasonLine = playerSeason is { Position: { } pos } ps
+            ? $"SEASON  P{pos} · {ps.Points} PTS"
+            : "SEASON  —";
+        string careerLine = FormatCareerLine(playerCareer);
 
         // A forced challenger who is not actually on this round's grid (his introduction could
         // not resolve) cannot be battled — surface a free pick instead of a lock on nothing.
@@ -1253,7 +1262,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return new SmgpBriefingModel
         {
             RoundHeader = $"{(packRound?.Name ?? $"Round {round}").ToUpperInvariant()} · ROUND {round}",
-            PointsLine = $"{points} D.P.",
+            SeasonLine = seasonLine,
+            CareerLine = careerLine,
             AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
             Titles = state.Titles,
             CareerOver = state.CareerOver,
@@ -1285,35 +1295,68 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         foreach (var e in Pack.Entries)
             entryByDriver.TryAdd(e.DriverId, e);
 
-        var drivers = new List<SmgpDriverCard>(Pack.Drivers.Count);
+        // Live stats: per-driver counts accrued from this season's folded results + the current
+        // standings for points/position. The player builds their record from zero; the AI carry their
+        // predetermined baseline forward. Display-only (a projection over the fold, like the standings).
+        var accrued = AccrueSeasonCounts();
+        var standings = CurrentStandings();
+        bool complete = SeasonComplete;
+        string? champion = complete
+            ? standings?.Drivers.FirstOrDefault(d => d.Position == 1)?.DriverId
+            : null;
+
+        SmgpDriverCard BuildCard(
+            string driverId, string name, string teamId, string teamName, string? number,
+            string portraitKey, string carKey, bool isPlayer,
+            Companion.Core.Smgp.SmgpDriverProfile? profile, int prestige)
+        {
+            var (career, season) = BuildDriverStats(
+                driverId, isPlayer,
+                accrued.GetValueOrDefault(driverId) ?? Companion.Core.Smgp.SmgpAccruedStats.Empty,
+                standings?.Drivers.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal)),
+                complete, champion,
+                isPlayer ? null : stats.ForDriver(driverId));
+            return new SmgpDriverCard
+            {
+                DriverId = driverId, Name = name, TeamId = teamId, TeamName = teamName, Number = number,
+                PortraitKey = portraitKey, CarKey = carKey,
+                Epithet = isPlayer ? "YOU" : profile?.Epithet ?? "",
+                Bio = isPlayer ? [] : profile?.Bio ?? [],
+                Quotes = isPlayer ? [] : profile?.Quotes ?? [],
+                IsPlayer = isPlayer, Career = career, Season = season, Prestige = prestige,
+            };
+        }
+
+        var drivers = new List<SmgpDriverCard>(Pack.Drivers.Count + 1);
         foreach (var d in Pack.Drivers)
         {
             entryByDriver.TryGetValue(d.Id, out var entry);
             PackTeam? team = entry is not null ? teamsById.GetValueOrDefault(entry.TeamId) : null;
             var profile = profiles.ForDriver(d.Id);
-            drivers.Add(new SmgpDriverCard
-            {
-                DriverId = d.Id,
-                Name = profile?.Name is { Length: > 0 } n ? n : d.Name,
-                TeamId = team?.Id ?? entry?.TeamId ?? "",
-                TeamName = team?.Name ?? "",
-                Number = entry?.Number,
-                PortraitKey = d.Id,
-                CarKey = d.Id,
-                Epithet = profile?.Epithet ?? "",
-                Bio = profile?.Bio ?? [],
-                Quotes = profile?.Quotes ?? [],
-                Stats = stats.ForDriver(d.Id),
-                Prestige = team?.Prestige ?? 0,
-            });
+            drivers.Add(BuildCard(
+                d.Id, profile?.Name is { Length: > 0 } n ? n : d.Name,
+                team?.Id ?? entry?.TeamId ?? "", team?.Name ?? "", entry?.Number,
+                d.Id, d.Id, isPlayer: false, profile, team?.Prestige ?? 0));
         }
 
-        // Most-storied first: top houses lead, then the biggest career (Senna at the top).
+        // Most-storied first: top houses lead, then the biggest career.
         var orderedDrivers = drivers
             .OrderByDescending(c => c.Prestige)
-            .ThenByDescending(c => c.Stats?.CareerPoints ?? 0)
+            .ThenByDescending(c => c.Career?.Points ?? 0)
             .ThenBy(c => c.Name, StringComparer.Ordinal)
             .ToList();
+
+        // The player LEADS the roster — their own card, built from their current seat + live record.
+        var playerSeat = complete ? null : CurrentGrid().FirstOrDefault(s => s.IsPlayer);
+        string playerTeamId = playerSeat?.TeamId ?? CurrentSmgpTeamId() ?? "";
+        var playerTeam = teamsById.GetValueOrDefault(playerTeamId);
+        string? playerLivery = playerSeat?.Ams2LiveryName ?? CurrentSmgpState()?.CurrentSeatLivery;
+        string? playerCarArtId = playerLivery is null ? null
+            : Pack.Entries.FirstOrDefault(e => string.Equals(e.Ams2LiveryName, playerLivery, StringComparison.Ordinal))?.DriverId;
+        orderedDrivers.Insert(0, BuildCard(
+            _playerDriverId, PlayerDisplayName() ?? PlayerDefaultName, playerTeamId, playerTeam?.Name ?? "",
+            null, Companion.ViewModels.Wizard.GridSeatChoice.PlayerImageKey(playerTeamId),
+            playerCarArtId ?? _playerDriverId, isPlayer: true, null, playerTeam?.Prestige ?? 0));
 
         var teams = new List<SmgpTeamCard>(Pack.Teams.Count);
         foreach (var t in Pack.Teams)
@@ -1341,6 +1384,79 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             .ToList();
 
         return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams };
+    }
+
+    /// <summary>Per-driver COUNTS (wins/poles/podiums/top-5s/starts) accrued from THIS season's folded
+    /// results — display-only, re-read from the raw envelopes like the standings. Empty before any round
+    /// is scored. (Single-season for now; a multi-season career would accrue across seasons.)</summary>
+    private IReadOnlyDictionary<string, Companion.Core.Smgp.SmgpAccruedStats> AccrueSeasonCounts()
+    {
+        var rounds = new List<(IReadOnlyList<Companion.Core.Scoring.ClassifiedEntry> Race, string? Pole)>();
+        foreach (var stored in ResultStore.ReadSeasonResults(_database, _seasonId))
+        {
+            var envelope = stored.ToEnvelope();
+            var race = envelope.Result.Sessions.FirstOrDefault(s => s.Kind == Companion.Core.Scoring.SessionKind.Race)
+                ?? envelope.Result.Sessions.FirstOrDefault();
+            if (race is null)
+                continue;
+            string? pole = envelope.QualifyingOrder is { Count: > 0 } q ? q[0] : null;
+            rounds.Add((race.Entries, pole));
+        }
+        return Companion.Core.Smgp.SmgpLiveStats.Accrue(rounds);
+    }
+
+    /// <summary>Builds a driver's all-time career totals and this-season tally from the accrued counts +
+    /// the current standings. The player (<paramref name="isPlayer"/>) has no baseline — they build from
+    /// zero; an AI driver's baseline is their predetermined pre-history. A completed season adds a title
+    /// to its champion. Season points/position come from the live standings.</summary>
+    private (SmgpCareerStats Career, SmgpSeasonStats? Season) BuildDriverStats(
+        string driverId, bool isPlayer,
+        Companion.Core.Smgp.SmgpAccruedStats accrued,
+        Companion.Core.Scoring.DriverStanding? standing,
+        bool seasonComplete, string? champion,
+        Companion.Core.Smgp.SmgpDriverStatLine? baseline)
+    {
+        int seasonPoints = standing is not null ? (int)Math.Round(standing.CountedPoints.ToDouble()) : 0;
+        bool wonTitle = seasonComplete && string.Equals(driverId, champion, StringComparison.Ordinal);
+
+        var career = new SmgpCareerStats
+        {
+            Starts = (isPlayer ? 0 : baseline?.CareerStarts ?? 0) + accrued.Starts,
+            Wins = (isPlayer ? 0 : baseline?.CareerWins ?? 0) + accrued.Wins,
+            Podiums = (isPlayer ? 0 : baseline?.CareerPodiums ?? 0) + accrued.Podiums,
+            Poles = (isPlayer ? 0 : baseline?.CareerPoles ?? 0) + accrued.Poles,
+            Top5s = (isPlayer ? 0 : baseline?.CareerTop5s ?? 0) + accrued.Top5s,
+            Points = (isPlayer ? 0 : baseline?.CareerPoints ?? 0) + seasonPoints,
+            Titles = (isPlayer ? 0 : baseline?.Championships ?? 0) + (wonTitle ? 1 : 0),
+        };
+
+        // No season card until something has happened this season (no round scored and no standing).
+        SmgpSeasonStats? season = standing is null && accrued.Starts == 0
+            ? null
+            : new SmgpSeasonStats
+            {
+                Position = standing?.Position,
+                Points = seasonPoints,
+                Wins = accrued.Wins,
+                Poles = accrued.Poles,
+                Podiums = accrued.Podiums,
+                Top5s = accrued.Top5s,
+                Starts = accrued.Starts,
+            };
+
+        return (career, season);
+    }
+
+    /// <summary>The player's career one-liner for the rival readout — the notable non-zero tallies
+    /// (titles, wins, poles, podiums), or empty when they have nothing to show yet.</summary>
+    private static string FormatCareerLine(SmgpCareerStats career)
+    {
+        var parts = new List<string>();
+        if (career.Titles > 0) parts.Add($"{career.Titles} {(career.Titles == 1 ? "TITLE" : "TITLES")}");
+        if (career.Wins > 0) parts.Add($"{career.Wins} {(career.Wins == 1 ? "WIN" : "WINS")}");
+        if (career.Poles > 0) parts.Add($"{career.Poles} {(career.Poles == 1 ? "POLE" : "POLES")}");
+        if (career.Podiums > 0) parts.Add($"{career.Podiums} {(career.Podiums == 1 ? "PODIUM" : "PODIUMS")}");
+        return parts.Count > 0 ? "CAREER  " + string.Join(" · ", parts) : "";
     }
 
     /// <summary>The rival's dossier line: his OWN words for the ladder state — a first challenge,

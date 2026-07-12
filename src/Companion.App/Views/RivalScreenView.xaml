@@ -24,9 +24,16 @@
             <Border Style="{StaticResource Panel}" DataContext="{Binding Briefing}">
                 <StackPanel>
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Right" Text="{Binding SmgpPointsLine}"
-                                   Foreground="{StaticResource AccentBrush}" FontWeight="Bold" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding SmgpRoundHeader}" FontWeight="Bold" FontSize="16" />
+                        <!-- the player's live readout (replaces the old "D.P."): season standing + the
+                             career record they're building from zero -->
+                        <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="{Binding SmgpSeasonLine}" Foreground="{StaticResource AccentBrush}"
+                                       FontWeight="Bold" TextAlignment="Right" />
+                            <TextBlock Text="{Binding SmgpCareerLine}" Style="{StaticResource Faint}"
+                                       TextAlignment="Right" Margin="0,2,0,0"
+                                       Visibility="{Binding SmgpCareerLine, Converter={StaticResource StringVisible}}" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding SmgpRoundHeader}" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" />
                     </DockPanel>
                     <TextBlock Text="{Binding SmgpAdviceLine}" Style="{StaticResource Body}"
                                FontStyle="Italic" Margin="0,6,0,0" />
