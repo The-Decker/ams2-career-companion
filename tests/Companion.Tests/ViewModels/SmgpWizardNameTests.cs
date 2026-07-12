@@ -6,9 +6,10 @@ using Companion.ViewModels.Wizard;
 namespace Companion.Tests.ViewModels;
 
 /// <summary>
-/// The SMGP character-creation name field (Mike: "the text box defaults to 'You' and not the driver you
-/// just chose"). Picking a seat and advancing into the Character step must pre-fill the driver-name box
-/// with the CHOSEN driver's name, not the runtime "You" placeholder.
+/// The SMGP character-creation name field (Mike: "whatever character you pick it should default to You as
+/// the driver name in the text box"). In SMGP the player is their OWN driver (the clean-swap, not the seat's
+/// historical occupant), so the box seeds to "You" for the player to personalise - regardless of which
+/// Level-D seat they pick.
 /// </summary>
 public sealed class SmgpWizardNameTests : IDisposable
 {
@@ -22,7 +23,7 @@ public sealed class SmgpWizardNameTests : IDisposable
     }
 
     [Fact]
-    public void SmgpCharacterStep_DefaultsTheNameToTheChosenDriver_NotYou()
+    public void SmgpCharacterStep_DefaultsTheNameToYou_NotTheChosenSeatDriver()
     {
         var packDir = Path.Combine(_root, "packs", "smgp");
         TestPackBuilder.Write(SmgpLevelDPack(), packDir);
@@ -53,8 +54,8 @@ public sealed class SmgpWizardNameTests : IDisposable
         Assert.Equal(WizardStep.Character, wizard.Step);
 
         Assert.NotNull(wizard.Character);
-        Assert.Equal(seat.DriverName, wizard.Character!.Name); // the chosen driver, not "You"
-        Assert.NotEqual("You", wizard.Character.Name);
+        Assert.Equal("You", wizard.Character!.Name);            // the player is their own driver, not the seat's
+        Assert.NotEqual(seat.DriverName, wizard.Character.Name);
     }
 
     /// <summary>A minimal SMGP pack with a LEVEL-D team (the only tier SMGP lets you start in), two rounds.</summary>

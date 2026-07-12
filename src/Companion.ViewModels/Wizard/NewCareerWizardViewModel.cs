@@ -657,10 +657,12 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
-        // Pre-fill the driver name with the seat's historical driver as a starting point; an own
-        // entrant has no seat driver, so they name themselves (empty seed).
-        Character = new CharacterViewModel(
-            _environment.Rules.Character, IsOwnEntrant ? null : SelectedSeat?.DriverName);
+        // The default driver name. SMGP: the player is their OWN driver (the clean-swap, not the seat's
+        // historical occupant), so the box seeds to "You" for you to personalise (Mike). A historical
+        // career instead pre-fills the seat's driver as a starting point (race AS them, or rename); an
+        // own entrant names themselves from an empty seed.
+        string? defaultName = IsSmgpPack ? "You" : (IsOwnEntrant ? null : SelectedSeat?.DriverName);
+        Character = new CharacterViewModel(_environment.Rules.Character, defaultName);
         Character.PropertyChanged += OnCharacterChanged;
     }
 
