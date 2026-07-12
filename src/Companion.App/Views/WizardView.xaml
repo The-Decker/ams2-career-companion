@@ -664,43 +664,105 @@
                 </ScrollViewer>
             </DockPanel>
 
-            <!-- c2. character (Increment 4a) -->
-            <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Character}}">
-                <TextBlock DockPanel.Dock="Top" Text="Your driver" Style="{StaticResource H2}" />
-                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
-                           Text="Pick an archetype for a ready-made driver, or customise the stats and perks. Your choices set the sim's expectation of you — a faster driver is judged against a harder bar, never handed secret pace." />
-                <!-- YOU, front and centre: the team-coloured player image (drop art at
-                     data\ams2\portraits\player.<team>.jpg) with the car you'll drive beneath it. Both
-                     follow the team you joined; framed placeholders show until the art is dropped. -->
-                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,14">
-                    <Grid Width="168" Height="168" HorizontalAlignment="Center"
-                          ToolTip="Drop your team player image at data\ams2\portraits\player.&lt;team&gt;.jpg (beside the exe)">
-                        <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
-                            <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="52"
-                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <Border CornerRadius="10" ClipToBounds="True">
-                            <Image Stretch="UniformToFill"
-                                   Source="{Binding PlayerImageKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                        </Border>
+            <!-- c2. character: a lateral driver licence + development workbench. Keeping the hero
+                 beside the controls returns the scarce minimum-window height to the actual build. -->
+            <Grid Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Character}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="230" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource Panel}" Padding="0" ClipToBounds="True">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border Background="{DynamicResource AccentBrush}" />
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                            <StackPanel Margin="14,12,14,14">
+                                <TextBlock Text="DRIVER LICENSE" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Text="CAREER ENTRY" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="16" Margin="0,2,0,10" />
+
+                                <!-- Team-coloured player portrait with a graceful empty-art state. -->
+                                <Grid Width="136" Height="136" HorizontalAlignment="Center"
+                                      ToolTip="Your team-coloured player portrait">
+                                    <Border Style="{StaticResource AssetPlaceholderFrame}"
+                                            BorderBrush="{DynamicResource EdgeStrongBrush}"
+                                            BorderThickness="1" CornerRadius="9">
+                                        <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                   FontSize="48" />
+                                    </Border>
+                                    <Border CornerRadius="9" ClipToBounds="True">
+                                        <Image Stretch="UniformToFill"
+                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                               Source="{Binding PlayerImageKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                    </Border>
+                                    <Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                                            Background="{DynamicResource AccentBrush}" CornerRadius="4"
+                                            Padding="6,3" Margin="0,0,-6,-6">
+                                        <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
+                                                   Foreground="{DynamicResource OnAccentBrush}" />
+                                    </Border>
+                                </Grid>
+
+                                <Image Height="42" Stretch="Uniform" HorizontalAlignment="Center"
+                                       Margin="0,9,0,7" RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                       Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+
+                                <TextBlock Text="{Binding Character.Name, FallbackValue=YOUR DRIVER}"
+                                           FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
+                                           FontSize="15" TextAlignment="Center" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Character.SelectedArchetype.Name, FallbackValue=SELECT AN ARCHETYPE, TargetNullValue=CUSTOM BUILD}"
+                                           Style="{StaticResource Muted}" TextAlignment="Center"
+                                           TextWrapping="Wrap" Margin="0,2,0,8" />
+
+                                <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,8">
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,5,5">
+                                        <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10">
+                                            <Run Text="AGE " /><Run Text="{Binding Character.Age}" FontWeight="Bold" />
+                                        </TextBlock>
+                                    </Border>
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,0,5">
+                                        <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10">
+                                            <Run Text="PERKS " /><Run Text="{Binding Character.SelectedPerkCount, Mode=OneWay}" FontWeight="Bold" />
+                                        </TextBlock>
+                                    </Border>
+                                </WrapPanel>
+
+                                <Border Style="{StaticResource AccentCallout}" Padding="9,7">
+                                    <StackPanel>
+                                        <TextBlock Text="EXPECTATION, NOT A BUFF" Style="{StaticResource Eyebrow}"
+                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                        <TextBlock Text="A stronger character raises the bar you must beat. Your driving still decides the race."
+                                                   Style="{StaticResource Body}" FontSize="10.5" Margin="0,3,0,0" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- The detailed car card is still available without occupying the whole page. -->
+                                <Expander Header="YOUR CAR SPEC" Margin="0,10,0,0"
+                                          Visibility="{Binding PlayerCarSpec, Converter={StaticResource NullCollapsed}}">
+                                    <ContentControl Content="{Binding PlayerCarSpec}" Margin="0,7,0,0">
+                                        <ContentControl.ContentTemplate>
+                                            <DataTemplate>
+                                                <views:CarSpecCard MaxWidth="202" />
+                                            </DataTemplate>
+                                        </ContentControl.ContentTemplate>
+                                    </ContentControl>
+                                </Expander>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Grid>
-                    <Image Height="44" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,8,0,0"
-                           Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                    <!-- the car you'll drive, as the arcade spec card — collapses when no spec is authored -->
-                    <ContentControl Content="{Binding PlayerCarSpec}" HorizontalAlignment="Center" Margin="0,8,0,0"
-                                    Visibility="{Binding PlayerCarSpec, Converter={StaticResource NullCollapsed}}">
-                        <ContentControl.ContentTemplate>
-                            <DataTemplate>
-                                <views:CarSpecCard MaxWidth="260" />
-                            </DataTemplate>
-                        </ContentControl.ContentTemplate>
-                    </ContentControl>
-                </StackPanel>
-                <views:CharacterView DataContext="{Binding Character}" />
-            </DockPanel>
+                </Border>
+
+                <views:CharacterView Grid.Column="2" DataContext="{Binding Character}" />
+            </Grid>
 
             <!-- d. confirm -->
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.Confirm}}">

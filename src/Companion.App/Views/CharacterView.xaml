@@ -3,218 +3,531 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              FontFamily="{StaticResource BodyFont}"
              Focusable="False">
-    <!-- The character-creation step (Increment 4a). DataContext is a CharacterViewModel. Every
-         control is keyboard-operable: the archetype list (arrows), the Random button (Enter/Space),
-         the stat sliders (arrows), the perk checkboxes (Space), and the specialism combo — decision
-         8 parity. Three tiers of depth: pick an archetype (or roll a random build), free-customize
-         the sliders + perk shelf against a live meter, and reveal the raw numbers in "Advanced". -->
-    <DockPanel>
-        <!-- driver name: the identity the whole app uses -->
-        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-            <TextBlock DockPanel.Dock="Left" Text="Driver name" FontWeight="SemiBold" FontSize="15"
-                       VerticalAlignment="Center" Margin="0,0,12,0" />
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" FontSize="15"
-                     MaxLength="40" AutomationProperties.Name="Driver name" />
-        </DockPanel>
+    <UserControl.Resources>
+        <Style x:Key="CharacterSectionLabel" TargetType="TextBlock" BasedOn="{StaticResource Eyebrow}">
+            <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+            <Setter Property="Margin" Value="0,0,0,5" />
+        </Style>
 
-        <!-- driver age: the character's REAL first-season age — drives aging + contract offers -->
-        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-            <TextBlock DockPanel.Dock="Left" Text="Age" FontWeight="SemiBold" FontSize="15"
-                       VerticalAlignment="Center" Margin="0,0,12,0" />
-            <TextBlock DockPanel.Dock="Right" VerticalAlignment="Center" Margin="12,0,0,0" MinWidth="24"
-                       FontSize="15" FontWeight="SemiBold" TextAlignment="Right"
-                       Text="{Binding Age, Mode=OneWay}" />
-            <Slider Minimum="16" Maximum="45" Value="{Binding Age}" IsSnapToTickEnabled="True"
-                    TickFrequency="1" VerticalAlignment="Center"
-                    AutomationProperties.Name="Driver age" />
-        </DockPanel>
+        <Style x:Key="CharacterTelemetryCard" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="7" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+        </Style>
 
-        <!-- character-points meter (always in view at the bottom) -->
-        <Border DockPanel.Dock="Bottom" Style="{StaticResource Panel}" Padding="12,8" Margin="0,12,0,0">
-            <StackPanel>
-                <TextBlock>
-                    <Run Text="Talent: " /><Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text=" allocated   ·   Perks: " /><Run Text="{Binding SelectedPerkCount, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerks, Mode=OneWay}" /><Run Text="   ·   Perk points: " /><Run Text="{Binding NetCpSpend, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" of " /><Run Text="{Binding MaxPerkPoints, Mode=OneWay}" /><Run Text=" spent · " /><Run Text="{Binding RemainingCp, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" left (budget " /><Run Text="{Binding Budget, Mode=OneWay}" /><Run Text=")" />
-                </TextBlock>
-                <TextBlock Foreground="{DynamicResource ErrorBrush}" Margin="0,4,0,0" TextWrapping="Wrap"
-                           Text="{Binding Invalidity}">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                            <Setter Property="Visibility" Value="Visible" />
+        <Style x:Key="CharacterArchetypeItem" TargetType="ListBoxItem"
+               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+            <Setter Property="Width" Value="260" />
+            <Setter Property="MinHeight" Value="96" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        </Style>
+
+        <DataTemplate x:Key="CharacterStatTemplate">
+            <Border Style="{StaticResource CharacterTelemetryCard}"
+                    ToolTip="{Binding WrittenPreview}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DockPanel>
+                        <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                Margin="8,0,0,0">
+                            <TextBlock FontFamily="{StaticResource MonoFont}" FontWeight="Bold"
+                                       Foreground="{DynamicResource AccentTextBrush}"
+                                       Text="{Binding Value, StringFormat={}{0:P0}}" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Label}" FontFamily="{StaticResource DisplayFont}"
+                                       FontWeight="Bold" FontSize="12" />
+                            <TextBlock Text="TUNE EXPECTATION" Style="{StaticResource Faint}"
+                                       FontSize="9" Margin="0,1,0,0" />
+                        </StackPanel>
+                    </DockPanel>
+                    <Slider Grid.Row="1" Minimum="{Binding Min}" Maximum="{Binding Max}"
+                            Value="{Binding Value, Mode=TwoWay}"
+                            SmallChange="0.05" LargeChange="0.1"
+                            Margin="0,7,0,0" VerticalAlignment="Center"
+                            ToolTip="{Binding Value, StringFormat={}{0:0.00}}" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CharacterPerkTemplate">
+            <CheckBox Width="300" Margin="0,0,9,9"
+                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                      IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                <CheckBox.ToolTip>
+                    <StackPanel MaxWidth="340">
+                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                                   Margin="0,3,0,0" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    </StackPanel>
+                </CheckBox.ToolTip>
+                <Border Padding="10,8" MinHeight="76" CornerRadius="7"
+                        BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Invalidity}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}"
+                                             Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    <Setter Property="BorderThickness" Value="2" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </StackPanel>
+                    </Border.Style>
+                    <StackPanel>
+                        <DockPanel>
+                            <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                    Margin="8,0,0,0">
+                                <TextBlock FontFamily="{StaticResource MonoFont}" FontWeight="Bold"
+                                           Text="{Binding CostLabel, StringFormat={}{0} CP}" />
+                            </Border>
+                            <TextBlock Text="{Binding Name}" FontFamily="{StaticResource DisplayFont}"
+                                       FontWeight="Bold" FontSize="12" TextWrapping="Wrap" />
+                        </DockPanel>
+                        <TextBlock Text="{Binding Description}" Style="{StaticResource Body}"
+                                   FontSize="11" Margin="0,5,0,0" TextWrapping="Wrap" />
+                        <StackPanel Margin="0,7,0,0"
+                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolVisible}}">
+                            <ItemsControl ItemsSource="{Binding Benefits}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextWrapping="Wrap" FontSize="11" Margin="0,1">
+                                            <Run Text="+  " FontWeight="Bold"
+                                                 Foreground="{DynamicResource SuccessBrush}" />
+                                            <Run Text="{Binding Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <ItemsControl ItemsSource="{Binding Drawbacks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextWrapping="Wrap" FontSize="11" Margin="0,1">
+                                            <Run Text="-  " FontWeight="Bold"
+                                                 Foreground="{DynamicResource ErrorBrush}" />
+                                            <Run Text="{Binding Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </CheckBox>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!-- Driver creation is a compact garage workbench: identity stays visible above a set of
+         keyboard-reachable build panes, and the live budget remains pinned below them. -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Identity strip: the two fields that define the driver's public record. -->
+        <Border x:Name="CharacterIdentityStrip" Grid.Row="0" Style="{StaticResource Panel}"
+                Padding="12,9" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.35*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="DRIVER IDENTITY" Style="{StaticResource CharacterSectionLabel}" />
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{StaticResource DisplayFont}" FontSize="15"
+                             MaxLength="40" AutomationProperties.Name="Driver name"
+                             ToolTip="The name printed on contracts, results, and headlines." />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <DockPanel Margin="0,0,0,3">
+                        <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                Margin="8,0,0,0">
+                            <TextBlock Text="{Binding Age, Mode=OneWay}"
+                                       FontFamily="{StaticResource MonoFont}" FontWeight="Bold"
+                                       Foreground="{DynamicResource AccentTextBrush}" />
+                        </Border>
+                        <TextBlock Text="FIRST-SEASON AGE" Style="{StaticResource CharacterSectionLabel}" />
+                    </DockPanel>
+                    <Slider Minimum="16" Maximum="45" Value="{Binding Age}"
+                            IsSnapToTickEnabled="True" TickFrequency="1"
+                            AutomationProperties.Name="Driver age"
+                            ToolTip="Age affects long-term development, retirement risk, and contract offers." />
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <!-- both columns flex (was a fixed 270 archetype rail) -->
-                <ColumnDefinition Width="1*" MinWidth="240" MaxWidth="400" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-
-            <!-- archetype presets: one click = a complete, valid character -->
-            <DockPanel Grid.Column="0" Margin="0,0,14,0">
-                <TextBlock DockPanel.Dock="Top" Text="Archetype" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,6" />
-                <!-- roll a complete random build — the other one-click way to a valid character -->
-                <Button DockPanel.Dock="Bottom" Margin="0,8,0,0" Padding="8,6"
-                        Command="{Binding RandomBuildCommand}"
-                        Content="🎲  Random balanced build"
-                        HorizontalContentAlignment="Center"
-                        ToolTip="Roll a random archetype and a fresh stat spread — always valid and in budget." />
-                <Border Style="{StaticResource Panel}" Padding="6">
-                    <ListBox ItemsSource="{Binding Archetypes}" SelectedItem="{Binding SelectedArchetype}"
+        <!-- Four focused panes prevent 13 archetypes and 42 perks from becoming one endless form. -->
+        <TabControl x:Name="CharacterWorkbench" Grid.Row="1" SelectedIndex="0">
+            <TabItem Header="ARCHETYPE" ToolTip="Choose a complete preset or roll a balanced build.">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <DockPanel Margin="0,0,0,9">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}"
+                                Padding="12,6" Command="{Binding RandomBuildCommand}"
+                                Content="RANDOM BALANCED BUILD"
+                                ToolTip="Roll a fresh valid archetype and stat spread."
+                                AutomationProperties.Name="Random balanced build" />
+                        <StackPanel>
+                            <TextBlock Text="CHOOSE YOUR RACING DNA" Style="{StaticResource CharacterSectionLabel}" />
+                            <TextBlock Text="Every card is a complete, valid starting build. Pick one, then tune it."
+                                       Style="{StaticResource Muted}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </DockPanel>
+                    <ListBox x:Name="CharacterArchetypeList" Grid.Row="1"
+                             ItemsSource="{Binding Archetypes}"
+                             SelectedItem="{Binding SelectedArchetype}"
+                             ItemContainerStyle="{StaticResource CharacterArchetypeItem}"
                              Background="Transparent" BorderThickness="0"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             AutomationProperties.Name="Driver archetypes">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="4">
-                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" />
-                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,2,0,0">
+                                <Border Padding="11,9" CornerRadius="7" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                             Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                    <Setter Property="BorderThickness" Value="2" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <DockPanel>
+                                        <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                                Margin="8,0,0,0"
+                                                Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource BoolVisible}}">
+                                            <TextBlock Text="SELECTED" Style="{StaticResource PixelBadge}"
+                                                       Foreground="{DynamicResource AccentTextBrush}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding Name}" FontFamily="{StaticResource DisplayFont}"
+                                                   FontWeight="Bold" FontSize="13" TextWrapping="Wrap" />
+                                    </DockPanel>
+                                    <TextBlock Grid.Row="1" Text="{Binding Description}" TextWrapping="Wrap"
+                                               FontSize="11" Margin="0,5,0,6">
                                         <TextBlock.Style>
-                                            <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                 Value="True">
                                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                </StackPanel>
+                                    <TextBlock Grid.Row="2" Style="{StaticResource Faint}" FontSize="9"
+                                               Text="{Binding PerkIds.Count, StringFormat={}{0} SIGNATURE PERKS}" />
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </Border>
-            </DockPanel>
+                </Grid>
+            </TabItem>
 
-            <!-- stats + perks -->
-            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-                <StackPanel>
-                    <TextBlock Text="Stats" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,4" />
-                    <ItemsControl ItemsSource="{Binding Stats}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel Margin="0,3">
-                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="120" VerticalAlignment="Center" />
-                                    <TextBlock DockPanel.Dock="Right" Width="44" TextAlignment="Right" VerticalAlignment="Center"
-                                               Style="{StaticResource Faint}"
-                                               Text="{Binding Value, StringFormat={}{0:0.00}}" />
-                                    <Slider Minimum="{Binding Min}" Maximum="{Binding Max}"
-                                            Value="{Binding Value, Mode=TwoWay}"
-                                            SmallChange="0.05" LargeChange="0.1"
-                                            VerticalAlignment="Center" Margin="8,0" />
-                                </DockPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <ItemsControl ItemsSource="{Binding MetaStats}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel Margin="0,3">
-                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="120" VerticalAlignment="Center" />
-                                    <TextBlock DockPanel.Dock="Right" Width="44" TextAlignment="Right" VerticalAlignment="Center"
-                                               Style="{StaticResource Faint}"
-                                               Text="{Binding Value, StringFormat={}{0:0.00}}" />
-                                    <Slider Minimum="{Binding Min}" Maximum="{Binding Max}"
-                                            Value="{Binding Value, Mode=TwoWay}"
-                                            SmallChange="0.05" LargeChange="0.1"
-                                            VerticalAlignment="Center" Margin="8,0" />
-                                </DockPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+            <TabItem Header="ATTRIBUTES" ToolTip="Tune talent and career-capital attributes.">
+                <ScrollViewer x:Name="CharacterAttributeScroll" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                    <StackPanel>
+                        <TextBlock Text="RACE TALENT" Style="{StaticResource CharacterSectionLabel}" />
+                        <TextBlock Text="These five ratings raise the performance bar the career expects you to beat."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                        <ItemsControl x:Name="CharacterStatsList" ItemsSource="{Binding Stats}"
+                                      ItemTemplate="{StaticResource CharacterStatTemplate}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
 
-                    <TextBlock Text="Perks" FontWeight="SemiBold" FontSize="15" Margin="0,14,0,4" />
-                    <ItemsControl ItemsSource="{Binding PerkCategories}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="0,4">
-                                    <TextBlock Text="{Binding DisplayName}" Style="{StaticResource Faint}" Margin="0,0,0,2" />
-                                    <ItemsControl ItemsSource="{Binding Perks}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Margin="4,2">
-                                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}">
-                                                        <CheckBox.ToolTip>
-                                                            <StackPanel MaxWidth="320">
-                                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
-                                                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
-                                                                           Margin="0,2,0,0" Opacity="0.85" />
-                                                            </StackPanel>
-                                                        </CheckBox.ToolTip>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{Binding Name}" />
-                                                            <TextBlock Text="{Binding CostLabel}" Style="{StaticResource Faint}"
-                                                                       Margin="8,0,0,0" />
-                                                        </StackPanel>
-                                                    </CheckBox>
-                                                    <!-- benefit/drawback inline once picked — keyboard-reachable,
-                                                         no hover required (decision-8 parity) -->
-                                                    <StackPanel Margin="22,2,0,4"
-                                                                Visibility="{Binding IsSelected, Converter={StaticResource BoolVisible}}">
-                                                        <ItemsControl ItemsSource="{Binding Benefits}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <TextBlock TextWrapping="Wrap" FontSize="12"><Run Text="+  " FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                        <ItemsControl ItemsSource="{Binding Drawbacks}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.9"><Run Text="−  " FontWeight="Bold" Foreground="{DynamicResource ErrorBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        <TextBlock Text="CAREER CAPITAL" Style="{StaticResource CharacterSectionLabel}"
+                                   Margin="0,6,0,5" />
+                        <TextBlock Text="Marketability opens doors; durability helps keep them open across a long career."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                        <ItemsControl ItemsSource="{Binding MetaStats}"
+                                      ItemTemplate="{StaticResource CharacterStatTemplate}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-                    <!-- One-Trick Pony: pick the single specialism its +0.30 lands on and locks to.
-                         Shown only when the perk is selected. -->
-                    <Border Style="{StaticResource Panel}" Padding="10,8" Margin="0,10,0,0"
+            <TabItem Header="PERK DECK" ToolTip="Spend character points on strengths with real trade-offs.">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- One-Trick Pony remains keyboard-visible as soon as that perk is selected. -->
+                    <Border Grid.Row="0" Style="{StaticResource AccentCallout}" Margin="0,0,0,9"
                             Visibility="{Binding IsOneTrickSelected, Converter={StaticResource BoolVisible}}">
                         <DockPanel>
-                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,10,0"
-                                       Text="Your one weapon" FontWeight="SemiBold" />
-                            <ComboBox ItemsSource="{Binding EligibleFlavors}" SelectedItem="{Binding ChosenFlavor}"
-                                      DisplayMemberPath="Label" MinWidth="180"
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0"
+                                       Text="ONE-TRICK SPECIALISM" FontFamily="{StaticResource DisplayFont}"
+                                       FontWeight="Bold" FontSize="11" />
+                            <ComboBox ItemsSource="{Binding EligibleFlavors}"
+                                      SelectedItem="{Binding ChosenFlavor}"
+                                      DisplayMemberPath="Label" MinWidth="190"
                                       AutomationProperties.Name="One-Trick specialism" />
                         </DockPanel>
                     </Border>
 
-                    <!-- Advanced (tier 3): the raw stat → written-rating numbers, so the honesty
-                         constraint is loud — talent sets the sim's EXPECTATION of you, not secret pace. -->
-                    <Expander Header="Advanced — show the numbers" Margin="0,12,0,0" FontSize="13">
-                        <StackPanel Margin="4,6,0,0">
-                            <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,0,0,6"
-                                       Text="Each talent stat writes these AI-rating fields on your seat. They set how good the sim EXPECTS you to be (a stiffer bar to beat), never a secret in-race buff." />
-                            <ItemsControl ItemsSource="{Binding Stats}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <DockPanel Margin="0,2">
-                                            <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="120" Style="{StaticResource Faint}" />
-                                            <TextBlock Text="{Binding WrittenPreview}" TextWrapping="Wrap" />
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Style="{StaticResource Panel}" Padding="6">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top" Text="PERK FAMILIES"
+                                           Style="{StaticResource CharacterSectionLabel}" Margin="6,5,6,8" />
+                                <ListBox x:Name="CharacterPerkCategoryList"
+                                         ItemsSource="{Binding PerkCategories}" SelectedIndex="0"
+                                         Background="Transparent" BorderThickness="0"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         AutomationProperties.Name="Perk families">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="2">
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold"
+                                                           TextWrapping="Wrap" />
+                                                <TextBlock Text="{Binding Perks.Count, StringFormat={}{0} OPTIONS}"
+                                                           Style="{StaticResource Faint}" FontSize="9" Margin="0,1,0,0" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </DockPanel>
+                        </Border>
+
+                        <ContentControl Grid.Column="2"
+                                        Content="{Binding SelectedItem, ElementName=CharacterPerkCategoryList}">
+                            <ContentControl.ContentTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <DockPanel Margin="0,0,0,8">
+                                            <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                                    Margin="8,0,0,0">
+                                                <TextBlock Text="{Binding Perks.Count, StringFormat={}{0} CARDS}" />
+                                            </Border>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding DisplayName}" Style="{StaticResource H2}" />
+                                                <TextBlock Text="Select a card to equip it; selected cards reveal their full trade-off."
+                                                           Style="{StaticResource Muted}" TextWrapping="Wrap" />
+                                            </StackPanel>
                                         </DockPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </Expander>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
-    </DockPanel>
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                                      HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                                            <ItemsControl x:Name="CharacterPerkList" ItemsSource="{Binding Perks}"
+                                                          ItemTemplate="{StaticResource CharacterPerkTemplate}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </DataTemplate>
+                            </ContentControl.ContentTemplate>
+                        </ContentControl>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="ADVANCED" ToolTip="Inspect the exact rating fields written by each talent stat.">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Focusable="False">
+                    <StackPanel MaxWidth="760" HorizontalAlignment="Left">
+                        <Border Style="{StaticResource AccentCallout}" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="EXPECTATION ENGINE" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="12"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Style="{StaticResource Body}" Margin="0,5,0,0"
+                                           Text="Talent writes AI-rating fields onto your seat. Those numbers set how good the sim expects you to be, making reputation and progression harder to earn. They never grant secret in-race pace." />
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="LIVE RATING PREVIEW" Style="{StaticResource CharacterSectionLabel}" />
+                        <ItemsControl ItemsSource="{Binding Stats}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource CharacterTelemetryCard}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Label}" FontFamily="{StaticResource DisplayFont}"
+                                                       FontWeight="Bold" FontSize="11" />
+                                            <TextBlock Grid.Column="1" Text="{Binding WrittenPreview}"
+                                                       FontFamily="{StaticResource MonoFont}"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       TextWrapping="Wrap" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Persistent live budget: scannable tiles replace the old single dense sentence. -->
+        <Border x:Name="CharacterBudgetBar" Grid.Row="2" Style="{StaticResource Panel}"
+                Padding="9" Margin="0,10,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.25*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource CompactChip}" Margin="0,0,7,0">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Text="TALENT" Style="{StaticResource Eyebrow}" />
+                            <TextBlock HorizontalAlignment="Right" FontFamily="{StaticResource MonoFont}"
+                                       FontWeight="Bold">
+                                <Run Text="{Binding StatTotal, Mode=OneWay, StringFormat={}{0:0.00}}" />
+                                <Run Text=" / " /><Run Text="{Binding StatCap, Mode=OneWay, StringFormat={}{0:0.00}}" />
+                            </TextBlock>
+                        </DockPanel>
+                        <ProgressBar Style="{StaticResource RatingBar}" Height="4" Margin="0,5,0,0"
+                                     Minimum="0" Maximum="{Binding StatCap, Mode=OneWay}"
+                                     Value="{Binding StatTotal, Mode=OneWay}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource CompactChip}" Margin="0,0,7,0">
+                    <StackPanel>
+                        <TextBlock Text="PERKS EQUIPPED" Style="{StaticResource Eyebrow}" />
+                        <TextBlock FontFamily="{StaticResource MonoFont}" FontWeight="Bold"
+                                   Foreground="{DynamicResource AccentTextBrush}">
+                            <Run Text="{Binding SelectedPerkCount, Mode=OneWay}" />
+                            <Run Text=" / " /><Run Text="{Binding MaxPerks, Mode=OneWay, TargetNullValue=NO CAP}" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Style="{StaticResource CompactChip}" Margin="0,0,7,0">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Text="CP REMAINING" Style="{StaticResource Eyebrow}" />
+                            <TextBlock HorizontalAlignment="Right" FontFamily="{StaticResource MonoFont}"
+                                       FontWeight="Bold" Foreground="{DynamicResource AccentTextBrush}"
+                                       Text="{Binding RemainingCp, Mode=OneWay}" />
+                        </DockPanel>
+                        <TextBlock Style="{StaticResource Faint}" FontSize="9">
+                            <Run Text="{Binding NetCpSpend, Mode=OneWay}" /><Run Text=" / " />
+                            <Run Text="{Binding MaxPerkPoints, Mode=OneWay}" /><Run Text=" SPENT  -  BUDGET " />
+                            <Run Text="{Binding Budget, Mode=OneWay}" />
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="3" Padding="8,5" CornerRadius="4" BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                    <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource PixelFont}" FontSize="9" FontWeight="Bold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                    <Setter Property="Text" Value="BUILD READY" />
+                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                            <Setter Property="Text" Value="FIX BUILD" />
+                                            <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock FontSize="8" HorizontalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                    <Setter Property="Text" Value="NEXT STEP UNLOCKED" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                            <Setter Property="Text" Value="ADJUST TO CONTINUE" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="4" Margin="4,7,4,0"
+                           Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap"
+                           FontWeight="SemiBold" Text="{Binding Invalidity}"
+                           Visibility="{Binding Invalidity, Converter={StaticResource NullCollapsed}}" />
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>
