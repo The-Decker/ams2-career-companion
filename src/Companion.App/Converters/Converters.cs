@@ -367,6 +367,282 @@ public sealed class KeyedAssetImageConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>An SMGP team id (for example <c>team.iris</c>) → its drop-in team photograph.
+/// Team reference ids deliberately carry the <c>team.</c> namespace while the user-art filenames
+/// are the short id (<c>iris.jpg</c>); this presentation-only adapter keeps that naming seam out of
+/// the view and delegates the actual image loading/caching contract to
+/// <see cref="KeyedAssetImageConverter"/>.</summary>
+public sealed class TeamAssetImageConverter : IValueConverter
+{
+    private static readonly KeyedAssetImageConverter Inner = new();
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string key || string.IsNullOrWhiteSpace(key))
+            return null;
+
+        const string prefix = "team.";
+        if (key.StartsWith(prefix, StringComparison.Ordinal))
+            key = key[prefix.Length..];
+
+        return Inner.Convert(key, targetType, parameter, culture);
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>One App-layer cache for the expensive SMGP read-side projections. Several controls bind
+/// the same projection (header + News, Paddock selections, collapsed Team HQ), so compute each at
+/// most once per career-session/current-round token and share it without extending the VM lane.</summary>
+internal static class SmgpBindingProjectionCache
+{
+    private sealed class State
+    {
+        public string DispatchToken { get; set; } = "";
+        public bool DispatchLoaded { get; set; }
+        public IReadOnlyList<Companion.Core.Smgp.SmgpDispatch> Dispatches { get; set; } = [];
+        public string PaddockToken { get; set; } = "";
+        public bool PaddockLoaded { get; set; }
+        public Companion.ViewModels.Services.SmgpPaddockModel? Paddock { get; set; }
+        public string DashboardToken { get; set; } = "";
+        public bool DashboardLoaded { get; set; }
+        public Companion.ViewModels.Services.SmgpTeamDashboard? Dashboard { get; set; }
+    }
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<
+        Companion.ViewModels.Services.ICareerSession, State> States = new();
+
+    public static IReadOnlyList<Companion.Core.Smgp.SmgpDispatch> Dispatches(
+        Companion.ViewModels.Services.ICareerSession session, string token)
+    {
+        var state = States.GetValue(session, static _ => new State());
+        lock (state)
+        {
+            if (!state.DispatchLoaded || !string.Equals(state.DispatchToken, token, StringComparison.Ordinal))
+            {
+                state.Dispatches = session.SmgpDispatches();
+                state.DispatchToken = token;
+                state.DispatchLoaded = true;
+            }
+            return state.Dispatches;
+        }
+    }
+
+    public static Companion.ViewModels.Services.SmgpPaddockModel? Paddock(
+        Companion.ViewModels.Services.ICareerSession session, string token)
+    {
+        var state = States.GetValue(session, static _ => new State());
+        lock (state)
+        {
+            if (!state.PaddockLoaded || !string.Equals(state.PaddockToken, token, StringComparison.Ordinal))
+            {
+                state.Paddock = session.SmgpPaddock();
+                state.PaddockToken = token;
+                state.PaddockLoaded = true;
+            }
+            return state.Paddock;
+        }
+    }
+
+    public static Companion.ViewModels.Services.SmgpTeamDashboard? Dashboard(
+        Companion.ViewModels.Services.ICareerSession session, string token)
+    {
+        var state = States.GetValue(session, static _ => new State());
+        lock (state)
+        {
+            if (!state.DashboardLoaded || !string.Equals(state.DashboardToken, token, StringComparison.Ordinal))
+            {
+                state.Dashboard = session.SmgpTeamDashboard();
+                state.DashboardToken = token;
+                state.DashboardLoaded = true;
+            }
+            return state.Dashboard;
+        }
+    }
+
+    public static string Token(object[] values) => values.OfType<string>().FirstOrDefault() ?? "";
+}
+
+/// <summary>The public SMGP living-world projection on an <c>ICareerSession</c> → its newest-first
+/// dispatch list. The second multi-binding value is deliberately only a refresh token (the hub's
+/// current-round label), so a completed fold re-runs this display-only read without adding a wrapper
+/// property to the shared ViewModel lane.</summary>
+public sealed class SmgpDispatchesConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var session = values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault();
+        return session is not null
+            ? SmgpBindingProjectionCache.Dispatches(session, SmgpBindingProjectionCache.Token(values))
+            : Array.Empty<Companion.Core.Smgp.SmgpDispatch>();
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Chooses the latest SMGP world dispatch for the persistent header wire, falling back to
+/// the existing journal-news item supplied as the third value outside SMGP or before its first beat.</summary>
+public sealed class LatestHubDispatchConverter : IMultiValueConverter
+{
+    public object? Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault() is { } session &&
+            SmgpBindingProjectionCache.Dispatches(session, SmgpBindingProjectionCache.Token(values)) is { Count: > 0 } dispatches)
+            return dispatches[0];
+
+        return values.Length > 2 && values[2] is not null &&
+               !ReferenceEquals(values[2], DependencyProperty.UnsetValue)
+            ? values[2]
+            : null;
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Resolves the real Task-4 paddock rumor straight from the public session projection, then
+/// falls through to a future ViewModel wrapper and the selected driver/team garage voices. This keeps
+/// the tear-off useful even though it has no Hub ancestor.</summary>
+public sealed class SmgpPaddockRumorConverter : IMultiValueConverter
+{
+    private const string Quiet = "The paddock is quiet—for now.";
+
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault() is { } session &&
+            SmgpBindingProjectionCache.Paddock(session, SmgpBindingProjectionCache.Token(values))?.PaddockRumor is { Length: > 0 } projected)
+            return projected;
+
+        // Values 0..3 are the main/tear-off session + refresh tokens. Only the typed wrapper
+        // and garage-voice values after them are legitimate text fallbacks.
+        for (int i = 4; i < values.Length; i++)
+        {
+            if (values[i] is string { Length: > 0 } fallback)
+                return fallback;
+        }
+        return Quiet;
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Resolves the Task-5 dashboard's player-team entry from the public session projection,
+/// falling through to today's selected Paddock team off-SMGP. The second value is a current-round
+/// refresh token.</summary>
+public sealed class SmgpPlayerTeamConverter : IMultiValueConverter
+{
+    public object? Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault() is { } session &&
+            SmgpBindingProjectionCache.Dashboard(session, SmgpBindingProjectionCache.Token(values))?.PlayerTeam is { } playerTeam)
+            return playerTeam;
+
+        for (int i = 2; i < values.Length; i++)
+        {
+            if (values[i] is not null && !ReferenceEquals(values[i], DependencyProperty.UnsetValue))
+                return values[i];
+        }
+        return null;
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Joins the Calendar card already projected by the shared ViewModel to Task 3's richer
+/// <see cref="Companion.ViewModels.Services.SeasonScheduleEntry"/> from the public session read side.
+/// The round label is stable, and the refresh-token value makes the join re-run after every fold.
+/// The whole schedule is cached once per session/token so a 16-card render performs one projection.</summary>
+public sealed class CalendarTask3DetailConverter : IMultiValueConverter
+{
+    private sealed class ScheduleCache
+    {
+        public string Token { get; set; } = "";
+        public IReadOnlyDictionary<string, Companion.ViewModels.Services.SeasonScheduleEntry> ByRound { get; set; } =
+            new Dictionary<string, Companion.ViewModels.Services.SeasonScheduleEntry>(StringComparer.Ordinal);
+    }
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<
+        Companion.ViewModels.Services.ICareerSession, ScheduleCache> Cache = new();
+
+    public object? Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.Length == 0 || values[0] is not Companion.ViewModels.Hub.CalendarRoundViewModel round)
+            return null;
+
+        var session = values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault();
+        if (session is null)
+            return null;
+
+        string token = values.OfType<string>().FirstOrDefault() ?? "";
+        var cache = Cache.GetOrCreateValue(session);
+        lock (cache)
+        {
+            if (!string.Equals(cache.Token, token, StringComparison.Ordinal) || cache.ByRound.Count == 0)
+            {
+                cache.ByRound = session.SeasonSchedule()
+                    .GroupBy(entry => Key(entry.Name, entry.Date), StringComparer.Ordinal)
+                    .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+                cache.Token = token;
+            }
+            return cache.ByRound.TryGetValue(Key(round.Name, round.DateText), out var entry) ? entry : null;
+        }
+    }
+
+    private static string Key(string name, string date) => $"{name}\u001f{date}";
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Projects Task 3's per-round player almanac for a History season card. The shared card
+/// ViewModel intentionally remains unchanged; this App-layer join reads the public timeline by year.
+/// The full timeline is cached once per session/token, avoiding one career replay per season card.</summary>
+public sealed class HistoryRoundLinesConverter : IMultiValueConverter
+{
+    private sealed class TimelineCache
+    {
+        public string Token { get; set; } = "";
+        public IReadOnlyDictionary<int, IReadOnlyList<Companion.ViewModels.Services.CareerSeasonRoundLine>> ByYear { get; set; } =
+            new Dictionary<int, IReadOnlyList<Companion.ViewModels.Services.CareerSeasonRoundLine>>();
+    }
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<
+        Companion.ViewModels.Services.ICareerSession, TimelineCache> Cache = new();
+
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.Length == 0 || values[0] is not Companion.ViewModels.Hub.SeasonCardViewModel card)
+            return Array.Empty<Companion.ViewModels.Services.CareerSeasonRoundLine>();
+
+        var session = values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault();
+        if (session is null)
+            return Array.Empty<Companion.ViewModels.Services.CareerSeasonRoundLine>();
+
+        string token = values.OfType<string>().FirstOrDefault() ?? "";
+        var cache = Cache.GetOrCreateValue(session);
+        lock (cache)
+        {
+            if (!string.Equals(cache.Token, token, StringComparison.Ordinal) || cache.ByYear.Count == 0)
+            {
+                cache.ByYear = session.CareerTimeline().Seasons
+                    .GroupBy(season => season.SeasonYear)
+                    .ToDictionary(group => group.Key, group => group.First().RoundLines);
+                cache.Token = token;
+            }
+            return cache.ByYear.TryGetValue(card.SeasonYear, out var lines)
+                ? lines
+                : Array.Empty<Companion.ViewModels.Services.CareerSeasonRoundLine>();
+        }
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>A circuit-layout id (e.g. "monaco-5") → a frozen <see cref="Geometry"/> for the circuit
 /// map, from the shipped <c>data/ams2/circuits/&lt;layoutId&gt;.json</c> (f1db-derived path data,
 /// already normalized to WPF's path mini-language by the build tool). Rendered by a <c>Path</c> with

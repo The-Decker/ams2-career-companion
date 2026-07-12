@@ -90,6 +90,16 @@ public partial class PaddockView : UserControl
         PaddockTabs.SelectedIndex = 0;
     }
 
+    private void OnViewSponsorClick(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not PaddockViewModel vm || sender is not Button { Tag: string sponsorId })
+            return;
+
+        vm.ViewSponsorCommand.Execute(sponsorId);
+        if (vm.SelectedSponsor is not null)
+            PaddockTabs.SelectedIndex = 2;
+    }
+
     private void OnViewSponsorTeamClick(object sender, RoutedEventArgs e)
     {
         if (DataContext is not PaddockViewModel vm || sender is not Button { Tag: string teamName })

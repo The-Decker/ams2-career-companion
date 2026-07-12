@@ -64,6 +64,13 @@
     <conv:TrackImageConverter x:Key="TrackImage" />
     <conv:ExpandGlyphConverter x:Key="ExpandGlyph" />
     <conv:KeyedAssetImageConverter x:Key="AssetImage" />
+    <conv:TeamAssetImageConverter x:Key="TeamAssetImage" />
+    <conv:SmgpDispatchesConverter x:Key="SmgpDispatches" />
+    <conv:LatestHubDispatchConverter x:Key="LatestHubDispatch" />
+    <conv:SmgpPaddockRumorConverter x:Key="SmgpPaddockRumor" />
+    <conv:SmgpPlayerTeamConverter x:Key="SmgpPlayerTeam" />
+    <conv:CalendarTask3DetailConverter x:Key="CalendarTask3Detail" />
+    <conv:HistoryRoundLinesConverter x:Key="HistoryRoundLines" />
     <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
     <conv:AspectRatioHeightConverter x:Key="AspectHeight" />
     <conv:WidthFractionConverter x:Key="WidthFraction" />

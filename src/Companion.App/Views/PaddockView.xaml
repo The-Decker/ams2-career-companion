@@ -82,8 +82,7 @@
             </Grid>
         </DataTemplate>
 
-        <!-- Future-ready sponsor wall. The session model already owns these fields; the current
-             PaddockViewModel collection projection is the only remaining binding seam. -->
+        <!-- Sponsor-board master row: brand art, industry and partnership tier. -->
         <DataTemplate x:Key="SponsorRow">
             <Grid Margin="2,3">
                 <Grid.ColumnDefinitions>
@@ -184,13 +183,30 @@
                                    Foreground="{DynamicResource AccentTextBrush}" Margin="0,1,12,0" />
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="YOUR CAMPAIGN" Style="{StaticResource Eyebrow}" />
-                            <TextBlock Text="{Binding DataContext.Home.Briefing.SmgpCampaignLine,
-                                                     RelativeSource={RelativeSource AncestorType={x:Type views:HubView}},
-                                                     FallbackValue='17-season campaign'}"
-                                       FontWeight="SemiBold" Margin="0,2,0,0" />
-                            <!-- TODO bind: typed Milestones when PaddockViewModel exposes them. -->
-                            <TextBlock Text="{Binding MilestoneSummary, FallbackValue='Your record writes the next chapter.'}"
-                                       Style="{StaticResource Muted}" FontSize="12" Margin="0,2,0,0" />
+                            <TextBlock Text="{Binding NarrativeIntro, FallbackValue='Your record writes the next chapter.'}"
+                                       FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,2,0,0" />
+                            <ItemsControl ItemsSource="{Binding Timeline}" Margin="0,9,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource Callout}" Padding="9,7" Margin="0,0,0,6">
+                                            <StackPanel>
+                                                <DockPanel>
+                                                    <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                                            Margin="8,0,0,0">
+                                                        <TextBlock Text="{Binding Kind}" Style="{StaticResource Eyebrow}" />
+                                                    </Border>
+                                                    <TextBlock Text="{Binding WhenLabel}" Style="{StaticResource Mono}"
+                                                               FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                                </DockPanel>
+                                                <TextBlock Text="{Binding Headline}" FontFamily="{StaticResource DisplayFont}"
+                                                           FontWeight="Bold" Margin="0,4,0,0" TextWrapping="Wrap" />
+                                                <TextBlock Text="{Binding Detail}" Style="{StaticResource Muted}"
+                                                           FontSize="11.5" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -352,6 +368,29 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            <TextBlock Text="PARTNERS" Style="{StaticResource Eyebrow}" Margin="0,8,0,6"
+                                       Visibility="{Binding Sponsors.Count, Converter={StaticResource CountVisible}}" />
+                            <ItemsControl ItemsSource="{Binding Sponsors}"
+                                          Visibility="{Binding Sponsors.Count, Converter={StaticResource CountVisible}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Tag="{Binding Id}" Margin="0,0,6,6"
+                                                Style="{StaticResource SelectableSubtleButton}"
+                                                Click="OnViewSponsorClick"
+                                                ToolTip="Open this sponsor's brand dossier">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Border Width="8" Height="8" CornerRadius="4" Margin="0,0,6,0"
+                                                        Background="{Binding BrandColorHex, Converter={StaticResource HexBrush}}"
+                                                        VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -466,6 +505,44 @@
             </Border>
         </Grid>
 
+        <!-- The main Hub view reads Task 4's real public session projection. A future direct
+             PaddockViewModel wrapper and the authored garage voices keep the same surface alive in
+             tear-off windows, where there is deliberately no Hub ancestor. -->
+        <Border DockPanel.Dock="Top" Style="{StaticResource AccentCallout}" Padding="11,8" Margin="0,0,0,9">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="&#xE720;" FontFamily="{StaticResource IconFont}" FontSize="18"
+                           Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,10,0"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" FontStyle="Italic" TextWrapping="Wrap"
+                           VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource SmgpPaddockRumor}">
+                            <Binding Path="DataContext.Home.Session"
+                                     RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                            <Binding Path="Tag.Home.Session"
+                                     RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Path="DataContext.Home.RoundText"
+                                     RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                            <Binding Path="Tag.Home.RoundText"
+                                     RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <!-- Optional future wrapper; the session projection above is already live. -->
+                            <Binding Path="PaddockRumor" />
+                            <Binding Path="SelectedDriver.Quotes[0]" />
+                            <Binding Path="SelectedTeam.Quotes[0]" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Column="2" Text="PADDOCK RADIO" Style="{StaticResource Eyebrow}"
+                           Foreground="{DynamicResource AccentTextBrush}" Margin="12,0,0,0"
+                           VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
         <TabControl x:Name="PaddockTabs" SelectionChanged="OnPaddockTabChanged">
             <TabItem Header="DRIVERS" ToolTip="Browse every driver, current-season totals, career record, and story">
                 <Grid>
@@ -511,8 +588,8 @@
                     </Grid.ColumnDefinitions>
                     <Border Grid.Column="0" Style="{StaticResource Panel}" Padding="5" Margin="0,0,12,3">
                         <Grid>
-                            <!-- TODO bind: PaddockViewModel.Sponsors once model.Sponsors is exposed. -->
-                            <ListBox x:Name="SponsorList" ItemsSource="{Binding Sponsors, FallbackValue={x:Null}}"
+                            <ListBox x:Name="SponsorList" ItemsSource="{Binding Sponsors}"
+                                     SelectedItem="{Binding SelectedSponsor}"
                                      ItemTemplate="{StaticResource SponsorRow}" HorizontalContentAlignment="Stretch"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="18"
@@ -530,14 +607,14 @@
                                            Foreground="{DynamicResource AccentTextBrush}" HorizontalAlignment="Center" />
                                 <TextBlock Text="SPONSOR BOARD" Style="{StaticResource H2}" FontSize="16"
                                            HorizontalAlignment="Center" Margin="0,8,0,4" />
-                                <TextBlock Text="The brands are authored and ready. Their Paddock projection is arriving with the next hub data pass."
+                                <TextBlock Text="No sponsor dossiers are filed for this paddock yet."
                                            Style="{StaticResource Muted}" TextWrapping="Wrap" TextAlignment="Center" />
                             </StackPanel>
                         </Grid>
                     </Border>
                     <Grid Grid.Column="1">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False" Padding="2,0,4,3">
-                            <ContentControl Content="{Binding SelectedItem, ElementName=SponsorList}"
+                            <ContentControl Content="{Binding SelectedSponsor}"
                                             ContentTemplate="{StaticResource SponsorDetail}" />
                         </ScrollViewer>
                         <Border HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="430"
@@ -546,7 +623,7 @@
                                 <Style TargetType="Border" BasedOn="{StaticResource AccentCallout}">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedItem, ElementName=SponsorList}" Value="{x:Null}">
+                                        <DataTrigger Binding="{Binding SelectedSponsor}" Value="{x:Null}">
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>

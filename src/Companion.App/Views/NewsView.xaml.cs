@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using Companion.ViewModels.Hub;
+using Companion.ViewModels.Shell;
 
 namespace Companion.App.Views;
 
@@ -37,10 +39,15 @@ public partial class NewsView : UserControl
             existing.Close(); // a stale window from a previous career — replace it
         }
 
+        var owner = Window.GetWindow(this);
+        var hub = (owner?.DataContext as ShellViewModel)?.Current as HubViewModel;
         var window = new NewsWindow
         {
             DataContext = DataContext,
-            Owner = Window.GetWindow(this),
+            // The feed VM intentionally stays narrow; the Window tag carries the live Hub session
+            // and RoundText token so Task-4 world dispatches remain reactive in the tear-off.
+            Tag = hub,
+            Owner = owner,
         };
         window.Closed += (_, _) =>
         {
