@@ -1306,7 +1306,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var (playerCareer, playerSeason) = BuildDriverStats(
             _playerDriverId, isPlayer: true,
             AccrueSeasonCounts().GetValueOrDefault(_playerDriverId) ?? Companion.Core.Smgp.SmgpAccruedStats.Empty,
-            playerStanding, seasonComplete: false, champion: null, baseline: null);
+            playerStanding, seasonComplete: false, champion: null, baseline: null,
+            prior: PriorSeasonsSmgpTotals().GetValueOrDefault(_playerDriverId));
         string seasonLine = playerSeason is { Position: { } pos } ps
             ? $"SEASON  P{pos} · {ps.Points} PTS"
             : "SEASON  —";
@@ -1360,6 +1361,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // standings for points/position. The player builds their record from zero; the AI carry their
         // predetermined baseline forward. Display-only (a projection over the fold, like the standings).
         var accrued = AccrueSeasonCounts();
+        // The cross-season rollup — computed ONCE for the whole paddock (each card just looks its driver
+        // up), so a 17-season career card spans every season, not just the current one.
+        var prior = PriorSeasonsSmgpTotals();
         var standings = CurrentStandings();
         bool complete = SeasonComplete;
         string? champion = complete
@@ -1376,7 +1380,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 accrued.GetValueOrDefault(driverId) ?? Companion.Core.Smgp.SmgpAccruedStats.Empty,
                 standings?.Drivers.FirstOrDefault(s => string.Equals(s.DriverId, driverId, StringComparison.Ordinal)),
                 complete, champion,
-                isPlayer ? null : stats.ForDriver(driverId));
+                isPlayer ? null : stats.ForDriver(driverId),
+                prior.GetValueOrDefault(driverId));
             return new SmgpDriverCard
             {
                 DriverId = driverId, Name = name, TeamId = teamId, TeamName = teamName, Number = number,
@@ -1447,9 +1452,88 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams };
     }
 
+    /// <summary>A driver's totals accrued across ALL COMPLETED PRIOR seasons of the career (everything
+    /// before the current season) — added on top of the predetermined baseline and the live current-season
+    /// tally so the SMGP career card spans the whole 17-season campaign. Display-only; a plain value with
+    /// default = all-zeros (the reused per-projection Empty).</summary>
+    private readonly record struct SmgpPriorTotals(
+        int Starts, int Wins, int Podiums, int Poles, int Top5s, int Points, int Titles);
+
+    /// <summary>Rolls up every COMPLETED PRIOR season's SMGP counts + points + titles per driver — the
+    /// term that makes the career card span all seasons (the current season stays the live delta added by
+    /// <see cref="BuildDriverStats"/>). Mirrors <see cref="CareerTimeline"/>'s per-season loop: each prior
+    /// season rehydrates its pinned pack + scoring, re-reads the stored envelopes, and re-derives counts
+    /// (<see cref="Companion.Core.Smgp.SmgpLiveStats"/>) + final standings (<see cref="StandingsEngine"/>).
+    /// A pure read over the immutable results — never a fold input, never persisted. The player's
+    /// per-season (possibly synthetic) id is normalized onto <c>_playerDriverId</c> so their prior seasons
+    /// land on their own card. Compute ONCE per projection and pass the result into BuildDriverStats.</summary>
+    private IReadOnlyDictionary<string, SmgpPriorTotals> PriorSeasonsSmgpTotals()
+    {
+        var totals = new Dictionary<string, SmgpPriorTotals>(StringComparer.Ordinal);
+        foreach (var season in CareerStore.ReadSeasons(_database))
+        {
+            if (season.Id == _seasonId)
+                continue; // the current season is the live delta, added separately by BuildDriverStats
+
+            var seasonPack = SeasonPackFor(season);
+            string seasonPlayerId = PlayerDriverIdFor(season, seasonPack);
+            string Key(string id) =>
+                string.Equals(id, seasonPlayerId, StringComparison.Ordinal) ? _playerDriverId : id;
+
+            // Counts over every round's primary race + pole (like the current-season AccrueSeasonCounts).
+            var rounds = new List<(IReadOnlyList<Companion.Core.Scoring.ClassifiedEntry> Race, string? Pole)>();
+            var stored = ResultStore.ReadSeasonResults(_database, season.Id);
+            foreach (var s in stored)
+            {
+                var envelope = s.ToEnvelope();
+                var race = envelope.Result.Sessions.FirstOrDefault(x => x.Kind == Companion.Core.Scoring.SessionKind.Race)
+                    ?? envelope.Result.Sessions.FirstOrDefault();
+                if (race is null)
+                    continue;
+                string? pole = envelope.QualifyingOrder is { Count: > 0 } q ? q[0] : null;
+                rounds.Add((race.Entries, pole));
+            }
+            foreach (var (id, c) in Companion.Core.Smgp.SmgpLiveStats.Accrue(rounds))
+            {
+                string key = Key(id);
+                var t = totals.GetValueOrDefault(key);
+                totals[key] = t with
+                {
+                    Starts = t.Starts + c.Starts,
+                    Wins = t.Wins + c.Wins,
+                    Podiums = t.Podiums + c.Podiums,
+                    Poles = t.Poles + c.Poles,
+                    Top5s = t.Top5s + c.Top5s,
+                };
+            }
+
+            // Standings over CHAMPIONSHIP rounds → points per driver + the champion's title (matches the
+            // current-season standings path and CareerTimeline's per-season scoring).
+            var champRounds = stored
+                .Where(r => seasonPack.Season.Rounds.FirstOrDefault(rd => rd.Round == r.Round)?.Championship ?? false)
+                .Select(r => r.ToRoundResult())
+                .ToList();
+            if (champRounds.Count == 0)
+                continue;
+            var scoring = ChampionshipCalendar.ResolveScoring(seasonPack);
+            var snapshot = StandingsEngine.ComputeSeason(scoring, champRounds).Snapshots[^1];
+            foreach (var d in snapshot.Drivers)
+            {
+                string key = Key(d.DriverId);
+                var t = totals.GetValueOrDefault(key);
+                totals[key] = t with
+                {
+                    Points = t.Points + (int)Math.Round(d.CountedPoints.ToDouble()),
+                    Titles = t.Titles + (d.Position == 1 ? 1 : 0),
+                };
+            }
+        }
+        return totals;
+    }
+
     /// <summary>Per-driver COUNTS (wins/poles/podiums/top-5s/starts) accrued from THIS season's folded
     /// results — display-only, re-read from the raw envelopes like the standings. Empty before any round
-    /// is scored. (Single-season for now; a multi-season career would accrue across seasons.)</summary>
+    /// is scored. The all-seasons total adds <see cref="PriorSeasonsSmgpTotals"/> on top of this.</summary>
     private IReadOnlyDictionary<string, Companion.Core.Smgp.SmgpAccruedStats> AccrueSeasonCounts()
     {
         var rounds = new List<(IReadOnlyList<Companion.Core.Scoring.ClassifiedEntry> Race, string? Pole)>();
@@ -1475,20 +1559,24 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         Companion.Core.Smgp.SmgpAccruedStats accrued,
         Companion.Core.Scoring.DriverStanding? standing,
         bool seasonComplete, string? champion,
-        Companion.Core.Smgp.SmgpDriverStatLine? baseline)
+        Companion.Core.Smgp.SmgpDriverStatLine? baseline,
+        SmgpPriorTotals prior = default)
     {
         int seasonPoints = standing is not null ? (int)Math.Round(standing.CountedPoints.ToDouble()) : 0;
         bool wonTitle = seasonComplete && string.Equals(driverId, champion, StringComparison.Ordinal);
 
+        // All-time = predetermined baseline (AI only) + every COMPLETED PRIOR season of THIS career + the
+        // live current season. For a 17-season campaign the career card thus spans all seasons, not just
+        // the current one. The player has no baseline (they build from zero).
         var career = new SmgpCareerStats
         {
-            Starts = (isPlayer ? 0 : baseline?.CareerStarts ?? 0) + accrued.Starts,
-            Wins = (isPlayer ? 0 : baseline?.CareerWins ?? 0) + accrued.Wins,
-            Podiums = (isPlayer ? 0 : baseline?.CareerPodiums ?? 0) + accrued.Podiums,
-            Poles = (isPlayer ? 0 : baseline?.CareerPoles ?? 0) + accrued.Poles,
-            Top5s = (isPlayer ? 0 : baseline?.CareerTop5s ?? 0) + accrued.Top5s,
-            Points = (isPlayer ? 0 : baseline?.CareerPoints ?? 0) + seasonPoints,
-            Titles = (isPlayer ? 0 : baseline?.Championships ?? 0) + (wonTitle ? 1 : 0),
+            Starts = (isPlayer ? 0 : baseline?.CareerStarts ?? 0) + prior.Starts + accrued.Starts,
+            Wins = (isPlayer ? 0 : baseline?.CareerWins ?? 0) + prior.Wins + accrued.Wins,
+            Podiums = (isPlayer ? 0 : baseline?.CareerPodiums ?? 0) + prior.Podiums + accrued.Podiums,
+            Poles = (isPlayer ? 0 : baseline?.CareerPoles ?? 0) + prior.Poles + accrued.Poles,
+            Top5s = (isPlayer ? 0 : baseline?.CareerTop5s ?? 0) + prior.Top5s + accrued.Top5s,
+            Points = (isPlayer ? 0 : baseline?.CareerPoints ?? 0) + prior.Points + seasonPoints,
+            Titles = (isPlayer ? 0 : baseline?.Championships ?? 0) + prior.Titles + (wonTitle ? 1 : 0),
         };
 
         // No season card until something has happened this season (no round scored and no standing).
