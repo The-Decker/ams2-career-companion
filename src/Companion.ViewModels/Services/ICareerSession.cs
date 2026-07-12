@@ -74,6 +74,12 @@ public interface ICareerSession
     /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
     string? CurrentSmgpTeamId() => null;
 
+    /// <summary>The driver id of the rival the player NAMED in the most-recently applied round (a per-round
+    /// choice, from that round's stored <c>SmgpRival</c> call), or null — every non-SMGP career and any
+    /// round where no rival was named. Lets the standings flag "your rival" for highlight. A pure read over
+    /// the persisted result envelopes; never a fold input. Additive default so fakes compile.</summary>
+    string? CurrentSmgpRivalDriverId() => null;
+
     /// <summary>The demotion screen's data (3c-3) when the LAST applied round forced the player DOWN
     /// a tier (a two-losses forfeit or a lost title defense) — i.e. the smgp team changed from
     /// <paramref name="previousTeamId"/> with no pending offer. An acknowledge-only screen (a demotion
@@ -328,6 +334,48 @@ public sealed record SeasonScheduleEntry
     /// <summary>Era-capped fun facts about the original circuit (data-grounded, spoiler-free).
     /// Empty when none are shipped.</summary>
     public IReadOnlyList<string> CircuitFacts { get; init; } = [];
+
+    // ---- Task 3.3 clickable round-detail (all additive, default so existing initializers are unchanged) ----
+
+    /// <summary>False marks a non-championship event (it scores no points).</summary>
+    public bool Championship { get; init; } = true;
+
+    /// <summary>This round's resolved grid size (starters), or null when the pack pins no per-round grid.</summary>
+    public int? GridSize { get; init; }
+
+    /// <summary>The backmarkers the pack pinned OUT of this round's grid (SMGP's per-race DNQ field),
+    /// fastest-first. Empty when the round runs the full field. Diffed from the PINNED starters (the player
+    /// injection happens at resolve time), so it is deterministic + spoiler-free for the calendar.</summary>
+    public IReadOnlyList<ScheduleDnqEntry> Dnq { get; init; } = [];
+
+    /// <summary>The round's weather label(s) ("Clear / Light Cloud"), from the setup guide. Empty when none.</summary>
+    public string WeatherLabel { get; init; } = "";
+
+    /// <summary>The setup-guide note for the round (the briefing's setup line). Empty when none.</summary>
+    public string SetupNote { get; init; } = "";
+
+    /// <summary>The AI opponent count from the setup guide, or null.</summary>
+    public int? Opponents { get; init; }
+
+    /// <summary>Progress marker: this round is Done (a result applied), Next (the upcoming round), or a
+    /// later Upcoming round — so the calendar can walk the season.</summary>
+    public SeasonRoundStatus Status { get; init; } = SeasonRoundStatus.Upcoming;
+}
+
+/// <summary>One driver the pack pinned OUT of a round's grid (a DNQ), for the calendar's round detail.</summary>
+public sealed record ScheduleDnqEntry(string Name, string TeamName, string? Number);
+
+/// <summary>A calendar round's progress relative to the career: already raced, the next one up, or later.</summary>
+public enum SeasonRoundStatus
+{
+    /// <summary>A result has been applied for this round.</summary>
+    Done,
+
+    /// <summary>The next round to race (the current round).</summary>
+    Next,
+
+    /// <summary>A later round, not yet reached.</summary>
+    Upcoming,
 }
 
 /// <summary>One perk offered on the season-review development block: what it is, what it costs, and —
@@ -502,6 +550,37 @@ public sealed record CareerSeasonCard
 
     /// <summary>The season's journaled headlines in story order — the archived dispatches.</summary>
     public IReadOnlyList<string> Headlines { get; init; } = [];
+
+    /// <summary>The player's per-round breakdown of THIS season (Task 3.3) — one line per applied round with
+    /// the player's finish, the rival they named that round + the rival's finish, the leader after the round
+    /// and the player's running points. Empty for a season with no applied round. Additive display-only.</summary>
+    public IReadOnlyList<CareerSeasonRoundLine> RoundLines { get; init; } = [];
+}
+
+/// <summary>One applied round in a season's "my career" breakdown for the History screen: the player's own
+/// result, the rival they named and how that duel went, and the championship picture after the round.
+/// DISPLAY-ONLY — a pure projection over the stored results.</summary>
+public sealed record CareerSeasonRoundLine
+{
+    public required int Round { get; init; }
+
+    /// <summary>The round's venue label.</summary>
+    public required string Venue { get; init; }
+
+    /// <summary>The player's finishing position, or null when they did not finish / were not classified.</summary>
+    public int? PlayerFinish { get; init; }
+
+    /// <summary>The rival the player NAMED this round (that round's stored call), or null when none named.</summary>
+    public string? RivalName { get; init; }
+
+    /// <summary>That named rival's finishing position this round, or null.</summary>
+    public int? RivalFinish { get; init; }
+
+    /// <summary>The championship leader's name after this round.</summary>
+    public string? ChampionAfter { get; init; }
+
+    /// <summary>The player's cumulative championship points after this round.</summary>
+    public double PlayerPointsAfter { get; init; }
 }
 
 /// <summary>The SMGP-universe "What Really Happened" almanac projection: the SEGA world's own legend
@@ -835,6 +914,71 @@ public sealed record SmgpDriverCard
     public required SmgpSeasonStats? Season { get; init; }
     /// <summary>The driver's team prestige (5 = top house … 2 = the floor) — grouping/order.</summary>
     public required int Prestige { get; init; }
+
+    // ---- Task 2 depth (all additive, default-empty so a card without them still renders) ----
+
+    /// <summary>The PLAYER card's evolving story: an ordered list of career milestone beats (arrived,
+    /// first win, a promotion, a title, a rivalry earned…) detected from the folded results + SMGP
+    /// state (<see cref="Companion.Core.Smgp.SmgpCareerBeats"/>). Empty for AI drivers. DISPLAY-ONLY —
+    /// grows with the career.</summary>
+    public IReadOnlyList<Companion.Core.Smgp.SmgpCareerBeat> Timeline { get; init; } = [];
+
+    /// <summary>A short live prose intro reflecting the player's standing RIGHT NOW (the one-line
+    /// header above the timeline). Empty for AI drivers / before anything has happened.</summary>
+    public string NarrativeIntro { get; init; } = "";
+
+    /// <summary>For an AI driver: the player-vs-this-driver record across the whole career (races met,
+    /// who finished ahead, best shared result) plus the live SMGP battle streak. Null on the player's
+    /// own card and before they have met on track.</summary>
+    public SmgpHeadToHead? HeadToHead { get; init; }
+
+    /// <summary>This driver's best race finish per venue, with the player's best at the same venue for
+    /// compare. Empty when no shared history. Ordered by venue name.</summary>
+    public IReadOnlyList<SmgpTrackBest> PerTrackBest { get; init; } = [];
+
+    /// <summary>Recent form: this driver's last few race finishes, oldest-first (null = a race they did
+    /// not finish / were not classified). Empty before any race. A trend the GUI can sparkline.</summary>
+    public IReadOnlyList<int?> FormRecent { get; init; } = [];
+}
+
+/// <summary>The player-vs-one-driver head-to-head across the whole career: races they both ran, who
+/// finished ahead, the best result the player took when they shared a grid, and the live SMGP battle
+/// streak (from <see cref="Companion.Core.Smgp.SmgpState.Tallies"/>). DISPLAY-ONLY.</summary>
+public sealed record SmgpHeadToHead
+{
+    /// <summary>Races both were classified in (a fair ahead/behind comparison needs both finishing).</summary>
+    public required int RacesMet { get; init; }
+
+    /// <summary>Of <see cref="RacesMet"/>, how many the player finished ahead of this driver.</summary>
+    public required int PlayerAhead { get; init; }
+
+    /// <summary>Of <see cref="RacesMet"/>, how many this driver finished ahead of the player.</summary>
+    public required int DriverAhead { get; init; }
+
+    /// <summary>The player's best race finish in a race they both ran (null if never classified together).</summary>
+    public int? PlayerBestTogether { get; init; }
+
+    /// <summary>The venue of that best-shared race, e.g. "Monaco" (null when none).</summary>
+    public string? BestTogetherVenue { get; init; }
+
+    /// <summary>Current SMGP battle streak in the player's favour this season (consecutive wins over him).</summary>
+    public required int PlayerStreak { get; init; }
+
+    /// <summary>Current SMGP battle streak in this driver's favour this season.</summary>
+    public required int DriverStreak { get; init; }
+}
+
+/// <summary>A driver's best finish at one venue, with the player's best at the same venue for compare.
+/// DISPLAY-ONLY.</summary>
+public sealed record SmgpTrackBest
+{
+    public required string Venue { get; init; }
+
+    /// <summary>This driver's best race finish here across the career, or null (never classified here).</summary>
+    public int? DriverBest { get; init; }
+
+    /// <summary>The player's best race finish at the same venue, or null.</summary>
+    public int? PlayerBest { get; init; }
 }
 
 /// <summary>A driver's all-time career totals — the predetermined baseline grown by live results
@@ -876,6 +1020,48 @@ public sealed record SmgpTeamCard
     /// <summary>The team's drivers, by name (for the roster line).</summary>
     public required IReadOnlyList<string> DriverNames { get; init; }
     public required int Prestige { get; init; }
+
+    // ---- Task 2 depth (all additive, default so an un-enriched card still renders) ----
+
+    /// <summary>The ladder tier label — "Level A" (top house) … "Level D" (the floor), from the team's
+    /// prestige. Empty when unknown.</summary>
+    public string Tier { get; init; } = "";
+
+    /// <summary>The team's accent colour "#RRGGBB" (<see cref="Companion.ViewModels.Shell.TeamPalette"/>).</summary>
+    public string PaletteHex { get; init; } = "";
+
+    /// <summary>The live roster: each driver with their this-season line + a career one-liner. Empty for
+    /// a team with no seated drivers this season.</summary>
+    public IReadOnlyList<SmgpTeamRosterLine> Roster { get; init; } = [];
+
+    /// <summary>The sponsors backing this team (cross-referenced from the paddock's sponsor board), so the
+    /// GUI can link team ↔ sponsor. Empty when none authored.</summary>
+    public IReadOnlyList<SmgpTeamSponsorRef> Sponsors { get; init; } = [];
+}
+
+/// <summary>One line of a team's live roster: a seated driver, their this-season standing, and a career
+/// one-liner. DISPLAY-ONLY.</summary>
+public sealed record SmgpTeamRosterLine
+{
+    public required string DriverId { get; init; }
+    public required string Name { get; init; }
+    public required bool IsPlayer { get; init; }
+
+    /// <summary>This season's line, e.g. "P3 · 18 PTS", or "—" before any round is scored.</summary>
+    public required string SeasonLine { get; init; }
+
+    /// <summary>A career one-liner, e.g. "12 WINS · 3 TITLES", or empty when nothing to show.</summary>
+    public required string CareerLine { get; init; }
+}
+
+/// <summary>A sponsor reference on a team card — the minimal identity + brand colour the GUI needs to
+/// show a chip and link across to the sponsor board. DISPLAY-ONLY.</summary>
+public sealed record SmgpTeamSponsorRef
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public required string Tier { get; init; }
+    public required string BrandColorHex { get; init; }
 }
 
 /// <summary>Whether the promotion screen is a climb (offer to accept/decline) or a forced drop.</summary>
@@ -983,12 +1169,30 @@ public sealed record SmgpRivalOption
     /// <summary>The rival's deadpan one-liner (the game's own vocabulary).</summary>
     public required string Quote { get; init; }
 
-    /// <summary>Beat him once more (without losing) and "you may get an offer to join his
+    /// <summary>Beat them once more (without losing) and "you may get an offer to join their
     /// team!" — the panel telegraphs it and asks for the standing answer.</summary>
     public required bool OfferOnWin { get; init; }
 
-    /// <summary>Lose to him once more and he is offered YOUR seat.</summary>
+    /// <summary>Lose to them once more and they are offered YOUR seat.</summary>
     public required bool ForfeitOnLoss { get; init; }
+
+    /// <summary>The rival's gendered pronoun set for the naming copy (Mika is female → she/her). Defaults to
+    /// he/him for every unmarked driver, so existing copy is unchanged for the rest of the grid.</summary>
+    public Companion.Core.Smgp.SmgpPronouns Pronouns { get; init; } = Companion.Core.Smgp.SmgpPronouns.Default;
+
+    /// <summary>The rival's ladder CLASS letter ("A".."D") — shown (coloured) in the picker dropdown so you
+    /// can see who is above/below you at a glance. Empty when unknown.</summary>
+    public string Tier { get; init; } = "";
+
+    /// <summary>The dropdown chip label, "CLASS B".</summary>
+    public string TierLabel { get; init; } = "";
+
+    /// <summary>The CLASS chip's accent colour "#RRGGBB" (A gold … D slate).</summary>
+    public string TierColorHex { get; init; } = "";
+
+    /// <summary>The player-vs-this-rival head-to-head (races met, who finished ahead, best shared, the live
+    /// streak) for the deeper dossier (Task 3.2). Null before they have met on track.</summary>
+    public SmgpHeadToHead? HeadToHead { get; init; }
 }
 
 /// <summary>One additional race's classification in a two-race weekend (<see cref="ResultDraft.AdditionalRaces"/>),

@@ -20,6 +20,8 @@
                 <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
                 <TextBlock Text=" (you)" Foreground="{DynamicResource AccentTextBrush}"
                            Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
+                <!-- The named SMGP rival is flagged wherever the shared seat-line template is used.
+                     RivalDriverId is null off-SMGP, so the equality converter collapses it there. -->
                 <Border Background="{DynamicResource ErrorDimBrush}" BorderBrush="{DynamicResource ErrorBrush}"
                         BorderThickness="1" CornerRadius="3" Padding="5,1" Margin="7,0,0,0"
                         VerticalAlignment="Center"

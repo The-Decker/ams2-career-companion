@@ -296,6 +296,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 // Surface where the named SMGP rival qualifies as the grid is entered (null = no rival).
                 RivalDriverId = Briefing.NamedSmgpRival?.DriverId,
                 RivalName = Briefing.NamedSmgpRival?.DriverName,
+                RivalPronouns = Briefing.NamedSmgpRival?.Pronouns ?? Companion.Core.Smgp.SmgpPronouns.Default,
             };
             _qualifyingEntry.PropertyChanged += OnResultEntryPropertyChanged;
             ConfirmResultCommand.NotifyCanExecuteChanged();
@@ -414,6 +415,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 // Surface where the named SMGP rival finishes as the order is entered (null = no rival).
                 RivalDriverId = Briefing.NamedSmgpRival?.DriverId,
                 RivalName = Briefing.NamedSmgpRival?.DriverName,
+                RivalPronouns = Briefing.NamedSmgpRival?.Pronouns ?? Companion.Core.Smgp.SmgpPronouns.Default,
                 // Prefill the slider prompt with the pace-anchor recommendation (the same
                 // value the briefing showed); before the anchor calibrates, the settings
                 // screen's default difficulty (neutral 100 out of the box).

@@ -45,6 +45,19 @@ public sealed partial class DossierViewModel : ObservableObject
     [ObservableProperty]
     private CarSpecCardViewModel? _playerCarSpec;
 
+    /// <summary>The SMGP evolving-narrative TIMELINE for the player (Task 2/3.3) — the milestone beats
+    /// (arrived, first win, promotions, titles, rivalries…) surfaced on the Driver tab as the story
+    /// progression. Empty for a non-SMGP career.</summary>
+    [ObservableProperty]
+    private IReadOnlyList<Companion.Core.Smgp.SmgpCareerBeat> _timeline = [];
+
+    /// <summary>The one-line live narrative intro (the header above the timeline). Empty off-SMGP.</summary>
+    [ObservableProperty]
+    private string _narrativeIntro = "";
+
+    /// <summary>True when there is an SMGP career story to show (the Driver tab renders the timeline).</summary>
+    public bool HasSmgpNarrative => Timeline.Count > 0 || NarrativeIntro.Length > 0;
+
     public void Refresh()
     {
         Dossier = _session.CharacterDossier();
@@ -57,7 +70,13 @@ public sealed partial class DossierViewModel : ObservableObject
         PlayerCarKey = playerSeat?.DriverId;
         PlayerCarSpec = _session.PlayerCarSpec();
 
+        // The evolving SMGP story lives on the player's Paddock card (Task 2) — surface it here too.
+        var playerCard = _session.SmgpPaddock()?.Drivers.FirstOrDefault(d => d.IsPlayer);
+        Timeline = playerCard?.Timeline ?? [];
+        NarrativeIntro = playerCard?.NarrativeIntro ?? "";
+
         OnPropertyChanged(nameof(HasCharacter));
         OnPropertyChanged(nameof(TeamLine));
+        OnPropertyChanged(nameof(HasSmgpNarrative));
     }
 }

@@ -10,7 +10,7 @@
     <DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="Your rival" Style="{StaticResource H2}" Margin="0,0,0,4" />
         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,12" TextWrapping="Wrap"
-                   Text="Name a rival to challenge this round — finish ahead of the same driver twice without losing and you may take his seat. Or race with no rival named." />
+                   Text="{Binding Briefing.SmgpRivalIntro}" />
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
             <!-- the content DataContext is the shared briefing, so every Smgp* binding works verbatim -->
@@ -57,10 +57,22 @@
                                   IsEnabled="{Binding SmgpPickEnabled}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock>
-                                        <Run Text="{Binding DriverName, Mode=OneWay}" FontWeight="SemiBold" />
-                                        <Run Text=" — " /><Run Text="{Binding TeamName, Mode=OneWay}" />
-                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <!-- the rival's ladder CLASS chip, coloured by tier (A gold … D slate),
+                                             so who you can climb toward reads at a glance in the dropdown. An
+                                             OUTLINED chip (colour on border + text) keeps it legible in both
+                                             themes without an inline paint. -->
+                                        <Border CornerRadius="4" Padding="6,1" Margin="0,0,8,0" VerticalAlignment="Center"
+                                                BorderThickness="1.5"
+                                                BorderBrush="{Binding TierColorHex, Converter={StaticResource HexBrush}}">
+                                            <TextBlock Text="{Binding Tier, Mode=OneWay}" FontWeight="Bold" FontSize="11"
+                                                       Foreground="{Binding TierColorHex, Converter={StaticResource HexBrush}}" />
+                                        </Border>
+                                        <TextBlock VerticalAlignment="Center">
+                                            <Run Text="{Binding DriverName, Mode=OneWay}" FontWeight="SemiBold" />
+                                            <Run Text=" — " /><Run Text="{Binding TeamName, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -133,11 +145,11 @@
                                        Visibility="{Binding SmgpLadderLine, Converter={StaticResource StringVisible}}" />
 
                             <Button x:Name="SmgpNameRivalButton" Style="{StaticResource AccentButton}"
-                                    Content="YES — name him as my rival" MinWidth="320" Margin="0,16,0,0"
+                                    Content="{Binding SmgpNameButtonLabel}" MinWidth="320" Margin="0,16,0,0"
                                     HorizontalAlignment="Center" FontWeight="Bold" FontSize="16"
                                     Command="{Binding SmgpNameRivalCommand}"
                                     Visibility="{Binding SmgpCanName, Converter={StaticResource BoolVisible}}"
-                                    ToolTip="Commit this rival for the round — finish ahead of him twice without losing and you may take his seat" />
+                                    ToolTip="Commit this rival for the round — finish ahead of them twice without losing and you may take their seat" />
                             <!-- after naming: the rival reacts in their OWN voice (mood-aware trash-talk),
                                  then the commitment line spells out what beating them means. -->
                             <Border x:Name="SmgpNamedBanner" Style="{StaticResource SuccessCallout}"

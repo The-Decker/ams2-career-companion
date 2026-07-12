@@ -43,11 +43,13 @@ public static class SmgpRules
     public static int Rank(char tier) => tier switch { 'A' => 3, 'B' => 2, 'C' => 1, _ => 0 };
 
     /// <summary>Whether the player (in <paramref name="playerTier"/>) may CHALLENGE a rival in
-    /// <paramref name="rivalTier"/> (Mike's rule): the ONE tier directly above (the seat you climb
-    /// toward) or ANY tier below. So D→C only; C→B or D; B→A, C or D; A→B, C or D. Never two tiers
-    /// up, never your own tier.</summary>
+    /// <paramref name="rivalTier"/> (Mike's rule, 2026-07-12): your OWN tier, the ONE tier directly above
+    /// (the seat you climb toward), and ANY tier below. So D→{D,C}; C→{B,C,D}; B→{A,B,C,D}; A→everyone.
+    /// Never two tiers up. (Your own TEAMMATE is still excluded separately by the briefing — same-tier means
+    /// other teams at your level, not your sister seat.) DISPLAY-ONLY: this gates the namable-rivals picker,
+    /// never the battle fold, so changing it never affects a folded/replayed career.</summary>
     public static bool CanChallenge(char playerTier, char rivalTier) =>
-        Rank(rivalTier) == Rank(playerTier) + 1 || Rank(rivalTier) < Rank(playerTier);
+        Rank(rivalTier) <= Rank(playerTier) + 1;
 
     /// <summary>The floor (LEVEL D) tolerance: lose this many rival battles while in a D team and
     /// the SMGP career is over — kicked out of F1 SMGP. (Mike's rule; the one hard-fail state now
