@@ -262,6 +262,71 @@ public static class ReplayService
     }
 
     /// <summary>
+    /// The promotion screen's forward resolution of a PENDING two-wins offer (3c-2): the player's
+    /// post-race accept/decline for <paramref name="round"/>. Journals the decision as the
+    /// provenance-excluded <c>smgp.swap</c> INPUT, runs the shared
+    /// <see cref="Companion.Core.Smgp.SmgpBattleFold.ResolvePendingOffer"/> (moving the seat +
+    /// emitting the derived <c>smgp.seat</c> row on accept), and re-persists the round's player
+    /// state — atomically. Re-fold reads the same input back and re-derives this exact state + row,
+    /// so replay stays byte-identical. Throws if the round carries no pending offer (the UI only
+    /// shows the screen when one exists).
+    /// </summary>
+    public static RoundPlayerState ResolveSmgpOffer(
+        CareerDatabase db,
+        long seasonId,
+        SeasonPack pack,
+        int round,
+        bool accept,
+        string utc)
+    {
+        using var transaction = db.Connection.BeginTransaction();
+
+        var roundState = StateStore.ReadRoundPlayerState(db, seasonId, round, transaction)
+            ?? throw new InvalidOperationException(
+                $"Round {round} of season {seasonId} is not folded — cannot resolve a promotion offer.");
+        var player = roundState.Player;
+        if (player.Smgp is not { PendingSwap: { } pending } smgpState)
+            throw new InvalidOperationException(
+                $"Round {round} of season {seasonId} carries no pending seat-swap offer to resolve.");
+
+        var seatEvents = new List<JournalEvent>();
+        var resolved = Companion.Core.Smgp.SmgpBattleFold.ResolvePendingOffer(
+            pack, smgpState, pending, accept, seatEvents);
+        player = player with { Smgp = resolved };
+
+        // A seat movement is a TEAM movement too — mirror the fold's CurrentTeamId derivation so the
+        // live state matches what re-fold produces (the season-end reputation tier reads it).
+        if (!string.Equals(resolved.CurrentSeatLivery, smgpState.CurrentSeatLivery, StringComparison.Ordinal) &&
+            pack.Entries.FirstOrDefault(e => string.Equals(
+                e.Ams2LiveryName, resolved.CurrentSeatLivery, StringComparison.Ordinal))?.TeamId is { } newTeamId)
+        {
+            player = player with { CurrentTeamId = newTeamId };
+        }
+
+        // The INPUT first (provenance-excluded), then its DERIVED effect (the smgp.seat row, which
+        // the byte-compare DOES cover) — the same order and content re-fold regenerates.
+        JournalStore.Append(db, seasonId, round, new JournalEvent
+        {
+            Phase = JournalPhases.SmgpSwap,
+            Entity = "player",
+            DeltaJson = DataJson.Serialize(new SmgpSwapInput
+            {
+                Rival = pending.RivalDriverId,
+                OfferedSeat = pending.OfferedSeat,
+                Accepted = accept,
+            }),
+            Cause = accept ? "promotion-accepted" : "promotion-declined",
+        }, utc, transaction);
+        if (seatEvents.Count > 0)
+            JournalStore.AppendMany(db, seasonId, round, seatEvents, utc, transaction);
+
+        var updated = roundState with { Player = player };
+        StateStore.UpdateRoundPlayerState(db, seasonId, round, updated, transaction);
+        transaction.Commit();
+        return updated;
+    }
+
+    /// <summary>
     /// Runs the season-end pipeline against the season's stored start states and raw results,
     /// consuming the FINAL ROUND'S FOLDED player state (per-round rep/OPI accrual drives the
     /// offers), journals its events (round = NULL), persists the derived 'end' states +
@@ -400,7 +465,8 @@ public static class ReplayService
                 StateStore.ReadPlayerState(db, season.Id, StateStore.StageStart),
                 StateStore.ReadDriverStates(db, season.Id, StateStore.StageStart),
                 StateStore.ReadTeamStates(db, season.Id, StateStore.StageStart),
-                ReadCharacterSpends(db, season.Id)))
+                ReadCharacterSpends(db, season.Id),
+                ReadSmgpSwaps(db, season.Id)))
             .ToList();
 
         int comparedRows = 0;
@@ -467,7 +533,8 @@ public static class ReplayService
                     soFar.Add(stored.ToRoundResult());
                 var outcome = ComputeRoundFold(
                     pack, masterSeed, inputs, current.StartTeams, soFar,
-                    stored.ToEnvelope(), stored.Round, playerAgeThisSeason, previousState);
+                    stored.ToEnvelope(), stored.Round, playerAgeThisSeason, previousState,
+                    current.SmgpSwaps.TryGetValue(stored.Round, out var decided) ? decided : null);
                 foreach (var journalEvent in outcome.Events)
                     regenerated.Add((stored.Round, journalEvent));
                 StateStore.InsertRoundPlayerState(db, season.Id, stored.Round, outcome.State, transaction);
@@ -561,7 +628,11 @@ public static class ReplayService
         RoundResultEnvelope envelope,
         int round,
         int playerAge,
-        RoundPlayerState previous)
+        RoundPlayerState previous,
+        // The player's post-race promotion decision for a two-phase smgp career (3c-2), or null.
+        // Replay supplies the stored smgp.swap input so the pending offer resolves inline; the live
+        // result-entry fold passes null (the offer stays pending for the promotion screen to answer).
+        bool? swapDecision = null)
     {
         var events = new List<JournalEvent>(RoundStandingsEvents(pack, roundsSoFar));
 
@@ -726,6 +797,9 @@ public static class ReplayService
                 RivalDriverId = rivalCall.RivalDriverId,
                 Forced = rivalCall.Forced,
                 SeatSwapAccepted = rivalCall.SeatSwapAccepted,
+                // Two-phase (3c-2): the stored post-race decision (replay) or null (live entry — the
+                // offer stays pending). Resolving inline here re-derives the live outcome exactly.
+                SwapDecision = swapDecision,
                 PlayerFinish = battlePlayerFinish,
                 RivalFinish = ClassifiedPositionIn(raceSessions[0], rivalCall.RivalDriverId),
             });
@@ -978,7 +1052,8 @@ public static class ReplayService
         PlayerCareerState? StartPlayer,
         IReadOnlyList<DriverCareerState> StartDrivers,
         IReadOnlyList<TeamCareerState> StartTeams,
-        IReadOnlyList<CharacterSpend> Spends);
+        IReadOnlyList<CharacterSpend> Spends,
+        IReadOnlyDictionary<int, bool> SmgpSwaps);
 
     private static bool IsComplete(SeasonRecord season) =>
         string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
@@ -1234,6 +1309,24 @@ public static class ReplayService
             .Where(r => string.Equals(r.Phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal))
             .Select(r => DataJson.Deserialize<CharacterSpend>(r.DeltaJson))
             .ToList();
+
+    /// <summary>The player's post-race promotion decisions (3c-2, two-phase smgp careers) keyed by
+    /// round — the journaled <c>smgp.swap</c> INPUT rows, read from the FULL journal (they are
+    /// provenance-excluded from the byte-compare, so they never reach the compared sequence) and
+    /// supplied to the round fold so the pending offer resolves identically live and on replay. A
+    /// round with no row = the offer was left unresolved (or a legacy/non-swap round).</summary>
+    public static IReadOnlyDictionary<int, bool> ReadSmgpSwaps(CareerDatabase db, long seasonId)
+    {
+        var swaps = new Dictionary<int, bool>();
+        foreach (var row in JournalStore.ReadSeason(db, seasonId))
+        {
+            if (!string.Equals(row.Phase, JournalPhases.SmgpSwap, StringComparison.Ordinal) || row.Round is not { } round)
+                continue;
+            // Last write wins, mirroring the live path (a re-decided round would append again).
+            swaps[round] = DataJson.Deserialize<SmgpSwapInput>(row.DeltaJson).Accepted;
+        }
+        return swaps;
+    }
 
     private static List<(long SeasonId, string TeamId)> ReadAcceptedOffers(CareerDatabase db)
     {

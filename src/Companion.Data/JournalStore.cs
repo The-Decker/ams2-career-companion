@@ -47,7 +47,11 @@ public static class DataJournalPhases
         || string.Equals(phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal)
         // player.gridSelection is the creation-time chosen field (v0.6.0) — its data rides in the
         // start player state (survives WipeDerived); the round fold never regenerates it, so exclude.
-        || string.Equals(phase, JournalPhases.PlayerGridSelection, StringComparison.Ordinal);
+        || string.Equals(phase, JournalPhases.PlayerGridSelection, StringComparison.Ordinal)
+        // smgp.swap is the player's post-race promotion decision (3c-2) — a two-phase INPUT the round
+        // fold never regenerates (it is READ back to resolve the pending offer, like the stat spends),
+        // so the byte-compare must exclude it. Its DERIVED effect (the smgp.seat row) IS compared.
+        || string.Equals(phase, JournalPhases.SmgpSwap, StringComparison.Ordinal);
 }
 
 /// <summary>One persisted journal row: a <see cref="JournalEvent"/> plus the storage-assigned

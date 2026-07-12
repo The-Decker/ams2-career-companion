@@ -37,6 +37,41 @@ public interface ICareerSession
     /// outside the mode, or when the season is complete. Additive default so fakes compile.</summary>
     SmgpBriefingModel? CurrentSmgpBriefing() => null;
 
+    /// <summary>The two-wins seat-swap offer awaiting the player's POST-RACE decision on the
+    /// promotion screen (3c-2), or null — outside the mode, a legacy (inline-apply) career, or no
+    /// offer pending this round. Non-null = show the promotion screen after confirm. Additive
+    /// default so fakes compile.</summary>
+    Companion.Core.Smgp.SmgpPendingOffer? CurrentSmgpPendingOffer() => null;
+
+    /// <summary>Resolve the pending two-wins offer (3c-2): ACCEPT moves the player into the offered
+    /// car (effective from the next round's grid); DECLINE keeps the current seat. Journals the
+    /// decision as the provenance-excluded <c>smgp.swap</c> input and re-persists the round it
+    /// belongs to, so replay re-derives the outcome byte-identically. Additive default: no-op so
+    /// fakes compile.</summary>
+    void ResolveSmgpOffer(bool accept) { }
+
+    /// <summary>The full-immersion promotion screen's data (3c-3) when a two-wins offer is pending —
+    /// the new team's photo/name/motto/history/quotes + the player image + car preview + accept/
+    /// decline. Null outside the mode or when no offer is pending. Additive default so fakes compile.</summary>
+    SmgpPromotionModel? CurrentSmgpPromotion() => null;
+
+    /// <summary>The SMGP Paddock lens: the whole grid's drivers (bio + predetermined career stats +
+    /// team) and teams (motto + history + quotes + roster), for the driver/team-preview rail tab.
+    /// DISPLAY-ONLY (reads the pack roster + the SMGP reference data). Null outside the SMGP mode or
+    /// when no rules are loaded. Additive default so fakes compile.</summary>
+    SmgpPaddockModel? SmgpPaddock() => null;
+
+    /// <summary>The player's SMGP team id right now (its short ladder position follows seat swaps),
+    /// captured BEFORE applying a round so the shell can tell whether that round forced a DEMOTION
+    /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
+    string? CurrentSmgpTeamId() => null;
+
+    /// <summary>The demotion screen's data (3c-3) when the LAST applied round forced the player DOWN
+    /// a tier (a two-losses forfeit or a lost title defense) — i.e. the smgp team changed from
+    /// <paramref name="previousTeamId"/> with no pending offer. An acknowledge-only screen (a demotion
+    /// cannot be declined). Null when no forced move happened. Additive default so fakes compile.</summary>
+    SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId) => null;
+
     /// <summary>The current round's race-weekend structure (practice/qualifying + 1–2 races),
     /// or null when the round runs today's single race. Additive default — sessions without
     /// weekend support (and every single-race round) report "no weekend". (Increment 2.)</summary>
@@ -692,8 +727,13 @@ public sealed record SmgpBriefingModel
     /// <summary>The game's Course Select header — "SAN MARINO · ROUND 1".</summary>
     public required string RoundHeader { get; init; }
 
-    /// <summary>The player's points, the game's abbreviation — "12 D.P."</summary>
-    public required string PointsLine { get; init; }
+    /// <summary>The player's live SEASON standing — "SEASON  P3 · 18 PTS" (or "SEASON —" before any
+    /// round). Replaces the old "D.P." points abbreviation with the player's real running stats.</summary>
+    public required string SeasonLine { get; init; }
+
+    /// <summary>The player's live CAREER record — "CAREER  2 WINS · 1 POLE · 5 TOP-5" (empty until they
+    /// have something to show). They build this from zero; the AI carry their pre-history.</summary>
+    public required string CareerLine { get; init; }
 
     /// <summary>The pit-crew advice line (the manual's own words).</summary>
     public required string AdviceLine { get; init; }
@@ -710,6 +750,144 @@ public sealed record SmgpBriefingModel
 
     /// <summary>Every AI driver on this round's grid, in grid order — any of them can be named.</summary>
     public required IReadOnlyList<SmgpRivalOption> Rivals { get; init; }
+}
+
+/// <summary>The SMGP Paddock lens (driver/team preview tab): the whole grid's drivers and teams as
+/// display cards, built from the pack roster + the SMGP reference data (bios, predetermined stats,
+/// team profiles). DISPLAY-ONLY — never a fold input.</summary>
+public sealed record SmgpPaddockModel
+{
+    /// <summary>Every driver on the grid, most-storied first (team prestige, then career points).</summary>
+    public required IReadOnlyList<SmgpDriverCard> Drivers { get; init; }
+
+    /// <summary>Every team on the grid, highest prestige first.</summary>
+    public required IReadOnlyList<SmgpTeamCard> Teams { get; init; }
+}
+
+/// <summary>One driver's Paddock card: identity + team + drop-in art keys + bio + predetermined stats.</summary>
+public sealed record SmgpDriverCard
+{
+    public required string DriverId { get; init; }
+    public required string Name { get; init; }
+    public required string TeamId { get; init; }
+    public required string TeamName { get; init; }
+    public required string? Number { get; init; }
+    /// <summary>Portrait key — <c>portraits/&lt;driverId&gt;.jpg</c>.</summary>
+    public required string PortraitKey { get; init; }
+    /// <summary>Car preview key — <c>cars/&lt;driverId&gt;.png</c>.</summary>
+    public required string CarKey { get; init; }
+    /// <summary>Short ALL-CAPS arcade epithet, or empty when no bio is authored.</summary>
+    public required string Epithet { get; init; }
+    /// <summary>The ~3-paragraph biography (empty when unauthored).</summary>
+    public required IReadOnlyList<string> Bio { get; init; }
+    /// <summary>In-character quotes (empty when unauthored).</summary>
+    public required IReadOnlyList<string> Quotes { get; init; }
+    /// <summary>True for the player's own card — they build their record from zero (no pre-history).</summary>
+    public required bool IsPlayer { get; init; }
+    /// <summary>All-time career totals: for an AI driver, the predetermined baseline PLUS what they have
+    /// accrued since the player arrived; for the player, purely what they have accrued (they start at
+    /// zero). Null only when the mode has no stats data at all.</summary>
+    public required SmgpCareerStats? Career { get; init; }
+    /// <summary>This season's live tally (championship position + points + wins/poles/podiums/top-5s),
+    /// or null before any round has been scored this season.</summary>
+    public required SmgpSeasonStats? Season { get; init; }
+    /// <summary>The driver's team prestige (5 = top house … 2 = the floor) — grouping/order.</summary>
+    public required int Prestige { get; init; }
+}
+
+/// <summary>A driver's all-time career totals — the predetermined baseline grown by live results
+/// (the player's baseline is zero). DISPLAY-ONLY.</summary>
+public sealed record SmgpCareerStats
+{
+    public required int Starts { get; init; }
+    public required int Wins { get; init; }
+    public required int Podiums { get; init; }
+    public required int Poles { get; init; }
+    public required int Top5s { get; init; }
+    public required int Points { get; init; }
+    public required int Titles { get; init; }
+}
+
+/// <summary>A driver's live tally for the CURRENT season, from the folded results. DISPLAY-ONLY.</summary>
+public sealed record SmgpSeasonStats
+{
+    /// <summary>Championship position this season, or null before it computes.</summary>
+    public required int? Position { get; init; }
+    public required int Points { get; init; }
+    public required int Wins { get; init; }
+    public required int Poles { get; init; }
+    public required int Podiums { get; init; }
+    public required int Top5s { get; init; }
+    public required int Starts { get; init; }
+}
+
+/// <summary>One team's Paddock card: identity + logo + motto/history/quotes + its roster.</summary>
+public sealed record SmgpTeamCard
+{
+    public required string TeamId { get; init; }
+    public required string Name { get; init; }
+    public required string Motto { get; init; }
+    /// <summary>Team logo/icon key — <c>smgp/logos/&lt;teamId&gt;.png</c>.</summary>
+    public required string LogoKey { get; init; }
+    public required IReadOnlyList<string> History { get; init; }
+    public required IReadOnlyList<string> Quotes { get; init; }
+    /// <summary>The team's drivers, by name (for the roster line).</summary>
+    public required IReadOnlyList<string> DriverNames { get; init; }
+    public required int Prestige { get; init; }
+}
+
+/// <summary>Whether the promotion screen is a climb (offer to accept/decline) or a forced drop.</summary>
+public enum SmgpPromotionKind
+{
+    /// <summary>A two-wins offer to move UP into the rival's car — the player accepts or declines.</summary>
+    PromotionOffer,
+
+    /// <summary>A forced move DOWN a tier (a two-losses forfeit or a lost title defense) — already
+    /// applied; the screen only acknowledges it (no decline).</summary>
+    Demotion,
+}
+
+/// <summary>The full-immersion promotion / demotion screen's data (3c-3): the new team's photo,
+/// name, motto, ~5-paragraph history and quotes, plus the team-coloured player image and the car
+/// preview. Built display-only from the folded state + the <see cref="Companion.Core.Smgp.SmgpTeamProfiles"/>
+/// catalog (3c-1) — never a fold input. A promotion is accept/decline; a demotion only acknowledges.</summary>
+public sealed record SmgpPromotionModel
+{
+    public required SmgpPromotionKind Kind { get; init; }
+
+    /// <summary>The arcade banner headline — "AN OFFER FROM MADONNA" / "RELEGATED TO ZEROFORCE".</summary>
+    public required string Headline { get; init; }
+
+    /// <summary>The new team's display name.</summary>
+    public required string TeamName { get; init; }
+
+    /// <summary>The VERY LARGE team photo key — <c>data/ams2/smgp/teams/&lt;key&gt;.jpg</c> (the team
+    /// id without its "team." prefix). Absent-tolerant: the view hides the photo until art is dropped.</summary>
+    public required string TeamPhotoKey { get; init; }
+
+    /// <summary>The team-coloured player image key — <c>player.&lt;team&gt;</c>.</summary>
+    public required string PlayerImageKey { get; init; }
+
+    /// <summary>The car preview key (<c>cars/&lt;driverId&gt;.png</c>) for the new car, or null.</summary>
+    public string? CarKey { get; init; }
+
+    /// <summary>The team's one-line motto, or null when unauthored.</summary>
+    public string? Motto { get; init; }
+
+    /// <summary>The team's SMGP-world history — a few paragraphs. Empty when unauthored.</summary>
+    public IReadOnlyList<string> History { get; init; } = [];
+
+    /// <summary>A few in-character team quotes. Empty when unauthored.</summary>
+    public IReadOnlyList<string> Quotes { get; init; } = [];
+
+    /// <summary>The rival the player beat twice to earn the offer (promotion only), or null.</summary>
+    public string? RivalName { get; init; }
+
+    /// <summary>True for a promotion offer (the Decline button shows); false for a forced demotion.</summary>
+    public bool CanDecline => Kind == SmgpPromotionKind.PromotionOffer;
+
+    /// <summary>The accept/acknowledge button label.</summary>
+    public string AcceptLabel => Kind == SmgpPromotionKind.PromotionOffer ? "Take the seat" : "Onwards";
 }
 
 /// <summary>One namable rival: the dossier card's facts (docs/dev/smgp-design.md — team banner,

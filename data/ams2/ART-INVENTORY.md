@@ -1,14 +1,17 @@
 # Art asset inventory
 
 The manifest of every user-art asset the app resolves — **what's present and what's still missing**.
-As of **2026-07-11** these assets are now **tracked in git** (previously drop-in-only under `dist/`);
-`data/ams2/` is the source of truth, synced to `dist/data/ams2/` beside the app at publish time.
+The live files under **`dist/data/ams2/` are the canonical art source**. Anything in `dist` wins:
+never overwrite it from the tracked `data/ams2/` tree. Tracked files may be useful references, but
+they are not authoritative art and can lag behind the runtime collection.
 
 Regenerate the present/expected counts any time:
-```
-ls data/ams2/era-art/*.jpg | wc -l          # era-art present
-ls data/ams2/portraits/driver.*.jpg | wc -l # driver portraits present
-ls data/ams2/portraits/player.*.jpg | wc -l # per-team player images present
+```powershell
+(Get-ChildItem dist/data/ams2/era-art -Filter *.jpg).Count
+(Get-ChildItem dist/data/ams2/portraits -Filter driver.*.jpg).Count
+(Get-ChildItem dist/data/ams2/portraits -Filter player.*.jpg).Count
+(Get-ChildItem dist/data/ams2/cars -Filter driver.*.png).Count
+(Get-ChildItem dist/data/ams2/smgp/flags -Filter driver.*.png).Count
 ```
 
 ## Summary
@@ -17,8 +20,13 @@ ls data/ams2/portraits/player.*.jpg | wc -l # per-team player images present
 |---|---|---|---|
 | **era-art** (`<year>.jpg` / `smgp.jpg`) | 20 | 20 (one per pack) | ✅ complete |
 | **driver portraits** (`driver.<id>.jpg`) | 34 | 34 (SMGP roster) | ✅ complete |
-| **per-team player images** (`player.<team>.jpg`) | 13 | 24 (SMGP teams) | ◐ **11 missing** |
-| **car previews** (`cars/<driverId>.png`) | 34 | 34 | ✅ auto-generated (`tools/extract_car_previews.cs`) — not tracked, regenerable |
+| **per-team player images** (`player.<team>.jpg`) | 24 | 24 (SMGP teams) | ✅ complete |
+| **car previews** (`cars/<driverId>.png`) | 34 | 34 | ✅ complete; extractor writes directly to canonical `dist` |
+| **SMGP national flags** (`smgp/flags/<driverId>.png`) | 34 | 34 | ✅ complete; converted locally from installed AMS2 country flags |
+| **SMGP grid-car miniatures** (`smgp/grid-cars/<driverId>.png`) | 0 | 34 optional | ○ side previews provide the live fallback |
+| **team logos** (`smgp/logos/team.<team>.png`) | 0 | 24 | ○ waiting for the final team palette |
+| **round cards** (`smgp/rounds/<round>.jpg`) | 0 | 16 | ○ missing |
+| **team photos** (`smgp/teams/<team>.jpg`) | 0 | 24 | ○ missing |
 | **track-art** (`<trackId>.jpg`) | 0 | optional (one per AMS2 track id) | ○ none — optional drop-in, clean fallback |
 | **history-art** (`<year>.jpg`) | 0 | optional (one per season year) | ○ none — optional drop-in, clean fallback |
 
@@ -33,15 +41,29 @@ One per pack, keyed by year (`smgp-1` → `smgp.jpg`). All present:
 Every SMGP roster driver has `portraits/driver.<id>.jpg`. (Real-F1 driver portraits are not part of
 the current design — the History tab uses era-art + optional history-art.)
 
-## Per-team player images — ◐ 13/24 (11 MISSING)
+## Per-team player images — ✅ 24/24
 
 `player.<team>.jpg` = the team-coloured player helmet shown on the Season's Grid "YOU" card + the
-character screen (team id minus the `team.` prefix). **Present (13):** azalea, comet, cool, firenze,
-iris, lares, madonna, minarae, moon, orchis, rigel, serga, zeroforce.
+character screen (team id minus the `team.` prefix). **Present (24):** azalea, comet, cool, firenze,
+iris, lares, madonna, minarae, moon, orchis, rigel, serga, zeroforce, bestowal, blanche, bullets,
+dardan, feet, joke, linden, losel, may, millions, and tyrant.
 
-**MISSING (11) — need to be added:**
-`player.bestowal`, `player.blanche`, `player.bullets`, `player.dardan`, `player.feet`,
-`player.joke`, `player.linden`, `player.losel`, `player.may`, `player.millions`, `player.tyrant`.
+## SMGP national flags — ✅ 34/34
+
+The SMGP starting grid resolves `smgp/flags/<driverId>.png` so nationality remains an art-only,
+driver-keyed concern and does not duplicate roster logic in the ViewModel. The 34 canonical PNGs
+were converted locally from the matching 128×128 `GUI/CountryFlags/Flag_*.dds` files in Mike's AMS2
+installation. The synthetic player entry deliberately hides this slot because the character model
+does not author a nationality; showing the replaced AI driver's flag would be misleading.
+
+## SMGP grid-car miniatures — 0/34 (optional upgrade)
+
+The SMGP pixel starting straight first resolves `smgp/grid-cars/<driverId>.png`, then falls back to
+the complete canonical `cars/<driverId>.png` set. Purpose-built miniatures should be 384×256
+transparent RGBA PNGs with consistent framing, a three-quarter overhead arcade view, and the nose
+pointing right to match the live side-preview fallback. Keep them driver-keyed: the 34 entries use
+five body silhouettes, and teammate liveries/numbers can differ. Never replace the canonical side
+previews to add these.
 
 ## track-art / history-art — ○ optional, none yet
 
@@ -51,8 +73,9 @@ are not "missing" in the blocking sense. To add: `track-art/<trackId>.jpg` (trac
 History tab's "what really happened" panel. Populate if/when we want that reference content to feel
 alive.
 
-## How to add art (now that it's tracked)
+## How to add art
 
-Drop the file into the matching **`data/ams2/<folder>/`** (the tracked source, NOT `dist/`), keep the
-naming convention above, then `git add` it and re-sync to `dist/` at the next publish. Update the
-counts in this file when a gap is filled.
+Drop the file directly into **`dist/data/ams2/<folder>/`** beside the app and keep the naming
+convention above. Do not publish, sync, or copy a tracked `data/ams2/` version over a file in
+`dist`. If a secondary archive or tracked reference is ever wanted, copy outward from canonical
+`dist` only and preserve the `dist` file byte-for-byte.

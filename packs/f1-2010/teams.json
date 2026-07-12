@@ -1,0 +1,184 @@
+{
+  "teams": [
+    {
+      "id": "team.mclaren",
+      "name": "McLaren",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.87,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.mercedes",
+      "name": "Mercedes",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.66,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.red_bull",
+      "name": "Red Bull",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.74,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.ferrari",
+      "name": "Ferrari",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.88,
+      "prestige": 5,
+      "budgetTier": 5
+    },
+    {
+      "id": "team.williams",
+      "name": "Williams",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.67,
+      "prestige": 4,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.renault",
+      "name": "Renault",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.76,
+      "prestige": 4,
+      "budgetTier": 4
+    },
+    {
+      "id": "team.force_india",
+      "name": "Force India",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.7,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.toro_rosso",
+      "name": "Toro Rosso",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.44,
+      "prestige": 2,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.lotus_racing",
+      "name": "Lotus Racing",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.46,
+      "prestige": 2,
+      "budgetTier": 2
+    },
+    {
+      "id": "team.hrt",
+      "name": "Hispania",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.47,
+      "prestige": 1,
+      "budgetTier": 1
+    },
+    {
+      "id": "team.sauber",
+      "name": "BMW Sauber",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.66,
+      "prestige": 3,
+      "budgetTier": 3
+    },
+    {
+      "id": "team.virgin",
+      "name": "Virgin",
+      "carVehicleIds": [
+        "formula_reiza"
+      ],
+      "performance": {
+        "weightScalar": 1,
+        "powerScalar": 1,
+        "dragScalar": 1
+      },
+      "reliability": 0.45,
+      "prestige": 1,
+      "budgetTier": 2
+    }
+  ]
+}

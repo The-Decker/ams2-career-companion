@@ -146,7 +146,8 @@ public sealed class WeekendLoopTests
             SmgpBriefing = new Companion.ViewModels.Services.SmgpBriefingModel
             {
                 RoundHeader = "SAN MARINO · ROUND 1",
-                PointsLine = "9 D.P.",
+                SeasonLine = "SEASON  P1 · 9 PTS",
+                CareerLine = "",
                 AdviceLine = "PASS AT THE HAIRPIN!",
                 Titles = 0,
                 CareerOver = false,

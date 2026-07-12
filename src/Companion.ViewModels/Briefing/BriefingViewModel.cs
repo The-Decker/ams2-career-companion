@@ -189,7 +189,7 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// renders outside the mode.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
-        nameof(SmgpPointsLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
+        nameof(SmgpSeasonLine), nameof(SmgpCareerLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
         nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled))]
     private SmgpBriefingModel? _smgpBriefing;
 
@@ -248,7 +248,11 @@ public sealed partial class BriefingViewModel : ObservableObject
 
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
 
-    public string SmgpPointsLine => SmgpBriefing?.PointsLine ?? "";
+    /// <summary>The player's live SEASON standing line for the readout (was the "D.P." points line).</summary>
+    public string SmgpSeasonLine => SmgpBriefing?.SeasonLine ?? "";
+
+    /// <summary>The player's live CAREER record line (empty until they have something to show).</summary>
+    public string SmgpCareerLine => SmgpBriefing?.CareerLine ?? "";
 
     public string SmgpAdviceLine => SmgpBriefing?.AdviceLine ?? "";
 

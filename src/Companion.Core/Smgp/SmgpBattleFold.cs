@@ -34,8 +34,31 @@ public static class SmgpBattleFold
         // A two-wins offer promotes in EVERY tier (incl. D→C — the way out of the floor). A
         // two-losses forfeit relegates only ABOVE D (to a RANDOM team one class below); at the D
         // floor there is nowhere below, so it does not relegate.
-        if (update.Trigger == SmgpTrigger.SeatSwapOfferToPlayer && context.SeatSwapAccepted == true)
-            state = ApplyAcceptedSwap(context, ladder, state, seatEvents);
+        if (update.Trigger == SmgpTrigger.SeatSwapOfferToPlayer)
+        {
+            if (state.TwoPhasePromotion)
+            {
+                // TWO-PHASE (3c-2): DEFER the promotion to the post-race screen — record the offer
+                // (the car the player would move into) instead of moving the seat. No seat row yet;
+                // the resolution (below / from the promotion screen) emits it on accept.
+                string? rivalSeat = CurrentSeatOf(context.Pack, state, context.RivalDriverId);
+                if (rivalSeat is not null &&
+                    !string.Equals(rivalSeat, state.CurrentSeatLivery, StringComparison.Ordinal))
+                    state = state with
+                    {
+                        PendingSwap = new SmgpPendingOffer
+                        {
+                            RivalDriverId = context.RivalDriverId,
+                            OfferedSeat = rivalSeat,
+                        },
+                    };
+            }
+            else if (context.SeatSwapAccepted == true)
+            {
+                // LEGACY (pre-3c-2 careers): the up-front answer applies inline this round.
+                state = ApplyAcceptedSwap(context, ladder, state, seatEvents);
+            }
+        }
         else if (update.Trigger == SmgpTrigger.PlayerSeatForfeit && playerTier != 'D')
             state = ApplyForfeit(context, ladder, state, seatEvents);
 
@@ -51,6 +74,14 @@ public static class SmgpBattleFold
         // Promoting OUT of D (a win-swap up to C) wipes the floor-loss count — a fresh start above.
         if (playerTier == 'D' && TierOf(ladder, state.CurrentSeatLivery) is { } newTier && newTier != 'D')
             state = state with { FloorLosses = 0 };
+
+        // TWO-PHASE resolution (3c-2): when the round already carries the player's stored decision
+        // (replay of a resolved round, or the skip-everything default), resolve the pending offer
+        // INSIDE this fold so the state + seat row re-derive byte-identically to the live path
+        // (where ResolvePendingOffer ran from the promotion screen). No decision yet (the live
+        // result-entry fold) → the offer stays pending for the screen to answer.
+        if (state.PendingSwap is { } pending && context.SwapDecision is { } decided)
+            state = ResolvePendingOffer(context.Pack, state, pending, decided, seatEvents);
 
         var events = new List<JournalEvent>
         {
@@ -180,6 +211,44 @@ public static class SmgpBattleFold
     /// <summary>The rival's "to" seat when a clean swap benches him (he holds no car while the player
     /// occupies his seat, and returns to it the moment the player moves on).</summary>
     private const string Benched = "";
+
+    /// <summary>
+    /// Resolve a PENDING two-wins offer (3c-2) with the player's post-race decision — the shared
+    /// half both paths run so live and replay produce the SAME state + seat rows:
+    /// <list type="bullet">
+    /// <item>the promotion SCREEN (live) calls it once the player answers, appending the resulting
+    /// <c>smgp.seat</c> row and re-persisting the round's state;</item>
+    /// <item>replay's <see cref="Apply"/> calls it inline once the stored <c>smgp.swap</c> input
+    /// supplies the decision.</item>
+    /// </list>
+    /// ACCEPT = a CLEAN move into the offered car (the rival benches, the player's old car reverts —
+    /// exactly like <see cref="ApplyAcceptedSwap"/>), and promoting OUT of the D floor wipes the
+    /// floor-loss count. DECLINE (or a pending that cannot resolve) just clears the offer; the seat
+    /// holds. Callers pass a state whose <see cref="SmgpState.PendingSwap"/> equals
+    /// <paramref name="pending"/>.
+    /// </summary>
+    public static SmgpState ResolvePendingOffer(
+        SeasonPack pack, SmgpState state, SmgpPendingOffer pending, bool accept,
+        List<JournalEvent> seatEvents)
+    {
+        if (!accept)
+            return state with { PendingSwap = null };
+
+        var ladder = Ladder(pack);
+        char? oldTier = TierOf(ladder, state.CurrentSeatLivery);
+        string playerSeat = state.CurrentSeatLivery;
+
+        state = state with { CurrentSeatLivery = pending.OfferedSeat, PendingSwap = null };
+        seatEvents.Add(SeatEvent("seat-swap", playerSeat, pending.OfferedSeat,
+            pending.RivalDriverId, pending.OfferedSeat, Benched,
+            displacedDriverId: null, displacedFrom: null, displacedTo: null));
+
+        // Promoting OUT of D wipes the floor-loss count — the same fresh-start rule the inline path
+        // applies, now on the round the offer is ACCEPTED (the deferred move actually happens here).
+        if (oldTier == 'D' && TierOf(ladder, state.CurrentSeatLivery) is { } newTier && newTier != 'D')
+            state = state with { FloorLosses = 0 };
+        return state;
+    }
 
     /// <summary>The rival beat the player twice (above D): the player is RELEGATED to a team in
     /// the class BELOW, chosen at RANDOM (deterministically, from the master seed) among that
@@ -347,8 +416,16 @@ public sealed record SmgpBattleFoldContext
     public bool Forced { get; init; }
 
     /// <summary>The player's stored answer to a seat-swap offer this round's battle triggered
-    /// (null = no offer arose / legacy).</summary>
+    /// (null = no offer arose / legacy). For a TWO-PHASE career this is only the UP-FRONT default
+    /// (the standing answer); the real decision rides <see cref="SwapDecision"/>.</summary>
     public bool? SeatSwapAccepted { get; init; }
+
+    /// <summary>The player's POST-RACE promotion-screen decision for a two-phase career (3c-2),
+    /// read back from the journaled <c>smgp.swap</c> input at re-fold. Null = undecided (the live
+    /// result-entry fold, before the screen — the offer stays pending) or a non-two-phase career.
+    /// When set on a round that raised an offer, <see cref="Apply"/> resolves the pending swap
+    /// inline so replay re-derives the live outcome byte-identically.</summary>
+    public bool? SwapDecision { get; init; }
 
     public required int? PlayerFinish { get; init; }
 

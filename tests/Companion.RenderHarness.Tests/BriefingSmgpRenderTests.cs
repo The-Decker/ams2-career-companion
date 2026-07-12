@@ -50,7 +50,8 @@ public sealed class BriefingSmgpRenderTests
         public SmgpBriefingModel? CurrentSmgpBriefing() => new()
         {
             RoundHeader = "SAN MARINO · ROUND 1",
-            PointsLine = "9 D.P.",
+            SeasonLine = "SEASON  P1 · 9 PTS",
+            CareerLine = "CAREER  2 WINS · 1 POLE",
             AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
             Titles = 0,
             CareerOver = false,

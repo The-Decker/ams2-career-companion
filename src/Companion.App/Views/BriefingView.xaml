@@ -221,6 +221,17 @@
                                 </Style>
                             </Button.Style>
                         </Button>
+
+                        <!-- the loop-walker: set the race up in AMS2, race it, then Continue through
+                             qualifying → grid → result → confirm (the Upcoming Race tab's own advance,
+                             now that the header loop buttons are gone — reserved for the tycoon mode).
+                             Binds up to the hosting HomeView; absent there (e.g. the render harness) it
+                             simply disables. -->
+                        <Button Content="Continue  ⏎" Style="{StaticResource AccentButton}"
+                                MinWidth="150" Margin="12,0,0,0"
+                                Command="{Binding DataContext.EnterResultCommand,
+                                          RelativeSource={RelativeSource AncestorType=views:HomeView}}"
+                                ToolTip="Continue the race weekend — qualifying, then the result" />
                     </StackPanel>
 
                     <!-- stage confirmation popover -->
@@ -353,7 +364,7 @@
                             Visibility="{Binding CircuitLayoutId, Converter={StaticResource StringVisible}}">
                         <StackPanel>
                             <TextBlock Text="CIRCUIT" Style="{StaticResource Faint}" FontSize="11" />
-                            <Viewbox HorizontalAlignment="Left" Margin="0,10,0,0"
+                            <Viewbox HorizontalAlignment="Center" Margin="0,10,0,0"
                                      Width="{Binding ActualWidth, ElementName=CircuitPanel,
                                              Converter={StaticResource WidthFraction}, ConverterParameter=0.55|140|280}"
                                      Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},

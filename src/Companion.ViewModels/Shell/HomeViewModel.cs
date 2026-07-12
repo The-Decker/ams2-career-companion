@@ -47,6 +47,12 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// over the shared Briefing so the naming persists). Null except while on that step.</summary>
     private RivalScreenViewModel? _rivalScreen;
 
+    /// <summary>The SMGP promotion / demotion screen (3c-3) — its own full-immersion step AFTER the
+    /// confirm, when the round produced a seat change (a two-wins offer to accept/decline, or a forced
+    /// relegation to acknowledge). Null except while on that step; the round does not advance until it
+    /// is answered (season end is held too — see CareerSessionService.EnsureSeasonEnd).</summary>
+    private PromotionViewModel? _promotion;
+
     /// <summary>True once the rival step has been shown-and-passed this round, so re-entering the flow
     /// (or a career with no rival) goes straight to qualifying. Reset on Apply.</summary>
     private bool _rivalStepDone;
@@ -151,7 +157,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         nameof(IsBriefingState), nameof(IsResultEntryState),
         nameof(IsConfirmState), nameof(IsStandingsState), nameof(IsSeasonReviewState),
         nameof(IsQualifyingStep), nameof(IsStartingGridState), nameof(IsRivalStep),
-        nameof(ConfirmButtonText))]
+        nameof(IsPromotionStep), nameof(ConfirmButtonText))]
     private ObservableObject? _currentContent;
 
     [ObservableProperty]
@@ -170,6 +176,11 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     /// <summary>True while the CURRENT content is the SMGP rival screen (after race setup, before
     /// qualifying). Drives the primary action's "Continue" label.</summary>
     public bool IsRivalStep => CurrentContent is RivalScreenViewModel;
+
+    /// <summary>True while the CURRENT content is the SMGP promotion / demotion screen (after confirm,
+    /// when the round moved seats). Its own accept/decline buttons drive the flow, so the header's
+    /// primary confirm action is suppressed.</summary>
+    public bool IsPromotionStep => CurrentContent is PromotionViewModel;
 
     /// <summary>True when this round has an SMGP rival step to show (an active rival briefing). A
     /// non-SMGP / character-free career has none, so the flow is byte-identical to the shipped loop.</summary>
@@ -291,11 +302,82 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             ShowRaceEntry();
             return;
         }
+        // The car the player actually drives: their seat is stamped with the synthetic distinct-driver
+        // id (SMGP clean-swap), which has no car art — so resolve the car from the livery they took over
+        // to the authored driver on that entry, whose car art IS that team's car. Null (a custom
+        // own-entrant livery matching no entry, or no player seat) leaves the card's fallback.
+        var playerSeat = grid.FirstOrDefault(s => s.IsPlayer);
+        string? playerCarArtDriverId = playerSeat is null ? null
+            : _session.Pack.Entries
+                .FirstOrDefault(e => string.Equals(
+                    e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal))
+                ?.DriverId;
+
+        // The dynamic per-race DNQ field: the cars whose livery didn't make this round's grid. The pack
+        // fields all its painted cars (SMGP = 34) but the grid caps at ~26, so the slowest 8-9 sit out —
+        // and which ones rotates race to race (the field is pre-qualified). Empty for a full-field pack,
+        // which hides the strip. Ordered fastest-first, so the cars that narrowly missed lead.
+        var seatedLiveries = grid.Select(s => s.Ams2LiveryName).ToHashSet(StringComparer.Ordinal);
+        var driverName = new Dictionary<string, string>(StringComparer.Ordinal);
+        var driverQuali = new Dictionary<string, double>(StringComparer.Ordinal);
+        foreach (var d in _session.Pack.Drivers)
+        {
+            driverName.TryAdd(d.Id, d.Name);
+            driverQuali.TryAdd(d.Id, d.Ratings.QualifyingSkill);
+        }
+        var teamName = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var t in _session.Pack.Teams)
+            teamName.TryAdd(t.Id, t.Name);
+        var dnq = _session.Pack.Entries
+            .Where(e => !seatedLiveries.Contains(e.Ams2LiveryName))
+            .OrderByDescending(e => driverQuali.GetValueOrDefault(e.DriverId))
+            .Select(e => new StartingGridDnq(
+                driverName.GetValueOrDefault(e.DriverId, e.DriverId),
+                teamName.GetValueOrDefault(e.TeamId, e.TeamId),
+                e.Number))
+            .ToList();
+
         _startingGrid = new StartingGridViewModel(
             grid, Summary.PlayerDriverId,
-            WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null);
+            WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null,
+            BuildGridConditions(), playerCarArtDriverId, dnq);
         CurrentContent = _startingGrid;
         ConfirmResultCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>The starting-grid bars' race conditions — lap distance + weather read from the current
+    /// briefing; the atmospheric readouts (track/air temp, wind, humidity) are synthesised
+    /// deterministically from the weather for flavour (display-only, never folded).</summary>
+    private GridConditions BuildGridConditions()
+    {
+        var briefing = _session.CurrentBriefing();
+        string weather = briefing?.Settings.FirstOrDefault(s =>
+            string.Equals(s.Section, "Race", StringComparison.Ordinal) &&
+            s.Label.StartsWith("Weather", StringComparison.OrdinalIgnoreCase))?.Value ?? "Clear";
+        bool wet = weather.Contains("rain", StringComparison.OrdinalIgnoreCase)
+            || weather.Contains("wet", StringComparison.OrdinalIgnoreCase)
+            || weather.Contains("storm", StringComparison.OrdinalIgnoreCase)
+            || weather.Contains("shower", StringComparison.OrdinalIgnoreCase);
+        int seed = Math.Abs(Summary.CurrentRound * 7 + weather.Length * 3);
+        return new GridConditions
+        {
+            LapDistanceKm = ParseKm(Briefing.CircuitCaption),
+            Weather = weather,
+            IsWet = wet,
+            TrackTempC = wet ? 16 + seed % 5 : 26 + seed % 7,
+            AirTempC = wet ? 13 + seed % 4 : 20 + seed % 5,
+            WindMs = Math.Round((wet ? 3.5 : 1.5) + seed % 4 * 0.4, 1),
+            HumidityPct = wet ? 80 + seed % 15 : 30 + seed % 20,
+            FuelPct = 100,
+        };
+    }
+
+    /// <summary>Pulls the "X.XXX km" lap distance out of the briefing's circuit caption, or null.</summary>
+    private static double? ParseKm(string? caption)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(caption ?? "", @"([\d.]+)\s*km");
+        return match.Success && double.TryParse(match.Groups[1].Value,
+            System.Globalization.CultureInfo.InvariantCulture, out double km) ? km : null;
     }
 
     /// <summary>Show the race result entry — the shipped flow, now seeded pole-first from any
@@ -418,8 +500,21 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             model,
             onApply: () => ApplyDraft(draft),
             onBack: () => CurrentContent = _resultEntry,
-            displayName: PackDisplayNames.ResolverFor(_session.Pack),
+            displayName: PlayerAwareNames(),
             minimalNarrative: _settings?.Current.MinimalNarrative ?? false);
+    }
+
+    /// <summary>A driver-id → display-name resolver that knows the PLAYER: an SMGP clean-swap player
+    /// is a synthetic driver ("driver.player-entrant") absent from the pack, so the pack resolver
+    /// would echo the raw id in the round's points / movements. This maps the player's id to their
+    /// name (character name, else "You") and defers to the pack resolver for everyone else.</summary>
+    private Func<string, string> PlayerAwareNames()
+    {
+        var packNames = PackDisplayNames.ResolverFor(_session.Pack);
+        var player = _session.PlayerIdentity();
+        return id => player is { } p && string.Equals(id, p.DriverId, StringComparison.Ordinal)
+            ? p.DisplayName
+            : packNames(id);
     }
 
     /// <summary>Assembles the round's draft from the captured races (locked) plus the final race
@@ -450,6 +545,10 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
 
     private void ApplyDraft(ResultDraft draft)
     {
+        // Captured BEFORE the fold so a forced demotion this round (a seat move with no pending
+        // offer) can be detected by the team changing. Null for every non-SMGP career.
+        string? smgpTeamBefore = _session.CurrentSmgpTeamId();
+
         try
         {
             _session.Apply(draft);
@@ -460,13 +559,36 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             return;
         }
 
+        ClearRoundEntryState();
+
+        Summary = _session.Summary;
+        Briefing.Refresh();
+
+        // SMGP promotion / demotion (3c-3): a seat change this round gets its own full-immersion
+        // screen BEFORE the round advances — a pending two-wins offer to accept/decline, or a forced
+        // relegation to acknowledge. Season end is held too until an offer resolves (3c-2). A
+        // non-SMGP / character-free career yields null for both, so the shipped loop is unchanged.
+        var promotion = _session.CurrentSmgpPromotion() ?? _session.CurrentSmgpDemotion(smgpTeamBefore);
+        if (promotion is not null)
+        {
+            ShowPromotion(promotion);
+            RefreshRoundCommands();
+            return;
+        }
+
+        AdvanceAfterRound();
+        RefreshRoundCommands();
+    }
+
+    /// <summary>Tears down the round's entry state (result / qualifying / grid / rival) once its
+    /// result is applied — the qualifying order + captured races were consumed by the fold.</summary>
+    private void ClearRoundEntryState()
+    {
         if (_resultEntry is not null)
         {
             _resultEntry.PropertyChanged -= OnResultEntryPropertyChanged;
             _resultEntry = null;
         }
-
-        // The weekend's qualifying order + captured races were consumed by this Apply — clear them.
         if (_qualifyingEntry is not null)
         {
             _qualifyingEntry.PropertyChanged -= OnResultEntryPropertyChanged;
@@ -477,18 +599,64 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         _startingGrid = null;
         _rivalScreen = null;
         _rivalStepDone = false;
+    }
 
-        Summary = _session.Summary;
-        Briefing.Refresh();
-
+    /// <summary>Move on from a finished round — the final standings review when the season is done,
+    /// else the next round's briefing.</summary>
+    private void AdvanceAfterRound()
+    {
+        _promotion = null;
         if (Summary.SeasonComplete)
             ShowSeasonReview();
         else
             CurrentContent = Briefing;
+    }
 
+    private void RefreshRoundCommands()
+    {
         ShowBriefingCommand.NotifyCanExecuteChanged();
         EnterResultCommand.NotifyCanExecuteChanged();
         ConfirmResultCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>Show the SMGP promotion / demotion screen (3c-3) — its own step after the confirm. Its
+    /// buttons resolve the offer (or acknowledge the drop) and then advance the round.</summary>
+    private void ShowPromotion(SmgpPromotionModel model)
+    {
+        ContentError = null;
+        _promotion = new PromotionViewModel(
+            model,
+            onAccept: () => ResolvePromotion(model, accept: true),
+            onDecline: () => ResolvePromotion(model, accept: false));
+        CurrentContent = _promotion;
+    }
+
+    /// <summary>Answer the promotion screen: a two-wins offer commits the accept/decline to the fold
+    /// (holding season end until now — 3c-2); a demotion is acknowledge-only. Then advance the round.</summary>
+    private void ResolvePromotion(SmgpPromotionModel model, bool accept)
+    {
+        if (model.Kind == SmgpPromotionKind.PromotionOffer)
+        {
+            try
+            {
+                _session.ResolveSmgpOffer(accept);
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+            {
+                ContentError = ex.Message;
+                return;
+            }
+        }
+
+        Summary = _session.Summary;
+        // Taking the seat moves the player's team/car but does NOT change the CareerSummary value
+        // (same round, same season-start livery), so the observable setter above no-ops and the hub
+        // never re-projects. Force the notification the hub listens on so the Driver + Skins lenses
+        // pick up the new team (else they keep showing the pre-promotion seat).
+        OnPropertyChanged(nameof(Summary));
+        Briefing.Refresh();
+        AdvanceAfterRound();
+        RefreshRoundCommands();
     }
 
     [RelayCommand]

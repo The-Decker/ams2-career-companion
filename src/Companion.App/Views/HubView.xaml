@@ -16,39 +16,10 @@
         <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1" Padding="20,12">
             <DockPanel>
-                <!-- always-visible primary loop actions (one click back to the loop from anywhere) -->
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="Upcoming Race" Command="{Binding GoToBriefingCommand}"
-                            ToolTip="Go to the upcoming race — set it up, then run the weekend">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource HubLoopButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Home.IsBriefingState}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Content="Enter result" Command="{Binding GoToResultCommand}"
-                            ToolTip="Enter this round's finishing order">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource HubLoopButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Home.IsResultEntryState}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Home.IsConfirmState}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                        <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
+                <!-- The top-right is deliberately EMPTY — reserved for the (future) tycoon team mode.
+                     The loop is entered from the "Upcoming Race" rail tab and walked with its own
+                     Continue button; the only global top-right control is the Settings gear (in the
+                     window title bar). -->
 
                 <!-- the season year (big + first) with its era medium beneath -->
                 <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,16,0">
@@ -99,8 +70,7 @@
                             <!-- the row = a full-width select button, with a small tear-off ⧉ on the
                                  read-only lenses (Standings/Driver/History/Skins) that pops the tab
                                  into an always-on-top companion window over AMS2. The Upcoming Race
-                                 screen is locked out of the rail (ShowInRail=false) — reached only
-                                 via the header loop buttons. -->
+                                 tab leads the rail; its loop is walked with its own Continue button. -->
                             <Grid Margin="0,2"
                                   Visibility="{Binding ShowInRail, Converter={StaticResource BoolVisible}}">
                                 <Button Padding="12,9" HorizontalContentAlignment="Left"
