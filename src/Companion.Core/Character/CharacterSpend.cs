@@ -28,10 +28,14 @@ public static class CharacterProgress
 {
     /// <summary>Character points available to spend right now: the creation leftover, plus the level
     /// grants earned so far, minus everything already spent.</summary>
-    public static int AvailableCp(CharacterProfile character, int level, CharacterRules rules) =>
-        character.CpUnspent
-        + rules.Levels.LevelGrants.CharacterPointsPerLevel * Math.Max(0, level - 1)
-        - character.CpSpent;
+    public static int AvailableCp(CharacterProfile character, int level, CharacterRules rules)
+    {
+        int perLevel = rules.Levels.LevelGrants.CharacterPointsPerLevel
+            + PerkResolver.Resolve(character, rules).StatPointsPerLevelBonus;
+        return character.CpUnspent
+            + Math.Max(0, perLevel) * Math.Max(0, level - 1)
+            - character.CpSpent;
+    }
 
     /// <summary>Applies a spend to the character — raise a stat by one step (capped at
     /// <c>statCapPerRating</c>, which is higher than the creation cap, so a driver develops beyond
@@ -41,12 +45,17 @@ public static class CharacterProgress
     {
         var stats = new Dictionary<string, double>(character.Stats, StringComparer.Ordinal);
         var perks = character.PerkIds.ToList();
+        var skillNodes = character.SkillNodeIds.ToList();
 
         if (spend.Kind == "stat")
         {
+            var node = rules.SkillTree.TryGetStatNode(spend.Target);
+            string statId = node?.Stat ?? spend.Target; // raw stat ids are the legacy journal shape
             double step = rules.Levels.LevelGrants.StatStepValue;
             double cap = rules.Levels.LevelGrants.StatCapPerRating;
-            stats[spend.Target] = Math.Clamp(stats.GetValueOrDefault(spend.Target) + step, 0.0, cap);
+            stats[statId] = Math.Clamp(stats.GetValueOrDefault(statId) + step, 0.0, cap);
+            if (node is not null && !skillNodes.Contains(node.Id, StringComparer.Ordinal))
+                skillNodes.Add(node.Id);
         }
         else if (spend.Kind == "perk" && !perks.Contains(spend.Target, StringComparer.Ordinal))
         {
@@ -57,6 +66,7 @@ public static class CharacterProgress
         {
             Stats = stats,
             PerkIds = perks,
+            UnlockedSkillNodeIds = skillNodes.Count == 0 ? null : skillNodes,
             CpSpent = character.CpSpent + spend.Cost,
         };
     }

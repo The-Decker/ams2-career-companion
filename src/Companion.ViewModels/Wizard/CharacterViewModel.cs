@@ -230,12 +230,15 @@ public sealed partial class CharacterViewModel : ObservableObject
         foreach (var slider in Stats.Concat(MetaStats))
             stats[slider.Id] = slider.Value;
 
+        var perkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList();
         return new CharacterProfile
         {
             Name = Name.Trim(),
             Age = Math.Clamp(Age, MinAge, MaxAge),
             Stats = stats,
-            PerkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList(),
+            PerkIds = perkIds,
+            CreationPerkIds = perkIds,
+            ProgressionVersion = 1,
             // Record the chosen specialism only when One-Trick Pony is actually taken, so a build
             // without it serialises with no ChosenFlavor (byte-identical to a legacy profile).
             ChosenFlavor = IsOneTrickSelected ? ChosenFlavor.Field : null,

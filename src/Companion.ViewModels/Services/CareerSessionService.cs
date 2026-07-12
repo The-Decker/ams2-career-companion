@@ -641,7 +641,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             : null;
         var dossier = Companion.Core.Character.CharacterDossier.Build(
             character, player.Level, player.Xp, _environment.Rules.Character, currentAge,
-            player.RaceSuspensionRemaining, player.SeasonEndingInjury, player.Deceased);
+            player.RaceSuspensionRemaining, player.SeasonEndingInjury, player.Deceased,
+            character.ProgressionVersion >= 1
+                ? _environment.Rules.Character.Levels.SoftCapForYear(Pack.Season.Year)
+                : null);
         // Reflect spends made this season but not yet applied at a transition.
         int pending = PendingSpends().Sum(s => s.Cost);
         return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };
@@ -651,6 +654,21 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// sign-and-continue applies them to the next season's character.</summary>
     private IReadOnlyList<CharacterSpend> PendingSpends() =>
         ReplayService.ReadCharacterSpends(_database, _seasonId);
+
+    /// <summary>The rules-backed skill-tree snapshot, including this season's pending development
+    /// inputs so a just-bought node immediately projects as owned.</summary>
+    public SkillTreeSnapshot? SkillTree()
+    {
+        if (_environment.RulesDirectory is null)
+            return null;
+        var player = CurrentPlayerState();
+        if (player?.Character is not { } character)
+            return null;
+        var rules = _environment.Rules.Character;
+        var projected = CharacterProgress.ApplyAll(character, PendingSpends(), rules);
+        return Companion.Core.Character.SkillTree.Build(
+            projected, player.Level, AvailableCharacterCp(), rules);
+    }
 
     /// <summary>Character points available to spend right now: the folded pool minus this season's
     /// pending spends. 0 when the career has no character.</summary>
@@ -675,6 +693,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (player?.Character is not { } character)
             throw new InvalidOperationException("This career has no character to develop.");
         var rules = _environment.Rules.Character;
+        var pendingSpends = PendingSpends();
+        var projectedCharacter = CharacterProgress.ApplyAll(character, pendingSpends, rules);
+        string journalTarget = spend.Target;
 
         // Derive the AUTHORITATIVE cost from the rules and never trust the caller's Cost. Otherwise a
         // crafted spend could buy a costed perk for 0 (or mint points with a negative cost), and
@@ -683,18 +704,47 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         int cost;
         if (spend.Kind == "stat")
         {
-            if (!IsKnownStat(rules, spend.Target))
+            var statNode = rules.SkillTree.TryGetStatNode(spend.Target);
+            if (statNode is null && character.ProgressionVersion >= 1 && IsKnownStat(rules, spend.Target))
+            {
+                // The legacy Season Review command still names a raw stat. Canonicalize it to the
+                // next authored node so new careers retain durable node ownership in the same
+                // player.statSpend journal shape. Old profiles keep their historical raw-stat path.
+                statNode = rules.SkillTree.StatNodes
+                    .Where(node => string.Equals(node.Stat, spend.Target, StringComparison.Ordinal))
+                    .OrderBy(node => node.Tier)
+                    .ThenBy(node => node.UnlockLevel)
+                    .FirstOrDefault(node => !projectedCharacter.SkillNodeIds.Contains(
+                        node.Id, StringComparer.Ordinal));
+                if (statNode is null)
+                    throw new InvalidOperationException("Every authored raise for that stat is already owned.");
+                journalTarget = statNode.Id;
+            }
+
+            string statId = statNode?.Stat ?? spend.Target;
+            if (!IsKnownStat(rules, statId))
                 throw new InvalidOperationException($"Unknown stat '{spend.Target}'.");
+            if (statNode is not null)
+            {
+                var treeNode = Companion.Core.Character.SkillTree.Build(
+                        projectedCharacter, player.Level, AvailableCharacterCp(), rules)
+                    .Branches.SelectMany(branch => branch.Nodes)
+                    .Single(node => string.Equals(node.Id, statNode.Id, StringComparison.Ordinal));
+                if (treeNode.State != SkillNodeState.Unlockable)
+                    throw new InvalidOperationException(
+                        treeNode.State == SkillNodeState.Owned ? "That skill node is already owned." : treeNode.LockReason);
+            }
+
             double step = rules.Levels.LevelGrants.StatStepValue;
-            var mods = PerkResolver.Resolve(character, rules);
+            var mods = PerkResolver.Resolve(projectedCharacter, rules);
             // One-Trick Pony's lockToOne freezes every talent stat except the one that owns the
             // chosen specialism rating — you can only ever develop your single weapon.
             if (mods.LockedFlavorRating is { } locked)
             {
                 bool isTalent = rules.Stats.TalentStats.Any(s =>
-                    string.Equals(s.Id, spend.Target, StringComparison.Ordinal));
+                    string.Equals(s.Id, statId, StringComparison.Ordinal));
                 bool ownsLocked = rules.Stats.TalentStats.Any(s =>
-                    string.Equals(s.Id, spend.Target, StringComparison.Ordinal)
+                    string.Equals(s.Id, statId, StringComparison.Ordinal)
                     && s.MapsTo.Contains(locked, StringComparer.Ordinal));
                 if (isTalent && !ownsLocked)
                     throw new InvalidOperationException(
@@ -702,12 +752,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             }
             // A statPoints/softCap perk (iron_constitution) lowers the in-career raise ceiling.
             double cap = rules.Levels.LevelGrants.StatCapPerRating + mods.StatSoftCapDelta;
-            int pendingSteps = PendingSpends().Count(s => s.Kind == "stat"
-                && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
-            double current = character.Stat(spend.Target) + (pendingSteps * step);
+            double current = projectedCharacter.Stat(statId);
             if (current + step > cap + 1e-9)
                 throw new InvalidOperationException("That stat is already at its maximum.");
-            cost = rules.Levels.LevelGrants.StatStepCpCost;
+            cost = statNode?.Cost ?? rules.Levels.LevelGrants.StatStepCpCost;
         }
         else if (spend.Kind == "perk")
         {
@@ -718,11 +766,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // the earned-points model).
             if (perk.Cost <= 0)
                 throw new InvalidOperationException("That perk can only be chosen at creation.");
-            bool owned = character.PerkIds.Contains(spend.Target, StringComparer.Ordinal)
-                || PendingSpends().Any(s => s.Kind == "perk"
-                    && string.Equals(s.Target, spend.Target, StringComparison.Ordinal));
-            if (owned)
-                throw new InvalidOperationException("Your driver already has that perk.");
+            var treeNode = Companion.Core.Character.SkillTree.Build(
+                    projectedCharacter, player.Level, AvailableCharacterCp(), rules)
+                .Branches.SelectMany(branch => branch.Nodes)
+                .Single(node => string.Equals(node.Id, perk.Id, StringComparison.Ordinal));
+            if (treeNode.State != SkillNodeState.Unlockable)
+                throw new InvalidOperationException(
+                    treeNode.State == SkillNodeState.Owned ? "Your driver already has that perk." : treeNode.LockReason);
             cost = perk.Cost;
         }
         else
@@ -741,7 +791,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             ("@utc", NowUtc()), ("@season", _seasonId),
             ("@phase", JournalPhases.PlayerStatSpend),
             ("@delta", JsonSerializer.Serialize(
-                new { kind = spend.Kind, target = spend.Target, cost }, CoreJson.Options)));
+                new { kind = spend.Kind, target = journalTarget, cost }, CoreJson.Options)));
         transaction.Commit();
     }
 
@@ -763,13 +813,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return [];
 
         var rules = _environment.Rules.Character;
-        var owned = new HashSet<string>(character.PerkIds, StringComparer.Ordinal);
-        foreach (var spend in PendingSpends())
-            if (spend.Kind == "perk")
-                owned.Add(spend.Target);
+        var projected = CharacterProgress.ApplyAll(character, PendingSpends(), rules);
+        var unlockable = Companion.Core.Character.SkillTree.Build(projected, player.Level, available, rules)
+            .Branches.SelectMany(branch => branch.Nodes)
+            .Where(node => node.Kind == "perk" && node.State == SkillNodeState.Unlockable)
+            .Select(node => node.Id)
+            .ToHashSet(StringComparer.Ordinal);
 
         return rules.Perks
-            .Where(p => p.Cost > 0 && p.Cost <= available && !owned.Contains(p.Id))
+            .Where(p => unlockable.Contains(p.Id))
             .OrderBy(p => p.Cost)
             .ThenBy(p => p.Name, StringComparer.Ordinal)
             .Select(p => new PurchasablePerk

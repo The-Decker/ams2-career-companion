@@ -50,6 +50,27 @@ public sealed record CharacterProfile
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public int CpSpent { get; init; }
 
+    /// <summary>
+    /// Opt-in version for the skill-tree/era-cap progression rules. Legacy profiles deserialize as
+    /// 0 and retain their original uncapped XP fold; newly created profiles use version 1. Omitted
+    /// at 0 so pre-rework state blobs remain byte-identical.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int ProgressionVersion { get; init; }
+
+    /// <summary>Stat-node ids bought through the skill tree. Null/empty for legacy profiles and for
+    /// drivers who have not bought a stat node; omitted until the first node is owned.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public IReadOnlyList<string>? UnlockedSkillNodeIds { get; init; }
+
+    /// <summary>The perks selected at character creation. Respec keeps these identity perks locked.
+    /// Null on legacy profiles, where every already-owned perk is conservatively creation-locked.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public IReadOnlyList<string>? CreationPerkIds { get; init; }
+
+    [JsonIgnore]
+    public IReadOnlyList<string> SkillNodeIds => UnlockedSkillNodeIds ?? [];
+
     public double Stat(string id) => Stats.GetValueOrDefault(id);
 
     // Structural equality over the collections. The compiler-generated record equality would
@@ -66,10 +87,13 @@ public sealed record CharacterProfile
             return true;
         return CpUnspent == other.CpUnspent
             && CpSpent == other.CpSpent
+            && ProgressionVersion == other.ProgressionVersion
             && Age == other.Age
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
             && string.Equals(ChosenFlavor, other.ChosenFlavor, StringComparison.Ordinal)
             && PerkIds.SequenceEqual(other.PerkIds)
+            && (UnlockedSkillNodeIds ?? []).SequenceEqual(other.UnlockedSkillNodeIds ?? [])
+            && (CreationPerkIds ?? []).SequenceEqual(other.CreationPerkIds ?? [])
             && StatsEqual(Stats, other.Stats);
     }
 
@@ -78,10 +102,15 @@ public sealed record CharacterProfile
         var hash = new HashCode();
         hash.Add(CpUnspent);
         hash.Add(CpSpent);
+        hash.Add(ProgressionVersion);
         hash.Add(Age);
         hash.Add(Name);
         hash.Add(ChosenFlavor);
         foreach (string id in PerkIds)
+            hash.Add(id);
+        foreach (string id in UnlockedSkillNodeIds ?? [])
+            hash.Add(id);
+        foreach (string id in CreationPerkIds ?? [])
             hash.Add(id);
         foreach (var (key, value) in Stats.OrderBy(kv => kv.Key, StringComparer.Ordinal))
         {
@@ -115,6 +144,8 @@ public sealed record CharacterProfile
         {
             Stats = stats,
             PerkIds = archetype.PerkIds.ToList(),
+            CreationPerkIds = archetype.PerkIds.ToList(),
+            ProgressionVersion = 1,
         };
     }
 }

@@ -167,7 +167,10 @@ public static class RoundUpdate
             // A hit Setup Gamble also rewards character growth (0 without a bet or on a miss).
             xpRound += calledShotXpBonus;
             newXp = Math.Max(0, player.Xp + xpRound);
-            newLevel = charRules.Levels.XpCurve.LevelForTotalXp(newXp);
+            newLevel = charRules.Levels.LevelForTotalXp(
+                newXp,
+                grid.Year,
+                useEraSoftCap: player.Character.ProgressionVersion >= 1);
             xpEvent = new JournalEvent
             {
                 Phase = JournalPhases.PlayerXp,

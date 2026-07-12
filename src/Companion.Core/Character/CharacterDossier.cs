@@ -48,7 +48,8 @@ public sealed record CharacterDossier
 
     public static CharacterDossier Build(
         CharacterProfile character, int level, long xp, CharacterRules rules, int? age = null,
-        int raceSuspensionRemaining = 0, bool seasonEndingInjury = false, bool deceased = false)
+        int raceSuspensionRemaining = 0, bool seasonEndingInjury = false, bool deceased = false,
+        int? levelCap = null)
     {
         var curve = rules.Levels.XpCurve;
 
@@ -56,7 +57,8 @@ public sealed record CharacterDossier
         long cumulativeToLevel = 0;
         for (int n = 2; n <= level; n++)
             cumulativeToLevel += curve.XpForLevel(n);
-        long forNext = level >= curve.MaxLevel ? 0 : curve.XpForLevel(level + 1);
+        int effectiveCap = Math.Min(curve.MaxLevel, levelCap ?? curve.MaxLevel);
+        long forNext = level >= effectiveCap ? 0 : curve.XpForLevel(level + 1);
 
         var stats = new List<DossierStat>();
         foreach (var stat in rules.Stats.TalentStats)

@@ -96,22 +96,70 @@ public sealed partial class DossierViewModel : ObservableObject
         LevelsGained = 0;
     }
 
-    /// <summary>Slice-0 command stub; unlock behavior lands after the tree projection.</summary>
+    /// <summary>Unlocks one eligible perk/stat node through the existing authoritative spend seam.</summary>
     [RelayCommand]
     private void UnlockNode(SkillNodeViewModel? node)
     {
+        if (node is null || !node.CanUnlock)
+            return;
+        var spend = string.Equals(node.Kind, "stat", StringComparison.Ordinal)
+            ? CharacterSpend.Stat(node.Id, node.Cost)
+            : CharacterSpend.Perk(node.Id, node.Cost);
+        _session.SpendCharacterPoint(spend);
+        Refresh();
     }
 
     /// <summary>Slice-0 command stub; respec behavior lands in Slice 5.</summary>
     [RelayCommand]
     private void RespecNode(SkillNodeViewModel? node)
     {
+        if (node is null || !node.IsOwned)
+            return;
+        _session.RespecNode(node.Id);
+        Refresh();
     }
 
     public void Refresh()
     {
-        Dossier = _session.CharacterDossier();
-        SkillTree = [];
+        int? previousLevel = Dossier?.Level;
+        var nextDossier = _session.CharacterDossier();
+        Dossier = nextDossier;
+        if (previousLevel is { } previous && nextDossier is { } next && next.Level > previous)
+        {
+            LevelUpPending = true;
+            LevelsGained += next.Level - previous;
+        }
+
+        var snapshot = _session.SkillTree();
+        if (snapshot is null)
+        {
+            SkillTree = [];
+        }
+        else
+        {
+            var names = snapshot.Branches.SelectMany(branch => branch.Nodes)
+                .ToDictionary(node => node.Id, node => node.Name, StringComparer.Ordinal);
+            SkillTree = snapshot.Branches.Select(branch => new SkillBranchViewModel
+            {
+                Id = branch.Id,
+                Name = branch.Name,
+                IsMeta = branch.IsMeta,
+                Nodes = branch.Nodes.Select(node => new SkillNodeViewModel
+                {
+                    Id = node.Id,
+                    Name = node.Name,
+                    Kind = node.Kind,
+                    Cost = node.Cost,
+                    Tier = node.Tier,
+                    UnlockLevel = node.UnlockLevel,
+                    RequiresLabels = node.Requires.Select(id => names.GetValueOrDefault(id, id)).ToList(),
+                    Benefits = node.Benefits,
+                    Drawbacks = node.Drawbacks,
+                    State = node.State,
+                    LockReason = node.LockReason,
+                }).ToList(),
+            }).ToList();
+        }
 
         // The player's current seat gives the team (portrait + spec) and the car (preview image).
         var playerSeat = _session.CurrentGrid().FirstOrDefault(s => s.IsPlayer);
