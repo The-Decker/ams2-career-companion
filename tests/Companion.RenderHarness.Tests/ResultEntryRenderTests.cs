@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Companion.App.Views;
+using Companion.Core.Career;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.ResultEntry;
@@ -598,6 +599,40 @@ public sealed class ResultEntryRenderTests
 
             Assert.False(host.InputBox.IsUndoEnabled,
                 "InputBox.IsUndoEnabled must be false so the grammar's Ctrl+Z is the only undo owner.");
+        });
+    }
+
+    [Fact]
+    public void PlayerAccident_RevealsSeverity_DefaultsMedium_AndTwoWayBindsHeavy()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new ResultEntryViewModel(Grid(), PlayerId);
+            using var host = ViewHost.Show(vm);
+            host.Layout();
+
+            var panel = host.Find<Border>("PlayerAccidentSeverityPanel")!;
+            var picker = host.Find<ListBox>("AccidentSeverityPicker")!;
+            Assert.Equal(Visibility.Collapsed, panel.Visibility);
+
+            Assert.True(vm.MarkDnf(PlayerId, "a"));
+            host.Layout();
+
+            Assert.Equal(Visibility.Visible, panel.Visibility);
+            Assert.Equal(AccidentSeverity.Medium, vm.PlayerAccidentSeverity);
+            Assert.Equal(AccidentSeverity.Medium, picker.SelectedItem);
+
+            picker.SelectedItem = AccidentSeverity.Heavy;
+            WpfRenderHarness.Pump();
+            Assert.Equal(AccidentSeverity.Heavy, vm.PlayerAccidentSeverity);
+
+            Assert.True(vm.SetDnfReason(PlayerId, "m"));
+            host.Layout();
+            Assert.Equal(Visibility.Collapsed, panel.Visibility);
+            Assert.Null(vm.PlayerAccidentSeverity);
         });
     }
 

@@ -4,23 +4,29 @@
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
     <Grid x:Name="HubStage">
-    <!-- Remove the ordinary Hub from BOTH layout and binding scope once CareerOver lands. That
-         matters in Hardcore: collapsed controls still keep WPF bindings alive, while clearing this
-         subtree's DataContext guarantees no hidden lens/converter can query the disposed session. -->
+    <!-- Remove the ordinary Hub from BOTH layout and binding scope for either terminal path.
+         That matters in Hardcore: collapsed controls still keep WPF bindings alive, while clearing
+         this subtree's DataContext guarantees no hidden lens/converter can query the disposed session. -->
     <Grid x:Name="LiveHubSurfaces">
         <Grid.Style>
             <Style TargetType="Grid">
                 <Setter Property="Visibility" Value="Collapsed" />
                 <Setter Property="DataContext" Value="{x:Null}" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding DataContext.Home.CareerOver,
-                                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                 Value="{x:Null}">
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding DataContext.Home.CareerOver,
+                                                         RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                       Value="{x:Null}" />
+                            <Condition Binding="{Binding DataContext.Home.Briefing.SmgpCareerOver,
+                                                         RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                       Value="False" />
+                        </MultiDataTrigger.Conditions>
                         <Setter Property="Visibility" Value="Visible" />
                         <Setter Property="DataContext"
                                 Value="{Binding DataContext,
                                                 RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                    </DataTrigger>
+                    </MultiDataTrigger>
                 </Style.Triggers>
             </Style>
         </Grid.Style>
@@ -401,5 +407,12 @@
                 </Style>
             </views:DeathScreenView.Style>
         </views:DeathScreenView>
+
+        <!-- The SMGP Level-D floor uses the same terminal visual language, with a fired/out-of-F1
+             voice instead of an obituary. This branch reads only the already-projected briefing. -->
+        <views:SmgpCareerOverView x:Name="SmgpCareerOverSurface"
+                                  Panel.ZIndex="20" DataContext="{Binding Home.Briefing}"
+                                  Visibility="{Binding Home.Briefing.SmgpCareerOver,
+                                                       Converter={StaticResource BoolVisible}}" />
     </Grid>
 </UserControl>

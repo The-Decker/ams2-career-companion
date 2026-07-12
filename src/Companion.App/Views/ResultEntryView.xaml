@@ -443,7 +443,8 @@
                              the DNF-zone root (the ResultEntryViewModel DataContext), not inside a
                              DnfEntry template, so the nullable enum remains a direct two-way bind.
                              The existing free-text Other-cause editor below remains independent. -->
-                        <Border DockPanel.Dock="Top" Margin="4,0,4,7" Padding="8,7"
+                        <Border x:Name="PlayerAccidentSeverityPanel"
+                                DockPanel.Dock="Top" Margin="4,0,4,7" Padding="8,7"
                                 Background="{DynamicResource WarningDimBrush}"
                                 BorderBrush="{DynamicResource WarningBrush}" BorderThickness="1"
                                 CornerRadius="5"
@@ -451,7 +452,8 @@
                             <StackPanel>
                                 <TextBlock Text="YOUR ACCIDENT — IMPACT SEVERITY" Style="{StaticResource Eyebrow}"
                                            Foreground="{DynamicResource WarningBrush}" />
-                                <ListBox ItemsSource="{StaticResource AccidentSeverityOptions}"
+                                <ListBox x:Name="AccidentSeverityPicker"
+                                         ItemsSource="{StaticResource AccidentSeverityOptions}"
                                          SelectedItem="{Binding PlayerAccidentSeverity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          SelectionMode="Single" HorizontalContentAlignment="Stretch" Margin="0,5,0,0"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"

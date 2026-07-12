@@ -891,7 +891,7 @@
                              ordered choices and the honest copy; this surface only makes the selected
                              danger level unmistakable. A single-selection ListBox provides true two-way
                              enum binding without a click handler or enum-to-bool converter. -->
-                        <Border Margin="0,18,0,0" Padding="14,12">
+                        <Border x:Name="MortalityModePanel" Margin="0,18,0,0" Padding="14,12">
                             <Border.Style>
                                 <Style TargetType="Border" BasedOn="{StaticResource Panel}">
                                     <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
@@ -914,7 +914,8 @@
                                 <TextBlock Text="DRIVER MORTALITY" Style="{StaticResource Eyebrow}" />
                                 <TextBlock Text="Choose how injuries and fatal accidents affect this career."
                                            Style="{StaticResource Body}" Margin="0,3,0,9" />
-                                <ListBox ItemsSource="{Binding MortalityOptions}"
+                                <ListBox x:Name="MortalityModePicker"
+                                         ItemsSource="{Binding MortalityOptions}"
                                          SelectedItem="{Binding MortalityMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          SelectionMode="Single" HorizontalContentAlignment="Stretch"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -986,7 +987,8 @@
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListBox>
-                                <TextBlock Text="{Binding MortalityModeSummary}" TextWrapping="Wrap"
+                                <TextBlock x:Name="MortalityModeSummaryText"
+                                           Text="{Binding MortalityModeSummary}" TextWrapping="Wrap"
                                            FontWeight="SemiBold" Margin="0,9,0,0">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock" BasedOn="{StaticResource Body}">

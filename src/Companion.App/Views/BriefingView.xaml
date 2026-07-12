@@ -443,13 +443,6 @@
                          now lives on its OWN step in the Upcoming Race flow (RivalScreenView), shown
                          after this race-setup briefing and before qualifying. -->
 
-                    <!-- SMGP game over: losing a rival battle at the floor team ends the career. -->
-                    <Border x:Name="SmgpCareerOverPanel" Style="{StaticResource ErrorCallout}" Margin="0,12,0,0"
-                            Visibility="{Binding SmgpCareerOver, Converter={StaticResource BoolVisible}}">
-                        <TextBlock Text="CAREER OVER — a rival took your seat with nothing below."
-                                   FontWeight="Bold" TextWrapping="Wrap" />
-                    </Border>
-
                     <!-- setup notes (placeholder distance note etc.) -->
                     <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
                             Visibility="{Binding SetupNotes, Converter={StaticResource NullCollapsed}}">

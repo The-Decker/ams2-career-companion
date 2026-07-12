@@ -40,7 +40,8 @@ public partial class MainWindow : Window
         // A fatal result replaces the whole Hub with the DB-free death screen. In Hardcore the
         // career database is already disposed and deleted, so no global Esc/tab accelerator may
         // reach hidden Hub/Home commands behind that terminal surface.
-        if (shell.Current is HubViewModel { Home.CareerOver: not null })
+        if (shell.Current is HubViewModel { Home.CareerOver: not null }
+            or HubViewModel { Home.Briefing.SmgpCareerOver: true })
             return;
 
         var hubView = FindVisualDescendant<HubView>(this);

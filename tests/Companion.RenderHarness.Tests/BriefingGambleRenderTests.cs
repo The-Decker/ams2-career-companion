@@ -104,7 +104,7 @@ public sealed class BriefingGambleRenderTests
             // caught it), and the SMGP panel must stay collapsed on a non-smgp career.
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("GamblePanel")).Visibility);
             // (the SMGP rival panel moved to its own RivalScreenView — no longer in the briefing)
-            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverPanel")).Visibility);
+            Assert.Null(view.FindName("SmgpCareerOverPanel"));
 
             // "No bet" is the WITHDRAW action: hidden while there is nothing to withdraw,
             // visible once a call is committed (the second half of the inverted-pair bug).
