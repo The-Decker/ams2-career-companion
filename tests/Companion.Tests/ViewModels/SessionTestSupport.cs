@@ -252,6 +252,12 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public BriefingModel? CurrentBriefing() => Briefing;
 
+    /// <summary>The SMGP Paddock projection surfaced to the driver/team-preview tab (null by default,
+    /// so the hub adds no Paddock tab).</summary>
+    public SmgpPaddockModel? Paddock { get; set; }
+
+    public SmgpPaddockModel? SmgpPaddock() => Paddock;
+
     public StageOutcome StageCurrentGrid() =>
         StageOutcomes.Count > 0
             ? StageOutcomes.Dequeue()

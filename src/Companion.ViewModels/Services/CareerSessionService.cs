@@ -1262,6 +1262,87 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         };
     }
 
+    /// <summary>The SMGP Paddock lens (driver/team-preview tab): every grid driver as a card (bio +
+    /// predetermined career stats + team) and every team as a card (motto + history + quotes + roster),
+    /// joined from the pinned pack roster and the SMGP reference data. DISPLAY-ONLY. Null outside the
+    /// SMGP mode or when no rules folder is loaded (the hub then never adds the tab).</summary>
+    public SmgpPaddockModel? SmgpPaddock()
+    {
+        if (_environment.RulesDirectory is null ||
+            !string.Equals(Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
+            return null;
+
+        var profiles = _environment.Rules.SmgpDriverProfiles;
+        var stats = _environment.Rules.SmgpDriverStats;
+        var teamProfiles = _environment.Rules.SmgpTeamProfiles;
+
+        var teamsById = new Dictionary<string, PackTeam>(StringComparer.Ordinal);
+        foreach (var t in Pack.Teams)
+            teamsById.TryAdd(t.Id, t);
+
+        // A driver's authored seat (team + number) from entries.json — one entry per driver.
+        var entryByDriver = new Dictionary<string, PackEntry>(StringComparer.Ordinal);
+        foreach (var e in Pack.Entries)
+            entryByDriver.TryAdd(e.DriverId, e);
+
+        var drivers = new List<SmgpDriverCard>(Pack.Drivers.Count);
+        foreach (var d in Pack.Drivers)
+        {
+            entryByDriver.TryGetValue(d.Id, out var entry);
+            PackTeam? team = entry is not null ? teamsById.GetValueOrDefault(entry.TeamId) : null;
+            var profile = profiles.ForDriver(d.Id);
+            drivers.Add(new SmgpDriverCard
+            {
+                DriverId = d.Id,
+                Name = profile?.Name is { Length: > 0 } n ? n : d.Name,
+                TeamId = team?.Id ?? entry?.TeamId ?? "",
+                TeamName = team?.Name ?? "",
+                Number = entry?.Number,
+                PortraitKey = d.Id,
+                CarKey = d.Id,
+                Epithet = profile?.Epithet ?? "",
+                Bio = profile?.Bio ?? [],
+                Quotes = profile?.Quotes ?? [],
+                Stats = stats.ForDriver(d.Id),
+                Prestige = team?.Prestige ?? 0,
+            });
+        }
+
+        // Most-storied first: top houses lead, then the biggest career (Senna at the top).
+        var orderedDrivers = drivers
+            .OrderByDescending(c => c.Prestige)
+            .ThenByDescending(c => c.Stats?.CareerPoints ?? 0)
+            .ThenBy(c => c.Name, StringComparer.Ordinal)
+            .ToList();
+
+        var teams = new List<SmgpTeamCard>(Pack.Teams.Count);
+        foreach (var t in Pack.Teams)
+        {
+            var tp = teamProfiles.ForTeam(t.Id);
+            teams.Add(new SmgpTeamCard
+            {
+                TeamId = t.Id,
+                Name = tp?.Name is { Length: > 0 } tn ? tn : t.Name,
+                Motto = tp?.Motto ?? "",
+                LogoKey = t.Id,
+                History = tp?.History ?? [],
+                Quotes = tp?.Quotes ?? [],
+                DriverNames = orderedDrivers
+                    .Where(c => string.Equals(c.TeamId, t.Id, StringComparison.Ordinal))
+                    .Select(c => c.Name)
+                    .ToList(),
+                Prestige = t.Prestige,
+            });
+        }
+
+        var orderedTeams = teams
+            .OrderByDescending(c => c.Prestige)
+            .ThenBy(c => c.Name, StringComparer.Ordinal)
+            .ToList();
+
+        return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams };
+    }
+
     /// <summary>The rival's dossier line: his OWN words for the ladder state — a first challenge,
     /// the player one win up (the seat in sight), or him one win up. Data-driven
     /// (<c>data/rules/smgp/rival-quotes.json</c>); the deadpan default when no rules folder or no

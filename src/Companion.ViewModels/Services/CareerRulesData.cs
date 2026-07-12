@@ -48,6 +48,16 @@ public sealed record CareerRulesData
     /// input; empty when the file is absent (the team story then simply omits).</summary>
     public required SmgpTeamProfiles SmgpTeamProfiles { get; init; }
 
+    /// <summary>Per-driver SMGP-world biographies (epithet + ~3-paragraph bio + quotes)
+    /// (<c>data\rules\smgp\driver-profiles.json</c>), shown on the Paddock driver-preview tab.
+    /// DISPLAY-ONLY — never a fold input; empty when the file is absent (bios then simply omit).</summary>
+    public required SmgpDriverProfiles SmgpDriverProfiles { get; init; }
+
+    /// <summary>Predetermined SMGP driver career stats — the world's history before the player arrived
+    /// (<c>data\rules\smgp\driver-stats.json</c>), shown on the Paddock tab. DISPLAY-ONLY — never a fold
+    /// input; empty when the file is absent (stats then simply omit).</summary>
+    public required SmgpDriverStats SmgpDriverStats { get; init; }
+
     /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
     /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
@@ -63,6 +73,8 @@ public sealed record CareerRulesData
         SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
         SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
         SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
+        SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
+        SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
         CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 

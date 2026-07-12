@@ -55,6 +55,12 @@ public interface ICareerSession
     /// decline. Null outside the mode or when no offer is pending. Additive default so fakes compile.</summary>
     SmgpPromotionModel? CurrentSmgpPromotion() => null;
 
+    /// <summary>The SMGP Paddock lens: the whole grid's drivers (bio + predetermined career stats +
+    /// team) and teams (motto + history + quotes + roster), for the driver/team-preview rail tab.
+    /// DISPLAY-ONLY (reads the pack roster + the SMGP reference data). Null outside the SMGP mode or
+    /// when no rules are loaded. Additive default so fakes compile.</summary>
+    SmgpPaddockModel? SmgpPaddock() => null;
+
     /// <summary>The player's SMGP team id right now (its short ladder position follows seat swaps),
     /// captured BEFORE applying a round so the shell can tell whether that round forced a DEMOTION
     /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
@@ -739,6 +745,57 @@ public sealed record SmgpBriefingModel
 
     /// <summary>Every AI driver on this round's grid, in grid order — any of them can be named.</summary>
     public required IReadOnlyList<SmgpRivalOption> Rivals { get; init; }
+}
+
+/// <summary>The SMGP Paddock lens (driver/team preview tab): the whole grid's drivers and teams as
+/// display cards, built from the pack roster + the SMGP reference data (bios, predetermined stats,
+/// team profiles). DISPLAY-ONLY — never a fold input.</summary>
+public sealed record SmgpPaddockModel
+{
+    /// <summary>Every driver on the grid, most-storied first (team prestige, then career points).</summary>
+    public required IReadOnlyList<SmgpDriverCard> Drivers { get; init; }
+
+    /// <summary>Every team on the grid, highest prestige first.</summary>
+    public required IReadOnlyList<SmgpTeamCard> Teams { get; init; }
+}
+
+/// <summary>One driver's Paddock card: identity + team + drop-in art keys + bio + predetermined stats.</summary>
+public sealed record SmgpDriverCard
+{
+    public required string DriverId { get; init; }
+    public required string Name { get; init; }
+    public required string TeamId { get; init; }
+    public required string TeamName { get; init; }
+    public required string? Number { get; init; }
+    /// <summary>Portrait key — <c>portraits/&lt;driverId&gt;.jpg</c>.</summary>
+    public required string PortraitKey { get; init; }
+    /// <summary>Car preview key — <c>cars/&lt;driverId&gt;.png</c>.</summary>
+    public required string CarKey { get; init; }
+    /// <summary>Short ALL-CAPS arcade epithet, or empty when no bio is authored.</summary>
+    public required string Epithet { get; init; }
+    /// <summary>The ~3-paragraph biography (empty when unauthored).</summary>
+    public required IReadOnlyList<string> Bio { get; init; }
+    /// <summary>In-character quotes (empty when unauthored).</summary>
+    public required IReadOnlyList<string> Quotes { get; init; }
+    /// <summary>Predetermined pre-player-era career stats, or null when unauthored.</summary>
+    public required Companion.Core.Smgp.SmgpDriverStatLine? Stats { get; init; }
+    /// <summary>The driver's team prestige (5 = top house … 2 = the floor) — grouping/order.</summary>
+    public required int Prestige { get; init; }
+}
+
+/// <summary>One team's Paddock card: identity + logo + motto/history/quotes + its roster.</summary>
+public sealed record SmgpTeamCard
+{
+    public required string TeamId { get; init; }
+    public required string Name { get; init; }
+    public required string Motto { get; init; }
+    /// <summary>Team logo/icon key — <c>smgp/logos/&lt;teamId&gt;.png</c>.</summary>
+    public required string LogoKey { get; init; }
+    public required IReadOnlyList<string> History { get; init; }
+    public required IReadOnlyList<string> Quotes { get; init; }
+    /// <summary>The team's drivers, by name (for the roster line).</summary>
+    public required IReadOnlyList<string> DriverNames { get; init; }
+    public required int Prestige { get; init; }
 }
 
 /// <summary>Whether the promotion screen is a climb (offer to accept/decline) or a forced drop.</summary>
