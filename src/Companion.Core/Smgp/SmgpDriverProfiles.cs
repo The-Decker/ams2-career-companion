@@ -70,6 +70,50 @@ public sealed record SmgpDriverProfile
     /// <summary>The driver's SMGP-world biography — a few paragraphs (Mike: ~3).</summary>
     public IReadOnlyList<string> Bio { get; init; } = [];
 
-    /// <summary>One or two in-character quotes (his own voice, or a paddock line about him).</summary>
+    /// <summary>One or two in-character quotes (their own voice, or a paddock line about them).</summary>
     public IReadOnlyList<string> Quotes { get; init; } = [];
+
+    /// <summary>The driver's gender, for gendered copy ("female" → she/her; anything else defaults to he/him,
+    /// the majority of the fictional grid). Only the non-default drivers need mark it in the JSON.</summary>
+    public string Gender { get; init; } = "";
+
+    /// <summary>The pronoun set for this driver's <see cref="Gender"/> (defaults to he/him).</summary>
+    public SmgpPronouns Pronouns => SmgpPronouns.For(Gender);
+}
+
+/// <summary>A gendered pronoun set for rival/driver copy — subject (she/he/they), object (her/him/them) and
+/// possessive determiner (her/his/their). DISPLAY-ONLY. <see cref="For"/> maps a gender string to a set;
+/// anything but "female" defaults to he/him (the majority of the fictional grid, and the safe legacy default
+/// so existing copy is unchanged for every driver not explicitly marked).</summary>
+public readonly record struct SmgpPronouns(string Subject, string Object, string Possessive)
+{
+    /// <summary>he / him / his — the default for an unmarked or male driver.</summary>
+    public static readonly SmgpPronouns He = new("he", "him", "his");
+
+    /// <summary>she / her / her.</summary>
+    public static readonly SmgpPronouns She = new("she", "her", "her");
+
+    /// <summary>they / them / their — reserved for a driver explicitly marked non-binary.</summary>
+    public static readonly SmgpPronouns They = new("they", "them", "their");
+
+    /// <summary>The default set (he/him) — used where no rival/gender is known.</summary>
+    public static SmgpPronouns Default => He;
+
+    /// <summary>Maps a gender string ("female"/"male"/"nonbinary", case-insensitive) to its pronoun set;
+    /// anything else → he/him.</summary>
+    public static SmgpPronouns For(string? gender) => (gender ?? "").Trim().ToLowerInvariant() switch
+    {
+        "female" or "f" or "she" => She,
+        "nonbinary" or "non-binary" or "nb" or "they" => They,
+        _ => He,
+    };
+
+    /// <summary>The subject pronoun with its first letter capitalised ("She"/"He"/"They").</summary>
+    public string SubjectCap => Capitalize(Subject);
+
+    /// <summary>The object pronoun with its first letter capitalised ("Her"/"Him"/"Them").</summary>
+    public string ObjectCap => Capitalize(Object);
+
+    private static string Capitalize(string s) =>
+        s.Length == 0 ? s : char.ToUpperInvariant(s[0]) + s[1..];
 }

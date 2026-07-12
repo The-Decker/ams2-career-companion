@@ -3,32 +3,33 @@ using Companion.Core.Smgp;
 namespace Companion.Tests.Career;
 
 /// <summary>
-/// The SMGP challenge-tier rule (Mike): you may challenge the ONE tier directly above you (the
-/// seat you climb toward) or ANY tier below — never two tiers up, never your own tier. Pure.
+/// The SMGP challenge-tier rule (Mike, 2026-07-12): you may challenge your OWN tier, the ONE tier
+/// directly above (the seat you climb toward), and ANY tier below — never two tiers up. So D→{D,C};
+/// C→{B,C,D}; B→{A,B,C,D}; A→everyone. (Your own teammate is excluded separately by the briefing.) Pure.
 /// </summary>
 public sealed class SmgpChallengeRulesTests
 {
     [Theory]
-    // From D: only C (the tier above).
+    // From D: D (own) and C (the tier above); NOT B/A (two+ up).
+    [InlineData('D', 'D', true)]
     [InlineData('D', 'C', true)]
     [InlineData('D', 'B', false)]
     [InlineData('D', 'A', false)]
-    [InlineData('D', 'D', false)]
-    // From C: B (above) or D (below); NOT A (two up) or C (own).
+    // From C: B (above), C (own), D (below); NOT A (two up).
     [InlineData('C', 'B', true)]
+    [InlineData('C', 'C', true)]
     [InlineData('C', 'D', true)]
     [InlineData('C', 'A', false)]
-    [InlineData('C', 'C', false)]
-    // From B: A, C, D; NOT B (own).
+    // From B: A (above), B (own), C, D (below) — everyone at or below A.
     [InlineData('B', 'A', true)]
+    [InlineData('B', 'B', true)]
     [InlineData('B', 'C', true)]
     [InlineData('B', 'D', true)]
-    [InlineData('B', 'B', false)]
-    // From A: B, C, D (all below); nothing above.
+    // From A: A (own) and all below — everyone.
+    [InlineData('A', 'A', true)]
     [InlineData('A', 'B', true)]
     [InlineData('A', 'C', true)]
     [InlineData('A', 'D', true)]
-    [InlineData('A', 'A', false)]
     public void CanChallenge_MatchesTheTierRule(char player, char rival, bool expected) =>
         Assert.Equal(expected, SmgpRules.CanChallenge(player, rival));
 

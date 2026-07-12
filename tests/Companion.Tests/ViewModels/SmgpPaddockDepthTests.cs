@@ -57,6 +57,31 @@ public sealed class SmgpPaddockDepthTests : IDisposable
     }
 
     [Fact]
+    public void Briefing_rivals_carry_tier_colour_and_the_new_challenge_rule_admits_own_tier()
+    {
+        using var session = NewCareer();
+        ApplyRound(session, playerWins: true); // one round raced (for the head-to-head)
+
+        var briefing = session.CurrentSmgpBriefing();
+        Assert.NotNull(briefing);
+        var rivals = briefing!.Rivals;
+
+        // The player is on team.c (tier C). New rule: C may challenge B, C (own) and D — but NOT A (two up).
+        Assert.Contains(rivals, r => r.DriverId == "driver.b" && r.Tier == "B");        // one tier up
+        Assert.Contains(rivals, r => r.DriverId == SmgpSchedule.CearaDriverId && r.Tier == "C"); // OWN tier (new rule)
+        Assert.DoesNotContain(rivals, r => r.DriverId == "driver.a");                    // team.a is tier A — two up
+
+        // Each option carries a coloured CLASS chip for the picker dropdown.
+        var b = rivals.Single(r => r.DriverId == "driver.b");
+        Assert.Equal("CLASS B", b.TierLabel);
+        Assert.StartsWith("#", b.TierColorHex);
+
+        // The dossier carries the player-vs-rival head-to-head, from the round they just shared.
+        Assert.NotNull(b.HeadToHead);
+        Assert.True(b.HeadToHead!.RacesMet >= 1);
+    }
+
+    [Fact]
     public void FormRecent_records_null_for_a_race_a_driver_did_not_finish()
     {
         using var session = NewCareer();

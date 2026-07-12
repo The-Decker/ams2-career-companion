@@ -1271,22 +1271,24 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 teamsById.TryGetValue(playerSeatSeat.TeamId, out var pt) ? pt.Prestige : 3);
         string? forcedChallenger = Companion.Core.Smgp.SmgpSchedule.ForcedChallenger(Pack, state, round);
 
+        // The rival dossier gets each rival's player-vs-them head-to-head (Task 3.2), from the same
+        // career-wide pass the Paddock uses. Profiles supply gendered pronouns for the copy (Mika is female).
+        var depth = BuildDriverDepthIndex();
+        var profiles = _environment.Rules.SmgpDriverProfiles;
+
         var rivals = new List<SmgpRivalOption>();
         foreach (var seat in seats)
         {
             if (seat.IsPlayer ||
                 string.Equals(seat.TeamId, playerTeamId, StringComparison.Ordinal))
                 continue;
+            teamsById.TryGetValue(seat.TeamId, out var team);
+            char rivalTier = Companion.Core.Smgp.SmgpRules.Tier(team?.Prestige ?? 3);
             // Tier gate — but the forced title-defense challenger is always namable regardless.
             bool isForced = string.Equals(seat.DriverId, forcedChallenger, StringComparison.Ordinal);
-            if (!isForced && playerTier is { } ptier)
-            {
-                char rivalTier = Companion.Core.Smgp.SmgpRules.Tier(
-                    teamsById.TryGetValue(seat.TeamId, out var rt) ? rt.Prestige : 3);
-                if (!Companion.Core.Smgp.SmgpRules.CanChallenge(ptier, rivalTier))
-                    continue;
-            }
-            teamsById.TryGetValue(seat.TeamId, out var team);
+            if (!isForced && playerTier is { } ptier &&
+                !Companion.Core.Smgp.SmgpRules.CanChallenge(ptier, rivalTier))
+                continue;
             string? vehicle = team?.CarVehicleIds.FirstOrDefault();
             // The MACHINE block reads the car's DISPLAY name from the extracted library
             // ("F-Classic Gen3 M4"), never the raw vehicle id.
@@ -1309,11 +1311,19 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 CarSpec = CarSpecCardViewModel.From(
                     _environment.Rules.CarSpecs.For(seat.TeamId, vehicle),
                     _environment.Rules.CarSpecs.BarMax),
-                // His line varies by WHO he is and WHERE the ladder stands (first meeting, you a win
-                // up, or him a win up). Display-only, so a per-round seed just keeps it stable on re-open.
+                // Their line varies by WHO they are and WHERE the ladder stands (first meeting, you a win
+                // up, or them a win up). Display-only, so a per-round seed just keeps it stable on re-open.
                 Quote = RivalQuote(seat.DriverId, tally, round),
                 OfferOnWin = tally.PlayerStreak == 1,
                 ForfeitOnLoss = tally.RivalStreak == 1,
+                // Gendered pronouns for the naming copy (Mika = female → "her"). Default he/him.
+                Pronouns = profiles.ForDriver(seat.DriverId)?.Pronouns ?? Companion.Core.Smgp.SmgpPronouns.Default,
+                // The rival's ladder CLASS for the (coloured) picker dropdown, so you know who you can climb toward.
+                Tier = rivalTier.ToString(),
+                TierLabel = $"CLASS {rivalTier}",
+                TierColorHex = TierColorHex(rivalTier),
+                // Player-vs-this-rival head-to-head for the dossier (Task 3.2), null before they have met.
+                HeadToHead = depth.GetValueOrDefault(seat.DriverId)?.HeadToHead,
             });
         }
 
@@ -1727,6 +1737,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     /// <summary>How many recent races the FormRecent trend keeps.</summary>
     private const int FormWindow = 6;
+
+    /// <summary>The ladder-class accent colour for the rival picker's coloured CLASS chip (A gold … D slate).
+    /// Vivid, distinct, mid-tone so it reads on both the light and dark themes. Display-only.</summary>
+    private static string TierColorHex(char tier) => tier switch
+    {
+        'A' => "#E8B900", // gold — the top house
+        'B' => "#2E77D0", // blue
+        'C' => "#1FA85B", // green
+        _ => "#8792A0",   // slate — the floor (D)
+    };
 
     /// <summary>The venue label a per-track record keys on: the round's own name — for the SMGP mode that
     /// is the short arcade venue ("Monaco", "San Marino"), which reads better on a compact card than the

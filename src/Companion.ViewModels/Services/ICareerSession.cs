@@ -1090,12 +1090,30 @@ public sealed record SmgpRivalOption
     /// <summary>The rival's deadpan one-liner (the game's own vocabulary).</summary>
     public required string Quote { get; init; }
 
-    /// <summary>Beat him once more (without losing) and "you may get an offer to join his
+    /// <summary>Beat them once more (without losing) and "you may get an offer to join their
     /// team!" — the panel telegraphs it and asks for the standing answer.</summary>
     public required bool OfferOnWin { get; init; }
 
-    /// <summary>Lose to him once more and he is offered YOUR seat.</summary>
+    /// <summary>Lose to them once more and they are offered YOUR seat.</summary>
     public required bool ForfeitOnLoss { get; init; }
+
+    /// <summary>The rival's gendered pronoun set for the naming copy (Mika is female → she/her). Defaults to
+    /// he/him for every unmarked driver, so existing copy is unchanged for the rest of the grid.</summary>
+    public Companion.Core.Smgp.SmgpPronouns Pronouns { get; init; } = Companion.Core.Smgp.SmgpPronouns.Default;
+
+    /// <summary>The rival's ladder CLASS letter ("A".."D") — shown (coloured) in the picker dropdown so you
+    /// can see who is above/below you at a glance. Empty when unknown.</summary>
+    public string Tier { get; init; } = "";
+
+    /// <summary>The dropdown chip label, "CLASS B".</summary>
+    public string TierLabel { get; init; } = "";
+
+    /// <summary>The CLASS chip's accent colour "#RRGGBB" (A gold … D slate).</summary>
+    public string TierColorHex { get; init; } = "";
+
+    /// <summary>The player-vs-this-rival head-to-head (races met, who finished ahead, best shared, the live
+    /// streak) for the deeper dossier (Task 3.2). Null before they have met on track.</summary>
+    public SmgpHeadToHead? HeadToHead { get; init; }
 }
 
 /// <summary>One additional race's classification in a two-race weekend (<see cref="ResultDraft.AdditionalRaces"/>),
