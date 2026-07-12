@@ -114,11 +114,12 @@
                         <Border Width="22" Height="3" Margin="0,0,0,0" VerticalAlignment="Top"
                                 HorizontalAlignment="Center" Background="{StaticResource SmgpGridMarkingBrush}" />
 
-                        <!-- Canonical cars are now authored nose-up on transparent canvases. -->
+                        <!-- Grid-only overhead sprites live beside the other SMGP presentation art;
+                             the shared cars/ folder remains the original side-view preview set. -->
                         <Image x:Name="SmgpCarImage" MaxHeight="94" MaxWidth="86" Margin="0,5,0,29"
                                Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"
-                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
 
                         <!-- A narrow timing-tower tag leaves the track and car dominant. -->

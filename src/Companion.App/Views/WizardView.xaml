@@ -604,7 +604,8 @@
                                             <TextBlock Text="{Binding TeamName}" Style="{StaticResource SelectedListMuted}"
                                                        FontSize="10.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
 
-                                            <!-- The car is the contract's other hero. Prefer a grid sprite when one exists. -->
+                                            <!-- The car is the contract's other hero. Menu previews retain the
+                                                 shared side view; overhead sprites belong only to the live grid. -->
                                             <Grid Height="47" Margin="0,6,0,0">
                                                 <Border Style="{StaticResource AssetPlaceholderFrame}" CornerRadius="5">
                                                     <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
@@ -612,7 +613,7 @@
                                                 </Border>
                                                 <Image Stretch="Uniform" IsHitTestVisible="False"
                                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
+                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
                                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                             </Grid>
                                         </StackPanel>
@@ -825,7 +826,7 @@
                                     </Border>
                                     <Image Stretch="Uniform" HorizontalAlignment="Center" IsHitTestVisible="False"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                           Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
+                                           Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
                                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                 </Grid>
 
