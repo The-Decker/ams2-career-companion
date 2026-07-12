@@ -144,10 +144,25 @@
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Width="288" CornerRadius="7"
-                                            Background="{DynamicResource SurfaceAltBrush}"
-                                            BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
-                                            ToolTip="{Binding Path}">
+                                    <Border Width="288" CornerRadius="7" ToolTip="{Binding Path}">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+                                                <Setter Property="BorderThickness" Value="1" />
+                                                <Setter Property="Effect" Value="{StaticResource ControlElevationEffect}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource EdgeStrongBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource SelectionBrush}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                        <Setter Property="BorderThickness" Value="2" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
                                         <DockPanel>
                                             <!-- YEAR-PIC HERO band (16:9 for the 288-wide card → 162 tall):
                                                  the year image is the thing you pick a career by (Mike:
@@ -192,8 +207,18 @@
                                             <StackPanel Margin="12,9,12,12">
                                                 <TextBlock Text="{Binding CareerName}" FontWeight="SemiBold"
                                                            FontSize="15" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Style="{StaticResource Faint}" Margin="0,3,0,0"
-                                                           Text="{Binding LastOpenedUtc.LocalDateTime, StringFormat='last opened {0:g}'}" />
+                                                <TextBlock Margin="0,3,0,0"
+                                                           Text="{Binding LastOpenedUtc.LocalDateTime, StringFormat='last opened {0:g}'}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                             </StackPanel>
                                         </DockPanel>
                                     </Border>

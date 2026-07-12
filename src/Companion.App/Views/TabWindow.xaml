@@ -1,10 +1,11 @@
 <Window x:Class="Companion.App.Views.TabWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:app="clr-namespace:Companion.App"
         Title="{Binding Title}"
         Topmost="True"
         ShowInTaskbar="False"
-        WindowStyle="ToolWindow"
+        WindowStyle="None"
         ResizeMode="CanResize"
         Width="560" Height="680"
         MinWidth="340" MinHeight="280"
@@ -18,10 +19,30 @@
          the window binds the stable tab, not the throwaway view-model. Read-only mirror of a tab the
          player also sees in the hub, so there is no state or parity cost. The root UI-scale transform
          keeps this pop-out in step with the main window's text size. -->
-    <Grid>
-        <Grid.LayoutTransform>
-            <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
-        </Grid.LayoutTransform>
-        <ContentControl Content="{Binding Content}" Focusable="False" />
+    <Grid Background="{StaticResource AppTextureBrush}">
+        <Border Background="{StaticResource AppVignetteBrush}" IsHitTestVisible="False" />
+        <Border BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
+            <!-- Content is declared before the overlaid title bar so the existing harness still
+                 finds the hosted lens as the first ContentControl in the visual tree. -->
+            <Grid>
+                <Grid Margin="0,34,0,0">
+                    <Grid.LayoutTransform>
+                        <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
+                    </Grid.LayoutTransform>
+                    <ContentControl Content="{Binding Content}" Focusable="False" />
+                </Grid>
+                <Border Height="34" VerticalAlignment="Top" Background="{DynamicResource SurfaceAltBrush}"
+                        BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,0,0,1"
+                        app:WindowChromeAssist.IsDragRegion="True">
+                    <DockPanel Margin="10,2,3,2">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource CloseButton}"
+                                app:WindowChromeAssist.IsCloseButton="True"
+                                AutomationProperties.Name="Close tear-off window" />
+                        <TextBlock Text="{Binding Title}" Style="{StaticResource Eyebrow}" FontSize="11"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

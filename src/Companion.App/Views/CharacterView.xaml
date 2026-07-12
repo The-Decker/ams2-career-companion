@@ -75,8 +75,17 @@
                             <DataTemplate>
                                 <StackPanel Margin="4">
                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" />
-                                    <TextBlock Text="{Binding Description}" Style="{StaticResource Faint}"
-                                               TextWrapping="Wrap" Margin="0,2,0,0" />
+                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,2,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

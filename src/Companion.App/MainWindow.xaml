@@ -11,7 +11,9 @@
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="ClearType"
         PreviewKeyDown="OnPreviewKeyDown">
-    <DockPanel>
+    <Grid Background="{StaticResource AppTextureBrush}">
+        <Border Background="{StaticResource AppVignetteBrush}" IsHitTestVisible="False" />
+        <DockPanel>
         <!-- root UI-scale (settings: font scale): a single LayoutTransform scales all text +
              spacing uniformly, so inline font sizes and headings scale like body text does. -->
         <DockPanel.LayoutTransform>
@@ -43,5 +45,6 @@
              Each screen fades + slides in on navigation (MotionAssist.Entrance). -->
         <ContentControl Content="{Binding Current}" Focusable="False"
                         RenderTransformOrigin="0.5,0.5" app:MotionAssist.Entrance="True" />
-    </DockPanel>
+        </DockPanel>
+    </Grid>
 </Window>

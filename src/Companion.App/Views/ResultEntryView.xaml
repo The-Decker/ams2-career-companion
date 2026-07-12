@@ -20,7 +20,32 @@
                 <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
                 <TextBlock Text=" (you)" Foreground="{DynamicResource AccentTextBrush}"
                            Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}" Foreground="{DynamicResource TextMutedBrush}" />
+                <Border Background="{DynamicResource ErrorDimBrush}" BorderBrush="{DynamicResource ErrorBrush}"
+                        BorderThickness="1" CornerRadius="3" Padding="5,1" Margin="7,0,0,0"
+                        VerticalAlignment="Center"
+                        ToolTip="Your named rival for this qualifying/race result">
+                    <Border.Visibility>
+                        <MultiBinding Converter="{StaticResource StringsEqualVisible}">
+                            <Binding Path="DataContext.RivalDriverId"
+                                     RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                            <Binding Path="DriverId" />
+                        </MultiBinding>
+                    </Border.Visibility>
+                    <TextBlock Text="RIVAL" Foreground="{DynamicResource ErrorBrush}"
+                               FontFamily="{StaticResource DisplayFont}" FontSize="9" FontWeight="Bold" />
+                </Border>
+                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </StackPanel>
         </DataTemplate>
 

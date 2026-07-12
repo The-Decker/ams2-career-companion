@@ -141,12 +141,14 @@
                         <Border Style="{StaticResource Panel}" Padding="14,10" Margin="0,0,0,6">
                             <DockPanel>
                                 <!-- status chip -->
-                                <Border DockPanel.Dock="Right" Style="{StaticResource SkinChip}">
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SkinChip}"
+                                        ToolTip="{Binding Detail, FallbackValue='Skin binding status for this driver'}">
                                     <TextBlock Text="{Binding StatusLabel}" Style="{StaticResource SkinChipText}" />
                                 </Border>
                                 <!-- copy button -->
                                 <Button DockPanel.Dock="Right" Content="Copy" MinWidth="56" Margin="0,0,10,0"
-                                        VerticalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         ToolTip="Copy this exact AMS2 livery name"
                                         Command="{Binding DataContext.CopyLiveryCommand,
                                                   RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}" />
@@ -162,7 +164,8 @@
                                         </TextBlock>
                                     </StackPanel>
                                     <TextBlock Text="{Binding LiveryName}" Style="{StaticResource Muted}"
-                                               FontFamily="{StaticResource MonoFont}" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                               FontFamily="{StaticResource MonoFont}" Margin="0,3,0,0" TextWrapping="Wrap"
+                                               ToolTip="The exact livery_name written to the AMS2 custom-AI file" />
                                     <TextBlock Text="{Binding Detail}" Style="{StaticResource Faint}"
                                                Margin="0,2,0,0" TextWrapping="Wrap"
                                                Visibility="{Binding Detail, Converter={StaticResource StringVisible}}" />

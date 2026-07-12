@@ -28,6 +28,25 @@
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="Margin" Value="0,2,0,0" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SelectedListFaint" TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SelectedListMuted" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
@@ -506,7 +525,7 @@
                                         <DockPanel ToolTip="{Binding RaceSkill, StringFormat='Race skill (raw): {0:0.000}'}"
                                                    Background="Transparent">
                                             <TextBlock DockPanel.Dock="Left" Width="42" Text="Race"
-                                                       Style="{StaticResource Faint}" VerticalAlignment="Center" />
+                                                       Style="{StaticResource SelectedListFaint}" VerticalAlignment="Center" />
                                             <ProgressBar Style="{StaticResource RatingBar}"
                                                          Value="{Binding RaceSkill, Mode=OneWay}" />
                                         </DockPanel>
@@ -514,18 +533,18 @@
                                                    ToolTip="{Binding QualifyingSkill, StringFormat='Qualifying skill (raw): {0:0.000}'}"
                                                    Background="Transparent">
                                             <TextBlock DockPanel.Dock="Left" Width="42" Text="Quali"
-                                                       Style="{StaticResource Faint}" VerticalAlignment="Center" />
+                                                       Style="{StaticResource SelectedListFaint}" VerticalAlignment="Center" />
                                             <ProgressBar Style="{StaticResource RatingBar}"
                                                          Value="{Binding QualifyingSkill, Mode=OneWay}" />
                                         </DockPanel>
-                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource Faint}" Margin="0,4,0,0"
+                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource SelectedListFaint}" Margin="0,4,0,0"
                                                    ToolTip="{Binding Reliability, StringFormat='Car reliability (raw): {0:0.000}'}">
                                             <Run Text="Team tier " /><Run Text="{Binding TeamTier, Mode=OneWay}" /><Run Text="  ·  Reliability " /><Run Text="{Binding Reliability, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text="  ·  Rounds " /><Run Text="{Binding Rounds, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" FontSize="15" />
-                                        <TextBlock Text="{Binding TeamName}" Style="{StaticResource Muted}" Margin="0,2,0,0" />
+                                        <TextBlock Text="{Binding TeamName}" Style="{StaticResource SelectedListMuted}" Margin="0,2,0,0" />
                                     </StackPanel>
                                 </DockPanel>
                             </DataTemplate>
