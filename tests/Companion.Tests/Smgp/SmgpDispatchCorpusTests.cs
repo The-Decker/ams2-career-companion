@@ -105,7 +105,8 @@ public sealed class SmgpDispatchCorpusTests
         {
             "milestone.arrived", "milestone.first-win", "milestone.promotion", "milestone.title",
             "milestone.rivalry-won", "milestone.finale", "milestone.season", "setback.demotion",
-            "setback.rivalry-lost", "setback.near-miss", "setback.career-over", "world.rival-streak",
+            "setback.rivalry-lost", "setback.near-miss", "setback.career-over",
+            "setback.injured", "setback.season-ending-injury", "setback.died", "world.rival-streak",
             "world.benchmark", "world.leader-change", "world.title-tightens", "world.standings-move",
         })
             Assert.Contains(key, corpus.TemplateKeys);

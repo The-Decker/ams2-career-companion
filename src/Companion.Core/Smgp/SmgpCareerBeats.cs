@@ -70,6 +70,13 @@ public enum SmgpBeatKind
     SeasonMilestone,
     /// <summary>The locked 17-season campaign finale — the summit.</summary>
     Finale,
+    /// <summary>An accident injured the driver — they must sit out one or more rounds (character death &amp;
+    /// injury §6).</summary>
+    Injured,
+    /// <summary>An accident ended the driver's season (they return next year).</summary>
+    SeasonEndingInjury,
+    /// <summary>The driver was KILLED in an accident — the SMGP career ends here.</summary>
+    Died,
 }
 
 /// <summary>One round's player-facing facts, shaped by the ViewModels from the folded state + results.</summary>
@@ -120,6 +127,16 @@ public sealed record SmgpNarrativeRound
 
     /// <summary>True once the career has ended (the floor kicked the player out of F1 SMGP).</summary>
     public bool CareerOver { get; init; }
+
+    /// <summary>The injuring outcome of the player's accident this round — <c>"minorInjury"</c> /
+    /// <c>"seasonEnding"</c> / <c>"death"</c> from the <c>player.accident</c> journal row (character death &amp;
+    /// injury §6), or null when the round had no injuring accident (a survived accident is skipped). Drives
+    /// the living-world Setback dispatch. Additive (default null) so the beat-content tests leave it unset.</summary>
+    public string? AccidentOutcome { get; init; }
+
+    /// <summary>Races the driver is sidelined by a minor accident injury this round (0 unless
+    /// <see cref="AccidentOutcome"/> is <c>"minorInjury"</c>). Additive (default 0).</summary>
+    public int AccidentMissRaces { get; init; }
 }
 
 /// <summary>One season's player-facing facts, shaped by the ViewModels.</summary>
@@ -345,6 +362,36 @@ public static class SmgpCareerBeats
                         Detail = $"{round.FloorLosses} floor losses — one more ends the career.",
                     });
                 prevFloorLosses = round.FloorLosses;
+
+                // An accident this round injured, ended the season, or KILLED the driver (character death &
+                // injury §6). A death ends the timeline like the floor knock-out.
+                if (round.AccidentOutcome == "minorInjury")
+                    Emit(new SmgpCareerBeat
+                    {
+                        WhenLabel = when, Kind = SmgpBeatKind.Injured,
+                        Headline = "SIDELINED",
+                        Detail = round.AccidentMissRaces == 1
+                            ? "A crash leaves the driver hurt — out of the next race."
+                            : $"A crash leaves the driver hurt — out for {round.AccidentMissRaces} races.",
+                    });
+                else if (round.AccidentOutcome == "seasonEnding")
+                    Emit(new SmgpCareerBeat
+                    {
+                        WhenLabel = when, Kind = SmgpBeatKind.SeasonEndingInjury,
+                        Headline = "SEASON IN THE BARRIERS",
+                        Detail = "A heavy crash ends the season — the driver returns next year.",
+                    });
+                else if (round.AccidentOutcome == "death")
+                {
+                    Emit(new SmgpCareerBeat
+                    {
+                        WhenLabel = when, Kind = SmgpBeatKind.Died,
+                        Headline = "TRAGEDY",
+                        Detail = "The driver was killed in an accident — the career ends here.",
+                    });
+                    careerEnded = true;
+                    break;
+                }
 
                 if (round.CareerOver)
                 {

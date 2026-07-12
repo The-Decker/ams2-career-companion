@@ -1,3 +1,5 @@
+using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Packs;
 using Companion.Core.Smgp;
 using Companion.Data;
@@ -101,6 +103,44 @@ public sealed class SmgpDispatchesTests : IDisposable
         Assert.Empty(session.SmgpDispatches());
     }
 
+    [Fact]
+    public void A_fatal_accident_writes_a_setback_died_dispatch_and_the_career_replays_byte_identically()
+    {
+        // Character death & injury §6: a mortality SMGP career whose driver is KILLED in an accident writes a
+        // living-world "TRAGEDY" setback. The dispatch is a pure display read over the folded journal — never a
+        // fold input — so the dead career still re-simulates byte-for-byte.
+        SeasonPack pack;
+        string playerId;
+        using (var session = NewMortalCareer(durability: -50.0)) // a lethal shunt (forced-death offset)
+        {
+            pack = session.Pack;
+            playerId = session.Summary.PlayerDriverId;
+            ApplyPlayerAccident(session, AccidentSeverity.Heavy);
+            Assert.True(session.PlayerMortality().Deceased);
+
+            var feed = session.SmgpDispatches();
+            var tragedy = Assert.Single(feed, d => d.Headline == "TRAGEDY");
+            Assert.Equal(SmgpDispatchKind.Setback, tragedy.Kind);
+            Assert.False(string.IsNullOrWhiteSpace(tragedy.Body));
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(CareerPath);
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)Seed), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+            CharacterRules = rules.Character,
+        });
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
     // ---------- scaffolding (mirrors SmgpPaddockDepthTests' real-machinery ladder) ----------
 
     private string PacksRoot => Path.Combine(_root, "packs");
@@ -128,6 +168,53 @@ public sealed class SmgpDispatchesTests : IDisposable
             PlayerLiveryName = SeatC,
             SmgpMode = smgp,
         }, Environment());
+    }
+
+    /// <summary>An SMGP career with mortality ON and a character whose durability forces the accident roll,
+    /// so a death can be pinned deterministically (an out-of-range offset floors the effective d500).</summary>
+    private CareerSessionService NewMortalCareer(double durability)
+    {
+        string packDirectory = Path.Combine(PacksRoot, "smgp-ladder");
+        TestPackBuilder.Write(LadderPack(true), packDirectory);
+        return CareerSessionService.CreateCareer(new CareerCreationRequest
+        {
+            PackDirectory = packDirectory,
+            CareerFilePath = CareerPath,
+            CareerName = "Mortal Dispatch Career",
+            MasterSeed = Seed,
+            PlayerLiveryName = SeatC,
+            SmgpMode = true,
+            Character = Character(durability),
+            Mortality = MortalityMode.Normal, // Normal keeps the file after death, so the feed can still read it
+        }, Environment());
+    }
+
+    private static CharacterProfile Character(double durability) => new()
+    {
+        Name = "Crash McTest",
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.55, ["oneLap"] = 0.50, ["craft"] = 0.50, ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50, ["marketability"] = 0.55, ["durability"] = durability,
+        },
+        PerkIds = [],
+        CpUnspent = 0,
+    };
+
+    private static void ApplyPlayerAccident(ICareerSession session, AccidentSeverity severity)
+    {
+        string player = session.Summary.PlayerDriverId;
+        var others = session.CurrentGrid()
+            .Select(s => s.DriverId)
+            .Where(id => !string.Equals(id, player, StringComparison.Ordinal))
+            .ToList();
+        session.Apply(new ResultDraft
+        {
+            Classified = others,
+            DidNotFinish = new Dictionary<string, string>(StringComparer.Ordinal) { [player] = "a" },
+            Disqualified = [],
+            PlayerAccidentSeverity = severity,
+        });
     }
 
     private static SeasonPack LadderPack(bool smgp = true)

@@ -2191,6 +2191,33 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 }
             }
 
+            // Journaled player accidents → the round an INJURING/FATAL accident happened (character death &
+            // injury §6). Only injuring outcomes drive a Setback dispatch; a survived accident ("none") is
+            // skipped. Mirrors the battle-trigger read above (same DERIVED player.accident row).
+            var accidentByRound = new Dictionary<int, string>();
+            var accidentMissByRound = new Dictionary<int, int>();
+            foreach (var row in JournalStore.ReadSeason(_database, season.Id))
+            {
+                if (!string.Equals(row.Phase, JournalPhases.PlayerAccident, StringComparison.Ordinal) || row.Round is not { } ar)
+                    continue;
+                try
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(row.DeltaJson);
+                    var root = doc.RootElement;
+                    string? outcome = root.TryGetProperty("outcome", out var ov) ? ov.GetString() : null;
+                    if (outcome is "minorInjury" or "seasonEnding" or "death")
+                    {
+                        accidentByRound[ar] = outcome;
+                        if (root.TryGetProperty("missRaces", out var mv) && mv.ValueKind == System.Text.Json.JsonValueKind.Number)
+                            accidentMissByRound[ar] = mv.GetInt32();
+                    }
+                }
+                catch (System.Text.Json.JsonException)
+                {
+                    // A malformed delta cell never breaks the display timeline.
+                }
+            }
+
             // Standings snapshots (per championship round, in order) → the player's cumulative counted points
             // (first-points beat) + the season champion (title beat).
             var stored = ResultStore.ReadSeasonResults(_database, season.Id).OrderBy(r => r.Round).ToList();
@@ -2254,6 +2281,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     RivalryLostToId = lostIdByRound.GetValueOrDefault(s.Round),
                     FloorLosses = smgp?.FloorLosses ?? 0,
                     CareerOver = smgp?.CareerOver ?? false,
+                    AccidentOutcome = accidentByRound.GetValueOrDefault(s.Round),
+                    AccidentMissRaces = accidentMissByRound.GetValueOrDefault(s.Round),
                 });
             }
 
@@ -2379,6 +2408,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         Companion.Core.Smgp.SmgpBeatKind.Finale => ("milestone.finale", Companion.Core.Smgp.SmgpDispatchKind.Milestone),
         Companion.Core.Smgp.SmgpBeatKind.RivalryLost => ("setback.rivalry-lost", Companion.Core.Smgp.SmgpDispatchKind.Setback),
         Companion.Core.Smgp.SmgpBeatKind.NearMiss => ("setback.near-miss", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        // Character death & injury (§6): an accident's setback voiced in the living-world feed.
+        Companion.Core.Smgp.SmgpBeatKind.Injured => ("setback.injured", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        Companion.Core.Smgp.SmgpBeatKind.SeasonEndingInjury => ("setback.season-ending-injury", Companion.Core.Smgp.SmgpDispatchKind.Setback),
+        Companion.Core.Smgp.SmgpBeatKind.Died => ("setback.died", Companion.Core.Smgp.SmgpDispatchKind.Setback),
         // The floor kicking the player OUT reuses the Demotion kind but a distinct "out" headline.
         Companion.Core.Smgp.SmgpBeatKind.Demotion => beat.Headline.Contains("OUT OF", StringComparison.Ordinal)
             ? ("setback.career-over", Companion.Core.Smgp.SmgpDispatchKind.Setback)
