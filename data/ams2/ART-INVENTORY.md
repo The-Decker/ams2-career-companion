@@ -11,6 +11,7 @@ Regenerate the present/expected counts any time:
 (Get-ChildItem dist/data/ams2/portraits -Filter driver.*.jpg).Count
 (Get-ChildItem dist/data/ams2/portraits -Filter player.*.jpg).Count
 (Get-ChildItem dist/data/ams2/cars -Filter driver.*.png).Count
+(Get-ChildItem dist/data/ams2/smgp/flags -Filter driver.*.png).Count
 ```
 
 ## Summary
@@ -21,6 +22,7 @@ Regenerate the present/expected counts any time:
 | **driver portraits** (`driver.<id>.jpg`) | 34 | 34 (SMGP roster) | ✅ complete |
 | **per-team player images** (`player.<team>.jpg`) | 24 | 24 (SMGP teams) | ✅ complete |
 | **car previews** (`cars/<driverId>.png`) | 34 | 34 | ✅ complete; extractor writes directly to canonical `dist` |
+| **SMGP national flags** (`smgp/flags/<driverId>.png`) | 34 | 34 | ✅ complete; converted locally from installed AMS2 country flags |
 | **SMGP grid-car miniatures** (`smgp/grid-cars/<driverId>.png`) | 0 | 34 optional | ○ side previews provide the live fallback |
 | **team logos** (`smgp/logos/team.<team>.png`) | 0 | 24 | ○ waiting for the final team palette |
 | **round cards** (`smgp/rounds/<round>.jpg`) | 0 | 16 | ○ missing |
@@ -45,6 +47,14 @@ the current design — the History tab uses era-art + optional history-art.)
 character screen (team id minus the `team.` prefix). **Present (24):** azalea, comet, cool, firenze,
 iris, lares, madonna, minarae, moon, orchis, rigel, serga, zeroforce, bestowal, blanche, bullets,
 dardan, feet, joke, linden, losel, may, millions, and tyrant.
+
+## SMGP national flags — ✅ 34/34
+
+The SMGP starting grid resolves `smgp/flags/<driverId>.png` so nationality remains an art-only,
+driver-keyed concern and does not duplicate roster logic in the ViewModel. The 34 canonical PNGs
+were converted locally from the matching 128×128 `GUI/CountryFlags/Flag_*.dds` files in Mike's AMS2
+installation. The synthetic player entry deliberately hides this slot because the character model
+does not author a nationality; showing the replaced AI driver's flag would be misleading.
 
 ## SMGP grid-car miniatures — 0/34 (optional upgrade)
 

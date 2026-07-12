@@ -1,36 +1,34 @@
 # Codex — Standing Brief: GUI + Art Expert (SMGP)
 
-**Updated:** 2026-07-12 · **Author:** Claude · **For:** Codex · **Base branch:** `hub/increment-4`
+**Updated:** 2026-07-12 · **Author:** Claude + Codex · **For:** Codex · **Base branch:** `hub/increment-4`
 
-Mike has made you the **GUI + art lead** for the SMGP mode — you've been doing a good job, so this is now
-a standing role, not a one-off. Claude keeps building SMGP **features + logic**; you own how it all
-**looks** and the **art assets**. This brief is the mission; work through it, and keep it + the asset
-inventory current as you go.
+Mike has made you the **GUI + art lead** for the SMGP mode. Claude keeps building SMGP **features +
+logic**; you own how it all **looks** and the **art assets**. Keep this brief and the asset inventory
+current as the work advances.
 
-**Round 1 merged (`bd5b01c`, 2026-07-12):** ✅ starting grid refreshed (the SMGP pixel starting
-straight) and ✅ rival screen hero-sized + Continue moved below "YES". Good work — reviewed clean.
+**Round 1 merged (`bd5b01c`, 2026-07-12):** ✅ SMGP pixel starting straight and ✅ hero-sized rival
+screen with Continue below “YES”. The next grid refinement places each portrait beside its exact car
+and adds the driver’s national flag, name, team, position, number, and `YOU` state.
 
 Your jobs now, in priority order:
-1. **Fill the missing art** — see `docs/dev/asset-inventory.md` (133 missing). **`cars/` (all 34) is the
-   top win**: the pixel grid, rival dossier and Paddock all show blank car bays until those land.
-   ⚠ Drop art into the tracked **`data/ams2/<kind>/`** (commit it) AND copy to `dist/data/ams2/<kind>/`
-   for the running RC — `dist/` is gitignored, so art dropped only there is NOT saved.
+
+1. **Fill the remaining art** — see `docs/dev/asset-inventory.md`. Portraits, car previews, player
+   images, and SMGP driver flags are complete in canonical `dist`; team logos are the next large gap.
 2. **Enhance the Paddock view** (§3) — make the driver/team preview beautiful.
-3. **A consistency / optimization pass** (§4) across every screen.
+3. **Run a consistency / optimization pass** (§4) across every SMGP screen.
 
 ---
 
 ## 0. How to work (read once)
 
 - Branch off `hub/increment-4`; keep diffs to **Views XAML + styles + art**; rebase before handing back
-  (Claude commits to the same base). Run `dotnet build` / `dotnet test` from the repo root
-  (`Companion.slnx`, .NET 10 — no `.sln`). Floor to stay green: **1943 unit + 51 render**.
-- Verify visually by running the app (the RC in `dist/`, or `dotnet run`) on an **SMGP career** — that's
-  where all these screens live. San Marino · Round 1 is the canonical test screen.
-- The **render-harness tests** (`tests/Companion.RenderHarness.Tests`) snapshot these screens
-  (`StartingGridRenderTests`, `PaddockRenderTests`, `RivalRenderTests`/`BriefingSmgpRenderTests`,
-  `PromotionRenderTests`). Run them after XAML changes; update expected renders where the change is
-  intentional.
+  because Claude commits to the same base. Run `dotnet build` / `dotnet test` from the repo root
+  (`Companion.slnx`, .NET 10 — no `.sln`). Current green floor: **1943 unit + 52 render**.
+- Verify visually on an **SMGP career**. San Marino · Round 1 is the canonical test screen.
+- The render harness (`tests/Companion.RenderHarness.Tests`) exercises these screens. Run it after XAML
+  changes and strengthen structural/layout assertions when the change is intentional.
+- **`dist/data/ams2/` is the canonical art source. Anything there is law.** Never overwrite it from
+  tracked `data/ams2`; any archive or reference copy must flow outward from `dist` byte-for-byte.
 
 ### Lane boundaries — CRITICAL (Claude is editing the code behind these screens)
 
@@ -38,77 +36,84 @@ Your jobs now, in priority order:
 |---|---|
 | `src/Companion.App/Views/**.xaml` (layout, size, font, colour, style) | `src/Companion.ViewModels/**` (ALL ViewModels, records, keys) |
 | resource dictionaries / `Styles*.xaml` / converters styling | `src/Companion.Core/**`, `src/Companion.Data/**` |
-| `data/ams2/**` (ALL art files) | `data/rules/smgp/**` (bios, stats, profiles — data) |
-| `docs/dev/asset-inventory.md` (keep it current) | `TeamPalette`, `SmgpPaddock`, live-stats, DNQ code |
+| `dist/data/ams2/**` (canonical art) | `data/rules/smgp/**` (bios, stats, profiles — data) |
+| GUI/art docs and inventories | `TeamPalette`, `SmgpPaddock`, live-stats, DNQ code |
 
-If a visual change needs a **new bound property / rename / a data field**, DON'T add it — drop a line in
-"§6 Requests to Claude" at the bottom and Claude wires it. Single-owner VMs prevent collisions.
-
----
-
-## 1. Missing art — `docs/dev/asset-inventory.md`
-
-That file has the full audited list (what the app expects, what's present, what's missing) + drop paths,
-sizes and style. **Style = 16-bit SEGA "Super Monaco GP" arcade** — the 34 driver portraits already in
-`data/ams2/portraits/` are the reference. Priority: **cars/ (34, all missing)** → `player.<team>` (11) →
-team logos (24) → team photos (24) → round cards (16) → banners (24). Drop files into
-`data/ams2/<kind>/` **and** `dist/data/ams2/<kind>/`; tick them off in the inventory.
+If a visual change needs a **new bound property / rename / data field**, do not add it. Leave a line in
+“§6 Requests to Claude” and let the VM owner wire it.
 
 ---
 
-## 2. Refresh the STARTING GRID — `src/Companion.App/Views/StartingGridView.xaml`
+## 1. Remaining art — `docs/dev/asset-inventory.md`
 
-State now: a staggered two-row carousel of team-coloured driver+car cards (264px wide), a top conditions
-bar, a bottom conditions strip, and a new **"DID NOT QUALIFY"** chip strip (the dynamic DNQ field — 8-9
-cars rotate out each race; fuel gauge already removed). Mike wants this to become the **cinematic** screen
-from his mockup. Do:
-- **Bigger, richer cards** — card ~264→**~380-440** wide; portrait+car row ~112→**~180-210** tall;
-  position box 44→~60; driver font 15→~20, team 11.5→~14. Scale the back-row stagger offset (`Margin="139…"`)
-  to ≈ half the new width.
-- **Make the player unmistakable** — their card already gets an accent border (`IsPlayer` trigger); add a
-  **"YOU"** badge, and **auto-scroll the carousel to the player's card** on load (code-behind
-  `OnScrollLeft/Right` exists). *If you need the player's grid index for the scroll, request a VM property.*
-- **Polish the DNQ strip** — it's functional grayed chips; make it read as "these didn't make the cut"
-  (subtle, secondary), and make the rotation feel meaningful.
-- Cinematic chrome: darker hero background, stronger team-colour accents (via the existing
-  `{Binding TeamColor, Converter={StaticResource HexBrush}}` — see §5, don't hardcode).
+That file is the audited list of what the app expects, what canonical `dist` contains, and what remains.
+The current completed SMGP fundamentals are:
+
+- 34/34 driver portraits
+- 34/34 side-profile car previews
+- 24/24 per-team player images
+- 34/34 driver-keyed national flags
+
+Next priority: team logos, team photos, round cards, and optional banners. Purpose-built overhead/three-
+quarter grid cars remain an optional upgrade because the complete canonical side previews are the live
+fallback.
+
+---
+
+## 2. SMGP STARTING GRID — `src/Companion.App/Views/StartingGridView.xaml`
+
+The SMGP-only surface is a vertically scrolling pixel starting straight. Historical careers retain the
+original compact two-row carousel.
+
+- Gate from the canonical identity:
+  `HomeView.DataContext.Session.Pack.Manifest.CareerStyle == SmgpRules.CareerStyle`.
+- Preserve the pixel scenery: asphalt, grass verges, red/white kerbs, fence rails, checker line, and
+  two grid bays per row.
+- Each bay shows position, car number, portrait **directly beside** the exact car, national flag,
+  driver name, team name, team-colour edge, and an unmistakable `YOU` state.
+- Prefer `smgp/grid-cars/<driverId>.png`; fall back to `cars/<driverId>.png` so the 34 canonical car
+  previews work immediately.
+- Driver flags resolve from `smgp/flags/<driverId>.png`. The synthetic player hides the flag because
+  the character model does not author nationality; never show the replaced AI driver’s flag as theirs.
+- Do not invent qualifying times or deltas: the result model stores qualifying order only.
+- Keep the seeded DNQ strip, live conditions, global fuel removal, and historical grid behavior intact.
+
+---
 
 ## 3. Enhance the PADDOCK — `src/Companion.App/Views/PaddockView.xaml`
 
-State now: a DRIVERS/TEAMS toggle over a master list (left) + a dossier detail (right). Driver dossier =
-portrait + car + epithet + a live "THIS SEASON" line + a **CAREER** stat-tile row (TITLES/WINS/PODIUMS/
-POLES/TOP-5/POINTS/STARTS) + 3-paragraph bio + quotes; the **player leads the roster** with their own
-card. Team dossier = logo + motto + roster + history + quotes. It's **functional but plain** — make it
-beautiful:
-- Team-colour the driver/team cards + the stat tiles + the selected-row highlight (via `TeamColor`, §5).
-- Make the stat tiles feel like a **record book** (bigger numbers, iconography, maybe a small bar/sparkline).
-- Richer master list rows (portrait + a hint of their record), a stronger dossier hero (big portrait + car).
-- The team logo (`smgp/logos`) becomes clickable/prominent per Mike's "click the team icon" ask.
+State now: a DRIVERS/TEAMS toggle over a master list (left) + dossier detail (right). Driver dossier =
+portrait + car + epithet + a live “THIS SEASON” line + a CAREER stat-tile row + bio + quotes. Team
+dossier = logo + motto + roster + history + quotes.
+
+- Team-colour driver/team cards, stat tiles, and selected rows through the existing `TeamColor` binding.
+- Make stat tiles feel like a record book: stronger numbers and hierarchy.
+- Enrich master rows and strengthen the dossier hero with portrait + car.
+- Make the team logo (`smgp/logos`) prominent once the final logo/palette art lands.
+
+---
 
 ## 4. Rival screen + consistency pass
 
-**Rival screen** (`RivalScreenView.xaml`) — still small. Portrait 200→**~400**, car preview 50→**~150**,
-fonts + the car-spec stat panel up, whole card a hero. Move the **Continue** button to sit **centred
-directly below "YES — name him as my rival"** (keep it reachable when no rival is picked). The top-right
-readout is now the player's live **SEASON / CAREER stats** (Claude replaced "D.P.") — you may style that
-container, but leave its text/bindings to Claude.
+The rival hero sizing and Continue placement landed in Round 1. Preserve `SmgpSeasonLine` and
+`SmgpCareerLine` while refining the surrounding presentation.
 
-**Consistency / optimization** — a pass across all SMGP screens (rival, grid, paddock, promotion, hub):
-shared type scale + spacing, consistent card/stat-tile styling, light/dark theming sanity, and trimming
-any layout that's heavy to render. Fold repeated card/stat-tile markup into shared styles/templates.
+Run a consistency pass across rival, grid, paddock, promotion, and hub: shared type scale + spacing,
+consistent card/stat-tile styling, light/dark theme sanity, and no unnecessarily expensive layout.
 
 ---
 
 ## 5. Team colours — `data/ams2/smgp/team-colors.json` (coming)
 
-Card accents come from `TeamPalette.For(teamId)` (curated hexes + a hue fallback) via
-`{Binding TeamColor, Converter={StaticResource HexBrush}}`. **Never hardcode colours in XAML** — keep
-binding `TeamColor`. Mike is sending exact per-team hexes; Claude will externalise `TeamPalette` to
-`data/ams2/smgp/team-colors.json` so they flow in without a rebuild. Your cards pick them up automatically.
+Card accents currently come from `TeamPalette.For(teamId)` via
+`{Binding TeamColor, Converter={StaticResource HexBrush}}`. Never hardcode team colours in XAML. Mike’s
+exact palette should flow through Claude’s eventual externalized data file without view changes.
 
 ---
 
 ## 6. Requests to Claude (leave notes; Claude wires the VM/data side)
 
-- _e.g. "need `StartingGridViewModel.PlayerIndex` to auto-scroll the carousel to the player"_
-- _e.g. "need a `bool IsChampion` on the driver card to gild the title tile"_
+- **SMGP player auto-scroll:** after `SmgpGridScroll` lays out, scroll to the existing slot whose
+  `IsPlayer` flag is true. No new VM property is required; keep historical carousel behavior unchanged.
+- **Player nationality, only if Mike wants it:** add nationality to the character/profile projection and
+  then expose it to the starting-grid slot. Do not reuse the donor/replaced AI driver’s nationality.
