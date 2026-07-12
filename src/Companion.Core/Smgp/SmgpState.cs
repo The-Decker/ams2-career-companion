@@ -76,6 +76,11 @@ public sealed record SmgpState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool PerSeasonDnq { get; init; }
 
+    /// <summary>New-career gate for the standings-driven between-season entry reshuffle. Omitted
+    /// when false so legacy SMGP careers keep their authored entries byte-identically.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool StandingsReshuffle { get; init; }
+
     /// <summary>A two-wins seat-swap offer AWAITING the player's post-race accept/decline on the
     /// promotion screen (3c-2, two-phase careers only): the battle fold records it here INSTEAD of
     /// moving the seat, and the resolution fold (driven by the journaled <c>smgp.swap</c> input,
@@ -128,6 +133,7 @@ public sealed record SmgpState
             && FloorLosses == other.FloorLosses
             && TwoPhasePromotion == other.TwoPhasePromotion
             && PerSeasonDnq == other.PerSeasonDnq
+            && StandingsReshuffle == other.StandingsReshuffle
             && Equals(PendingSwap, other.PendingSwap)
             && Tallies.SequenceEqual(other.Tallies)
             && AiSeatOverrides.SequenceEqual(other.AiSeatOverrides);
@@ -144,6 +150,7 @@ public sealed record SmgpState
         hash.Add(FloorLosses);
         hash.Add(TwoPhasePromotion);
         hash.Add(PerSeasonDnq);
+        hash.Add(StandingsReshuffle);
         hash.Add(PendingSwap);
         foreach (var pair in Tallies)
         {

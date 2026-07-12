@@ -489,6 +489,14 @@ public static class ReplayService
             seasonOrdinal++;
             var season = current.Season;
             var pack = packs[(season.PackId, season.PackVersion)];
+            // Standings-driven winter reshuffle: the same pure entry transform the live session
+            // applies before its per-season DNQ roll. The default-omitted start-state gate keeps
+            // every legacy career on the authored grid.
+            if (current.StartPlayer?.Smgp?.StandingsReshuffle == true && previousEnd is not null)
+            {
+                pack = Companion.Core.Smgp.SmgpGridReshuffle.ForNextSeason(
+                    pack, previousEnd.FinalStandings, current.StartPlayer.Smgp.CurrentSeatLivery);
+            }
             // Per-season DNQ RE-ROLL (17-season campaign): apply the SAME transform the live fold's runtime
             // Pack receives (CareerSessionService ctor), gated per-career on the season START state's
             // PerSeasonDnq flag, so season 2+ re-folds against its own re-rolled backmarker field. Season 1

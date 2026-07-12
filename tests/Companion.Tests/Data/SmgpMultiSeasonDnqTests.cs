@@ -1,5 +1,6 @@
 using Companion.Core.Career;
 using Companion.Core.Packs;
+using Companion.Core.Scoring;
 using Companion.Core.Smgp;
 using Companion.Data;
 using Companion.Tests.ViewModels;
@@ -44,6 +45,8 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         var s2Start = StateStore.ReadPlayerState(db, seasons[1].Id, StateStore.StageStart)!.Smgp!;
         Assert.True(s1Start.PerSeasonDnq); // seeded for a DNQ pack at creation
         Assert.True(s2Start.PerSeasonDnq); // carried across the rollover
+        Assert.True(s1Start.StandingsReshuffle);
+        Assert.True(s2Start.StandingsReshuffle);
     }
 
     [Fact]
@@ -56,7 +59,10 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             // The runtime Pack the live fold resolves the grid from IS the ordinal-2 re-roll of the pinned
             // pack (variety only shuffles venues, keeping the grid with the round number, so the DNQ field
             // equals ForSeason regardless of variety). This is exactly what ResimulateCore re-applies.
-            var expected = SmgpDnqField.ForSeason(pinnedSeasonOne, 2, unchecked((ulong)Seed));
+            var expected = SmgpGridReshuffle.ForNextSeason(
+                pinnedSeasonOne, SeasonOneFinal(pinnedSeasonOne), SeatC);
+            expected = SmgpDnqField.ForSeason(expected, 2, unchecked((ulong)Seed));
+            Assert.Equal(expected.Entries, s2.Pack.Entries);
             foreach (var round in s2.Pack.Season.Rounds)
             {
                 var expectedStarters = expected.Season.Rounds.Single(r => r.Round == round.Round)
@@ -219,5 +225,17 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             $"diverged: {report.FirstDivergence?.Reason} season={report.FirstDivergence?.SeasonId} " +
             $"stored={report.FirstDivergence?.StoredDeltaJson} regen={report.FirstDivergence?.RegeneratedDeltaJson}");
         Assert.True(report.ComparedRows > 0);
+    }
+
+    private StandingsSnapshot SeasonOneFinal(SeasonPack pack)
+    {
+        using var db = CareerDatabase.Open(CareerPath);
+        long seasonId = CareerStore.ReadSeasons(db)[0].Id;
+        var results = ResultStore.ReadSeasonResults(db, seasonId)
+            .Where(stored => ChampionshipCalendar.IsChampionshipRound(pack, stored.Round))
+            .Select(stored => stored.ToRoundResult())
+            .ToList();
+        return Companion.Core.Scoring.StandingsEngine.ComputeSeason(
+            ChampionshipCalendar.ResolveScoring(pack), results).Final;
     }
 }

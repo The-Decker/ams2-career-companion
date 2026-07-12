@@ -17,6 +17,7 @@ public sealed class SmgpTextQualityTests
     [InlineData("driver-profiles.json")]
     [InlineData("team-profiles.json")]
     [InlineData("rival-quotes.json")]
+    [InlineData("pit-crew-advice.json")]
     [InlineData("what-really-happened.json")]
     [InlineData("sponsors.json")]
     public void SmgpAuthoredText_HasNoDoubleEncodingMojibake(string fileName)
@@ -34,6 +35,7 @@ public sealed class SmgpTextQualityTests
     [InlineData("driver-profiles.json")]
     [InlineData("team-profiles.json")]
     [InlineData("rival-quotes.json")]
+    [InlineData("pit-crew-advice.json")]
     [InlineData("what-really-happened.json")]
     [InlineData("sponsors.json")]
     public void SmgpAuthoredText_IsWellFormedJson(string fileName)

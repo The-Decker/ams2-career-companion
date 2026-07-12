@@ -37,6 +37,9 @@ public sealed record CareerRulesData
     /// file is absent, so a non-SMGP install or an un-updated data folder is unaffected.</summary>
     public required SmgpRivalQuotes SmgpRivalQuotes { get; init; }
 
+    /// <summary>Venue-keyed SMGP pit-wall advice. DISPLAY-ONLY; empty fallback when absent.</summary>
+    public required SmgpPitCrewAdvice SmgpPitCrewAdvice { get; init; }
+
     /// <summary>The SMGP-universe "What Really Happened" almanac (<c>data\rules\smgp\what-really-happened.json</c>):
     /// the SEGA world's own legend of every calendar circuit, revealed on the History tab once the
     /// player has raced it. DISPLAY-ONLY — never a fold input; empty when the file is absent (the
@@ -81,6 +84,7 @@ public sealed record CareerRulesData
         NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
         Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
         SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
+        SmgpPitCrewAdvice = SmgpPitCrewAdvice.Load(rulesDirectory),
         SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
         SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
         SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),

@@ -118,10 +118,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // applies this — is byte-identical; only what the calendar shows and what the briefing tells
         // you to set in AMS2 changes. Season 1 / non-SMGP → the pack verbatim.
         int seasonOrdinal = 1;
+        int seasonIndex = 0;
         for (int i = 0; i < allSeasons.Count; i++)
-            if (allSeasons[i].Id == seasonId) { seasonOrdinal = i + 1; break; }
+            if (allSeasons[i].Id == seasonId) { seasonIndex = i; seasonOrdinal = i + 1; break; }
         _seasonOrdinal = seasonOrdinal;
         var variedPack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed);
+        var startSmgp = StateStore.ReadPlayerState(database, seasonId, StateStore.StageStart)?.Smgp;
+        if (startSmgp?.StandingsReshuffle == true && seasonIndex > 0 &&
+            PreviousFinalStandings(database, allSeasons[seasonIndex - 1], pack) is { } previousFinal)
+        {
+            variedPack = Companion.Core.Smgp.SmgpGridReshuffle.ForNextSeason(
+                variedPack, previousFinal, startSmgp.CurrentSeatLivery);
+        }
         // Per-season DNQ RE-ROLL (17-season campaign): a career gated on SmgpState.PerSeasonDnq re-rolls
         // its backmarker DNQ field for season 2+ (each season a fresh seeded field, so the rotation is not
         // frozen to season 1's pinned roll). This is a FOLD INPUT — the runtime Pack is what the live fold
@@ -129,7 +137,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // pack on the replay path (ReplayService.ResimulateCore), keyed by the same ordinal, and live and
         // replay agree by construction. Season 1 / legacy (flag omitted) / non-DNQ careers no-op, so they
         // stay byte-identical. The gate is read from this season's START state.
-        Pack = StateStore.ReadPlayerState(database, seasonId, StateStore.StageStart)?.Smgp?.PerSeasonDnq == true
+        Pack = startSmgp?.PerSeasonDnq == true
             ? Companion.Core.Smgp.SmgpDnqField.ForSeason(variedPack, seasonOrdinal, unchecked((ulong)masterSeed))
             : variedPack;
         _seasonYear = allSeasons.FirstOrDefault(s => s.Id == seasonId)?.Year ?? pack.Season.Year;
@@ -145,6 +153,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // non-championship events. ChampionshipCalendar is the ONE shared mapping — the
         // unified fold (ReplayService) resolves through the same code.
         _scoringDefinition = ChampionshipCalendar.ResolveScoring(pack);
+    }
+
+    private static StandingsSnapshot? PreviousFinalStandings(
+        CareerDatabase database,
+        SeasonRecord previousSeason,
+        SeasonPack pack)
+    {
+        if (!string.Equals(previousSeason.PackId, pack.Manifest.PackId, StringComparison.Ordinal))
+            return null;
+        var results = ResultStore.ReadSeasonResults(database, previousSeason.Id)
+            .Where(stored => ChampionshipCalendar.IsChampionshipRound(pack, stored.Round))
+            .Select(stored => stored.ToRoundResult())
+            .ToList();
+        return results.Count == 0
+            ? null
+            : StandingsEngine.ComputeSeason(ChampionshipCalendar.ResolveScoring(pack), results).Final;
     }
 
     /// <summary>1-based position of a championship calendar round among championship rounds
@@ -518,6 +542,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     CurrentSeatLivery = playerLiveryName,
                     TwoPhasePromotion = true,
                     PerSeasonDnq = Companion.Core.Smgp.SmgpDnqField.HasDnqField(pack),
+                    StandingsReshuffle = true,
                 }
                 : null,
             // The mortality mode (character death & injury, Slice 1): Off (default) serializes to
@@ -1542,7 +1567,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             RoundHeader = $"{(packRound?.Name ?? $"Round {round}").ToUpperInvariant()} · ROUND {round}",
             SeasonLine = seasonLine,
             CareerLine = careerLine,
-            AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
+            AdviceLine = _environment.Rules.SmgpPitCrewAdvice.Line(
+                packRound?.Name ?? "", QuoteSeed(packRound?.Name ?? "round", round)),
             Titles = state.Titles,
             SeasonOrdinal = _seasonOrdinal,
             SeasonsTotal = Companion.Core.Smgp.SmgpRules.CampaignSeasons,
