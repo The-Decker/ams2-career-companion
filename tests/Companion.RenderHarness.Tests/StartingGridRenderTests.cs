@@ -69,4 +69,32 @@ public sealed class StartingGridRenderTests
             Assert.True(view.ActualHeight > 0);
         });
     }
+
+    [Fact]
+    public void StartingGridView_RendersTheDnqStrip()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var grid = new[] { Seat("driver.brabham", "Brabham", "1"), Seat(PlayerId, "Hulme", "2") };
+            var dnq = new[]
+            {
+                new StartingGridDnq("Paul White", "Blanche", "10"),
+                new StartingGridDnq("Paul Klinger", "Zeroforce", "32"),
+            };
+            var vm = new StartingGridViewModel(grid, PlayerId, "Feature",
+                conditions: null, playerCarArtDriverId: null, dnq: dnq);
+            Assert.True(vm.HasDnq);
+
+            var view = new StartingGridView { DataContext = vm };
+            view.Measure(new Size(1000, 800));
+            view.Arrange(new Rect(0, 0, 1000, 800));
+            view.UpdateLayout();
+
+            // The DNQ strip realises without a render-time crash (its bindings + resources resolve).
+            Assert.True(view.ActualHeight > 0);
+        });
+    }
 }

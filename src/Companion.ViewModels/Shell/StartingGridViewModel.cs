@@ -14,10 +14,12 @@ public sealed class StartingGridViewModel : ObservableObject
 {
     public StartingGridViewModel(
         IReadOnlyList<GridSeat> orderedGrid, string playerDriverId, string? sessionTitle,
-        GridConditions? conditions = null, string? playerCarArtDriverId = null)
+        GridConditions? conditions = null, string? playerCarArtDriverId = null,
+        IReadOnlyList<StartingGridDnq>? dnq = null)
     {
         Title = string.IsNullOrEmpty(sessionTitle) ? "Starting grid" : $"Starting grid  ·  {sessionTitle}";
         Conditions = conditions ?? GridConditions.Unknown;
+        Dnq = dnq ?? [];
         Slots = orderedGrid.Select((seat, i) => new StartingGridSlot(
             Position: i + 1,
             DriverId: seat.DriverId,
@@ -52,6 +54,25 @@ public sealed class StartingGridViewModel : ObservableObject
 
     /// <summary>The race conditions shown in the top/bottom bars (lap distance, weather, fuel …).</summary>
     public GridConditions Conditions { get; }
+
+    /// <summary>The cars that DID NOT QUALIFY this round — the SMGP dynamic DNQ field's rotating tail
+    /// (the pack fields 34 painted cars but the grid caps at ~26, so the slowest 8-9 sit out, and which
+    /// ones rotates race to race). Empty for a full-field pack (no DNQ), which hides the strip.</summary>
+    public IReadOnlyList<StartingGridDnq> Dnq { get; }
+
+    /// <summary>True when any car missed the cut this round — gates the "DID NOT QUALIFY" strip.</summary>
+    public bool HasDnq => Dnq.Count > 0;
+
+    /// <summary>The DNQ strip header, e.g. "DID NOT QUALIFY · 8".</summary>
+    public string DnqHeader => $"DID NOT QUALIFY · {Dnq.Count}";
+}
+
+/// <summary>One car that failed to qualify this round — shown grayed on the grid's DNQ strip so the
+/// player can see the rotating field (who narrowly missed, who is a perennial backmarker).</summary>
+public sealed record StartingGridDnq(string Name, string TeamName, string? Number)
+{
+    public string NameUpper => Name.ToUpperInvariant();
+    public string NumberLabel => string.IsNullOrEmpty(Number) ? "" : "#" + Number;
 }
 
 /// <summary>One starting-grid card: the grid position, driver/team, the team accent colour, and the

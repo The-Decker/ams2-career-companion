@@ -312,10 +312,35 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
                 .FirstOrDefault(e => string.Equals(
                     e.Ams2LiveryName, playerSeat.Ams2LiveryName, StringComparison.Ordinal))
                 ?.DriverId;
+
+        // The dynamic per-race DNQ field: the cars whose livery didn't make this round's grid. The pack
+        // fields all its painted cars (SMGP = 34) but the grid caps at ~26, so the slowest 8-9 sit out —
+        // and which ones rotates race to race (the field is pre-qualified). Empty for a full-field pack,
+        // which hides the strip. Ordered fastest-first, so the cars that narrowly missed lead.
+        var seatedLiveries = grid.Select(s => s.Ams2LiveryName).ToHashSet(StringComparer.Ordinal);
+        var driverName = new Dictionary<string, string>(StringComparer.Ordinal);
+        var driverQuali = new Dictionary<string, double>(StringComparer.Ordinal);
+        foreach (var d in _session.Pack.Drivers)
+        {
+            driverName.TryAdd(d.Id, d.Name);
+            driverQuali.TryAdd(d.Id, d.Ratings.QualifyingSkill);
+        }
+        var teamName = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var t in _session.Pack.Teams)
+            teamName.TryAdd(t.Id, t.Name);
+        var dnq = _session.Pack.Entries
+            .Where(e => !seatedLiveries.Contains(e.Ams2LiveryName))
+            .OrderByDescending(e => driverQuali.GetValueOrDefault(e.DriverId))
+            .Select(e => new StartingGridDnq(
+                driverName.GetValueOrDefault(e.DriverId, e.DriverId),
+                teamName.GetValueOrDefault(e.TeamId, e.TeamId),
+                e.Number))
+            .ToList();
+
         _startingGrid = new StartingGridViewModel(
             grid, Summary.PlayerDriverId,
             WeekendRaceCount > 1 ? WeekendRaces?[CurrentRaceIndex].Label : null,
-            BuildGridConditions(), playerCarArtDriverId);
+            BuildGridConditions(), playerCarArtDriverId, dnq);
         CurrentContent = _startingGrid;
         ConfirmResultCommand.NotifyCanExecuteChanged();
     }

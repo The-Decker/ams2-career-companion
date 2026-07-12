@@ -112,8 +112,36 @@
             </Border>
         </Grid>
 
-        <!-- ===== bottom: conditions strip + START RACE ===== -->
-        <Border DockPanel.Dock="Bottom" Margin="0,12,0,0" BorderThickness="0,1,0,0"
+        <!-- ===== bottom: DID NOT QUALIFY strip + conditions strip + START RACE ===== -->
+        <StackPanel DockPanel.Dock="Bottom">
+          <!-- the dynamic per-race DNQ field: the cars that missed this round's cut (SMGP rotates the
+               slowest 8-9 out each race). Hidden for a full-field pack. -->
+          <Border Margin="0,10,0,0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}"
+                  BorderThickness="1" CornerRadius="8" Padding="12,8"
+                  Visibility="{Binding HasDnq, Converter={StaticResource BoolVisible}}">
+              <StackPanel>
+                  <TextBlock Text="{Binding DnqHeader}" Style="{StaticResource Faint}" FontSize="10.5" Margin="0,0,0,6" />
+                  <ItemsControl ItemsSource="{Binding Dnq}">
+                      <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                              <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="10"
+                                      Padding="9,3" Margin="0,0,6,6" Opacity="0.7">
+                                  <TextBlock>
+                                      <Run Text="{Binding NameUpper, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" />
+                                      <Run Text="  " /><Run Text="{Binding TeamName, Mode=OneWay}" FontSize="10.5"
+                                           Foreground="{StaticResource TextMutedBrush}" />
+                                  </TextBlock>
+                              </Border>
+                          </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+              </StackPanel>
+          </Border>
+
+          <Border Margin="0,12,0,0" BorderThickness="0,1,0,0"
                 BorderBrush="{StaticResource EdgeBrush}" Padding="0,12,0,0">
             <DockPanel>
                 <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}" MinWidth="170" FontWeight="Bold"
@@ -127,10 +155,10 @@
                     <TextBlock Text="{Binding WindLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding HumidityLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding TrackStateLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding FuelLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
                 </StackPanel>
             </DockPanel>
-        </Border>
+          </Border>
+        </StackPanel>
 
         <!-- ===== the staggered grid, paged horizontally ===== -->
         <Grid Margin="0,14,0,0">

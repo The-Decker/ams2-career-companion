@@ -86,12 +86,9 @@ File: **`src/Companion.App/Views/StartingGridView.xaml`**.
 | Back-row stagger offset | `Margin="139,4,0,0"` (~L144) | 139 | **≈ half the new card width** |
 | Card margins / carousel arrow hit-size | L12, L149–154 | — | scale to match |
 
-**Fuel gauge removal:** delete the fuel readout in the bottom strip:
-```xml
-<TextBlock Text="{Binding FuelLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" .../>  <!-- ~L130 -->
-```
-(Leave the other bottom-strip readouts — weather / wind / humidity / track state. The `FuelLabel`/`FuelPct`
-on the model become unused; Claude will drop them from `GridConditions` later — don't touch the model.)
+**Fuel gauge removal — ✅ DONE by Claude** (while restructuring the bottom strip for the DNQ display,
+commit after `f1f4ec2`). The fuel readout is gone; the `FuelLabel`/`FuelPct` on `GridConditions` are now
+unused (harmless — leave the model alone). Nothing for you to do here.
 
 **Player card is now correct data-side.** Claude fixed the bug where the player's card showed a blank car
 (it keyed art off the synthetic `driver.player-entrant` id). The player's card now resolves the **actual

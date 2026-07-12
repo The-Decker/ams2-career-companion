@@ -50,6 +50,33 @@ public sealed class StartingGridViewModelTests
     }
 
     [Fact]
+    public void DnqStrip_SurfacesTheNonQualifiers_FastestFirstAsGiven()
+    {
+        var grid = new[] { Seat("driver.a", "team.x", "Livery A", isPlayer: false) };
+        var dnq = new[]
+        {
+            new StartingGridDnq("Paul White", "Blanche", "10"),
+            new StartingGridDnq("Paul Klinger", "Zeroforce", "32"),
+        };
+        var vm = new StartingGridViewModel(grid, "driver.a", sessionTitle: null,
+            conditions: null, playerCarArtDriverId: null, dnq: dnq);
+
+        Assert.True(vm.HasDnq);
+        Assert.Equal("DID NOT QUALIFY · 2", vm.DnqHeader);
+        Assert.Equal(new[] { "PAUL WHITE", "PAUL KLINGER" }, vm.Dnq.Select(d => d.NameUpper));
+    }
+
+    [Fact]
+    public void NoDnq_HidesTheStrip()
+    {
+        var vm = new StartingGridViewModel(
+            new[] { Seat("driver.a", "team.x", "Livery A", isPlayer: true) }, "driver.a", sessionTitle: null);
+
+        Assert.False(vm.HasDnq);
+        Assert.Empty(vm.Dnq);
+    }
+
+    [Fact]
     public void PlayerCard_FallsBackToSeatId_WhenNoTakenOverCar()
     {
         // A custom own-entrant livery matching no pack entry: no car-art driver to borrow, so the card
