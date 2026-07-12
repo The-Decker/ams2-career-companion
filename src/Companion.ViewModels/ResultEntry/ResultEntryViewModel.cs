@@ -170,6 +170,20 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     [ObservableProperty]
     private bool isWet;
 
+    /// <summary>The severity of the player's OWN accident DNF (Light/Medium/Heavy) — bound by the result
+    /// screen's severity picker, which is shown ONLY when <see cref="PlayerHasAccidentDnf"/> (the player
+    /// marked their own retirement as an accident). Defaults Medium the moment an accident is marked and
+    /// clears when it is undone (see <see cref="RaiseStateChanged"/>). Stored on the raw envelope (v7);
+    /// nothing folds it until Slice 3. (Character death &amp; injury §3.1.)</summary>
+    [ObservableProperty]
+    private Companion.Core.Career.AccidentSeverity? playerAccidentSeverity;
+
+    /// <summary>True when the player's OWN retirement this round is an accident ("a") — the gate the
+    /// view uses to reveal the severity picker.</summary>
+    public bool PlayerHasAccidentDnf =>
+        _dnfs.Any(d => string.Equals(d.Seat.DriverId, _playerDriverId, StringComparison.Ordinal)
+            && d.Reason == "a");
+
     [ObservableProperty]
     private string input = "";
 
@@ -264,6 +278,9 @@ public sealed partial class ResultEntryViewModel : ObservableObject
         SliderUsed = Math.Clamp(
             Math.Round(SliderUsed, MidpointRounding.AwayFromZero), MinSlider, MaxSlider),
         IsWet = IsWet,
+        // Only for the player's own accident DNF (kept in sync by RaiseStateChanged); the session
+        // gates it again on the accident reason before storing it on the envelope.
+        PlayerAccidentSeverity = PlayerHasAccidentDnf ? PlayerAccidentSeverity : null,
     };
 
     // ---------- commands (view maps Enter/Tab/Esc/F8/Ctrl+Z to these) ----------
@@ -585,6 +602,12 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     private void RaiseStateChanged()
     {
         Recompute();
+        // Keep the player's accident-severity selection in sync with their DNF: default Medium the
+        // moment they mark their own accident, clear it when the accident is undone/changed.
+        if (PlayerHasAccidentDnf)
+            PlayerAccidentSeverity ??= Companion.Core.Career.AccidentSeverity.Medium;
+        else
+            PlayerAccidentSeverity = null;
         OnPropertyChanged(nameof(Classified));
         OnPropertyChanged(nameof(Remaining));
         OnPropertyChanged(nameof(RivalStatusLine));
@@ -593,6 +616,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
         OnPropertyChanged(nameof(ResolvedCount));
         OnPropertyChanged(nameof(ProgressText));
         OnPropertyChanged(nameof(IsComplete));
+        OnPropertyChanged(nameof(PlayerHasAccidentDnf));
         OnPropertyChanged(nameof(CanUndo));
     }
 }

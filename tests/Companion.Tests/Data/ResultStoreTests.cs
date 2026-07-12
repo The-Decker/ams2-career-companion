@@ -122,6 +122,49 @@ public class ResultStoreTests
     }
 
     [Fact]
+    public void AccidentSeverityRoundTrips_OnV7Envelope()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        // A player accident DNF stores its Light/Medium/Heavy severity alongside the cause (v7).
+        var envelope = new RoundResultEnvelope
+        {
+            Result = DataCareerFixture.Rounds()[0],
+            PlayerDnfCause = DnfCause.DriverError,
+            PlayerAccidentSeverity = AccidentSeverity.Heavy,
+        };
+        ResultStore.Append(
+            db, seasonId, 1,
+            JsonSerializer.Serialize(envelope, CoreJson.Options),
+            DataCareerFixture.Utc);
+
+        var stored = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
+        Assert.Equal(RoundResultEnvelope.CurrentVersion, stored.Version); // v7
+        Assert.Equal(AccidentSeverity.Heavy, stored.PlayerAccidentSeverity);
+    }
+
+    [Fact]
+    public void PreV7Payload_ReadsAccidentSeverityNull()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId) = Setup(tmp);
+        using var _ = db;
+
+        // A genuine v6 accident DNF had no severity concept — the field is absent from the JSON.
+        // It must read back null so the fold treats it as legacy binary behavior (no injury roll).
+        string roundJson = JsonSerializer.Serialize(DataCareerFixture.Rounds()[0], CoreJson.Options);
+        string v6Payload = $"{{\"version\":6,\"result\":{roundJson},\"playerDnfCause\":\"driverError\"}}";
+        ResultStore.Append(db, seasonId, 1, v6Payload, DataCareerFixture.Utc);
+
+        var stored = ResultStore.ReadSeasonResults(db, seasonId)[0].ToEnvelope();
+        Assert.Equal(6, stored.Version);
+        Assert.Equal(DnfCause.DriverError, stored.PlayerDnfCause);
+        Assert.Null(stored.PlayerAccidentSeverity);
+    }
+
+    [Fact]
     public void LegacyBareRoundResultPayloadReadsWithDefaults()
     {
         using var tmp = new TempDb();

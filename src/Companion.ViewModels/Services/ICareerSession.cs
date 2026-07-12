@@ -842,6 +842,13 @@ public sealed record ResultDraft
     /// round with no call — or a call no bolder than expected — folds exactly as before. (4b.)</summary>
     public int? CalledShot { get; init; }
 
+    /// <summary>How hard the player's OWN accident ("a") DNF was — Light/Medium/Heavy (character death &amp;
+    /// injury §3.1). The result screen reveals this picker only for the player's own accident DNF, default
+    /// Medium. Stored on the raw envelope (v7); <see cref="CareerSessionService"/> threads it in ONLY when
+    /// the player's DNF reason is accident, null otherwise. Nothing consumes it until Slice 3, so a round
+    /// carrying it still folds byte-identically. Older producers omit it.</summary>
+    public Companion.Core.Career.AccidentSeverity? PlayerAccidentSeverity { get; init; }
+
     /// <summary>The qualifying order for this round (driver ids, pole first), when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying. Stored verbatim in
     /// the raw envelope; never scored. Older producers omit it.</summary>

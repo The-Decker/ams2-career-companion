@@ -3492,12 +3492,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             Result = ToRoundResult(draft, roundNumber, packRound),
             SliderUsed = Math.Clamp(slider, DifficultyModel.MinSlider, DifficultyModel.MaxSlider),
             PlayerDnfCause = PlayerDnfCauseFrom(draft),
+            PlayerAccidentSeverity = PlayerAccidentSeverityFrom(draft),
             QualifyingOrder = draft.QualifyingOrder,
             IsWet = draft.IsWet,
             CalledShot = draft.CalledShot,
             SmgpRival = draft.SmgpRival,
         };
     }
+
+    /// <summary>The player's chosen accident severity, captured ONLY for the player's OWN accident ("a")
+    /// DNF (Slice 2, §3.1). Null for every other outcome, so a non-accident round stores no severity and
+    /// stays byte-identical. The value comes from the draft (the result screen defaults it to Medium when
+    /// an accident is marked). Nothing folds it yet — Slice 3 rolls the d500 off it.</summary>
+    private AccidentSeverity? PlayerAccidentSeverityFrom(ResultDraft draft) =>
+        draft.DidNotFinish.TryGetValue(_playerDriverId, out string? reason) && reason == "a"
+            ? draft.PlayerAccidentSeverity
+            : null;
 
     /// <summary>Maps the result screen's reason for the PLAYER onto the sim's blame model:
     /// m(echanical) = no blame, a(ccident) = driver error, o(ther) = the fold's no-blame

@@ -28,7 +28,7 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 6;
+    public const int CurrentVersion = 7;
 
     public int Version { get; init; } = CurrentVersion;
 
@@ -63,6 +63,13 @@ public sealed record RoundResultEnvelope
     /// the fold defaults a retired player to <see cref="DnfCause.Mechanical"/> (no blame)
     /// and a disqualified player to <see cref="DnfCause.DriverError"/>.</summary>
     public DnfCause? PlayerDnfCause { get; init; }
+
+    /// <summary>How hard the player's OWN accident (<c>"a"</c>) DNF was — Light/Medium/Heavy (character
+    /// death &amp; injury §3.1, v7). A raw player INPUT the sim cannot re-derive, so it is stored. Null on
+    /// every pre-v7 save AND on any non-accident DNF — the fold then treats null as "no severity, legacy
+    /// binary behavior". Slice 2 captures it only; NOTHING consumes it yet, so a round carrying a severity
+    /// still replays BYTE-IDENTICALLY. Slice 3 folds it into the d500 injury roll.</summary>
+    public AccidentSeverity? PlayerAccidentSeverity { get; init; }
 
     /// <summary>The round's qualifying order — pack driver ids, pole first — when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying (every pre-weekend
