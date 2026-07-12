@@ -347,6 +347,23 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public CharacterDossier? CharacterDossier() => Dossier;
 
+    public SkillTreeSnapshot? Tree { get; set; }
+
+    public SkillTreeSnapshot? SkillTree() => Tree ?? SkillTreeSnapshot.Empty;
+
+    public int RespecTokenCount { get; set; }
+
+    public int RespecTokensAvailable() => RespecTokenCount;
+
+    public List<string> Respecs { get; } = [];
+
+    public void RespecNode(string nodeId)
+    {
+        Respecs.Add(nodeId);
+        if (RespecTokenCount > 0)
+            RespecTokenCount--;
+    }
+
     // ---------- skins (read-only lens) ----------
 
     /// <summary>The skin picture the Skins lens projects (empty by default).</summary>

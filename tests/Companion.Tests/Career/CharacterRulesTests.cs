@@ -83,6 +83,11 @@ public sealed class CharacterRulesTests
         Assert.Equal(2, curve.LevelForTotalXp(234));     // 100 + 135 = 235 to reach level 3
         Assert.Equal(3, curve.LevelForTotalXp(235));
         Assert.Equal(curve.MaxLevel, curve.LevelForTotalXp(long.MaxValue));
+
+        var levels = Shipped().Levels;
+        Assert.Equal(26, levels.LevelForTotalXp(long.MaxValue, 1967, useEraSoftCap: true));
+        Assert.Equal(30, levels.LevelForTotalXp(long.MaxValue, 1967, useEraSoftCap: false));
+        Assert.Equal(30, levels.LevelForTotalXp(long.MaxValue, 2022, useEraSoftCap: true));
     }
 
     [Fact]

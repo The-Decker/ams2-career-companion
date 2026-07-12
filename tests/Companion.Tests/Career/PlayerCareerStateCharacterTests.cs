@@ -116,4 +116,30 @@ public sealed class PlayerCareerStateCharacterTests
         // equality this fails on the freshly-deserialized Stats/PerkIds collections.
         Assert.Equal(state, back);
     }
+
+    [Fact]
+    public void ProgressionDefaults_AreOmitted_ButOptInFieldsRoundTripStructurally()
+    {
+        var legacy = new CharacterProfile
+        {
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal) { ["pace"] = 0.5 },
+            PerkIds = [],
+        };
+        string legacyJson = JsonSerializer.Serialize(legacy, CoreJson.Options);
+        Assert.DoesNotContain("progressionVersion", legacyJson);
+        Assert.DoesNotContain("unlockedSkillNodeIds", legacyJson);
+        Assert.DoesNotContain("creationPerkIds", legacyJson);
+
+        var current = legacy with
+        {
+            ProgressionVersion = 1,
+            UnlockedSkillNodeIds = ["raise_pace_1"],
+            CreationPerkIds = ["rain_man"],
+            PerkIds = ["rain_man"],
+        };
+        string json = JsonSerializer.Serialize(current, CoreJson.Options);
+        var back = JsonSerializer.Deserialize<CharacterProfile>(json, CoreJson.Options)!;
+        Assert.Equal(current, back);
+        Assert.Equal(current.GetHashCode(), back.GetHashCode());
+    }
 }

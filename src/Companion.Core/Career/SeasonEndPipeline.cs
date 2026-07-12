@@ -229,7 +229,10 @@ public static class SeasonEndPipeline
             int seasonXp = XpMath.PerSeason(
                 xpRules.Levels.XpSources.PerSeason, playerPosition, seasonCompleted: true);
             seasonEndXp = Math.Max(0, player.Xp + seasonXp);
-            seasonEndLevel = xpRules.Levels.XpCurve.LevelForTotalXp(seasonEndXp);
+            seasonEndLevel = xpRules.Levels.LevelForTotalXp(
+                seasonEndXp,
+                context.Pack.Season.Year,
+                useEraSoftCap: player.Character.ProgressionVersion >= 1);
             events.Add(new JournalEvent
             {
                 Phase = JournalPhases.PlayerXp,
