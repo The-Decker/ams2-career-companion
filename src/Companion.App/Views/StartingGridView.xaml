@@ -5,8 +5,8 @@
              xmlns:smgp="clr-namespace:Companion.Core.Smgp;assembly=Companion.Core"
              Focusable="False">
     <!-- The display-only starting grid after qualifying: historical careers retain the compact,
-         horizontally paged two-row cards; SMGP alone switches to the vertically scrolling pixel
-         starting straight with one keyed miniature car per driver. -->
+         horizontally paged two-row cards; SMGP alone switches to a top-down, vertically scrolling
+         start straight with grandstands, staggered grid boxes and a working pitlane. -->
     <UserControl.Resources>
         <!-- one grid card: team-coloured position box + name, portrait + car, team edge. -->
         <DataTemplate x:Key="GridCard">
@@ -70,145 +70,150 @@
             </Border>
         </DataTemplate>
 
+        <!-- One real grid box: almost all asphalt and car, with a compact broadcast tag instead of
+             the old full-width driver card. The containing ItemsControl offsets every even slot by
+             half a box, producing the true P1/P2/P3 two-file stagger. -->
         <DataTemplate x:Key="SmgpGridSlot">
-            <Border x:Name="SmgpGridSlotCard" Height="136" Margin="4" CornerRadius="6"
+            <Border x:Name="SmgpGridSlotCard" Height="136" Margin="4" CornerRadius="4"
                     UseLayoutRounding="True" RenderOptions.BitmapScalingMode="NearestNeighbor">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Background" Value="{DynamicResource OverlaySurfaceBrush}" />
-                        <Setter Property="BorderBrush"
-                                Value="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
-                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsPlayer}" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                <Setter Property="BorderThickness" Value="4" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <Grid Margin="6">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="22" />
-                        <RowDefinition Height="62" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
 
-                    <DockPanel>
-                        <Border DockPanel.Dock="Left" MinWidth="38" CornerRadius="4" Padding="6,2"
-                                Background="{Binding TeamColor, Converter={StaticResource HexBrush}}">
-                            <Grid>
-                                <Border Background="{DynamicResource TeamColorScrimBrush}" CornerRadius="4" />
-                                <TextBlock Text="{Binding PositionLabel}" Style="{StaticResource PixelBadge}"
-                                           Foreground="{DynamicResource OnTeamColorBrush}" FontSize="8"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                        <Border x:Name="SmgpYouBadge" DockPanel.Dock="Right" CornerRadius="4" Padding="6,2"
-                                Background="{DynamicResource AccentBrush}"
-                                Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
-                            <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
-                                       Foreground="{DynamicResource OnAccentBrush}" FontSize="8" />
-                        </Border>
-                        <TextBlock Text="{Binding NumberLabel}" Margin="4,0" VerticalAlignment="Center"
-                                   HorizontalAlignment="Right" FontFamily="{StaticResource MonoFont}" FontWeight="Bold"
-                                   Foreground="{DynamicResource TextSecondaryBrush}" />
-                    </DockPanel>
+                <Grid x:Name="SmgpDriverVisuals" Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="54" />
+                        <ColumnDefinition Width="6" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                    <!-- Put the driver's portrait directly beside their exact car, like a compact
-                         broadcast entry rather than a detached identity footer. -->
-                    <Grid x:Name="SmgpDriverVisuals" Grid.Row="1" Margin="0,4,0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="54" />
-                            <ColumnDefinition Width="6" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid x:Name="SmgpPortraitFrame" Width="54" Height="54"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                              RenderTransformOrigin="0.5,0.5">
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <!-- Preserve the measured 54 px layout contract while making the
-                                         authored portrait read larger inside the compact card. -->
-                                    <Setter Property="RenderTransform">
-                                        <Setter.Value>
-                                            <ScaleTransform ScaleX="1.08" ScaleY="1.08" />
-                                        </Setter.Value>
-                                    </Setter>
+                    <!-- The classic open-bottom grid marking with its short centre cap. -->
+                    <Grid x:Name="SmgpCarBay" Grid.Column="2" Margin="0,0,2,0">
+                        <Border Margin="5,1,5,2" CornerRadius="2,2,0,0">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="{StaticResource SmgpGridBayEdgeBrush}" />
+                                    <Setter Property="BorderThickness" Value="2,2,2,0" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                                            <Setter Property="RenderTransform">
-                                                <Setter.Value>
-                                                    <ScaleTransform ScaleX="1.16" ScaleY="1.16" />
-                                                </Setter.Value>
-                                            </Setter>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                            <Setter Property="BorderThickness" Value="4,4,4,0" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Grid.Style>
-                            <Border CornerRadius="4" Background="{DynamicResource OverlaySurfaceAltBrush}">
-                                <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="22"
-                                           Foreground="{DynamicResource TextMutedBrush}" Opacity="0.55"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <Border CornerRadius="4" ClipToBounds="True">
-                                <Image x:Name="SmgpPortraitImage" Stretch="UniformToFill"
-                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                       Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                            </Border>
-                        </Grid>
+                            </Border.Style>
+                        </Border>
+                        <Border Width="22" Height="3" Margin="0,0,0,0" VerticalAlignment="Top"
+                                HorizontalAlignment="Center" Background="{StaticResource SmgpGridMarkingBrush}" />
 
-                        <!-- Prefer a bespoke overhead sprite, then use the canonical dist side preview. -->
-                        <Grid x:Name="SmgpCarBay" Grid.Column="2" Margin="0,0,2,0">
-                            <Border BorderBrush="{StaticResource SmgpGridBayEdgeBrush}"
-                                    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" />
-                            <Border Width="18" Height="3" Margin="0,-1,0,0" VerticalAlignment="Top"
-                                    HorizontalAlignment="Center" Background="{StaticResource SmgpGridMarkingBrush}" />
-                            <Image x:Name="SmgpCarImage" MaxHeight="56" Stretch="Uniform"
-                                   HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                   Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
-                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                        </Grid>
+                        <!-- Grid-only overhead sprites live beside the other SMGP presentation art;
+                             the shared cars/ folder remains the original side-view preview set. -->
+                        <Image x:Name="SmgpCarImage" MaxHeight="94" MaxWidth="86" Margin="0,5,0,29"
+                               Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
+                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+
+                        <!-- A narrow timing-tower tag leaves the track and car dominant. -->
+                        <Border VerticalAlignment="Bottom" Margin="8,0,8,4" Padding="6,3" CornerRadius="3"
+                                Background="{DynamicResource OverlaySurfaceBrush}"
+                                BorderBrush="{Binding TeamColor, Converter={StaticResource HexBrush}}"
+                                BorderThickness="0,0,0,2">
+                            <StackPanel>
+                                <TextBlock Text="{Binding DriverNameUpper}" FontWeight="Bold" FontSize="10.5"
+                                           TextTrimming="CharacterEllipsis" ToolTip="{Binding DriverName}" />
+                                <TextBlock Text="{Binding TeamNameUpper}" FontSize="8.5"
+                                           Foreground="{DynamicResource TextMutedBrush}"
+                                           TextTrimming="CharacterEllipsis" ToolTip="{Binding TeamName}" />
+                            </StackPanel>
+                        </Border>
                     </Grid>
 
-                    <!-- Nationality is driver-keyed in canonical dist art so this remains XAML-only;
-                         the synthetic player has no authored nationality, therefore its flag collapses. -->
-                    <Grid x:Name="SmgpDriverIdentity" Grid.Row="2" Margin="0,1,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="6" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid x:Name="SmgpFlagFrame" Width="24" Height="18" VerticalAlignment="Center">
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Grid.Style>
-                            <Border Background="{DynamicResource OverlaySurfaceAltBrush}"
-                                    BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1" />
-                            <Image x:Name="SmgpFlagImage" Stretch="Uniform"
+                    <!-- Portraits are deliberately small broadcast identifiers, but the player's
+                         scales up another step so YOU is instantly findable without widening a slot. -->
+                    <Grid x:Name="SmgpPortraitFrame" Width="54" Height="54" Grid.Column="0"
+                          HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value><ScaleTransform ScaleX="1.04" ScaleY="1.04" /></Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                        <Setter Property="RenderTransform">
+                                            <Setter.Value><ScaleTransform ScaleX="1.18" ScaleY="1.18" /></Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Border CornerRadius="4" Background="{DynamicResource OverlaySurfaceAltBrush}"
+                                BorderBrush="{Binding TeamColor, Converter={StaticResource HexBrush}}"
+                                BorderThickness="2">
+                            <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="22"
+                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.55"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border CornerRadius="4" ClipToBounds="True" Margin="2">
+                            <Image x:Name="SmgpPortraitImage" Stretch="UniformToFill"
                                    RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/flags}"
+                                   Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                        </Grid>
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding DriverNameUpper}" FontWeight="Bold" FontSize="13"
-                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding DriverName}" />
-                            <TextBlock Text="{Binding TeamNameUpper}" FontSize="10.5" Margin="0,1,0,0"
-                                       Foreground="{DynamicResource TextMutedBrush}"
-                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding TeamName}" />
-                        </StackPanel>
+                        </Border>
                     </Grid>
+
+                    <Border Grid.Column="0" MinWidth="42" CornerRadius="3" Padding="5,3"
+                            HorizontalAlignment="Left" VerticalAlignment="Top"
+                            Background="{Binding TeamColor, Converter={StaticResource HexBrush}}">
+                        <Grid>
+                            <Border Background="{DynamicResource TeamColorScrimBrush}" CornerRadius="3" />
+                            <TextBlock Text="{Binding PositionLabel}" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource OnTeamColorBrush}" FontSize="8"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Nationality remains driver-keyed; the synthetic player has no authored flag. -->
+                    <Grid x:Name="SmgpFlagFrame" Grid.Column="0" Width="24" Height="18"
+                          Margin="0,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Border Background="{DynamicResource OverlaySurfaceAltBrush}"
+                                BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1" />
+                        <Image x:Name="SmgpFlagImage" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/flags}"
+                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    </Grid>
+
+                    <Border x:Name="SmgpYouBadge" Grid.Column="2" CornerRadius="3" Padding="5,3"
+                            HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,8,0"
+                            Background="{DynamicResource AccentBrush}"
+                            Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
+                                   Foreground="{DynamicResource OnAccentBrush}" FontSize="8" />
+                    </Border>
+                    <TextBlock Grid.Column="2" Text="{Binding NumberLabel}" Margin="8,7,0,0"
+                               VerticalAlignment="Top" HorizontalAlignment="Left"
+                               FontFamily="{StaticResource MonoFont}" FontSize="9" FontWeight="Bold"
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
                 </Grid>
             </Border>
         </DataTemplate>
@@ -387,26 +392,33 @@
                               AutomationProperties.Name="Scroll through the SMGP starting order">
                     <Grid x:Name="SmgpTrackSurface" HorizontalAlignment="Stretch"
                           Background="{StaticResource SmgpGrassBrush}">
-                        <!-- The venue remains grass-edge-to-grass-edge at every width, but the active
-                             racing strip is deliberately narrow. Scenery absorbs wide-screen space;
-                             the road minimum protects portrait + car + identity at compact sizes. -->
+                        <!-- The venue remains grass-edge-to-grass-edge at every width. The active
+                             straight is capped at 620 px; grandstands and pitlane absorb every extra
+                             ultrawide pixel instead of allowing two driver cards to balloon. -->
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.12*" />
-                            <ColumnDefinition Width="0.63*" />
-                            <ColumnDefinition Width="14" />
-                            <ColumnDefinition Width="*" MinWidth="420" MaxWidth="900" />
                             <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="0.63*" />
+                            <ColumnDefinition Width="1.05*" />
                             <ColumnDefinition Width="14" />
-                            <ColumnDefinition Width="0.12*" />
+                            <ColumnDefinition Width="2.15*" MinWidth="374" MaxWidth="620" />
+                            <ColumnDefinition Width="26" />
+                            <ColumnDefinition Width="1.15*" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="10" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Background="{StaticResource SmgpGrassBrush}" />
                         <Border Grid.Column="1" Background="{StaticResource SmgpGrandstandBrush}" />
                         <Border Grid.Column="2" Background="{StaticResource SmgpCurbBrush}" />
                         <Border Grid.Column="3" Background="{StaticResource SmgpAsphaltBrush}" />
-                        <Border Grid.Column="4" Background="{StaticResource SmgpFenceBrush}"
+                        <!-- Track-side kerb, then the pit wall: the active road is kerbed on both
+                             edges while the wall still clearly separates it from the pit road. -->
+                        <Border Grid.Column="4" Background="{StaticResource SmgpCurbBrush}" />
+                        <Border Grid.Column="4" Width="12" HorizontalAlignment="Right"
+                                Background="{StaticResource SmgpFenceBrush}"
                                 BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
                         <Border Grid.Column="5" Background="{StaticResource SmgpPitLaneBrush}" />
+                        <!-- The pit-lane limiter line stays continuous through the whole scroll. -->
+                        <Border Grid.Column="5" Width="4" HorizontalAlignment="Left" Margin="18,0,0,0"
+                                Background="{StaticResource SmgpPitLineBrush}" />
                         <Border Grid.Column="6" Background="{StaticResource SmgpCurbBrush}" />
                         <Border Grid.Column="7" Background="{StaticResource SmgpGrassBrush}" />
 
@@ -545,7 +557,25 @@
                             </Border>
                             <ItemsControl x:Name="SmgpSlotList" ItemsSource="{Binding Slots}"
                                           ItemTemplate="{StaticResource SmgpGridSlot}"
-                                          ItemsPanel="{StaticResource SmgpGridPanel}" />
+                                          ItemsPanel="{StaticResource SmgpGridPanel}"
+                                          AlternationCount="2" Margin="4,4,4,72">
+                                <!-- P2/P4/etc sit half a grid box behind the opposite file. A render
+                                     transform preserves compact row spacing while making the real
+                                     stagger unmistakable. -->
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Panel.ZIndex" Value="1" />
+                                        <Style.Triggers>
+                                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                                <Setter Property="RenderTransform">
+                                                    <Setter.Value><TranslateTransform Y="68" /></Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Panel.ZIndex" Value="2" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>

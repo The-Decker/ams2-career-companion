@@ -78,45 +78,78 @@
         <!-- one drivers/constructors table row; columns mirror the header layout via the shared
              size groups above -->
         <DataTemplate x:Key="StandingsRowTemplate">
-            <Grid Margin="4,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextMutedBrush}" />
-                <!-- The name is a "Why?" walk-back target (decisions 4 + 5): click (or focus +
-                     Enter/Space — a Button is keyboard-invokable, locked decision 8) opens the
-                     shared inspector for this competitor's journal. When no session is wired
-                     (CanInspect false) the command no-ops and the row reads as plain text. -->
-                <Button Grid.Column="1" Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
-                        HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
-                        Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                        CommandParameter="{Binding CompetitorId}"
-                        ToolTip="Why? — walk back the journal rows behind this number" />
-                <TextBlock Grid.Column="2" Margin="14,0,0,0" Text="{Binding DroppedRoundsText}"
-                           TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                           ToolTip="Rounds dropped by the best-N rule"
-                           Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
-                           FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
-                           Foreground="{DynamicResource TextMutedBrush}"
-                           ToolTip="Gross points before the best-N rule dropped anything"
-                           Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
-                           FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
-                           Foreground="{DynamicResource TextSecondaryBrush}"
-                           ToolTip="Average counted points per applied round"
-                           Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
-                           FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
-                           ToolTip="Counted points (dropped results excluded)"
-                           Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-            </Grid>
+            <Border Margin="4,2" Padding="7,4" CornerRadius="5">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+                        <Setter Property="BorderThickness" Value="3,0,0,0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsRival}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                    <!-- The name remains the keyboard/mouse Why? target; the role badges are explicit
+                         so player/rival identity never depends on colour alone. -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
+                                HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
+                                Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding CompetitorId}"
+                                ToolTip="Why? — walk back the journal rows behind this number" />
+                        <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
+                                Background="{DynamicResource AccentDimBrush}"
+                                BorderBrush="{DynamicResource AccentBrush}"
+                                Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
+                            <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource AccentTextBrush}" />
+                        </Border>
+                        <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
+                                Background="{DynamicResource ErrorDimBrush}"
+                                BorderBrush="{DynamicResource ErrorBrush}"
+                                Visibility="{Binding IsRival, Converter={StaticResource BoolVisible}}">
+                            <TextBlock Text="RIVAL" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource ErrorBrush}" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Margin="14,0,0,0" Text="{Binding DroppedRoundsText}"
+                               TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
+                               ToolTip="Rounds dropped by the best-N rule"
+                               Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
+                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
+                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"
+                               ToolTip="Gross points before the best-N rule dropped anything"
+                               Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
+                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
+                               Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                               ToolTip="Average counted points per applied round"
+                               Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
+                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right" VerticalAlignment="Center"
+                               ToolTip="Counted points (dropped results excluded)"
+                               Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                </Grid>
+            </Border>
         </DataTemplate>
         <!-- one inspector contribution row: label · detail · value -->
         <DataTemplate x:Key="InspectorRowTemplate">

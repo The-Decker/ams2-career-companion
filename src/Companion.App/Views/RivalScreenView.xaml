@@ -138,6 +138,80 @@
                                     </DataTemplate>
                                 </ContentControl.ContentTemplate>
                             </ContentControl>
+
+                            <!-- Career-wide duel record plus the live two-win ladder streak. A null
+                                 record means these drivers have not shared enough classified races yet. -->
+                            <Border Style="{StaticResource AccentCallout}" Margin="0,14,0,0" Padding="14,11"
+                                    DataContext="{Binding SelectedSmgpRival.HeadToHead}"
+                                    Visibility="{Binding DataContext.SelectedSmgpRival.HeadToHead,
+                                                         RelativeSource={RelativeSource AncestorType=StackPanel},
+                                                         Converter={StaticResource NullCollapsed}}">
+                                <StackPanel>
+                                    <DockPanel Margin="0,0,0,8">
+                                        <TextBlock DockPanel.Dock="Right" Text="CAREER DUEL"
+                                                   Style="{StaticResource Eyebrow}"
+                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                        <TextBlock Text="HEAD TO HEAD" FontFamily="{StaticResource DisplayFont}"
+                                                   FontWeight="Bold" FontSize="15" />
+                                    </DockPanel>
+                                    <UniformGrid Columns="3">
+                                        <Border Style="{StaticResource StatTile}" Margin="0,0,6,6">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding RacesMet}" Style="{StaticResource StatValue}"
+                                                           FontSize="20" />
+                                                <TextBlock Text="RACES MET" Style="{StaticResource Eyebrow}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource StatTile}" Margin="0,0,6,6">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding PlayerAhead}" Style="{StaticResource StatValue}"
+                                                           FontSize="20" Foreground="{DynamicResource AccentTextBrush}" />
+                                                <TextBlock Text="YOU AHEAD" Style="{StaticResource Eyebrow}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Style="{StaticResource StatTile}" Margin="0,0,0,6">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding DriverAhead}" Style="{StaticResource StatValue}"
+                                                           FontSize="20" Foreground="{DynamicResource ErrorBrush}" />
+                                                <TextBlock Text="RIVAL AHEAD" Style="{StaticResource Eyebrow}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </UniformGrid>
+                                    <Border Style="{StaticResource Callout}" Padding="10,7"
+                                            Visibility="{Binding PlayerBestTogether, Converter={StaticResource NullCollapsed}}">
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}"
+                                                       FontWeight="Bold" Foreground="{DynamicResource AccentTextBrush}"
+                                                       Text="{Binding PlayerBestTogether, StringFormat=P{0}}" />
+                                            <StackPanel>
+                                                <TextBlock Text="BEST SHARED RESULT" Style="{StaticResource Eyebrow}" />
+                                                <TextBlock Text="{Binding BestTogetherVenue}" Style="{StaticResource Muted}"
+                                                           Margin="0,2,0,0"
+                                                           Visibility="{Binding BestTogetherVenue, Converter={StaticResource StringVisible}}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                    <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="5"
+                                            Padding="10,7" Margin="0,7,0,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock TextAlignment="Right" FontFamily="{StaticResource MonoFont}">
+                                                <Run Text="YOU " /><Run Text="{Binding PlayerStreak}" FontWeight="Bold"
+                                                                        Foreground="{DynamicResource AccentTextBrush}" /><Run Text=" / 2" />
+                                            </TextBlock>
+                                            <TextBlock Grid.Column="1" Text="  CURRENT STREAK  " Style="{StaticResource Eyebrow}" />
+                                            <TextBlock Grid.Column="2" FontFamily="{StaticResource MonoFont}">
+                                                <Run Text="RIVAL " /><Run Text="{Binding DriverStreak}" FontWeight="Bold"
+                                                                          Foreground="{DynamicResource ErrorBrush}" /><Run Text=" / 2" />
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
                             <!-- Trash-talk lands below as the rival's reaction after the player commits. -->
                             <TextBlock Text="{Binding SmgpLadderLine}" Foreground="{DynamicResource AccentTextBrush}"
                                        FontWeight="SemiBold" FontSize="21" TextWrapping="Wrap" Margin="0,12,0,0"

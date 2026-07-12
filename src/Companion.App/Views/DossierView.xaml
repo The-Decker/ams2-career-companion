@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
+             xmlns:smgp="clr-namespace:Companion.Core.Smgp;assembly=Companion.Core"
              Focusable="False">
     <!-- The Driver dossier (character depth 3). DataContext is a DossierViewModel; the character
          data is Dossier (a CharacterDossier). Read-only — this is the "see your driver" lens. -->
@@ -88,6 +89,92 @@
                     </ContentControl>
                 </StackPanel>
             </Grid>
+
+            <!-- The player's evolving SMGP campaign: a typed, chronological story projection over
+                 folded results. RelativeSource is intentional because this page's ScrollViewer uses
+                 the CharacterDossier as its inner DataContext. -->
+            <StackPanel Margin="0,24,0,0"
+                        Visibility="{Binding DataContext.HasSmgpNarrative,
+                                             RelativeSource={RelativeSource AncestorType=UserControl},
+                                             Converter={StaticResource BoolVisible}}">
+                <TextBlock Text="YOUR STORY" Style="{StaticResource H2}" />
+                <Border Style="{StaticResource AccentCallout}" Margin="0,8,0,12" Padding="14,10">
+                    <StackPanel>
+                        <TextBlock Text="LIVE CAMPAIGN" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource AccentTextBrush}" />
+                        <TextBlock Text="{Binding DataContext.NarrativeIntro,
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Margin="0,3,0,0" />
+                    </StackPanel>
+                </Border>
+                <ItemsControl ItemsSource="{Binding DataContext.Timeline,
+                                                    RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="112" />
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding WhenLabel}" Style="{StaticResource Mono}"
+                                           FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"
+                                           TextWrapping="Wrap" Margin="0,7,10,0" />
+                                <Grid Grid.Column="1">
+                                    <Border Width="2" Background="{DynamicResource EdgeBrush}"
+                                            HorizontalAlignment="Center" />
+                                    <Border Width="12" Height="12" CornerRadius="6"
+                                            HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Promotion}">
+                                                        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.RivalryEarned}">
+                                                        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Demotion}">
+                                                        <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.RivalryLost}">
+                                                        <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.NearMiss}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.FirstWin}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Title}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Finale}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </Grid>
+                                <Border Grid.Column="2" Style="{StaticResource Callout}" Padding="12,9">
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding Kind}"
+                                                       Style="{StaticResource Eyebrow}" Margin="10,0,0,0" />
+                                            <TextBlock Text="{Binding Headline}" FontFamily="{StaticResource DisplayFont}"
+                                                       FontWeight="Bold" FontSize="14" TextWrapping="Wrap" />
+                                        </DockPanel>
+                                        <TextBlock Text="{Binding Detail}" Style="{StaticResource Body}"
+                                                   FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
 
             <!-- stats -->
             <TextBlock Text="Stats" Style="{StaticResource H2}" Margin="0,28,0,8" />

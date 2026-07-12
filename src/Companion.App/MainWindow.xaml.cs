@@ -2,6 +2,8 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using Companion.App.Views;
 using Companion.ViewModels.Hub;
 using Companion.ViewModels.Settings;
 using Companion.ViewModels.Shell;
@@ -35,6 +37,21 @@ public partial class MainWindow : Window
         if (e.Handled || DataContext is not ShellViewModel shell)
             return;
 
+        var hubView = FindVisualDescendant<HubView>(this);
+
+        // MainWindow is the top of PreviewKeyDown's tunnel. Give the modal Team HQ first refusal
+        // so Esc closes the overlay instead of navigating the disabled Hub content underneath it.
+        if (e.Key == Key.Escape && hubView?.TryCloseTycoonDashboard() == true)
+        {
+            e.Handled = true;
+            return;
+        }
+
+        // While the dashboard is open, bare digits belong to the focused modal surface; never let
+        // the global 1–9 accelerators change a disabled tab behind its scrim.
+        if (hubView?.IsTycoonDashboardOpen == true)
+            return;
+
         // Tab accelerators: only when a hub is open, no modifier, and focus is not in an
         // editable box (the result-entry InputBox owns bare digits).
         if (shell.Current is HubViewModel hub &&
@@ -56,6 +73,20 @@ public partial class MainWindow : Window
 
         if (e.Key == Key.Escape && shell.TryEscapeBack())
             e.Handled = true;
+    }
+
+    private static T? FindVisualDescendant<T>(DependencyObject root) where T : DependencyObject
+    {
+        int count = VisualTreeHelper.GetChildrenCount(root);
+        for (int i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T match)
+                return match;
+            if (FindVisualDescendant<T>(child) is { } nested)
+                return nested;
+        }
+        return null;
     }
 
     // ---------- window placement remembered (ux-round contract section 4) ----------
