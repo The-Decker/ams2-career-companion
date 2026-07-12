@@ -27,6 +27,20 @@ public sealed class SmgpTextQualityTests
             $"{fileName} contains double-encoding mojibake (â€…) — re-clean it and write UTF-8 (no BOM).");
     }
 
+    // Parse with the SAME reader the app uses, so a mojibake-cleanup that accidentally injects a raw
+    // quote/backslash (which would close a JSON string early and break EVERY team) fails here, loudly.
+    [Theory]
+    [InlineData("driver-profiles.json")]
+    [InlineData("team-profiles.json")]
+    [InlineData("rival-quotes.json")]
+    [InlineData("what-really-happened.json")]
+    public void SmgpAuthoredText_IsWellFormedJson(string fileName)
+    {
+        string path = Path.Combine(RepoRoot(), "data", "rules", "smgp", fileName);
+        using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
+        Assert.Equal(System.Text.Json.JsonValueKind.Object, doc.RootElement.ValueKind);
+    }
+
     private static string RepoRoot()
     {
         for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
