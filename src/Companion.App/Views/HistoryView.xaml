@@ -8,7 +8,7 @@
             <Border Style="{StaticResource Chip}" Margin="0,0,10,10" Padding="14,8">
                 <StackPanel>
                     <TextBlock Text="{Binding Value}" FontSize="20" FontWeight="Bold"
-                               Foreground="{StaticResource AccentBrush}" />
+                               Foreground="{DynamicResource AccentTextBrush}" />
                     <TextBlock Text="{Binding Label}" Style="{StaticResource Faint}" FontSize="11" />
                 </StackPanel>
             </Border>
@@ -24,11 +24,11 @@
                         HorizontalContentAlignment="Left" Padding="4,3"
                         Command="{Binding ToggleCommand}" ToolTip="Preview the circuit / show the result">
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" FontFamily="Consolas"
-                                   Foreground="{StaticResource TextMutedBrush}" Width="34" VerticalAlignment="Center" />
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" FontFamily="{StaticResource MonoFont}"
+                                   Foreground="{DynamicResource TextMutedBrush}" Width="34" VerticalAlignment="Center" />
                         <!-- revealed: the winner; preview: a spoiler-free "preview" tag -->
                         <TextBlock DockPanel.Dock="Right" Text="{Binding WinnerText}"
-                                   Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource AccentTextBrush}" TextTrimming="CharacterEllipsis"
                                    Margin="10,0,0,0" VerticalAlignment="Center"
                                    Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}" />
                         <TextBlock DockPanel.Dock="Right" Text="preview" Style="{StaticResource Faint}"
@@ -48,11 +48,11 @@
                                  Height="{Binding ActualWidth, RelativeSource={RelativeSource Self},
                                           Converter={StaticResource AspectHeight}, ConverterParameter=1}">
                             <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
-                                  Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                  Stroke="{DynamicResource AccentBrush}" StrokeThickness="10"
                                   StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                         </Viewbox>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                            <TextBlock Text="{Binding CircuitCaption}" Foreground="{DynamicResource AccentTextBrush}"
                                        TextWrapping="Wrap" />
                             <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Muted}"
                                        TextWrapping="Wrap" Margin="0,4,0,0"
@@ -67,8 +67,8 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel Margin="0,1">
-                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Pos}" FontFamily="Consolas"
-                                                   Width="40" Foreground="{StaticResource TextMutedBrush}" />
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Pos}" FontFamily="{StaticResource MonoFont}"
+                                                   Width="40" Foreground="{DynamicResource TextMutedBrush}" />
                                         <TextBlock DockPanel.Dock="Right" Text="{Binding Team}" Style="{StaticResource Faint}"
                                                    Margin="8,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                                         <StackPanel Orientation="Horizontal">
@@ -100,11 +100,11 @@
                         HorizontalContentAlignment="Left" Padding="4,3"
                         Command="{Binding ToggleCommand}" ToolTip="What the world remembers here">
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" FontFamily="Consolas"
-                                   Foreground="{StaticResource TextMutedBrush}" Width="34" VerticalAlignment="Center" />
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding RoundLabel}" FontFamily="{StaticResource MonoFont}"
+                                   Foreground="{DynamicResource TextMutedBrush}" Width="34" VerticalAlignment="Center" />
                         <!-- revealed: the champion of record; sealed: a spoiler-free tag -->
                         <TextBlock DockPanel.Dock="Right" Text="{Binding Champion}"
-                                   Foreground="{StaticResource AccentBrush}" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource AccentTextBrush}" TextTrimming="CharacterEllipsis"
                                    Margin="10,0,0,0" VerticalAlignment="Center"
                                    Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}" />
                         <TextBlock DockPanel.Dock="Right" Text="sealed" Style="{StaticResource Faint}"
@@ -119,7 +119,7 @@
                     <StackPanel Visibility="{Binding IsRevealed, Converter={StaticResource BoolVisible}}">
                         <TextBlock Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,2"
                                    Visibility="{Binding HasTitle, Converter={StaticResource BoolVisible}}" />
-                        <TextBlock Text="{Binding Circuit}" Foreground="{StaticResource AccentBrush}"
+                        <TextBlock Text="{Binding Circuit}" Foreground="{DynamicResource AccentTextBrush}"
                                    TextWrapping="Wrap" Margin="0,0,0,6"
                                    Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}" />
                         <DockPanel Margin="0,0,0,8"
@@ -141,7 +141,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel Margin="0,2">
-                                        <TextBlock DockPanel.Dock="Left" Text="•" Foreground="{StaticResource AccentBrush}"
+                                        <TextBlock DockPanel.Dock="Left" Text="•" Foreground="{DynamicResource AccentTextBrush}"
                                                    VerticalAlignment="Top" Margin="0,0,8,0" />
                                         <TextBlock Text="{Binding}" Style="{StaticResource Muted}" FontSize="12"
                                                    TextWrapping="Wrap" />
@@ -163,9 +163,9 @@
             <DockPanel Margin="0,0,0,14">
                 <!-- lineage timeline node + connector -->
                 <Grid DockPanel.Dock="Left" Width="28" Margin="0,4,10,0">
-                    <Border Width="2" Background="{StaticResource EdgeBrush}" HorizontalAlignment="Center" />
+                    <Border Width="2" Background="{DynamicResource EdgeBrush}" HorizontalAlignment="Center" />
                     <Ellipse Width="12" Height="12" VerticalAlignment="Top" HorizontalAlignment="Center"
-                             Fill="{StaticResource AccentBrush}" />
+                             Fill="{DynamicResource AccentBrush}" />
                 </Grid>
 
                 <Border Style="{StaticResource Panel}">
@@ -173,13 +173,13 @@
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Left" Text="{Binding YearText}"
                                        FontSize="22" FontWeight="Bold"
-                                       Foreground="{StaticResource AccentBrush}" />
+                                       Foreground="{DynamicResource AccentTextBrush}" />
                             <!-- champion crown for the player's title seasons -->
                             <Border DockPanel.Dock="Right" Style="{StaticResource Chip}"
-                                    Background="{StaticResource WarningDimBrush}" VerticalAlignment="Center"
+                                    Background="{DynamicResource WarningDimBrush}" VerticalAlignment="Center"
                                     Visibility="{Binding PlayerIsChampion, Converter={StaticResource BoolVisible}}">
                                 <TextBlock Text="World Champion" FontWeight="SemiBold" FontSize="12"
-                                           Foreground="{StaticResource WarningBrush}" />
+                                           Foreground="{DynamicResource WarningBrush}" />
                             </Border>
                             <!-- The season's final standing is a season-scoped "Why?" walk-back target
                                  (career-hub-design.md §4/§5, decision 18): click (or focus + Enter/Space —
@@ -199,7 +199,7 @@
                         <TextBlock Text="{Binding ChampionText}" Style="{StaticResource Muted}"
                                    Margin="0,6,0,0" FontSize="13"
                                    Visibility="{Binding HasChampion, Converter={StaticResource BoolVisible}}" />
-                        <TextBlock Text="{Binding FormText}" Foreground="{StaticResource AccentBrush}"
+                        <TextBlock Text="{Binding FormText}" Foreground="{DynamicResource AccentTextBrush}"
                                    FontSize="12" Margin="0,4,0,0"
                                    Visibility="{Binding HasForm, Converter={StaticResource BoolVisible}}" />
 
@@ -217,7 +217,7 @@
                         <!-- WHAT REALLY HAPPENED: the real f1db results of this year, clearly separated
                              from the player's OWN (diverged) season above by a divider + label. Read-only
                              reference — collapsed by default, expands per season and per race. -->
-                        <Border Margin="0,12,0,0" Padding="0,10,0,0" BorderBrush="{StaticResource EdgeBrush}"
+                        <Border Margin="0,12,0,0" Padding="0,10,0,0" BorderBrush="{DynamicResource EdgeBrush}"
                                 BorderThickness="0,1,0,0"
                                 Visibility="{Binding HasRealSeason, Converter={StaticResource BoolVisible}}"
                                 DataContext="{Binding RealSeason}">
@@ -227,15 +227,15 @@
                                         Command="{Binding ToggleCommand}"
                                         ToolTip="What really happened in F1 this year — the real results, separate from your career">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE81C;" FontSize="12"
-                                                   VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}"
+                                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE81C;" FontSize="12"
+                                                   VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"
                                                    Margin="0,0,8,0" />
                                         <TextBlock Text="What really happened" FontWeight="SemiBold" VerticalAlignment="Center" />
                                         <TextBlock Text="{Binding Year, StringFormat=' in {0}'}"
                                                    Style="{StaticResource Muted}" VerticalAlignment="Center" />
                                         <TextBlock Text="{Binding IsExpanded, Converter={StaticResource ExpandGlyph}}"
-                                                   FontFamily="Segoe MDL2 Assets" FontSize="10" Margin="8,0,0,0"
-                                                   VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}" />
+                                                   FontFamily="{StaticResource IconFont}" FontSize="10" Margin="8,0,0,0"
+                                                   VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" />
                                     </StackPanel>
                                 </Button>
                                 <StackPanel Margin="0,8,0,0"
@@ -246,7 +246,7 @@
                                     <Border CornerRadius="6" ClipToBounds="True" Margin="0,0,0,10"
                                             MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
                                                        Converter={StaticResource WidthFraction}, ConverterParameter=0.55|620}"
-                                            HorizontalAlignment="Left" BorderBrush="{StaticResource EdgeBrush}"
+                                            HorizontalAlignment="Left" BorderBrush="{DynamicResource EdgeBrush}"
                                             BorderThickness="1"
                                             Visibility="{Binding ElementName=SeasonStoryImage, Path=Source, Converter={StaticResource NullCollapsed}}">
                                         <Image x:Name="SeasonStoryImage" Stretch="Uniform" StretchDirection="DownOnly"
@@ -272,7 +272,7 @@
                                         </DockPanel>
                                     </StackPanel>
                                     <!-- In-progress season: explain the reveal rule (no champion spoiler). -->
-                                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="4" Padding="10,7"
+                                    <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="4" Padding="10,7"
                                             Margin="0,0,0,8"
                                             Visibility="{Binding IsSeasonComplete, Converter={StaticResource BoolCollapsed}}">
                                         <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
@@ -293,7 +293,7 @@
         <!-- one inspector contribution row: label · detail · value (mirrors StandingsView) -->
         <DataTemplate x:Key="InspectorRowTemplate">
             <DockPanel Margin="0,3">
-                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="Consolas"
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="{StaticResource MonoFont}"
                            FontWeight="SemiBold" TextAlignment="Right" MinWidth="56" Margin="8,0,0,0"
                            Visibility="{Binding HasValue, Converter={StaticResource BoolVisible}}" />
                 <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" FontWeight="SemiBold" MinWidth="120" />
@@ -339,12 +339,12 @@
                                               Converter={StaticResource AspectHeight}, ConverterParameter=1}"
                                      Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
                                 <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
-                                      Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                                      Stroke="{DynamicResource AccentBrush}" StrokeThickness="10"
                                       StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                             </Viewbox>
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Name}" FontSize="19" FontWeight="SemiBold" TextWrapping="Wrap" />
-                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{DynamicResource AccentTextBrush}"
                                            TextWrapping="Wrap" Margin="0,4,0,0" />
                                 <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Body}" TextWrapping="Wrap"
                                            Margin="0,8,0,0"
@@ -402,7 +402,7 @@
                               Visibility="{Binding HasArticles, Converter={StaticResource BoolVisible}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1"
+                            <Border BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,0,0,1"
                                     Padding="2,10">
                                 <StackPanel>
                                     <TextBlock Text="{Binding Meta}" Style="{StaticResource Faint}" FontSize="11" />
@@ -420,10 +420,10 @@
                                                    Style="{StaticResource Muted}" />
                                         <Border Margin="0,8,0,0" Padding="9,4" CornerRadius="3"
                                                 HorizontalAlignment="Left"
-                                                Background="{StaticResource AccentDimBrush}"
+                                                Background="{DynamicResource AccentDimBrush}"
                                                 Visibility="{Binding HasWhy, Converter={StaticResource BoolVisible}}">
                                             <TextBlock Text="{Binding WhyText}" TextWrapping="Wrap"
-                                                       Foreground="{StaticResource AccentBrush}" FontSize="12" />
+                                                       Foreground="{DynamicResource AccentTextBrush}" FontSize="12" />
                                         </Border>
                                     </StackPanel>
                                 </StackPanel>
@@ -438,7 +438,7 @@
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5), mirroring StandingsView.
              Shown while an inspector is open; the scrim + Close button (mouse) and the ESC key
              binding (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border x:Name="InspectorScrim" Background="#99000000"
+        <Border x:Name="InspectorScrim" Background="{DynamicResource ScrimBrush}"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
@@ -450,8 +450,8 @@
                     MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
                                 Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="{StaticResource SurfaceBrush}" CornerRadius="6"
-                    BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    Background="{DynamicResource SurfaceBrush}" CornerRadius="6"
+                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
                     DataContext="{Binding SelectedInspector}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">

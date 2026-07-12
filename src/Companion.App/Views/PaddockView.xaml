@@ -16,9 +16,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Width="46" Height="46">
-                    <Border CornerRadius="6" Background="{StaticResource SurfaceAltBrush}">
-                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="20"
-                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                    <Border CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}">
+                        <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="20"
+                                   Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <Border CornerRadius="6" ClipToBounds="True">
@@ -43,9 +43,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Width="46" Height="46">
-                    <Border CornerRadius="6" Background="{StaticResource SurfaceAltBrush}">
-                        <TextBlock Text="&#xE7C1;" FontFamily="Segoe MDL2 Assets" FontSize="18"
-                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                    <Border CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}">
+                        <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="18"
+                                   Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <Border CornerRadius="6" ClipToBounds="True">
@@ -62,123 +62,126 @@
             </Grid>
         </DataTemplate>
 
-        <!-- one stat tile: big number over a caption -->
-        <Style x:Key="StatTile" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Padding" Value="14,8" />
-            <Setter Property="Margin" Value="0,0,8,8" />
-            <Setter Property="MinWidth" Value="76" />
-        </Style>
-
         <!-- the RIGHT detail pane for a selected driver -->
         <DataTemplate x:Key="DriverDetail">
             <StackPanel>
                 <!-- hero: portrait + car + identity -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Width="180" Height="180" VerticalAlignment="Top"
-                          ToolTip="Drop the portrait at data\ams2\portraits\&lt;driverId&gt;.jpg">
-                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
-                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="56"
-                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.4"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <Border CornerRadius="10" ClipToBounds="True">
-                            <Image Stretch="UniformToFill"
-                                   Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                        </Border>
-                    </Grid>
-                    <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Top">
-                        <TextBlock Text="{Binding Name}" FontSize="26" FontWeight="Bold" TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding Epithet}" Foreground="{StaticResource AccentBrush}"
-                                   FontWeight="SemiBold" Margin="0,2,0,0"
-                                   Visibility="{Binding Epithet, Converter={StaticResource StringVisible}}" />
-                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                            <TextBlock Text="{Binding Number, StringFormat='#{0}'}" Style="{StaticResource Faint}"
-                                       VerticalAlignment="Center" Margin="0,0,10,0"
-                                       Visibility="{Binding Number, Converter={StaticResource StringVisible}}" />
-                            <Button Content="{Binding TeamName}"
-                                    Style="{StaticResource SubtleButton}"
-                                    Command="{Binding DataContext.ViewTeamCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding TeamId}"
-                                    ToolTip="Open this team's dossier" />
+                <Border Style="{StaticResource Panel}" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="180" Height="180" VerticalAlignment="Top"
+                              ToolTip="Drop the portrait at data\ams2\portraits\&lt;driverId&gt;.jpg">
+                            <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                                <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="56"
+                                           Foreground="{DynamicResource TextMutedBrush}" Opacity="0.4"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border CornerRadius="10" ClipToBounds="True">
+                                <Image Stretch="UniformToFill"
+                                       Source="{Binding PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            </Border>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource H1}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding Epithet}" Foreground="{DynamicResource AccentTextBrush}"
+                                       FontWeight="SemiBold" Margin="0,2,0,0"
+                                       Visibility="{Binding Epithet, Converter={StaticResource StringVisible}}" />
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <Border Style="{StaticResource Chip}" Margin="0,0,10,0"
+                                        Visibility="{Binding Number, Converter={StaticResource StringVisible}}">
+                                    <TextBlock Text="{Binding Number, StringFormat='#{0}'}" Style="{StaticResource PixelBadge}"
+                                               Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center" />
+                                </Border>
+                                <Button Content="{Binding TeamName}"
+                                        Style="{StaticResource SubtleButton}"
+                                        Command="{Binding DataContext.ViewTeamCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding TeamId}"
+                                        ToolTip="Open this team's dossier" />
+                            </StackPanel>
+                            <Image Height="64" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,12,0,0"
+                                   Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}"
+                                   ToolTip="Drop the car at data\ams2\cars\&lt;driverId&gt;.png" />
                         </StackPanel>
-                        <Image Height="64" Stretch="Uniform" HorizontalAlignment="Left" Margin="0,12,0,0"
-                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}"
-                               ToolTip="Drop the car at data\ams2\cars\&lt;driverId&gt;.png" />
-                    </StackPanel>
-                </Grid>
+                    </Grid>
+                </Border>
 
                 <!-- this season (live) + all-time career -->
                 <StackPanel Margin="0,16,0,0" Visibility="{Binding Career, Converter={StaticResource NullCollapsed}}">
                     <!-- the live season line, once a round has been scored -->
-                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12,8" Margin="0,0,0,12"
+                    <Border Style="{StaticResource Panel}" Background="{DynamicResource SurfaceAltBrush}"
+                            Padding="14,10" Margin="0,0,0,12"
                             Visibility="{Binding Season, Converter={StaticResource NullCollapsed}}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="THIS SEASON" Style="{StaticResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0" />
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="P" /><Run Text="{Binding Season.Position, Mode=OneWay}" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
-                                <Run Text="   " /><Run Text="{Binding Season.Points, Mode=OneWay}" FontWeight="Bold" /><Run Text=" pts" />
-                                <Run Text="   " /><Run Text="{Binding Season.Wins, Mode=OneWay}" FontWeight="Bold" /><Run Text=" W" />
-                                <Run Text="   " /><Run Text="{Binding Season.Poles, Mode=OneWay}" FontWeight="Bold" /><Run Text=" pole" />
-                            </TextBlock>
+                        <StackPanel>
+                            <TextBlock Text="THIS SEASON" Style="{StaticResource Eyebrow}" Margin="0,0,0,6" />
+                            <WrapPanel>
+                                <TextBlock Text="{Binding Season.Position, StringFormat=P{0}}"
+                                           Style="{StaticResource StatValue}" FontSize="18"
+                                           Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,22,0" />
+                                <TextBlock Text="{Binding Season.Points, StringFormat={}{0} pts}"
+                                           Style="{StaticResource StatValue}" FontSize="18" Margin="0,0,22,0" />
+                                <TextBlock Text="{Binding Season.Wins, StringFormat={}{0} W}"
+                                           Style="{StaticResource StatValue}" FontSize="18" Margin="0,0,22,0" />
+                                <TextBlock Text="{Binding Season.Poles, StringFormat={}{0} pole}"
+                                           Style="{StaticResource StatValue}" FontSize="18" />
+                            </WrapPanel>
                         </StackPanel>
                     </Border>
-                    <TextBlock Text="CAREER" Style="{StaticResource Faint}" Margin="0,0,0,8" />
+                    <TextBlock Text="CAREER RECORD" Style="{StaticResource Eyebrow}" Margin="0,0,0,8" />
                     <WrapPanel>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Titles}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
-                                <TextBlock Text="TITLES" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Titles}" Style="{StaticResource StatValue}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Text="TITLES" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Wins}" FontSize="22" FontWeight="Bold" />
-                                <TextBlock Text="WINS" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Wins}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="WINS" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Podiums}" FontSize="22" FontWeight="Bold" />
-                                <TextBlock Text="PODIUMS" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Podiums}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="PODIUMS" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Poles}" FontSize="22" FontWeight="Bold" />
-                                <TextBlock Text="POLES" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Poles}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="POLES" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Top5s}" FontSize="22" FontWeight="Bold" />
-                                <TextBlock Text="TOP 5" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Top5s}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="TOP 5" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Points}" FontSize="22" FontWeight="Bold" />
-                                <TextBlock Text="POINTS" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Points}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="POINTS" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource StatTile}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Career.Starts}" FontSize="22" FontWeight="Bold" />
-                                <TextBlock Text="STARTS" Style="{StaticResource Faint}" FontSize="10" />
+                                <TextBlock Text="{Binding Career.Starts}" Style="{StaticResource StatValue}" />
+                                <TextBlock Text="STARTS" Style="{StaticResource Eyebrow}" />
                             </StackPanel>
                         </Border>
                     </WrapPanel>
                 </StackPanel>
 
                 <!-- biography -->
-                <ItemsControl ItemsSource="{Binding Bio}" Margin="0,16,0,0">
+                <TextBlock Text="PROFILE" Style="{StaticResource Eyebrow}" Margin="0,10,0,8" />
+                <ItemsControl ItemsSource="{Binding Bio}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,10" />
@@ -187,11 +190,13 @@
                 </ItemsControl>
 
                 <!-- quotes -->
-                <ItemsControl ItemsSource="{Binding Quotes}" Margin="0,4,0,0">
+                <TextBlock Text="IN THEIR WORDS" Style="{StaticResource Eyebrow}" Margin="0,4,0,8" />
+                <ItemsControl ItemsSource="{Binding Quotes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,0,0,8">
-                                <TextBlock Text="{Binding}" FontStyle="Italic" TextWrapping="Wrap" />
+                            <Border Style="{StaticResource QuoteCard}">
+                                <TextBlock Text="{Binding}" Style="{StaticResource Body}"
+                                           FontStyle="Italic" TextWrapping="Wrap" />
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -202,47 +207,49 @@
         <!-- the RIGHT detail pane for a selected team -->
         <DataTemplate x:Key="TeamDetail">
             <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Width="120" Height="120" VerticalAlignment="Top"
-                          ToolTip="Drop the team logo at data\ams2\smgp\logos\&lt;teamId&gt;.png">
-                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
-                            <TextBlock Text="&#xE7C1;" FontFamily="Segoe MDL2 Assets" FontSize="44"
-                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.4"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <Border CornerRadius="10" ClipToBounds="True">
-                            <Image Stretch="Uniform" Margin="10"
-                                   Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
-                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                        </Border>
+                <Border Style="{StaticResource Panel}" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="120" Height="120" VerticalAlignment="Top"
+                              ToolTip="Drop the team logo at data\ams2\smgp\logos\&lt;teamId&gt;.png">
+                            <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                                <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="44"
+                                           Foreground="{DynamicResource TextMutedBrush}" Opacity="0.4"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border CornerRadius="10" ClipToBounds="True">
+                                <Image Stretch="Uniform" Margin="10"
+                                       Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            </Border>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource H1}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding Motto}" Foreground="{DynamicResource AccentTextBrush}"
+                                       FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Visibility="{Binding Motto, Converter={StaticResource StringVisible}}" />
+                            <TextBlock Text="DRIVERS" Style="{StaticResource Eyebrow}" Margin="0,12,0,6" />
+                            <ItemsControl ItemsSource="{Binding DriverNames}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource Chip}" Margin="0,0,6,6">
+                                            <TextBlock Text="{Binding}" FontSize="12" FontWeight="SemiBold" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
                     </Grid>
-                    <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Top">
-                        <TextBlock Text="{Binding Name}" FontSize="26" FontWeight="Bold" TextWrapping="Wrap" />
-                        <TextBlock Text="{Binding Motto}" Foreground="{StaticResource AccentBrush}"
-                                   FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,4,0,0"
-                                   Visibility="{Binding Motto, Converter={StaticResource StringVisible}}" />
-                        <TextBlock Text="DRIVERS" Style="{StaticResource Faint}" Margin="0,12,0,4" />
-                        <ItemsControl ItemsSource="{Binding DriverNames}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="12"
-                                            Padding="10,4" Margin="0,0,6,6">
-                                        <TextBlock Text="{Binding}" FontSize="12" />
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Grid>
+                </Border>
 
-                <ItemsControl ItemsSource="{Binding History}" Margin="0,16,0,0">
+                <TextBlock Text="TEAM HISTORY" Style="{StaticResource Eyebrow}" Margin="0,16,0,8" />
+                <ItemsControl ItemsSource="{Binding History}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,10" />
@@ -250,11 +257,13 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl ItemsSource="{Binding Quotes}" Margin="0,4,0,0">
+                <TextBlock Text="FROM THE GARAGE" Style="{StaticResource Eyebrow}" Margin="0,4,0,8" />
+                <ItemsControl ItemsSource="{Binding Quotes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,8" Margin="0,0,0,8">
-                                <TextBlock Text="{Binding}" FontStyle="Italic" TextWrapping="Wrap" />
+                            <Border Style="{StaticResource QuoteCard}">
+                                <TextBlock Text="{Binding}" Style="{StaticResource Body}"
+                                           FontStyle="Italic" TextWrapping="Wrap" />
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -267,6 +276,7 @@
         <!-- header: title + DRIVERS/TEAMS toggle -->
         <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
             <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="SMGP RECORD BOOK" Style="{StaticResource Eyebrow}" />
                 <TextBlock Text="PADDOCK" Style="{StaticResource H2}" />
                 <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
                            Text="The grid — every driver and the house they race for." />
@@ -274,11 +284,13 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <Button Content="DRIVERS" MinWidth="90" Command="{Binding ShowDriversCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource SelectableSubtleButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ShowTeams}" Value="False">
                                     <Setter Property="FontWeight" Value="Bold" />
-                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -286,11 +298,13 @@
                 </Button>
                 <Button Content="TEAMS" MinWidth="90" Margin="6,0,0,0" Command="{Binding ShowTeamsListCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource SelectableSubtleButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ShowTeams}" Value="True">
                                     <Setter Property="FontWeight" Value="Bold" />
-                                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

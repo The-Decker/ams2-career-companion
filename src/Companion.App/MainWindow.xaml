@@ -6,7 +6,7 @@
         Width="1120" Height="740"
         MinWidth="920" MinHeight="620"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BgBrush}"
+        Background="{DynamicResource BgBrush}"
         FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="ClearType"
@@ -18,11 +18,11 @@
             <ScaleTransform ScaleX="{DynamicResource AppUiScale}" ScaleY="{DynamicResource AppUiScale}" />
         </DockPanel.LayoutTransform>
         <!-- shell header: app identity + the settings gear (ux-round contract section 3) -->
-        <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1">
+        <Border DockPanel.Dock="Top" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,0,0,1">
             <DockPanel Margin="12,3">
                 <Button DockPanel.Dock="Right" Style="{StaticResource SubtleButton}"
-                        FontFamily="Segoe MDL2 Assets" Content="&#xE713;" FontSize="15" Padding="8,5"
+                        FontFamily="{StaticResource IconFont}" Content="&#xE713;" FontSize="15" Padding="8,5"
                         AutomationProperties.Name="Settings"
                         ToolTip="Settings — appearance, racing defaults, staging behavior, data folders (click again or press Esc to close)"
                         Command="{Binding ToggleSettingsCommand}" />
@@ -33,9 +33,9 @@
 
         <!-- shell-level failure banner (e.g. a career file that would not open) -->
         <Border DockPanel.Dock="Bottom"
-                Background="{StaticResource ErrorDimBrush}"
+                Background="{DynamicResource ErrorDimBrush}"
                 Visibility="{Binding StatusError, Converter={StaticResource NullCollapsed}}">
-            <TextBlock Text="{Binding StatusError}" Foreground="{StaticResource ErrorBrush}"
+            <TextBlock Text="{Binding StatusError}" Foreground="{DynamicResource ErrorBrush}"
                        Margin="16,8" TextWrapping="Wrap" />
         </Border>
 

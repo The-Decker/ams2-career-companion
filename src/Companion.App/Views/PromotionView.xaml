@@ -10,8 +10,10 @@
     <DockPanel>
 
         <!-- action bar: accept (promotion) / acknowledge (demotion), and decline only for an offer -->
-        <Border DockPanel.Dock="Bottom" Padding="0,14,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,1,0,0"
+                Padding="0,14,0,0">
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Stay put" MinWidth="120" Margin="0,0,10,0"
                         Command="{Binding DeclineCommand}"
                         Visibility="{Binding CanDecline, Converter={StaticResource BoolVisible}}"
@@ -19,45 +21,53 @@
                 <Button Content="{Binding Model.AcceptLabel}" Style="{StaticResource AccentButton}"
                         MinWidth="180" FontWeight="Bold" Command="{Binding AcceptCommand}"
                         ToolTip="Move to the new team from next round" />
-            </StackPanel>
+            </WrapPanel>
         </Border>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
             <StackPanel MaxWidth="780" HorizontalAlignment="Center">
 
                 <!-- arcade headline + motto -->
+                <TextBlock Text="PADDOCK BULLETIN" Style="{StaticResource Eyebrow}"
+                           HorizontalAlignment="Center" Margin="0,0,0,6" />
                 <TextBlock Text="{Binding Model.Headline}" Style="{StaticResource H1}"
                            TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" />
-                <TextBlock Text="{Binding Model.Motto}" Foreground="{StaticResource AccentBrush}"
+                <TextBlock Text="{Binding Model.Motto}" Foreground="{DynamicResource AccentTextBrush}"
                            FontStyle="Italic" FontSize="15" TextAlignment="Center" TextWrapping="Wrap"
                            Margin="0,4,0,0" HorizontalAlignment="Center"
                            Visibility="{Binding Model.Motto, Converter={StaticResource StringVisible}}" />
 
                 <!-- the VERY LARGE new-team photo: data/ams2/smgp/teams/<team>.jpg (placeholder until dropped) -->
-                <Grid Height="300" Margin="0,16,0,0"
+                <Border Style="{StaticResource Panel}" Padding="18" Margin="0,16,0,0">
+                    <StackPanel>
+                <Grid Height="440"
                       ToolTip="Drop the team photo at data\ams2\smgp\teams\&lt;team&gt;.jpg (beside the exe)">
-                    <Border CornerRadius="12" Background="{StaticResource SurfaceAltBrush}">
-                        <TextBlock Text="&#xE7C5;" FontFamily="Segoe MDL2 Assets" FontSize="72"
-                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.4"
+                    <Border CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}">
+                        <TextBlock Text="&#xE7C5;" FontFamily="{StaticResource IconFont}" FontSize="72"
+                                   Foreground="{DynamicResource TextMutedBrush}" Opacity="0.4"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <Border CornerRadius="12" ClipToBounds="True">
-                        <Image Stretch="UniformToFill"
+                        <Image Stretch="Uniform"
                                Source="{Binding Model.TeamPhotoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/teams}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                     </Border>
                 </Grid>
 
-                <TextBlock Text="{Binding Model.TeamName}" Style="{StaticResource H2}"
-                           TextAlignment="Center" HorizontalAlignment="Center" Margin="0,12,0,0" />
+                <TextBlock Text="{Binding Model.TeamName}" Style="{StaticResource H1}"
+                           TextAlignment="Center" HorizontalAlignment="Center" Margin="0,14,0,0" />
 
                 <!-- you (in the new colours) + the car you'll drive -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Grid MaxWidth="560" HorizontalAlignment="Stretch" Margin="0,12,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Grid Width="120" Height="120" Margin="0,0,18,0"
                           ToolTip="Drop the team player image at data\ams2\portraits\player.&lt;team&gt;.jpg">
-                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
-                            <TextBlock Text="&#xE7C1;" FontFamily="Segoe MDL2 Assets" FontSize="42"
-                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                        <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="42"
+                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <Border CornerRadius="10" ClipToBounds="True">
@@ -66,21 +76,27 @@
                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                         </Border>
                     </Grid>
-                    <Image Height="86" Stretch="Uniform" VerticalAlignment="Center"
+                    <Image Grid.Column="1" Height="96" MaxWidth="400" Stretch="Uniform"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
                            Source="{Binding Model.CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}"
                            ToolTip="Drop the car photo at data\ams2\cars\&lt;driverId&gt;.png" />
-                </StackPanel>
+                </Grid>
 
                 <!-- the rival you beat (promotion only) -->
-                <TextBlock Margin="0,12,0,0" TextAlignment="Center" HorizontalAlignment="Center"
-                           Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap"
-                           Visibility="{Binding Model.RivalName, Converter={StaticResource StringVisible}}">
-                    <Run Text="You beat " /><Run Text="{Binding Model.RivalName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" twice without losing — the seat is yours if you want it." />
-                </TextBlock>
+                <Border Style="{StaticResource AccentCallout}" Margin="0,14,0,0"
+                        Visibility="{Binding Model.RivalName, Converter={StaticResource StringVisible}}">
+                    <TextBlock TextAlignment="Center" HorizontalAlignment="Stretch"
+                               Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap">
+                        <Run Text="You beat " /><Run Text="{Binding Model.RivalName, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=" twice without losing — the seat is yours if you want it." />
+                    </TextBlock>
+                </Border>
+                    </StackPanel>
+                </Border>
 
                 <!-- the team's SMGP-world story -->
-                <ItemsControl ItemsSource="{Binding Model.History}" Margin="0,18,0,0">
+                <TextBlock Text="THE STORY" Style="{StaticResource Eyebrow}" Margin="0,18,0,8" />
+                <ItemsControl ItemsSource="{Binding Model.History}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,10" />
@@ -89,12 +105,15 @@
                 </ItemsControl>
 
                 <!-- team quotes -->
-                <ItemsControl ItemsSource="{Binding Model.Quotes}" Margin="0,2,0,0">
+                <TextBlock Text="FROM THE GARAGE" Style="{StaticResource Eyebrow}" Margin="0,2,0,8" />
+                <ItemsControl ItemsSource="{Binding Model.Quotes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Style="{StaticResource Faint}" FontStyle="Italic" TextWrapping="Wrap" Margin="0,0,0,7">
-                                <Run Text="&#x201C;" /><Run Text="{Binding Mode=OneWay}" /><Run Text="&#x201D;" />
-                            </TextBlock>
+                            <Border Style="{StaticResource QuoteCard}">
+                                <TextBlock Style="{StaticResource Body}" FontStyle="Italic" TextWrapping="Wrap">
+                                    <Run Text="&#x201C;" /><Run Text="{Binding Mode=OneWay}" /><Run Text="&#x201D;" />
+                                </TextBlock>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

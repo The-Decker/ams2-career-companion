@@ -12,7 +12,7 @@ Your four missions:
 4. **Fonts** — a proper type system (see §4; Claude supplies the recommended open-license set).
 
 Same lanes as always (Views XAML + **resource dictionaries** + styles + art). Build + test green floor:
-**1943 unit + 52 render.** Verify on an SMGP career.
+**1969 unit + 64 render.** Verify on an SMGP career.
 
 ---
 
@@ -53,8 +53,9 @@ Fold repeated markup into shared styles/templates. Watch render cost.
 
 ## 3. Custom art — finish the inventory
 
-Work `docs/dev/asset-inventory.md` to zero. Current top gaps: **team logos (24)**, team photos (24),
-round cards (16), banners (24). Style = 16-bit SEGA arcade (see the inventory for paths/sizes).
+Work `docs/dev/asset-inventory.md` to zero. The 24 team logos are complete, and Mike's first canonical
+promotion-photo batch brings team photos to 15/24. Current gaps: **team photos (9)**, round cards (16),
+and optional banners (24). Style = 16-bit SEGA arcade (see the inventory for paths/sizes).
 ✅ **Art-location decision (Mike, 2026-07-12): `dist/data/ams2/` IS canonical.** That's where Mike drops
 his art, and it's where you add yours — proceed. It's gitignored on purpose (some assets are AMS2-derived).
 Add art directly to `dist/data/ams2/<kind>/`, keep the inventory ticked off, and don't copy it back into
@@ -66,9 +67,9 @@ The recommended **primary stack** (a sim-racing / esports-HUD system):
 - **Display** → **Orbitron** — the closest match to the SEGA Super Monaco GP arcade marquee: wide,
   geometric, caps-first. Owns the wordmark, screen titles, standings/leaderboard banners, card headers.
 - **Body / UI** → **Inter** — carries every stat, table and label; tall x-height, tabular figures that
-  align number columns at 11-13px, disambiguated I/l/1. (Upgrade over the current Roboto body.)
+  align number columns at 11-13px, disambiguated I/l/1. (Upgrade over the previous Roboto body.)
 - **Pixel** → **Press Start 2P** — authentic 16-bit coin-op flavour for badges + grid/position numbers
-  ONLY, at 8px multiples, ≤3 glyphs (never body). Complements the existing `MicrosportFont`.
+  ONLY, at 8px multiples, ≤3 glyphs (never body).
 - **Mono / tabular** → **JetBrains Mono** — lap times, gaps, telemetry; fixed-width digits, slashed zero.
   Replaces the scattered `FontFamily=Consolas` number cells.
 
@@ -83,15 +84,81 @@ to the csproj as `<Resource>` (see `Fonts/LICENSES.md` — all SIL OFL). Files: 
 `Inter-{Regular,SemiBold,Bold}`, `JetBrainsMono-{Regular,Bold}`, `PressStart2P-Regular`, plus the alts
 `ChakraPetch-Bold`, `Saira-{Regular,SemiBold}`, `Silkscreen-Regular`.
 
-**Your part:** declare the `FontFamily` resource keys in the theme dicts (like `MicrosportFont` →
-`/Fonts/#Microsport`; you'll need each font's internal family name — check by loading it) and apply the
-hierarchy across screens (Orbitron titles, Inter body/stats, Press Start 2P badges, JetBrains Mono
-numbers). Fonts are **theme-agnostic** (they don't change with light/dark).
+✅ **Codex implementation:** the internal family names are verified by render tests and the hierarchy is
+applied app-wide: Orbitron titles, Inter body/stats, Press Start 2P short badges, and JetBrains Mono
+numbers. Fonts are **theme-agnostic** (they don't change with light/dark).
 
 ---
 
 ## 5. Requests to Claude (leave notes here)
 
-- **Theme contract:** the final list of brush (+ font) keys each theme dict must define, so I can build
-  the swap service + Settings picker against it.
-- **Anything else** needing a VM/settings/property.
+### Theme/runtime contract settled by Codex
+
+`Themes/Theme.xaml` remains the compatibility facade loaded by `App.xaml`. Its merged dictionaries are:
+
+1. `Theme.Dark.xaml` (replace with `Theme.Light.xaml` for the selected base),
+2. the matching `Accents/<Dark|Light>/Accent.<name>.xaml`, and
+3. stable `Smgp.Track.xaml` art.
+
+Keep the facade, fonts, converters, styles, templates, and SMGP art dictionary alive. Preload the new base
+and accent, then replace the two stored palette slots together on the UI dispatcher; do not clear the whole
+merged collection. All switchable consumers now use `DynamicResource`, so existing controls update live.
+
+Every base dictionary defines this exact typed contract:
+
+```text
+BgBrush                    SolidColorBrush
+SurfaceBrush               SolidColorBrush
+SurfaceAltBrush            SolidColorBrush
+FieldBrush                 SolidColorBrush
+EdgeBrush                  SolidColorBrush
+EdgeStrongBrush            SolidColorBrush
+TextBrush                  SolidColorBrush
+TextSecondaryBrush         SolidColorBrush
+TextMutedBrush             SolidColorBrush
+TextFaintBrush             SolidColorBrush
+AccentBrush                SolidColorBrush
+AccentHoverBrush           SolidColorBrush
+AccentTextBrush            SolidColorBrush
+AccentDimBrush             SolidColorBrush
+SelectionBrush             SolidColorBrush
+OnAccentBrush              SolidColorBrush
+SuccessBrush               SolidColorBrush
+SuccessDimBrush            SolidColorBrush
+WarningBrush               SolidColorBrush
+WarningDimBrush            SolidColorBrush
+ErrorBrush                 SolidColorBrush
+ErrorDimBrush              SolidColorBrush
+ControlHoverOverlayBrush   SolidColorBrush
+OverlaySurfaceBrush        SolidColorBrush
+OverlaySurfaceAltBrush     SolidColorBrush
+ScrimBrush                 SolidColorBrush
+ShadowBrush                SolidColorBrush
+MediaCaptionGradientBrush  LinearGradientBrush
+OnMediaBrush               SolidColorBrush
+OnMediaMutedBrush          SolidColorBrush
+TeamColorScrimBrush        SolidColorBrush
+OnTeamColorBrush           SolidColorBrush
+```
+
+Each paired accent dictionary overrides exactly six keys: `AccentBrush`, `AccentHoverBrush`,
+`AccentTextBrush`, `AccentDimBrush`, `SelectionBrush`, and `OnAccentBrush`. Preset names are `SmgpRed`,
+`Gold`, `Teal`, `RoyalBlue`, `Green`, `Magenta`, and `Orange`. The arbitrary custom-hex path must derive
+the same six values in memory: select `AccentTextBrush` and `OnAccentBrush` by measured contrast, then
+derive hover/dim/selection for the active base. The old dark-only `AccentDimBrush` blend in
+`App.ApplyAppearance` is not compatible with the new light base.
+
+Theme-agnostic font keys are `DisplayFont` (Orbitron), `BodyFont` (Inter), `PixelFont` (Press Start 2P),
+`MonoFont` (JetBrains Mono), `IconFont` (Segoe MDL2 Assets), plus `AltDisplayFont` (Chakra Petch),
+`AltBodyFont` (Saira), and `AltPixelFont` (Silkscreen).
+
+### VM/settings requests
+
+- Add the Light/Dark base picker and the seven named accent presets to Settings, persist both selections,
+  and expose the current choices so the 40px swatches/base buttons can render a selected ring.
+- Update `MotionAssist` ripple, the drag/drop insertion pen, and `GlyphBrushConverter` to resolve current
+  semantic resources at creation time; those C# styling paths still cache literal dark-theme colors.
+- Preserve `TeamPalette` as identity data. App accent must never recolor a team; the XAML now applies a
+  theme-independent contrast scrim to team-colored position fills.
+- Startup currently replaces the XAML `AppFontSize` value with 14. Decide whether the intended Inter body
+  default is 14 or 15 and make the single persisted source authoritative.

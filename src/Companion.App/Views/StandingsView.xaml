@@ -9,7 +9,7 @@
             <Setter Property="Padding" Value="0,2" />
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
             <Setter Property="ToolTip" Value="Click to sort; click again to flip. Right-click for the column chooser." />
         </Style>
 
@@ -82,7 +82,7 @@
                     <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
-                           Foreground="{StaticResource TextMutedBrush}" />
+                           Foreground="{DynamicResource TextMutedBrush}" />
                 <!-- The name is a "Why?" walk-back target (decisions 4 + 5): click (or focus +
                      Enter/Space — a Button is keyboard-invokable, locked decision 8) opens the
                      shared inspector for this competitor's journal. When no session is wired
@@ -97,17 +97,17 @@
                            ToolTip="Rounds dropped by the best-N rule"
                            Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
                 <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           Foreground="{StaticResource TextMutedBrush}"
+                           FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
+                           Foreground="{DynamicResource TextMutedBrush}"
                            ToolTip="Gross points before the best-N rule dropped anything"
                            Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
                 <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           Foreground="{StaticResource TextSecondaryBrush}"
+                           FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
                            ToolTip="Average counted points per applied round"
                            Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
                 <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
-                           FontFamily="Consolas" TextAlignment="Right"
+                           FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
                            ToolTip="Counted points (dropped results excluded)"
                            Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
             </Grid>
@@ -115,7 +115,7 @@
         <!-- one inspector contribution row: label · detail · value -->
         <DataTemplate x:Key="InspectorRowTemplate">
             <DockPanel Margin="0,3">
-                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="Consolas"
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="{StaticResource MonoFont}"
                            FontWeight="SemiBold" TextAlignment="Right" MinWidth="56" Margin="8,0,0,0"
                            Visibility="{Binding HasValue, Converter={StaticResource BoolVisible}}" />
                 <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" FontWeight="SemiBold" MinWidth="120" />
@@ -139,7 +139,7 @@
                         ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
                         Command="{Binding DataContext.CoachMarks.DismissStandingsRulesChipCommand,
                                   RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
-                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"
+                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}"
                            Text="The grey chip below is this season's rulebook in one line — points system, dropped-round rules and scoring quirks come from the season pack, exactly as scored. Click a column header to sort; right-click a header to choose columns." />
             </DockPanel>
         </Border>
@@ -240,13 +240,13 @@
                                                                 CommandParameter="{Binding InspectorRef}"
                                                                 ToolTip="Why? — walk back this round for this driver">
                                                             <TextBlock Text="{Binding Text}" TextAlignment="Center"
-                                                                       FontFamily="Consolas">
+                                                                       FontFamily="{StaticResource MonoFont}">
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock">
-                                                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding IsDropped}" Value="True">
-                                                                                <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFaintBrush}" />
                                                                                 <Setter Property="TextDecorations" Value="Strikethrough" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
@@ -271,7 +271,7 @@
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5). Shown while an
              inspector is open; the scrim + Close button (mouse) and the ESC key binding
              (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border x:Name="InspectorScrim" Background="#99000000"
+        <Border x:Name="InspectorScrim" Background="{DynamicResource ScrimBrush}"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
@@ -284,8 +284,8 @@
                     MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
                                 Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="{StaticResource SurfaceBrush}" CornerRadius="6"
-                    BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    Background="{DynamicResource SurfaceBrush}" CornerRadius="6"
+                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
                     DataContext="{Binding SelectedInspector}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">

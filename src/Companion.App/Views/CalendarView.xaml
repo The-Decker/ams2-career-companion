@@ -14,9 +14,9 @@
                        Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
 
             <!-- alternate-available hint (only when a round has an alternate that wasn't enabled) -->
-            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="10,7" Margin="0,10,0,0"
+            <Border Background="{DynamicResource AccentDimBrush}" CornerRadius="6" Padding="10,7" Margin="0,10,0,0"
                     Visibility="{Binding HasUnusedAlternates, Converter={StaticResource BoolVisible}}">
-                <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
                            Text="Some rounds offer optional community-mod alternate circuits — tick “Use alternate tracks” when you start a career to race them." />
             </Border>
 
@@ -38,13 +38,13 @@
                                     <Border DockPanel.Dock="Right" CornerRadius="4" Padding="6,2" Margin="6,0,0,0" VerticalAlignment="Top">
                                         <Border.Style>
                                             <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                                <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsAlternate}" Value="True">
-                                                        <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                                        <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsStandIn}" Value="True">
-                                                        <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                                        <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -52,13 +52,13 @@
                                         <TextBlock Text="{Binding BadgeText}" FontSize="10" FontWeight="SemiBold">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsAlternate}" Value="True">
-                                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsStandIn}" Value="True">
-                                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -78,10 +78,10 @@
                                 <Viewbox Height="88" Margin="0,8,0,0" HorizontalAlignment="Center"
                                          Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
                                     <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
-                                          Stroke="{StaticResource AccentBrush}" StrokeThickness="10" Margin="8"
+                                          Stroke="{DynamicResource AccentBrush}" StrokeThickness="10" Margin="8"
                                           StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                                 </Viewbox>
-                                <Border Height="88" Margin="0,8,0,0" CornerRadius="6" Background="{StaticResource SurfaceAltBrush}"
+                                <Border Height="88" Margin="0,8,0,0" CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}"
                                         Visibility="{Binding HasCircuit, Converter={StaticResource BoolCollapsed}}">
                                     <TextBlock Text="no circuit map" Style="{StaticResource Faint}" FontSize="10"
                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -91,7 +91,7 @@
                                 <TextBlock Text="{Binding RealVenue}" FontWeight="SemiBold" FontSize="12" Margin="0,8,0,0"
                                            TextWrapping="Wrap"
                                            Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}" />
-                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
+                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{DynamicResource AccentTextBrush}"
                                            FontSize="11" Margin="0,2,0,0" TextWrapping="Wrap"
                                            Visibility="{Binding HasCircuitCaption, Converter={StaticResource BoolVisible}}" />
                                 <TextBlock Text="{Binding TrackLine}" Style="{StaticResource Faint}" FontSize="11"
@@ -104,11 +104,11 @@
                                 <!-- era-capped fun facts (spoiler-free), compact -->
                                 <StackPanel Margin="0,8,0,0"
                                             Visibility="{Binding HasCircuitFacts, Converter={StaticResource BoolVisible}}">
-                                    <Border Height="1" Background="{StaticResource EdgeBrush}" Margin="0,0,0,6" />
+                                    <Border Height="1" Background="{DynamicResource EdgeBrush}" Margin="0,0,0,6" />
                                     <ItemsControl ItemsSource="{Binding CircuitFacts}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Style="{StaticResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,2"><Run Text="•  " Foreground="{StaticResource AccentBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                                <TextBlock Style="{StaticResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,2"><Run Text="•  " Foreground="{DynamicResource AccentTextBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>

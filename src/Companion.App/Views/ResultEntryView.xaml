@@ -15,12 +15,12 @@
         <!-- a seat line: number, name, team; players get a marker -->
         <DataTemplate x:Key="SeatLine">
             <StackPanel Orientation="Horizontal" Background="Transparent">
-                <TextBlock Width="40" Foreground="{StaticResource AccentBrush}" FontFamily="Consolas"
+                <TextBlock Width="40" Foreground="{DynamicResource AccentTextBrush}" FontFamily="{StaticResource MonoFont}"
                            Text="{Binding Number, StringFormat='#{0}'}" />
                 <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
-                <TextBlock Text=" (you)" Foreground="{StaticResource AccentBrush}"
+                <TextBlock Text=" (you)" Foreground="{DynamicResource AccentTextBrush}"
                            Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}" Foreground="{StaticResource TextMutedBrush}" />
+                <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}" Foreground="{DynamicResource TextMutedBrush}" />
             </StackPanel>
         </DataTemplate>
 
@@ -59,12 +59,12 @@
         <!-- the context menu's "Insert at position…" number popover -->
         <Popup x:Name="InsertPositionPopup" DockPanel.Dock="Top" StaysOpen="False"
                Placement="Mouse" AllowsTransparency="True">
-            <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource EdgeBrush}"
+            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource EdgeBrush}"
                     BorderThickness="1" CornerRadius="6" Padding="12,10">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Insert at position" Style="{StaticResource Muted}"
                                VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <TextBox x:Name="InsertPositionBox" Width="52" FontFamily="Consolas" FontSize="15"
+                    <TextBox x:Name="InsertPositionBox" Width="52" FontFamily="{StaticResource MonoFont}" FontSize="15"
                              VerticalAlignment="Center" KeyDown="OnInsertPositionKeyDown" />
                     <Button Content="Insert" Style="{StaticResource AccentButton}" Margin="8,0,0,0"
                             Click="OnInsertPositionConfirm" />
@@ -88,7 +88,7 @@
                         <Path Data="{Binding DataContext.Briefing.CircuitLayoutId,
                                      RelativeSource={RelativeSource AncestorType=views:HomeView},
                                      Converter={StaticResource CircuitGeometry}}"
-                              Stroke="{StaticResource AccentBrush}" StrokeThickness="10"
+                              Stroke="{DynamicResource AccentBrush}" StrokeThickness="10"
                               StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                     </Viewbox>
                     <StackPanel VerticalAlignment="Center" MaxWidth="480">
@@ -96,7 +96,7 @@
                         <TextBlock FontWeight="SemiBold" FontSize="15" TextTrimming="CharacterEllipsis"
                                    Text="{Binding DataContext.Briefing.VenueDisplayName,
                                           RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
-                        <TextBlock Foreground="{StaticResource AccentBrush}" FontSize="12" TextWrapping="Wrap"
+                        <TextBlock Foreground="{DynamicResource AccentTextBrush}" FontSize="12" TextWrapping="Wrap"
                                    Text="{Binding DataContext.Briefing.CircuitCaption,
                                           RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
                     </StackPanel>
@@ -106,20 +106,20 @@
             <!-- weekend session heading (Increment 2): names the current session — "Qualifying",
                  "Feature", "Sprint". Only weekend sessions set a SessionLabel, so a plain single-race
                  entry (SessionLabel null) renders exactly as the shipped loop. -->
-            <Border Style="{StaticResource Chip}" Background="{StaticResource AccentDimBrush}"
+            <Border Style="{StaticResource Chip}" Background="{DynamicResource AccentDimBrush}"
                     HorizontalAlignment="Left" Margin="0,0,0,10"
                     Visibility="{Binding SessionLabel, Converter={StaticResource NullCollapsed}}">
-                <TextBlock FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}"
+                <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource AccentTextBrush}"
                            Text="{Binding SessionLabel}" />
             </Border>
 
             <!-- named SMGP rival readout: where your rival is as you place cars (Mike: "a lot more
                  places where you can see where your rival is"). Hidden when no rival is named. -->
-            <Border CornerRadius="6" Background="{StaticResource AccentDimBrush}" BorderThickness="1"
-                    BorderBrush="{StaticResource AccentBrush}" Padding="12,8" Margin="0,0,0,10"
+            <Border CornerRadius="6" Background="{DynamicResource AccentDimBrush}" BorderThickness="1"
+                    BorderBrush="{DynamicResource AccentBrush}" Padding="12,8" Margin="0,0,0,10"
                     HorizontalAlignment="Left"
                     Visibility="{Binding RivalStatusLine, Converter={StaticResource StringVisible}}">
-                <TextBlock Text="{Binding RivalStatusLine}" Foreground="{StaticResource AccentBrush}"
+                <TextBlock Text="{Binding RivalStatusLine}" Foreground="{DynamicResource AccentTextBrush}"
                            FontWeight="Bold" FontSize="15" />
             </Border>
 
@@ -135,20 +135,20 @@
                             ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
                             Command="{Binding DataContext.CoachMarks.DismissResultEntryTypeOrDragCommand,
                                       RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
-                    <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"
+                    <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}"
                                Text="Enter the result your way: TYPE in the box (car number or a few letters, Enter places the next finisher — fastest), or DRAG drivers from Remaining into the finishing order and the DNF/DSQ zones. Both feed the same result and the same undo (Ctrl+Z); right-click any driver for every action." />
                 </DockPanel>
             </Border>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <Border Style="{StaticResource Chip}" Background="{StaticResource AccentDimBrush}"
+                <Border Style="{StaticResource Chip}" Background="{DynamicResource AccentDimBrush}"
                         Visibility="{Binding IsDnfPhase, Converter={StaticResource BoolCollapsed}}">
-                    <TextBlock FontSize="12" Foreground="{StaticResource AccentBrush}"
+                    <TextBlock FontSize="12" Foreground="{DynamicResource AccentTextBrush}"
                                Text="Type OR drag — car number / 2–3 letters + Enter assigns the next position ('me' = you), or drag drivers into the finishing order" />
                 </Border>
-                <Border Style="{StaticResource Chip}" Background="{StaticResource WarningDimBrush}"
+                <Border Style="{StaticResource Chip}" Background="{DynamicResource WarningDimBrush}"
                         Visibility="{Binding IsDnfPhase, Converter={StaticResource BoolVisible}}">
-                    <TextBlock FontSize="12" Foreground="{StaticResource WarningBrush}"
+                    <TextBlock FontSize="12" Foreground="{DynamicResource WarningBrush}"
                                Text="DNF phase — Enter marks the highlighted driver (↵↵↵ retires the rest in list order); add ' m' / ' a' / ' o' for the reason; F8 returns" />
                 </Border>
             </StackPanel>
@@ -167,9 +167,9 @@
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsDnfPhase}" Value="True">
                                     <Setter Property="Content" Value="End DNF phase" />
-                                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
-                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
-                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -184,14 +184,14 @@
                      The TextBox's built-in per-keystroke undo would otherwise be a second Ctrl+Z
                      owner that can swallow the chord depending on where focus landed after a mouse
                      action (e.g. picking Mech/Acc), making that change look un-undoable. One owner. -->
-                <TextBox x:Name="InputBox" FontSize="20" FontFamily="Consolas" Padding="12,9"
+                <TextBox x:Name="InputBox" FontSize="20" FontFamily="{StaticResource MonoFont}" Padding="12,9"
                          IsUndoEnabled="False"
                          Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}">
                     <TextBox.Style>
                         <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsDnfPhase}" Value="True">
-                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -200,7 +200,7 @@
             </DockPanel>
 
             <!-- candidates dropdown: what Enter will do; Tab cycles the highlight -->
-            <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource EdgeBrush}"
+            <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource EdgeBrush}"
                     BorderThickness="1" CornerRadius="0,0,6,6" Margin="6,0,6,0">
                 <Border.Visibility>
                     <MultiBinding Converter="{StaticResource CandidatesVisible}">
@@ -222,14 +222,14 @@
                 </ListBox>
             </Border>
 
-            <TextBlock Foreground="{StaticResource ErrorBrush}" Margin="2,6,0,0"
+            <TextBlock Foreground="{DynamicResource ErrorBrush}" Margin="2,6,0,0"
                        Text="{Binding ErrorText}"
                        Visibility="{Binding ErrorText, Converter={StaticResource NullCollapsed}}" />
         </StackPanel>
 
         <!-- ===== footer: progress + live timer + hints + confirm ===== -->
-        <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,1,0,0"
+        <Border DockPanel.Dock="Bottom" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,1,0,0"
                 Padding="14,10" Margin="0,12,0,0" CornerRadius="6">
             <!-- star grid instead of a docked chain: the hint column absorbs (and trims away) any
                  width squeeze, so progress/wet/slider/confirm never crowd each other at 920 or at
@@ -246,7 +246,7 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="{Binding ProgressText}" FontWeight="SemiBold" FontSize="16" />
                     <TextBlock Text="{Binding ElapsedText}" Style="{StaticResource Mono}" FontSize="16"
-                               Foreground="{StaticResource TextMutedBrush}" Margin="18,0,0,0" />
+                               Foreground="{DynamicResource TextMutedBrush}" Margin="18,0,0,0" />
                 </StackPanel>
 
                 <TextBlock Grid.Column="1" Style="{StaticResource Faint}" Margin="24,0,12,0"
@@ -270,7 +270,7 @@
                             Minimum="70" Maximum="120" SmallChange="1" LargeChange="5"
                             TickFrequency="1" IsSnapToTickEnabled="True"
                             Value="{Binding SliderUsed}" />
-                    <TextBlock Text="{Binding SliderUsedText}" FontWeight="SemiBold" FontFamily="Consolas"
+                    <TextBlock Text="{Binding SliderUsedText}" FontWeight="SemiBold" FontFamily="{StaticResource MonoFont}"
                                FontSize="15" VerticalAlignment="Center" MinWidth="44" />
                 </StackPanel>
 
@@ -301,9 +301,9 @@
                         <Style.Triggers>
                             <!-- light the zone up (accent border + wash) when a drag hovers it -->
                             <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
-                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                 <Setter Property="BorderThickness" Value="1.5" />
-                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -337,9 +337,9 @@
                     <Style TargetType="Border" BasedOn="{StaticResource Panel}">
                         <Style.Triggers>
                             <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
-                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                 <Setter Property="BorderThickness" Value="1.5" />
-                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -361,7 +361,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Background="Transparent">
-                                    <TextBlock Width="42" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}"
+                                    <TextBlock Width="42" FontWeight="SemiBold" Foreground="{DynamicResource SuccessBrush}"
                                                Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource AltPosition}}" />
                                     <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource SeatLine}" />
                                 </StackPanel>
@@ -391,15 +391,15 @@
                         <Style TargetType="Border" BasedOn="{StaticResource Panel}">
                             <Style.Triggers>
                                 <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
-                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
-                                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
-                                   Foreground="{StaticResource WarningBrush}" Text="DNF — drop drivers here" />
+                                   Foreground="{DynamicResource WarningBrush}" Text="DNF — drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="Multi-select drops retire in bulk; pick the reason on the dropped row" />
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
@@ -421,14 +421,14 @@
                                                         <Binding Path="Seat.DriverId" />
                                                     </MultiBinding>
                                                 </StackPanel.Visibility>
-                                                <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                <TextBlock Width="46" Text="DNF" Foreground="{DynamicResource WarningBrush}"
                                                            FontWeight="SemiBold" VerticalAlignment="Center" />
                                                 <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
                                                            VerticalAlignment="Center" />
                                                 <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
-                                                           Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                           Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 <!-- reason label: custom text when present, else the m/a/o word -->
-                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center">
+                                                <TextBlock Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center">
                                                     <Run Text=" · " /><Run Text="{Binding Mode=OneWay, Converter={StaticResource DnfReason}}" />
                                                 </TextBlock>
                                             </StackPanel>
@@ -446,12 +446,12 @@
                                                 </StackPanel.Visibility>
                                                 <!-- keep the driver + team in view while editing, for context -->
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Width="46" Text="DNF" Foreground="{StaticResource WarningBrush}"
+                                                    <TextBlock Width="46" Text="DNF" Foreground="{DynamicResource WarningBrush}"
                                                                FontWeight="SemiBold" VerticalAlignment="Center" />
                                                     <TextBlock Text="{Binding Seat.DriverName}" FontWeight="SemiBold"
                                                                VerticalAlignment="Center" />
                                                     <TextBlock Text="{Binding Seat.TeamName, StringFormat=' — {0}'}"
-                                                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
                                                     <Button Style="{StaticResource ReasonButton}" Content="Mech" Tag="m"
@@ -464,7 +464,7 @@
                                                             Click="OnReasonPickDone"
                                                             ToolTip="Finish — hide the editor (also: press Enter in the box)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Remove"
-                                                            Foreground="{StaticResource WarningBrush}"
+                                                            Foreground="{DynamicResource WarningBrush}"
                                                             Click="OnReasonPickRemove"
                                                             ToolTip="Mistake? Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
                                                 </StackPanel>
@@ -497,15 +497,15 @@
                         <Style TargetType="Border" BasedOn="{StaticResource Panel}">
                             <Style.Triggers>
                                 <Trigger Property="b:ListDragDropBehavior.IsDragOver" Value="True">
-                                    <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}" />
-                                    <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Margin="4,0,0,2"
-                                   Foreground="{StaticResource ErrorBrush}" Text="DSQ — drop drivers here" />
+                                   Foreground="{DynamicResource ErrorBrush}" Text="DSQ — drop drivers here" />
                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource Faint}" Margin="4,0,0,6" TextWrapping="Wrap"
                                    Text="A placed driver is pulled out of the classification" />
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
@@ -527,13 +527,13 @@
                                                         <Binding Path="DriverId" />
                                                     </MultiBinding>
                                                 </StackPanel.Visibility>
-                                                <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
+                                                <TextBlock Width="46" Text="DSQ" Foreground="{DynamicResource ErrorBrush}"
                                                            FontWeight="SemiBold" VerticalAlignment="Center" />
                                                 <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
                                                            VerticalAlignment="Center" />
                                                 <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
-                                                           Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
-                                                <TextBlock Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center">
+                                                           Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                <TextBlock Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center">
                                                     <Run Text=" · " /><Run>
                                                         <Run.Text>
                                                             <MultiBinding Converter="{StaticResource DsqReasonLabel}">
@@ -555,12 +555,12 @@
                                                     </MultiBinding>
                                                 </StackPanel.Visibility>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Width="46" Text="DSQ" Foreground="{StaticResource ErrorBrush}"
+                                                    <TextBlock Width="46" Text="DSQ" Foreground="{DynamicResource ErrorBrush}"
                                                                FontWeight="SemiBold" VerticalAlignment="Center" />
                                                     <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
                                                                VerticalAlignment="Center" />
                                                     <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}"
-                                                               Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="46,3,0,0">
                                                     <!-- free-text DSQ reason, e.g. "Underweight", "Illegal wing" -->
@@ -573,7 +573,7 @@
                                                             Click="OnReasonPickDone"
                                                             ToolTip="Finish — hide the editor (also: press Enter in the box)" />
                                                     <Button Style="{StaticResource ReasonButton}" Content="Remove"
-                                                            Foreground="{StaticResource ErrorBrush}"
+                                                            Foreground="{DynamicResource ErrorBrush}"
                                                             Click="OnReasonPickRemove"
                                                             ToolTip="Send this driver back to Remaining (also: drag out, right-click Remove, or Ctrl+Z)" />
                                                 </StackPanel>

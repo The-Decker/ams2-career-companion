@@ -28,10 +28,10 @@
                                         BorderBrush="{Binding AccentHex, Converter={StaticResource HexBrush}}">
                                     <Border.Style>
                                         <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                                            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsAccepted}" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -56,7 +56,7 @@
                                             <!-- the letter itself, in the era's voice -->
                                             <TextBlock Text="{Binding BodyText}" TextWrapping="Wrap" FontSize="13"
                                                        LineHeight="19" FontFamily="{Binding DocumentFontStack}"
-                                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                                                       Foreground="{DynamicResource TextSecondaryBrush}" />
                                             <!-- footer: terms + accept -->
                                             <DockPanel Margin="0,11,0,0">
                                                 <Button DockPanel.Dock="Right" MinWidth="110" VerticalAlignment="Center"
@@ -84,7 +84,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
+                    <TextBlock Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
                                Text="{Binding OfferError}"
                                Visibility="{Binding OfferError, Converter={StaticResource NullCollapsed}}" />
                 </StackPanel>
@@ -97,7 +97,7 @@
                     <DockPanel>
                         <TextBlock Text="Develop your driver" FontWeight="SemiBold" DockPanel.Dock="Left" />
                         <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Right" FontWeight="SemiBold"
-                                   Foreground="{StaticResource AccentBrush}">
+                                   Foreground="{DynamicResource AccentTextBrush}">
                             <Run Text="{Binding AvailableCp, Mode=OneWay}" /><Run Text=" points to spend" />
                         </TextBlock>
                     </DockPanel>
@@ -106,7 +106,7 @@
                     <ItemsControl ItemsSource="{Binding DevelopmentStats}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border CornerRadius="6" Padding="12,8" Margin="0,3" Background="{StaticResource SurfaceAltBrush}">
+                                <Border CornerRadius="6" Padding="12,8" Margin="0,3" Background="{DynamicResource SurfaceAltBrush}">
                                     <DockPanel>
                                         <Button DockPanel.Dock="Right" MinWidth="90" VerticalAlignment="Center"
                                                 Content="Raise +"
@@ -114,7 +114,7 @@
                                                 CommandParameter="{Binding Id}"
                                                 IsEnabled="{Binding DataContext.HasCp, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
                                         <TextBlock VerticalAlignment="Center" FontSize="15">
-                                            <Run Text="{Binding Label, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding ValueText, Mode=OneWay}" Foreground="{StaticResource TextMutedBrush}" />
+                                            <Run Text="{Binding Label, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding ValueText, Mode=OneWay}" Foreground="{DynamicResource TextMutedBrush}" />
                                         </TextBlock>
                                     </DockPanel>
                                 </Border>
@@ -128,7 +128,7 @@
                         <ItemsControl ItemsSource="{Binding DevelopmentPerks}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="6" Padding="12,8" Margin="0,3" Background="{StaticResource SurfaceAltBrush}">
+                                    <Border CornerRadius="6" Padding="12,8" Margin="0,3" Background="{DynamicResource SurfaceAltBrush}">
                                         <DockPanel>
                                             <Button DockPanel.Dock="Right" MinWidth="90" VerticalAlignment="Center"
                                                     Content="Buy"
@@ -136,7 +136,7 @@
                                                     CommandParameter="{Binding Id}" />
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock FontSize="15">
-                                                    <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding CostText, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                                                    <Run Text="{Binding Name, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="   " /><Run Text="{Binding CostText, Mode=OneWay}" Foreground="{DynamicResource AccentTextBrush}" />
                                                 </TextBlock>
                                                 <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0" TextWrapping="Wrap"
                                                            Text="{Binding BenefitText}" />
@@ -154,9 +154,9 @@
             </Border>
 
             <!-- era transition: sign & continue (M6) -->
-            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="12,10" Margin="0,12,0,0">
+            <Border Background="{DynamicResource AccentDimBrush}" CornerRadius="6" Padding="12,10" Margin="0,12,0,0">
                 <StackPanel>
-                    <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
+                    <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
                                Text="{Binding EraTransitionText}" />
                     <!-- bridge note: skipped years age through deterministically -->
                     <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,6,0,0"
@@ -186,7 +186,7 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-                    <TextBlock Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
+                    <TextBlock Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" Margin="0,6,0,0"
                                Text="{Binding TransitionError}"
                                Visibility="{Binding TransitionError, Converter={StaticResource NullCollapsed}}" />
                 </StackPanel>
@@ -205,10 +205,10 @@
                             Visibility="{Binding RestoreBanner, Converter={StaticResource NullCollapsed}}">
                         <Border.Style>
                             <Style TargetType="Border">
-                                <Setter Property="Background" Value="{StaticResource ErrorDimBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding RestoreSucceeded}" Value="True">
-                                        <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                        <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -216,10 +216,10 @@
                         <TextBlock Text="{Binding RestoreBanner}" TextWrapping="Wrap">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding RestoreSucceeded}" Value="True">
-                                            <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

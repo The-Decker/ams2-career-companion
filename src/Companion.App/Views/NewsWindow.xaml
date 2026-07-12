@@ -9,8 +9,8 @@
         ResizeMode="CanResize"
         Width="400" Height="540"
         MinWidth="300" MinHeight="240"
-        Background="{StaticResource BgBrush}"
-        Foreground="{StaticResource TextBrush}"
+        Background="{DynamicResource BgBrush}"
+        Foreground="{DynamicResource TextBrush}"
         FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}">
     <!-- the SAME NewsViewModel as the hub's News tab (set as DataContext on open), so the
          torn-off window stays in sync as rounds apply. Read-only mirror → zero state cost.

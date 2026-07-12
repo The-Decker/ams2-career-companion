@@ -11,7 +11,7 @@
                         ToolTip="Pop the news out into an always-on-top window — handy on a second monitor while you race"
                         AutomationProperties.Name="Pop news out into its own window">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8A7;" FontSize="13"
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8A7;" FontSize="13"
                                    VerticalAlignment="Center" Margin="0,0,7,0" />
                         <TextBlock Text="Pop out" />
                     </StackPanel>
@@ -33,7 +33,7 @@
             <ItemsControl ItemsSource="{Binding Items}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="{StaticResource EdgeBrush}" BorderThickness="0,0,0,1"
+                        <Border BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,0,0,1"
                                 Padding="2,10">
                             <StackPanel>
                                 <TextBlock Text="{Binding Meta}" Style="{StaticResource Faint}" FontSize="11" />
@@ -64,10 +64,10 @@
                                     <!-- the Why? chip: the journal delta as a plain sentence -->
                                     <Border Margin="0,8,0,0" Padding="9,4" CornerRadius="3"
                                             HorizontalAlignment="Left"
-                                            Background="{StaticResource AccentDimBrush}"
+                                            Background="{DynamicResource AccentDimBrush}"
                                             Visibility="{Binding HasWhy, Converter={StaticResource BoolVisible}}">
                                         <TextBlock Text="{Binding WhyText}" TextWrapping="Wrap"
-                                                   Foreground="{StaticResource AccentBrush}" FontSize="12" />
+                                                   Foreground="{DynamicResource AccentTextBrush}" FontSize="12" />
                                     </Border>
                                 </StackPanel>
                             </StackPanel>

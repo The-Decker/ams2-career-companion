@@ -5,7 +5,7 @@
         Width="420" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}"
-        Background="{StaticResource SurfaceBrush}">
+        Background="{DynamicResource SurfaceBrush}">
     <!-- keyboard parity: the textbox is focused on open, Enter = OK (IsDefault),
          Esc = Cancel (IsCancel) — fully operable without the mouse. -->
     <StackPanel Margin="20">

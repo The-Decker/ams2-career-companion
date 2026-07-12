@@ -8,8 +8,8 @@
         ResizeMode="CanResize"
         Width="380" Height="460"
         MinWidth="300" MinHeight="220"
-        Background="{StaticResource BgBrush}"
-        Foreground="{StaticResource TextBrush}"
+        Background="{DynamicResource BgBrush}"
+        Foreground="{DynamicResource TextBrush}"
         FontFamily="{StaticResource BodyFont}"
         FontSize="13">
     <DockPanel Margin="12,10">
@@ -23,10 +23,10 @@
             <Border DockPanel.Dock="Right" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource Chip}">
-                        <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                        <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding AllSet}" Value="True">
-                                <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -36,7 +36,7 @@
                         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding AllSet}" Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -71,13 +71,13 @@
                                                 <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,8,0"
                                                            Style="{StaticResource Muted}" FontSize="12"
                                                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="Consolas" FontSize="15"
+                                                <TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="{StaticResource MonoFont}" FontSize="15"
                                                            FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsChecked}" Value="True">
-                                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                                                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>

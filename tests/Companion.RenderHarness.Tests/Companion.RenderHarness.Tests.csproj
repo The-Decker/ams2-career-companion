@@ -13,6 +13,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <!-- The App project is a WinExe; referencing it emits a harmless MSB3270-style note. -->
     <NoWarn>$(NoWarn);MSB3270;NETSDK1152</NoWarn>
   </PropertyGroup>

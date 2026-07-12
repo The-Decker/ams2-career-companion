@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Orange · dark-base accessible preset. -->
+    <SolidColorBrush x:Key="AccentBrush" Color="#FF8A4C" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF9F6B" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#FF955D" />
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#33FF8A4C" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#4DFF8A4C" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#101318" />
+</ResourceDictionary>

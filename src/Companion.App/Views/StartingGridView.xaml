@@ -10,13 +10,13 @@
     <UserControl.Resources>
         <!-- one grid card: team-coloured position box + name, portrait + car, team edge. -->
         <DataTemplate x:Key="GridCard">
-            <Border Width="264" Margin="7,6" CornerRadius="10" Background="{StaticResource SurfaceBrush}"
+            <Border Width="264" Margin="7,6" CornerRadius="10" Background="{DynamicResource SurfaceBrush}"
                     BorderThickness="1" BorderBrush="{Binding TeamColor, Converter={StaticResource HexBrush}}">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                 <Setter Property="BorderThickness" Value="2" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -27,15 +27,19 @@
                     <DockPanel Margin="10,10,10,0">
                         <Border DockPanel.Dock="Left" Width="44" Height="44" CornerRadius="8"
                                 Background="{Binding TeamColor, Converter={StaticResource HexBrush}}">
-                            <TextBlock Text="{Binding Position}" Foreground="White" FontWeight="Bold"
-                                       FontSize="21" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Grid>
+                                <Border Background="{DynamicResource TeamColorScrimBrush}" CornerRadius="8" />
+                                <TextBlock Text="{Binding Position}" Style="{StaticResource PixelBadge}"
+                                           Foreground="{DynamicResource OnTeamColorBrush}" FontSize="16"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
                         </Border>
                         <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                             <TextBlock Text="{Binding DriverNameUpper}" FontWeight="Bold" FontSize="15"
                                        TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{Binding TeamNameUpper}" FontSize="11.5" Margin="0,2,0,0"
                                        TextTrimming="CharacterEllipsis"
-                                       Foreground="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
+                                       Foreground="{DynamicResource TextMutedBrush}" />
                         </StackPanel>
                     </DockPanel>
 
@@ -47,10 +51,9 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0" Margin="0,0,6,0">
-                            <Border CornerRadius="8" Background="{StaticResource SurfaceAltBrush}">
-                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="34"
-                                           Foreground="{StaticResource TextMutedBrush}" Opacity="0.4"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Style="{StaticResource AssetPlaceholderFrame}">
+                                <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                           FontSize="34" />
                             </Border>
                             <Border CornerRadius="8" ClipToBounds="True">
                                 <Image Stretch="UniformToFill"
@@ -67,116 +70,19 @@
             </Border>
         </DataTemplate>
 
-        <!-- SMGP-only pixel track: code-native repeating textures scale cleanly through the full
-             34-car field. The supplied reference establishes the top-down asphalt/grass/kerb look;
-             driver art stays keyed to canonical dist assets instead of being baked into a bitmap. -->
-        <DrawingBrush x:Key="SmgpAsphaltBrush" TileMode="Tile"
-                      Viewport="0,0,32,32" ViewportUnits="Absolute"
-                      Viewbox="0,0,32,32" ViewboxUnits="Absolute">
-            <DrawingBrush.Drawing>
-                <DrawingGroup>
-                    <GeometryDrawing Brush="#34383B">
-                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#2D3134">
-                        <GeometryDrawing.Geometry>
-                            <GeometryGroup>
-                                <RectangleGeometry Rect="3,5,3,2" /><RectangleGeometry Rect="19,2,2,3" />
-                                <RectangleGeometry Rect="10,20,2,2" /><RectangleGeometry Rect="26,24,3,2" />
-                            </GeometryGroup>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#414549">
-                        <GeometryDrawing.Geometry>
-                            <GeometryGroup>
-                                <RectangleGeometry Rect="12,8,2,2" /><RectangleGeometry Rect="28,11,2,2" />
-                                <RectangleGeometry Rect="4,27,2,2" /><RectangleGeometry Rect="21,18,3,2" />
-                            </GeometryGroup>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </DrawingBrush.Drawing>
-        </DrawingBrush>
-
-        <DrawingBrush x:Key="SmgpGrassBrush" TileMode="Tile"
-                      Viewport="0,0,24,24" ViewportUnits="Absolute"
-                      Viewbox="0,0,24,24" ViewboxUnits="Absolute">
-            <DrawingBrush.Drawing>
-                <DrawingGroup>
-                    <GeometryDrawing Brush="#426C16">
-                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,24,24" /></GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#31570F">
-                        <GeometryDrawing.Geometry>
-                            <GeometryGroup>
-                                <RectangleGeometry Rect="2,4,4,3" /><RectangleGeometry Rect="14,1,3,4" />
-                                <RectangleGeometry Rect="8,15,3,3" /><RectangleGeometry Rect="19,18,4,3" />
-                            </GeometryGroup>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#6F941F">
-                        <GeometryDrawing.Geometry>
-                            <GeometryGroup>
-                                <RectangleGeometry Rect="9,6,3,2" /><RectangleGeometry Rect="20,9,2,3" />
-                                <RectangleGeometry Rect="3,20,3,2" /><RectangleGeometry Rect="15,13,2,2" />
-                            </GeometryGroup>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </DrawingBrush.Drawing>
-        </DrawingBrush>
-
-        <DrawingBrush x:Key="SmgpCurbBrush" TileMode="Tile"
-                      Viewport="0,0,18,64" ViewportUnits="Absolute"
-                      Viewbox="0,0,18,64" ViewboxUnits="Absolute">
-            <DrawingBrush.Drawing>
-                <DrawingGroup>
-                    <GeometryDrawing Brush="#F1EEE7">
-                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,64" /></GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#C52A23">
-                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,32" /></GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#771A18">
-                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,28,18,4" /></GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </DrawingBrush.Drawing>
-        </DrawingBrush>
-
-        <DrawingBrush x:Key="SmgpCheckeredBrush" TileMode="Tile"
-                      Viewport="0,0,32,32" ViewportUnits="Absolute"
-                      Viewbox="0,0,32,32" ViewboxUnits="Absolute">
-            <DrawingBrush.Drawing>
-                <DrawingGroup>
-                    <GeometryDrawing Brush="#EEECE5">
-                        <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                    <GeometryDrawing Brush="#17191B">
-                        <GeometryDrawing.Geometry>
-                            <GeometryGroup>
-                                <RectangleGeometry Rect="0,0,16,16" />
-                                <RectangleGeometry Rect="16,16,16,16" />
-                            </GeometryGroup>
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
-                </DrawingGroup>
-            </DrawingBrush.Drawing>
-        </DrawingBrush>
-
         <DataTemplate x:Key="SmgpGridSlot">
             <Border x:Name="SmgpGridSlotCard" Height="136" Margin="4" CornerRadius="6"
                     UseLayoutRounding="True" RenderOptions.BitmapScalingMode="NearestNeighbor">
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Background" Value="#C51B1F22" />
+                        <Setter Property="Background" Value="{DynamicResource OverlaySurfaceBrush}" />
                         <Setter Property="BorderBrush"
                                 Value="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
                         <Setter Property="BorderThickness" Value="2" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                                <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                 <Setter Property="BorderThickness" Value="4" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -192,19 +98,22 @@
                     <DockPanel>
                         <Border DockPanel.Dock="Left" MinWidth="38" CornerRadius="4" Padding="6,2"
                                 Background="{Binding TeamColor, Converter={StaticResource HexBrush}}">
-                            <TextBlock Text="{Binding PositionLabel}" Foreground="White" FontWeight="Bold"
-                                       FontFamily="{StaticResource MicrosportFont}" FontSize="12"
-                                       HorizontalAlignment="Center" />
+                            <Grid>
+                                <Border Background="{DynamicResource TeamColorScrimBrush}" CornerRadius="4" />
+                                <TextBlock Text="{Binding PositionLabel}" Style="{StaticResource PixelBadge}"
+                                           Foreground="{DynamicResource OnTeamColorBrush}" FontSize="8"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
                         </Border>
                         <Border x:Name="SmgpYouBadge" DockPanel.Dock="Right" CornerRadius="4" Padding="6,2"
-                                Background="{StaticResource AccentBrush}"
+                                Background="{DynamicResource AccentBrush}"
                                 Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
-                            <TextBlock Text="YOU" Foreground="{StaticResource BgBrush}" FontWeight="Bold"
-                                       FontFamily="{StaticResource MicrosportFont}" FontSize="10" />
+                            <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource OnAccentBrush}" FontSize="8" />
                         </Border>
                         <TextBlock Text="{Binding NumberLabel}" Margin="4,0" VerticalAlignment="Center"
-                                   HorizontalAlignment="Right" FontFamily="Consolas" FontWeight="Bold"
-                                   Foreground="{Binding TeamColor, Converter={StaticResource HexBrush}}" />
+                                   HorizontalAlignment="Right" FontFamily="{StaticResource MonoFont}" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
                     </DockPanel>
 
                     <!-- Put the driver's portrait directly beside their exact car, like a compact
@@ -218,9 +127,9 @@
 
                         <Grid x:Name="SmgpPortraitFrame" Width="54" Height="54"
                               HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Border CornerRadius="4" Background="#D826292D">
-                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="22"
-                                           Foreground="{StaticResource TextMutedBrush}" Opacity="0.55"
+                            <Border CornerRadius="4" Background="{DynamicResource OverlaySurfaceAltBrush}">
+                                <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="22"
+                                           Foreground="{DynamicResource TextMutedBrush}" Opacity="0.55"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <Border CornerRadius="4" ClipToBounds="True">
@@ -233,9 +142,10 @@
 
                         <!-- Prefer a bespoke overhead sprite, then use the canonical dist side preview. -->
                         <Grid x:Name="SmgpCarBay" Grid.Column="2" Margin="0,0,2,0">
-                            <Border BorderBrush="#AAB9BCBD" BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" />
+                            <Border BorderBrush="{StaticResource SmgpGridBayEdgeBrush}"
+                                    BorderThickness="2,2,2,0" CornerRadius="2,2,0,0" />
                             <Border Width="18" Height="3" Margin="0,-1,0,0" VerticalAlignment="Top"
-                                    HorizontalAlignment="Center" Background="#F1EEE7" />
+                                    HorizontalAlignment="Center" Background="{StaticResource SmgpGridMarkingBrush}" />
                             <Image x:Name="SmgpCarImage" MaxHeight="56" Stretch="Uniform"
                                    HorizontalAlignment="Stretch" VerticalAlignment="Center"
                                    RenderOptions.BitmapScalingMode="NearestNeighbor"
@@ -263,7 +173,8 @@
                                     </Style.Triggers>
                                 </Style>
                             </Grid.Style>
-                            <Border Background="#D826292D" BorderBrush="#6E7B7D80" BorderThickness="1" />
+                            <Border Background="{DynamicResource OverlaySurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1" />
                             <Image x:Name="SmgpFlagImage" Stretch="Uniform"
                                    RenderOptions.BitmapScalingMode="NearestNeighbor"
                                    Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/flags}"
@@ -273,7 +184,7 @@
                             <TextBlock Text="{Binding DriverNameUpper}" FontWeight="Bold" FontSize="13"
                                        TextTrimming="CharacterEllipsis" ToolTip="{Binding DriverName}" />
                             <TextBlock Text="{Binding TeamNameUpper}" FontSize="10.5" Margin="0,1,0,0"
-                                       Foreground="{Binding TeamColor, Converter={StaticResource HexBrush}}"
+                                       Foreground="{DynamicResource TextMutedBrush}"
                                        TextTrimming="CharacterEllipsis" ToolTip="{Binding TeamName}" />
                         </StackPanel>
                     </Grid>
@@ -301,7 +212,7 @@
             </StackPanel>
 
             <Border x:Name="DesktopConditionsPanel" HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="8" Padding="4"
-                    Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
                     DataContext="{Binding Conditions}">
                 <Border.Style>
                     <Style TargetType="Border">
@@ -321,21 +232,21 @@
                         <TextBlock Text="LAP DISTANCE" Style="{StaticResource Faint}" FontSize="10" />
                         <TextBlock Text="{Binding LapDistanceLabel}" FontWeight="SemiBold" FontSize="14" Margin="0,3,0,0" />
                     </StackPanel>
-                    <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="2,6" />
+                    <Border Width="1" Background="{DynamicResource EdgeBrush}" Margin="2,6" />
                     <StackPanel Margin="14,6" MinWidth="70">
                         <TextBlock Text="WEATHER" Style="{StaticResource Faint}" FontSize="10" />
                         <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                            <TextBlock Text="{Binding WeatherGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                                       Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBlock Text="{Binding WeatherGlyph}" FontFamily="{StaticResource IconFont}" FontSize="14"
+                                       Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
                             <TextBlock Text="{Binding Weather}" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
                         </StackPanel>
                     </StackPanel>
-                    <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="2,6" />
+                    <Border Width="1" Background="{DynamicResource EdgeBrush}" Margin="2,6" />
                     <StackPanel Margin="14,6" MinWidth="66">
                         <TextBlock Text="TRACK TEMP" Style="{StaticResource Faint}" FontSize="10" />
                         <TextBlock Text="{Binding TrackTempLabel}" FontWeight="SemiBold" FontSize="14" Margin="0,3,0,0" />
                     </StackPanel>
-                    <Border Width="1" Background="{StaticResource EdgeBrush}" Margin="2,6" />
+                    <Border Width="1" Background="{DynamicResource EdgeBrush}" Margin="2,6" />
                     <StackPanel Margin="14,6" MinWidth="58">
                         <TextBlock Text="AIR TEMP" Style="{StaticResource Faint}" FontSize="10" />
                         <TextBlock Text="{Binding AirTempLabel}" FontWeight="SemiBold" FontSize="14" Margin="0,3,0,0" />
@@ -348,7 +259,7 @@
         <StackPanel DockPanel.Dock="Bottom">
           <!-- the dynamic per-race DNQ field: the cars that missed this round's cut (SMGP rotates the
                slowest 8-9 out each race). Hidden for a full-field pack. -->
-          <Border x:Name="DnqStrip" Margin="0,10,0,0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource EdgeBrush}"
+          <Border x:Name="DnqStrip" Margin="0,10,0,0" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource EdgeBrush}"
                   BorderThickness="1" CornerRadius="8" Padding="12,8"
                   Visibility="{Binding HasDnq, Converter={StaticResource BoolVisible}}">
               <StackPanel>
@@ -359,12 +270,12 @@
                       </ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate>
                           <DataTemplate>
-                              <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="10"
-                                      Padding="9,3" Margin="0,0,6,6" Opacity="0.7">
+                               <Border Style="{StaticResource CompactChip}"
+                                       Padding="9,3" Margin="0,0,6,6" Opacity="0.78">
                                   <TextBlock>
                                       <Run Text="{Binding NameUpper, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" />
                                       <Run Text="  " /><Run Text="{Binding TeamName, Mode=OneWay}" FontSize="10.5"
-                                           Foreground="{StaticResource TextMutedBrush}" />
+                                           Foreground="{DynamicResource TextMutedBrush}" />
                                   </TextBlock>
                               </Border>
                           </DataTemplate>
@@ -374,15 +285,15 @@
           </Border>
 
           <Border Margin="0,12,0,0" BorderThickness="0,1,0,0"
-                BorderBrush="{StaticResource EdgeBrush}" Padding="0,12,0,0">
+                BorderBrush="{DynamicResource EdgeBrush}" Padding="0,12,0,0">
             <DockPanel>
                 <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}" MinWidth="170" FontWeight="Bold"
                         Content="{Binding DataContext.ConfirmButtonText, RelativeSource={RelativeSource AncestorType=views:HomeView}, FallbackValue='START RACE'}"
                         Command="{Binding DataContext.ConfirmResultCommand, RelativeSource={RelativeSource AncestorType=views:HomeView}}"
                         ToolTip="Go racing from this grid" />
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DataContext="{Binding Conditions}">
-                    <TextBlock Text="{Binding WeatherGlyph}" FontFamily="Segoe MDL2 Assets" FontSize="15"
-                               Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding WeatherGlyph}" FontFamily="{StaticResource IconFont}" FontSize="15"
+                               Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding Weather}" Margin="7,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding WindLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding HumidityLabel}" Style="{StaticResource Muted}" Margin="20,0,0,0" VerticalAlignment="Center" />
@@ -423,10 +334,10 @@
 
                 <!-- carousel arrows -->
                 <Button x:Name="ScrollLeftButton" Click="OnScrollLeft" HorizontalAlignment="Left" VerticalAlignment="Center"
-                        Width="30" Height="52" Content="&#xE76B;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                        Width="30" Height="52" Content="&#xE76B;" FontFamily="{StaticResource IconFont}" FontSize="14"
                         Style="{StaticResource SubtleButton}" ToolTip="Earlier on the grid" />
                 <Button x:Name="ScrollRightButton" Click="OnScrollRight" HorizontalAlignment="Right" VerticalAlignment="Center"
-                        Width="30" Height="52" Content="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                        Width="30" Height="52" Content="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="14"
                         Style="{StaticResource SubtleButton}" ToolTip="Further down the grid" />
             </Grid>
 
@@ -469,16 +380,18 @@
 
                         <!-- Compact pixel fence rails at the outside edges. -->
                         <Border Grid.Column="0" Width="10" HorizontalAlignment="Left" Margin="4,0,0,0"
-                                Background="#2A332F" BorderBrush="#9AA39E" BorderThickness="2,0" />
+                                Background="{StaticResource SmgpFenceBrush}"
+                                BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
                         <Border Grid.Column="4" Width="10" HorizontalAlignment="Right" Margin="0,0,4,0"
-                                Background="#2A332F" BorderBrush="#9AA39E" BorderThickness="2,0" />
+                                Background="{StaticResource SmgpFenceBrush}"
+                                BorderBrush="{StaticResource SmgpFenceEdgeBrush}" BorderThickness="2,0" />
 
                         <StackPanel Grid.Column="2" Margin="8,14,8,24">
                             <!-- The authored race length and the existing class/lap/rules-aware fuel
                                  advisory are already owned by the Race Day briefing. Bind through the
                                  HomeView ancestor so this view adds presentation, never strategy logic. -->
-                            <Border x:Name="SmgpRacePlanPanel" Background="#E6202327"
-                                    BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                            <Border x:Name="SmgpRacePlanPanel" Background="{DynamicResource OverlaySurfaceBrush}"
+                                    BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
                                     CornerRadius="5" Padding="10,8" Margin="0,0,0,4">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -487,27 +400,27 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="RACE DISTANCE" Style="{StaticResource Faint}"
-                                                   FontFamily="{StaticResource MicrosportFont}" FontSize="9" />
+                                        <TextBlock Text="RACE DISTANCE" Style="{StaticResource Eyebrow}" />
                                         <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                            <TextBlock x:Name="SmgpLapCount" FontFamily="{StaticResource MicrosportFont}"
+                                            <TextBlock x:Name="SmgpLapCount" FontFamily="{StaticResource PixelFont}"
                                                        FontSize="24" FontWeight="Bold"
-                                                       Foreground="{StaticResource AccentBrush}"
+                                                       Foreground="{DynamicResource AccentTextBrush}"
                                                        Text="{Binding DataContext.Briefing.Briefing.Round.Laps,
                                                                       RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}},
                                                                       Mode=OneWay, FallbackValue='—'}" />
-                                            <TextBlock Text=" LAPS" FontFamily="{StaticResource MicrosportFont}"
-                                                       FontSize="11" FontWeight="Bold" VerticalAlignment="Bottom"
+                                            <TextBlock Text=" LAPS" FontFamily="{StaticResource DisplayFont}"
+                                                       FontSize="10" FontWeight="Bold" VerticalAlignment="Bottom"
                                                        Margin="0,0,0,3" />
                                         </StackPanel>
                                     </StackPanel>
-                                    <Border Grid.Column="1" Background="{StaticResource EdgeBrush}" />
+                                    <Border Grid.Column="1" Background="{DynamicResource EdgeBrush}" />
                                     <StackPanel Grid.Column="2" Margin="10,0,0,0">
                                         <TextBlock Text="PIT WALL  ·  POTENTIAL STRATEGIES" Style="{StaticResource Faint}"
-                                                   FontFamily="{StaticResource MicrosportFont}" FontSize="9" />
+                                                   FontFamily="{StaticResource DisplayFont}" FontSize="10"
+                                                   FontWeight="Bold" />
                                         <TextBlock x:Name="SmgpTacticalAdvice" Margin="0,3,0,0"
                                                    FontSize="10.5" FontWeight="SemiBold" TextWrapping="Wrap"
-                                                   Foreground="{StaticResource AccentBrush}"
+                                                   Foreground="{DynamicResource AccentTextBrush}"
                                                    Text="{Binding DataContext.Briefing.SmgpAdviceLine,
                                                                   RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}},
                                                                   Mode=OneWay}"
@@ -516,7 +429,7 @@
                                                                         Converter={StaticResource StringVisible}}" />
                                         <TextBlock x:Name="SmgpStrategyText" Margin="0,3,0,0"
                                                    FontSize="10" LineHeight="13" TextWrapping="Wrap"
-                                                   Foreground="{StaticResource TextBrush}"
+                                                   Foreground="{DynamicResource TextBrush}"
                                                    Text="{Binding DataContext.Briefing.FuelNote,
                                                                   RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}},
                                                                   Mode=OneWay}"
@@ -524,7 +437,7 @@
                                                                      RelativeSource={RelativeSource AncestorType={x:Type views:HomeView}},
                                                                      Mode=OneWay}" />
                                         <WrapPanel Margin="0,5,0,0">
-                                            <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="3"
+                                            <Border Style="{StaticResource CompactChip}"
                                                     Padding="5,2" Margin="0,0,5,0">
                                                 <TextBlock x:Name="SmgpPitRule" FontSize="9">
                                                     <TextBlock.Style>
@@ -548,7 +461,7 @@
                                                     </TextBlock.Style>
                                                 </TextBlock>
                                             </Border>
-                                            <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="3" Padding="5,2">
+                                            <Border Style="{StaticResource CompactChip}" Padding="5,2">
                                                 <TextBlock x:Name="SmgpRefuelRule" FontSize="9">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
@@ -575,10 +488,11 @@
                                     </StackPanel>
                                 </Grid>
                             </Border>
-                            <Border Background="#DC171A1D" Padding="8,4" Margin="0,0,0,4"
+                            <Border Background="{DynamicResource OverlaySurfaceAltBrush}"
+                                    Padding="8,4" Margin="0,0,0,4"
                                     DataContext="{Binding Conditions}">
                                 <TextBlock TextAlignment="Center" TextWrapping="Wrap" FontSize="11"
-                                           Foreground="{StaticResource TextMutedBrush}">
+                                           Foreground="{DynamicResource TextMutedBrush}">
                                     <Run Text="{Binding LapDistanceLabel, Mode=OneWay}" />
                                     <Run Text="  ·  " /><Run Text="{Binding Weather, Mode=OneWay}" />
                                     <Run Text="  ·  TRACK " /><Run Text="{Binding TrackTempLabel, Mode=OneWay}" />
@@ -586,11 +500,12 @@
                                 </TextBlock>
                             </Border>
                             <Border Height="20" Background="{StaticResource SmgpCheckeredBrush}"
-                                    BorderBrush="#EAE7DF" BorderThickness="0,2" />
-                            <Border Background="#DC171A1D" Padding="8,4" Margin="0,0,0,4">
+                                    BorderBrush="{StaticResource SmgpGridMarkingBrush}" BorderThickness="0,2" />
+                            <Border Background="{DynamicResource OverlaySurfaceAltBrush}"
+                                    Padding="8,4" Margin="0,0,0,4">
                                 <TextBlock Text="SUPER MONACO GP · STARTING ORDER" TextAlignment="Center"
-                                           FontFamily="{StaticResource MicrosportFont}" FontSize="12"
-                                           Foreground="{StaticResource AccentBrush}" />
+                                           FontFamily="{StaticResource DisplayFont}" FontSize="10" FontWeight="Bold"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
                             </Border>
                             <ItemsControl x:Name="SmgpSlotList" ItemsSource="{Binding Slots}"
                                           ItemTemplate="{StaticResource SmgpGridSlot}"

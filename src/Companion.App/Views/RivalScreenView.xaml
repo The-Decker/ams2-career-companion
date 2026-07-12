@@ -17,24 +17,31 @@
             <Border Style="{StaticResource Panel}" DataContext="{Binding Briefing}"
                     Padding="24" CornerRadius="14" BorderThickness="2">
                 <StackPanel>
-                    <DockPanel>
-                        <!-- the player's live readout (replaces the old "D.P."): season standing + the
-                             career record they're building from zero -->
-                        <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="{Binding SmgpSeasonLine}" Foreground="{StaticResource AccentBrush}"
-                                       FontWeight="Bold" TextAlignment="Right" />
-                            <TextBlock Text="{Binding SmgpCareerLine}" Style="{StaticResource Faint}"
-                                       TextAlignment="Right" Margin="0,2,0,0"
-                                       Visibility="{Binding SmgpCareerLine, Converter={StaticResource StringVisible}}" />
-                        </StackPanel>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding SmgpRoundHeader}" FontWeight="Bold" FontSize="16" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                            <TextBlock Text="ROUND" Style="{StaticResource Eyebrow}" />
+                            <TextBlock Text="{Binding SmgpRoundHeader}" Style="{StaticResource H2}"
+                                       TextWrapping="Wrap" Margin="0,3,0,0" />
                             <!-- Mike's 17-season grand campaign: "SEASON n / 17" -->
                             <TextBlock Text="{Binding SmgpCampaignLine}" Style="{StaticResource Faint}"
-                                       FontWeight="SemiBold" Margin="0,2,0,0"
+                                       FontWeight="SemiBold" Margin="0,3,0,0"
                                        Visibility="{Binding SmgpCampaignLine, Converter={StaticResource StringVisible}}" />
                         </StackPanel>
-                    </DockPanel>
+                        <!-- the player's live readout (replaces the old "D.P."): season standing + the
+                             career record they're building from zero -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="{Binding SmgpSeasonLine}" Style="{StaticResource Mono}"
+                                       Foreground="{DynamicResource AccentTextBrush}"
+                                       FontWeight="Bold" TextAlignment="Right" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding SmgpCareerLine}" Style="{StaticResource Faint}"
+                                       TextAlignment="Right" Margin="0,3,0,0" TextWrapping="Wrap"
+                                       Visibility="{Binding SmgpCareerLine, Converter={StaticResource StringVisible}}" />
+                        </StackPanel>
+                    </Grid>
                     <TextBlock Text="{Binding SmgpAdviceLine}" Style="{StaticResource Body}"
                                FontStyle="Italic" Margin="0,6,0,0" />
 
@@ -44,8 +51,8 @@
                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
 
                     <TextBlock Text="{Binding SmgpRivalPrompt}" FontWeight="SemiBold" Margin="0,12,0,4" />
-                    <StackPanel Orientation="Horizontal">
-                        <ComboBox MinWidth="260" ItemsSource="{Binding SmgpRivals}"
+                    <WrapPanel>
+                        <ComboBox MinWidth="260" Margin="0,0,8,8" ItemsSource="{Binding SmgpRivals}"
                                   SelectedItem="{Binding SelectedSmgpRival}"
                                   IsEnabled="{Binding SmgpPickEnabled}">
                             <ComboBox.ItemTemplate>
@@ -57,64 +64,71 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <Button Content="No rival" Margin="8,0,0,0" MinWidth="80"
+                        <Button Content="No rival" Margin="0,0,8,8" MinWidth="80"
                                 Command="{Binding SmgpDeclineRivalCommand}"
                                 Visibility="{Binding SmgpPickEnabled, Converter={StaticResource BoolVisible}}"
                                 ToolTip="Race without naming a rival this round" />
-                    </StackPanel>
+                    </WrapPanel>
 
                     <!-- the rival dossier card: banner, big driver PORTRAIT + car thumbnail, MACHINE
                          block + arcade car-spec card, his line, the ladder telegraph, and the YES
                          commitment (nothing rides the result until it is pressed). -->
-                    <Border Background="{StaticResource AccentDimBrush}" CornerRadius="14" Padding="20" Margin="0,16,0,0"
-                            BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                    <Border Style="{StaticResource Panel}" Background="{DynamicResource SurfaceBrush}"
+                            CornerRadius="14" Padding="24" Margin="0,16,0,0"
+                            BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2"
                             Visibility="{Binding SelectedSmgpRival, Converter={StaticResource NullCollapsed}}">
                         <StackPanel>
                             <Image MaxHeight="90" MaxWidth="470" HorizontalAlignment="Center" Stretch="Uniform" Margin="0,0,0,10"
                                    Source="{Binding SelectedSmgpRival.TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/banners}"
                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                            <StackPanel HorizontalAlignment="Center" Margin="0,2,0,0">
-                                <Grid Width="360" Height="360" HorizontalAlignment="Center"
-                                      ToolTip="Drop the rival's portrait at data\ams2\portraits\&lt;driverId&gt;.jpg (beside the exe)">
-                                    <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
-                                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="86"
-                                                   Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <Border CornerRadius="10" ClipToBounds="True">
-                                        <Image Stretch="UniformToFill"
-                                               Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                    </Border>
-                                </Grid>
-                                <Image Height="135" MaxWidth="470" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,14,0,0"
+                            <StackPanel Margin="0,2,0,0">
+                                <!-- DownOnly keeps the hero crisp at full size, while allowing it to
+                                     shrink with the viewport at larger UI-scale settings. -->
+                                <Viewbox Stretch="Uniform" StretchDirection="DownOnly"
+                                         MaxWidth="400" MaxHeight="400" HorizontalAlignment="Center"
+                                         ToolTip="Drop the rival's portrait at data\ams2\portraits\&lt;driverId&gt;.jpg (beside the exe)">
+                                    <Grid Width="400" Height="400">
+                                        <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                                            <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="96"
+                                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <Border CornerRadius="10" ClipToBounds="True">
+                                            <Image Stretch="UniformToFill"
+                                                   Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                        </Border>
+                                    </Grid>
+                                </Viewbox>
+                                <Image Height="150" MaxWidth="520" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,16,0,0"
                                        Source="{Binding SelectedSmgpRival.DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}"
                                        ToolTip="Drop the rival's car photo at data\ams2\cars\&lt;driverId&gt;.png (beside the exe)" />
                             </StackPanel>
-                            <TextBlock FontWeight="Bold" FontSize="25" Margin="0,14,0,0"
+                            <TextBlock Style="{StaticResource H1}" FontSize="28" Margin="0,16,0,0"
                                        HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap">
                                 <Run Text="{Binding SelectedSmgpRival.DriverName, Mode=OneWay}" />
                                 <Run Text=" · " /><Run Text="{Binding SelectedSmgpRival.TeamName, Mode=OneWay}" />
                             </TextBlock>
-                            <TextBlock Style="{StaticResource Muted}" FontSize="16" Margin="0,6,0,0"
-                                       HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap">
-                                <Run Text="MACHINE  " FontWeight="SemiBold" />
-                                <Run Text="{Binding SelectedSmgpRival.MachineLine, Mode=OneWay}" />
-                            </TextBlock>
+                            <TextBlock Text="MACHINE" Style="{StaticResource Eyebrow}"
+                                       HorizontalAlignment="Center" Margin="0,10,0,0" />
+                            <TextBlock Text="{Binding SelectedSmgpRival.MachineLine}" Style="{StaticResource Mono}"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" FontSize="16"
+                                       HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                                       Margin="0,4,0,0" />
                             <ContentControl Content="{Binding SelectedSmgpRival.CarSpec}"
-                                            HorizontalAlignment="Center" Margin="0,12,0,0"
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                            Margin="0,14,0,0"
                                             Visibility="{Binding SelectedSmgpRival.CarSpec, Converter={StaticResource NullCollapsed}}">
                                 <ContentControl.ContentTemplate>
                                     <DataTemplate>
-                                        <views:CarSpecCard Width="400" />
+                                        <views:CarSpecCard MaxWidth="440" HorizontalAlignment="Center" />
                                     </DataTemplate>
                                 </ContentControl.ContentTemplate>
                             </ContentControl>
-                            <!-- the rival's trash-talk is NOT shown here as a static line any more — it lands
-                                 in the named banner below as their REACTION once you commit them (Mike). -->
-                            <TextBlock Text="{Binding SmgpLadderLine}" Foreground="{StaticResource AccentBrush}"
-                                       FontWeight="SemiBold" FontSize="19" TextWrapping="Wrap" Margin="0,12,0,0"
+                            <!-- Trash-talk lands below as the rival's reaction after the player commits. -->
+                            <TextBlock Text="{Binding SmgpLadderLine}" Foreground="{DynamicResource AccentTextBrush}"
+                                       FontWeight="SemiBold" FontSize="21" TextWrapping="Wrap" Margin="0,12,0,0"
                                        HorizontalAlignment="Center" TextAlignment="Center"
                                        Visibility="{Binding SmgpLadderLine, Converter={StaticResource StringVisible}}" />
 
@@ -126,15 +140,15 @@
                                     ToolTip="Commit this rival for the round — finish ahead of him twice without losing and you may take his seat" />
                             <!-- after naming: the rival reacts in their OWN voice (mood-aware trash-talk),
                                  then the commitment line spells out what beating them means. -->
-                            <Border x:Name="SmgpNamedBanner" Background="{StaticResource SuccessDimBrush}" CornerRadius="6"
+                            <Border x:Name="SmgpNamedBanner" Style="{StaticResource SuccessCallout}"
                                     Padding="16,12" Margin="0,14,0,0"
                                     Visibility="{Binding SmgpRivalNamed, Converter={StaticResource BoolVisible}}">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding SmgpNamedRivalQuote}" Foreground="{StaticResource AccentBrush}"
+                                    <TextBlock Text="{Binding SmgpNamedRivalQuote}" Foreground="{DynamicResource AccentTextBrush}"
                                                FontStyle="Italic" FontWeight="SemiBold" FontSize="19" TextWrapping="Wrap"
                                                HorizontalAlignment="Center" TextAlignment="Center"
                                                Visibility="{Binding SmgpNamedRivalQuote, Converter={StaticResource StringVisible}}" />
-                                    <TextBlock Text="{Binding SmgpNamedLine}" Foreground="{StaticResource SuccessBrush}"
+                                    <TextBlock Text="{Binding SmgpNamedLine}" Foreground="{DynamicResource SuccessBrush}"
                                                FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Margin="0,8,0,0"
                                                HorizontalAlignment="Center" TextAlignment="Center" />
                                 </StackPanel>
