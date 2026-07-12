@@ -792,6 +792,38 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(BaselineImportSummary));
     }
 
+    // ---------- character death & injury: the mortality choice (Slice 1) ----------
+
+    /// <summary>The career's mortality mode (character death &amp; injury — docs/dev/character-death-injury.md
+    /// §2). Off (default) = no injury/death, the classic experience. Normal = injury/death ON with a full
+    /// save &amp; reload safety net. Hardcore = injury/death ON with NO saves, and death physically deletes
+    /// the career file. VM-only here; the view binds a radio group / picker to this. Default Off (opt-in).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MortalityModeSummary))]
+    private Companion.Core.Career.MortalityMode _mortalityMode = Companion.Core.Career.MortalityMode.Off;
+
+    /// <summary>The three mortality choices, in creation order, for the view's picker.</summary>
+    public IReadOnlyList<Companion.Core.Career.MortalityMode> MortalityOptions { get; } =
+    [
+        Companion.Core.Career.MortalityMode.Off,
+        Companion.Core.Career.MortalityMode.Normal,
+        Companion.Core.Career.MortalityMode.Hardcore,
+    ];
+
+    /// <summary>One honest line on what the current mortality choice means — with the destructive
+    /// Hardcore reality spelled out, since it must be unmistakable at creation (plan §2).</summary>
+    public string MortalityModeSummary => MortalityMode switch
+    {
+        Companion.Core.Career.MortalityMode.Normal =>
+            "Normal — accidents can injure or kill your driver, but you can save and reload " +
+            "(manual slots + an autosave each season), including to un-do a death.",
+        Companion.Core.Career.MortalityMode.Hardcore =>
+            "⚠ Hardcore — accidents can injure or kill your driver. There are NO saves and no restore, " +
+            "ever, and DEATH PERMANENTLY DELETES this career file. There is no way back.",
+        _ =>
+            "Off — no injury and no death. The classic experience.",
+    };
+
     private void Create()
     {
         CreateError = null;
@@ -825,6 +857,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             // Opt-in modded field (the SMGP McLaren teams) — the service adds them only if the
             // required car mod is installed (else the base field). Default OFF.
             UseModdedField = UseModdedField,
+            // Character death & injury (Slice 1): the explicit Off/Normal/Hardcore creation choice.
+            // Off (default) = no injury/death (classic). Normal adds the save & reload safety net;
+            // Hardcore has no saves and death deletes the file.
+            Mortality = MortalityMode,
         };
 
         ICareerSession session;

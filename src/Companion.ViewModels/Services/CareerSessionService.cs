@@ -64,6 +64,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private readonly int _playerFirstSeasonAge;
     private readonly SeasonScoringDefinition _scoringDefinition;
 
+    /// <summary>The career-wide mortality mode (Off / Normal / Hardcore), read from the <c>career</c>
+    /// table at create/open. Gates the Normal-only save &amp; reload surface. (Slice 1.)</summary>
+    private readonly MortalityMode _mortality;
+
     public SeasonPack Pack { get; }
 
     public string CareerFilePath { get; }
@@ -85,9 +89,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         string playerLiveryName,
         string playerDriverId,
         int playerFirstSeasonAge,
-        string baselineSource)
+        string baselineSource,
+        MortalityMode mortality)
     {
         BaselineSource = baselineSource;
+        _mortality = mortality;
         _database = database;
         _environment = environment;
         CareerFilePath = careerFilePath;
@@ -233,10 +239,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             using (var transaction = database.Connection.BeginTransaction())
             {
                 Execute(database.Connection, transaction,
-                    "INSERT INTO career (id, name, created_utc, master_seed, app_version) " +
-                    "VALUES (1, @name, @utc, @seed, @version);",
+                    "INSERT INTO career (id, name, created_utc, master_seed, app_version, mortality_mode) " +
+                    "VALUES (1, @name, @utc, @seed, @version, @mortality);",
                     ("@name", request.CareerName), ("@utc", nowUtc),
-                    ("@seed", request.MasterSeed), ("@version", AppVersion));
+                    ("@seed", request.MasterSeed), ("@version", AppVersion),
+                    ("@mortality", (int)request.Mortality));
 
                 Execute(database.Connection, transaction,
                     "INSERT INTO pinned_pack (pack_id, version, sha256, pack_json, pinned_utc) " +
@@ -302,18 +309,23 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 SeedStartStates(
                     database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
                     request.Character, request.GridSelection, request.FormAware,
-                    request.SmgpMode, transaction);
+                    request.SmgpMode, request.Mortality, transaction);
 
                 transaction.Commit();
             }
 
-            return new CareerSessionService(
+            var session = new CareerSessionService(
                 database, environment, pack, request.CareerFilePath, seasonId,
                 request.CareerName, request.MasterSeed, request.PlayerLiveryName, playerDriverId,
                 // A real character sets its OWN first-season age; without one (or a legacy character)
                 // the age falls back to the historical driver whose seat was taken.
                 request.Character?.Age ?? PlayerAgeIn(pack, playerDriverId),
-                import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile);
+                import is null ? BaselineSourcePack : BaselineSourceInstalledAiFile,
+                request.Mortality);
+            // Normal careers autosave the fresh season's start point (best-effort) so a death always
+            // has a very recent restore point (character-death plan §4). No-op for Off/Hardcore.
+            session.TryAutosaveSeasonStart();
+            return session;
         }
         catch
         {
@@ -334,12 +346,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         try
         {
             var careerRow = Query(database.Connection,
-                    "SELECT name, master_seed FROM career WHERE id = 1;",
-                    r => (Name: r.GetString(0), Seed: r.GetInt64(1)))
+                    "SELECT name, master_seed, mortality_mode FROM career WHERE id = 1;",
+                    r => (Name: r.GetString(0), Seed: r.GetInt64(1), Mortality: r.GetInt32(2)))
                 .SingleOrDefault(defaultValue: default);
             if (careerRow.Name is null)
                 throw new InvalidOperationException($"'{careerFilePath}' has no career row — not a career file?");
-            (string careerName, long masterSeed) = careerRow;
+            (string careerName, long masterSeed, int mortalityRaw) = careerRow;
+            // The mortality_mode column is guaranteed present by the migration that ran during Open.
+            var mortality = (MortalityMode)mortalityRaw;
 
             var seasons = CareerStore.ReadSeasons(database);
             if (seasons.Count == 0)
@@ -403,10 +417,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 playerFirstSeasonAge = characterAge ?? PlayerAgeIn(firstPack, delta.PlayerDriverId);
             }
 
-            return new CareerSessionService(
+            var session = new CareerSessionService(
                 database, environment, pack, careerFilePath, latest.Id,
                 careerName, masterSeed, playerLiveryName, playerDriverId,
-                playerFirstSeasonAge, baselineSource);
+                playerFirstSeasonAge, baselineSource, mortality);
+            // A freshly-started season (e.g. just transitioned into) autosaves its start once for
+            // Normal careers; gated so opening a mid-season career or a non-Normal one is a no-op.
+            session.TryAutosaveSeasonStart();
+            return session;
         }
         catch
         {
@@ -437,6 +455,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         Companion.Core.Grid.GridSelection? gridSelection,
         bool formAware,
         bool smgpMode,
+        MortalityMode mortality,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -492,6 +511,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     PerSeasonDnq = Companion.Core.Smgp.SmgpDnqField.HasDnqField(pack),
                 }
                 : null,
+            // The mortality mode (character death & injury, Slice 1): Off (default) serializes to
+            // nothing (WhenWritingDefault) so a non-opted career's start blob is byte-identical;
+            // Normal/Hardcore are carried forward each round via record `with`, exactly like FormAware.
+            Mortality = mortality,
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
@@ -4847,6 +4870,104 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         while (reader.Read())
             rows.Add(map(reader));
         return rows;
+    }
+
+    // ---------- character death & injury: mortality mode + Normal save/reload (Slice 1) ----------
+
+    /// <inheritdoc />
+    public MortalityMode Mortality => _mortality;
+
+    /// <inheritdoc />
+    public bool SavesEnabled => _mortality == MortalityMode.Normal;
+
+    /// <inheritdoc />
+    public IReadOnlyList<SaveSlotInfo> SaveSlots() =>
+        SavesEnabled ? SaveSlotStore.List(CareerFilePath) : [];
+
+    /// <inheritdoc />
+    public SaveSlotInfo SaveToSlot(string label)
+    {
+        if (!SavesEnabled)
+            throw new InvalidOperationException(
+                $"Saving is available only in Normal mode — this career is {_mortality}.");
+
+        string chosenLabel = string.IsNullOrWhiteSpace(label)
+            ? $"Season {_seasonYear} · Round {CurrentRoundNumber}"
+            : label.Trim();
+        // Snapshot from the LIVE connection so committed WAL data is captured too.
+        return SaveSlotStore.Save(
+            _database.Connection, CareerFilePath, NextManualSlotId(), chosenLabel,
+            _seasonYear, CurrentRoundNumber, NowUtc(), isAutosave: false);
+    }
+
+    /// <inheritdoc />
+    public void RestoreSlot(string slotId)
+    {
+        if (!SavesEnabled)
+            throw new InvalidOperationException(
+                $"Restoring is available only in Normal mode — this career is {_mortality}.");
+        // Validate the target BEFORE tearing down the live DB, so an unknown/stale slot id fails cleanly
+        // without spending the session (matching the disabled-mode guard's fail-without-side-effects).
+        if (!SaveSlotStore.SnapshotExists(CareerFilePath, slotId))
+            throw new InvalidOperationException($"Save slot '{slotId}' has no snapshot to restore.");
+
+        // Release the working file (Dispose clears the pool, so the file becomes replaceable), then
+        // swap the snapshot in. THIS SESSION IS SPENT afterwards — the shell must reopen the career
+        // file to land at the restored point (the same reopen contract as an era transition).
+        _database.Dispose();
+        SaveSlotStore.Restore(CareerFilePath, slotId);
+    }
+
+    /// <inheritdoc />
+    public void DeleteSlot(string slotId)
+    {
+        if (!SavesEnabled)
+            return;
+        SaveSlotStore.Delete(CareerFilePath, slotId);
+    }
+
+    /// <summary>Best-effort autosave of a FRESH season's start (Normal only): snapshots the season
+    /// start point exactly once, so a death always has a recent restore point (character-death plan
+    /// §4). Gated on Normal mode + zero applied rounds this season + no existing autosave for it, so a
+    /// mid-season or non-Normal open is a no-op and reopening never duplicates. A snapshot hiccup must
+    /// never break creating/opening a career, so failures are swallowed.</summary>
+    private void TryAutosaveSeasonStart()
+    {
+        if (_mortality != MortalityMode.Normal || MaxAppliedRound > 0)
+            return;
+
+        string slotId = $"autosave-season-{_seasonOrdinal}";
+        try
+        {
+            if (SaveSlotStore.List(CareerFilePath).Any(s => string.Equals(s.SlotId, slotId, StringComparison.Ordinal)))
+                return;
+            SaveSlotStore.Save(
+                _database.Connection, CareerFilePath, slotId,
+                $"Season {_seasonYear} start", _seasonYear, CurrentRoundNumber, NowUtc(),
+                isAutosave: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+        {
+            // Autosave is best-effort — never let a snapshot failure abort create/open.
+        }
+    }
+
+    /// <summary>The next free <c>manual-NNN</c> slot id (a stable, deterministic ordinal — no clock or
+    /// RNG in the id, so tests are reproducible).</summary>
+    private string NextManualSlotId()
+    {
+        int max = 0;
+        foreach (var slot in SaveSlotStore.List(CareerFilePath))
+        {
+            const string prefix = "manual-";
+            if (!slot.IsAutosave &&
+                slot.SlotId.StartsWith(prefix, StringComparison.Ordinal) &&
+                int.TryParse(slot.SlotId.AsSpan(prefix.Length), out int n))
+            {
+                max = Math.Max(max, n);
+            }
+        }
+        return $"manual-{max + 1:D3}";
     }
 
     public void Dispose() => _database.Dispose();

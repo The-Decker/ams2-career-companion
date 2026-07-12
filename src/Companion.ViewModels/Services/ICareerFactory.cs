@@ -69,6 +69,13 @@ public sealed record CareerCreationRequest
     /// is missing — the season is pinned on its base/DLC defaults and NO mod track is used, so the
     /// default never depends on a mod. Seed-driven per-round variety is a later slice.</summary>
     public bool UseAlternateTracks { get; init; }
+
+    /// <summary>The career's MORTALITY mode (character death &amp; injury, Slice 1;
+    /// docs/dev/character-death-injury.md §2). Default <see cref="Companion.Core.Career.MortalityMode.Off"/>
+    /// so existing creation callers (and every test that does not opt in) create a career with no
+    /// injury/death — byte-identical to before. The wizard surfaces Off/Normal/Hardcore as an explicit
+    /// creation choice. Persisted on the <c>career</c> table AND mirrored into the start player state.</summary>
+    public Companion.Core.Career.MortalityMode Mortality { get; init; }
 }
 
 /// <summary>

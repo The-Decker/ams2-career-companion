@@ -304,6 +304,44 @@ public interface ICareerSession
     /// pack + content library; no results, so nothing is hidden. Additive default: empty.</summary>
     IReadOnlyList<SeasonScheduleEntry> SeasonSchedule() => [];
 
+    // ---- Character death & injury: mortality mode + Normal save/reload (Slice 1) ----
+
+    /// <summary>The career's mortality mode (Off / Normal / Hardcore), chosen at creation
+    /// (docs/dev/character-death-injury.md §2). Off = no injury/death (classic). Normal = injury/death
+    /// with the save &amp; reload safety net below. Hardcore = injury/death, no saves, death deletes the
+    /// file. Additive default: <see cref="Companion.Core.Career.MortalityMode.Off"/>, so fakes compile.</summary>
+    Companion.Core.Career.MortalityMode Mortality => Companion.Core.Career.MortalityMode.Off;
+
+    /// <summary>True when the FILE-level save &amp; reload surface is available — <c>Normal</c> mode ONLY.
+    /// Off (no death to undo) and Hardcore (no saves, ever) both report false. When false, the slot
+    /// list is empty and <see cref="SaveToSlot"/>/<see cref="RestoreSlot"/> throw. Additive default:
+    /// false, so fakes compile.</summary>
+    bool SavesEnabled => false;
+
+    /// <summary>The career's manual + autosave snapshot slots, newest first (Normal only). Each is a
+    /// complete, replay-verifiable career-file snapshot taken OUTSIDE the fold, so listing/saving/
+    /// restoring never touches the re-simulation contract. Empty when saves are disabled. Additive
+    /// default: empty, so fakes compile.</summary>
+    IReadOnlyList<Companion.Data.SaveSlotInfo> SaveSlots() => [];
+
+    /// <summary>Snapshots the working career into a NEW manual save slot with the given label and
+    /// returns it. Throws when saves are disabled (Off/Hardcore). Additive default: throws, so a
+    /// session without save support says so.</summary>
+    Companion.Data.SaveSlotInfo SaveToSlot(string label) => throw new NotSupportedException(
+        "This career session does not support saving.");
+
+    /// <summary>Restores the career WHOLESALE to a snapshot (reverting every round since) — Normal
+    /// only, allowed any time, including to un-do a death. THIS SESSION IS SPENT afterwards: its DB is
+    /// closed, so the shell must reopen the career file to continue from the restored point (mirroring
+    /// the era-transition reopen contract). Throws when saves are disabled or the slot is unknown.
+    /// Additive default: throws, so fakes compile.</summary>
+    void RestoreSlot(string slotId) => throw new NotSupportedException(
+        "This career session does not support restoring saves.");
+
+    /// <summary>Deletes a save slot (Normal only). A no-op when saves are disabled or the slot is
+    /// unknown. Additive default: no-op, so fakes compile.</summary>
+    void DeleteSlot(string slotId) { }
+
     SeasonPack Pack { get; }
 }
 

@@ -142,6 +142,18 @@ public sealed record PlayerCareerState
     /// and the whole mode stays inert.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Companion.Core.Smgp.SmgpState? Smgp { get; init; }
+
+    // ---- Character death & injury (docs/dev/character-death-injury.md, Slice 1) ----
+
+    /// <summary>The career's mortality mode (Off / Normal / Hardcore), seeded ONCE at creation and
+    /// carried forward each round via record <c>with</c> — mirroring <see cref="FormAware"/> and the
+    /// SMGP gates. <see cref="MortalityMode.Off"/> is the enum default, so this is omitted from the
+    /// serialized start state (WhenWritingDefault): every pre-feature career's player_state blob is
+    /// BYTE-IDENTICAL and the whole mortality system stays inert. It is display/career-wide state
+    /// (the same value is also persisted on the <c>career</c> table); Slice 1 makes NO fold change,
+    /// so an Off career — and a Normal/Hardcore one — re-simulates exactly as before.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public MortalityMode Mortality { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller

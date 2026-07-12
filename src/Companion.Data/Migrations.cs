@@ -143,6 +143,17 @@ public static class Migrations
             PRIMARY KEY (season_id, livery_key)
         );
         """,
+
+        // v5 — the career MORTALITY mode (character death & injury, Slice 1;
+        // docs/dev/character-death-injury.md §2). Career-wide, chosen once at creation:
+        // 0 = Off (no injury/death — the default), 1 = Normal (injury/death + save & reload),
+        // 2 = Hardcore (injury/death, no saves, death deletes the file). The NOT NULL DEFAULT 0
+        // gives every existing career Off in place, so an upgraded file reads exactly as before.
+        // The mode is ALSO mirrored into the start player_state for the fold to read without a DB
+        // hop; this column is the career-wide authority the session reads on open.
+        """
+        ALTER TABLE career ADD COLUMN mortality_mode INTEGER NOT NULL DEFAULT 0;
+        """,
     ];
 
     public static int CurrentVersion => Scripts.Length;
