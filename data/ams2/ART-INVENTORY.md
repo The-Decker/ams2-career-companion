@@ -5,6 +5,12 @@ The live files under **`dist/data/ams2/` are the canonical art source**. Anythin
 never overwrite it from the tracked `data/ams2/` tree. Tracked files may be useful references, but
 they are not authoritative art and can lag behind the runtime collection.
 
+> **Promoted to the tracked tree — 2026-07-12** (Mike: "all art from dist can go live"): the SMGP art
+> collection is now COMPLETE in `dist/`, and the whole set (`cars/`, `smgp/` — grid-cars/logos/rounds/
+> teams/sponsors/finale/flags — and all portraits) has been copied into the tracked `data/ams2/` tree
+> and committed, so it is version-controlled. `dist/` stays canonical: keep dropping NEW art there
+> (never overwrite `dist` from the tracked tree) and re-promote outward when it's approved.
+
 Regenerate the present/expected counts any time:
 ```powershell
 (Get-ChildItem dist/data/ams2/era-art -Filter *.jpg).Count
@@ -23,11 +29,12 @@ Regenerate the present/expected counts any time:
 | **per-team player images** (`player.<team>.jpg`) | 24 | 24 (SMGP teams) | ✅ complete |
 | **car previews** (`cars/<driverId>.png`) | 34 | 34 | ✅ complete; extractor writes directly to canonical `dist` |
 | **SMGP national flags** (`smgp/flags/<driverId>.png`) | 34 | 34 | ✅ complete; converted locally from installed AMS2 country flags |
-| **SMGP grid-car miniatures** (`smgp/grid-cars/<driverId>.png`) | 0 | 34 optional | ○ side previews provide the live fallback |
-| **team logos** (`smgp/logos/team.<team>.png`) | 0 | 24 | ○ waiting for the final team palette |
-| **round cards** (`smgp/rounds/<round>.jpg`) | 0 | 16 | ○ missing |
-| **team photos** (`smgp/teams/<team>.jpg`) | 0 | 24 | ○ missing |
-| **campaign finale secrets** (`smgp/finale/special.jpg`, `ultimate.jpg`) | 0 | 2 | 🔒 secret — the 17-season reward images (Mike supplies) |
+| **SMGP grid-car miniatures** (`smgp/grid-cars/<driverId>.png`) | 34 | 34 | ✅ complete |
+| **team logos** (`smgp/logos/team.<team>.png`) | 24 | 24 | ✅ complete |
+| **round cards** (`smgp/rounds/<round>.jpg`) | 16 | 16 | ✅ complete |
+| **team photos** (`smgp/teams/<team>.jpg`) | 24 | 24 | ✅ complete |
+| **sponsor logos** (`smgp/sponsors/<id>.png`) | 27 | 27 | ✅ complete |
+| **campaign finale secrets** (`smgp/finale/special.jpg`, `ultimate.jpg`) | 2 | 2 | ✅ present — Mike's 17-season reward images |
 | **track-art** (`<trackId>.jpg`) | 0 | optional (one per AMS2 track id) | ○ none — optional drop-in, clean fallback |
 | **history-art** (`<year>.jpg`) | 0 | optional (one per season year) | ○ none — optional drop-in, clean fallback |
 
@@ -57,7 +64,7 @@ were converted locally from the matching 128×128 `GUI/CountryFlags/Flag_*.dds` 
 installation. The synthetic player entry deliberately hides this slot because the character model
 does not author a nationality; showing the replaced AI driver's flag would be misleading.
 
-## SMGP grid-car miniatures — 0/34 (optional upgrade)
+## SMGP grid-car miniatures — ✅ 34/34 (dropped 2026-07-12)
 
 The SMGP pixel starting straight first resolves `smgp/grid-cars/<driverId>.png`, then falls back to
 the complete canonical `cars/<driverId>.png` set. Purpose-built miniatures should be 384×256
@@ -66,7 +73,18 @@ pointing right to match the live side-preview fallback. Keep them driver-keyed: 
 five body silhouettes, and teammate liveries/numbers can differ. Never replace the canonical side
 previews to add these.
 
-## SMGP campaign finale — 🔒 0/2 (secret reward images)
+## SMGP team art — ✅ complete (dropped 2026-07-12)
+
+The Paddock / Tycoon team surfaces resolve, all now present:
+- **`smgp/logos/team.<team>.png`** — 24/24 team logos (the sponsor board + team cards).
+- **`smgp/teams/<team>.jpg`** — 24/24 team photos (the Paddock team detail + promotion screen).
+- **`smgp/rounds/<round>.jpg`** — 16/16 round cards (the calendar / upcoming-race hero).
+- **`smgp/sponsors/<id>.png`** — 27/27 sponsor logos (the Paddock Sponsors tab; `data/rules/smgp/sponsors.json`).
+
+All absent-tolerant (a missing file falls back to a coloured placeholder). Keep dropping new/updated
+art into `dist/data/ams2/smgp/<folder>/` and re-promote to the tracked tree when approved.
+
+## SMGP campaign finale — ✅ 2/2 present (secret reward images)
 
 The 17-season grand campaign's "final final screen" (Mike's spec, `docs/dev/smgp-17-seasons.md`) is
 built around two **secret** hero images that the app loads ONLY on the finale screen and ONLY once
