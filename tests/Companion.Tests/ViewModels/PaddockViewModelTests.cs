@@ -23,6 +23,12 @@ public sealed class PaddockViewModelTests
         History = ["h1"], Quotes = ["q"], DriverNames = [name], Prestige = 5,
     };
 
+    private static SmgpSponsorCard Sponsor(string id, string name, params string[] teamIds) => new()
+    {
+        Id = id, Name = name, Industry = "Fuel", Tier = "major", Tagline = "T", Story = ["s"],
+        BrandColorHex = "#123456", LogoKey = id, FoundedFlavor = "1970", TeamIds = teamIds, TeamNames = teamIds,
+    };
+
     private static FakeCareerSession SessionWithPaddock() => new()
     {
         Paddock = new SmgpPaddockModel
@@ -33,6 +39,7 @@ public sealed class PaddockViewModelTests
                 Driver("driver.ceara", "Ceara", "team.bullets", "Bullets", 3),
             ],
             Teams = [Team("team.madonna", "Madonna"), Team("team.bullets", "Bullets")],
+            Sponsors = [Sponsor("sponsor.acme", "Acme", "team.madonna"), Sponsor("sponsor.zenith", "Zenith")],
         },
     };
 
@@ -67,6 +74,29 @@ public sealed class PaddockViewModelTests
 
         Assert.True(vm.ShowTeams);
         Assert.Equal("team.bullets", vm.SelectedTeam?.TeamId);
+    }
+
+    [Fact]
+    public void Projects_sponsors_and_selects_the_first()
+    {
+        var vm = new PaddockViewModel(SessionWithPaddock());
+
+        Assert.Equal(2, vm.Sponsors.Count);
+        Assert.Equal("sponsor.acme", vm.SelectedSponsor?.Id);
+    }
+
+    [Fact]
+    public void ViewSponsor_and_ViewDriver_cross_links_select_the_target()
+    {
+        var vm = new PaddockViewModel(SessionWithPaddock());
+
+        vm.ViewSponsorCommand.Execute("sponsor.zenith");
+        Assert.Equal("sponsor.zenith", vm.SelectedSponsor?.Id);
+
+        vm.ShowTeams = true;
+        vm.ViewDriverCommand.Execute("driver.ceara");
+        Assert.Equal("driver.ceara", vm.SelectedDriver?.DriverId);
+        Assert.False(vm.ShowTeams); // jumped back to the drivers view
     }
 
     [Fact]

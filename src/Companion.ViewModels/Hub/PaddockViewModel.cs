@@ -28,6 +28,9 @@ public sealed partial class PaddockViewModel : ObservableObject
     /// <summary>The grid's teams, highest prestige first.</summary>
     public ObservableCollection<SmgpTeamCard> Teams { get; } = [];
 
+    /// <summary>The SMGP sponsor board (the Sponsors tab); empty when none authored.</summary>
+    public ObservableCollection<SmgpSponsorCard> Sponsors { get; } = [];
+
     /// <summary>True when there is a paddock to show — the hub adds the tab only then.</summary>
     public bool HasPaddock => Drivers.Count > 0;
 
@@ -43,6 +46,10 @@ public sealed partial class PaddockViewModel : ObservableObject
     [ObservableProperty]
     private SmgpTeamCard? _selectedTeam;
 
+    /// <summary>The sponsor whose card the detail pane shows.</summary>
+    [ObservableProperty]
+    private SmgpSponsorCard? _selectedSponsor;
+
     public void Refresh()
     {
         var model = _session.SmgpPaddock();
@@ -51,19 +58,24 @@ public sealed partial class PaddockViewModel : ObservableObject
         // yank the pane back to the top of the list.
         string? keepDriver = SelectedDriver?.DriverId;
         string? keepTeam = SelectedTeam?.TeamId;
+        string? keepSponsor = SelectedSponsor?.Id;
 
         Drivers.Clear();
         Teams.Clear();
+        Sponsors.Clear();
         if (model is not null)
         {
             foreach (var d in model.Drivers) Drivers.Add(d);
             foreach (var t in model.Teams) Teams.Add(t);
+            foreach (var s in model.Sponsors) Sponsors.Add(s);
         }
 
         SelectedDriver = Drivers.FirstOrDefault(d => string.Equals(d.DriverId, keepDriver, StringComparison.Ordinal))
             ?? Drivers.FirstOrDefault();
         SelectedTeam = Teams.FirstOrDefault(t => string.Equals(t.TeamId, keepTeam, StringComparison.Ordinal))
             ?? Teams.FirstOrDefault();
+        SelectedSponsor = Sponsors.FirstOrDefault(s => string.Equals(s.Id, keepSponsor, StringComparison.Ordinal))
+            ?? Sponsors.FirstOrDefault();
         OnPropertyChanged(nameof(HasPaddock));
     }
 
@@ -87,5 +99,30 @@ public sealed partial class PaddockViewModel : ObservableObject
             SelectedTeam = team;
             ShowTeams = true;
         }
+    }
+
+    /// <summary>Jump from a team's roster (or anywhere) to that driver's dossier (the "view driver" link).</summary>
+    [RelayCommand]
+    private void ViewDriver(string? driverId)
+    {
+        if (string.IsNullOrEmpty(driverId))
+            return;
+        var driver = Drivers.FirstOrDefault(d => string.Equals(d.DriverId, driverId, StringComparison.Ordinal));
+        if (driver is not null)
+        {
+            SelectedDriver = driver;
+            ShowTeams = false;
+        }
+    }
+
+    /// <summary>Jump to a sponsor's card (from a team's sponsor chip — the team ↔ sponsor cross-link).</summary>
+    [RelayCommand]
+    private void ViewSponsor(string? sponsorId)
+    {
+        if (string.IsNullOrEmpty(sponsorId))
+            return;
+        var sponsor = Sponsors.FirstOrDefault(s => string.Equals(s.Id, sponsorId, StringComparison.Ordinal));
+        if (sponsor is not null)
+            SelectedSponsor = sponsor;
     }
 }
