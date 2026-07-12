@@ -57,7 +57,17 @@ a byte-identity re-sim test on a floored career AND a dead career proving the ga
 an Off/alive career is unaffected. Whole suite green. Commit.
 ```
 
-### 2 — Per-race SMGP livery staging (DNQ Slice 3) (P1)
+### 2 — Per-race SMGP livery staging (DNQ Slice 3) (P1) — ⛔ SUPERSEDED, DO NOT BUILD
+
+> **Superseded 2026-07-12 after seam exploration.** This prompt asked to park the round's non-qualifier
+> liveries per race — but that is *exactly* the per-race rotation `CareerSessionService.cs:3036-3044` already
+> deliberately rejects: AMS2 loads a car model's custom liveries ONCE at launch, so parking non-qualifiers
+> mid-season makes those cars pool-fill with random STOCK drivers and forces a full game restart every round.
+> The shipping "activate every SMGP livery that fits the model's slot cap, once, park nothing" is the correct
+> solution (the pre-qualifying field is display-only; whatever fits the cap stays painted, no restart). The
+> only residual refinement — if a model's cap is < the pack size — would be to make the over-cap *skip* prefer
+> the weakest-pace (perennial-DNQ) liveries so qualifiers keep slot priority, a STABLE no-restart tweak; even
+> that is optional. Do not implement the prompt below.
 
 ```
 Continue the AMS2 Career Companion (hub/increment-4). Read the memory TOP block + ams2-next-content-arc
