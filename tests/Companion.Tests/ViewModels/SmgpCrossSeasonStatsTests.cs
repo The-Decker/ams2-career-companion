@@ -58,6 +58,12 @@ public sealed class SmgpCrossSeasonStatsTests : IDisposable
         // The all-time totals are strictly larger than the current season — proof the prior season rolled up.
         Assert.True(player.Career.Wins > player.Season.Wins);
         Assert.True(player.Career.Points >= player.Season.Points);
+
+        // The player's OWN card has a generated bio (Mike wanted a biography for "you") — three
+        // paragraphs that reflect the live record + the 17-season campaign.
+        Assert.Equal(3, player.Bio.Count);
+        Assert.All(player.Bio, p => Assert.False(string.IsNullOrWhiteSpace(p)));
+        Assert.Contains(player.Bio, p => p.Contains("Seventeen seasons") || p.Contains("17"));
     }
 
     [Fact]

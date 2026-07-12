@@ -1405,7 +1405,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 DriverId = driverId, Name = name, TeamId = teamId, TeamName = teamName, Number = number,
                 PortraitKey = portraitKey, CarKey = carKey,
                 Epithet = isPlayer ? "YOU" : profile?.Epithet ?? "",
-                Bio = isPlayer ? [] : profile?.Bio ?? [],
+                Bio = isPlayer ? BuildPlayerBio(name, teamName, career) : profile?.Bio ?? [],
                 Quotes = isPlayer ? [] : profile?.Quotes ?? [],
                 IsPlayer = isPlayer, Career = career, Season = season, Prestige = prestige,
             };
@@ -1468,6 +1468,38 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             .ToList();
 
         return new SmgpPaddockModel { Drivers = orderedDrivers, Teams = orderedTeams };
+    }
+
+    /// <summary>The player's OWN Paddock bio — the one card that is not authored but generated live, so
+    /// it reflects who you are RIGHT NOW: your team, how far into the 17-season campaign you are, and the
+    /// record you have built from zero (honestly - a blank sheet reads as a blank sheet). Grows with the
+    /// career. ASCII punctuation, matching the authored bios. Display-only.</summary>
+    private IReadOnlyList<string> BuildPlayerBio(string name, string teamName, SmgpCareerStats career)
+    {
+        string where = string.IsNullOrWhiteSpace(teamName) ? "the SEGA world" : $"{teamName}";
+        string season = $"Season {_seasonOrdinal} of {Companion.Core.Smgp.SmgpRules.CampaignSeasons}";
+
+        string p1 = career.Starts == 0
+            ? $"{name} arrives with everything still to prove - no wins, no history, just a seat at {where} and a season ahead. Where every other name on the grid carries years of it, you carry nothing but the number on your car. {season} of the long climb begins, and the whole field is a stranger."
+            : $"{name} races for {where}, and unlike everyone around you, your story starts the day you arrived - the world only began counting your results then. {season} into the climb, you are building a name the only way this place allows: one result at a time, from zero.";
+
+        var earned = new List<string>();
+        if (career.Titles > 0) earned.Add(Count(career.Titles, "title", "titles"));
+        if (career.Wins > 0) earned.Add(Count(career.Wins, "win", "wins"));
+        if (career.Poles > 0) earned.Add(Count(career.Poles, "pole", "poles"));
+        if (career.Podiums > 0) earned.Add(Count(career.Podiums, "podium", "podiums"));
+        string p2 = earned.Count == 0
+            ? $"The sheet is still blank - {Count(career.Starts, "start", "starts")}, and the first podium not yet taken. In this world a reputation is never handed over; it is prised loose one race at a time, and yours is still all ahead of you."
+            : $"So far you have earned {Join(earned)} across {Count(career.Starts, "start", "starts")}. Every line of it is yours alone - no inheritance, no pre-history, just what you have wrestled from the grid since you turned up.";
+
+        string p3 = "Above it all sits A. Senna and Madonna's crown - untouchable, the benchmark the entire grid is measured against and the seat the boldest insurgents swear they will take. Seventeen seasons stand between you and the final reckoning. Go the distance and the SEGA world remembers your name; conquer every one of them and it never forgets it.";
+
+        return [p1, p2, p3];
+
+        static string Count(int n, string one, string many) => $"{n} {(n == 1 ? one : many)}";
+        static string Join(List<string> parts) => parts.Count == 1
+            ? parts[0]
+            : string.Join(", ", parts.Take(parts.Count - 1)) + " and " + parts[^1];
     }
 
     /// <summary>A driver's totals accrued across ALL COMPLETED PRIOR seasons of the career (everything
