@@ -57,6 +57,42 @@ public sealed class SmgpPaddockDepthTests : IDisposable
     }
 
     [Fact]
+    public void SeasonSchedule_carries_clickable_round_detail_and_progress()
+    {
+        using var session = NewCareer();
+        ApplyRound(session, playerWins: true); // round 1 raced
+
+        var schedule = session.SeasonSchedule();
+        Assert.Equal(2, schedule.Count);
+        var r1 = schedule.Single(e => e.Round == 1);
+        var r2 = schedule.Single(e => e.Round == 2);
+
+        Assert.Equal(SeasonRoundStatus.Done, r1.Status); // a result applied
+        Assert.Equal(SeasonRoundStatus.Next, r2.Status); // the upcoming round
+        Assert.True(r1.Championship);
+        // The detail fields project without error (the basic fixture pins no grid/setup, so DNQ is empty).
+        Assert.Empty(r1.Dnq);
+    }
+
+    [Fact]
+    public void CareerTimeline_round_lines_break_down_the_players_season()
+    {
+        using var session = NewCareer();
+        // Round 1: the player wins and names driver.b as the rival for the round.
+        ApplyRound(session, playerWins: true, rival: Challenge("driver.b"));
+
+        var season = session.CareerTimeline().Seasons.Single();
+        var line = Assert.Single(season.RoundLines);
+
+        Assert.Equal(1, line.Round);
+        Assert.Equal(1, line.PlayerFinish);                       // the player won
+        Assert.False(string.IsNullOrEmpty(line.RivalName));       // the named rival is recorded
+        Assert.NotNull(line.RivalFinish);                          // and their finish
+        Assert.True(line.PlayerPointsAfter > 0);                   // scored
+        Assert.False(string.IsNullOrEmpty(line.ChampionAfter));   // a leader after the round
+    }
+
+    [Fact]
     public void Briefing_rivals_carry_tier_colour_and_the_new_challenge_rule_admits_own_tier()
     {
         using var session = NewCareer();

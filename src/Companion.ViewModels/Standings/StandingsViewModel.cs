@@ -28,6 +28,14 @@ public sealed record StandingsRow(
 {
     /// <summary>True when gross differs from counted (drops or adjustments applied).</summary>
     public bool ShowGross => GrossText != CountedText;
+
+    /// <summary>True for the player's own row — the table highlights it. Init-only (not a positional param,
+    /// so the record's deconstruction arity is unchanged). Display-only.</summary>
+    public bool IsPlayer { get; init; }
+
+    /// <summary>True for the player's currently named SMGP rival's row — highlighted (with the red rival
+    /// accent) so the two are easy to track down the table. False off-SMGP. Display-only.</summary>
+    public bool IsRival { get; init; }
 }
 
 /// <summary>One cell of the Wikipedia-style round matrix: the points that round, dropped-marked,
@@ -122,6 +130,10 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
             driverNames[player.DriverId] = player.DisplayName;
         var teamNames = pack.Teams.ToDictionary(t => t.Id, t => t.Name, StringComparer.Ordinal);
 
+        // Flag the player's row and the currently-named SMGP rival's row so the table can highlight both.
+        string? playerRowId = session?.PlayerIdentity()?.DriverId;
+        string? rivalRowId = session?.CurrentSmgpRivalDriverId();
+
         var ordered = snapshots.OrderBy(s => s.AfterRound).ToArray();
         var latest = ordered.Length > 0 ? ordered[^1] : null;
         int appliedRounds = ordered.Length;
@@ -133,7 +145,11 @@ public sealed partial class StandingsViewModel : InspectorHostViewModel
             : latest.Drivers
                 .Select(d => Row(
                     d.Position, d.DriverId, driverNames.GetValueOrDefault(d.DriverId, d.DriverId),
-                    d.CountedPoints, d.GrossPoints, d.Dropped, appliedRounds))
+                    d.CountedPoints, d.GrossPoints, d.Dropped, appliedRounds) with
+                {
+                    IsPlayer = playerRowId is { } p && string.Equals(d.DriverId, p, StringComparison.Ordinal),
+                    IsRival = rivalRowId is { } r && string.Equals(d.DriverId, r, StringComparison.Ordinal),
+                })
                 .ToArray();
 
         _constructorRowsBase = latest?.Constructors is not { } constructors

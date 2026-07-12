@@ -793,9 +793,28 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var tracks = _environment.ContentLibrary.Tracks;
         string TrackName(string id) => tracks.TryGetValue(id, out var t) && t.TrackName is { Length: > 0 } n ? n : id;
 
+        // Round-detail lookups (Task 3.3): progress marker + the per-round DNQ field.
+        int maxApplied = MaxAppliedRound;
+        var driverById = new Dictionary<string, PackDriver>(StringComparer.Ordinal);
+        foreach (var d in Pack.Drivers) driverById.TryAdd(d.Id, d);
+        var teamNameById = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var t in Pack.Teams) teamNameById.TryAdd(t.Id, t.Name);
+
         var schedule = new List<SeasonScheduleEntry>(Pack.Season.Rounds.Count);
         foreach (var round in Pack.Season.Rounds)
         {
+            // The backmarkers the pack PINNED out of this round's grid (SMGP's per-race DNQ field),
+            // fastest-first — every covering entry whose driver id is not in the pinned starters.
+            IReadOnlyList<ScheduleDnqEntry> dnq = round.Grid is { StarterDriverIds.Count: > 0 } grid
+                ? Pack.Entries
+                    .Where(e => !grid.StarterDriverIds.Contains(e.DriverId, StringComparer.Ordinal))
+                    .OrderByDescending(e => driverById.TryGetValue(e.DriverId, out var dd) ? dd.Ratings.QualifyingSkill : 0.0)
+                    .Select(e => new ScheduleDnqEntry(
+                        driverById.TryGetValue(e.DriverId, out var dn) ? dn.Name : e.DriverId,
+                        teamNameById.GetValueOrDefault(e.TeamId, e.TeamId),
+                        e.Number))
+                    .ToList()
+                : [];
             // The REAL (historical) circuit per round — the shared lookup rule (authored
             // per-round history pointer, else pack year + same round; carryover-stable), so the
             // calendar shows the ORIGINAL venue's map + facts, never the stand-in's, even on a
@@ -824,6 +843,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 CircuitCaption = CircuitCaptions.Compose(circuit),
                 CircuitHistory = circuit?.History ?? "",
                 CircuitFacts = circuit?.Facts ?? [],
+                // Task 3.3 round detail (clickable): championship flag, grid size + DNQ field, weather,
+                // setup note, opponents, and the round's progress through the season.
+                Championship = round.Championship,
+                GridSize = round.Grid?.Size,
+                Dnq = dnq,
+                WeatherLabel = string.Join(" / ", round.SetupGuide?.Session.WeatherSlots ?? []),
+                SetupNote = round.SetupGuide?.Notes ?? "",
+                Opponents = round.SetupGuide?.Session.Opponents,
+                Status = round.Round <= maxApplied ? SeasonRoundStatus.Done
+                    : round.Round == maxApplied + 1 ? SeasonRoundStatus.Next
+                    : SeasonRoundStatus.Upcoming,
             });
         }
         return schedule;
@@ -1142,6 +1172,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// the shell captures it before applying a round to detect a forced demotion afterwards.</summary>
     public string? CurrentSmgpTeamId() =>
         CurrentSmgpState() is { } state ? TeamOfLivery(state.CurrentSeatLivery) : null;
+
+    /// <summary>The rival named in the most-recently applied round (its stored <c>SmgpRival</c> call), or
+    /// null. A pure read over the persisted envelopes — never a fold input. The named rival is a per-round
+    /// choice; this surfaces the LATEST for the season standings' "your rival" highlight.</summary>
+    public string? CurrentSmgpRivalDriverId() =>
+        ResultStore.ReadSeasonResults(_database, _seasonId)
+            .OrderBy(r => r.Round)
+            .LastOrDefault()?
+            .ToEnvelope().SmgpRival?.RivalDriverId;
 
     /// <summary>The promotion screen (3c-3): a pending two-wins offer's new-team story. Null when no
     /// offer is pending (or outside the mode).</summary>
@@ -3966,6 +4005,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             string playerDriverId = PlayerDriverIdFor(season, seasonPack);
             var driverNames = seasonPack.Drivers.ToDictionary(d => d.Id, d => d.Name, StringComparer.Ordinal);
             var scoring = ChampionshipCalendar.ResolveScoring(seasonPack);
+            var venueByRound = seasonPack.Season.Rounds.ToDictionary(r => r.Round, VenueLabel);
 
             var storedResults = ResultStore.ReadSeasonResults(_database, season.Id)
                 .Where(r => seasonPack.Season.Rounds
@@ -3985,10 +4025,38 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     line is { Status: FinishStatus.Classified, Position: { } p } ? p : null));
             }
 
-            // Final standings (from the stored results): the player's position + the champion.
-            StandingsSnapshot? finalSnapshot = storedResults.Count == 0
-                ? null
-                : StandingsEngine.ComputeSeason(scoring, storedResults.Select(r => r.ToRoundResult()).ToList()).Snapshots[^1];
+            // The per-round standings snapshots (championship rounds in order) — reused for both the final
+            // standings AND the per-round breakdown (Task 3.3), so there is only ONE scoring pass.
+            var orderedStored = storedResults.OrderBy(r => r.Round).ToList();
+            IReadOnlyList<StandingsSnapshot> snapshots = orderedStored.Count == 0
+                ? []
+                : StandingsEngine.ComputeSeason(scoring, orderedStored.Select(r => r.ToRoundResult()).ToList()).Snapshots;
+            StandingsSnapshot? finalSnapshot = snapshots.Count > 0 ? snapshots[^1] : null;
+
+            // The player's own per-round story this season: their finish, the rival they NAMED that round +
+            // how the duel went, the leader after the round and the player's running points.
+            var roundLines = new List<CareerSeasonRoundLine>(orderedStored.Count);
+            for (int i = 0; i < orderedStored.Count; i++)
+            {
+                var stored = orderedStored[i];
+                var envelope = stored.ToEnvelope();
+                var race = envelope.Result.Sessions.FirstOrDefault(s => s.Kind == SessionKind.Race);
+                var entries = race?.Entries ?? [];
+                string? rivalId = envelope.SmgpRival?.RivalDriverId;
+                var snap = i < snapshots.Count ? snapshots[i] : finalSnapshot;
+                var leader = snap?.Drivers.FirstOrDefault(d => d.Position == 1);
+                var playerRow = snap?.Drivers.FirstOrDefault(d => string.Equals(d.DriverId, playerDriverId, StringComparison.Ordinal));
+                roundLines.Add(new CareerSeasonRoundLine
+                {
+                    Round = stored.Round,
+                    Venue = venueByRound.GetValueOrDefault(stored.Round) ?? $"Round {stored.Round}",
+                    PlayerFinish = FinishPosition(entries, playerDriverId),
+                    RivalName = rivalId is null ? null : driverNames.GetValueOrDefault(rivalId, rivalId),
+                    RivalFinish = rivalId is null ? null : FinishPosition(entries, rivalId),
+                    ChampionAfter = leader is null ? null : driverNames.GetValueOrDefault(leader.DriverId, leader.DriverId),
+                    PlayerPointsAfter = playerRow?.CountedPoints.ToDouble() ?? 0.0,
+                });
+            }
             var playerStanding = finalSnapshot?.Drivers
                 .FirstOrDefault(d => string.Equals(d.DriverId, playerDriverId, StringComparison.Ordinal));
             int? playerPosition = playerStanding?.Position;
@@ -4022,6 +4090,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 ChampionName = championName,
                 PlayerIsChampion = playerIsChampion,
                 Headlines = headlines,
+                RoundLines = roundLines,
             });
         }
 

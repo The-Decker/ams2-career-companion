@@ -74,6 +74,12 @@ public interface ICareerSession
     /// (a seat move with no pending offer). Null outside the mode. Additive default so fakes compile.</summary>
     string? CurrentSmgpTeamId() => null;
 
+    /// <summary>The driver id of the rival the player NAMED in the most-recently applied round (a per-round
+    /// choice, from that round's stored <c>SmgpRival</c> call), or null — every non-SMGP career and any
+    /// round where no rival was named. Lets the standings flag "your rival" for highlight. A pure read over
+    /// the persisted result envelopes; never a fold input. Additive default so fakes compile.</summary>
+    string? CurrentSmgpRivalDriverId() => null;
+
     /// <summary>The demotion screen's data (3c-3) when the LAST applied round forced the player DOWN
     /// a tier (a two-losses forfeit or a lost title defense) — i.e. the smgp team changed from
     /// <paramref name="previousTeamId"/> with no pending offer. An acknowledge-only screen (a demotion
@@ -328,6 +334,48 @@ public sealed record SeasonScheduleEntry
     /// <summary>Era-capped fun facts about the original circuit (data-grounded, spoiler-free).
     /// Empty when none are shipped.</summary>
     public IReadOnlyList<string> CircuitFacts { get; init; } = [];
+
+    // ---- Task 3.3 clickable round-detail (all additive, default so existing initializers are unchanged) ----
+
+    /// <summary>False marks a non-championship event (it scores no points).</summary>
+    public bool Championship { get; init; } = true;
+
+    /// <summary>This round's resolved grid size (starters), or null when the pack pins no per-round grid.</summary>
+    public int? GridSize { get; init; }
+
+    /// <summary>The backmarkers the pack pinned OUT of this round's grid (SMGP's per-race DNQ field),
+    /// fastest-first. Empty when the round runs the full field. Diffed from the PINNED starters (the player
+    /// injection happens at resolve time), so it is deterministic + spoiler-free for the calendar.</summary>
+    public IReadOnlyList<ScheduleDnqEntry> Dnq { get; init; } = [];
+
+    /// <summary>The round's weather label(s) ("Clear / Light Cloud"), from the setup guide. Empty when none.</summary>
+    public string WeatherLabel { get; init; } = "";
+
+    /// <summary>The setup-guide note for the round (the briefing's setup line). Empty when none.</summary>
+    public string SetupNote { get; init; } = "";
+
+    /// <summary>The AI opponent count from the setup guide, or null.</summary>
+    public int? Opponents { get; init; }
+
+    /// <summary>Progress marker: this round is Done (a result applied), Next (the upcoming round), or a
+    /// later Upcoming round — so the calendar can walk the season.</summary>
+    public SeasonRoundStatus Status { get; init; } = SeasonRoundStatus.Upcoming;
+}
+
+/// <summary>One driver the pack pinned OUT of a round's grid (a DNQ), for the calendar's round detail.</summary>
+public sealed record ScheduleDnqEntry(string Name, string TeamName, string? Number);
+
+/// <summary>A calendar round's progress relative to the career: already raced, the next one up, or later.</summary>
+public enum SeasonRoundStatus
+{
+    /// <summary>A result has been applied for this round.</summary>
+    Done,
+
+    /// <summary>The next round to race (the current round).</summary>
+    Next,
+
+    /// <summary>A later round, not yet reached.</summary>
+    Upcoming,
 }
 
 /// <summary>One perk offered on the season-review development block: what it is, what it costs, and —
@@ -502,6 +550,37 @@ public sealed record CareerSeasonCard
 
     /// <summary>The season's journaled headlines in story order — the archived dispatches.</summary>
     public IReadOnlyList<string> Headlines { get; init; } = [];
+
+    /// <summary>The player's per-round breakdown of THIS season (Task 3.3) — one line per applied round with
+    /// the player's finish, the rival they named that round + the rival's finish, the leader after the round
+    /// and the player's running points. Empty for a season with no applied round. Additive display-only.</summary>
+    public IReadOnlyList<CareerSeasonRoundLine> RoundLines { get; init; } = [];
+}
+
+/// <summary>One applied round in a season's "my career" breakdown for the History screen: the player's own
+/// result, the rival they named and how that duel went, and the championship picture after the round.
+/// DISPLAY-ONLY — a pure projection over the stored results.</summary>
+public sealed record CareerSeasonRoundLine
+{
+    public required int Round { get; init; }
+
+    /// <summary>The round's venue label.</summary>
+    public required string Venue { get; init; }
+
+    /// <summary>The player's finishing position, or null when they did not finish / were not classified.</summary>
+    public int? PlayerFinish { get; init; }
+
+    /// <summary>The rival the player NAMED this round (that round's stored call), or null when none named.</summary>
+    public string? RivalName { get; init; }
+
+    /// <summary>That named rival's finishing position this round, or null.</summary>
+    public int? RivalFinish { get; init; }
+
+    /// <summary>The championship leader's name after this round.</summary>
+    public string? ChampionAfter { get; init; }
+
+    /// <summary>The player's cumulative championship points after this round.</summary>
+    public double PlayerPointsAfter { get; init; }
 }
 
 /// <summary>The SMGP-universe "What Really Happened" almanac projection: the SEGA world's own legend

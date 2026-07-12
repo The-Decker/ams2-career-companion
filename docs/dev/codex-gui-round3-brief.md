@@ -146,3 +146,30 @@ All additive, display-only, already populated by `CareerSessionService.SmgpPaddo
   or "—"), `CareerLine` ("12 WINS · 3 TITLES" or ""). Highlight the `IsPlayer` row.
 - `Sponsors` : `IReadOnlyList<SmgpTeamSponsorRef>` — `Id`, `Name`, `Tier`, `BrandColorHex` — the sponsors that
   back this team (cross-link to the Sponsors tab by `Id`).
+
+## Contract — Task 3 (rival flag + screen data) LANDED, and cross-lane XAML touches
+
+**Cross-lane XAML Claude already edited (for Mike's direct bug asks — please keep, don't revert):**
+- `RivalScreenView.xaml` — the subtitle, YES button and picker dropdown now bind gender-aware VM props
+  (`Briefing.SmgpRivalIntro`, `SmgpNameButtonLabel`) instead of hard-coded "him/his"; the picker `ComboBox`
+  `ItemTemplate` gained an **outlined coloured CLASS chip** (`Tier` + `TierColorHex`).
+- `ResultEntryView.xaml` — the `SeatLine` template gained the **red RIVAL badge** (Mike's ask) via the
+  existing `StringsEqualVisible` MultiBinding of `DataContext.RivalDriverId` (ItemsControl ancestor) vs the
+  row's `DriverId`, `Background="{DynamicResource ErrorBrush}"`. If you want it on the DNF/DSQ templates too,
+  mirror it there (`Seat.DriverId` on those rows).
+
+**New VM data to bind (all display-only, already populated):**
+- **Standings** (`StandingsRow`): `IsPlayer` / `IsRival` bools — highlight the player row and the currently-named
+  SMGP rival's row (reuse `ErrorBrush` for the rival accent). Off-SMGP → no `IsRival`.
+- **Calendar** (`SeasonScheduleEntry`, from `SeasonSchedule()`): `Championship` (bool), `GridSize` (int?), `Dnq`
+  (`IReadOnlyList<ScheduleDnqEntry>{Name,TeamName,Number}` — the round's DNQ'd backmarkers), `WeatherLabel`,
+  `SetupNote`, `Opponents` (int?), `Status` (`SeasonRoundStatus` Done/Next/Upcoming). Build the clickable
+  round-detail panel + a done/next/upcoming progress treatment from these.
+- **History** (`CareerSeasonCard.RoundLines`, `IReadOnlyList<CareerSeasonRoundLine>`): per applied round —
+  `Round`, `Venue`, `PlayerFinish` (int?), `RivalName`/`RivalFinish` (the rival named that round + how the duel
+  went), `ChampionAfter`, `PlayerPointsAfter`. Render as the "my season" almanac breakdown.
+- **Driver / Dossier** (`DossierViewModel`): `Timeline` (`IReadOnlyList<SmgpCareerBeat>`) + `NarrativeIntro`
+  (string) + `HasSmgpNarrative` (bool) — the same evolving story-scroll as the Paddock player card, surfaced on
+  the Driver tab.
+- **Rival dossier** (`SmgpRivalOption`): `HeadToHead` (`SmgpHeadToHead?`), `Tier`/`TierLabel`/`TierColorHex`,
+  `Pronouns` — for the deeper rival screen + the coloured class picker.

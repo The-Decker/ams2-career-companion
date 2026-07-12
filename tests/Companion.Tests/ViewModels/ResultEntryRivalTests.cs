@@ -77,4 +77,39 @@ public sealed class ResultEntryRivalTests
         k.Line("Ceara");
         Assert.Contains("qualifies", vm.RivalStatusLine);
     }
+
+    [Fact]
+    public void IsRival_flags_only_the_named_rival_row()
+    {
+        var vm = new ResultEntryViewModel(Grid(), "driver.you")
+        {
+            RivalDriverId = "driver.rival", RivalName = "Gil Ceara",
+        };
+        Assert.True(vm.IsRival("driver.rival"));   // the named rival
+        Assert.False(vm.IsRival("driver.other"));  // another driver
+        Assert.False(vm.IsRival("driver.you"));    // the player
+    }
+
+    [Fact]
+    public void IsRival_is_false_when_no_rival_is_named()
+    {
+        var vm = new ResultEntryViewModel(Grid(), "driver.you"); // no rival
+        Assert.False(vm.IsRival("driver.rival"));
+        Assert.False(vm.IsRival(null));
+    }
+
+    [Fact]
+    public void RivalStatusLine_uses_the_rivals_pronoun_when_a_female_rival_is_out()
+    {
+        var vm = new ResultEntryViewModel(Grid(), "driver.you")
+        {
+            RivalDriverId = "driver.rival", RivalName = "Mika Larssen",
+            RivalPronouns = Companion.Core.Smgp.SmgpPronouns.She,
+        };
+        var k = new ResultEntryViewModelTests.Keys(vm);
+        k.F8();          // DNF phase
+        k.Line("Ceara"); // the rival's seat retires
+        Assert.Contains("beat her home", vm.RivalStatusLine);
+        Assert.DoesNotContain("him", vm.RivalStatusLine);
+    }
 }

@@ -20,6 +20,19 @@
                 <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
                 <TextBlock Text=" (you)" Foreground="{DynamicResource AccentTextBrush}"
                            Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
+                <!-- the named SMGP rival is flagged as you drag them into the order (Mike: "a red RIVAL text
+                     shows by their name"). Visible only when this row's id matches the VM's RivalDriverId;
+                     null off-SMGP so the converter's length guard collapses it. -->
+                <Border Background="{DynamicResource ErrorBrush}" CornerRadius="3" Padding="4,0" Margin="6,0,0,0"
+                        VerticalAlignment="Center">
+                    <Border.Visibility>
+                        <MultiBinding Converter="{StaticResource StringsEqualVisible}">
+                            <Binding Path="DataContext.RivalDriverId" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                            <Binding Path="DriverId" />
+                        </MultiBinding>
+                    </Border.Visibility>
+                    <TextBlock Text="RIVAL" FontWeight="Bold" FontSize="10" Foreground="{DynamicResource OnAccentBrush}" />
+                </Border>
                 <TextBlock Text="{Binding TeamName, StringFormat=' — {0}'}" Foreground="{DynamicResource TextMutedBrush}" />
             </StackPanel>
         </DataTemplate>

@@ -98,6 +98,15 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// <summary>The named rival's display name (paired with <see cref="RivalDriverId"/>).</summary>
     public string? RivalName { get; init; }
 
+    /// <summary>The named rival's gendered pronouns (Mika is female → she/her). Defaults to he/him, so the
+    /// readout is unchanged for every unmarked driver. Display-only.</summary>
+    public Companion.Core.Smgp.SmgpPronouns RivalPronouns { get; init; } = Companion.Core.Smgp.SmgpPronouns.Default;
+
+    /// <summary>True when a draggable driver row is the named rival — the seam a row template binds to for
+    /// the red RIVAL badge. Null/empty rival (every non-SMGP round) → always false. Display-only.</summary>
+    public bool IsRival(string? driverId) =>
+        !string.IsNullOrEmpty(RivalDriverId) && string.Equals(driverId, RivalDriverId, StringComparison.Ordinal);
+
     /// <summary>A live readout of the named rival's position as results are entered — "RIVAL  G. CEARA
     /// finishes P3 · you are AHEAD". Empty when no rival is named (every non-SMGP round). Recomputed on
     /// every placement via <see cref="RaiseStateChanged"/>.</summary>
@@ -120,7 +129,7 @@ public sealed partial class ResultEntryViewModel : ObservableObject
                 return $"RIVAL  {who} {verb} P{rivalPos + 1}{rel}";
             }
             if (_dnfs.Any(d => string.Equals(d.Seat.DriverId, RivalDriverId, StringComparison.Ordinal)))
-                return $"RIVAL  {who} is OUT — beat him home to bank the win";
+                return $"RIVAL  {who} is OUT — beat {RivalPronouns.Object} home to bank the win";
             if (_disqualified.Any(s => string.Equals(s.DriverId, RivalDriverId, StringComparison.Ordinal)))
                 return $"RIVAL  {who} — DISQUALIFIED";
             return $"RIVAL  {who} — not placed yet";

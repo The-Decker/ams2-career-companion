@@ -385,6 +385,11 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public (string DriverId, string DisplayName)? PlayerIdentity() => Identity;
 
+    /// <summary>The currently-named SMGP rival's driver id, surfaced to the standings highlight (null = none).</summary>
+    public string? SmgpRivalDriverId { get; set; }
+
+    public string? CurrentSmgpRivalDriverId() => SmgpRivalDriverId;
+
     /// <summary>The team the player drives for, surfaced to the Driver dossier.</summary>
     public string? TeamName { get; set; }
 
