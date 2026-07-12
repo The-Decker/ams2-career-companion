@@ -93,12 +93,28 @@ public sealed class SmgpWorldStoriesTests
     public void A_change_at_the_top_of_the_standings_fires_a_leader_change()
     {
         var stories = Detect(
-            Round(1, 1, "R1", "driver.a", [S(1, "driver.a", 9), S(2, Player, 6)]),
-            Round(1, 2, "R2", Player, [S(1, Player, 15), S(2, "driver.a", 12)]));  // player takes the lead
+            Round(1, 1, "R1", "driver.a", [S(1, "driver.a", 9), S(2, "driver.b", 6)]),
+            Round(1, 2, "R2", "driver.b", [S(1, "driver.b", 18), S(2, "driver.a", 15)]));  // driver.b takes the lead
 
         var lead = Assert.Single(stories, s => s.Kind == SmgpWorldStoryKind.LeaderChange);
-        Assert.Equal(Player, lead.SubjectId);
+        Assert.Equal("driver.b", lead.SubjectId);
         Assert.Equal("driver.a", lead.OtherName);   // dethroned leader named
+    }
+
+    [Fact]
+    public void The_player_is_never_the_active_subject_of_a_leader_or_standings_story()
+    {
+        // The player rising is told through the milestone feed, not a third-person "YOU takes X" world story
+        // (their name is a pronoun) — but they still appear as the OTHER party the grid reacts to.
+        var stories = Detect(
+            Round(1, 1, "R1", "driver.a", [S(1, "driver.a", 9), S(2, "driver.b", 6), S(3, Player, 4)]),
+            Round(1, 2, "R2", Player, [S(1, Player, 18), S(2, "driver.a", 12), S(3, "driver.b", 10)]));   // player seizes P1
+
+        Assert.DoesNotContain(stories, s =>
+            (s.Kind == SmgpWorldStoryKind.LeaderChange || s.Kind == SmgpWorldStoryKind.StandingsMove)
+            && s.SubjectId == Player);
+        // The dethroned AI leader is still named as the story's OTHER party.
+        Assert.Contains(stories, s => s.Kind == SmgpWorldStoryKind.StandingsMove && s.OtherName == "driver.b");
     }
 
     [Fact]

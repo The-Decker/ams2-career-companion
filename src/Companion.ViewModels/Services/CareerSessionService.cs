@@ -2151,7 +2151,9 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             ? DriverDisplayName(ld.DriverId) : "";
 
         var dispatches = new List<Companion.Core.Smgp.SmgpDispatch>();
-        int seq = 0;
+        // Two sequence ranges so that within one round the PLAYER's own milestones sort ahead of the ambient
+        // world stories in the newest-first feed (milestones take the high range → first after the reverse).
+        int milestoneSeq = 1_000_000, worldSeq = 0;
 
         // --- Player milestone dispatches (reuse the Task-2 beat detector; render a news body per beat) ---
         foreach (var beat in Companion.Core.Smgp.SmgpCareerBeats.Detect(BuildSmgpNarrativeSeasons()))
@@ -2176,7 +2178,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             {
                 WhenLabel = beat.WhenLabel, Kind = kind, Headline = beat.Headline, Body = body,
                 DriverArtKey = beat.SubjectId, TeamArtKey = "",
-                SortSeason = beat.Season, SortRound = beat.Round, SortSeq = seq++,
+                SortSeason = beat.Season, SortRound = beat.Round, SortSeq = milestoneSeq++,
             });
         }
 
@@ -2193,7 +2195,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             {
                 WhenLabel = $"Season {story.Season} · {story.Venue}", Kind = kind, Headline = headline, Body = body,
                 DriverArtKey = story.SubjectId, TeamArtKey = story.SubjectTeamId,
-                SortSeason = story.Season, SortRound = story.Round, SortSeq = seq++,
+                SortSeason = story.Season, SortRound = story.Round, SortSeq = worldSeq++,
             });
         }
 

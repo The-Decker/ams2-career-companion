@@ -176,7 +176,12 @@ public static class SmgpWorldStories
 
             if (leader is not null)
             {
-                if (prevLeader is not null
+                // The player as the SUBJECT of an active-verb story ("YOU takes the lead") reads wrong (their
+                // display name is a pronoun); their rise is told through the milestone feed. They still appear
+                // as the dethroned OTHER party ("X takes the lead off you"), which the grid reacting to the
+                // player is the whole point.
+                bool leaderIsPlayer = string.Equals(leader.DriverId, playerId, StringComparison.Ordinal);
+                if (prevLeader is not null && !leaderIsPlayer
                     && !string.Equals(leader.DriverId, prevLeader, StringComparison.Ordinal))
                 {
                     string oldName = r.Standings.FirstOrDefault(s =>
@@ -194,7 +199,8 @@ public static class SmgpWorldStories
 
             if (second is not null)
             {
-                if (prevSecond is not null
+                bool secondIsPlayer = string.Equals(second.DriverId, playerId, StringComparison.Ordinal);
+                if (prevSecond is not null && !secondIsPlayer
                     && !string.Equals(second.DriverId, prevSecond, StringComparison.Ordinal))
                 {
                     string displaced = r.Standings.FirstOrDefault(s =>
