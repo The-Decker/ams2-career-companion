@@ -34,17 +34,27 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="SelectedListFaint" TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+        <Style x:Key="SelectedListMuted" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                     <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="SelectedListMuted" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+        <Style x:Key="SeatCardFrame" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="Effect" Value="{StaticResource ControlElevationEffect}" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                             Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentHoverBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                             Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                    <Setter Property="BorderThickness" Value="2" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -79,7 +89,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="3 · Seat">
+                <TextBlock Text="3 · Team &amp; Car">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
@@ -478,15 +488,34 @@
 
             <!-- c. seat pick -->
             <DockPanel Visibility="{Binding Step, Converter={StaticResource EnumVisible}, ConverterParameter={x:Static wizard:WizardStep.SeatPick}}">
-                <TextBlock DockPanel.Dock="Top" Text="Pick your seat" Style="{StaticResource H2}" />
+                <TextBlock DockPanel.Dock="Top" Text="Choose your team &amp; car" Style="{StaticResource H2}" />
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,12" TextWrapping="Wrap"
-                           Text="You replace this driver for the season (their ratings vacate the seat; the team's car stays as-is)." />
+                           Text="Pick the cockpit that starts your story. You take over this car for the season and its current driver steps away." />
                 <!-- SMGP: rookies start at the bottom — the list is filtered to LEVEL D cars. -->
                 <Border DockPanel.Dock="Top" Background="{DynamicResource AccentDimBrush}" CornerRadius="6"
                         Padding="10,7" Margin="0,0,0,10"
                         Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolVisible}}">
                     <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
                                Text="SUPER MONACO GP starts you at the bottom — LEVEL D cars only. Beat the same rival twice to take his seat and climb the ladder." />
+                </Border>
+                <Border DockPanel.Dock="Top" Style="{StaticResource AccentCallout}"
+                        Padding="10,7" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="&#xE946;" FontFamily="{StaticResource IconFont}" FontSize="20"
+                                   Foreground="{DynamicResource AccentTextBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="PADDOCK DOSSIERS SEALED" Style="{StaticResource Eyebrow}"
+                                       Foreground="{DynamicResource AccentTextBrush}" />
+                            <TextBlock Text="Choose the face, badge, and machine that feel right. The rest is learned on track."
+                                       Style="{StaticResource Body}" FontSize="11" Margin="0,2,0,0"
+                                       Foreground="{DynamicResource AccentTextBrush}" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
                 <!-- ...or race as your own independent entrant (a custom AMS2 livery). Takes precedence
                      over the seat above; leave blank for the ordinary seat pick. Hidden for the SMGP
@@ -496,7 +525,7 @@
                     <StackPanel>
                         <TextBlock Text="— or race as your own entrant —" Style="{StaticResource Faint}" />
                         <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,6" TextWrapping="Wrap"
-                                   Text="Type the exact name of a custom livery installed in AMS2 to race as an independent privateer — your own car, added to the grid instead of replacing a historical driver. Leave blank to take a seat above." />
+                                   Text="Type the exact name of a custom livery installed in AMS2 to enter as an independent privateer. Leave it blank to accept one of the contracts above." />
                         <TextBox Text="{Binding CustomLiveryName, UpdateSourceTrigger=PropertyChanged}" FontSize="14"
                                  ToolTip="The AMS2 livery name for your own car — leave blank to take a pack seat instead" />
                         <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
@@ -505,48 +534,114 @@
                                    Visibility="{Binding CustomLiveryName, Converter={StaticResource StringVisible}}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource Panel}" Padding="8">
-                    <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}">
+                <Border Style="{StaticResource Panel}" Padding="6">
+                    <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}"
+                             Background="Transparent" BorderThickness="0" Padding="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.CanContentScroll="False"
+                             AutomationProperties.Name="Available team and car contracts">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel IsItemsHost="True" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                                 <!-- mouse parity: double-click a seat = select it AND advance -->
                                 <EventSetter Event="MouseDoubleClick" Handler="OnSeatDoubleClick" />
-                                <Setter Property="ToolTip" Value="Double-click to pick this seat and continue" />
+                                <Setter Property="Width" Value="328" />
+                                <Setter Property="Height" Value="150" />
+                                <Setter Property="Margin" Value="4" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                <Setter Property="ToolTip" Value="Double-click to choose this team and car" />
+                                <Setter Property="AutomationProperties.Name" Value="{Binding DriverName}" />
+                                <Setter Property="AutomationProperties.HelpText"
+                                        Value="{Binding TeamName, StringFormat='Team {0}. Double-click to continue.'}" />
                             </Style>
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel>
-                                    <TextBlock DockPanel.Dock="Left" Width="44" FontWeight="SemiBold"
-                                               Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center"
-                                               Text="{Binding Number, StringFormat='#{0}'}" />
-                                    <!-- ratings as bars; raw numbers on hover (ux-round §2) -->
-                                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" MinWidth="190" MaxWidth="280">
-                                        <DockPanel ToolTip="{Binding RaceSkill, StringFormat='Race skill (raw): {0:0.000}'}"
-                                                   Background="Transparent">
-                                            <TextBlock DockPanel.Dock="Left" Width="42" Text="Race"
-                                                       Style="{StaticResource SelectedListFaint}" VerticalAlignment="Center" />
-                                            <ProgressBar Style="{StaticResource RatingBar}"
-                                                         Value="{Binding RaceSkill, Mode=OneWay}" />
-                                        </DockPanel>
-                                        <DockPanel Margin="0,4,0,0"
-                                                   ToolTip="{Binding QualifyingSkill, StringFormat='Qualifying skill (raw): {0:0.000}'}"
-                                                   Background="Transparent">
-                                            <TextBlock DockPanel.Dock="Left" Width="42" Text="Quali"
-                                                       Style="{StaticResource SelectedListFaint}" VerticalAlignment="Center" />
-                                            <ProgressBar Style="{StaticResource RatingBar}"
-                                                         Value="{Binding QualifyingSkill, Mode=OneWay}" />
-                                        </DockPanel>
-                                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource SelectedListFaint}" Margin="0,4,0,0"
-                                                   ToolTip="{Binding Reliability, StringFormat='Car reliability (raw): {0:0.000}'}">
-                                            <Run Text="Team tier " /><Run Text="{Binding TeamTier, Mode=OneWay}" /><Run Text="  ·  Reliability " /><Run Text="{Binding Reliability, Mode=OneWay, StringFormat={}{0:0.00}}" /><Run Text="  ·  Rounds " /><Run Text="{Binding Rounds, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </StackPanel>
-                                    <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" FontSize="15" />
-                                        <TextBlock Text="{Binding TeamName}" Style="{StaticResource SelectedListMuted}" Margin="0,2,0,0" />
-                                    </StackPanel>
-                                </DockPanel>
+                                <Border Style="{StaticResource SeatCardFrame}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="96" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Current driver: identity only. Performance remains deliberately hidden. -->
+                                        <Grid Width="96" Height="122" VerticalAlignment="Center">
+                                            <Border Style="{StaticResource AssetPlaceholderFrame}">
+                                                <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                           FontSize="38" />
+                                            </Border>
+                                            <Border CornerRadius="8" ClipToBounds="True">
+                                                <Image Stretch="UniformToFill" IsHitTestVisible="False"
+                                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                            </Border>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <DockPanel Margin="0,0,0,3">
+                                                <Border DockPanel.Dock="Left" Style="{StaticResource CompactChip}"
+                                                        Padding="5,2" Margin="0,0,6,0">
+                                                    <TextBlock Text="{Binding Number, StringFormat='#{0}'}"
+                                                               Style="{StaticResource PixelBadge}"
+                                                               Foreground="{DynamicResource AccentTextBrush}" />
+                                                </Border>
+                                                <TextBlock Text="CURRENT DRIVER" Style="{StaticResource Eyebrow}"
+                                                           VerticalAlignment="Center" />
+                                            </DockPanel>
+                                            <TextBlock Text="{Binding DriverName}" FontFamily="{StaticResource DisplayFont}"
+                                                       FontWeight="Bold" FontSize="13" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding TeamName}" Style="{StaticResource SelectedListMuted}"
+                                                       FontSize="10.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
+
+                                            <!-- The car is the contract's other hero. Prefer a grid sprite when one exists. -->
+                                            <Grid Height="47" Margin="0,6,0,0">
+                                                <Border Style="{StaticResource AssetPlaceholderFrame}" CornerRadius="5">
+                                                    <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                               FontSize="23" />
+                                                </Border>
+                                                <Image Stretch="Uniform" IsHitTestVisible="False"
+                                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
+                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="4">
+                                            <!-- Team crest, with an in-world generic badge when a historical pack has no art. -->
+                                            <Grid Width="50" Height="50">
+                                                <Border Style="{StaticResource AssetPlaceholderFrame}"
+                                                        BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1">
+                                                    <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                               FontSize="20" />
+                                                </Border>
+                                                <Image Stretch="Uniform" Margin="4" IsHitTestVisible="False"
+                                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                       Source="{Binding TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
+                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                            </Grid>
+                                            <Border Style="{StaticResource CompactChip}" Padding="4,3" Margin="0,35,0,0"
+                                                    HorizontalAlignment="Stretch"
+                                                    Background="{DynamicResource AccentDimBrush}"
+                                                    BorderBrush="{DynamicResource AccentBrush}"
+                                                    Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource BoolVisible}}">
+                                                <TextBlock Text="CHOSEN" Style="{StaticResource PixelBadge}"
+                                                           Foreground="{DynamicResource AccentTextBrush}"
+                                                           TextAlignment="Center" />
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -703,6 +798,18 @@
                                                Source="{Binding PlayerImageKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
                                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                     </Border>
+                                    <Grid Width="44" Height="44" HorizontalAlignment="Left"
+                                          VerticalAlignment="Top" Margin="-5,-5,0,0">
+                                        <Border Style="{StaticResource AssetPlaceholderFrame}"
+                                                BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
+                                            <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                       FontSize="18" />
+                                        </Border>
+                                        <Image Stretch="Uniform" Margin="4" IsHitTestVisible="False"
+                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                               Source="{Binding SelectedSeat.TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                    </Grid>
                                     <Border VerticalAlignment="Bottom" HorizontalAlignment="Right"
                                             Background="{DynamicResource AccentBrush}" CornerRadius="4"
                                             Padding="6,3" Margin="0,0,-6,-6">
@@ -711,10 +818,16 @@
                                     </Border>
                                 </Grid>
 
-                                <Image Height="42" Stretch="Uniform" HorizontalAlignment="Center"
-                                       Margin="0,9,0,7" RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                       Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                <Grid Height="48" Margin="0,9,0,7">
+                                    <Border Style="{StaticResource AssetPlaceholderFrame}" CornerRadius="5">
+                                        <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                   FontSize="24" />
+                                    </Border>
+                                    <Image Stretch="Uniform" HorizontalAlignment="Center" IsHitTestVisible="False"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                           Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars|cars}"
+                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                </Grid>
 
                                 <TextBlock Text="{Binding Character.Name, FallbackValue=YOUR DRIVER}"
                                            FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
@@ -738,24 +851,13 @@
 
                                 <Border Style="{StaticResource AccentCallout}" Padding="9,7">
                                     <StackPanel>
-                                        <TextBlock Text="EXPECTATION, NOT A BUFF" Style="{StaticResource Eyebrow}"
+                                        <TextBlock Text="YOUR STORY STARTS HERE" Style="{StaticResource Eyebrow}"
                                                    Foreground="{DynamicResource AccentTextBrush}" />
-                                        <TextBlock Text="A stronger character raises the bar you must beat. Your driving still decides the race."
+                                        <TextBlock Text="Your choices shape the expectations around you. Your driving writes everything that follows."
                                                    Style="{StaticResource Body}" FontSize="10.5" Margin="0,3,0,0" />
                                     </StackPanel>
                                 </Border>
 
-                                <!-- The detailed car card is still available without occupying the whole page. -->
-                                <Expander Header="YOUR CAR SPEC" Margin="0,10,0,0"
-                                          Visibility="{Binding PlayerCarSpec, Converter={StaticResource NullCollapsed}}">
-                                    <ContentControl Content="{Binding PlayerCarSpec}" Margin="0,7,0,0">
-                                        <ContentControl.ContentTemplate>
-                                            <DataTemplate>
-                                                <views:CarSpecCard MaxWidth="202" />
-                                            </DataTemplate>
-                                        </ContentControl.ContentTemplate>
-                                    </ContentControl>
-                                </Expander>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
@@ -796,7 +898,7 @@
                                 <TextBlock Style="{StaticResource Faint}" Margin="24,2,0,0" TextWrapping="Wrap"
                                            Text="{Binding InstalledAiFilePath}" />
                                 <TextBlock Style="{StaticResource Faint}" Margin="24,4,0,0" TextWrapping="Wrap"
-                                           Text="Per-livery ratings, names and countries come from your file; the pack keeps the calendar, entries, teams and scoring. The imported baseline is pinned into the career — it never drifts if the file changes later." />
+                                           Text="Driver names, countries, and on-track character come from your file; the pack keeps the calendar, entries, teams, and scoring. The imported baseline is pinned into the career so the field never drifts later." />
                             </StackPanel>
                         </Border>
 
@@ -821,7 +923,7 @@
                         </Border>
 
                         <TextBlock Style="{StaticResource Faint}" Margin="0,12,0,0" TextWrapping="Wrap"
-                                   Text="Difficulty note: the pack's AI ratings assume a fixed in-game AI strength — pick one and keep it for the whole season." />
+                                   Text="Difficulty note: choose one in-game AI strength and keep it for the whole season so the competitive order stays consistent." />
 
                         <TextBlock Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" Margin="0,12,0,0"
                                    Text="{Binding CreateError}"
