@@ -326,6 +326,12 @@ public interface ICareerSession
         CareerFileDeleted = false,
     };
 
+    /// <summary>The rich death-screen projection (character death &amp; injury §6) when the driver has died —
+    /// an in-world obituary, the career record, the fatal accident's cause/venue, and (Normal) the
+    /// restorable save slots. Null when the driver is alive. Captured before the file is deleted on a
+    /// Hardcore death, so it is safe to read after the DB is gone. Additive default: null, so fakes compile.</summary>
+    DeathScreenModel? DeathScreen() => null;
+
     /// <summary>The player's SIT-OUT status when an injury forces the CURRENT round to be auto-simulated
     /// (character death &amp; injury §5), or null when the player races this round normally. The shell shows
     /// the sit-out screen (an "INJURED — auto-simulating" / "SEASON OVER — recovering" banner) with a
