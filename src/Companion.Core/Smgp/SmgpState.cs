@@ -65,6 +65,17 @@ public sealed record SmgpState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool TwoPhasePromotion { get; init; }
 
+    /// <summary>The PER-SEASON DNQ RE-ROLL gate (17-season campaign): a career created after this shipped
+    /// re-rolls its backmarker DNQ field for every season 2+ (each season a fresh seeded field), instead
+    /// of every season sharing season 1's pinned roll. Seeded true at creation for new smgp careers with a
+    /// DNQ field; OMITTED when false so every pre-change state cell parses as false and keeps the single
+    /// pinned field across all seasons — the byte-identical gate. Carried forward each round and across the
+    /// season reset / champion rollover (it is a career-level decision, never reset). Read from the season
+    /// START state to decide whether <see cref="SmgpDnqField.ForSeason"/> transforms the pack on both the
+    /// live-fold and replay paths.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool PerSeasonDnq { get; init; }
+
     /// <summary>A two-wins seat-swap offer AWAITING the player's post-race accept/decline on the
     /// promotion screen (3c-2, two-phase careers only): the battle fold records it here INSTEAD of
     /// moving the seat, and the resolution fold (driven by the journaled <c>smgp.swap</c> input,
@@ -116,6 +127,7 @@ public sealed record SmgpState
             && DefenseRound1 == other.DefenseRound1
             && FloorLosses == other.FloorLosses
             && TwoPhasePromotion == other.TwoPhasePromotion
+            && PerSeasonDnq == other.PerSeasonDnq
             && Equals(PendingSwap, other.PendingSwap)
             && Tallies.SequenceEqual(other.Tallies)
             && AiSeatOverrides.SequenceEqual(other.AiSeatOverrides);
@@ -131,6 +143,7 @@ public sealed record SmgpState
         hash.Add(DefenseRound1);
         hash.Add(FloorLosses);
         hash.Add(TwoPhasePromotion);
+        hash.Add(PerSeasonDnq);
         hash.Add(PendingSwap);
         foreach (var pair in Tallies)
         {

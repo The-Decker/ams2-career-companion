@@ -95,6 +95,60 @@ public sealed class SmgpDnqGeneratorTests
         Assert.True(everDnq > maxSingleRound, "the DNQ set doesn't rotate — more cars DNQ across the season than in any one round should hold.");
     }
 
+    // ---------- the per-season re-roll (17-season campaign) ----------
+
+    [Fact]
+    public void ForSeason_Season1_ReturnsThePackVerbatim()
+    {
+        // Season 1 keeps its PINNED creation roll — ForSeason must be a no-op (same reference).
+        Assert.Same(Pack.Value, SmgpDnqField.ForSeason(Pack.Value, 1, 424242));
+        Assert.Same(Pack.Value, SmgpDnqField.ForSeason(Pack.Value, 0, 424242));
+    }
+
+    [Fact]
+    public void ForSeason_ReRollsADifferentField_ForEachSeason()
+    {
+        var pack = Pack.Value;
+        const ulong seed = 424242;
+
+        var s1Roll = SmgpDnqField.Generate(pack, seed, 1); // season 1's actual seeded roll
+        var s2 = SmgpDnqField.ForSeason(pack, 2, seed);
+        var s3 = SmgpDnqField.ForSeason(pack, 3, seed);
+
+        bool Differs(SeasonPack a, IReadOnlyDictionary<int, IReadOnlyList<string>> b) =>
+            a.Season.Rounds.Any(r =>
+                !r.Grid!.StarterDriverIds.ToHashSet(StringComparer.Ordinal).SetEquals(b[r.Round]));
+        bool DiffersPacks(SeasonPack a, SeasonPack b) =>
+            a.Season.Rounds.Any(r =>
+                !r.Grid!.StarterDriverIds.ToHashSet(StringComparer.Ordinal).SetEquals(
+                    b.Season.Rounds.Single(x => x.Round == r.Round).Grid!.StarterDriverIds));
+
+        Assert.True(Differs(s2, s1Roll), "season 2 matched season 1's roll on every round — no re-roll.");
+        Assert.True(DiffersPacks(s2, s3), "season 2 and 3 rolled the identical field — the ordinal isn't in the seed key.");
+    }
+
+    [Fact]
+    public void ForSeason_ReRolledField_StaysExactFit_AndKeepsTheStrong()
+    {
+        var pack = Pack.Value;
+        var field = pack.Entries.Select(e => e.DriverId).ToHashSet(StringComparer.Ordinal);
+        string[] benchmarks = { "driver.ayrton_senna", "driver.gilberto_ceara" };
+
+        foreach (int ord in new[] { 2, 5, 17 })
+        {
+            var transformed = SmgpDnqField.ForSeason(pack, ord, 55);
+            foreach (var round in transformed.Season.Rounds)
+            {
+                var starters = round.Grid!.StarterDriverIds;
+                Assert.Equal(round.Grid.Size, starters.Count);
+                Assert.Equal(round.Grid.Size, starters.Distinct(StringComparer.Ordinal).Count());
+                Assert.All(starters, id => Assert.Contains(id, field));
+                foreach (var star in benchmarks)
+                    Assert.Contains(star, starters); // a benchmark never DNQs, any season
+            }
+        }
+    }
+
     [Fact]
     public void Transform_PinsTheGeneratedStarters_IntoSeasonJson_AndReparses()
     {

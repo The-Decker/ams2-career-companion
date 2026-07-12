@@ -479,10 +479,23 @@ public static class ReplayService
         SeasonEndResult? previousEnd = null;
         StoredSeason? previousSeason = null;
 
+        // 1-based season ordinal in id-order — the SAME derivation the live session uses
+        // (CareerSessionService ctor: index of the season in CareerStore.ReadSeasons + 1), so a
+        // per-season pack transform keyed by ordinal matches live and replay exactly.
+        int seasonOrdinal = 0;
         foreach (var current in preread)
         {
+            seasonOrdinal++;
             var season = current.Season;
             var pack = packs[(season.PackId, season.PackVersion)];
+            // Per-season DNQ RE-ROLL (17-season campaign): apply the SAME transform the live fold's runtime
+            // Pack receives (CareerSessionService ctor), gated per-career on the season START state's
+            // PerSeasonDnq flag, so season 2+ re-folds against its own re-rolled backmarker field. Season 1
+            // (ordinal 1 → ForSeason no-ops), a legacy career (flag omitted), and a non-DNQ pack all return
+            // the pinned pack verbatim → byte-identical. Pure function of (pinned pack, ordinal, seed), so
+            // this replay re-derivation equals the live fold's grid by construction.
+            if (current.StartPlayer?.Smgp?.PerSeasonDnq == true)
+                pack = Companion.Core.Smgp.SmgpDnqField.ForSeason(pack, seasonOrdinal, masterSeed);
             var regenerated = new List<(int? Round, JournalEvent Event)>();
 
             // ---- follow-on seasons: start states must re-derive via the rollover (same

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Companion.Core.Determinism;
@@ -43,8 +44,17 @@ public static class SmgpDnqField
     /// <summary>Rolls each capped round's qualifiers from the master seed: the top <c>size − churn</c> by
     /// base qualifying skill are guaranteed; the bubble competes for the remaining slots on a per-race
     /// jittered pace. Returns round number → the (grid.size) starter driver ids. Rounds without a DNQ cap
-    /// are omitted (their authored grid stands).</summary>
-    public static IReadOnlyDictionary<int, IReadOnlyList<string>> Generate(SeasonPack pack, ulong masterSeed)
+    /// are omitted (their authored grid stands). This is the SEASON-1 roll pinned at creation.</summary>
+    public static IReadOnlyDictionary<int, IReadOnlyList<string>> Generate(SeasonPack pack, ulong masterSeed) =>
+        Generate(pack, masterSeed, seasonOrdinal: 1);
+
+    /// <summary>The ordinal-aware roll. Season 1 (<paramref name="seasonOrdinal"/> ≤ 1) keys the jitter by
+    /// driver id ALONE — the exact original roll, so the pinned season-1 field is byte-identical. Seasons
+    /// 2+ fold the ordinal into the stream key so each season re-rolls an INDEPENDENT backmarker field
+    /// (Mike: "the second year is all random"). <c>pack.Season.Year</c> is constant across a single-pack
+    /// SMGP carryover career, so without the ordinal every season would share one field.</summary>
+    public static IReadOnlyDictionary<int, IReadOnlyList<string>> Generate(
+        SeasonPack pack, ulong masterSeed, int seasonOrdinal)
     {
         var factory = new StreamFactory(masterSeed);
 
@@ -77,7 +87,7 @@ public static class SmgpDnqField
             // The bubble competes on a per-race jittered pace; the top (size − guaranteed) get the slots.
             var rolled = byBase
                 .Skip(guaranteedCount)
-                .Select(id => (id, eff: qualiById.GetValueOrDefault(id) + Jitter(factory, pack.Season.Year, round.Round, id)))
+                .Select(id => (id, eff: qualiById.GetValueOrDefault(id) + Jitter(factory, pack.Season.Year, round.Round, seasonOrdinal, id)))
                 .OrderByDescending(t => t.eff)
                 .ThenBy(t => t.id, StringComparer.Ordinal)
                 .Select(t => t.id)
@@ -88,8 +98,46 @@ public static class SmgpDnqField
         return result;
     }
 
-    private static double Jitter(StreamFactory factory, int year, int round, string driverId) =>
-        (factory.CreateStream(Subsystem, year, round, driverId).NextDouble() * 2.0 - 1.0) * JitterMagnitude;
+    private static double Jitter(StreamFactory factory, int year, int round, int seasonOrdinal, string driverId)
+    {
+        // Season 1 keeps the ORIGINAL driver-only key so the pinned creation roll is byte-identical.
+        // Season 2+ folds the ordinal into the entity (StreamFactory escapes the '|', keeping the key
+        // injective), so every season draws an independent field off the same master seed.
+        string entity = seasonOrdinal <= 1
+            ? driverId
+            : seasonOrdinal.ToString(CultureInfo.InvariantCulture) + "|" + driverId;
+        return (factory.CreateStream(Subsystem, year, round, entity).NextDouble() * 2.0 - 1.0) * JitterMagnitude;
+    }
+
+    /// <summary>The per-season DNQ RE-ROLL for the 17-season campaign: seasons 2+ get their OWN seeded
+    /// backmarker field, so the rotation differs each season instead of every season sharing season 1's
+    /// pinned roll. Rewrites each capped round's <c>grid.StarterDriverIds</c> on an IN-MEMORY pack — a
+    /// same-pack carryover season has no separate pinned bytes to re-pin. The starter set IS a fold input
+    /// (grid membership → seat-strength → the byte-compared player rows), so this MUST be applied
+    /// IDENTICALLY on the live-fold pack (CareerSessionService.Pack) AND the replay pack (ResimulateCore),
+    /// both fed the same ordinal — the transform is a pure function of (pack, ordinal, seed), so live and
+    /// replay agree by construction. Season 1 (<paramref name="seasonOrdinal"/> ≤ 1), a non-smgp pack, or
+    /// a full-field pack returns the pack VERBATIM: season 1 keeps its pinned creation roll, and every
+    /// legacy / non-DNQ / non-smgp career is byte-identical. Per-career gated by
+    /// <see cref="SmgpState.PerSeasonDnq"/> at the call sites so pre-change careers never re-roll.</summary>
+    public static SeasonPack ForSeason(SeasonPack pack, int seasonOrdinal, ulong masterSeed)
+    {
+        if (seasonOrdinal <= 1 ||
+            !string.Equals(pack.Manifest.CareerStyle, SmgpRules.CareerStyle, StringComparison.Ordinal) ||
+            !HasDnqField(pack))
+            return pack;
+
+        var starters = Generate(pack, masterSeed, seasonOrdinal);
+        if (starters.Count == 0)
+            return pack;
+
+        var newRounds = pack.Season.Rounds
+            .Select(r => starters.TryGetValue(r.Round, out var s) && r.Grid is { } grid
+                ? r with { Grid = grid with { StarterDriverIds = s } }
+                : r)
+            .ToList();
+        return pack with { Season = pack.Season with { Rounds = newRounds } };
+    }
 
     /// <summary>Rewrites <paramref name="seasonJson"/> so each round in <paramref name="startersByRound"/>
     /// carries the generated <c>grid.starterDriverIds</c> (replacing the authored/baked default). Rounds

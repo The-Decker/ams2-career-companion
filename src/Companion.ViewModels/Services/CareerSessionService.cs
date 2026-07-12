@@ -106,7 +106,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         for (int i = 0; i < allSeasons.Count; i++)
             if (allSeasons[i].Id == seasonId) { seasonOrdinal = i + 1; break; }
         _seasonOrdinal = seasonOrdinal;
-        Pack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed);
+        var variedPack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed);
+        // Per-season DNQ RE-ROLL (17-season campaign): a career gated on SmgpState.PerSeasonDnq re-rolls
+        // its backmarker DNQ field for season 2+ (each season a fresh seeded field, so the rotation is not
+        // frozen to season 1's pinned roll). This is a FOLD INPUT — the runtime Pack is what the live fold
+        // (Apply / PreviewFold) resolves the grid from — so the SAME transform is applied to the pinned
+        // pack on the replay path (ReplayService.ResimulateCore), keyed by the same ordinal, and live and
+        // replay agree by construction. Season 1 / legacy (flag omitted) / non-DNQ careers no-op, so they
+        // stay byte-identical. The gate is read from this season's START state.
+        Pack = StateStore.ReadPlayerState(database, seasonId, StateStore.StageStart)?.Smgp?.PerSeasonDnq == true
+            ? Companion.Core.Smgp.SmgpDnqField.ForSeason(variedPack, seasonOrdinal, unchecked((ulong)masterSeed))
+            : variedPack;
         _seasonYear = allSeasons.FirstOrDefault(s => s.Id == seasonId)?.Year ?? pack.Season.Year;
         _firstSeasonYear = allSeasons.Count > 0 ? allSeasons[0].Year : _seasonYear;
         _careerName = careerName;
@@ -472,7 +482,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal)
                 // TwoPhasePromotion (3c-2): new smgp careers DEFER a two-wins offer to the post-race
                 // promotion screen; omitted-when-false so every pre-3c-2 career keeps the inline path.
-                ? new Companion.Core.Smgp.SmgpState { CurrentSeatLivery = playerLiveryName, TwoPhasePromotion = true }
+                // PerSeasonDnq (17-season campaign): a DNQ pack re-rolls its backmarker field every season
+                // 2+; omitted-when-false so every pre-change career keeps the single pinned field. Both are
+                // per-career gates seeded at creation, carried across rollover, and replay-verified.
+                ? new Companion.Core.Smgp.SmgpState
+                {
+                    CurrentSeatLivery = playerLiveryName,
+                    TwoPhasePromotion = true,
+                    PerSeasonDnq = Companion.Core.Smgp.SmgpDnqField.HasDnqField(pack),
+                }
                 : null,
         };
 
