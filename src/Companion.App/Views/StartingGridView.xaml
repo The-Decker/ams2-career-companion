@@ -362,7 +362,8 @@
                               VerticalScrollBarVisibility="Auto" Focusable="True" IsTabStop="True"
                               HorizontalContentAlignment="Stretch"
                               AutomationProperties.Name="Scroll through the SMGP starting order">
-                    <Grid MaxWidth="900" HorizontalAlignment="Stretch" Background="{StaticResource SmgpGrassBrush}">
+                    <Grid x:Name="SmgpTrackSurface" HorizontalAlignment="Stretch"
+                          Background="{StaticResource SmgpGrassBrush}">
                         <!-- Proportional verges preserve the pixel track at minimum size while giving
                              portrait + car + identity enough width in each of the two grid bays. -->
                         <Grid.ColumnDefinitions>

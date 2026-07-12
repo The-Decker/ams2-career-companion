@@ -24,7 +24,7 @@ Your jobs now, in priority order:
 
 - Branch off `hub/increment-4`; keep diffs to **Views XAML + styles + art**; rebase before handing back
   because Claude commits to the same base. Run `dotnet build` / `dotnet test` from the repo root
-  (`Companion.slnx`, .NET 10 — no `.sln`). Current green floor: **1969 unit + 64 render**.
+  (`Companion.slnx`, .NET 10 — no `.sln`). Current green floor: **1977 unit + 67 render**.
 - Verify visually on an **SMGP career**. San Marino · Round 1 is the canonical test screen.
 - The render harness (`tests/Companion.RenderHarness.Tests`) exercises these screens. Run it after XAML
   changes and strengthen structural/layout assertions when the change is intentional.

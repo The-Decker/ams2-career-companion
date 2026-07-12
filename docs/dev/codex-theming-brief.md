@@ -12,7 +12,7 @@ Your four missions:
 4. **Fonts** — a proper type system (see §4; Claude supplies the recommended open-license set).
 
 Same lanes as always (Views XAML + **resource dictionaries** + styles + art). Build + test green floor:
-**1969 unit + 64 render.** Verify on an SMGP career.
+**1977 unit + 67 render.** Verify on an SMGP career.
 
 ---
 
