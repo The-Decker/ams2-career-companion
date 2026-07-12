@@ -43,6 +43,31 @@
     <DropShadowEffect x:Key="ControlElevationEffect" Color="#000000" BlurRadius="6"
                       ShadowDepth="2" Direction="270" Opacity="0.24" />
 
+    <!-- Invariant main-menu cinematography. The generated key art deliberately leaves its left
+         side quiet; this layered scrim finishes the contrast treatment while keeping the hero car
+         visible on ultrawide and 4K displays in both application themes. -->
+    <LinearGradientBrush x:Key="MainMenuScrimBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Offset="0" Color="#FA090C11" />
+        <GradientStop Offset="0.28" Color="#F0090C11" />
+        <GradientStop Offset="0.5" Color="#B8090C11" />
+        <GradientStop Offset="0.72" Color="#52090C11" />
+        <GradientStop Offset="1" Color="#18090C11" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MainMenuBottomFadeBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#00090C11" />
+        <GradientStop Offset="0.62" Color="#12090C11" />
+        <GradientStop Offset="1" Color="#D9090C11" />
+    </LinearGradientBrush>
+    <RadialGradientBrush x:Key="MainMenuVignetteBrush" Center="0.58,0.43"
+                         GradientOrigin="0.58,0.43" RadiusX="0.82" RadiusY="0.9">
+        <GradientStop Offset="0" Color="#00000000" />
+        <GradientStop Offset="0.72" Color="#12000000" />
+        <GradientStop Offset="1" Color="#7A000000" />
+    </RadialGradientBrush>
+    <SolidColorBrush x:Key="MainMenuGlassBrush" Color="#DA171C24" />
+    <SolidColorBrush x:Key="MainMenuGlassStrongBrush" Color="#F21A2029" />
+    <SolidColorBrush x:Key="MainMenuGlassEdgeBrush" Color="#70FFFFFF" />
+
     <!-- Invariant SMGP pixel-track art. These colors describe asphalt, scenery and paint rather
          than application chrome, so they intentionally do not follow the app base or accent. -->
     <DrawingBrush x:Key="SmgpAsphaltBrush" TileMode="Tile"

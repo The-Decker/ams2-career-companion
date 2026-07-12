@@ -3,18 +3,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
-    <!-- Keyboard parity (career-hub-design.md decision 8): Ctrl+O opens the career file picker,
-         mirroring the button + its tooltip. The shell's window-level Esc/tab routing is unaffected
-         (no modifier there); this chord requires Ctrl so it never collides. -->
+    <!-- Ctrl+O remains the keyboard twin of LOAD CAREER. -->
     <UserControl.InputBindings>
-        <KeyBinding Modifiers="Control" Key="O" Command="{x:Static views:StartView.OpenCareerFileCommand}" />
+        <KeyBinding Modifiers="Control" Key="O"
+                    Command="{x:Static views:StartView.OpenCareerFileCommand}" />
+        <KeyBinding Modifiers="Alt" Key="N" Command="{Binding NewCareerCommand}" />
+        <KeyBinding Modifiers="Alt" Key="C" Command="{Binding ContinueCommand}"
+                    CommandParameter="{Binding RecentCareers[0]}" />
     </UserControl.InputBindings>
+
     <UserControl.Resources>
-        <!-- right-click parity (ux-round contract section 2). A PAGE resource on purpose:
-             event handlers on menu items nested inside a Style's Setter.Value hit WPF's
-             connection-id mismatch ("Set connectionId threw an exception", MenuItem cast to
-             Button) the first time a row renders — same pattern as ResultEntryView's
-             DriverRowMenu. DataContext flows in from the row under the cursor. -->
+        <Style x:Key="MainMenuButton" TargetType="Button"
+               BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="58" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="{StaticResource MainMenuGlassBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource MainMenuGlassEdgeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource OnMediaBrush}" />
+        </Style>
+
+        <Style x:Key="MainMenuPrimaryButton" TargetType="Button"
+               BasedOn="{StaticResource MainMenuButton}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+        </Style>
+
+        <Style x:Key="MainMenuUtilityButton" TargetType="Button"
+               BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Background" Value="{StaticResource MainMenuGlassBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource MainMenuGlassEdgeBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource OnMediaMutedBrush}" />
+            <Setter Property="FontSize" Value="10.5" />
+        </Style>
+
+        <!-- Right-click parity for every career card in the garage drawer. -->
         <ContextMenu x:Key="RecentCareerMenu">
             <MenuItem Header="Continue this career" Click="OnRecentContinue" />
             <Separator />
@@ -22,220 +51,364 @@
                       ToolTip="Show the .ams2career file in Explorer" />
             <Separator />
             <MenuItem Header="Set card image…" Click="OnRecentSetImage"
-                      ToolTip="Pick a 16:9 image to show as this career's gallery card (your file stays where it is)" />
+                      ToolTip="Pick a 16:9 image for this career card" />
             <MenuItem Header="Clear card image" Click="OnRecentClearImage"
-                      ToolTip="Remove the custom image — the card reverts to the era art for its year" />
+                      ToolTip="Revert the card to its era art" />
             <Separator />
-            <MenuItem Header="Rename career…" Click="OnRecentRename"
-                      ToolTip="Renames the career and its .ams2career file to match" />
-            <MenuItem Header="Duplicate career" Click="OnRecentDuplicate"
-                      ToolTip="Copies this career as '&lt;name&gt; (copy)' — handy before a risky season" />
+            <MenuItem Header="Rename career…" Click="OnRecentRename" />
+            <MenuItem Header="Duplicate career" Click="OnRecentDuplicate" />
             <MenuItem Header="Remove from this list" Click="OnRecentRemove"
-                      ToolTip="Only removes the shortcut — the career file stays on disk" />
+                      ToolTip="The career file stays on disk" />
             <Separator />
             <MenuItem Header="Delete career file…" Click="OnRecentDelete"
-                      ToolTip="Deletes this career's .ams2career file from disk — asks first, cannot be undone" />
+                      ToolTip="Deletes the file after confirmation" />
         </ContextMenu>
     </UserControl.Resources>
-    <Grid>
+
+    <Grid x:Name="MainMenuRoot" ClipToBounds="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-            <!-- proportional page column (was a hard 680 that strangled the gallery to 2 cards/row
-                 on a 2560 monitor): the gallery WrapPanel now flows 4–6 cards; the intro text keeps
-                 its own readable 680 cap -->
-            <StackPanel Margin="48,56" HorizontalAlignment="Center"
-                        MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer},
-                                   Converter={StaticResource WidthFraction}, ConverterParameter=0.85|680}">
-                <TextBlock Text="AMS2 Career Companion" Style="{StaticResource H1}" />
-                <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,28" TextWrapping="Wrap" MaxWidth="680"
-                           HorizontalAlignment="Left"
-                           Text="Historical career seasons around Automobilista 2 single-player custom races — offline, one file per career." />
+        <!-- Original embedded key art. UniformToFill accepts 16:9 through 4K without stretching;
+             the focal car stays right while the authored negative space carries the menu. -->
+        <Image x:Name="MainMenuBackdrop" Grid.RowSpan="2" IsHitTestVisible="False"
+               Source="/AMS2CareerCompanion;component/Assets/MainMenu/grand-prix-blue-hour.png"
+               Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"
+               RenderOptions.BitmapScalingMode="HighQuality" />
+        <Border Grid.RowSpan="2" IsHitTestVisible="False"
+                Background="{StaticResource MainMenuScrimBrush}" />
+        <Border Grid.RowSpan="2" IsHitTestVisible="False"
+                Background="{StaticResource MainMenuBottomFadeBrush}" />
+        <Border Grid.RowSpan="2" IsHitTestVisible="False"
+                Background="{StaticResource MainMenuVignetteBrush}" />
 
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="_New career" Style="{StaticResource AccentButton}"
-                            MinWidth="160" Command="{Binding NewCareerCommand}" />
-                    <Button Content="_Open career…" Margin="12,0,0,0"
-                            Click="OnOpenCareerFile"
-                            ToolTip="Open an existing .ams2career file that is not in your recent list (Ctrl+O)"
-                            AutomationProperties.Name="Open career file" />
-                    <Button Content="Open pack folder" Margin="12,0,0,0"
-                            Click="OnOpenPackFolder"
-                            ToolTip="Opens Documents\AMS2CareerCompanion\Packs — drop season packs here" />
-                </StackPanel>
+        <Grid x:Name="MainMenuStage" Grid.Row="0">
+            <!-- The default game menu. It scrolls only at extreme UI scaling; the four primary
+                 actions remain large instead of shrinking into desktop-form buttons. -->
+            <ScrollViewer x:Name="MainMenuCommands" HorizontalAlignment="Left"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto" Focusable="False">
+                <Viewbox Width="{Binding ActualWidth, ElementName=MainMenuStage,
+                                         Converter={StaticResource WidthFraction},
+                                         ConverterParameter=0.27|360|620}"
+                         Stretch="Uniform" StretchDirection="Both"
+                         HorizontalAlignment="Left" VerticalAlignment="Top"
+                         Margin="48,28,0,24">
+                    <StackPanel Width="360">
+                    <Border Width="216" Height="5" HorizontalAlignment="Left"
+                            Background="{StaticResource SmgpCheckeredBrush}" Margin="0,0,0,12" />
+                    <TextBlock Text="A MOTORSPORT CAREER EXPERIENCE"
+                               FontFamily="{StaticResource DisplayFont}" FontSize="10"
+                               FontWeight="Bold" Foreground="{DynamicResource AccentTextBrush}" />
+                    <TextBlock Text="AMS2" FontFamily="{StaticResource DisplayFont}"
+                               FontSize="40" FontWeight="Bold" Foreground="{DynamicResource OnMediaBrush}"
+                               Margin="0,2,0,0" />
+                    <TextBlock Text="CAREER COMPANION" FontFamily="{StaticResource DisplayFont}"
+                               FontSize="22" FontWeight="Bold" Foreground="{DynamicResource OnMediaBrush}"
+                               Margin="0,-4,0,0" />
+                    <TextBlock Text="FORMULA CAREER MODE  ·  WRITE YOUR OWN HISTORY"
+                               FontFamily="{StaticResource MonoFont}" FontSize="9.5"
+                               Foreground="{DynamicResource OnMediaMutedBrush}" Margin="0,5,0,15" />
 
-                <!-- Open-career picker pre-flight error (blank/missing path). A file that exists but
-                     will not open is reported by the shell's own StatusError banner instead. -->
-                <Border Background="{DynamicResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
-                        Margin="0,12,0,0"
-                        Visibility="{Binding OpenError, Converter={StaticResource NullCollapsed}}">
-                    <TextBlock Text="{Binding OpenError}" Foreground="{DynamicResource ErrorBrush}"
-                               TextWrapping="Wrap" />
-                </Border>
-
-                <TextBlock Text="Recent careers" Style="{StaticResource H2}" Margin="0,36,0,8" />
-
-                <!-- gallery file-operation failure (delete/rename/duplicate on a locked file,
-                     permissions, or an invalid rename target). The entry stays in the gallery
-                     because the file is still on disk. -->
-                <Border Background="{DynamicResource ErrorDimBrush}" CornerRadius="4" Padding="12,8"
-                        Margin="0,0,0,8"
-                        Visibility="{Binding GalleryError, Converter={StaticResource NullCollapsed}}">
-                    <TextBlock Text="{Binding GalleryError}" Foreground="{DynamicResource ErrorBrush}"
-                               TextWrapping="Wrap" />
-                </Border>
-
-                <!-- empty state (ux-round §4): no careers yet → arrow to New career + open button -->
-                <Border Style="{StaticResource Panel}" Padding="20"
-                        Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7C1;" FontSize="20"
-                                       Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center"
-                                       Margin="0,0,12,0" />
-                            <TextBlock Text="No careers yet" FontWeight="SemiBold" FontSize="15"
+                    <Button Style="{StaticResource MainMenuButton}"
+                            Command="{Binding ContinueCommand}"
+                            CommandParameter="{Binding RecentCareers[0]}"
+                            ToolTip="Continue the most recently opened career"
+                            AutomationProperties.Name="Continue most recent career">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="24" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="19"
                                        VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="CONTINUE CAREER" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="14" />
+                                <TextBlock Text="{Binding RecentCareers[0].CareerName, Mode=OneWay, FallbackValue=NO RECENT CAREER}"
+                                           FontSize="9.5" Opacity="0.72" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="&#xE76C;" FontFamily="{StaticResource IconFont}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+
+                    <Button Style="{StaticResource MainMenuPrimaryButton}"
+                            Command="{Binding NewCareerCommand}"
+                            ToolTip="Start a new career and choose a season"
+                            AutomationProperties.Name="New career">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="24" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="19"
+                                       VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="NEW CAREER" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="14" />
+                                <TextBlock Text="Choose a season, seat, and racing identity"
+                                           FontSize="9.5" Opacity="0.8" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="&#xE76C;" FontFamily="{StaticResource IconFont}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+
+                    <Button Style="{StaticResource MainMenuButton}" Click="OnOpenCareerFile"
+                            ToolTip="Open an existing .ams2career file (Ctrl+O)"
+                            AutomationProperties.Name="Open career file">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="48" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE8E5;" FontFamily="{StaticResource IconFont}" FontSize="18"
+                                       VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="LOAD CAREER" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="14" />
+                                <TextBlock Text="Open any career file from disk" FontSize="9.5" Opacity="0.72" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="CTRL+O" FontFamily="{StaticResource MonoFont}"
+                                       FontSize="7.5" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+
+                    <Button x:Name="CareerGarageButton" Style="{StaticResource MainMenuButton}"
+                            Click="OnToggleCareerGarage"
+                            ToolTip="Browse, continue, rename, duplicate, or delete saved careers"
+                            AutomationProperties.Name="Open career garage">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="24" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE7B8;" FontFamily="{StaticResource IconFont}" FontSize="18"
+                                       VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock x:Name="CareerGarageLabel" Text="CAREER GARAGE"
+                                           FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="14" />
+                                <TextBlock FontSize="9.5" Opacity="0.72">
+                                    <Run Text="{Binding RecentCareers.Count, Mode=OneWay}" />
+                                    <Run Text=" SAVED CAREERS" />
+                                </TextBlock>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="&#xE76C;" FontFamily="{StaticResource IconFont}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+
+                    <Border Background="{DynamicResource ErrorDimBrush}"
+                            BorderBrush="{DynamicResource ErrorBrush}" BorderThickness="1"
+                            CornerRadius="5" Padding="10,7" Margin="0,1,0,8"
+                            Visibility="{Binding OpenError, Converter={StaticResource NullCollapsed}}">
+                        <TextBlock Text="{Binding OpenError}" Foreground="{DynamicResource ErrorBrush}"
+                                   FontSize="10.5" TextWrapping="Wrap" />
+                    </Border>
+
+                    <Border Background="{StaticResource MainMenuGlassBrush}"
+                            BorderBrush="{StaticResource MainMenuGlassEdgeBrush}" BorderThickness="1"
+                            CornerRadius="5" Padding="10,7" Margin="0,1,0,8"
+                            Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}">
+                        <TextBlock Foreground="{DynamicResource OnMediaMutedBrush}" FontSize="10.5"
+                                   TextWrapping="Wrap"
+                                   Text="No career files yet. NEW CAREER opens the season-select grid." />
+                    </Border>
+
+                    <Grid Margin="0,1,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Style="{StaticResource MainMenuUtilityButton}"
+                                Command="{Binding DataContext.ToggleSettingsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                Content="⚙  SETTINGS" ToolTip="Appearance and racing defaults" />
+                        <Button Grid.Column="2" Style="{StaticResource MainMenuUtilityButton}"
+                                Content="PACKS" Click="OnOpenPackFolder"
+                                ToolTip="Open the user season-pack folder" />
+                        <Button Grid.Column="4" Style="{StaticResource MainMenuUtilityButton}"
+                                Content="EXIT" Click="OnExitApplication"
+                                ToolTip="Exit AMS2 Career Companion" />
+                    </Grid>
+
+                    <TextBlock Text="OFFLINE  ·  DETERMINISTIC  ·  ONE FILE PER CAREER"
+                               FontFamily="{StaticResource MonoFont}" FontSize="8"
+                               Foreground="{DynamicResource OnMediaMutedBrush}" Opacity="0.7"
+                               Margin="0,12,0,0" />
+                    </StackPanel>
+                </Viewbox>
+            </ScrollViewer>
+
+            <!-- Clicking CAREER GARAGE opens this modal-like gallery without replacing the menu
+                 or adding navigation state to the view model. -->
+            <Border x:Name="CareerGarageBackdrop" Visibility="Collapsed"
+                    Background="{StaticResource MainMenuScrimBrush}" Opacity="0.55"
+                    MouseLeftButtonDown="OnCloseCareerGarage" />
+
+            <Border x:Name="CareerGaragePanel" Visibility="Collapsed"
+                    HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                    Width="{Binding ActualWidth, ElementName=MainMenuStage,
+                                    Converter={StaticResource WidthFraction},
+                                    ConverterParameter=0.64|620|1040}"
+                    Margin="24" Padding="18"
+                    Background="{StaticResource MainMenuGlassStrongBrush}"
+                    BorderBrush="{StaticResource MainMenuGlassEdgeBrush}" BorderThickness="1"
+                    CornerRadius="10" Effect="{StaticResource PanelElevationEffect}"
+                    PreviewKeyDown="OnGaragePreviewKeyDown">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Margin="0,0,0,12">
+                        <Button x:Name="CareerGarageCloseButton" DockPanel.Dock="Right"
+                                Style="{StaticResource CloseButton}" Click="OnCloseCareerGarage"
+                                ToolTip="Close career garage"
+                                AutomationProperties.Name="Close career garage" />
+                        <StackPanel>
+                            <TextBlock Text="CAREER GARAGE" FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="22" FontWeight="Bold"
+                                       Foreground="{DynamicResource OnMediaBrush}" />
+                            <TextBlock Text="Select a career, then continue—or right-click a card for file operations."
+                                       Foreground="{DynamicResource OnMediaMutedBrush}" FontSize="11"
+                                       TextWrapping="Wrap" Margin="0,3,0,0" />
                         </StackPanel>
-                        <TextBlock Style="{StaticResource Body}" Margin="0,8,0,0">
-                            <Run FontFamily="{StaticResource IconFont}" Text="&#xE74A;"
-                                 Foreground="{DynamicResource AccentTextBrush}" /><Run
-                                 Text="  Start with " /><Run Text="New career" FontWeight="SemiBold"
-                                 Foreground="{DynamicResource AccentTextBrush}" /><Run
-                                 Text=" above — pick a season pack, verify it against your install, pick your seat, race." />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource Faint}" Margin="0,6,0,0" TextWrapping="Wrap"
-                                   Text="Each career is a single *.ams2career file in Documents\AMS2CareerCompanion\Careers — copy it to back up or share a season." />
-                        <Button Content="Open careers folder" HorizontalAlignment="Left" Margin="0,12,0,0"
-                                Click="OnOpenCareersFolder"
-                                ToolTip="Opens Documents\AMS2CareerCompanion\Careers in Explorer (created if missing)" />
-                    </StackPanel>
-                </Border>
+                    </DockPanel>
 
-                <Border Style="{StaticResource Panel}" Padding="8"
-                        Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolVisible}}">
-                    <StackPanel>
-                        <!-- picture-rich career gallery: the YEAR PIC is the hero of each card (Mike:
-                             "the year pics should be what is selected") — a full 16:9 image driven by
-                             the career's STORED season year (name-parse fallback for legacy entries —
-                             see career-hub-design.md §11). Drop a 16:9 historical photo into
-                             data\ams2\era-art and it fills the card top uncropped; otherwise the
-                             coloured era placeholder shows through. -->
-                        <!-- no MaxHeight: the page ScrollViewer scrolls, the gallery flows freely -->
-                        <ListBox ItemsSource="{Binding RecentCareers}"
-                                 SelectedItem="{Binding SelectedCareer}"
-                                 Background="Transparent" BorderThickness="0"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                                    <EventSetter Event="MouseDoubleClick" Handler="OnRecentDoubleClick" />
-                                    <Setter Property="ContextMenu" Value="{StaticResource RecentCareerMenu}" />
-                                    <Setter Property="Margin" Value="6" />
-                                    <Setter Property="Padding" Value="0" />
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Width="288" CornerRadius="7" ToolTip="{Binding Path}">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
-                                                <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
-                                                <Setter Property="BorderThickness" Value="1" />
-                                                <Setter Property="Effect" Value="{StaticResource ControlElevationEffect}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="{DynamicResource EdgeStrongBrush}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                        <Setter Property="Background" Value="{DynamicResource SelectionBrush}" />
-                                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                        <Setter Property="BorderThickness" Value="2" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <DockPanel>
-                                            <!-- YEAR-PIC HERO band (16:9 for the 288-wide card → 162 tall):
-                                                 the year image is the thing you pick a career by (Mike:
-                                                 "the year pics should be what is selected"). A real
-                                                 historical photo dropped into data\ams2\era-art (resolved
-                                                 most-specific-first by the career's STORED year — see
-                                                 career-hub-design.md §11) fills it; a 16:9 source lands
-                                                 uncropped. The ImageBrush is painted INTO the rounded
-                                                 Border so its own corner radius clips the picture — no
-                                                 hard-coded clip Rect, no magic 288. When no image exists
-                                                 the brush is empty and the coloured era placeholder
-                                                 underneath shows through. Bound to the whole RecentCareer
-                                                 so the converters read SeasonYear (name-parse fallback
-                                                 for legacy entries with no stored year). -->
-                                            <Grid DockPanel.Dock="Top" Height="162">
-                                                <Border CornerRadius="6,6,0,0"
-                                                        Background="{Binding Converter={StaticResource EraAccent}}" />
-                                                <Border CornerRadius="6,6,0,0">
-                                                    <Border.Background>
-                                                        <ImageBrush ImageSource="{Binding Converter={StaticResource EraImage}}"
-                                                                    Stretch="UniformToFill" />
-                                                    </Border.Background>
-                                                </Border>
-                                                <!-- bottom scrim so the era label + the card seam stay
-                                                     legible over a bright photo -->
-                                                <Border CornerRadius="6,6,0,0" Height="56" VerticalAlignment="Bottom"
-                                                        Background="{DynamicResource MediaCaptionGradientBrush}" />
-                                                <TextBlock Text="{Binding Converter={StaticResource EraLabel}}"
-                                                           Foreground="{DynamicResource OnMediaMutedBrush}"
-                                                           FontWeight="Bold" FontSize="12"
-                                                           VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                                                           Margin="12,0,0,8"
-                                                           Visibility="{Binding DataContext.EraThemingEnabled, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource BoolVisible}}" />
-                                                <Button Content="&#xE711;" Style="{StaticResource IconButton}"
-                                                        VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4"
-                                                        Foreground="{DynamicResource OnMediaMutedBrush}"
-                                                        ToolTip="Remove from this list (the career file stays)"
-                                                        AutomationProperties.Name="Remove from recent careers"
-                                                        Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                        CommandParameter="{Binding}" />
-                                            </Grid>
-                                            <StackPanel Margin="12,9,12,12">
-                                                <TextBlock Text="{Binding CareerName}" FontWeight="SemiBold"
-                                                           FontSize="15" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Margin="0,3,0,0"
-                                                           Text="{Binding LastOpenedUtc.LocalDateTime, StringFormat='last opened {0:g}'}">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                        <Button Content="_Continue selected career" Margin="10,10,10,6" HorizontalAlignment="Left"
+                    <Border Grid.Row="1" Background="{DynamicResource ErrorDimBrush}"
+                            BorderBrush="{DynamicResource ErrorBrush}" BorderThickness="1"
+                            CornerRadius="5" Padding="10,7" Margin="0,0,0,10"
+                            Visibility="{Binding GalleryError, Converter={StaticResource NullCollapsed}}">
+                        <TextBlock Text="{Binding GalleryError}" Foreground="{DynamicResource ErrorBrush}"
+                                   TextWrapping="Wrap" />
+                    </Border>
+
+                    <Grid Grid.Row="2">
+                        <Border Padding="18" Background="{StaticResource MainMenuGlassBrush}"
+                                BorderBrush="{StaticResource MainMenuGlassEdgeBrush}"
+                                BorderThickness="1" CornerRadius="7"
+                                Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolCollapsed}}">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}"
+                                           FontSize="30" Foreground="{DynamicResource AccentTextBrush}"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="THE GARAGE IS EMPTY" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="15"
+                                           Foreground="{DynamicResource OnMediaBrush}"
+                                           HorizontalAlignment="Center" Margin="0,8,0,0" />
+                                <TextBlock Text="Start a new career or open an existing .ams2career file."
+                                           Foreground="{DynamicResource OnMediaMutedBrush}"
+                                           TextWrapping="Wrap" TextAlignment="Center" Margin="0,5,0,0" />
+                                <Button Content="OPEN CAREERS FOLDER" Margin="0,12,0,0"
+                                        HorizontalAlignment="Center" Click="OnOpenCareersFolder" />
+                            </StackPanel>
+                        </Border>
+
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto" Focusable="False"
+                                      Visibility="{Binding HasRecentCareers, Converter={StaticResource BoolVisible}}">
+                            <ListBox x:Name="CareerGalleryList" ItemsSource="{Binding RecentCareers}"
+                                     SelectedItem="{Binding SelectedCareer}" SelectedIndex="0"
+                                     Background="Transparent" BorderThickness="0"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                        <EventSetter Event="MouseDoubleClick" Handler="OnRecentDoubleClick" />
+                                        <Setter Property="ContextMenu" Value="{StaticResource RecentCareerMenu}" />
+                                        <Setter Property="Margin" Value="5" />
+                                        <Setter Property="Padding" Value="0" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Width="258" CornerRadius="7" ToolTip="{Binding Path}"
+                                                Background="{StaticResource MainMenuGlassBrush}"
+                                                BorderBrush="{StaticResource MainMenuGlassEdgeBrush}"
+                                                BorderThickness="1">
+                                            <DockPanel>
+                                                <Grid DockPanel.Dock="Top" Height="145">
+                                                    <Border CornerRadius="6,6,0,0"
+                                                            Background="{Binding Converter={StaticResource EraAccent}}" />
+                                                    <Border CornerRadius="6,6,0,0">
+                                                        <Border.Background>
+                                                            <ImageBrush ImageSource="{Binding Converter={StaticResource EraImage}}"
+                                                                        Stretch="UniformToFill" />
+                                                        </Border.Background>
+                                                    </Border>
+                                                    <Border CornerRadius="6,6,0,0" Height="56"
+                                                            VerticalAlignment="Bottom"
+                                                            Background="{DynamicResource MediaCaptionGradientBrush}" />
+                                                    <TextBlock Text="{Binding Converter={StaticResource EraLabel}}"
+                                                               Foreground="{DynamicResource OnMediaMutedBrush}"
+                                                               FontWeight="Bold" FontSize="11"
+                                                               VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                                                               Margin="11,0,0,8"
+                                                               Visibility="{Binding DataContext.EraThemingEnabled,
+                                                                                    RelativeSource={RelativeSource AncestorType=ListBox},
+                                                                                    Converter={StaticResource BoolVisible}}" />
+                                                    <Button Content="&#xE711;" Style="{StaticResource IconButton}"
+                                                            VerticalAlignment="Top" HorizontalAlignment="Right"
+                                                            Margin="4" Foreground="{DynamicResource OnMediaMutedBrush}"
+                                                            ToolTip="Remove from recent careers"
+                                                            AutomationProperties.Name="Remove from recent careers"
+                                                            Command="{Binding DataContext.RemoveRecentCommand,
+                                                                              RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                            CommandParameter="{Binding}" />
+                                                </Grid>
+                                                <StackPanel Margin="11,8,11,10">
+                                                    <TextBlock Text="{Binding CareerName}" FontWeight="SemiBold"
+                                                               FontSize="14" Foreground="{DynamicResource OnMediaBrush}"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding LastOpenedUtc.LocalDateTime,
+                                                                              StringFormat='last opened {0:g}'}"
+                                                               FontSize="9.5" Margin="0,2,0,0"
+                                                               Foreground="{DynamicResource OnMediaMutedBrush}" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <DockPanel Grid.Row="3" Margin="0,12,0,0">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource AccentButton}"
+                                Content="CONTINUE SELECTED CAREER" MinWidth="210"
                                 Command="{Binding ContinueCommand}" />
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </ScrollViewer>
+                        <Button DockPanel.Dock="Left" Content="OPEN CAREERS FOLDER"
+                                Click="OnOpenCareersFolder"
+                                ToolTip="Open Documents\AMS2CareerCompanion\Careers" />
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </Grid>
 
-        <!-- install detection status from the shell -->
-        <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
-                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="0,1,0,0">
-            <TextBlock Margin="16,8" Style="{StaticResource Faint}" TextWrapping="Wrap"
+        <!-- Install detection remains visible without turning into a bright desktop status bar. -->
+        <Border Grid.Row="1" Background="{StaticResource MainMenuGlassStrongBrush}"
+                BorderBrush="{StaticResource MainMenuGlassEdgeBrush}" BorderThickness="0,1,0,0">
+            <TextBlock Margin="14,6" FontFamily="{StaticResource MonoFont}" FontSize="9"
+                       Foreground="{DynamicResource OnMediaMutedBrush}" TextWrapping="Wrap"
                        Text="{Binding DataContext.InstallStatus, RelativeSource={RelativeSource AncestorType=Window}}" />
         </Border>
     </Grid>

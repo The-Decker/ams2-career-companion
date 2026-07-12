@@ -22,6 +22,44 @@ public partial class StartView : UserControl
         CommandBindings.Add(new CommandBinding(OpenCareerFileCommand, (_, _) => OpenCareerFilePicker()));
     }
 
+    /// <summary>Presentation-only main-menu layer switch. The StartViewModel remains the owner of
+    /// career selection and navigation; this simply reveals the retained gallery as a garage drawer.</summary>
+    private void OnToggleCareerGarage(object sender, RoutedEventArgs e) =>
+        SetCareerGarageOpen(CareerGaragePanel.Visibility != Visibility.Visible);
+
+    private void OnCloseCareerGarage(object sender, RoutedEventArgs e) =>
+        SetCareerGarageOpen(false);
+
+    private void SetCareerGarageOpen(bool open)
+    {
+        MainMenuCommands.IsEnabled = !open;
+        CareerGarageBackdrop.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        CareerGaragePanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        CareerGarageLabel.Text = open ? "CLOSE CAREER GARAGE" : "CAREER GARAGE";
+
+        if (open)
+        {
+            if (CareerGalleryList.SelectedIndex < 0 && CareerGalleryList.Items.Count > 0)
+                CareerGalleryList.SelectedIndex = 0;
+            CareerGarageCloseButton.Focus();
+        }
+        else
+        {
+            CareerGarageButton.Focus();
+        }
+    }
+
+    private void OnGaragePreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape)
+            return;
+        SetCareerGarageOpen(false);
+        e.Handled = true;
+    }
+
+    private void OnExitApplication(object sender, RoutedEventArgs e) =>
+        Window.GetWindow(this)?.Close();
+
     /// <summary>"Open career…" button: mirror of the Ctrl+O keybind.</summary>
     private void OnOpenCareerFile(object sender, RoutedEventArgs e) => OpenCareerFilePicker();
 
