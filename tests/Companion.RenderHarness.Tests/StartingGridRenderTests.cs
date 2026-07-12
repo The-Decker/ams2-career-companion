@@ -37,10 +37,33 @@ public sealed class StartingGridRenderTests
 
     // A tiny binding-only host is enough to exercise the view's canonical mode gate without adding
     // replica state to StartingGridViewModel: HomeView.DataContext.Session.Pack.Manifest.CareerStyle.
-    private sealed class ModeHost { public ModeSession Session { get; } = new(); }
+    private sealed class ModeHost
+    {
+        public ModeSession Session { get; } = new();
+        public ModeBriefingView Briefing { get; } = new();
+    }
     private sealed class ModeSession { public ModePack Pack { get; } = new(); }
-    private sealed class ModePack { public ModeManifest Manifest { get; } = new(); }
+    private sealed class ModePack
+    {
+        public ModeManifest Manifest { get; } = new();
+        public ModeSeason Season { get; } = new();
+    }
     private sealed class ModeManifest { public string CareerStyle => SmgpRules.CareerStyle; }
+    private sealed class ModeSeason { public bool? RefuellingAllowed => false; }
+    private sealed class ModeBriefingView
+    {
+        public ModeBriefing Briefing { get; } = new();
+        public string FuelNote => "One tank covers the race; conserve fuel or shorten the distance.";
+        public string SmgpAdviceLine => "Pass at the hairpin and protect the exit.";
+    }
+    private sealed class ModeBriefing { public ModeRound Round { get; } = new(); }
+    private sealed class ModeRound
+    {
+        public int Laps => 61;
+        public ModeSetupGuide SetupGuide { get; } = new();
+    }
+    private sealed class ModeSetupGuide { public ModeRaceSession Session { get; } = new(); }
+    private sealed class ModeRaceSession { public bool MandatoryPitStop => false; }
 
     private static GridSeat SmgpSeat(
         string id, string name, string teamId, string teamName, string number, bool isPlayer = false) => new()
@@ -110,7 +133,7 @@ public sealed class StartingGridRenderTests
             const string smgpPlayerId = "driver.player-entrant";
             GridSeat[] grid = Enumerable.Range(1, 26)
                 .Select(position => SmgpSeat(
-                    position == 20 ? smgpPlayerId : $"driver.smoke_{position}",
+                    position == 20 ? smgpPlayerId : position == 1 ? "driver.ayrton_senna" : $"driver.smoke_{position}",
                     position == 20 ? "You" : $"Arcade Driver {position}",
                     $"team.smoke_{(position + 1) / 2}",
                     $"Arcade Team {(position + 1) / 2}",
@@ -138,6 +161,12 @@ public sealed class StartingGridRenderTests
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpPixelTrack")).Visibility);
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("DesktopConditionsPanel")).Visibility);
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("DnqStrip")).Visibility);
+            Assert.Equal("61", ((TextBlock)view.FindName("SmgpLapCount")).Text);
+            Assert.Contains("One tank", ((TextBlock)view.FindName("SmgpStrategyText")).Text);
+            Assert.Contains("hairpin", ((TextBlock)view.FindName("SmgpTacticalAdvice")).Text);
+            Assert.Equal("PIT STOP  ·  OPTIONAL", ((TextBlock)view.FindName("SmgpPitRule")).Text);
+            Assert.Equal("REFUELLING  ·  NOT ALLOWED", ((TextBlock)view.FindName("SmgpRefuelRule")).Text);
+            Assert.True(((FrameworkElement)view.FindName("SmgpRacePlanPanel")).ActualHeight > 0);
 
             var slots = (ItemsControl)view.FindName("SmgpSlotList");
             var dnqList = (ItemsControl)view.FindName("DnqList");
@@ -149,10 +178,32 @@ public sealed class StartingGridRenderTests
             Assert.True(scroll.ScrollableHeight > 0);
 
             var firstSlot = Assert.IsType<ContentPresenter>(slots.ItemContainerGenerator.ContainerFromIndex(0));
+            var card = Assert.IsAssignableFrom<FrameworkElement>(
+                firstSlot.ContentTemplate.FindName("SmgpGridSlotCard", firstSlot));
+            var visuals = Assert.IsType<Grid>(
+                firstSlot.ContentTemplate.FindName("SmgpDriverVisuals", firstSlot));
+            var portrait = Assert.IsAssignableFrom<FrameworkElement>(
+                firstSlot.ContentTemplate.FindName("SmgpPortraitFrame", firstSlot));
             var carBay = Assert.IsAssignableFrom<FrameworkElement>(
                 firstSlot.ContentTemplate.FindName("SmgpCarBay", firstSlot));
-            Assert.True(carBay.ActualWidth >= 80);
+            var flag = Assert.IsAssignableFrom<FrameworkElement>(
+                firstSlot.ContentTemplate.FindName("SmgpFlagFrame", firstSlot));
+            Assert.True(firstSlot.ActualWidth >= 175);
+            Assert.Equal(136, card.ActualHeight);
+            Assert.Equal(54, portrait.ActualWidth);
+            Assert.Equal(0, Grid.GetColumn(portrait));
+            Assert.Equal(2, Grid.GetColumn(carBay));
+            Assert.True(carBay.ActualWidth >= 100);
             Assert.True(carBay.ActualWidth <= firstSlot.ActualWidth);
+            Assert.Equal(Visibility.Visible, flag.Visibility);
+
+            var playerSlot = Assert.IsType<ContentPresenter>(slots.ItemContainerGenerator.ContainerFromIndex(19));
+            var playerFlag = Assert.IsAssignableFrom<FrameworkElement>(
+                playerSlot.ContentTemplate.FindName("SmgpFlagFrame", playerSlot));
+            var youBadge = Assert.IsAssignableFrom<FrameworkElement>(
+                playerSlot.ContentTemplate.FindName("SmgpYouBadge", playerSlot));
+            Assert.Equal(Visibility.Collapsed, playerFlag.Visibility);
+            Assert.Equal(Visibility.Visible, youBadge.Visibility);
         });
     }
 
