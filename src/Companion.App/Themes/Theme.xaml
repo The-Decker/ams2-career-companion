@@ -70,6 +70,8 @@
     <conv:SmgpPaddockRumorConverter x:Key="SmgpPaddockRumor" />
     <conv:SmgpPlayerTeamConverter x:Key="SmgpPlayerTeam" />
     <conv:CalendarTask3DetailConverter x:Key="CalendarTask3Detail" />
+    <conv:SmgpCalendarRoundArtConverter x:Key="SmgpCalendarRoundArt" />
+    <conv:CalendarDnqVisibilityConverter x:Key="CalendarDnqVisible" />
     <conv:HistoryRoundLinesConverter x:Key="HistoryRoundLines" />
     <conv:CircuitGeometryConverter x:Key="CircuitGeometry" />
     <conv:AspectRatioHeightConverter x:Key="AspectHeight" />

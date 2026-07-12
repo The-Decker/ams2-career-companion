@@ -24,6 +24,9 @@
     <!-- Original generated key art for the full-bleed Formula-style game menu. Embedded so the
          single-file build never depends on a loose image beside the executable. -->
     <Resource Include="Assets\MainMenu\grand-prix-blue-hour.png" />
+    <!-- Authored SMGP start-straight environment. Live cars, portraits and grid markings remain
+         data-bound WPF overlays; only the static grandstand/track/pit complex is raster art. -->
+    <Resource Include="Assets\StartingGrid\smgp-start-straight.png" />
     <Resource Include="Fonts\Race Sport.ttf" />
     <Resource Include="Fonts\Retro Floral.ttf" />
     <Resource Include="Fonts\Microsport Bold.ttf" />
@@ -70,6 +73,13 @@
     <!-- Drop-in story art for the History tab's "what really happened" panel (keyed by season year):
          untracked user art; the README documents the naming. Copied beside the exe. -->
     <None Include="..\..\data\ams2\history-art\**\*.*" Link="data\ams2\history-art\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Tracked SMGP presentation art. These were previously available only in an already-populated
+         dist folder, so clean builds silently lost portraits, side-view previews, team/sponsor art,
+         round heroes and the dedicated overhead grid cars. Keep the source folders distinct and
+         copy them recursively beside the executable for the shared keyed-asset resolver. -->
+    <None Include="..\..\data\ams2\cars\**\*.*" Link="data\ams2\cars\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\data\ams2\portraits\**\*.*" Link="data\ams2\portraits\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\data\ams2\smgp\**\*.*" Link="data\ams2\smgp\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\data\rules\*.json" Link="data\rules\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- Real historical results (f1db-derived, CC BY 4.0) the History tab shows as reference — shipped
          beside the exe, read-only (the sim never scores them). Regenerate with tools/derive_history.cs

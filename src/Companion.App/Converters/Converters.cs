@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -598,6 +599,116 @@ public sealed class CalendarTask3DetailConverter : IMultiValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>Resolves the selected SMGP calendar venue to its shipped round illustration. Round art is
+/// keyed to the original sixteen-venue campaign, while later SMGP seasons may shuffle those venues,
+/// so the presentation bridge maps the venue identity instead of the selected season's round number.
+/// Historical careers deliberately return null and retain the circuit-map hero.</summary>
+public sealed class SmgpCalendarRoundArtConverter : IMultiValueConverter
+{
+    private static readonly KeyedAssetImageConverter Inner = new();
+
+    private static readonly IReadOnlyDictionary<string, int> ArtByVenue =
+        new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["San Marino"] = 1,
+            ["Autodromo Internazionale Enzo e Dino Ferrari"] = 1,
+            ["Brazil"] = 2,
+            ["Autodromo Internacional do Rio de Janeiro (Jacarepagua)"] = 2,
+            ["France"] = 3,
+            ["Circuit Paul Ricard"] = 3,
+            ["Hungary"] = 4,
+            ["Hungaroring"] = 4,
+            ["West Germany"] = 5,
+            ["Hockenheimring"] = 5,
+            ["U.S.A."] = 6,
+            ["USA"] = 6,
+            ["Phoenix Street Circuit"] = 6,
+            ["Canada"] = 7,
+            ["Circuit Gilles Villeneuve"] = 7,
+            ["Great Britain"] = 8,
+            ["Silverstone Circuit"] = 8,
+            ["Italy"] = 9,
+            ["Autodromo Nazionale Monza"] = 9,
+            ["Portugal"] = 10,
+            ["Autodromo do Estoril"] = 10,
+            ["Spain"] = 11,
+            ["Circuito de Jerez"] = 11,
+            ["Mexico"] = 12,
+            ["Autodromo Hermanos Rodriguez"] = 12,
+            ["Japan"] = 13,
+            ["Suzuka Circuit"] = 13,
+            ["Belgium"] = 14,
+            ["Circuit de Spa-Francorchamps"] = 14,
+            ["Australia"] = 15,
+            ["Adelaide Street Circuit"] = 15,
+            ["Monaco"] = 16,
+            ["Circuit de Monaco"] = 16,
+        };
+
+    public object? Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.Length == 0 || values[0] is not Companion.ViewModels.Hub.CalendarRoundViewModel round)
+            return null;
+
+        var session = values.OfType<Companion.ViewModels.Services.ICareerSession>().FirstOrDefault();
+        if (session is null || !string.Equals(
+                session.Pack.Manifest.CareerStyle,
+                Companion.Core.Smgp.SmgpRules.CareerStyle,
+                StringComparison.Ordinal))
+            return null;
+
+        if (!TryArtKey(round.Name, out int key) && !TryArtKey(round.RealVenue, out key))
+            return null;
+
+        return Inner.Convert(key, targetType, "smgp/rounds", culture);
+    }
+
+    private static bool TryArtKey(string value, out int key) =>
+        ArtByVenue.TryGetValue(RemoveDiacritics(value), out key);
+
+    private static string RemoveDiacritics(string value)
+    {
+        string normalized = value.Normalize(NormalizationForm.FormD);
+        var builder = new System.Text.StringBuilder(normalized.Length);
+        foreach (char c in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                builder.Append(c);
+        }
+        return builder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Controls the Calendar's spoiler-safe DNQ reveal. The pack knows every DNQ up front, but
+/// the names appear only for the upcoming race while the player is on its Starting Grid. Past rounds
+/// belong in History and later rounds stay sealed. The optional <c>sealed</c> parameter returns the
+/// inverse state for the qualifying-envelope callout without leaking any driver identity.</summary>
+public sealed class CalendarDnqVisibilityConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (values.Length == 0 || values[0] is not Companion.ViewModels.Services.SeasonScheduleEntry entry ||
+            entry.Dnq.Count == 0)
+            return Visibility.Collapsed;
+
+        bool revealed = entry.Status == Companion.ViewModels.Services.SeasonRoundStatus.Next &&
+            (IsTrue(values, 1) || IsTrue(values, 2));
+        bool sealedState = string.Equals(parameter as string, "sealed", StringComparison.OrdinalIgnoreCase);
+        bool visible = sealedState
+            ? entry.Status != Companion.ViewModels.Services.SeasonRoundStatus.Done && !revealed
+            : revealed;
+        return visible ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private static bool IsTrue(object[] values, int index) => index < values.Length && values[index] is true;
+
+    public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Projects Task 3's per-round player almanac for a History season card. The shared card
 /// ViewModel intentionally remains unchanged; this App-layer join reads the public timeline by year.
 /// The full timeline is cached once per session/token, avoiding one career replay per season card.</summary>
@@ -845,6 +956,31 @@ public sealed class WidthToColumnsConverter : IValueConverter
         return value is double width && width > 0 && !double.IsInfinity(width)
             ? Math.Clamp((int)(width / cardWidth), 2, 6)
             : 4;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Starting-grid viewport width to the authored venue crop or its matching three-band
+/// layout. Wide screens retain the grandstand/track/pit composition; at the narrow shell viewport
+/// the image crops farther into the straight and the live two-file grid receives enough asphalt to
+/// keep both cars and portraits legible. The crop and column ratios deliberately change together so
+/// dynamic overlays never drift onto scenery.</summary>
+public sealed class StartingGridViewportConverter : IValueConverter
+{
+    private const double CompactBreakpoint = 640;
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        bool compact = value is double width && width > 0 && width < CompactBreakpoint;
+        return (parameter as string) switch
+        {
+            "plate" => compact ? new Rect(0.25, 0, 0.50, 1) : new Rect(0.12, 0, 0.76, 1),
+            "left" or "right" => new GridLength(compact ? 10 : 24, GridUnitType.Star),
+            "center" => new GridLength(compact ? 80 : 52, GridUnitType.Star),
+            _ => DependencyProperty.UnsetValue,
+        };
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
