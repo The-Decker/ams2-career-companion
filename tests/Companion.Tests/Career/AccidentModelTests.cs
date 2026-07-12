@@ -97,4 +97,59 @@ public sealed class AccidentModelTests
         Assert.Equal(500, doomed.EffectiveRoll);
         Assert.Equal(AccidentOutcomeKind.Death, doomed.Kind);
     }
+
+    // ---------- distribution-level "the spread feels right" guard (open decision B) ----------
+
+    /// <summary>Realistic safety archetypes at their true perks.json magnitudes (durabilityDelta / baseAdd),
+    /// paired with a plausible base durability.</summary>
+    private static readonly (string Name, double Durability, PlayerPerkModifiers Mods)[] Archetypes =
+    [
+        ("ironman",      0.60, new PlayerPerkModifiers { InjuryDurabilityDelta = 0.25 }),
+        ("iron_const",   0.55, new PlayerPerkModifiers { InjuryDurabilityDelta = 0.20 }),
+        ("average",      0.50, PlayerPerkModifiers.Identity),
+        ("hot_head",     0.50, new PlayerPerkModifiers { InjuryBaseAdd = 0.05 }),
+        ("glass_cannon", 0.40, new PlayerPerkModifiers { InjuryDurabilityDelta = -0.20 }),
+        ("injury_prone", 0.40, new PlayerPerkModifiers { InjuryDurabilityDelta = -0.30 }),
+    ];
+
+    private static int OutcomeCount(
+        AccidentSeverity severity, double durability, PlayerPerkModifiers mods, AccidentOutcomeKind kind)
+    {
+        int n = 0;
+        for (int roll = 1; roll <= 500; roll++)
+            if (AccidentModel.Resolve(severity, roll, durability, mods, Rules).Kind == kind)
+                n++;
+        return n;
+    }
+
+    [Fact]
+    public void TheSpread_IsOrderedAcrossSafetyProfiles_DeathsRare_HeavyDeadlierThanLight()
+    {
+        // The §3.4 promise at the DISTRIBUTION level (sweeping all 500 rolls): a fragile build dies from a
+        // heavy shunt meaningfully more than an average driver, who dies more than an ironman (death-proof
+        // from a heavy shunt); deaths stay RARE even for an average heavy shunt; and a heavy shunt is never
+        // safer than a light one. Encodes the design INVARIANTS (not exact odds), so a sane retune of the
+        // tunable perks.json bands passes but an inversion of the intended ordering fails.
+        int Death(string name)
+        {
+            var a = Archetypes.First(x => x.Name == name);
+            return OutcomeCount(AccidentSeverity.Heavy, a.Durability, a.Mods, AccidentOutcomeKind.Death);
+        }
+
+        int ironman = Death("ironman"), average = Death("average"),
+            glass = Death("glass_cannon"), prone = Death("injury_prone");
+
+        Assert.True(ironman <= average, "an ironman heavy shunt must be no deadlier than an average driver's");
+        Assert.Equal(0, ironman);                                    // in fact death-proof from a heavy shunt
+        Assert.InRange(average, 1, 24);                              // deaths are RARE even here (< ~5%)
+        Assert.True(glass > average, "a glass_cannon heavy shunt must be deadlier than an average driver's");
+        Assert.True(prone >= glass, "injury_prone must be the most fragile of all");
+
+        // A heavier shunt is never safer than a lighter one, for every profile.
+        foreach (var a in Archetypes)
+            Assert.True(
+                OutcomeCount(AccidentSeverity.Heavy, a.Durability, a.Mods, AccidentOutcomeKind.Death)
+                    >= OutcomeCount(AccidentSeverity.Light, a.Durability, a.Mods, AccidentOutcomeKind.Death),
+                $"a heavy shunt must be at least as deadly as a light one for {a.Name}");
+    }
 }
