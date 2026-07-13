@@ -97,6 +97,20 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public long Xp { get; init; }
 
+    /// <summary>The explicit Alpha experience discriminator for v2. Null keeps the exact legacy
+    /// single-career path even if newer fields exist in the application.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? ExperienceMode { get; init; }
+
+    /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Passport uses its
+    /// own portfolio state instead, so this is null there and on every legacy save.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public CampaignProgressionPlan? CampaignProgressionPlan { get; init; }
+
+    /// <summary>Numerator-unit remainder for v2's exact rational XP carry.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public long XpScaleRemainder { get; init; }
+
     /// <summary>Within-season injury load banked from the driver-error-DNF injury perks (glass_cannon /
     /// hot_head <c>perErrorAdd</c>): each driver-error DNF adds its perk's per-error contribution, and
     /// the season-end injury roll reads the total ON TOP of the base hazard, then resets it to 0 so it
