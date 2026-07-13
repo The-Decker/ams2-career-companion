@@ -243,6 +243,19 @@ The spend UI lives in **`SeasonReviewViewModel`** (`RaiseStat`/`BuyPerk` command
 
 The rework must preserve the exact determinism contract: unlocks ride the existing `player.statSpend` (or a new provenance‑excluded `player.respec`) input, cost re‑derived server‑side.
 
+### 7.8 PLANNED: character creation and progression v2 — level 500
+
+`docs/dev/character-progression-v2.md` (2026‑07‑12) is the first-wave contract for new progression-version-2 careers. It preserves v0/v1 behavior and defines:
+- a deterministic integer level curve through **L500**, plus campaign-pinned XP normalization and a 499-SP lifetime pool paced to the career horizon;
+- SMGP mastery by the season-16 review so season 17 can be driven with a complete build, and proportional pacing across historical starts through 2020;
+- **30 immutable Racing DNA identities** (`character-progression-v2-dna-catalog.md`);
+- **90 mastery skills**, exactly 10 in each of Pace, Racecraft, Physical, Mental, Business, Weather, Team, Media, and Era Flavor (`character-progression-v2-skill-catalog.md`);
+- a real wiring-diagram tree with prerequisite connectors, node details, a pending purchase plan, and atomic Confirm;
+- XP-funded full-tree resets without deleveling or changing DNA;
+- the verified AMS2 boundary: only `weight_scalar`, `power_scalar`, and `drag_scalar` affect the human-driven livery; all final CAR compositions clamp to 0.900–1.100.
+
+The v2 work is explicitly multi-wave. The master document records the implementation order, balance budgets, compatibility rules, AMS2 research, transaction/replay invariants, and the SMGP continuation prerequisite.
+
 ---
 
 ## 8. SMGP replica mode (in full)
@@ -405,14 +418,14 @@ All VMs are CommunityToolkit.Mvvm partial `ObservableObject` with `[ObservablePr
 
 ### In flight
 - **P0 alpha blocker:** the character death/injury SCREENS (GUI round 5, `codex/gui-round5` worktree) — then RC rebuild+deploy+push (deliberately un‑rebuilt today, no GUI consumer yet).
-- **Immediate priority:** the character/RPG skill‑tree rework (`docs/dev/character-rpg-rework.md`) — design only, zero code; two‑Codex lane split ready.
+- **Immediate priority:** character creation/progression v2 (`docs/dev/character-progression-v2.md`) — level 500, 30 Racing DNA identities, 90 mastery skills, and the graphical/transactional skill tree, delivered in versioned waves without changing v0/v1 replay.
 - **Roadmap tail (P1, not blockers, clean fallbacks):** living‑flavour data corpora, CampaignFlawless celebration hook, skin‑install ownership vs RCM.
 
 ### Doc map — where each design doc lives
 
 **Standing / evergreen:** `CLAUDE.md` (standing instructions + locked decisions + the dual‑role handoff), `AGENTS.md` (Codex guide — points to the two role charters), `PLAN.md` (founding vision). The two Codex charters live at `docs/dev/codex-head-of-coding.md` and `docs/dev/codex-head-of-gui.md`.
 
-**Live design (`docs/dev/`):** `character-rpg-rework.md` (active priority), `smgp-finish-roadmap.md` (live roadmap), `character-death-injury.md`, `character-system.md`, `career-hub-design.md` (LOCKED) + `career-hub-build.md`, `smgp-design.md`, `smgp-17-seasons.md`, `upcoming-race-loop.md`, `ux-round.md`, `season-pack-format.md`, `career-sim.md`, `m5-fix-integration.md`, `app-shell.md`, `auto-capture.md`, `codex-gui-round5-brief.md` (the ONE live GUI brief — screens pending).
+**Live design (`docs/dev/`):** `character-progression-v2.md` (active level-500 contract) + `character-progression-v2-dna-catalog.md` + `character-progression-v2-skill-catalog.md`, `character-rpg-rework.md` (shipped-v1 history and bind contract), `smgp-finish-roadmap.md` (live roadmap), `character-death-injury.md`, `character-system.md`, `career-hub-design.md` (LOCKED) + `career-hub-build.md`, `smgp-design.md`, `smgp-17-seasons.md`, `upcoming-race-loop.md`, `ux-round.md`, `season-pack-format.md`, `career-sim.md`, `m5-fix-integration.md`, `app-shell.md`, `auto-capture.md`, `codex-gui-round5-brief.md`.
 
 **Reference / research:** `docs/dev/oracle-fixtures.md`, `docs/dev/season-coverage.md`, `docs/dev/ams2-season-coverage.md`, `docs/dev/ams2-custom-race-reference.md`, `docs/dev/wet-weather-research.md`, `docs/dev/asset-inventory.md`; `docs/dev/audits/*` (per‑season/roster/news/funfacts/skins/responsive); `docs/research/*` (RESEARCH.md, extraction‑verification, local‑install‑inventory, 1967/1969/1983/2010 source‑parity).
 
