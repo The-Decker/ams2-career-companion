@@ -759,8 +759,31 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var rules = _environment.Rules.Character;
         var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
         projected = CharacterProgress.ApplyAll(projected, PendingSpends(), rules);
-        return Companion.Core.Character.SkillTree.Build(
+        var snapshot = Companion.Core.Character.SkillTree.Build(
             projected, player.Level, AvailableCharacterCp(), rules);
+        if (character.ProgressionVersion != CharacterLevelProgression.Level300Version)
+            return snapshot;
+
+        return snapshot with
+        {
+            Branches = snapshot.Branches.Select(branch => branch with
+            {
+                Nodes = branch.Nodes.Select(node =>
+                {
+                    if (node.Kind != "perk" || node.State != SkillNodeState.Unlockable ||
+                        !rules.TryGetPerk(node.Id, out var perk) ||
+                        !PlayerCarScalarPolicy.HasConditionalCarScalar(perk))
+                    {
+                        return node;
+                    }
+                    return node with
+                    {
+                        State = SkillNodeState.Locked,
+                        LockReason = "Conditional CAR physics needs a persisted pre-race condition",
+                    };
+                }).ToArray(),
+            }).ToArray(),
+        };
     }
 
     /// <summary>Character points available to spend right now: the folded pool minus this season's
@@ -856,6 +879,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         {
             if (!rules.TryGetPerk(spend.Target, out var perk))
                 throw new InvalidOperationException($"Unknown perk '{spend.Target}'.");
+            if (projectedCharacter.ProgressionVersion == CharacterLevelProgression.Level300Version &&
+                PlayerCarScalarPolicy.HasConditionalCarScalar(perk))
+            {
+                throw new InvalidOperationException(
+                    "That skill has conditional player-car physics and is unavailable until its " +
+                    "pre-race condition is persisted for both AMS2 staging and replay.");
+            }
             // Between-season development is spend-only: a drawback (<=0-cost) perk is a creation-time
             // identity choice, not something you buy mid-career (and letting one refund CP would break
             // the earned-points model).
@@ -918,6 +948,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         return rules.Perks
             .Where(p => unlockable.Contains(p.Id))
+            .Where(p => character.ProgressionVersion != CharacterLevelProgression.Level300Version ||
+                        !PlayerCarScalarPolicy.HasConditionalCarScalar(p))
             .OrderBy(p => p.Cost)
             .ThenBy(p => p.Name, StringComparer.Ordinal)
             .Select(p => new PurchasablePerk

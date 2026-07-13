@@ -33,6 +33,9 @@ public class GridStagerNamesPrimaryTests
                 <qualifying_skill>0.70</qualifying_skill>
                 <aggression>0.55</aggression>
                 <vehicle_reliability>0.90</vehicle_reliability>
+                <weight_scalar>0.94</weight_scalar>
+                <power_scalar>1.06</power_scalar>
+                <drag_scalar>0.97</drag_scalar>
         	</driver>
         </custom_ai_drivers>
         """;
@@ -90,6 +93,38 @@ public class GridStagerNamesPrimaryTests
         // Fields with no career delta keep the installed value verbatim.
         Assert.Equal(0.70, Stat(written, "qualifying_skill"), 3);
         Assert.Equal("Gianni Morbidelli", written.Element("name")!.Value);
+    }
+
+    [Fact]
+    public void Stage_AuthoritativeNeutralPlayerScalars_ReplaceInstalledTuning_AndKeepCuratedDriver()
+    {
+        using var dir = new TempInstall(InstalledXml);
+
+        var packBaseline = BaselineDriver(
+            name: "G. Morbidelli", raceSkill: 0.50, qualifying: 0.50, aggression: 0.50);
+        var generated = Build(Seat(
+            name: "G. Morbidelli", raceSkill: 0.50, qualifying: 0.50, aggression: 0.50) with
+        {
+            IsPlayer = true,
+            PlayerCarScalarsAuthoritative = true,
+            WeightScalar = 1.0,
+            PowerScalar = 1.0,
+            DragScalar = 1.0,
+        });
+
+        var result = GridStager.Stage(
+            generated, dir.Path, Timestamp(0), force: true,
+            packBaselineByLivery: SingleBaseline(packBaseline));
+
+        Assert.False(result.NoOpAlreadyMatches);
+        Assert.NotNull(result.BackupPath);
+        var written = XDocument.Load(result.WrittenPath).Root!.Elements("driver").Single();
+        Assert.Equal("Gianni Morbidelli", written.Element("name")!.Value);
+        Assert.Equal(0.72, Stat(written, "race_skill"), 3);
+        Assert.Equal(0.70, Stat(written, "qualifying_skill"), 3);
+        Assert.Equal(1.0, Stat(written, "weight_scalar"));
+        Assert.Equal(1.0, Stat(written, "power_scalar"));
+        Assert.Equal(1.0, Stat(written, "drag_scalar"));
     }
 
     [Fact]

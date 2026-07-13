@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Companion.Core.Career;
 using Companion.Core.Character;
+using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.Core.Smgp;
 using Companion.Data;
@@ -124,6 +125,7 @@ internal static class CampaignCreationPlanner
             CampaignProgressionPlan = plan,
         };
         input.ValidateForNewCareer();
+        PlayerCarScalarPolicy.EnsureStagingCompatible(character, environment.Rules.Character);
 
         return new CampaignCreationPreparation
         {

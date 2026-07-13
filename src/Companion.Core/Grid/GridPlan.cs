@@ -115,6 +115,11 @@ public sealed record GridSeat
     /// reads it (sim-inert; the team fields above keep feeding the sim exactly as before).</summary>
     public PackDriverCar? CarTuning { get; init; }
 
+    /// <summary>True only for a progression-v2 player seat whose final physics scalars are the
+    /// authoritative career values. Staging then writes even neutral 1.000 values so an installed
+    /// NAMeS row cannot resurrect foreign weight/power/drag settings.</summary>
+    public bool PlayerCarScalarsAuthoritative { get; init; }
+
     /// <summary>True when the player drives this livery. The seat is still written to the
     /// generated file — the team scalars must apply to the player's car — and the AI skill
     /// fields stay: they are inert while the player is in the car.</summary>

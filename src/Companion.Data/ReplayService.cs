@@ -944,6 +944,12 @@ public static class ReplayService
         if (liveryName is null)
             return null;
 
+        // Do this outside the absent-seat compatibility catch below. A v2 character carrying
+        // conditional CAR physics is an unsupported input contract, not a missing seat; swallowing
+        // it would commit a standings-only fold and hide the real staging/replay mismatch.
+        if (character?.Profile.ProgressionVersion == CharacterLevelProgression.Level300Version)
+            PlayerCarScalarPolicy.EnsureStagingCompatible(character.Profile, character.Rules);
+
         // The player takes a REAL seat even when the driver they replace did not start this round
         // historically (a per-round grid excludes non-starters). Resolve directly with the player
         // seat — the resolver adds the player's covering entry back to the grid — and treat an

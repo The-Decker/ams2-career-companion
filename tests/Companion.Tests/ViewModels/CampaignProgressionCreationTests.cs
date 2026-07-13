@@ -258,6 +258,67 @@ public sealed class CampaignProgressionCreationTests : IDisposable
     }
 
     [Fact]
+    public void ConditionalPlayerCarPhysicsPerk_IsRejectedBeforeCareerFileExists()
+    {
+        WritePack(1967);
+        string careerPath = CareerPath("conditional-car-scalar.invalid");
+        var original = VersionTwoCharacter();
+        var character = original with
+        {
+            PerkIds = ["rain_man"],
+            CreationPerkIds = ["rain_man"],
+            CreationBaseline = original.CreationBaseline! with { TraitIds = ["rain_man"] },
+        };
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            CareerSessionService.CreateCareer(
+                Request(careerPath, character, CareerExperienceModes.GrandPrixDynasty),
+                Environment()));
+
+        Assert.Contains("conditional player-car physics", exception.Message, StringComparison.Ordinal);
+        Assert.False(File.Exists(careerPath));
+    }
+
+    [Fact]
+    public void ConditionalPlayerCarPhysicsPerk_IsHiddenAndRejectedByLegacySpendSeamForV2()
+    {
+        WritePack(1967);
+        string careerPath = CareerPath("conditional-car-spend");
+        using (CareerSessionService.CreateCareer(
+                   Request(
+                       careerPath,
+                       VersionTwoCharacter(),
+                       CareerExperienceModes.GrandPrixDynasty),
+                   Environment()))
+        {
+        }
+
+        // Simulate an earned bank on the temporary legacy spend seam. V2's real 499-SP economy
+        // lands later; this regression only proves a conditional CAR perk cannot enter through it.
+        using (var db = CareerDatabase.Open(careerPath))
+        {
+            long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+            var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+            StateStore.UpsertPlayerState(
+                db,
+                seasonId,
+                StateStore.StageStart,
+                start with { Character = start.Character! with { CpUnspent = 5 } });
+        }
+
+        using var session = CareerSessionService.OpenCareer(careerPath, Environment());
+        var rainNode = session.SkillTree()!.Branches
+            .SelectMany(branch => branch.Nodes)
+            .Single(node => node.Id == "rain_man");
+        Assert.Equal(SkillNodeState.Locked, rainNode.State);
+        Assert.Contains("persisted pre-race condition", rainNode.LockReason, StringComparison.Ordinal);
+        Assert.DoesNotContain(session.PurchasablePerks(), perk => perk.Id == "rain_man");
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            session.SpendCharacterPoint(CharacterSpend.Perk("rain_man", 1)));
+        Assert.Contains("conditional player-car physics", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void DynastyRejectsAStartOutsideThe1960To2020HorizonBeforeCreatingAFile()
     {
         WritePack(1959);
@@ -404,9 +465,8 @@ public sealed class CampaignProgressionCreationTests : IDisposable
             Name = "Campaign Driver",
             Age = 22,
             Stats = all,
-            PerkIds = ["rain_man"],
-            CreationPerkIds = ["rain_man"],
-            ChosenFlavor = "wetSkill",
+            PerkIds = ["engineers_favorite"],
+            CreationPerkIds = ["engineers_favorite"],
             ProgressionVersion = CharacterLevelProgression.Level300Version,
             RacingDnaId = "dna_circuit_specialist",
             RacingDnaVersion = 1,
@@ -415,8 +475,7 @@ public sealed class CampaignProgressionCreationTests : IDisposable
             {
                 Stats = talent,
                 Meta = meta,
-                TraitIds = ["rain_man"],
-                ChosenFlavor = "wetSkill",
+                TraitIds = ["engineers_favorite"],
             },
         };
     }

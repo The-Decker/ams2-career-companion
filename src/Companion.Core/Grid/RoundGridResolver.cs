@@ -548,6 +548,41 @@ public static class RoundGridResolver
             return seat;
 
         var mods = character.Modifiers;
+        if (character.Profile.ProgressionVersion == CharacterLevelProgression.Level300Version)
+        {
+            PlayerCarScalarPolicy.EnsureStagingCompatible(character.Profile, character.Rules);
+            // V2 has one physical truth: per-driver tuning wins per axis, otherwise the team axis;
+            // add the character delta once, clamp the aggregate, then feed those exact values to
+            // both the expectation model (seat fields) and AMS2 staging (CarTuning when present).
+            var authoredTuning = seat.CarTuning;
+            double weight = PlayerCarScalarPolicy.Compose(
+                authoredTuning?.WeightScalar ?? seat.WeightScalar,
+                mods.WeightScalarDelta);
+            double power = PlayerCarScalarPolicy.Compose(
+                authoredTuning?.PowerScalar ?? seat.PowerScalar,
+                mods.PowerScalarDelta);
+            double drag = PlayerCarScalarPolicy.Compose(
+                authoredTuning?.DragScalar ?? seat.DragScalar,
+                mods.DragScalarDelta);
+            return seat with
+            {
+                Ratings = CharacterRatingWriter.Apply(
+                    seat.Ratings, character.Profile, character.Rules, mods),
+                WeightScalar = weight,
+                PowerScalar = power,
+                DragScalar = drag,
+                CarTuning = authoredTuning is null
+                    ? null
+                    : authoredTuning with
+                    {
+                        WeightScalar = weight,
+                        PowerScalar = power,
+                        DragScalar = drag,
+                    },
+                PlayerCarScalarsAuthoritative = true,
+            };
+        }
+
         // Per-driver car tuning (staged-file-only) gets the same perk deltas, so a character's
         // car tweaks survive on a pack that authors juppo-style tuning for the player's seat.
         var tuning = seat.CarTuning;
