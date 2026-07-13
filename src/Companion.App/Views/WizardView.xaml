@@ -66,7 +66,7 @@
         <StackPanel DockPanel.Dock="Top">
             <TextBlock Text="New career" Style="{StaticResource H1}" />
             <WrapPanel Margin="0,10,0,12">
-                <TextBlock Text="1 · Season">
+                <TextBlock Text="1 &#x00B7; Season">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
@@ -78,7 +78,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="2 · Verify content">
+                <TextBlock Text="2 &#x00B7; Verify content">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
@@ -90,19 +90,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="3 · Team &amp; Car">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.SeatPick}">
-                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
-                                    <Setter Property="FontWeight" Value="SemiBold" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-                <TextBlock Text="4 · Driver"
+                <TextBlock Text="3 &#x00B7; Driver"
                            Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
@@ -118,10 +106,26 @@
                 <TextBlock>
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
-                            <Setter Property="Text" Value="5 · Season Grid" />
+                            <Setter Property="Text" Value="4 &#x00B7; Team &amp; Car" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding HasCharacterStep}" Value="False">
-                                    <Setter Property="Text" Value="4 · Season Grid" />
+                                    <Setter Property="Text" Value="3 &#x00B7; Team &amp; Car" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.SeatPick}">
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock>
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Setter Property="Text" Value="5 &#x00B7; Season Grid" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasCharacterStep}" Value="False">
+                                    <Setter Property="Text" Value="4 &#x00B7; Season Grid" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
@@ -134,10 +138,10 @@
                 <TextBlock>
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
-                            <Setter Property="Text" Value="6 · Confirm" />
+                            <Setter Property="Text" Value="6 &#x00B7; Confirm" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding HasCharacterStep}" Value="False">
-                                    <Setter Property="Text" Value="5 · Confirm" />
+                                    <Setter Property="Text" Value="5 &#x00B7; Confirm" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Confirm}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
@@ -535,119 +539,255 @@
                                    Visibility="{Binding CustomLiveryName, Converter={StaticResource StringVisible}}" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource Panel}" Padding="6">
-                    <ListBox ItemsSource="{Binding Seats}" SelectedItem="{Binding SelectedSeat}"
-                             Background="Transparent" BorderThickness="0" Padding="0"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                             ScrollViewer.CanContentScroll="False"
-                             AutomationProperties.Name="Available team and car contracts">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel IsItemsHost="True" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-                                <!-- mouse parity: double-click a seat = select it AND advance -->
-                                <EventSetter Event="MouseDoubleClick" Handler="OnSeatDoubleClick" />
-                                <Setter Property="Width" Value="328" />
-                                <Setter Property="Height" Value="150" />
-                                <Setter Property="Margin" Value="4" />
-                                <Setter Property="Padding" Value="0" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                <Setter Property="ToolTip" Value="Double-click to choose this team and car" />
-                                <Setter Property="AutomationProperties.Name" Value="{Binding DriverName}" />
-                                <Setter Property="AutomationProperties.HelpText"
-                                        Value="{Binding TeamName, StringFormat='Team {0}. Double-click to continue.'}" />
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Style="{StaticResource SeatCardFrame}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="96" />
-                                            <ColumnDefinition Width="10" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="8" />
-                                            <ColumnDefinition Width="50" />
-                                        </Grid.ColumnDefinitions>
+                <!-- One contract per viewport. The side arrows page the external ScrollViewer by one
+                     full card without selecting it; clicking the large card is the explicit choice. -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="72" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="72" />
+                    </Grid.ColumnDefinitions>
 
-                                        <!-- Current driver: identity only. Performance remains deliberately hidden. -->
-                                        <Grid Width="96" Height="122" VerticalAlignment="Center">
-                                            <Border Style="{StaticResource AssetPlaceholderFrame}">
-                                                <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                           FontSize="38" />
-                                            </Border>
-                                            <Border CornerRadius="8" ClipToBounds="True">
-                                                <Image Stretch="UniformToFill" IsHitTestVisible="False"
-                                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                            </Border>
-                                        </Grid>
+                    <Button x:Name="SeatCarouselPrevious" Grid.Column="0"
+                            Width="58" Height="118" HorizontalAlignment="Left" VerticalAlignment="Center"
+                            Style="{StaticResource SubtleButton}"
+                            Click="OnPreviousSeatCard"
+                            ToolTip="Previous car" AutomationProperties.Name="Previous car">
+                        <TextBlock Text="&#xE76B;" FontFamily="{StaticResource IconFont}" FontSize="32" />
+                    </Button>
 
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                            <DockPanel Margin="0,0,0,3">
-                                                <Border DockPanel.Dock="Left" Style="{StaticResource CompactChip}"
-                                                        Padding="5,2" Margin="0,0,6,0">
-                                                    <TextBlock Text="{Binding Number, StringFormat='#{0}'}"
-                                                               Style="{StaticResource PixelBadge}"
-                                                               Foreground="{DynamicResource AccentTextBrush}" />
-                                                </Border>
-                                                <TextBlock Text="CURRENT DRIVER" Style="{StaticResource Eyebrow}"
-                                                           VerticalAlignment="Center" />
-                                            </DockPanel>
-                                            <TextBlock Text="{Binding DriverName}" FontFamily="{StaticResource DisplayFont}"
-                                                       FontWeight="Bold" FontSize="13" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding TeamName}" Style="{StaticResource SelectedListMuted}"
-                                                       FontSize="10.5" Margin="0,1,0,0" TextTrimming="CharacterEllipsis" />
+                    <ScrollViewer x:Name="SeatCarouselScroller" Grid.Column="1"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  CanContentScroll="False" PanningMode="None"
+                                  Loaded="OnSeatCarouselLoaded"
+                                  SizeChanged="OnSeatCarouselSizeChanged"
+                                  Focusable="False">
+                        <ListBox x:Name="SeatCarousel"
+                                 ItemsSource="{Binding Seats}"
+                                 SelectedItem="{Binding SelectedSeat, Mode=TwoWay}"
+                                 SelectionChanged="OnSeatCarouselSelectionChanged"
+                                 SelectionMode="Single" Background="Transparent"
+                                 BorderThickness="0" Padding="0"
+                                 AutomationProperties.Name="Available team and car contracts">
+                            <!-- The outer named ScrollViewer owns paging; remove the ListBox's own
+                                 scroller so each item can bind to the real viewport width. -->
+                            <ListBox.Template>
+                                <ControlTemplate TargetType="ListBox">
+                                    <ItemsPresenter />
+                                </ControlTemplate>
+                            </ListBox.Template>
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" IsItemsHost="True" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                    <Setter Property="Width"
+                                            Value="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" />
+                                    <Setter Property="MinHeight" Value="470" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                    <Setter Property="ToolTip" Value="Click to drive this car" />
+                                    <Setter Property="AutomationProperties.Name" Value="{Binding DriverName}" />
+                                    <Setter Property="AutomationProperties.HelpText"
+                                            Value="{Binding TeamName, StringFormat='Team {0}. Click to choose this car.'}" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource SeatCardFrame}" Padding="24,20"
+                                            Margin="18,4" MaxWidth="1240" HorizontalAlignment="Center"
+                                            VerticalAlignment="Stretch">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="240" />
+                                                <ColumnDefinition Width="22" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="22" />
+                                                <ColumnDefinition Width="176" />
+                                            </Grid.ColumnDefinitions>
 
-                                            <!-- The car is the contract's other hero. Menu previews retain the
-                                                 shared side view; overhead sprites belong only to the live grid. -->
-                                            <Grid Height="47" Margin="0,6,0,0">
-                                                <Border Style="{StaticResource AssetPlaceholderFrame}" CornerRadius="5">
-                                                    <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                               FontSize="23" />
-                                                </Border>
-                                                <Image Stretch="Uniform" IsHitTestVisible="False"
-                                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                       Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                            </Grid>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="4">
-                                            <!-- Team crest, with an in-world generic badge when a historical pack has no art. -->
-                                            <Grid Width="50" Height="50">
-                                                <Border Style="{StaticResource AssetPlaceholderFrame}"
-                                                        BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1">
-                                                    <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                               FontSize="20" />
-                                                </Border>
-                                                <Image Stretch="Uniform" Margin="4" IsHitTestVisible="False"
-                                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                       Source="{Binding TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
-                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                            </Grid>
-                                            <Border Style="{StaticResource CompactChip}" Padding="4,3" Margin="0,35,0,0"
-                                                    HorizontalAlignment="Stretch"
-                                                    Background="{DynamicResource AccentDimBrush}"
-                                                    BorderBrush="{DynamicResource AccentBrush}"
-                                                    Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource BoolVisible}}">
-                                                <TextBlock Text="CHOSEN" Style="{StaticResource PixelBadge}"
+                                            <!-- The incumbent occupies the portrait until this card is clicked.
+                                                 Selection swaps in the created driver's team-coloured player art. -->
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock x:Name="SeatCardCurrentDriverLabel"
+                                                           Text="CURRENT DRIVER"
+                                                           HorizontalAlignment="Center" Margin="0,0,0,8">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource Eyebrow}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                             Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock x:Name="SeatCardYouLabel" Text="YOU"
+                                                           Style="{StaticResource PixelBadge}" FontSize="11"
                                                            Foreground="{DynamicResource AccentTextBrush}"
-                                                           TextAlignment="Center" />
-                                            </Border>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Border>
+                                                           HorizontalAlignment="Center" Margin="0,0,0,8"
+                                                           Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource BoolVisible}}" />
+                                                <Grid x:Name="SeatCardPortrait" Width="220" Height="220"
+                                                      HorizontalAlignment="Center">
+                                                    <Border Style="{StaticResource AssetPlaceholderFrame}">
+                                                        <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                                   FontSize="64" />
+                                                    </Border>
+                                                    <Grid>
+                                                        <Grid.Style>
+                                                            <Style TargetType="Grid">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                                 Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Grid.Style>
+                                                        <Border CornerRadius="10" ClipToBounds="True">
+                                                            <Image Stretch="UniformToFill" IsHitTestVisible="False"
+                                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                                   Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
+                                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                                        </Border>
+                                                    </Grid>
+                                                    <Grid>
+                                                        <Grid.Style>
+                                                            <Style TargetType="Grid">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                                 Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Grid.Style>
+                                                        <Border CornerRadius="10" ClipToBounds="True">
+                                                            <Image x:Name="SeatCardPlayerPortrait" Stretch="UniformToFill"
+                                                                   IsHitTestVisible="False"
+                                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                                   Source="{Binding DataContext.PlayerImageKey,
+                                                                                    RelativeSource={RelativeSource AncestorType=ListBox},
+                                                                                    Converter={StaticResource AssetImage},
+                                                                                    ConverterParameter=portraits}"
+                                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                                        </Border>
+                                                    </Grid>
+                                                </Grid>
+                                                <TextBlock x:Name="SeatCardDriverName" Text="{Binding DriverName}"
+                                                           FontFamily="{StaticResource DisplayFont}" FontSize="18"
+                                                           FontWeight="Bold" TextAlignment="Center" TextWrapping="Wrap"
+                                                           Margin="0,10,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                             Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock x:Name="SeatCardPlayerName"
+                                                           Text="{Binding DataContext.Character.Name,
+                                                                          RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                           FontFamily="{StaticResource DisplayFont}" FontSize="18"
+                                                           FontWeight="Bold" Foreground="{DynamicResource AccentTextBrush}"
+                                                           TextAlignment="Center" TextWrapping="Wrap" Margin="0,10,0,0"
+                                                           Visibility="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource BoolVisible}}" />
+                                            </StackPanel>
+
+                                            <!-- The chosen machine is the other hero, large enough to judge at a glance. -->
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                <DockPanel Margin="0,0,0,10">
+                                                    <Border DockPanel.Dock="Left" Style="{StaticResource CompactChip}"
+                                                            Padding="7,4" Margin="0,0,8,0">
+                                                        <TextBlock Text="{Binding Number, StringFormat='CAR #{0}'}"
+                                                                   Style="{StaticResource PixelBadge}"
+                                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                                    </Border>
+                                                    <TextBlock Text="THE CAR" Style="{StaticResource Eyebrow}"
+                                                               VerticalAlignment="Center" />
+                                                </DockPanel>
+                                                <Grid Height="235">
+                                                    <Border Style="{StaticResource AssetPlaceholderFrame}" CornerRadius="8">
+                                                        <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                                   FontSize="58" />
+                                                    </Border>
+                                                    <Image x:Name="SeatCardCarPreview" Stretch="Uniform"
+                                                           IsHitTestVisible="False"
+                                                           RenderOptions.BitmapScalingMode="HighQuality"
+                                                           Source="{Binding DriverId, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                                </Grid>
+                                                <TextBlock Text="{Binding LiveryName}" Style="{StaticResource Mono}"
+                                                           TextAlignment="Center" TextWrapping="Wrap" Margin="0,10,0,0" />
+                                                <Border Style="{StaticResource AccentCallout}" Padding="12,8" Margin="0,16,0,0">
+                                                    <TextBlock Foreground="{DynamicResource AccentTextBrush}"
+                                                               HorizontalAlignment="Center">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock" BasedOn="{StaticResource PixelBadge}">
+                                                                <Setter Property="Text" Value="CLICK THIS CARD TO DRIVE" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                                 Value="True">
+                                                                        <Setter Property="Text" Value="CHOSEN CAR  &#x2713;" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                                <Grid Width="112" Height="112" HorizontalAlignment="Center">
+                                                    <Border Style="{StaticResource AssetPlaceholderFrame}"
+                                                            BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1">
+                                                        <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                                   FontSize="36" />
+                                                    </Border>
+                                                    <Image Stretch="Uniform" Margin="10" IsHitTestVisible="False"
+                                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                           Source="{Binding TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
+                                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                                </Grid>
+                                                <TextBlock Text="{Binding TeamName}" FontFamily="{StaticResource DisplayFont}"
+                                                           FontSize="17" FontWeight="Bold" TextAlignment="Center"
+                                                           TextWrapping="Wrap" Margin="0,12,0,0" />
+                                                <WrapPanel HorizontalAlignment="Center" Margin="0,12,0,0">
+                                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,0,6">
+                                                        <TextBlock Text="{Binding TeamTier, StringFormat=TIER {0}}"
+                                                                   Style="{StaticResource Mono}" />
+                                                    </Border>
+                                                </WrapPanel>
+                                                <TextBlock Text="{Binding Rounds, StringFormat=Rounds {0}}"
+                                                           Style="{StaticResource Faint}" TextAlignment="Center"
+                                                           TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+
+                    <Button x:Name="SeatCarouselNext" Grid.Column="2"
+                            Width="58" Height="118" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Style="{StaticResource SubtleButton}"
+                            Click="OnNextSeatCard"
+                            ToolTip="Next car" AutomationProperties.Name="Next car">
+                        <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="32" />
+                    </Button>
+                </Grid>
             </DockPanel>
 
             <!-- c1. choose the grid (v0.6.0) -->
