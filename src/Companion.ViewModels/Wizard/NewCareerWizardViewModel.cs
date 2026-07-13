@@ -19,12 +19,14 @@ public sealed class CareerCreatedEventArgs(ICareerSession session, string career
 }
 
 /// <summary>
-/// The four-step new-career wizard (app-shell contract):
+/// The new-career wizard (app-shell contract):
 ///  a. Season pick — packs from the exe-adjacent packs\ folder + Documents\AMS2CareerCompanion\Packs.
 ///  b. Content verification — PackStructuralValidator + PackContentValidator + installed-livery
 ///     scan. ERRORS BLOCK; warnings allow an explicit proceed-anyway.
-///  c. Seat pick — the pack's entries with driver ratings and team tier/reliability.
-///  d. Confirm — career name, master seed (random default, editable), rules-summary chip;
+///  c. Create driver — establish the player's identity before choosing a car.
+///  d. Seat pick — the pack's entries with driver ratings and team tier/reliability.
+///  e. Season grid — the field carried into the career.
+///  f. Confirm — career name, master seed (random default, editable), rules-summary chip;
 ///     Create pins the pack and creates the career DB.
 /// </summary>
 public sealed partial class NewCareerWizardViewModel : ObservableObject
@@ -84,7 +86,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public bool CanGoBack => Step > WizardStep.SeasonPick;
 
     /// <summary>The character step exists only when character rules are available (the app always
-    /// ships perks.json; a rules-less environment — some tests — skips straight to confirm).</summary>
+    /// ships perks.json; a rules-less environment — some tests — skips from verification to seat pick).</summary>
     public bool HasCharacterStep => _environment.RulesDirectory is not null;
 
     [RelayCommand(CanExecute = nameof(CanGoNext))]
@@ -103,13 +105,6 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.Verification:
-                BuildSeats();
-                Step = WizardStep.SeatPick;
-                break;
-
-            case WizardStep.SeatPick:
-                // Flow (Mike): select car → create character → see the grid → confirm. Create the
-                // character first (when the mode has one), then the grid reveal is the last look.
                 if (HasCharacterStep)
                 {
                     PrepareCharacter();
@@ -117,12 +112,17 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 }
                 else
                 {
-                    BuildGridChoices();
-                    Step = WizardStep.Grid;
+                    BuildSeats();
+                    Step = WizardStep.SeatPick;
                 }
                 break;
 
             case WizardStep.Character:
+                BuildSeats();
+                Step = WizardStep.SeatPick;
+                break;
+
+            case WizardStep.SeatPick:
                 BuildGridChoices();
                 Step = WizardStep.Grid;
                 break;
@@ -143,11 +143,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (!CanGoBack)
             return;
-        // The grid step precedes confirm and follows the (possibly skipped) character step; step
-        // back over character straight to seat pick when the mode has no character.
+        // A rules-less environment skips Character on the way forward, so SeatPick must skip it on
+        // the way back as well. Every other step follows the enum's visual order.
         Step = Step switch
         {
-            WizardStep.Grid => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
+            WizardStep.SeatPick => HasCharacterStep ? WizardStep.Character : WizardStep.Verification,
             _ => Step - 1,
         };
     }
@@ -394,7 +394,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     partial void OnUseModdedFieldChanged(bool value) =>
         RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
 
-    // ---------- step c: seat pick ----------
+    // ---------- step d: seat pick ----------
 
     public ObservableCollection<SeatOption> Seats { get; } = [];
 
@@ -503,8 +503,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             });
         }
 
-        if (smgp)
-            SelectedSeat = Seats.FirstOrDefault();
+        // Seat choice is always explicit. SMGP still filters to Level-D cars, but it no longer
+        // silently chooses the first one before the player clicks a card.
     }
 
     /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
@@ -644,7 +644,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         return new GridSelection { IncludedLiveries = included };
     }
 
-    // ---------- step c2: character (Increment 4a) ----------
+    // ---------- step c: character (Increment 4a) ----------
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoNext))]
@@ -657,10 +657,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
-        // Pre-fill the driver name with the seat's historical driver as a starting point; an own
-        // entrant has no seat driver, so they name themselves (empty seed).
-        Character = new CharacterViewModel(
-            _environment.Rules.Character, IsOwnEntrant ? null : SelectedSeat?.DriverName);
+        // Driver creation now precedes seat selection, so its identity cannot depend on a seat that
+        // has not been chosen yet. "You" is the stable starting point in every mode; the player can
+        // personalise it before seat selection and the selected seat card can then show that name.
+        Character = new CharacterViewModel(_environment.Rules.Character, "You");
         Character.PropertyChanged += OnCharacterChanged;
     }
 
@@ -673,7 +673,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         }
     }
 
-    // ---------- step d: confirm ----------
+    // ---------- step f: confirm ----------
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoNext))]
@@ -711,7 +711,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         DetectInstalledBaseline();
     }
 
-    // ---------- step d: NAMeS-first baseline import (locked decision #7a) ----------
+    // ---------- step f: NAMeS-first baseline import (locked decision #7a) ----------
 
     /// <summary>"Use your installed AI file as the season baseline" — defaults ON whenever
     /// the install has a parseable class XML for the pack's ams2Class.</summary>
@@ -790,6 +790,38 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(BaselineImportSummary));
     }
 
+    // ---------- character death & injury: the mortality choice (Slice 1) ----------
+
+    /// <summary>The career's mortality mode (character death &amp; injury — docs/dev/character-death-injury.md
+    /// §2). Off (default) = no injury/death, the classic experience. Normal = injury/death ON with a full
+    /// save &amp; reload safety net. Hardcore = injury/death ON with NO saves, and death physically deletes
+    /// the career file. VM-only here; the view binds a radio group / picker to this. Default Off (opt-in).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MortalityModeSummary))]
+    private Companion.Core.Career.MortalityMode _mortalityMode = Companion.Core.Career.MortalityMode.Off;
+
+    /// <summary>The three mortality choices, in creation order, for the view's picker.</summary>
+    public IReadOnlyList<Companion.Core.Career.MortalityMode> MortalityOptions { get; } =
+    [
+        Companion.Core.Career.MortalityMode.Off,
+        Companion.Core.Career.MortalityMode.Normal,
+        Companion.Core.Career.MortalityMode.Hardcore,
+    ];
+
+    /// <summary>One honest line on what the current mortality choice means — with the destructive
+    /// Hardcore reality spelled out, since it must be unmistakable at creation (plan §2).</summary>
+    public string MortalityModeSummary => MortalityMode switch
+    {
+        Companion.Core.Career.MortalityMode.Normal =>
+            "Normal — accidents can injure or kill your driver, but you can save and reload " +
+            "(manual slots + an autosave each season), including to un-do a death.",
+        Companion.Core.Career.MortalityMode.Hardcore =>
+            "⚠ Hardcore — accidents can injure or kill your driver. There are NO saves and no restore, " +
+            "ever, and DEATH PERMANENTLY DELETES this career file. There is no way back.",
+        _ =>
+            "Off — no injury and no death. The classic experience.",
+    };
+
     private void Create()
     {
         CreateError = null;
@@ -823,6 +855,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             // Opt-in modded field (the SMGP McLaren teams) — the service adds them only if the
             // required car mod is installed (else the base field). Default OFF.
             UseModdedField = UseModdedField,
+            // Character death & injury (Slice 1): the explicit Off/Normal/Hardcore creation choice.
+            // Off (default) = no injury/death (classic). Normal adds the save & reload safety net;
+            // Hardcore has no saves and death deletes the file.
+            Mortality = MortalityMode,
         };
 
         ICareerSession session;

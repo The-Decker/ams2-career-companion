@@ -1,3 +1,4 @@
+using Companion.Core.Character;
 using Companion.Core.Career;
 using Companion.Core.Determinism;
 
@@ -113,6 +114,91 @@ public class SeasonEndPipelineTests
         Assert.Equal("season-final", row.Cause);
         Assert.Contains("\"from\":1", row.DeltaJson);
         Assert.Contains("\"to\":2", row.DeltaJson);
+    }
+
+    [Fact]
+    public void VersionTwoSeasonXpCanReachLevel300InTheGoldenAge()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var context = CareerTestData.Context();
+        var character = new CharacterProfile
+        {
+            Name = "Pat Player",
+            ProgressionVersion = CharacterLevelProgression.Level300Version,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.5,
+                ["oneLap"] = 0.5,
+                ["craft"] = 0.5,
+                ["racecraft"] = 0.5,
+                ["adaptability"] = 0.5,
+                ["marketability"] = 0.5,
+                ["durability"] = 0.5,
+            },
+            PerkIds = [],
+        };
+
+        var result = SeasonEndPipeline.Run(context with
+        {
+            CharacterRules = rules,
+            Player = context.Player with
+            {
+                Character = character,
+                Level = 299,
+                Xp = 14_890,
+            },
+        });
+
+        Assert.Equal(300, result.Player.Level);
+        var xpRow = result.Events.Single(e => e.Phase == JournalPhases.PlayerXp);
+        using var delta = System.Text.Json.JsonDocument.Parse(xpRow.DeltaJson);
+        Assert.Equal(300, delta.RootElement.GetProperty("level").GetInt32());
+    }
+
+    [Fact]
+    public void VersionOneCarryoverRetainsThePinnedPackEraCap()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var context = CareerTestData.Context();
+        var character = new CharacterProfile
+        {
+            Name = "Pat Player",
+            ProgressionVersion = CharacterLevelProgression.EraCappedVersion,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.5,
+                ["oneLap"] = 0.5,
+                ["craft"] = 0.5,
+                ["racecraft"] = 0.5,
+                ["adaptability"] = 0.5,
+                ["marketability"] = 0.5,
+                ["durability"] = 0.5,
+            },
+            PerkIds = [],
+        };
+        long xpPastGoldenAgeCap = CharacterLevelProgression.CumulativeXpToLevel(
+            CharacterLevelProgression.EraCappedVersion,
+            level: 27,
+            rules);
+
+        var result = SeasonEndPipeline.Run(context with
+        {
+            // A same-pack fallback advances the live season row, but v1 intentionally keeps the
+            // original pack's 1967 cap so old saves and their DERIVED rows remain byte-identical.
+            Year = 1970,
+            CharacterRules = rules,
+            Player = context.Player with
+            {
+                Character = character,
+                Level = 26,
+                Xp = xpPastGoldenAgeCap,
+            },
+        });
+
+        Assert.Equal(26, result.Player.Level);
+        var xpRow = result.Events.Single(e => e.Phase == JournalPhases.PlayerXp);
+        using var delta = System.Text.Json.JsonDocument.Parse(xpRow.DeltaJson);
+        Assert.Equal(26, delta.RootElement.GetProperty("level").GetInt32());
     }
 
     // ---------- step 3: aging ----------

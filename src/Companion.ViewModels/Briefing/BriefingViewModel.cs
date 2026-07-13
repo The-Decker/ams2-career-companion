@@ -189,25 +189,26 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// renders outside the mode.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
-        nameof(SmgpPointsLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
-        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled))]
+        nameof(SmgpSeasonLine), nameof(SmgpCareerLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
+        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled), nameof(SmgpCampaignLine))]
     private SmgpBriefingModel? _smgpBriefing;
 
     /// <summary>The picker unlocks only for a free pick (forced challenges lock to the challenger).</summary>
     public bool SmgpPickEnabled => !SmgpForced;
 
     /// <summary>The rival the player is LOOKING AT in the picker (the dossier card previews
-    /// him) — browsing only; nothing rides the result until the YES button NAMES him.</summary>
+    /// them) — browsing only; nothing rides the result until the YES button NAMES them.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpCanName))]
+    [NotifyPropertyChangedFor(nameof(SmgpHasRival), nameof(SmgpLadderLine), nameof(SmgpCanName),
+        nameof(SmgpRivalPrompt), nameof(SmgpNameButtonLabel), nameof(SmgpRivalIntro))]
     private SmgpRivalOption? _selectedSmgpRival;
 
     /// <summary>The rival the player has NAMED for this round (the YES confirmation, or the
     /// forced challenger) — the commitment the result fold counts the two-wins ladder against.
     /// Null = no rival named. Reset each round; survives same-round re-navigation.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpCanName),
-        nameof(SmgpSwapPromptVisible))]
+    [NotifyPropertyChangedFor(nameof(SmgpRivalNamed), nameof(SmgpNamedLine), nameof(SmgpNamedRivalQuote),
+        nameof(SmgpCanName), nameof(SmgpSwapPromptVisible), nameof(SmgpSwapAcceptLabel))]
     private SmgpRivalOption? _namedSmgpRival;
 
     /// <summary>The standing answer to a seat-swap offer, should this round's win trigger one
@@ -238,17 +239,30 @@ public sealed partial class BriefingViewModel : ObservableObject
     public string SmgpNamedLine => NamedSmgpRival switch
     {
         { OfferOnWin: true } named =>
-            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL — and you have beaten him once already. " +
-            "Finish ahead of him again THIS race and his seat is yours.",
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL — and you have beaten {named.Pronouns.Object} once already. " +
+            $"Finish ahead of {named.Pronouns.Object} again THIS race and {named.Pronouns.Possessive} seat is yours.",
         { } named =>
-            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat him this race and once more — two wins " +
-            "without losing to him — and you take his seat.",
+            $"{named.DriverName.ToUpperInvariant()} IS YOUR RIVAL. Beat {named.Pronouns.Object} this race and once more — two wins " +
+            $"without losing to {named.Pronouns.Object} — and you take {named.Pronouns.Possessive} seat.",
         null => "",
     };
 
+    /// <summary>The named rival's own words back at you (the mood-aware trash-talk from
+    /// <c>rival-quotes.json</c>) — shown as their REACTION once you commit them, not as a static line under
+    /// the stats. Empty until a rival is named.</summary>
+    public string SmgpNamedRivalQuote => NamedSmgpRival?.Quote ?? "";
+
     public string SmgpRoundHeader => SmgpBriefing?.RoundHeader ?? "";
 
-    public string SmgpPointsLine => SmgpBriefing?.PointsLine ?? "";
+    /// <summary>The grand-campaign progress line — "SEASON 6 / 17" (Mike's 17-season SMGP arc). Empty
+    /// outside the mode.</summary>
+    public string SmgpCampaignLine => SmgpBriefing is { } b ? $"SEASON {b.SeasonOrdinal} / {b.SeasonsTotal}" : "";
+
+    /// <summary>The player's live SEASON standing line for the readout (was the "D.P." points line).</summary>
+    public string SmgpSeasonLine => SmgpBriefing?.SeasonLine ?? "";
+
+    /// <summary>The player's live CAREER record line (empty until they have something to show).</summary>
+    public string SmgpCareerLine => SmgpBriefing?.CareerLine ?? "";
 
     public string SmgpAdviceLine => SmgpBriefing?.AdviceLine ?? "";
 
@@ -259,22 +273,41 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// accuracy rule is "nothing invented".</summary>
     public string SmgpRivalPrompt => SmgpForced
         ? "A forced challenge — your rival is already named."
-        : "WILL YOU NAME HIM AS YOUR RIVAL?";
+        : $"WILL YOU NAME {(SelectedSmgpRival?.Pronouns.Object ?? "them").ToUpperInvariant()} AS YOUR RIVAL?";
+
+    /// <summary>The YES button's gender-aware label ("YES — name her as my rival"). The RivalScreenView binds
+    /// its Content here so a female rival (Mika) is never misgendered.</summary>
+    public string SmgpNameButtonLabel =>
+        $"YES — name {SelectedSmgpRival?.Pronouns.Object ?? "them"} as my rival";
+
+    /// <summary>The rival-screen intro subtitle, gender-aware (uses the previewed rival's pronoun, else the
+    /// neutral "their"). The RivalScreenView binds its subtitle here.</summary>
+    public string SmgpRivalIntro =>
+        $"Name a rival to challenge this round — finish ahead of the same driver twice without losing and you " +
+        $"may take {SelectedSmgpRival?.Pronouns.Possessive ?? "their"} seat. Or race with no rival named.";
 
     /// <summary>What this rival's ladder telegraphs — streak-aware so the two-wins path and your
     /// progress along it are always explicit (Mike's fix: "beat him once, then it said two races").
     /// A win only counts in a race you NAMED him for, so the fresh-rival line spells that out.</summary>
     public string SmgpLadderLine => SelectedSmgpRival switch
     {
-        { OfferOnWin: true } => "You have beaten him once — finish ahead of him again THIS race and you take his seat!",
-        { ForfeitOnLoss: true } => "He has beaten you once — lose to him again this race and he takes YOUR seat.",
-        not null => "Beat him twice without losing to take his seat. Name him each race you mean to beat — a win only counts when he is your named rival.",
+        { OfferOnWin: true } r =>
+            $"You have beaten {r.Pronouns.Object} once — finish ahead of {r.Pronouns.Object} again THIS race and you take {r.Pronouns.Possessive} seat!",
+        { ForfeitOnLoss: true } r =>
+            $"{r.Pronouns.SubjectCap} has beaten you once — lose to {r.Pronouns.Object} again this race and {r.Pronouns.Subject} takes YOUR seat.",
+        { } r =>
+            $"Beat {r.Pronouns.Object} twice without losing to take {r.Pronouns.Possessive} seat. Name {r.Pronouns.Object} each race you mean to beat — a win only counts when {r.Pronouns.Subject} is your named rival.",
         null => "",
     };
 
     /// <summary>The standing swap answer is only asked once a rival whose offer can arise this
     /// round has been NAMED.</summary>
     public bool SmgpSwapPromptVisible => NamedSmgpRival?.OfferOnWin == true;
+
+    /// <summary>The swap-accept checkbox label — gender-aware ("Join her team if the offer comes"). Bound by
+    /// RivalScreenView so a female named rival (Mika) is not misgendered.</summary>
+    public string SmgpSwapAcceptLabel =>
+        $"Join {NamedSmgpRival?.Pronouns.Possessive ?? "their"} team if the offer comes";
 
     /// <summary>The YES button: commit the previewed rival — this is what the result fold
     /// counts the two-wins ladder against when the round's result lands.</summary>

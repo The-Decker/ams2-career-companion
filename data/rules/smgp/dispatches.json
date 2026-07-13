@@ -1,0 +1,152 @@
+{
+  "_provenance": "SMGP 'living world' dispatch corpus (Task 4) — reactive in-world news stories for the SEGA Super Monaco GP replica mode. Rendered by SmgpDispatchCorpus with a deterministic PCG32 stream (masterSeed + round), so a career shows the same dispatches on every open and on replay. DISPLAY-ONLY, never a fold input (like rival-quotes.json + the news corpora). Voice: bold, colorful, retro-arcade sports-tabloid — the World Championship circus, the hairpin, the big board, the rival ladder, the D.P. board. ASCII punctuation ONLY (no em-dash/curly-quote mojibake). Templates keyed by dispatch id ('milestone.*', 'setback.*', 'world.*'); {pool:name} expands to one interchangeable fragment. Tokens: {player} {team} {rival} {venue} {season} {number} {subject} {other} {leader} {benchmark}. Unknown tokens render empty (the corpus-consistency test guards the shipped set).",
+  "pools": {
+    "dateline": [
+      "TRACKSIDE WIRE, {venue}:",
+      "FROM THE SMGP CIRCUS AT {venue}:",
+      "PADDOCK BULLETIN, {venue}:",
+      "THE BIG BOARD AT {venue}:",
+      "SIGNAL FROM THE PIT WALL, {venue}:",
+      "THE TANNOY CRACKLES AT {venue}:",
+      "LIVE FROM THE HAIRPIN, {venue}:"
+    ],
+    "cheer": [
+      "The grandstand is on its feet.",
+      "The pit crew dances on the wall.",
+      "The whole ladder is watching.",
+      "The circus has a new favourite tonight.",
+      "One for the highlight reel.",
+      "The rivals go quiet; the garage goes wild."
+    ],
+    "groan": [
+      "The pit wall goes silent.",
+      "The crowd's cheer curdles to a groan.",
+      "The big board tells the cruel story.",
+      "The rivals grin.",
+      "One to shake off before the next circuit.",
+      "The garage wheels the car away with long faces."
+    ],
+    "mourning": [
+      "The whole paddock falls silent.",
+      "Flags fly at half-mast over the pit lane.",
+      "The SEGA world will not forget this name.",
+      "A hush settles over the big board.",
+      "The circus stops, and remembers one of its own."
+    ],
+    "rumor": [
+      "Word on the pit wall is that {benchmark} has never looked more untouchable at the top of the ladder.",
+      "The paddock is whispering about who dares name {benchmark} at the next round.",
+      "Talk in the transporters: {leader} leads the D.P. board, but the hairpin forgives nobody.",
+      "The mechanics are betting on a shake-up in the LEVEL boards before the circus leaves town.",
+      "They say the seat-swap whispers are louder than the engines this week.",
+      "A rumor drifts down the pit lane: someone on the grid has {player}'s name circled on their challenge list.",
+      "The odds-makers can't split the front of the ladder, and the paddock loves it.",
+      "Overheard at the hairpin: the rookies think the old guard is ripe for the taking.",
+      "The rumor mill says {leader} is the one everyone is measuring themselves against now.",
+      "Chatter in the garages: the D.P. board is tighter than it has been in seasons."
+    ]
+  },
+  "templates": {
+    "milestone.arrived": [
+      "{pool:dateline} {player} joins the SMGP world with {team} - a number on the car and everything still to prove. The ladder does not know the name yet. It will.",
+      "{pool:dateline} A new challenger steps into the circus: {player}, in {team} colours, with the whole grid a stranger. Season {season} of the long climb begins."
+    ],
+    "milestone.first-start": [
+      "{pool:dateline} Lights out on the first race of {player}'s career! The SMGP world gets its first look at the newcomer in the {team} car. {pool:cheer}",
+      "{pool:dateline} {player} takes the first green flag of a career for {team}. Everyone starts somewhere; this is where the story begins."
+    ],
+    "milestone.first-points": [
+      "{pool:dateline} FIRST D.P. ON THE BOARD! {player} banks championship points for the very first time, and the {team} tally finally reads more than zero. {pool:cheer}",
+      "{pool:dateline} {player} is on the championship board at last - the first D.P. of the career safely in the bag for {team}. A climb has to start somewhere."
+    ],
+    "milestone.first-top5": [
+      "{pool:dateline} INTO THE TOP FIVE! {player} cracks the sharp end of the field for the first time in {team} colours. The ladder recalculates. {pool:cheer}",
+      "{pool:dateline} A first top-five finish for {player}! The {team} car ran with the front-runners today, and the paddock took note."
+    ],
+    "milestone.first-pole": [
+      "{pool:dateline} POLE POSITION! {player} is fastest of all in qualifying for the very first time, the {team} machine top of the timing screens. {pool:cheer}",
+      "{pool:dateline} {player} plants the {team} car on pole - a maiden fastest lap when it mattered most. The front row belongs to the newcomer today."
+    ],
+    "milestone.first-podium": [
+      "{pool:dateline} THE ROSTRUM AT LAST! {player} takes a first career podium for {team}, champagne and all. {pool:cheer}",
+      "{pool:dateline} {player} climbs onto the podium for the first time in {team} colours - a maiden top-three the whole garage will remember. {pool:cheer}"
+    ],
+    "milestone.first-win": [
+      "{pool:dateline} {player} WINS! The first victory of a career, and the SMGP world will remember this one. The {team} car took the flag first, and a name is made. {pool:cheer}",
+      "{pool:dateline} MAIDEN VICTORY FOR {player}! Flag to flag, no argument, the big board glowing {team} all afternoon. The ladder trembles at the arrival of a winner. {pool:cheer}"
+    ],
+    "milestone.season": [
+      "{pool:dateline} Season {season} of {player}'s campaign opens with {team}. The long climb toward the summit rolls on, one circuit at a time.",
+      "{pool:dateline} A fresh season begins for {player} at {team} - number {season} of the great campaign, and the challenge-lists reset for another assault."
+    ],
+    "milestone.promotion": [
+      "{pool:dateline} {player} MOVES UP THE LADDER! A rung climbed, a better seat earned - {team} welcome a driver on the rise. {pool:cheer}",
+      "{pool:dateline} PROMOTION for {player}! The SMGP world's seat-swap whispers came true, and {team} colours are the reward for the climb. {pool:cheer}"
+    ],
+    "milestone.title": [
+      "{pool:dateline} CHAMPION! {player} takes the Season {season} crown for {team}, the name struck into the record board for good. From the first flag to the last, the D.P. board bent to one driver. {pool:cheer}",
+      "{pool:dateline} THE TITLE IS {player}'S! A whole season of the World Championship circus answered with a right foot that would not be denied. {team} triumphant, and the summit a step closer. {pool:cheer}"
+    ],
+    "milestone.rivalry-won": [
+      "{pool:dateline} {player} BEATS {rival} TWICE - and the offer of a seat is on the table! The two-wins ladder swings the newcomer's way, and {rival} can only watch. {pool:cheer}",
+      "{pool:dateline} The duel is settled: {player} has {rival}'s number, twice over, and a rung up the ladder beckons. The paddock marks the date. {pool:cheer}"
+    ],
+    "milestone.finale": [
+      "{pool:dateline} SEVENTEEN CONQUERED! {player} reaches the summit of the entire campaign for {team} - the SMGP world will speak of this run for a generation. {pool:cheer}",
+      "{pool:dateline} THE FINAL RECKONING IS {player}'S! Seventeen seasons survived, the long climb complete, and the big board goes dark on a legend. {pool:cheer}"
+    ],
+    "setback.demotion": [
+      "{pool:dateline} DROPPED A RUNG. {player} loses the seat and falls to {team} - the ladder is a cruel master, and it climbs both ways. {pool:groan}",
+      "{pool:dateline} A hard day for {player}: forced down the ladder into {team}, the seat that could not be held. The climb starts again from lower down. {pool:groan}"
+    ],
+    "setback.rivalry-lost": [
+      "{pool:dateline} {rival} TAKES THE DUEL! Two losses in a row, and {player} pays the price for it. {pool:groan}",
+      "{pool:dateline} The battle turns cruel: {rival} beats {player} twice over and collects the spoils. The rival ladder shows no mercy today. {pool:groan}"
+    ],
+    "setback.near-miss": [
+      "{pool:dateline} ON THE BRINK. {player} sits one loss from the LEVEL D floor - one more defeat down here and the career is over. The whole paddock can feel it. {pool:groan}",
+      "{pool:dateline} The floor looms for {player}: another battle lost at LEVEL D and the SMGP dream ends. Nerves of steel required from here. {pool:groan}"
+    ],
+    "setback.career-over": [
+      "{pool:dateline} THE FLOOR CLAIMS ANOTHER. {player} is out of F1 SMGP - the LEVEL D losses ran out the clock on the career. The big board goes dark on the dream. {pool:groan}",
+      "{pool:dateline} It is over for {player}: knocked out of the SMGP world at the LEVEL D floor, the campaign ended before its summit. {pool:groan}"
+    ],
+    "setback.injured": [
+      "{pool:dateline} {player} IS HURT. A crash pitches the {team} car into the barriers and leaves the driver battered - sidelined while the injuries mend. {pool:groan}",
+      "{pool:dateline} A heavy shunt for {player}: carried from the wreck and ruled out of the coming rounds. The {team} seat waits for its driver to heal. {pool:groan}"
+    ],
+    "setback.season-ending-injury": [
+      "{pool:dateline} SEASON OVER IN THE BARRIERS. {player}'s campaign ends in the wall - a crash bad enough to close out the year. The {team} car waits until next season for its driver. {pool:groan}",
+      "{pool:dateline} The barriers claim {player}'s season: an accident too severe to come back from this year. The climb pauses, but the driver will return. {pool:groan}"
+    ],
+    "setback.died": [
+      "{pool:dateline} TRAGEDY. {player} has been killed in an accident here. The SMGP world loses one of its own, and the circus falls silent. {pool:mourning}",
+      "{pool:dateline} The darkest day: {player} lost their life in the crash. The big board goes dark, and the paddock mourns a driver taken too soon. {pool:mourning}"
+    ],
+    "world.rival-streak": [
+      "{pool:dateline} {subject} MAKES IT {number} IN A ROW! The {venue} win extends a run that has the whole ladder on notice. The rest of the grid can only chase.",
+      "{pool:dateline} UNSTOPPABLE: {subject} banks a {number}th straight victory at {venue}. The paddock is running out of ways to describe it.",
+      "{pool:dateline} {subject} wins AGAIN at {venue} - that's {number} on the bounce. The challenge-lists are being torn up and rewritten."
+    ],
+    "world.benchmark": [
+      "{pool:dateline} THE BENCHMARK REASSERTS ITSELF. {subject} wins once more at {venue}, and the message to the grid is the same as it ever was: catch me if you can.",
+      "{pool:dateline} {subject} reminds everyone who sets the standard, taking {venue} with the ruthless ease the whole ladder measures itself against.",
+      "{pool:dateline} Normal service at the top: {subject} wins at {venue}, untouchable as ever, the bar every challenger is trying to clear."
+    ],
+    "world.leader-change": [
+      "{pool:dateline} NEW LEADER OF THE D.P. BOARD! {subject} seizes the top of the World Championship from {other}. The title race has a new face out front.",
+      "{pool:dateline} The championship changes hands: {subject} takes the lead of the D.P. board off {other} at {venue}. The big board flashes a new name at the summit.",
+      "{pool:dateline} {subject} is the new championship leader after {venue}, wrestling the top spot away from {other}. The pursuit begins anew."
+    ],
+    "world.title-tightens": [
+      "{pool:dateline} THE TITLE RACE TIGHTENS! Just {number} D.P. now split leader {subject} and {other} with the season running short. The big board holds its breath.",
+      "{pool:dateline} It is knife-edge at the top: {subject} leads {other} by a mere {number} on the D.P. board, and every remaining round is a final. The circus loves it.",
+      "{pool:dateline} {number} points. That is all that separates {subject} and {other} at the head of the championship now. The run-in will decide everything."
+    ],
+    "world.standings-move": [
+      "{pool:dateline} {subject} TAKES SECOND OFF {other}! A move up the D.P. board at {venue} reshuffles the podium of the championship.",
+      "{pool:dateline} The second-place battle turns over: {subject} climbs past {other} into P2 of the standings after {venue}. The chase for the leader has a new challenger.",
+      "{pool:dateline} {subject} muscles into second on the D.P. board, {other} bumped down after {venue}. The order behind the leader is anything but settled."
+    ]
+  }
+}

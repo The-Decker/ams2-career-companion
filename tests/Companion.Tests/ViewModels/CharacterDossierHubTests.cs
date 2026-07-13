@@ -61,6 +61,11 @@ public sealed class CharacterDossierHubTests : IDisposable
         Assert.Equal(1, hub.Dossier.Dossier.Level);
         Assert.Equal(7, hub.Dossier.Dossier.Stats.Count);
         Assert.Contains(hub.Dossier.Dossier.Perks, p => p.Id == "rain_man");
+        Assert.Equal(9, hub.Dossier.SkillTree.Count);
+        Assert.Equal(5, hub.Dossier.TalentStatsView.Count);
+        Assert.Equal(2, hub.Dossier.MetaStatsView.Count);
+        Assert.Equal("Fit", hub.Dossier.AvailabilityLabel);
+        Assert.Equal(1, hub.Dossier.SkillPointsAvailable);
     }
 
     [Fact]
@@ -90,16 +95,19 @@ public sealed class CharacterDossierHubTests : IDisposable
     }
 
     [Fact]
-    public void UpcomingRaceTab_IsRenamed_AndLockedOutOfTheRail()
+    public void UpcomingRaceTab_IsRenamed_AndLeadsTheRail()
     {
         using var hub = new HubViewModel(CreateCareer(Character()));
 
         var raceTab = hub.Tabs.Single(t => t.Key == HubViewModel.RaceTabKey);
         Assert.Equal("Upcoming Race", raceTab.Title);
-        Assert.False(raceTab.ShowInRail); // reached only via the header loop buttons, not the rail
+        // The Upcoming Race tab now shows in the rail (the header loop buttons are gone — the top is
+        // reserved for the tycoon team mode) and leads it; its loop is walked with its own Continue.
+        Assert.True(raceTab.ShowInRail);
+        Assert.Same(raceTab, hub.Tabs[0]);
 
-        // Every other tab still shows in the rail.
-        Assert.All(hub.Tabs.Where(t => t.Key != HubViewModel.RaceTabKey), t => Assert.True(t.ShowInRail));
+        // Every tab shows in the rail now.
+        Assert.All(hub.Tabs, t => Assert.True(t.ShowInRail));
     }
 
     [Fact]
@@ -110,4 +118,80 @@ public sealed class CharacterDossierHubTests : IDisposable
         Assert.DoesNotContain(hub.Tabs, t => t.Key == HubViewModel.DriverTabKey);
         Assert.False(hub.Dossier.HasCharacter);
     }
+
+    [Fact]
+    public void Dossier_LevelUpMomentAccumulatesUntilAcknowledged()
+    {
+        var session = new FakeCareerSession { Dossier = DossierAt(level: 1) };
+        var vm = new DossierViewModel(session);
+
+        session.Dossier = DossierAt(level: 3);
+        vm.Refresh();
+
+        Assert.True(vm.LevelUpPending);
+        Assert.Equal(2, vm.LevelsGained);
+        vm.AcknowledgeLevelUpCommand.Execute(null);
+        Assert.False(vm.LevelUpPending);
+        Assert.Equal(0, vm.LevelsGained);
+    }
+
+    [Fact]
+    public void Dossier_UnlockAndRespecCommandsUseThePublishedSessionSeams()
+    {
+        var node = new SkillNode
+        {
+            Id = "rain_man", Name = "Rain Man", Kind = "perk", Cost = 1, Tier = 1,
+            UnlockLevel = 1, Requires = [], Benefits = ["Wet pace"], Drawbacks = [],
+            State = SkillNodeState.Unlockable, LockReason = "",
+        };
+        var session = new FakeCareerSession
+        {
+            Dossier = DossierAt(2),
+            Cp = 2,
+            RespecTokenCount = 1,
+            Tree = new SkillTreeSnapshot
+            {
+                Branches =
+                [
+                    new SkillBranch { Id = "weather", Name = "Weather", IsMeta = false, Nodes = [node] },
+                ],
+            },
+        };
+        var vm = new DossierViewModel(session);
+        var projected = Assert.Single(Assert.Single(vm.SkillTree).Nodes);
+
+        vm.UnlockNodeCommand.Execute(projected);
+        Assert.Equal(CharacterSpend.Perk("rain_man", 1), Assert.Single(session.Spends));
+
+        session.Tree = new SkillTreeSnapshot
+        {
+            Branches =
+            [
+                new SkillBranch
+                {
+                    Id = "weather", Name = "Weather", IsMeta = false,
+                    Nodes = [node with { State = SkillNodeState.Owned }],
+                },
+            ],
+        };
+        vm.Refresh();
+        vm.RespecNodeCommand.Execute(Assert.Single(Assert.Single(vm.SkillTree).Nodes));
+        Assert.Equal("rain_man", Assert.Single(session.Respecs));
+    }
+
+    private static CharacterDossier DossierAt(int level) => new()
+    {
+        Name = "Nova Reyes",
+        Level = level,
+        Xp = 0,
+        XpIntoLevel = 0,
+        XpForNextLevel = 100,
+        CpUnspent = 0,
+        Stats =
+        [
+            new DossierStat("pace", "Pace", 0.5, Talent: true),
+            new DossierStat("marketability", "Marketability", 0.5, Talent: false),
+        ],
+        Perks = [],
+    };
 }

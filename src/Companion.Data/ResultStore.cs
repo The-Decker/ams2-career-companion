@@ -28,7 +28,7 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 6;
+    public const int CurrentVersion = 8;
 
     public int Version { get; init; } = CurrentVersion;
 
@@ -63,6 +63,21 @@ public sealed record RoundResultEnvelope
     /// the fold defaults a retired player to <see cref="DnfCause.Mechanical"/> (no blame)
     /// and a disqualified player to <see cref="DnfCause.DriverError"/>.</summary>
     public DnfCause? PlayerDnfCause { get; init; }
+
+    /// <summary>How hard the player's OWN accident (<c>"a"</c>) DNF was — Light/Medium/Heavy (character
+    /// death &amp; injury §3.1, v7). A raw player INPUT the sim cannot re-derive, so it is stored. Null on
+    /// every pre-v7 save AND on any non-accident DNF — the fold then treats null as "no severity, legacy
+    /// binary behavior". Slice 2 captures it only; NOTHING consumes it yet, so a round carrying a severity
+    /// still replays BYTE-IDENTICALLY. Slice 3 folds it into the d500 injury roll.</summary>
+    public AccidentSeverity? PlayerAccidentSeverity { get; init; }
+
+    /// <summary>True for an AUTO-SIMULATED round the injured player SAT OUT (character death &amp; injury §5,
+    /// v8). A raw marker the sim cannot re-derive (only the app knows the player was unavailable), so it is
+    /// stored: the fold reads it to skip the player's update (OPI-neutral), heal one race of suspension,
+    /// and emit the derived DNS row, while the stored <see cref="Result"/> carries the auto-simulated AI
+    /// field (which advances the championship). False on every pre-v8 save and every player-driven round —
+    /// the fold then runs the ordinary player update, so those rounds stay byte-identical.</summary>
+    public bool PlayerDidNotStart { get; init; }
 
     /// <summary>The round's qualifying order — pack driver ids, pole first — when the pack's
     /// weekend ran a qualifying session (Increment 2). Null = no qualifying (every pre-weekend
@@ -106,6 +121,24 @@ public sealed record SmgpRivalCall
     /// (the two-wins rule): true = accepted (the swap applies from the next round), false =
     /// declined. Null = no offer arose this round.</summary>
     public bool? SeatSwapAccepted { get; init; }
+}
+
+/// <summary>The DeltaJson of an <c>smgp.swap</c> journal input row (3c-2): the player's post-race
+/// promotion-screen decision for a two-phase career. Provenance-excluded from the byte-compare and
+/// read back at re-fold to resolve the round's pending offer. Carries the rival + offered car for
+/// the Why? inspector; the resolution itself reads only <see cref="Accepted"/> (the pending offer's
+/// seat rides on the folded state).</summary>
+public sealed record SmgpSwapInput
+{
+    /// <summary>The rival whose seat was offered (pack driver id) — provenance only.</summary>
+    public string? Rival { get; init; }
+
+    /// <summary>The offered car (ams2LiveryName) — provenance only.</summary>
+    public string? OfferedSeat { get; init; }
+
+    /// <summary>True = the player ACCEPTED the promotion (move into the offered car); false =
+    /// declined (keep the current seat).</summary>
+    public required bool Accepted { get; init; }
 }
 
 public sealed record StoredRoundResult

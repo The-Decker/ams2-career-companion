@@ -252,6 +252,12 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public BriefingModel? CurrentBriefing() => Briefing;
 
+    /// <summary>The SMGP Paddock projection surfaced to the driver/team-preview tab (null by default,
+    /// so the hub adds no Paddock tab).</summary>
+    public SmgpPaddockModel? Paddock { get; set; }
+
+    public SmgpPaddockModel? SmgpPaddock() => Paddock;
+
     public StageOutcome StageCurrentGrid() =>
         StageOutcomes.Count > 0
             ? StageOutcomes.Dequeue()
@@ -267,14 +273,27 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public int? CurrentExpectedFinish() => ExpectedFinish;
 
-    public ConfirmModel Preview(ResultDraft draft) => new()
+    /// <summary>The confirm model this fake previews (null = the default empty one) — lets a test
+    /// drive the confirm screen's points / movement name rendering.</summary>
+    public ConfirmModel? PreviewModel { get; set; }
+
+    public ConfirmModel Preview(ResultDraft draft) => PreviewModel ?? new()
     {
         RoundPoints = [],
         Movements = [],
         Headline = "fake headline",
     };
 
-    public void Apply(ResultDraft draft) => Applied.Add(draft);
+    /// <summary>When set, an Apply flips <see cref="Summary"/>.SeasonComplete true — so a wiring test
+    /// can drive the shell into the season-complete branch (season review / campaign finale).</summary>
+    public bool CompletesSeasonOnApply { get; set; }
+
+    public void Apply(ResultDraft draft)
+    {
+        Applied.Add(draft);
+        if (CompletesSeasonOnApply)
+            Summary = Summary with { SeasonComplete = true };
+    }
 
     public StandingsSnapshot? CurrentStandings() => Snapshots.Count > 0 ? Snapshots[^1] : null;
 
@@ -328,6 +347,23 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public CharacterDossier? CharacterDossier() => Dossier;
 
+    public SkillTreeSnapshot? Tree { get; set; }
+
+    public SkillTreeSnapshot? SkillTree() => Tree ?? SkillTreeSnapshot.Empty;
+
+    public int RespecTokenCount { get; set; }
+
+    public int RespecTokensAvailable() => RespecTokenCount;
+
+    public List<string> Respecs { get; } = [];
+
+    public void RespecNode(string nodeId)
+    {
+        Respecs.Add(nodeId);
+        if (RespecTokenCount > 0)
+            RespecTokenCount--;
+    }
+
     // ---------- skins (read-only lens) ----------
 
     /// <summary>The skin picture the Skins lens projects (empty by default).</summary>
@@ -366,10 +402,49 @@ internal sealed class FakeCareerSession : ICareerSession
 
     public (string DriverId, string DisplayName)? PlayerIdentity() => Identity;
 
+    /// <summary>The currently-named SMGP rival's driver id, surfaced to the standings highlight (null = none).</summary>
+    public string? SmgpRivalDriverId { get; set; }
+
+    public string? CurrentSmgpRivalDriverId() => SmgpRivalDriverId;
+
     /// <summary>The team the player drives for, surfaced to the Driver dossier.</summary>
     public string? TeamName { get; set; }
 
     public string? PlayerTeamName() => TeamName;
+
+    // ---------- SMGP promotion / demotion (3c-2 / 3c-3) ----------
+
+    /// <summary>The pending-offer promotion screen this fake surfaces after a round (null = none).
+    /// Cleared when <see cref="ResolveSmgpOffer"/> answers it, mirroring the real session.</summary>
+    public SmgpPromotionModel? Promotion { get; set; }
+
+    public SmgpPromotionModel? CurrentSmgpPromotion() => Promotion;
+
+    /// <summary>The demotion screen this fake surfaces (null = none) — returned by
+    /// <see cref="CurrentSmgpDemotion"/> regardless of the previous team, for wiring tests.</summary>
+    public SmgpPromotionModel? Demotion { get; set; }
+
+    public SmgpPromotionModel? CurrentSmgpDemotion(string? previousTeamId) => Demotion;
+
+    /// <summary>The 17-season campaign finale this fake surfaces once the season completes (null = none),
+    /// returned by <see cref="SmgpFinale"/> — for the finale wiring tests.</summary>
+    public SmgpFinaleModel? Finale { get; set; }
+
+    public SmgpFinaleModel? SmgpFinale() => Finale;
+
+    /// <summary>The player's smgp team id captured before an apply (null outside the mode).</summary>
+    public string? SmgpTeamId { get; set; }
+
+    public string? CurrentSmgpTeamId() => SmgpTeamId;
+
+    /// <summary>Every ResolveSmgpOffer decision, in order — the promotion screen's accept/decline.</summary>
+    public List<bool> ResolvedOffers { get; } = [];
+
+    public void ResolveSmgpOffer(bool accept)
+    {
+        ResolvedOffers.Add(accept);
+        Promotion = null;
+    }
 
     public int AvailableCharacterCp() => Cp;
 

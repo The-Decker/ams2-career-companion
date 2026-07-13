@@ -1,4 +1,6 @@
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Companion.App.Views;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
@@ -50,9 +52,12 @@ public sealed class BriefingSmgpRenderTests
         public SmgpBriefingModel? CurrentSmgpBriefing() => new()
         {
             RoundHeader = "SAN MARINO · ROUND 1",
-            PointsLine = "9 D.P.",
+            SeasonLine = "SEASON  P1 · 9 PTS",
+            CareerLine = "CAREER  2 WINS · 1 POLE",
             AdviceLine = "PASS THE CARS AT THE HAIRPIN TURN!",
             Titles = 0,
+            SeasonOrdinal = 1,
+            SeasonsTotal = Companion.Core.Smgp.SmgpRules.CampaignSeasons,
             CareerOver = false,
             ForcedChallengerDriverId = Forced ? "driver.gilberto_ceara" : null,
             Rivals =
@@ -151,6 +156,8 @@ public sealed class BriefingSmgpRenderTests
             Assert.True(briefing.BuildSmgpRival()!.SeatSwapAccepted);
 
             var view = new RivalScreenView { DataContext = new RivalScreenViewModel(briefing) };
+            view.Resources.MergedDictionaries.Add(LoadThemeDictionary("Theme.Dark.xaml"));
+            view.Resources.MergedDictionaries.Add(LoadThemeDictionary("Accents/Dark/Accent.RoyalBlue.xaml"));
             view.Measure(new Size(1000, 1400));
             view.Arrange(new Rect(0, 0, 1000, 1400));
             view.UpdateLayout();
@@ -163,12 +170,31 @@ public sealed class BriefingSmgpRenderTests
             Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpNameRivalButton")).Visibility);
             Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("SmgpNamedBanner")).Visibility);
 
+            // The same already-created screen recolors when its local base/accent slots are replaced.
+            var continueButton = Assert.IsType<Button>(view.FindName("ContinueButton"));
+            var darkBlue = ((SolidColorBrush)view.Resources.MergedDictionaries[1]["AccentBrush"]).Color;
+            Assert.Equal(darkBlue, Assert.IsType<SolidColorBrush>(continueButton.Background).Color);
+
+            view.Resources.MergedDictionaries[0] = LoadThemeDictionary("Theme.Light.xaml");
+            view.Resources.MergedDictionaries[1] = LoadThemeDictionary("Accents/Light/Accent.Gold.xaml");
+            WpfRenderHarness.Pump();
+
+            var lightGold = ((SolidColorBrush)view.Resources.MergedDictionaries[1]["AccentBrush"]).Color;
+            Assert.Equal(lightGold, Assert.IsType<SolidColorBrush>(continueButton.Background).Color);
+            Assert.Equal(
+                ((SolidColorBrush)view.Resources.MergedDictionaries[1]["OnAccentBrush"]).Color,
+                Assert.IsType<SolidColorBrush>(continueButton.Foreground).Color);
+
             // Withdrawing un-names: the draft goes back to carrying nothing.
             briefing.SmgpDeclineRivalCommand.Execute(null);
             Assert.Null(briefing.BuildSmgpRival());
             Assert.False(briefing.SmgpRivalNamed);
         });
     }
+
+    private static ResourceDictionary LoadThemeDictionary(string relativePath) =>
+        Assert.IsType<ResourceDictionary>(Application.LoadComponent(
+            new Uri($"/AMS2CareerCompanion;component/Themes/{relativePath}", UriKind.Relative)));
 
     [Fact]
     public void BriefingView_LocksThePicker_OnAForcedChallenge()

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Companion.Core.Character;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Wizard;
@@ -23,6 +24,35 @@ public sealed partial class DossierViewModel : ObservableObject
     [ObservableProperty]
     private CharacterDossier? _dossier;
 
+    /// <summary>One-shot level-up signal. Slice 0 publishes the bind contract; detection lands in Slice 4.</summary>
+    [ObservableProperty]
+    private bool _levelUpPending;
+
+    /// <summary>How many levels were gained in the unacknowledged level-up moment.</summary>
+    [ObservableProperty]
+    private int _levelsGained;
+
+    /// <summary>The bindable skill-tree lanes. Empty until the rules-backed projection lands.</summary>
+    [ObservableProperty]
+    private IReadOnlyList<SkillBranchViewModel> _skillTree = [];
+
+    /// <summary>The in-career spend currency. Skill Points are numerically the existing Available CP.</summary>
+    public int SkillPointsAvailable => _session.AvailableCharacterCp();
+
+    /// <summary>Milestone respec tokens currently available.</summary>
+    public int RespecTokens => _session.RespecTokensAvailable();
+
+    /// <summary>The five talent stats which directly shape driving ratings.</summary>
+    public IReadOnlyList<DossierStat> TalentStatsView =>
+        Dossier?.Stats.Where(stat => stat.Talent).ToList() ?? [];
+
+    /// <summary>The marketability and durability meta stats.</summary>
+    public IReadOnlyList<DossierStat> MetaStatsView =>
+        Dossier?.Stats.Where(stat => !stat.Talent).ToList() ?? [];
+
+    /// <summary>The driver's current availability, ready for display.</summary>
+    public string AvailabilityLabel => Dossier?.AvailabilityLabel ?? "Fit";
+
     /// <summary>True when this career has a character to show — the hub adds the Driver tab only then.</summary>
     public bool HasCharacter => Dossier is not null;
 
@@ -45,9 +75,91 @@ public sealed partial class DossierViewModel : ObservableObject
     [ObservableProperty]
     private CarSpecCardViewModel? _playerCarSpec;
 
+    /// <summary>The SMGP evolving-narrative TIMELINE for the player (Task 2/3.3) — the milestone beats
+    /// (arrived, first win, promotions, titles, rivalries…) surfaced on the Driver tab as the story
+    /// progression. Empty for a non-SMGP career.</summary>
+    [ObservableProperty]
+    private IReadOnlyList<Companion.Core.Smgp.SmgpCareerBeat> _timeline = [];
+
+    /// <summary>The one-line live narrative intro (the header above the timeline). Empty off-SMGP.</summary>
+    [ObservableProperty]
+    private string _narrativeIntro = "";
+
+    /// <summary>True when there is an SMGP career story to show (the Driver tab renders the timeline).</summary>
+    public bool HasSmgpNarrative => Timeline.Count > 0 || NarrativeIntro.Length > 0;
+
+    /// <summary>Dismisses the one-shot level-up moment.</summary>
+    [RelayCommand]
+    public void AcknowledgeLevelUp()
+    {
+        LevelUpPending = false;
+        LevelsGained = 0;
+    }
+
+    /// <summary>Unlocks one eligible perk/stat node through the existing authoritative spend seam.</summary>
+    [RelayCommand]
+    private void UnlockNode(SkillNodeViewModel? node)
+    {
+        if (node is null || !node.CanUnlock)
+            return;
+        var spend = string.Equals(node.Kind, "stat", StringComparison.Ordinal)
+            ? CharacterSpend.Stat(node.Id, node.Cost)
+            : CharacterSpend.Perk(node.Id, node.Cost);
+        _session.SpendCharacterPoint(spend);
+        Refresh();
+    }
+
+    /// <summary>Slice-0 command stub; respec behavior lands in Slice 5.</summary>
+    [RelayCommand]
+    private void RespecNode(SkillNodeViewModel? node)
+    {
+        if (node is null || !node.IsOwned)
+            return;
+        _session.RespecNode(node.Id);
+        Refresh();
+    }
+
     public void Refresh()
     {
-        Dossier = _session.CharacterDossier();
+        int? previousLevel = Dossier?.Level;
+        var nextDossier = _session.CharacterDossier();
+        Dossier = nextDossier;
+        if (previousLevel is { } previous && nextDossier is { } next && next.Level > previous)
+        {
+            LevelUpPending = true;
+            LevelsGained += next.Level - previous;
+        }
+
+        var snapshot = _session.SkillTree();
+        if (snapshot is null)
+        {
+            SkillTree = [];
+        }
+        else
+        {
+            var names = snapshot.Branches.SelectMany(branch => branch.Nodes)
+                .ToDictionary(node => node.Id, node => node.Name, StringComparer.Ordinal);
+            SkillTree = snapshot.Branches.Select(branch => new SkillBranchViewModel
+            {
+                Id = branch.Id,
+                Name = branch.Name,
+                IsMeta = branch.IsMeta,
+                Nodes = branch.Nodes.Select(node => new SkillNodeViewModel
+                {
+                    Id = node.Id,
+                    Name = node.Name,
+                    Kind = node.Kind,
+                    Cost = node.Cost,
+                    Tier = node.Tier,
+                    UnlockLevel = node.UnlockLevel,
+                    RequiresLabels = node.Requires.Select(id => names.GetValueOrDefault(id, id)).ToList(),
+                    Benefits = node.Benefits,
+                    Drawbacks = node.Drawbacks,
+                    State = node.State,
+                    LockReason = node.LockReason,
+                }).ToList(),
+            }).ToList();
+        }
 
         // The player's current seat gives the team (portrait + spec) and the car (preview image).
         var playerSeat = _session.CurrentGrid().FirstOrDefault(s => s.IsPlayer);
@@ -57,7 +169,18 @@ public sealed partial class DossierViewModel : ObservableObject
         PlayerCarKey = playerSeat?.DriverId;
         PlayerCarSpec = _session.PlayerCarSpec();
 
+        // The evolving SMGP story lives on the player's Paddock card (Task 2) — surface it here too.
+        var playerCard = _session.SmgpPaddock()?.Drivers.FirstOrDefault(d => d.IsPlayer);
+        Timeline = playerCard?.Timeline ?? [];
+        NarrativeIntro = playerCard?.NarrativeIntro ?? "";
+
         OnPropertyChanged(nameof(HasCharacter));
         OnPropertyChanged(nameof(TeamLine));
+        OnPropertyChanged(nameof(HasSmgpNarrative));
+        OnPropertyChanged(nameof(SkillPointsAvailable));
+        OnPropertyChanged(nameof(RespecTokens));
+        OnPropertyChanged(nameof(TalentStatsView));
+        OnPropertyChanged(nameof(MetaStatsView));
+        OnPropertyChanged(nameof(AvailabilityLabel));
     }
 }

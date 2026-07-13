@@ -1,0 +1,73 @@
+<UserControl x:Class="Companion.App.Views.SmgpFinaleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <!-- The 17-season SMGP campaign FINALE (Mike's "final final screen") — shown ONCE, at the fold
+         that completes the grand campaign, built around the SECRET hero image: special.jpg (survived
+         all 17) or ultimate.jpg (champion in all 17). The DataContext is an SmgpFinaleViewModel; its
+         Model.HeroImageKey is emitted ONLY when the campaign is beaten, so the art (living at
+         data/ams2/smgp/finale/<key>.jpg, a folder no other view references) is unreachable until then.
+         Absent-tolerant: a missing file just shows a sealed-vault placeholder — the UNLOCK is the
+         achievement, the image is the payoff. Continue advances into the final season review. -->
+    <DockPanel>
+
+        <!-- action bar: acknowledge + continue -->
+        <Border DockPanel.Dock="Bottom" Padding="0,14,0,0">
+            <Button Content="Continue  &#x23CE;" Style="{StaticResource AccentButton}"
+                    MinWidth="200" FontWeight="Bold" HorizontalAlignment="Right"
+                    Command="{Binding ContinueCommand}" />
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <StackPanel MaxWidth="820" HorizontalAlignment="Center">
+
+                <!-- the FLAWLESS ribbon (champion in all 17) — the deeper secret -->
+                <Border Margin="0,0,0,6" Padding="14,4" CornerRadius="10" HorizontalAlignment="Center"
+                        Background="{DynamicResource AccentBrush}"
+                        Visibility="{Binding Model.IsFlawless, Converter={StaticResource BoolVisible}}">
+                    <TextBlock Text="&#x2605;  T H E   U L T I M A T E   S E C R E T  &#x2605;"
+                               Foreground="{DynamicResource OnAccentBrush}" FontWeight="Bold" FontSize="13" />
+                </Border>
+
+                <!-- triumphant arcade headline -->
+                <TextBlock Text="{Binding Model.Headline}" Style="{StaticResource H1}"
+                           TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" />
+
+                <!-- the SECRET hero image: data/ams2/smgp/finale/<special|ultimate>.jpg (sealed until earned) -->
+                <Grid Height="380" Margin="0,16,0,0"
+                      ToolTip="The reward image lives at data\ams2\smgp\finale\&lt;key&gt;.jpg (beside the exe)">
+                    <Border CornerRadius="14" Background="{DynamicResource SurfaceAltBrush}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="88"
+                                       Foreground="{DynamicResource AccentTextBrush}" Opacity="0.55"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="A SECRET UNLOCKED" Style="{StaticResource Faint}"
+                                       HorizontalAlignment="Center" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+                    <Border CornerRadius="14" ClipToBounds="True">
+                        <Image Stretch="UniformToFill"
+                               Source="{Binding Model.HeroImageKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/finale}"
+                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                    </Border>
+                </Grid>
+
+                <!-- dedication line -->
+                <TextBlock Text="{Binding Model.Subhead}" Foreground="{DynamicResource AccentTextBrush}"
+                           FontStyle="Italic" FontSize="15" TextAlignment="Center" TextWrapping="Wrap"
+                           Margin="0,16,0,0" HorizontalAlignment="Center" />
+
+                <!-- the 17-season record -->
+                <ItemsControl ItemsSource="{Binding Model.Record}" HorizontalAlignment="Center" Margin="0,16,0,0">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Style="{StaticResource H2}"
+                                       TextAlignment="Center" HorizontalAlignment="Center" Margin="0,2" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

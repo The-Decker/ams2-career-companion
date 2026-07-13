@@ -8,9 +8,11 @@ public sealed class CharacterDossierTests
 {
     private static CharacterRules Rules() => CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
 
-    private static CharacterProfile Character(IReadOnlyList<string> perks, string name = "Ace") => new()
+    private static CharacterProfile Character(
+        IReadOnlyList<string> perks, string name = "Ace", int progressionVersion = 0) => new()
     {
         Name = name,
+        ProgressionVersion = progressionVersion,
         Stats = new Dictionary<string, double>(StringComparer.Ordinal)
         {
             ["pace"] = 0.70, ["oneLap"] = 0.55, ["craft"] = 0.50, ["racecraft"] = 0.45,
@@ -59,5 +61,86 @@ public sealed class CharacterDossierTests
         Assert.Equal(0, dossier.XpForNextLevel);
         Assert.Equal(1.0, dossier.LevelProgress);
         Assert.Empty(dossier.Perks);
+    }
+
+    [Fact]
+    public void Build_VersionTwoAtLevel299_UsesTheLevel300CurveInEveryEra()
+    {
+        var dossier = CharacterDossier.Build(
+            Character([], progressionVersion: CharacterLevelProgression.Level300Version),
+            level: 299,
+            xp: 14_890,
+            Rules(),
+            progressionYear: 1967);
+
+        Assert.Equal(0, dossier.XpIntoLevel);
+        Assert.Equal(61, dossier.XpForNextLevel);
+        Assert.Equal(0.0, dossier.LevelProgress);
+    }
+
+    [Fact]
+    public void Build_VersionTwoAtLevel300_HasNoNextLevelAndFullProgress()
+    {
+        var dossier = CharacterDossier.Build(
+            Character([], progressionVersion: CharacterLevelProgression.Level300Version),
+            level: CharacterLevelProgression.Level300Max,
+            xp: 14_951,
+            Rules(),
+            progressionYear: 1967);
+
+        Assert.Equal(0, dossier.XpIntoLevel);
+        Assert.Equal(0, dossier.XpForNextLevel);
+        Assert.Equal(1.0, dossier.LevelProgress);
+    }
+
+    [Fact]
+    public void Build_VersionOneIn1967_RetainsTheEraLevelCap()
+    {
+        const int goldenAgeCap = 26;
+        var rules = Rules();
+        long xpAtCap = CharacterLevelProgression.CumulativeXpToLevel(
+            CharacterLevelProgression.EraCappedVersion,
+            goldenAgeCap,
+            rules);
+
+        var dossier = CharacterDossier.Build(
+            Character([], progressionVersion: CharacterLevelProgression.EraCappedVersion),
+            level: goldenAgeCap,
+            xp: xpAtCap,
+            rules,
+            progressionYear: 1967);
+
+        Assert.Equal(goldenAgeCap, dossier.Level);
+        Assert.Equal(0, dossier.XpIntoLevel);
+        Assert.Equal(0, dossier.XpForNextLevel);
+        Assert.Equal(1.0, dossier.LevelProgress);
+    }
+
+    [Fact]
+    public void Build_HealthyDriver_ReadsFit()
+    {
+        var dossier = CharacterDossier.Build(Character([]), level: 1, xp: 0, Rules());
+
+        Assert.Equal(AvailabilityStatus.Fit, dossier.Availability);
+        Assert.Equal("Fit", dossier.AvailabilityLabel);
+    }
+
+    [Theory]
+    [InlineData(1, false, false, AvailabilityStatus.Injured, "Injured — out 1 race")]
+    [InlineData(2, false, false, AvailabilityStatus.Injured, "Injured — out 2 races")]
+    [InlineData(0, true, false, AvailabilityStatus.SeasonOver, "Season over — recovering")]
+    [InlineData(0, false, true, AvailabilityStatus.Deceased, "Deceased")]
+    // Precedence — deceased trumps a season-ending injury trumps a suspension (mirrors IsFit).
+    [InlineData(3, true, true, AvailabilityStatus.Deceased, "Deceased")]
+    [InlineData(3, true, false, AvailabilityStatus.SeasonOver, "Season over — recovering")]
+    public void Build_ProjectsAvailabilityFromFoldedInjuryState(
+        int suspension, bool seasonEnding, bool deceased, AvailabilityStatus expected, string expectedLabel)
+    {
+        var dossier = CharacterDossier.Build(
+            Character([]), level: 1, xp: 0, Rules(), age: null,
+            raceSuspensionRemaining: suspension, seasonEndingInjury: seasonEnding, deceased: deceased);
+
+        Assert.Equal(expected, dossier.Availability);
+        Assert.Equal(expectedLabel, dossier.AvailabilityLabel);
     }
 }

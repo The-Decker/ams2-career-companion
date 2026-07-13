@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Smgp Red · dark-base accessible preset. -->
+    <SolidColorBrush x:Key="AccentBrush" Color="#FF5C61" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF7378" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#FF7276" />
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#33FF5C61" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#4DFF5C61" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#101318" />
+</ResourceDictionary>

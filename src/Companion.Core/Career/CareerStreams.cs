@@ -17,6 +17,19 @@ public static class CareerStreams
     /// carrying an injury-stream perk, so a default career consumes zero new draws and stays
     /// replay-compatible with pre-character saves. Keyed (injury, year, 0, "player").</summary>
     public const string Injury = "injury";
+
+    /// <summary>The per-ROUND accident d500 roll (character death &amp; injury §3.2): drawn ONLY when the
+    /// career opted into mortality (<see cref="MortalityMode"/> != Off), has a character, AND this round
+    /// is the player's own accident-DNF with a captured severity — so an Off / no-character / non-accident
+    /// career consumes zero new draws and stays byte-identical. A round-level companion to the season-level
+    /// <see cref="Injury"/> stream, keyed (accident, year, round, "player").</summary>
+    public const string Accident = "accident";
+
+    /// <summary>The per-ROUND auto-simulated field jitter (character death &amp; injury §5): drawn per
+    /// non-player seat ONLY when the injured player sits a round out and the app must simulate the race.
+    /// Keyed (auto-race, year, round, driverId) — a fresh generator per seat, so no other stream shifts
+    /// and a career that is never injured draws zero from it and stays byte-identical.</summary>
+    public const string AutoRace = "auto-race";
 }
 
 /// <summary>Journal phase names emitted by the career sim. Part of the save format (the news
@@ -43,6 +56,10 @@ public static class JournalPhases
     /// <see cref="PlayerCharacter"/>.</summary>
     public const string PlayerStatSpend = "player.statSpend";
 
+    /// <summary>A milestone-token respec choice, re-applied at the next transition. INPUT and
+    /// provenance-excluded; its carried CharacterProfile effect is checked in the next start state.</summary>
+    public const string PlayerRespec = "player.respec";
+
     /// <summary>The player's character XP update for the round — a DERIVED fold output (a pure
     /// function of the result), emitted only for a character career after the reputation row, so a
     /// pre-character career's journal sequence is unchanged. (Increment 4a.)</summary>
@@ -59,6 +76,20 @@ public static class JournalPhases
     /// setback to standing, never a finishing position. Absent for every other career, so their
     /// journal sequence is unchanged.</summary>
     public const string PlayerInjury = "player.injury";
+
+    /// <summary>An in-race ACCIDENT resolution (character death &amp; injury §3.2/§3.3): a DERIVED row
+    /// emitted only when a mortality-enabled character has an accident-DNF with a captured severity and
+    /// the d500 roll is folded. Carries { severity, roll, effectiveRoll, outcome, missRaces } — the
+    /// none/minor-injury/season-ending/death ladder. Absent for every other career, so their journal
+    /// sequence is unchanged; DERIVED, so it is byte-compared (never provenance-excluded).</summary>
+    public const string PlayerAccident = "player.accident";
+
+    /// <summary>An AUTO-SIMULATED skipped round (character death &amp; injury §5): a DERIVED row emitted only
+    /// when the injured player sat a round out (the stored <c>PlayerDidNotStart</c> envelope flag). The
+    /// AI field raced (its standings advance); the player is OPI-neutral (no player.opi/reputation rows).
+    /// Carries { round, reason, suspensionRemaining }. Absent for every uninjured career, so their journal
+    /// sequence is unchanged; DERIVED, so it is byte-compared (never provenance-excluded).</summary>
+    public const string PlayerDidNotStart = "player.dns";
 
     /// <summary>The player's SeasonsCompleted increment at season end (journal/state parity:
     /// every state change is a journal row).</summary>
@@ -87,6 +118,14 @@ public static class JournalPhases
     /// <summary>An SMGP seat reassignment (M3): the accepted swap / forfeit displacement chain —
     /// who now drives what. Emitted only when a battle actually moved seats.</summary>
     public const string SmgpSeat = "smgp.seat";
+
+    /// <summary>The player's post-race answer to a two-wins seat-swap offer, captured on the
+    /// promotion screen (3c-2, two-phase careers). A raw player-choice INPUT the fold cannot
+    /// re-derive — journaled here and PROVENANCE-EXCLUDED (the round fold never regenerates it),
+    /// then read back at re-fold to resolve the pending offer, exactly like the character spends.
+    /// Absent = the offer was left unresolved / a legacy career (the standing up-front answer
+    /// already applied inline).</summary>
+    public const string SmgpSwap = "smgp.swap";
 
     /// <summary>The SMGP season-end fold (M3 slice 4): the championship title increment + the
     /// Madonna title-defense arming (champion), or the between-seasons streak reset (everyone

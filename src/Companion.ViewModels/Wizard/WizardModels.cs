@@ -3,18 +3,16 @@ using Companion.Core.Scoring;
 
 namespace Companion.ViewModels.Wizard;
 
-/// <summary>The one-screen wizard steps (app-shell contract). The Character step (Increment 4a)
-/// sits between seat pick and confirm; it is present only when character rules are loaded, so a
-/// build without them (some tests) flows straight seat-pick → confirm.</summary>
+/// <summary>The one-screen wizard steps (app-shell contract). Character creation comes after content
+/// verification but before seat selection, so the player's identity exists before choosing a car. A
+/// rules-less environment skips that step and flows from verification to seat selection.</summary>
 public enum WizardStep
 {
     SeasonPick = 0,
     Verification = 1,
-    SeatPick = 2,
-    /// <summary>Create your driver. Present only when character rules are loaded. Comes BEFORE the
-    /// Season's Grid (Mike's flow: select car → create character → see the grid → confirm), so the
-    /// grid reveal — where YOU already have a car and a character — is the last look before confirm.</summary>
-    Character = 3,
+    /// <summary>Create the player's driver before choosing a car.</summary>
+    Character = 2,
+    SeatPick = 3,
     /// <summary>Choose the season's field — which seats are on the grid (v0.6.0). Always present;
     /// defaults to the whole pack, so leaving it untouched is byte-identical to before.</summary>
     Grid = 4,

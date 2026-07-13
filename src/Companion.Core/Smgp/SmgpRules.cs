@@ -43,16 +43,24 @@ public static class SmgpRules
     public static int Rank(char tier) => tier switch { 'A' => 3, 'B' => 2, 'C' => 1, _ => 0 };
 
     /// <summary>Whether the player (in <paramref name="playerTier"/>) may CHALLENGE a rival in
-    /// <paramref name="rivalTier"/> (Mike's rule): the ONE tier directly above (the seat you climb
-    /// toward) or ANY tier below. So D→C only; C→B or D; B→A, C or D; A→B, C or D. Never two tiers
-    /// up, never your own tier.</summary>
+    /// <paramref name="rivalTier"/> (Mike's rule, 2026-07-12): your OWN tier, the ONE tier directly above
+    /// (the seat you climb toward), and ANY tier below. So D→{D,C}; C→{B,C,D}; B→{A,B,C,D}; A→everyone.
+    /// Never two tiers up. (Your own TEAMMATE is still excluded separately by the briefing — same-tier means
+    /// other teams at your level, not your sister seat.) DISPLAY-ONLY: this gates the namable-rivals picker,
+    /// never the battle fold, so changing it never affects a folded/replayed career.</summary>
     public static bool CanChallenge(char playerTier, char rivalTier) =>
-        Rank(rivalTier) == Rank(playerTier) + 1 || Rank(rivalTier) < Rank(playerTier);
+        Rank(rivalTier) <= Rank(playerTier) + 1;
 
     /// <summary>The floor (LEVEL D) tolerance: lose this many rival battles while in a D team and
     /// the SMGP career is over — kicked out of F1 SMGP. (Mike's rule; the one hard-fail state now
     /// that D has nowhere to be relegated to.)</summary>
     public const int FloorLossLimit = 4;
+
+    /// <summary>The grand campaign length: SEVENTEEN full seasons (Mike's "17 seasons total before it
+    /// gives you a final final screen"). Reaching the end of season 17 unlocks the locked finale and its
+    /// secret <c>special.jpg</c>; being champion in all 17 unlocks the deeper secret <c>ultimate.jpg</c>.
+    /// This is the true summit — a milestone BEYOND <see cref="IsComplete"/>'s 2-title replica marker.</summary>
+    public const int CampaignSeasons = 17;
 
     /// <summary>
     /// The round's rival-battle outcome. The game decides by finishing ahead: a classified
@@ -149,8 +157,24 @@ public static class SmgpRules
     }
 
     /// <summary>Two championships won = the game is beaten (the mode keeps running like normal
-    /// carryover afterward; this only marks completion).</summary>
+    /// carryover afterward; this only marks completion). A MILESTONE, not the summit — the
+    /// 17-season campaign (<see cref="CampaignSeasons"/>) is the real end.</summary>
     public static bool IsComplete(int titles) => titles >= 2;
+
+    /// <summary>The campaign is COMPLETED — the player went the distance through all
+    /// <see cref="CampaignSeasons"/> seasons without the career ending. "Beat all 17" = play through
+    /// seventeen (Mike, 2026-07-12); losing titles along the way does not fail it — only
+    /// <paramref name="careerOver"/> (the Level-D floor kicking you out) does. Unlocks the locked
+    /// finale + <c>special.jpg</c>. A pure read over folded state (season count + CareerOver).</summary>
+    public static bool CampaignComplete(int seasonOrdinal, bool careerOver) =>
+        seasonOrdinal >= CampaignSeasons && !careerOver;
+
+    /// <summary>The FLAWLESS campaign — champion in EVERY one of the <see cref="CampaignSeasons"/>
+    /// seasons (the emperor run). Unlocks the deeper secret <c>ultimate.jpg</c>. At the 17-season
+    /// summit a title count of 17 can only mean 17-from-17 (you can never hold more titles than
+    /// seasons raced), so this is the flawless-record predicate.</summary>
+    public static bool CampaignFlawless(int seasonOrdinal, int titles, bool careerOver) =>
+        CampaignComplete(seasonOrdinal, careerOver) && titles >= CampaignSeasons;
 }
 
 public enum SmgpBattleOutcome

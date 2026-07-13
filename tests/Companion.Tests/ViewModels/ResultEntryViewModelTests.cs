@@ -1,3 +1,4 @@
+using Companion.Core.Career;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.ResultEntry;
@@ -391,6 +392,59 @@ public class ResultEntryViewModelTests
         Assert.Equal(
             new[] { ("d.hulme", "m"), ("d.stewart", "a"), ("d.clark", "o") },
             vm.Dnfs.Select(d => (d.Seat.DriverId, d.Reason)));
+    }
+
+    // ---------- accident severity (character death & injury §3.1, Slice 2) ----------
+
+    [Fact]
+    public void PlayerAccidentDnf_RevealsSeverityPicker_DefaultsMedium_AndBuildsIntoDraft()
+    {
+        var vm = Vm();
+        var k = new Keys(vm);
+
+        // No accident yet → picker hidden, no severity.
+        Assert.False(vm.PlayerHasAccidentDnf);
+        Assert.Null(vm.PlayerAccidentSeverity);
+
+        k.F8();
+        k.Line("amo a");   // the player (Chris Amon) retires with an accident
+
+        Assert.True(vm.PlayerHasAccidentDnf);
+        Assert.Equal(AccidentSeverity.Medium, vm.PlayerAccidentSeverity); // defaulted on marking
+
+        vm.PlayerAccidentSeverity = AccidentSeverity.Heavy;               // player bumps it up
+        var draft = vm.BuildDraft();
+        Assert.Equal("a", draft.DidNotFinish[PlayerId]);
+        Assert.Equal(AccidentSeverity.Heavy, draft.PlayerAccidentSeverity);
+    }
+
+    [Fact]
+    public void NonPlayerAccident_DoesNotRevealPicker_AndDraftSeverityIsNull()
+    {
+        var vm = Vm();
+        var k = new Keys(vm);
+
+        k.F8();
+        k.Line("st a");    // Stewart (not the player) accidents
+
+        Assert.False(vm.PlayerHasAccidentDnf);
+        Assert.Null(vm.PlayerAccidentSeverity);
+        Assert.Null(vm.BuildDraft().PlayerAccidentSeverity);
+    }
+
+    [Fact]
+    public void PlayerAccident_ThenUndone_ClearsSeverityAndHidesPicker()
+    {
+        var vm = Vm();
+        var k = new Keys(vm);
+
+        k.F8();
+        k.Line("amo a");
+        Assert.Equal(AccidentSeverity.Medium, vm.PlayerAccidentSeverity);
+
+        k.CtrlZ();         // undo the accident marking
+        Assert.False(vm.PlayerHasAccidentDnf);
+        Assert.Null(vm.PlayerAccidentSeverity);
     }
 
     [Fact]

@@ -1,123 +1,478 @@
 <UserControl x:Class="Companion.App.Views.CalendarView"
+             x:Name="Root"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:services="clr-namespace:Companion.ViewModels.Services;assembly=Companion.ViewModels"
+             xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-        <StackPanel Margin="16,0,16,16">
-            <TextBlock Text="Season calendar" Style="{StaticResource H2}" />
-            <TextBlock Text="{Binding HeaderNote}" Style="{StaticResource Muted}" Margin="0,4,0,0" />
-            <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,2,0,0"
-                       Text="Every circuit you'll race this season — the actual AMS2 track, and where a stand-in or a mod alternate replaces a venue AMS2 doesn't have. No spoilers: results stay hidden until you race (see History)." />
+    <UserControl.Resources>
+        <!-- Compact master-row: the season remains scannable while the selected round owns the
+             full dossier. The richer Task-3 projection stays in the App lane through Tag. -->
+        <DataTemplate x:Key="CalendarRoundRow">
+            <Grid x:Name="RoundRow" Margin="1,3" MinHeight="88">
+                <Grid.Tag>
+                    <MultiBinding Converter="{StaticResource CalendarTask3Detail}">
+                        <Binding />
+                        <Binding Path="DataContext.Home.Session"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                        <Binding Path="DataContext.Home.RoundText"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                        <Binding Path="Tag.Home.Session"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                        <Binding Path="Tag.Home.RoundText"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </Grid.Tag>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="58" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <!-- empty state -->
-            <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0" Text="No calendar to show yet."
-                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
+                <Border Width="52" Height="52" CornerRadius="6"
+                        Background="{DynamicResource SurfaceAltBrush}"
+                        BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
+                        VerticalAlignment="Top">
+                    <Grid>
+                        <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="17"
+                                   Foreground="{DynamicResource TextMutedBrush}" Opacity="0.28"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Visibility="{Binding HasCircuit, Converter={StaticResource BoolCollapsed}}" />
+                        <Viewbox Margin="6" Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
+                            <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                                  Stroke="{DynamicResource AccentBrush}" StrokeThickness="10"
+                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        </Viewbox>
+                    </Grid>
+                </Border>
 
-            <!-- alternate-available hint (only when a round has an alternate that wasn't enabled) -->
-            <Border Background="{StaticResource AccentDimBrush}" CornerRadius="6" Padding="10,7" Margin="0,10,0,0"
-                    Visibility="{Binding HasUnusedAlternates, Converter={StaticResource BoolVisible}}">
-                <TextBlock Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap"
-                           Text="Some rounds offer optional community-mod alternate circuits — tick “Use alternate tracks” when you start a career to race them." />
-            </Border>
+                <StackPanel Grid.Column="1" Margin="9,0,0,0">
+                    <DockPanel LastChildFill="True">
+                        <Border DockPanel.Dock="Right" Padding="5,2" Margin="6,0,0,0" VerticalAlignment="Top"
+                                DataContext="{Binding Tag, ElementName=RoundRow}"
+                                Visibility="{Binding Status, Converter={StaticResource NullCollapsed}}">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource CompactChip}">
+                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static services:SeasonRoundStatus.Done}">
+                                            <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static services:SeasonRoundStatus.Next}">
+                                            <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding Status}" FontSize="9">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Eyebrow}">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static services:SeasonRoundStatus.Done}">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static services:SeasonRoundStatus.Next}">
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Border>
+                        <TextBlock Text="{Binding RoundLabel}" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource AccentTextBrush}" FontSize="9.5"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                    <TextBlock Text="{Binding Name}" FontFamily="{StaticResource DisplayFont}"
+                               FontWeight="Bold" FontSize="13" Margin="0,2,0,0"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding RealVenue}" Style="{StaticResource Muted}" FontSize="10.5"
+                               Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                    <!-- Kept inline as the compact circuit identifier and as the established render contract. -->
+                    <TextBlock Text="{Binding CircuitCaption}" Style="{StaticResource Faint}" FontSize="9.5"
+                               Margin="0,2,0,0" TextTrimming="CharacterEllipsis"
+                               Visibility="{Binding HasCircuitCaption, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Style="{StaticResource Faint}" FontFamily="{StaticResource MonoFont}"
+                               FontSize="9.5" Margin="0,3,0,0">
+                        <Run Text="{Binding DateText, Mode=OneWay}" /><Run Text="  /  " />
+                        <Run Text="{Binding LapsText, Mode=OneWay}" />
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
 
-            <!-- The whole season as a 4-in-a-row board: one compact card per round with its circuit
-                 map, the real venue + AMS2 track, and era-capped fun facts. Fixed 4 columns (Mike). -->
-            <ItemsControl ItemsSource="{Binding Rounds}" Margin="0,14,0,0"
-                          Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="4" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource Panel}" Margin="0,0,8,8" Padding="12,10" VerticalAlignment="Stretch">
-                            <StackPanel>
-                                <!-- header: round + name, with the kind badge -->
+        <!-- Paddock-style selected-round dossier. Standard schedule data stays on the shared
+             CalendarRoundViewModel; Task-3 operations/status/DNQ data is joined through Tag. -->
+        <DataTemplate x:Key="CalendarRoundDetail">
+            <ScrollViewer x:Name="DetailRoot" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                <ScrollViewer.Tag>
+                    <MultiBinding Converter="{StaticResource CalendarTask3Detail}">
+                        <Binding />
+                        <Binding Path="DataContext.Home.Session"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                        <Binding Path="DataContext.Home.RoundText"
+                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                        <Binding Path="Tag.Home.Session"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                        <Binding Path="Tag.Home.RoundText"
+                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                    </MultiBinding>
+                </ScrollViewer.Tag>
+                <StackPanel Margin="14">
+                    <!-- Venue hero: SMGP gets its authored round image; every other career retains
+                         a high-contrast circuit-map field. Text uses the theme's media contract. -->
+                    <Border Height="244" CornerRadius="10" ClipToBounds="True"
+                            Background="{DynamicResource SurfaceAltBrush}"
+                            BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
+                        <Grid>
+                            <Viewbox Margin="70,24" Opacity="0.32"
+                                     Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
+                                <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
+                                      Stroke="{DynamicResource AccentBrush}" StrokeThickness="11"
+                                      StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                            </Viewbox>
+                            <Image x:Name="RoundHeroArt" Stretch="UniformToFill"
+                                   RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
+                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source,
+                                                        Converter={StaticResource NullCollapsed}}">
+                                <Image.Source>
+                                    <MultiBinding Converter="{StaticResource SmgpCalendarRoundArt}">
+                                        <Binding />
+                                        <Binding Path="DataContext.Home.Session"
+                                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                                        <Binding Path="Tag.Home.Session"
+                                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                            <Border Background="{DynamicResource ScrimBrush}" Opacity="0.24" />
+                            <Border Background="{DynamicResource MediaCaptionGradientBrush}" />
+
+                            <Grid Margin="18,15,18,17">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <DockPanel>
-                                    <Border DockPanel.Dock="Right" CornerRadius="4" Padding="6,2" Margin="6,0,0,0" VerticalAlignment="Top">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsAlternate}" Value="True">
-                                                        <Setter Property="Background" Value="{StaticResource AccentDimBrush}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsStandIn}" Value="True">
-                                                        <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <TextBlock Text="{Binding BadgeText}" FontSize="10" FontWeight="SemiBold">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                                    <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsAlternate}" Value="True">
-                                                            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsStandIn}" Value="True">
-                                                            <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                    <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                            Background="{DynamicResource ScrimBrush}"
+                                            BorderBrush="{DynamicResource OnMediaMutedBrush}"
+                                            DataContext="{Binding Tag, ElementName=DetailRoot}"
+                                            Visibility="{Binding Status, Converter={StaticResource NullCollapsed}}">
+                                        <TextBlock Text="{Binding Status}" Style="{StaticResource Eyebrow}"
+                                                   Foreground="{DynamicResource OnMediaBrush}" />
                                     </Border>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding RoundLabel}" Style="{StaticResource Faint}"
-                                                   FontSize="10" FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"
-                                                   TextTrimming="CharacterEllipsis" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Style="{StaticResource CompactChip}"
+                                                Background="{DynamicResource ScrimBrush}"
+                                                BorderBrush="{DynamicResource OnMediaMutedBrush}" Margin="0,0,7,0">
+                                            <TextBlock Text="{Binding RoundLabel}" Style="{StaticResource Eyebrow}"
+                                                       Foreground="{DynamicResource OnMediaBrush}" />
+                                        </Border>
+                                        <Border Style="{StaticResource CompactChip}"
+                                                Background="{DynamicResource ScrimBrush}"
+                                                BorderBrush="{DynamicResource OnMediaMutedBrush}">
+                                            <TextBlock Text="{Binding BadgeText}" Style="{StaticResource Eyebrow}"
+                                                       Foreground="{DynamicResource OnMediaBrush}" />
+                                        </Border>
                                     </StackPanel>
                                 </DockPanel>
 
-                                <!-- the circuit MAP (the track image): shipped geometry, cached; scales
-                                     with the card and keeps its stroke inside the box -->
-                                <Viewbox Height="88" Margin="0,8,0,0" HorizontalAlignment="Center"
-                                         Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}">
-                                    <Path Data="{Binding CircuitLayoutId, Converter={StaticResource CircuitGeometry}}"
-                                          Stroke="{StaticResource AccentBrush}" StrokeThickness="10" Margin="8"
-                                          StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                                </Viewbox>
-                                <Border Height="88" Margin="0,8,0,0" CornerRadius="6" Background="{StaticResource SurfaceAltBrush}"
-                                        Visibility="{Binding HasCircuit, Converter={StaticResource BoolCollapsed}}">
-                                    <TextBlock Text="no circuit map" Style="{StaticResource Faint}" FontSize="10"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-
-                                <!-- real venue + one-line specs + the AMS2 track / stand-in -->
-                                <TextBlock Text="{Binding RealVenue}" FontWeight="SemiBold" FontSize="12" Margin="0,8,0,0"
-                                           TextWrapping="Wrap"
-                                           Visibility="{Binding HasCircuit, Converter={StaticResource BoolVisible}}" />
-                                <TextBlock Text="{Binding CircuitCaption}" Foreground="{StaticResource AccentBrush}"
-                                           FontSize="11" Margin="0,2,0,0" TextWrapping="Wrap"
-                                           Visibility="{Binding HasCircuitCaption, Converter={StaticResource BoolVisible}}" />
-                                <TextBlock Text="{Binding TrackLine}" Style="{StaticResource Faint}" FontSize="11"
-                                           Margin="0,4,0,0" TextWrapping="Wrap" />
-                                <TextBlock Style="{StaticResource Faint}" FontSize="11" Margin="0,2,0,0"><Run Text="{Binding DateText, Mode=OneWay}" /><Run Text="  ·  " /><Run Text="{Binding LapsText, Mode=OneWay}" /></TextBlock>
-                                <TextBlock Text="{Binding UnusedAlternateNote}" Style="{StaticResource Faint}" FontSize="11"
-                                           TextWrapping="Wrap" Margin="0,3,0,0"
-                                           Visibility="{Binding HasUnusedAlternate, Converter={StaticResource BoolVisible}}" />
-
-                                <!-- era-capped fun facts (spoiler-free), compact -->
-                                <StackPanel Margin="0,8,0,0"
-                                            Visibility="{Binding HasCircuitFacts, Converter={StaticResource BoolVisible}}">
-                                    <Border Height="1" Background="{StaticResource EdgeBrush}" Margin="0,0,0,6" />
-                                    <ItemsControl ItemsSource="{Binding CircuitFacts}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Style="{StaticResource Faint}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,2"><Run Text="•  " Foreground="{StaticResource AccentBrush}" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                <StackPanel Grid.Row="2">
+                                    <TextBlock Text="{Binding RealVenue}" FontFamily="{StaticResource DisplayFont}"
+                                               FontSize="28" FontWeight="Bold" TextWrapping="Wrap"
+                                               Foreground="{DynamicResource OnMediaBrush}" />
+                                    <TextBlock Text="{Binding TrackLine}" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource OnMediaMutedBrush}"
+                                               TextWrapping="Wrap" Margin="0,3,0,0" />
+                                    <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10.5"
+                                               Foreground="{DynamicResource OnMediaMutedBrush}" Margin="0,6,0,0">
+                                        <Run Text="{Binding DateText, Mode=OneWay}" /><Run Text="  /  " />
+                                        <Run Text="{Binding LapsText, Mode=OneWay}" />
+                                    </TextBlock>
                                 </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Phoenix gets an authored street-race identity instead of reading like a
+                         generic stand-in. Its Round 6 image remains the visual anchor above. -->
+                    <Border Style="{StaticResource AccentCallout}" Margin="0,10,0,0" Padding="14,11"
+                            Visibility="{Binding RealVenue, Converter={StaticResource StringEqualsVisible},
+                                                 ConverterParameter='Phoenix Street Circuit'}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE7C1;" FontFamily="{StaticResource IconFont}" FontSize="25"
+                                       Foreground="{DynamicResource AccentTextBrush}" Margin="0,1,13,0" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="PHOENIX STREET FILE" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Text="DOWNTOWN. CONCRETE. NO MARGIN."
+                                           FontFamily="{StaticResource DisplayFont}" FontSize="17"
+                                           FontWeight="Bold" Margin="0,3,0,0" />
+                                <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,4,0,0">
+                                    <Run Text="Phoenix brings the U.S. round into a city-street canyon. " />
+                                    <Run Text="{Binding Ams2TrackName, Mode=OneWay}" FontWeight="Bold" />
+                                    <Run Text=" carries the stand-in plan while preserving the era's stop-start street-race character." />
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Style="{StaticResource Panel}" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="RACE PLAN" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Text="{Binding Ams2TrackName}" FontFamily="{StaticResource DisplayFont}"
+                                           FontSize="17" FontWeight="Bold" TextWrapping="Wrap" Margin="0,5,0,0" />
+                                <TextBlock Text="{Binding TrackLine}" Style="{StaticResource Muted}"
+                                           FontSize="11.5" TextWrapping="Wrap" Margin="0,3,0,0" />
+                                <WrapPanel Margin="0,10,0,0">
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6">
+                                        <TextBlock Text="{Binding BadgeText}" Style="{StaticResource Eyebrow}" />
+                                    </Border>
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6">
+                                        <TextBlock Text="{Binding LapsText}" Style="{StaticResource Mono}" FontSize="10" />
+                                    </Border>
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6">
+                                        <TextBlock Text="{Binding DateText}" Style="{StaticResource Mono}" FontSize="10" />
+                                    </Border>
+                                </WrapPanel>
+                                <TextBlock Text="{Binding UnusedAlternateNote}" Style="{StaticResource Faint}"
+                                           FontSize="11" TextWrapping="Wrap" Margin="0,5,0,0"
+                                           Visibility="{Binding HasUnusedAlternate, Converter={StaticResource BoolVisible}}" />
                             </StackPanel>
                         </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+
+                        <Border Grid.Column="2" Style="{StaticResource Panel}" Padding="14">
+                            <StackPanel>
+                                <TextBlock Text="CIRCUIT ALMANAC" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Text="{Binding CircuitCaption}" FontWeight="SemiBold"
+                                           TextWrapping="Wrap" Margin="0,5,0,0"
+                                           Visibility="{Binding HasCircuitCaption, Converter={StaticResource BoolVisible}}" />
+                                <TextBlock Text="{Binding CircuitHistory}" Style="{StaticResource Muted}"
+                                           FontSize="11.5" TextWrapping="Wrap" Margin="0,6,0,0"
+                                           Visibility="{Binding HasCircuitHistory, Converter={StaticResource BoolVisible}}" />
+                                <ItemsControl ItemsSource="{Binding CircuitFacts}" Margin="0,8,0,0"
+                                              Visibility="{Binding HasCircuitFacts, Converter={StaticResource BoolVisible}}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource Faint}" FontSize="11"
+                                                       TextWrapping="Wrap" Margin="0,0,0,4">
+                                                <Run Text="•  " Foreground="{DynamicResource AccentTextBrush}" />
+                                                <Run Text="{Binding Mode=OneWay}" />
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Task-3 operations are visible only when the live session bridge exists.
+                         DNQ identity is a one-window reveal: Next + Starting Grid, never later rounds. -->
+                    <Border Style="{StaticResource AccentCallout}" Margin="0,10,0,0" Padding="14"
+                            DataContext="{Binding Tag, ElementName=DetailRoot}"
+                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=DataContext,
+                                                 Converter={StaticResource NullCollapsed}}">
+                        <StackPanel>
+                            <DockPanel>
+                                <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}">
+                                    <TextBlock Text="{Binding Status}" Style="{StaticResource Eyebrow}"
+                                               Foreground="{DynamicResource AccentTextBrush}" />
+                                </Border>
+                                <StackPanel>
+                                    <TextBlock Text="ROUND OPERATIONS" Style="{StaticResource Eyebrow}"
+                                               Foreground="{DynamicResource AccentTextBrush}" />
+                                    <TextBlock Text="Weekend file" FontFamily="{StaticResource DisplayFont}"
+                                               FontSize="16" FontWeight="Bold" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </DockPanel>
+                            <WrapPanel Margin="0,10,0,2">
+                                <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6"
+                                        Visibility="{Binding Championship, Converter={StaticResource BoolCollapsed}}">
+                                    <TextBlock Text="NON-CHAMPIONSHIP" Style="{StaticResource Eyebrow}"
+                                               Foreground="{DynamicResource WarningBrush}" />
+                                </Border>
+                                <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6"
+                                        Visibility="{Binding GridSize, Converter={StaticResource NullCollapsed}}">
+                                    <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10.5">
+                                        <Run Text="GRID " /><Run Text="{Binding GridSize}" FontWeight="Bold" />
+                                    </TextBlock>
+                                </Border>
+                                <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6"
+                                        Visibility="{Binding Opponents, Converter={StaticResource NullCollapsed}}">
+                                    <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10.5">
+                                        <Run Text="AI OPPONENTS " /><Run Text="{Binding Opponents}" FontWeight="Bold" />
+                                    </TextBlock>
+                                </Border>
+                                <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6"
+                                        Visibility="{Binding WeatherLabel, Converter={StaticResource StringVisible}}">
+                                    <TextBlock Text="{Binding WeatherLabel}" FontSize="10.5" />
+                                </Border>
+                            </WrapPanel>
+                            <TextBlock Text="{Binding SetupNote}" Style="{StaticResource Muted}"
+                                       FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,7"
+                                       Visibility="{Binding SetupNote, Converter={StaticResource StringVisible}}" />
+
+                            <Border Style="{StaticResource Callout}" Margin="0,5,0,0">
+                                <Border.Visibility>
+                                    <MultiBinding Converter="{StaticResource CalendarDnqVisible}" ConverterParameter="sealed">
+                                        <Binding />
+                                        <Binding Path="DataContext.Home.IsStartingGridState"
+                                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                                        <Binding Path="Tag.Home.IsStartingGridState"
+                                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                                    </MultiBinding>
+                                </Border.Visibility>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="20"
+                                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,11,0" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="QUALIFYING FIELD SEALED" Style="{StaticResource Eyebrow}" />
+                                        <TextBlock Text="DNQ names unlock only when this upcoming race reaches the Starting Grid."
+                                                   Style="{StaticResource Muted}" FontSize="11.5"
+                                                   TextWrapping="Wrap" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <StackPanel Margin="0,7,0,0">
+                                <StackPanel.Visibility>
+                                    <MultiBinding Converter="{StaticResource CalendarDnqVisible}">
+                                        <Binding />
+                                        <Binding Path="DataContext.Home.IsStartingGridState"
+                                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
+                                        <Binding Path="Tag.Home.IsStartingGridState"
+                                                 RelativeSource="{RelativeSource AncestorType=Window}" />
+                                    </MultiBinding>
+                                </StackPanel.Visibility>
+                                <TextBlock Text="DID NOT QUALIFY" Style="{StaticResource Eyebrow}"
+                                           Foreground="{DynamicResource ErrorBrush}" Margin="0,0,0,5" />
+                                <ItemsControl ItemsSource="{Binding Dnq}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="52" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Number, StringFormat='#{0}'}"
+                                                           FontFamily="{StaticResource MonoFont}"
+                                                           Foreground="{DynamicResource ErrorBrush}" />
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold" />
+                                                <TextBlock Grid.Column="2" Text="{Binding TeamName}"
+                                                           Style="{StaticResource Faint}" Margin="12,0,0,0" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="16,0,16,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Season calendar" Style="{StaticResource H2}" />
+            <TextBlock Text="{Binding HeaderNote}" Style="{StaticResource Muted}" Margin="0,4,0,0" />
+            <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,2,0,0"
+                       Text="Select any round for its circuit, race plan and weekend file. Results remain in History; DNQ names appear only as the upcoming race reaches the Starting Grid." />
+            <Border Background="{DynamicResource AccentDimBrush}" CornerRadius="6" Padding="10,7"
+                    Margin="0,10,0,0"
+                    Visibility="{Binding HasUnusedAlternates, Converter={StaticResource BoolVisible}}">
+                <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
+                           Text="Some rounds offer optional community-mod alternate circuits - enable alternate tracks when starting a career to use them." />
+            </Border>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,16,0,0"
+                       Text="No calendar to show yet."
+                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolVisible}}" />
         </StackPanel>
-    </ScrollViewer>
+
+        <Grid Grid.Row="1" Margin="0,14,0,0"
+              Visibility="{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource Panel}" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border Padding="13,11" BorderBrush="{DynamicResource EdgeBrush}"
+                            BorderThickness="0,0,0,1">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Text="SELECT"
+                                       Style="{StaticResource Eyebrow}"
+                                       Foreground="{DynamicResource AccentTextBrush}"
+                                       VerticalAlignment="Center" />
+                            <StackPanel>
+                                <TextBlock Text="ROUNDS" Style="{StaticResource Eyebrow}" />
+                                <TextBlock Text="Season route" FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="16" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                    <ListBox x:Name="RoundList" Grid.Row="1" ItemsSource="{Binding Rounds}"
+                             ItemTemplate="{StaticResource CalendarRoundRow}"
+                             SelectionMode="Single"
+                             SelectionChanged="OnRoundSelectionChanged"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             AutomationProperties.Name="Season rounds">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                <Setter Property="Padding" Value="8,5" />
+                                <Setter Property="ToolTip" Value="Select this round's full dossier" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <Border Grid.Row="2" Padding="13,8" BorderBrush="{DynamicResource EdgeBrush}"
+                            BorderThickness="0,1,0,0">
+                        <TextBlock Text="CLICK OR USE ARROW KEYS" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource TextMutedBrush}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource Panel}" Padding="0">
+                <ContentControl Content="{Binding SelectedItem, ElementName=RoundList}"
+                                ContentTemplate="{StaticResource CalendarRoundDetail}"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

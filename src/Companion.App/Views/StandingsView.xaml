@@ -9,7 +9,7 @@
             <Setter Property="Padding" Value="0,2" />
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
             <Setter Property="ToolTip" Value="Click to sort; click again to flip. Right-click for the column chooser." />
         </Style>
 
@@ -41,81 +41,120 @@
                     <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Style="{StaticResource HeaderButton}"
-                        Content="{Binding PositionHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="position" />
+                         Content="{Binding PositionHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="position"
+                         ToolTip="Championship position — click to sort; click again to reverse" />
                 <Button Grid.Column="1" Style="{StaticResource HeaderButton}" HorizontalAlignment="Stretch"
-                        Content="{Binding NameHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="name" />
+                         Content="{Binding NameHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="name"
+                         ToolTip="Driver or constructor — click to sort alphabetically" />
                 <Button Grid.Column="2" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding DroppedHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="dropped"
-                        Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding DroppedHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="dropped"
+                         ToolTip="Dropped rounds: scores excluded by the season's best-N rule"
+                         Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
                 <Button Grid.Column="3" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding GrossHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="gross"
-                        Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding GrossHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="gross"
+                         ToolTip="Gross points: total before the best-N rule removes dropped scores"
+                         Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
                 <Button Grid.Column="4" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding PerRoundHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="perRound"
-                        Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding PerRoundHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="perRound"
+                         ToolTip="P/R: average counted points per applied round"
+                         Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
                 <Button Grid.Column="5" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
                         HorizontalContentAlignment="Right"
-                        Content="{Binding CountedHeader}"
-                        Command="{Binding SortByCommand}" CommandParameter="counted"
-                        Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
+                         Content="{Binding CountedHeader}"
+                         Command="{Binding SortByCommand}" CommandParameter="counted"
+                         ToolTip="Counted points: championship total after dropped rounds"
+                         Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
             </Grid>
         </DataTemplate>
 
         <!-- one drivers/constructors table row; columns mirror the header layout via the shared
              size groups above -->
         <DataTemplate x:Key="StandingsRowTemplate">
-            <Grid Margin="4,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
-                           Foreground="{StaticResource TextMutedBrush}" />
-                <!-- The name is a "Why?" walk-back target (decisions 4 + 5): click (or focus +
-                     Enter/Space — a Button is keyboard-invokable, locked decision 8) opens the
-                     shared inspector for this competitor's journal. When no session is wired
-                     (CanInspect false) the command no-ops and the row reads as plain text. -->
-                <Button Grid.Column="1" Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
-                        HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
-                        Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                        CommandParameter="{Binding CompetitorId}"
-                        ToolTip="Why? — walk back the journal rows behind this number" />
-                <TextBlock Grid.Column="2" Margin="14,0,0,0" Text="{Binding DroppedRoundsText}"
-                           TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                           ToolTip="Rounds dropped by the best-N rule"
-                           Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           Foreground="{StaticResource TextMutedBrush}"
-                           ToolTip="Gross points before the best-N rule dropped anything"
-                           Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           Foreground="{StaticResource TextSecondaryBrush}"
-                           ToolTip="Average counted points per applied round"
-                           Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
-                           FontFamily="Consolas" TextAlignment="Right"
-                           ToolTip="Counted points (dropped results excluded)"
-                           Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-            </Grid>
+            <Border Margin="4,2" Padding="7,4" CornerRadius="5">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+                        <Setter Property="BorderThickness" Value="3,0,0,0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsRival}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                    <!-- The name remains the keyboard/mouse Why? target; the role badges are explicit
+                         so player/rival identity never depends on colour alone. -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
+                                HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
+                                Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding CompetitorId}"
+                                ToolTip="Why? — walk back the journal rows behind this number" />
+                        <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
+                                Background="{DynamicResource AccentDimBrush}"
+                                BorderBrush="{DynamicResource AccentBrush}"
+                                Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
+                            <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource AccentTextBrush}" />
+                        </Border>
+                        <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
+                                Background="{DynamicResource ErrorDimBrush}"
+                                BorderBrush="{DynamicResource ErrorBrush}"
+                                Visibility="{Binding IsRival, Converter={StaticResource BoolVisible}}">
+                            <TextBlock Text="RIVAL" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource ErrorBrush}" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Margin="14,0,0,0" Text="{Binding DroppedRoundsText}"
+                               TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
+                               ToolTip="Rounds dropped by the best-N rule"
+                               Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
+                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
+                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"
+                               ToolTip="Gross points before the best-N rule dropped anything"
+                               Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
+                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
+                               Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                               ToolTip="Average counted points per applied round"
+                               Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
+                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right" VerticalAlignment="Center"
+                               ToolTip="Counted points (dropped results excluded)"
+                               Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                </Grid>
+            </Border>
         </DataTemplate>
         <!-- one inspector contribution row: label · detail · value -->
         <DataTemplate x:Key="InspectorRowTemplate">
             <DockPanel Margin="0,3">
-                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="Consolas"
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="{StaticResource MonoFont}"
                            FontWeight="SemiBold" TextAlignment="Right" MinWidth="56" Margin="8,0,0,0"
                            Visibility="{Binding HasValue, Converter={StaticResource BoolVisible}}" />
                 <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" FontWeight="SemiBold" MinWidth="120" />
@@ -139,7 +178,7 @@
                         ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
                         Command="{Binding DataContext.CoachMarks.DismissStandingsRulesChipCommand,
                                   RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
-                <TextBlock TextWrapping="Wrap" Foreground="{StaticResource TextSecondaryBrush}"
+                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}"
                            Text="The grey chip below is this season's rulebook in one line — points system, dropped-round rules and scoring quirks come from the season pack, exactly as scored. Click a column header to sort; right-click a header to choose columns." />
             </DockPanel>
         </Border>
@@ -240,13 +279,13 @@
                                                                 CommandParameter="{Binding InspectorRef}"
                                                                 ToolTip="Why? — walk back this round for this driver">
                                                             <TextBlock Text="{Binding Text}" TextAlignment="Center"
-                                                                       FontFamily="Consolas">
+                                                                       FontFamily="{StaticResource MonoFont}">
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock">
-                                                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+                                                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding IsDropped}" Value="True">
-                                                                                <Setter Property="Foreground" Value="{StaticResource TextFaintBrush}" />
+                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFaintBrush}" />
                                                                                 <Setter Property="TextDecorations" Value="Strikethrough" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
@@ -271,7 +310,7 @@
         <!-- The shared "Why?" inspector overlay (career-hub-design.md §5). Shown while an
              inspector is open; the scrim + Close button (mouse) and the ESC key binding
              (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border x:Name="InspectorScrim" Background="#99000000"
+        <Border x:Name="InspectorScrim" Background="{DynamicResource ScrimBrush}"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
@@ -284,15 +323,16 @@
                     MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
                                 Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="{StaticResource SurfaceBrush}" CornerRadius="6"
-                    BorderBrush="{StaticResource EdgeBrush}" BorderThickness="1"
+                    Background="{DynamicResource SurfaceBrush}" CornerRadius="6"
+                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
                     DataContext="{Binding SelectedInspector}">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                        <Button DockPanel.Dock="Right" Content="Close" VerticalAlignment="Top"
-                                Style="{StaticResource SubtleButton}"
+                        <Button DockPanel.Dock="Right" VerticalAlignment="Top"
+                                Style="{StaticResource CloseButton}"
+                                AutomationProperties.Name="Close standings inspector"
                                 Command="{Binding DataContext.CloseInspectorCommand,
-                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
                                 ToolTip="Close (Esc)" />
                         <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
                     </DockPanel>

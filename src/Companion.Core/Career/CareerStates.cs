@@ -97,6 +97,20 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public long Xp { get; init; }
 
+    /// <summary>The explicit Alpha experience discriminator for v2. Null keeps the exact legacy
+    /// single-career path even if newer fields exist in the application.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? ExperienceMode { get; init; }
+
+    /// <summary>Creation-pinned bounded campaign horizon and rational XP scale. Passport uses its
+    /// own portfolio state instead, so this is null there and on every legacy save.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public CampaignProgressionPlan? CampaignProgressionPlan { get; init; }
+
+    /// <summary>Numerator-unit remainder for v2's exact rational XP carry.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public long XpScaleRemainder { get; init; }
+
     /// <summary>Within-season injury load banked from the driver-error-DNF injury perks (glass_cannon /
     /// hot_head <c>perErrorAdd</c>): each driver-error DNF adds its perk's per-error contribution, and
     /// the season-end injury roll reads the total ON TOP of the base hazard, then resets it to 0 so it
@@ -142,6 +156,37 @@ public sealed record PlayerCareerState
     /// and the whole mode stays inert.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Companion.Core.Smgp.SmgpState? Smgp { get; init; }
+
+    // ---- Character death & injury (docs/dev/character-death-injury.md, Slice 1) ----
+
+    /// <summary>The career's mortality mode (Off / Normal / Hardcore), seeded ONCE at creation and
+    /// carried forward each round via record <c>with</c> — mirroring <see cref="FormAware"/> and the
+    /// SMGP gates. <see cref="MortalityMode.Off"/> is the enum default, so this is omitted from the
+    /// serialized start state (WhenWritingDefault): every pre-feature career's player_state blob is
+    /// BYTE-IDENTICAL and the whole mortality system stays inert. It is display/career-wide state
+    /// (the same value is also persisted on the <c>career</c> table); Slice 1 makes NO fold change,
+    /// so an Off career — and a Normal/Hardcore one — re-simulates exactly as before.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public MortalityMode Mortality { get; init; }
+
+    /// <summary>Races the driver must still SIT OUT from a minor accident injury (character death &amp;
+    /// injury §3.3). Set by the accident fold; decremented as the driver sits (Slice 4 auto-simulates
+    /// those rounds). 0 = fit. Omitted when 0 (WhenWritingDefault) so a non-injured career is
+    /// byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int RaceSuspensionRemaining { get; init; }
+
+    /// <summary>The driver is out for the REST of the season with a season-ending injury (§3.3). Skips
+    /// every remaining round of the season (Slice 4 auto-simulates them); cleared at the season reset so
+    /// the driver returns next season. Omitted when false so an uninjured career is byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool SeasonEndingInjury { get; init; }
+
+    /// <summary>The character DIED in an accident (§3.3) — TERMINAL. The career stops accepting rounds
+    /// (mirrors the SMGP CareerOver floor); in Hardcore the career file is physically deleted. Carried
+    /// forward verbatim (never reset). Omitted when false so a living career is byte-identical.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Deceased { get; init; }
 }
 
 /// <summary>A driver available to the AI seat market (free agents / journeymen the caller

@@ -2,13 +2,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Threading;
 using Companion.ViewModels.Wizard;
 
 namespace Companion.App.Views;
 
 public partial class WizardView : UserControl
 {
+    private int _seatCarouselIndex;
+
     public WizardView()
     {
         InitializeComponent();
@@ -39,15 +41,47 @@ public partial class WizardView : UserControl
         }
     }
 
-    /// <summary>Mouse parity (ux-round §2): double-click a seat = select it and advance.</summary>
-    private void OnSeatDoubleClick(object sender, MouseButtonEventArgs e)
+    private void OnPreviousSeatCard(object sender, RoutedEventArgs e) => PageSeatCarousel(-1);
+
+    private void OnNextSeatCard(object sender, RoutedEventArgs e) => PageSeatCarousel(1);
+
+    private void PageSeatCarousel(int direction)
     {
-        if (sender is not ListBoxItem { DataContext: SeatOption seat } ||
-            DataContext is not NewCareerWizardViewModel vm)
+        if (SeatCarousel.Items.Count == 0)
             return;
 
-        vm.SelectedSeat = seat;
-        if (vm.NextCommand.CanExecute(null))
-            vm.NextCommand.Execute(null);
+        _seatCarouselIndex = Math.Clamp(
+            _seatCarouselIndex + direction,
+            0,
+            SeatCarousel.Items.Count - 1);
+        SnapSeatCarousel();
     }
+
+    private void OnSeatCarouselLoaded(object sender, RoutedEventArgs e)
+    {
+        _seatCarouselIndex = Math.Max(0, SeatCarousel.SelectedIndex);
+        QueueSeatCarouselSnap();
+    }
+
+    private void OnSeatCarouselSizeChanged(object sender, SizeChangedEventArgs e) => QueueSeatCarouselSnap();
+
+    private void OnSeatCarouselSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (SeatCarousel.SelectedIndex < 0)
+            return;
+
+        _seatCarouselIndex = SeatCarousel.SelectedIndex;
+        QueueSeatCarouselSnap();
+    }
+
+    private void QueueSeatCarouselSnap() =>
+        Dispatcher.BeginInvoke(SnapSeatCarousel, DispatcherPriority.Loaded);
+
+    private void SnapSeatCarousel()
+    {
+        double pageWidth = SeatCarouselScroller.ViewportWidth;
+        if (pageWidth > 0)
+            SeatCarouselScroller.ScrollToHorizontalOffset(_seatCarouselIndex * pageWidth);
+    }
+
 }

@@ -90,6 +90,55 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// single-race loop. Display only; the grammar itself is identical for every session.</summary>
     public string? SessionLabel { get; init; }
 
+    /// <summary>The named SMGP rival's driver id for this entry, or null. Set by the shell on an SMGP
+    /// round so the qualifying / finishing-order grammar surfaces WHERE the rival is as cars are placed
+    /// (Mike: "a lot more places where you can see where your rival is"). Display-only.</summary>
+    public string? RivalDriverId { get; init; }
+
+    /// <summary>The named rival's display name (paired with <see cref="RivalDriverId"/>).</summary>
+    public string? RivalName { get; init; }
+
+    /// <summary>The named rival's gendered pronouns (Mika is female → she/her). Defaults to he/him, so the
+    /// readout is unchanged for every unmarked driver. Display-only.</summary>
+    public Companion.Core.Smgp.SmgpPronouns RivalPronouns { get; init; } = Companion.Core.Smgp.SmgpPronouns.Default;
+
+    /// <summary>True when a driver id is the named rival — the LOGIC behind the red RIVAL badge (the row
+    /// template can't call this from a DataTemplate, so it renders the badge via an equivalent
+    /// <c>StringsEqualVisible</c> MultiBinding of <see cref="RivalDriverId"/> vs the row's DriverId; this
+    /// predicate is the unit-testable form of that same gate). Null/empty rival (every non-SMGP round) →
+    /// always false. Display-only.</summary>
+    public bool IsRival(string? driverId) =>
+        !string.IsNullOrEmpty(RivalDriverId) && string.Equals(driverId, RivalDriverId, StringComparison.Ordinal);
+
+    /// <summary>A live readout of the named rival's position as results are entered — "RIVAL  G. CEARA
+    /// finishes P3 · you are AHEAD". Empty when no rival is named (every non-SMGP round). Recomputed on
+    /// every placement via <see cref="RaiseStateChanged"/>.</summary>
+    public string RivalStatusLine
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(RivalDriverId))
+                return "";
+            string who = (RivalName ?? "Your rival").ToUpperInvariant();
+            string verb = string.Equals(SessionLabel, "Qualifying", StringComparison.OrdinalIgnoreCase)
+                ? "qualifies" : "finishes";
+
+            int rivalPos = _classified.FindIndex(s => string.Equals(s.DriverId, RivalDriverId, StringComparison.Ordinal));
+            if (rivalPos >= 0)
+            {
+                int playerPos = _classified.FindIndex(s => string.Equals(s.DriverId, _playerDriverId, StringComparison.Ordinal));
+                string rel = playerPos < 0 ? ""
+                    : playerPos < rivalPos ? "  ·  you are AHEAD" : "  ·  you are BEHIND";
+                return $"RIVAL  {who} {verb} P{rivalPos + 1}{rel}";
+            }
+            if (_dnfs.Any(d => string.Equals(d.Seat.DriverId, RivalDriverId, StringComparison.Ordinal)))
+                return $"RIVAL  {who} is OUT — beat {RivalPronouns.Object} home to bank the win";
+            if (_disqualified.Any(s => string.Equals(s.DriverId, RivalDriverId, StringComparison.Ordinal)))
+                return $"RIVAL  {who} — DISQUALIFIED";
+            return $"RIVAL  {who} — not placed yet";
+        }
+    }
+
     // ---------- observable state ----------
 
     /// <summary>Slider value assumed before any recommendation exists (neutral 100%).</summary>
@@ -120,6 +169,20 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     /// for a character-free career (the fold never reads it).</summary>
     [ObservableProperty]
     private bool isWet;
+
+    /// <summary>The severity of the player's OWN accident DNF (Light/Medium/Heavy) — bound by the result
+    /// screen's severity picker, which is shown ONLY when <see cref="PlayerHasAccidentDnf"/> (the player
+    /// marked their own retirement as an accident). Defaults Medium the moment an accident is marked and
+    /// clears when it is undone (see <see cref="RaiseStateChanged"/>). Stored on the raw envelope (v7);
+    /// nothing folds it until Slice 3. (Character death &amp; injury §3.1.)</summary>
+    [ObservableProperty]
+    private Companion.Core.Career.AccidentSeverity? playerAccidentSeverity;
+
+    /// <summary>True when the player's OWN retirement this round is an accident ("a") — the gate the
+    /// view uses to reveal the severity picker.</summary>
+    public bool PlayerHasAccidentDnf =>
+        _dnfs.Any(d => string.Equals(d.Seat.DriverId, _playerDriverId, StringComparison.Ordinal)
+            && d.Reason == "a");
 
     [ObservableProperty]
     private string input = "";
@@ -215,6 +278,9 @@ public sealed partial class ResultEntryViewModel : ObservableObject
         SliderUsed = Math.Clamp(
             Math.Round(SliderUsed, MidpointRounding.AwayFromZero), MinSlider, MaxSlider),
         IsWet = IsWet,
+        // Only for the player's own accident DNF (kept in sync by RaiseStateChanged); the session
+        // gates it again on the accident reason before storing it on the envelope.
+        PlayerAccidentSeverity = PlayerHasAccidentDnf ? PlayerAccidentSeverity : null,
     };
 
     // ---------- commands (view maps Enter/Tab/Esc/F8/Ctrl+Z to these) ----------
@@ -536,13 +602,21 @@ public sealed partial class ResultEntryViewModel : ObservableObject
     private void RaiseStateChanged()
     {
         Recompute();
+        // Keep the player's accident-severity selection in sync with their DNF: default Medium the
+        // moment they mark their own accident, clear it when the accident is undone/changed.
+        if (PlayerHasAccidentDnf)
+            PlayerAccidentSeverity ??= Companion.Core.Career.AccidentSeverity.Medium;
+        else
+            PlayerAccidentSeverity = null;
         OnPropertyChanged(nameof(Classified));
         OnPropertyChanged(nameof(Remaining));
+        OnPropertyChanged(nameof(RivalStatusLine));
         OnPropertyChanged(nameof(Dnfs));
         OnPropertyChanged(nameof(Disqualified));
         OnPropertyChanged(nameof(ResolvedCount));
         OnPropertyChanged(nameof(ProgressText));
         OnPropertyChanged(nameof(IsComplete));
+        OnPropertyChanged(nameof(PlayerHasAccidentDnf));
         OnPropertyChanged(nameof(CanUndo));
     }
 }

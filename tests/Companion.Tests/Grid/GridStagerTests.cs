@@ -104,6 +104,32 @@ public class GridStagerTests
     }
 
     [Fact]
+    public void Build_AuthoritativePlayerNeutralScalars_AreExplicitInTheXml()
+    {
+        var player = Seat() with
+        {
+            IsPlayer = true,
+            PlayerCarScalarsAuthoritative = true,
+            WeightScalar = 1.0,
+            PowerScalar = 1.0,
+            DragScalar = 1.0,
+        };
+
+        var file = GridStager.Build(Plan(player));
+
+        var driver = Assert.Single(file.Drivers);
+        Assert.Equal(1.0, driver.WeightScalar);
+        Assert.Equal(1.0, driver.PowerScalar);
+        Assert.Equal(1.0, driver.DragScalar);
+
+        var written = XDocument.Parse(CustomAiXmlWriter.ToXml(file))
+            .Root!.Elements("driver").Single();
+        Assert.Equal(1.0, ParseStat(written, "weight_scalar"));
+        Assert.Equal(1.0, ParseStat(written, "power_scalar"));
+        Assert.Equal(1.0, ParseStat(written, "drag_scalar"));
+    }
+
+    [Fact]
     public void Build_IncludesThePlayerSeat_WithSkillsAndScalars()
     {
         var player = Seat() with { IsPlayer = true, PowerScalar = 0.96 };

@@ -33,7 +33,8 @@ public static class SeasonRollover
         string acceptedTeamId,
         string? playerLiveryName,
         IReadOnlyList<CharacterSpend>? spends = null,
-        CharacterRules? characterRules = null)
+        CharacterRules? characterRules = null,
+        IReadOnlyList<CharacterRespec>? respecs = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(acceptedTeamId);
 
@@ -54,8 +55,14 @@ public static class SeasonRollover
         // application the era-transition path makes, so a same-pack CARRYOVER develops the driver
         // just like a changeover. No spends (or no character) → unchanged, so ordinary rollovers
         // stay byte-identical.
-        if (spends is { Count: > 0 } && characterRules is not null && player.Character is { } character)
-            player = player with { Character = CharacterProgress.ApplyAll(character, spends, characterRules) };
+        if (characterRules is not null && player.Character is { } character)
+        {
+            if (respecs is { Count: > 0 })
+                character = CharacterProgress.ApplyRespecs(character, respecs);
+            if (spends is { Count: > 0 })
+                character = CharacterProgress.ApplyAll(character, spends, characterRules);
+            player = player with { Character = character };
+        }
 
         return new SeasonStartStates
         {

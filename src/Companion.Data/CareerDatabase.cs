@@ -25,17 +25,26 @@ public sealed class CareerDatabase : IDisposable
             Mode = SqliteOpenMode.ReadWriteCreate,
             ForeignKeys = true,
         }.ToString());
-        connection.Open();
-
-        using (var pragma = connection.CreateCommand())
+        try
         {
-            pragma.CommandText = "PRAGMA journal_mode=WAL;";
-            pragma.ExecuteNonQuery();
-        }
+            connection.Open();
 
-        var database = new CareerDatabase(connection);
-        Migrations.Apply(connection);
-        return database;
+            using (var pragma = connection.CreateCommand())
+            {
+                pragma.CommandText = "PRAGMA journal_mode=WAL;";
+                pragma.ExecuteNonQuery();
+            }
+
+            var database = new CareerDatabase(connection);
+            Migrations.Apply(connection);
+            return database;
+        }
+        catch
+        {
+            connection.Dispose();
+            SqliteConnection.ClearPool(connection);
+            throw;
+        }
     }
 
     public int SchemaVersion

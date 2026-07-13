@@ -78,8 +78,8 @@ public sealed partial class CharacterViewModel : ObservableObject
 
     public IReadOnlyList<Archetype> Archetypes { get; }
 
-    /// <summary>The player's driver name — the identity the whole app will use. Pre-filled with the
-    /// seat's historical driver as a starting point; the player makes it their own.</summary>
+    /// <summary>The player's driver name — the identity the whole app will use. It is created before
+    /// seat selection, so its default is deliberately independent of the historical driver.</summary>
     [ObservableProperty]
     private string _name;
 
@@ -230,12 +230,15 @@ public sealed partial class CharacterViewModel : ObservableObject
         foreach (var slider in Stats.Concat(MetaStats))
             stats[slider.Id] = slider.Value;
 
+        var perkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList();
         return new CharacterProfile
         {
             Name = Name.Trim(),
             Age = Math.Clamp(Age, MinAge, MaxAge),
             Stats = stats,
-            PerkIds = Perks.Where(p => p.IsSelected).Select(p => p.Id).ToList(),
+            PerkIds = perkIds,
+            CreationPerkIds = perkIds,
+            ProgressionVersion = 1,
             // Record the chosen specialism only when One-Trick Pony is actually taken, so a build
             // without it serialises with no ChosenFlavor (byte-identical to a legacy profile).
             ChosenFlavor = IsOneTrickSelected ? ChosenFlavor.Field : null,

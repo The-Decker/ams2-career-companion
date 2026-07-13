@@ -1,7 +1,12 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using Companion.Data;
 using Companion.ViewModels.Hub;
+using Companion.ViewModels.Shell;
 
 namespace Companion.App.Views;
 
@@ -23,6 +28,98 @@ public partial class HubView : UserControl
 
     public HubView() => InitializeComponent();
 
+    internal bool IsTycoonDashboardOpen => TycoonDashboardPanel.Visibility == Visibility.Visible;
+
+    private void OnOpenLatestNews(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not HubViewModel hub)
+            return;
+
+        var news = hub.Tabs.FirstOrDefault(tab => tab.Key == HubViewModel.NewsTabKey);
+        if (news is not null && hub.SelectTabCommand.CanExecute(news))
+            hub.SelectTabCommand.Execute(news);
+    }
+
+    private void OnManageSaves(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not HubViewModel hub ||
+            Application.Current is not App { TrackedCareerFactory: { } factory } ||
+            Window.GetWindow(this)?.DataContext is not ShellViewModel shell)
+            return;
+
+        try
+        {
+            string path = factory.GetCareerPath(hub.Home.Session);
+            SaveManagerWindow.ShowIfEnabled(Window.GetWindow(this), hub.Home.Session, path, shell);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            MessageBox.Show(Window.GetWindow(this),
+                $"Career save points could not be opened:\n\n{ex.Message}",
+                "Career saves", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void OnDeathRestoreRequested(object? sender, SaveSlotInfo slot)
+    {
+        if (DataContext is not HubViewModel hub ||
+            Application.Current is not App { TrackedCareerFactory: { } factory } ||
+            Window.GetWindow(this)?.DataContext is not ShellViewModel shell)
+            return;
+
+        try
+        {
+            string path = factory.GetCareerPath(hub.Home.Session);
+            SaveManagerWindow.RestoreAndReopen(
+                Window.GetWindow(this), hub.Home.Session, path, shell, slot);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            MessageBox.Show(Window.GetWindow(this),
+                $"That save point could not be restored:\n\n{ex.Message}",
+                "Restore career", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void OnToggleTycoonDashboard(object sender, RoutedEventArgs e) =>
+        SetTycoonDashboardOpen(TycoonDashboardPanel.Visibility != Visibility.Visible);
+
+    private void OnCloseTycoonDashboard(object sender, RoutedEventArgs e)
+    {
+        SetTycoonDashboardOpen(false);
+        e.Handled = true;
+    }
+
+    private void OnTycoonPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape)
+            return;
+
+        e.Handled = TryCloseTycoonDashboard();
+    }
+
+    /// <summary>Closes the modal Team HQ before shell-level Esc navigation runs. MainWindow owns
+    /// the preview tunnel, so it calls this App-layer hook before asking the Hub VM to go back.</summary>
+    internal bool TryCloseTycoonDashboard()
+    {
+        if (TycoonDashboardPanel.Visibility != Visibility.Visible)
+            return false;
+        SetTycoonDashboardOpen(false);
+        return true;
+    }
+
+    private void SetTycoonDashboardOpen(bool open)
+    {
+        TycoonDashboardBackdrop.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        TycoonDashboardPanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        HubContent.IsEnabled = !open;
+
+        if (open)
+            TycoonCloseButton.Focus();
+        else
+            TeamHqButton.Focus();
+    }
+
     private void OnPopOutTab(object sender, RoutedEventArgs e)
     {
         if ((sender as FrameworkElement)?.DataContext is not HubTabViewModel tab)
@@ -41,6 +138,9 @@ public partial class HubView : UserControl
         var window = new TabWindow
         {
             DataContext = tab,
+            // App-only bridge for Task-3/4 projections in a tear-off: Calendar, History and
+            // Paddock keep the live session + RoundText refresh token through this Hub VM.
+            Tag = DataContext,
             Owner = Window.GetWindow(this),
         };
         window.RememberBy(tab.Key);

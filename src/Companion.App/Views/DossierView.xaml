@@ -2,7 +2,47 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
+             xmlns:smgp="clr-namespace:Companion.Core.Smgp;assembly=Companion.Core"
+             xmlns:character="clr-namespace:Companion.Core.Character;assembly=Companion.Core"
              Focusable="False">
+    <UserControl.Resources>
+        <DataTemplate x:Key="DossierStatRow">
+            <DockPanel Margin="0,5">
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="138"
+                           VerticalAlignment="Center" />
+                <TextBlock DockPanel.Dock="Right" Width="48" TextAlignment="Right"
+                           VerticalAlignment="Center" Style="{StaticResource Mono}"
+                           Text="{Binding Value, StringFormat={}{0:0.00}}" />
+                <ProgressBar Value="{Binding Value, Mode=OneWay}" Maximum="1" Height="8"
+                             VerticalAlignment="Center" Margin="10,0" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!-- Locked is the calm default. Owned and unlockable nodes opt into stronger semantic
+             treatments through the bind-contract booleans, avoiding presentation-side logic. -->
+        <Style x:Key="SkillNodeCard" TargetType="Border" BasedOn="{StaticResource Panel}">
+            <Setter Property="Width" Value="250" />
+            <Setter Property="MinHeight" Value="196" />
+            <Setter Property="Padding" Value="13,11" />
+            <Setter Property="Margin" Value="0,0,10,10" />
+            <Setter Property="Opacity" Value="0.56" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsOwned}" Value="True">
+                    <Setter Property="Opacity" Value="1" />
+                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding CanUnlock}" Value="True">
+                    <Setter Property="Opacity" Value="1" />
+                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                    <Setter Property="BorderThickness" Value="2" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <!-- The Driver dossier (character depth 3). DataContext is a DossierViewModel; the character
          data is Dossier (a CharacterDossier). Read-only — this is the "see your driver" lens. -->
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False" DataContext="{Binding Dossier}">
@@ -22,9 +62,9 @@
                 <StackPanel Grid.Column="0" Margin="0,0,22,0" VerticalAlignment="Top">
                     <Grid Width="150" Height="150"
                           ToolTip="Drop your team player image at data\ams2\portraits\player.&lt;team&gt;.jpg (beside the exe)">
-                        <Border CornerRadius="10" Background="{StaticResource SurfaceAltBrush}">
-                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="48"
-                                       Foreground="{StaticResource TextMutedBrush}" Opacity="0.45"
+                        <Border CornerRadius="10" Background="{DynamicResource SurfaceAltBrush}">
+                            <TextBlock Text="&#xE77B;" FontFamily="{StaticResource IconFont}" FontSize="48"
+                                       Foreground="{DynamicResource TextMutedBrush}" Opacity="0.45"
                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <Border CornerRadius="10" ClipToBounds="True">
@@ -44,38 +84,152 @@
                     <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0"
                                Text="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                Visibility="{Binding DataContext.TeamLine, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource NullCollapsed}}" />
-                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                        <TextBlock Style="{StaticResource Muted}">
-                            <Run Text="Level" /><Run Text=" " /><Run Text="{Binding Level, Mode=OneWay}" FontWeight="SemiBold" />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource Muted}" Margin="16,0,0,0"
-                                   Visibility="{Binding Age, Converter={StaticResource NullCollapsed}}">
-                            <Run Text="Age" /><Run Text=" " /><Run Text="{Binding Age, Mode=OneWay}" FontWeight="SemiBold" />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0">
-                            <Run Text="{Binding Xp, Mode=OneWay}" /><Run Text=" XP" />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource Faint}" Margin="16,0,0,0"
-                                   Visibility="{Binding CpUnspent, Converter={StaticResource CountVisible}}">
-                            <Run Text="{Binding CpUnspent, Mode=OneWay}" /><Run Text=" points to spend" />
-                        </TextBlock>
-                    </StackPanel>
-                    <TextBlock Margin="0,6,0,0">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding InjuryRisk}" Value="{x:Null}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                        <Run Text="Injury risk: " /><Run Text="{Binding InjuryRisk, Mode=OneWay}" FontWeight="SemiBold"
-                             Foreground="{StaticResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
-                    </TextBlock>
-                    <ProgressBar Value="{Binding LevelProgress, Mode=OneWay}" Maximum="1" Height="6" Margin="0,8,0,0"
-                                 ToolTip="Progress to the next level" />
+                    <!-- Level-up is a one-shot VM moment. Every VM-level binding deliberately
+                         reaches back through the UserControl because this ScrollViewer is on the
+                         inner CharacterDossier DataContext. -->
+                    <Border x:Name="LevelUpBanner" Style="{StaticResource AccentCallout}"
+                            Margin="0,10,0,0" Padding="14,11"
+                            Visibility="{Binding DataContext.LevelUpPending,
+                                                 RelativeSource={RelativeSource AncestorType=UserControl},
+                                                 Converter={StaticResource BoolVisible}}">
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="Got it" Margin="14,0,0,0"
+                                    Style="{StaticResource SubtleButton}" Padding="11,6"
+                                    Command="{Binding DataContext.AcknowledgeLevelUpCommand,
+                                                      RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            <StackPanel>
+                                <TextBlock Text="LEVEL UP" Style="{StaticResource PixelBadge}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                <TextBlock Style="{StaticResource Body}" Margin="0,4,0,0">
+                                    <Run Text="Your racecraft evolved. " />
+                                    <Run Text="{Binding DataContext.LevelsGained,
+                                                        RelativeSource={RelativeSource AncestorType=UserControl},
+                                                        StringFormat=+{0} level}"
+                                         FontWeight="Bold" />
+                                    <Run Text=" &#x2014; choose what comes next." />
+                                </TextBlock>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
 
+                    <Border Style="{StaticResource Panel}" Padding="14,12" Margin="0,10,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="82" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="70" Height="70" CornerRadius="35"
+                                    Background="{DynamicResource AccentBrush}"
+                                    BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="2">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="LEVEL" Style="{StaticResource PixelBadge}"
+                                               Foreground="{DynamicResource OnAccentBrush}" FontSize="8"
+                                               HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding Level}" FontFamily="{StaticResource DisplayFont}"
+                                               FontSize="27" FontWeight="Bold"
+                                               Foreground="{DynamicResource OnAccentBrush}"
+                                               HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <DockPanel>
+                                    <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                            Margin="10,0,0,0"
+                                            Visibility="{Binding DataContext.SkillPointsAvailable,
+                                                                 RelativeSource={RelativeSource AncestorType=UserControl},
+                                                                 Converter={StaticResource CountVisible},
+                                                                 Mode=OneWay}">
+                                        <TextBlock Foreground="{DynamicResource AccentTextBrush}"
+                                                   FontWeight="Bold">
+                                            <Run Text="{Binding DataContext.SkillPointsAvailable,
+                                                                RelativeSource={RelativeSource AncestorType=UserControl},
+                                                                Mode=OneWay}" />
+                                            <Run Text=" SKILL POINTS TO SPEND" />
+                                        </TextBlock>
+                                    </Border>
+                                    <TextBlock Style="{StaticResource Muted}"
+                                               Visibility="{Binding Age, Converter={StaticResource NullCollapsed}}">
+                                        <Run Text="Age " /><Run Text="{Binding Age}" FontWeight="SemiBold" />
+                                        <Run Text="  &#x00B7;  " /><Run Text="{Binding Xp}" /><Run Text=" total XP" />
+                                    </TextBlock>
+                                </DockPanel>
+                                <ProgressBar Value="{Binding LevelProgress, Mode=OneWay}" Maximum="1" Height="10"
+                                             Margin="0,9,0,0" ToolTip="Progress to the next level" />
+                                <TextBlock Style="{StaticResource Faint}" Margin="0,5,0,0">
+                                    <Run Text="{Binding XpIntoLevel}" FontWeight="SemiBold" />
+                                    <Run Text=" / " /><Run Text="{Binding XpForNextLevel}" />
+                                    <Run Text=" XP to next level" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <!-- Current race availability sits beside the long-term injury-risk profile.
+                         This ScrollViewer's DataContext is already CharacterDossier, so both are
+                         direct bindings; the risk line retains its legacy null-collapse. -->
+                    <WrapPanel Margin="0,6,0,0">
+                        <Border Padding="8,3" CornerRadius="4" BorderThickness="1" VerticalAlignment="Center">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Availability}"
+                                                     Value="{x:Static character:AvailabilityStatus.Injured}">
+                                            <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Availability}"
+                                                     Value="{x:Static character:AvailabilityStatus.SeasonOver}">
+                                            <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Availability}"
+                                                     Value="{x:Static character:AvailabilityStatus.Deceased}">
+                                            <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                                            <Setter Property="BorderThickness" Value="2" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Availability}"
+                                                         Value="{x:Static character:AvailabilityStatus.Injured}">
+                                                <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Availability}"
+                                                         Value="{x:Static character:AvailabilityStatus.SeasonOver}">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Availability}"
+                                                         Value="{x:Static character:AvailabilityStatus.Deceased}">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                                <Run Text="Availability: " /><Run Text="{Binding AvailabilityLabel, Mode=OneWay}"
+                                                                     FontWeight="SemiBold" />
+                            </TextBlock>
+                        </Border>
+                        <TextBlock Margin="12,3,0,0" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding InjuryRisk}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                            <Run Text="Injury risk: " /><Run Text="{Binding InjuryRisk, Mode=OneWay}" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource ErrorBrush}" /><Run Text="  — a fragile build can be set back at season's end." />
+                        </TextBlock>
+                    </WrapPanel>
                     <!-- the car you drive, as the arcade spec card — collapses when no spec is authored -->
                     <ContentControl Content="{Binding DataContext.PlayerCarSpec, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     HorizontalAlignment="Left" MaxWidth="300" Margin="0,14,0,0"
@@ -89,24 +243,294 @@
                 </StackPanel>
             </Grid>
 
-            <!-- stats -->
-            <TextBlock Text="Stats" Style="{StaticResource H2}" Margin="0,28,0,8" />
-            <Border Style="{StaticResource Panel}" Padding="14,10">
-                <ItemsControl ItemsSource="{Binding Stats}">
+            <!-- The player's evolving SMGP campaign: a typed, chronological story projection over
+                 folded results. RelativeSource is intentional because this page's ScrollViewer uses
+                 the CharacterDossier as its inner DataContext. -->
+            <Expander x:Name="StoryExpander" Margin="0,24,0,0" IsExpanded="True"
+                      HorizontalContentAlignment="Stretch"
+                      Visibility="{Binding DataContext.HasSmgpNarrative,
+                                           RelativeSource={RelativeSource AncestorType=UserControl},
+                                           Converter={StaticResource BoolVisible}}">
+                <Expander.Header>
+                    <TextBlock Text="YOUR STORY" Style="{StaticResource H2}" />
+                </Expander.Header>
+                <StackPanel x:Name="StoryContent"
+                            Visibility="{Binding IsExpanded,
+                                                 RelativeSource={RelativeSource AncestorType=Expander},
+                                                 Converter={StaticResource BoolVisible}}">
+                <Border Style="{StaticResource AccentCallout}" Margin="0,8,0,12" Padding="14,10">
+                    <StackPanel>
+                        <TextBlock Text="LIVE CAMPAIGN" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource AccentTextBrush}" />
+                        <TextBlock Text="{Binding DataContext.NarrativeIntro,
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Margin="0,3,0,0" />
+                    </StackPanel>
+                </Border>
+                <ItemsControl ItemsSource="{Binding DataContext.Timeline,
+                                                    RelativeSource={RelativeSource AncestorType=UserControl}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <DockPanel Margin="0,4">
-                                <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" Width="130" VerticalAlignment="Center" />
-                                <TextBlock DockPanel.Dock="Right" Width="48" TextAlignment="Right" VerticalAlignment="Center"
-                                           Style="{StaticResource Faint}"
-                                           Text="{Binding Value, StringFormat={}{0:0.00}}" />
-                                <ProgressBar Value="{Binding Value}" Maximum="1" Height="8"
-                                             VerticalAlignment="Center" Margin="10,0" />
-                            </DockPanel>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="112" />
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding WhenLabel}" Style="{StaticResource Mono}"
+                                           FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}"
+                                           TextWrapping="Wrap" Margin="0,7,10,0" />
+                                <Grid Grid.Column="1">
+                                    <Border Width="2" Background="{DynamicResource EdgeBrush}"
+                                            HorizontalAlignment="Center" />
+                                    <Border Width="12" Height="12" CornerRadius="6"
+                                            HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Promotion}">
+                                                        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.RivalryEarned}">
+                                                        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Demotion}">
+                                                        <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.RivalryLost}">
+                                                        <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.NearMiss}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.FirstWin}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Title}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Kind}" Value="{x:Static smgp:SmgpBeatKind.Finale}">
+                                                        <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </Grid>
+                                <Border Grid.Column="2" Style="{StaticResource Callout}" Padding="12,9">
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding Kind}"
+                                                       Style="{StaticResource Eyebrow}" Margin="10,0,0,0" />
+                                            <TextBlock Text="{Binding Headline}" FontFamily="{StaticResource DisplayFont}"
+                                                       FontWeight="Bold" FontSize="14" TextWrapping="Wrap" />
+                                        </DockPanel>
+                                        <TextBlock Text="{Binding Detail}" Style="{StaticResource Body}"
+                                                   FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </Border>
+                </StackPanel>
+            </Expander>
+
+            <!-- skill tree -->
+            <DockPanel Margin="0,28,0,8">
+                <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Center">
+                    <Border Style="{StaticResource CompactChip}" Margin="0,0,7,0">
+                        <TextBlock Style="{StaticResource Mono}" Foreground="{DynamicResource AccentTextBrush}">
+                            <Run Text="{Binding DataContext.SkillPointsAvailable,
+                                                RelativeSource={RelativeSource AncestorType=UserControl},
+                                                Mode=OneWay}" />
+                            <Run Text=" SP" />
+                        </TextBlock>
+                    </Border>
+                    <Border Style="{StaticResource CompactChip}"
+                            Visibility="{Binding DataContext.RespecTokens,
+                                                 RelativeSource={RelativeSource AncestorType=UserControl},
+                                                 Converter={StaticResource CountVisible},
+                                                 Mode=OneWay}">
+                        <TextBlock Style="{StaticResource Mono}">
+                            <Run Text="{Binding DataContext.RespecTokens,
+                                                RelativeSource={RelativeSource AncestorType=UserControl},
+                                                Mode=OneWay}" />
+                            <Run Text=" RESPEC" />
+                        </TextBlock>
+                    </Border>
+                </WrapPanel>
+                <StackPanel>
+                    <TextBlock Text="SKILL TREE" Style="{StaticResource H2}" />
+                    <TextBlock Text="Turn earned Skill Points into a distinct driving identity."
+                               Style="{StaticResource Muted}" Margin="0,3,0,0" />
+                </StackPanel>
+            </DockPanel>
+
+            <ItemsControl x:Name="SkillTreeBranches"
+                          ItemsSource="{Binding DataContext.SkillTree,
+                                                RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                                    <Setter Property="Padding" Value="15,13" />
+                                    <Setter Property="Margin" Value="0,0,0,12" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMeta}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,10">
+                                    <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                                            Visibility="{Binding IsMeta, Converter={StaticResource BoolVisible}}">
+                                        <TextBlock Text="FAME / LONGEVITY" Style="{StaticResource PixelBadge}"
+                                                   Foreground="{DynamicResource WarningBrush}" />
+                                    </Border>
+                                    <TextBlock Text="{Binding Name}" FontFamily="{StaticResource DisplayFont}"
+                                               FontSize="17" FontWeight="Bold" />
+                                </DockPanel>
+                                <ItemsControl ItemsSource="{Binding Nodes}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource SkillNodeCard}">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <DockPanel>
+                                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                                                                    Margin="8,0,0,0">
+                                                            <Border Style="{StaticResource CompactChip}" Margin="0,0,5,0">
+                                                                <TextBlock Text="{Binding Tier, StringFormat=TIER {0}}"
+                                                                           Style="{StaticResource PixelBadge}" />
+                                                            </Border>
+                                                            <Border Style="{StaticResource CompactChip}">
+                                                                <TextBlock Text="{Binding Cost, StringFormat={}{0} SP}"
+                                                                           Style="{StaticResource Mono}"
+                                                                           Foreground="{DynamicResource AccentTextBrush}" />
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14.5"
+                                                                   TextWrapping="Wrap" />
+                                                    </DockPanel>
+
+                                                    <StackPanel Grid.Row="1" Margin="0,9,0,8">
+                                                        <ItemsControl ItemsSource="{Binding Benefits}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap">
+                                                                        <Run Text="+  " Foreground="{DynamicResource SuccessBrush}"
+                                                                             FontWeight="Bold" />
+                                                                        <Run Text="{Binding Mode=OneWay}" />
+                                                                    </TextBlock>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                        <ItemsControl ItemsSource="{Binding Drawbacks}" Margin="0,3,0,0">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Style="{StaticResource Faint}" TextWrapping="Wrap">
+                                                                        <Run Text="&#x2212;  " Foreground="{DynamicResource ErrorBrush}"
+                                                                             FontWeight="Bold" />
+                                                                        <Run Text="{Binding Mode=OneWay}" />
+                                                                    </TextBlock>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+
+                                                    <Grid Grid.Row="2">
+                                                        <TextBlock Text="{Binding LockReason}" TextWrapping="Wrap">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsOwned}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding CanUnlock}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                        <TextBlock Text="OWNED  &#x2713;" Style="{StaticResource PixelBadge}"
+                                                                   Foreground="{DynamicResource SuccessBrush}"
+                                                                   Visibility="{Binding IsOwned, Converter={StaticResource BoolVisible}}" />
+                                                        <Button Content="Unlock" HorizontalAlignment="Right"
+                                                                Style="{StaticResource AccentButton}" Padding="11,6"
+                                                                Command="{Binding DataContext.UnlockNodeCommand,
+                                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding Mode=OneWay}"
+                                                                Visibility="{Binding CanUnlock, Converter={StaticResource BoolVisible}}" />
+                                                        <Grid Visibility="{Binding IsOwned, Converter={StaticResource BoolVisible}}">
+                                                            <Button Content="Respec" HorizontalAlignment="Right"
+                                                                    Style="{StaticResource SubtleButton}" Padding="9,5"
+                                                                    Command="{Binding DataContext.RespecNodeCommand,
+                                                                                      RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                    CommandParameter="{Binding Mode=OneWay}"
+                                                                    Visibility="{Binding DataContext.RespecTokens,
+                                                                                         RelativeSource={RelativeSource AncestorType=UserControl},
+                                                                                         Converter={StaticResource CountVisible},
+                                                                                         Mode=OneWay}" />
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Talent shapes the driver in the car; meta shapes the career around it. -->
+            <TextBlock Text="DRIVER ATTRIBUTES" Style="{StaticResource H2}" Margin="0,20,0,8" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource AccentCallout}" Padding="14,11">
+                    <StackPanel>
+                        <TextBlock Text="DRIVING TALENT" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,0,5" />
+                        <ItemsControl ItemsSource="{Binding DataContext.TalentStatsView,
+                                                            RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                      ItemTemplate="{StaticResource DossierStatRow}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Panel}" Padding="14,11"
+                        Background="{DynamicResource WarningDimBrush}"
+                        BorderBrush="{DynamicResource WarningBrush}">
+                    <StackPanel>
+                        <TextBlock Text="FAME &amp; LONGEVITY" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource WarningBrush}" Margin="0,0,0,5" />
+                        <ItemsControl ItemsSource="{Binding DataContext.MetaStatsView,
+                                                            RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                      ItemTemplate="{StaticResource DossierStatRow}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
 
             <!-- perks -->
             <TextBlock Text="Perks" Style="{StaticResource H2}" Margin="0,24,0,8" />
@@ -116,8 +540,15 @@
                         <Border Style="{StaticResource Panel}" Padding="14,10" Margin="0,0,0,8">
                             <StackPanel>
                                 <DockPanel>
-                                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource Faint}"
-                                               Text="{Binding Category}" VerticalAlignment="Center" />
+                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                        <Border Style="{StaticResource CompactChip}" Margin="0,0,7,0">
+                                            <TextBlock Text="{Binding Cost, StringFormat={}{0} SP}"
+                                                       Style="{StaticResource Mono}"
+                                                       Foreground="{DynamicResource AccentTextBrush}" />
+                                        </Border>
+                                        <TextBlock Style="{StaticResource Faint}"
+                                                   Text="{Binding Category}" VerticalAlignment="Center" />
+                                    </StackPanel>
                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="15" />
                                 </DockPanel>
                                 <TextBlock Text="{Binding Description}" Style="{StaticResource Body}"
@@ -125,7 +556,7 @@
                                 <ItemsControl ItemsSource="{Binding Benefits}" Margin="0,6,0,0">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock TextWrapping="Wrap" Style="{StaticResource Faint}"><Run Text="+  " Foreground="{StaticResource AccentBrush}" FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
+                                            <TextBlock TextWrapping="Wrap" Style="{StaticResource Faint}"><Run Text="+  " Foreground="{DynamicResource AccentTextBrush}" FontWeight="Bold" /><Run Text="{Binding Mode=OneWay}" /></TextBlock>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>

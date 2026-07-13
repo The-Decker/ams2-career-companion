@@ -261,9 +261,9 @@ public sealed partial class SeasonReviewViewModel : ObservableObject
 
     // ---------- era transition: sign & continue (M6) ----------
 
-    /// <summary>Where the career goes next: a real era CHANGEOVER when a dedicated next-year pack is
-    /// installed, otherwise a CARRYOVER on the same car. Non-null once the season is complete — the
-    /// career never dead-ends.</summary>
+    /// <summary>Where the career goes next: a real era CHANGEOVER when an eligible dedicated
+    /// next-year pack is installed, otherwise a CARRYOVER on the same car. Null at a bounded
+    /// campaign summit (SMGP season 17).</summary>
     public NextSeasonInfo? NextSeason { get; }
 
     public bool HasNextSeason => NextSeason is not null;

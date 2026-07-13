@@ -6,16 +6,16 @@
          just the Race tab's content: the loop's own banners + the two-state content area. -->
     <DockPanel>
         <!-- content error banner -->
-        <Border DockPanel.Dock="Top" Background="{StaticResource ErrorDimBrush}"
+        <Border DockPanel.Dock="Top" Background="{DynamicResource ErrorDimBrush}"
                 Visibility="{Binding ContentError, Converter={StaticResource NullCollapsed}}">
-            <TextBlock Text="{Binding ContentError}" Foreground="{StaticResource ErrorBrush}"
+            <TextBlock Text="{Binding ContentError}" Foreground="{DynamicResource ErrorBrush}"
                        Margin="20,8" TextWrapping="Wrap" />
         </Border>
 
         <!-- season review banner -->
-        <Border DockPanel.Dock="Top" Background="{StaticResource SuccessDimBrush}"
+        <Border DockPanel.Dock="Top" Background="{DynamicResource SuccessDimBrush}"
                 Visibility="{Binding IsSeasonReview, Converter={StaticResource BoolVisible}}">
-            <TextBlock Foreground="{StaticResource SuccessBrush}" Margin="20,8" FontWeight="SemiBold"
+            <TextBlock Foreground="{DynamicResource SuccessBrush}" Margin="20,8" FontWeight="SemiBold"
                        Text="🏁 Season complete — review the season, read your offer letters, and restore your AI file below." />
         </Border>
 

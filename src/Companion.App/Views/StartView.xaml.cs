@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Shell;
 using Companion.ViewModels.Start;
 using Microsoft.Win32;
 
@@ -21,6 +22,44 @@ public partial class StartView : UserControl
         InitializeComponent();
         CommandBindings.Add(new CommandBinding(OpenCareerFileCommand, (_, _) => OpenCareerFilePicker()));
     }
+
+    /// <summary>Presentation-only main-menu layer switch. The StartViewModel remains the owner of
+    /// career selection and navigation; this simply reveals the retained gallery as a garage drawer.</summary>
+    private void OnToggleCareerGarage(object sender, RoutedEventArgs e) =>
+        SetCareerGarageOpen(CareerGaragePanel.Visibility != Visibility.Visible);
+
+    private void OnCloseCareerGarage(object sender, RoutedEventArgs e) =>
+        SetCareerGarageOpen(false);
+
+    private void SetCareerGarageOpen(bool open)
+    {
+        MainMenuCommands.IsEnabled = !open;
+        CareerGarageBackdrop.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        CareerGaragePanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        CareerGarageLabel.Text = open ? "CLOSE CAREER GARAGE" : "CAREER GARAGE";
+
+        if (open)
+        {
+            if (CareerGalleryList.SelectedIndex < 0 && CareerGalleryList.Items.Count > 0)
+                CareerGalleryList.SelectedIndex = 0;
+            CareerGarageCloseButton.Focus();
+        }
+        else
+        {
+            CareerGarageButton.Focus();
+        }
+    }
+
+    private void OnGaragePreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape)
+            return;
+        SetCareerGarageOpen(false);
+        e.Handled = true;
+    }
+
+    private void OnExitApplication(object sender, RoutedEventArgs e) =>
+        Window.GetWindow(this)?.Close();
 
     /// <summary>"Open career…" button: mirror of the Ctrl+O keybind.</summary>
     private void OnOpenCareerFile(object sender, RoutedEventArgs e) => OpenCareerFilePicker();
@@ -68,6 +107,37 @@ public partial class StartView : UserControl
         {
             vm.ContinueCommand.Execute(career);
         }
+    }
+
+    /// <summary>Start-gallery save action: open the selected career through the app's tracking
+    /// factory, then show the surface only when the session reports Normal-mode SavesEnabled.</summary>
+    private void OnRecentManageSaves(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: RecentCareer career } ||
+            Application.Current is not App { TrackedCareerFactory: { } factory } ||
+            Window.GetWindow(this)?.DataContext is not ShellViewModel shell)
+            return;
+
+        try
+        {
+            var session = factory.Open(career.Path);
+            if (!SaveManagerWindow.ShowIfEnabled(
+                    Window.GetWindow(this), session, career.Path, shell, ownsSession: true))
+            {
+                MessageBox.Show(Window.GetWindow(this),
+                    "Save points are available only for careers created with Normal mortality.\n\n" +
+                    "Off mode has no deaths to undo; Hardcore has no rollback.",
+                    "Career saves", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or IOException)
+        {
+            MessageBox.Show(Window.GetWindow(this),
+                $"Career save points could not be opened:\n\n{ex.Message}",
+                "Career saves", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        e.Handled = true;
     }
 
     /// <summary>Right-click MRU → Remove from list (the career file stays on disk).</summary>

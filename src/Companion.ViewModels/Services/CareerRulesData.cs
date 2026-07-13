@@ -37,6 +37,9 @@ public sealed record CareerRulesData
     /// file is absent, so a non-SMGP install or an un-updated data folder is unaffected.</summary>
     public required SmgpRivalQuotes SmgpRivalQuotes { get; init; }
 
+    /// <summary>Venue-keyed SMGP pit-wall advice. DISPLAY-ONLY; empty fallback when absent.</summary>
+    public required SmgpPitCrewAdvice SmgpPitCrewAdvice { get; init; }
+
     /// <summary>The SMGP-universe "What Really Happened" almanac (<c>data\rules\smgp\what-really-happened.json</c>):
     /// the SEGA world's own legend of every calendar circuit, revealed on the History tab once the
     /// player has raced it. DISPLAY-ONLY — never a fold input; empty when the file is absent (the
@@ -47,6 +50,26 @@ public sealed record CareerRulesData
     /// shown on the promotion/demotion screen when the player joins a team. DISPLAY-ONLY — never a fold
     /// input; empty when the file is absent (the team story then simply omits).</summary>
     public required SmgpTeamProfiles SmgpTeamProfiles { get; init; }
+
+    /// <summary>Per-driver SMGP-world biographies (epithet + ~3-paragraph bio + quotes)
+    /// (<c>data\rules\smgp\driver-profiles.json</c>), shown on the Paddock driver-preview tab.
+    /// DISPLAY-ONLY — never a fold input; empty when the file is absent (bios then simply omit).</summary>
+    public required SmgpDriverProfiles SmgpDriverProfiles { get; init; }
+
+    /// <summary>Predetermined SMGP driver career stats — the world's history before the player arrived
+    /// (<c>data\rules\smgp\driver-stats.json</c>), shown on the Paddock tab. DISPLAY-ONLY — never a fold
+    /// input; empty when the file is absent (stats then simply omit).</summary>
+    public required SmgpDriverStats SmgpDriverStats { get; init; }
+
+    /// <summary>The SMGP-universe SPONSOR board — fictional brands with stories/logos + the teams they back
+    /// (<c>data\rules\smgp\sponsors.json</c>), shown on the Paddock's Sponsors tab (and the seed of the
+    /// future Tycoon mode). DISPLAY-ONLY — never a fold input; empty when the file is absent.</summary>
+    public required SmgpSponsors SmgpSponsors { get; init; }
+
+    /// <summary>The SMGP "living world" dispatch corpus (<c>data\rules\smgp\dispatches.json</c>): templated
+    /// in-world news bodies for the reactive per-round dispatch feed (Task 4). DISPLAY-ONLY — never a fold
+    /// input; empty when the file is absent (the feed then falls back to each milestone's own detail line).</summary>
+    public required SmgpDispatchCorpus SmgpDispatchCorpus { get; init; }
 
     /// <summary>Per-car arcade spec cards (machine/engine/power + ENG-TM-SUS-TIRE-BRA bars) for the
     /// character and rival screens, keyed by team or vehicle id (<c>data\rules\car-specs.json</c>).
@@ -61,8 +84,13 @@ public sealed record CareerRulesData
         NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
         Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
         SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
+        SmgpPitCrewAdvice = SmgpPitCrewAdvice.Load(rulesDirectory),
         SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
         SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
+        SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
+        SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
+        SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
+        SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
         CarSpecs = CarSpecCatalog.Load(rulesDirectory),
     };
 

@@ -45,8 +45,8 @@ public class MigrationsV2Tests
 
         using var db = CareerDatabase.Open(tmp.Path);
 
-        Assert.Equal(4, Migrations.CurrentVersion);
-        Assert.Equal(4, db.SchemaVersion);
+        Assert.Equal(5, Migrations.CurrentVersion);
+        Assert.Equal(5, db.SchemaVersion);
 
         // Every v1 row survived the upgrade untouched.
         var career = CareerStore.ReadCareer(db);
@@ -96,7 +96,7 @@ public class MigrationsV2Tests
         }
 
         using var db = CareerDatabase.Open(tmp.Path);
-        Assert.Equal(4, db.SchemaVersion);
+        Assert.Equal(5, db.SchemaVersion);
         Assert.Equal(35.0, StateStore.ReadPlayerState(db, 1, StateStore.StageStart)!.Reputation);
 
         StateStore.InsertRoundPlayerState(db, 1, 1, new RoundPlayerState
@@ -117,10 +117,42 @@ public class MigrationsV2Tests
         CreateV1File(tmp.Path);
 
         using (var first = CareerDatabase.Open(tmp.Path))
-            Assert.Equal(4, first.SchemaVersion);
+            Assert.Equal(5, first.SchemaVersion);
         using var second = CareerDatabase.Open(tmp.Path);
-        Assert.Equal(4, second.SchemaVersion);
+        Assert.Equal(5, second.SchemaVersion);
         Assert.Equal("Mike", CareerStore.ReadCareer(second).Name);
+    }
+
+    [Fact]
+    public void V4CareerFileGainsMortalityColumnDefaultingOff()
+    {
+        // A genuine v4-era file (created before the mortality feature): v5 adds the career.mortality_mode
+        // column with DEFAULT 0, so the existing career reads Off in place — no data loss, no re-author.
+        using var tmp = new TempDb();
+        using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+               {
+                   DataSource = tmp.Path,
+                   Mode = SqliteOpenMode.ReadWriteCreate,
+                   Pooling = false,
+               }.ToString()))
+        {
+            connection.Open();
+            Migrations.Apply(connection, targetVersion: 4);
+            using var seed = connection.CreateCommand();
+            seed.CommandText =
+                """
+                INSERT INTO career (id, name, created_utc, master_seed, app_version)
+                VALUES (1, 'Mike', '2026-01-01T00:00:00Z', 42, '0.6.0');
+                """;
+            seed.ExecuteNonQuery();
+        }
+
+        using var db = CareerDatabase.Open(tmp.Path);
+        Assert.Equal(5, db.SchemaVersion);
+
+        using var read = db.Connection.CreateCommand();
+        read.CommandText = "SELECT mortality_mode FROM career WHERE id = 1;";
+        Assert.Equal(0L, (long)read.ExecuteScalar()!); // 0 == MortalityMode.Off
     }
 
     [Fact]

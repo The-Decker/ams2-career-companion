@@ -1,0 +1,289 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Invariant application depth. Paired black/white flecks stay deliberately faint on
+         either base theme; the vignette supplies edge depth without becoming app chrome. -->
+    <DrawingBrush x:Key="AppTextureBrush" TileMode="Tile" Opacity="0.34"
+                  Viewport="0,0,28,28" ViewportUnits="Absolute"
+                  Viewbox="0,0,28,28" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#09000000">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,0,28,1" />
+                            <RectangleGeometry Rect="0,14,28,1" />
+                            <RectangleGeometry Rect="6,5,2,1" />
+                            <RectangleGeometry Rect="21,21,3,1" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#08FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,1,28,1" />
+                            <RectangleGeometry Rect="0,15,28,1" />
+                            <RectangleGeometry Rect="18,7,2,1" />
+                            <RectangleGeometry Rect="4,24,3,1" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <RadialGradientBrush x:Key="AppVignetteBrush" Center="0.5,0.42"
+                         GradientOrigin="0.5,0.42" RadiusX="0.78" RadiusY="0.82">
+        <GradientStop Offset="0" Color="#00000000" />
+        <GradientStop Offset="0.72" Color="#08000000" />
+        <GradientStop Offset="1" Color="#24000000" />
+    </RadialGradientBrush>
+
+    <DropShadowEffect x:Key="PanelElevationEffect" Color="#000000" BlurRadius="12"
+                      ShadowDepth="2" Direction="270" Opacity="0.20" />
+    <DropShadowEffect x:Key="ControlElevationEffect" Color="#000000" BlurRadius="6"
+                      ShadowDepth="2" Direction="270" Opacity="0.24" />
+
+    <!-- Invariant main-menu cinematography. The generated key art deliberately leaves its left
+         side quiet; this layered scrim finishes the contrast treatment while keeping the hero car
+         visible on ultrawide and 4K displays in both application themes. -->
+    <LinearGradientBrush x:Key="MainMenuScrimBrush" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Offset="0" Color="#FA090C11" />
+        <GradientStop Offset="0.28" Color="#F0090C11" />
+        <GradientStop Offset="0.5" Color="#B8090C11" />
+        <GradientStop Offset="0.72" Color="#52090C11" />
+        <GradientStop Offset="1" Color="#18090C11" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="MainMenuBottomFadeBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#00090C11" />
+        <GradientStop Offset="0.62" Color="#12090C11" />
+        <GradientStop Offset="1" Color="#D9090C11" />
+    </LinearGradientBrush>
+    <RadialGradientBrush x:Key="MainMenuVignetteBrush" Center="0.58,0.43"
+                         GradientOrigin="0.58,0.43" RadiusX="0.82" RadiusY="0.9">
+        <GradientStop Offset="0" Color="#00000000" />
+        <GradientStop Offset="0.72" Color="#12000000" />
+        <GradientStop Offset="1" Color="#7A000000" />
+    </RadialGradientBrush>
+    <SolidColorBrush x:Key="MainMenuGlassBrush" Color="#DA171C24" />
+    <SolidColorBrush x:Key="MainMenuGlassStrongBrush" Color="#F21A2029" />
+    <SolidColorBrush x:Key="MainMenuGlassEdgeBrush" Color="#70FFFFFF" />
+
+    <!-- Invariant SMGP pixel-track art. These colors describe asphalt, scenery and paint rather
+         than application chrome, so they intentionally do not follow the app base or accent. -->
+    <DrawingBrush x:Key="SmgpAsphaltBrush" TileMode="Tile"
+                  Viewport="0,0,32,32" ViewportUnits="Absolute"
+                  Viewbox="0,0,32,32" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#34383B">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#2D3134">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="3,5,3,2" /><RectangleGeometry Rect="19,2,2,3" />
+                            <RectangleGeometry Rect="10,20,2,2" /><RectangleGeometry Rect="26,24,3,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#414549">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="12,8,2,2" /><RectangleGeometry Rect="28,11,2,2" />
+                            <RectangleGeometry Rect="4,27,2,2" /><RectangleGeometry Rect="21,18,3,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="SmgpGrassBrush" TileMode="Tile"
+                  Viewport="0,0,24,24" ViewportUnits="Absolute"
+                  Viewbox="0,0,24,24" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#426C16">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,24,24" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#31570F">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="2,4,4,3" /><RectangleGeometry Rect="14,1,3,4" />
+                            <RectangleGeometry Rect="8,15,3,3" /><RectangleGeometry Rect="19,18,4,3" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#6F941F">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="9,6,3,2" /><RectangleGeometry Rect="20,9,2,3" />
+                            <RectangleGeometry Rect="3,20,3,2" /><RectangleGeometry Rect="15,13,2,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- Pixel grandstand: concrete tiers, rails, and a deliberately varied arcade crowd. -->
+    <DrawingBrush x:Key="SmgpGrandstandBrush" TileMode="Tile"
+                  Viewport="0,0,96,96" ViewportUnits="Absolute"
+                  Viewbox="0,0,96,96" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#252A30">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,96,96" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#4A5159">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,14,96,8" />
+                            <RectangleGeometry Rect="0,46,96,8" />
+                            <RectangleGeometry Rect="0,78,96,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#AEB8C2">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,12,96,2" />
+                            <RectangleGeometry Rect="0,44,96,2" />
+                            <RectangleGeometry Rect="0,76,96,2" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#C9343D">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="5,3,10,8" /><RectangleGeometry Rect="51,3,10,8" />
+                            <RectangleGeometry Rect="27,35,10,8" /><RectangleGeometry Rect="73,35,10,8" />
+                            <RectangleGeometry Rect="5,67,10,8" /><RectangleGeometry Rect="51,67,10,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#D8A92C">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="17,3,10,8" /><RectangleGeometry Rect="63,3,10,8" />
+                            <RectangleGeometry Rect="39,35,10,8" /><RectangleGeometry Rect="85,35,8,8" />
+                            <RectangleGeometry Rect="17,67,10,8" /><RectangleGeometry Rect="63,67,10,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#3E78B8">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="29,3,10,8" /><RectangleGeometry Rect="75,3,10,8" />
+                            <RectangleGeometry Rect="5,35,10,8" /><RectangleGeometry Rect="51,35,10,8" />
+                            <RectangleGeometry Rect="29,67,10,8" /><RectangleGeometry Rect="75,67,10,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#E2E5E8">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="41,3,8,8" /><RectangleGeometry Rect="87,3,6,8" />
+                            <RectangleGeometry Rect="17,35,8,8" /><RectangleGeometry Rect="63,35,8,8" />
+                            <RectangleGeometry Rect="41,67,8,8" /><RectangleGeometry Rect="87,67,6,8" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <!-- Repeating garage fronts + painted pit boxes. The vertical repeat reads as one box per car. -->
+    <DrawingBrush x:Key="SmgpPitLaneBrush" TileMode="Tile"
+                  Viewport="0,0,96,96" ViewportUnits="Absolute"
+                  Viewbox="0,0,96,96" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#2F3439">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,96,96" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#171B20">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,96,31" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#59616A">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="5,5,38,21" />
+                            <RectangleGeometry Rect="53,5,38,21" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#252A30">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="10,9,28,17" />
+                            <RectangleGeometry Rect="58,9,28,17" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#E6E2D8">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,38,96,3" />
+                            <RectangleGeometry Rect="8,49,42,2" />
+                            <RectangleGeometry Rect="8,49,2,24" />
+                            <RectangleGeometry Rect="48,49,2,24" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#E4B52D">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,79,34,3" />
+                            <RectangleGeometry Rect="48,79,34,3" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="SmgpCurbBrush" TileMode="Tile"
+                  Viewport="0,0,18,64" ViewportUnits="Absolute"
+                  Viewbox="0,0,18,64" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#F1EEE7">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,64" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#C52A23">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,18,32" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#771A18">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,28,18,4" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <DrawingBrush x:Key="SmgpCheckeredBrush" TileMode="Tile"
+                  Viewport="0,0,32,32" ViewportUnits="Absolute"
+                  Viewbox="0,0,32,32" ViewboxUnits="Absolute">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#EEECE5">
+                    <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,32,32" /></GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="#17191B">
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="0,0,16,16" />
+                            <RectangleGeometry Rect="16,16,16,16" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+
+    <SolidColorBrush x:Key="SmgpFenceBrush" Color="#2A332F" />
+    <SolidColorBrush x:Key="SmgpFenceEdgeBrush" Color="#9AA39E" />
+    <SolidColorBrush x:Key="SmgpPitLineBrush" Color="#E4B52D" />
+    <SolidColorBrush x:Key="SmgpGridBayEdgeBrush" Color="#AAB9BCBD" />
+    <SolidColorBrush x:Key="SmgpGridMarkingBrush" Color="#F1EEE7" />
+</ResourceDictionary>

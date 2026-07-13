@@ -1,0 +1,47 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Complete dark-base fallback contract. A paired accent dictionary may override only the
+         six Accent* / OnAccent keys; every other color is owned by the base theme. -->
+    <SolidColorBrush x:Key="BgBrush" Color="#17191E" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#20232A" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#292D35" />
+    <SolidColorBrush x:Key="FieldBrush" Color="#111318" />
+    <SolidColorBrush x:Key="EdgeBrush" Color="#3C424D" />
+    <SolidColorBrush x:Key="EdgeStrongBrush" Color="#596273" />
+
+    <SolidColorBrush x:Key="TextBrush" Color="#F5F7FA" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#D7DCE5" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#A4ACB9" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#838D9C" />
+
+    <SolidColorBrush x:Key="AccentBrush" Color="#6F9BFF" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#88ADFF" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#7FA5FF" />
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#336F9BFF" />
+    <SolidColorBrush x:Key="SelectionBrush" Color="#4D6F9BFF" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#101318" />
+
+    <SolidColorBrush x:Key="SuccessBrush" Color="#54C27A" />
+    <SolidColorBrush x:Key="SuccessDimBrush" Color="#243B2D" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#F2B84B" />
+    <SolidColorBrush x:Key="WarningDimBrush" Color="#40331A" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="#F06A6A" />
+    <SolidColorBrush x:Key="ErrorDimBrush" Color="#412327" />
+
+    <SolidColorBrush x:Key="ControlHoverOverlayBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="OverlaySurfaceBrush" Color="#E6202327" />
+    <SolidColorBrush x:Key="OverlaySurfaceAltBrush" Color="#DC171A1D" />
+    <SolidColorBrush x:Key="ScrimBrush" Color="#B3000000" />
+    <SolidColorBrush x:Key="ShadowBrush" Color="#80000000" />
+
+    <!-- Media and team-palette content is deliberately invariant: imagery stays dark enough for
+         white captions, and arbitrary team colors receive a 45% black contrast scrim. -->
+    <LinearGradientBrush x:Key="MediaCaptionGradientBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#00000000" />
+        <GradientStop Offset="1" Color="#CC000000" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="OnMediaBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="OnMediaMutedBrush" Color="#E6FFFFFF" />
+    <SolidColorBrush x:Key="TeamColorScrimBrush" Color="#73000000" />
+    <SolidColorBrush x:Key="OnTeamColorBrush" Color="#FFFFFF" />
+</ResourceDictionary>

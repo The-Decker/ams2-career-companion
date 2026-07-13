@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Companion.Core.Packs;
+using Companion.Core.Smgp;
 
 namespace Companion.ViewModels.Services;
 
@@ -77,6 +78,69 @@ public static class PackDiscovery
             .ThenBy(p => p.Manifest!.PackId, StringComparer.Ordinal)
             .ThenBy(p => p.Directory, StringComparer.Ordinal)
             .FirstOrDefault();
+
+    /// <summary>The next historical pack. SMGP is a separate career entity and must never enter
+    /// a historical changeover merely because its authored season year sorts next. Other style
+    /// values remain eligible for forward compatibility; only the locked SMGP discriminator is
+    /// excluded here.</summary>
+    public static DiscoveredPack? NextHistoricalAfter(
+        IEnumerable<DiscoveredPack> packs,
+        int currentYear) =>
+        NextAfter(
+            packs.Where(p => p.Manifest is { } manifest &&
+                             !string.Equals(
+                                 manifest.CareerStyle,
+                                 SmgpRules.CareerStyle,
+                                 StringComparison.Ordinal)),
+            currentYear);
+
+    /// <summary>Pure continuation policy over already-discovered packs. SMGP continues on its
+    /// own pinned pack through season 17 and then terminates; historical careers consider only
+    /// ordinary historical packs and otherwise carry their current car forward one year.</summary>
+    public static NextSeasonInfo? PlanNextSeason(
+        PackManifest currentPack,
+        int currentYear,
+        int seasonOrdinal,
+        IEnumerable<DiscoveredPack> discoveredPacks)
+    {
+        ArgumentNullException.ThrowIfNull(currentPack);
+        ArgumentNullException.ThrowIfNull(discoveredPacks);
+
+        int nextYear = checked(currentYear + 1);
+        if (string.Equals(currentPack.CareerStyle, SmgpRules.CareerStyle, StringComparison.Ordinal))
+        {
+            if (seasonOrdinal >= SmgpRules.CampaignSeasons)
+                return null;
+
+            return Carryover(currentPack, nextYear);
+        }
+
+        var changeover = NextHistoricalAfter(discoveredPacks, currentYear);
+        if (changeover?.Manifest is not null && changeover.SeasonYear == nextYear)
+        {
+            return new NextSeasonInfo
+            {
+                IsCarryover = false,
+                PackDirectory = changeover.Directory,
+                PackId = changeover.Manifest.PackId,
+                PackName = changeover.Manifest.Name,
+                SeasonYear = nextYear,
+                BridgedYears = [],
+            };
+        }
+
+        return Carryover(currentPack, nextYear);
+    }
+
+    private static NextSeasonInfo Carryover(PackManifest currentPack, int nextYear) => new()
+    {
+        IsCarryover = true,
+        PackDirectory = "",
+        PackId = currentPack.PackId,
+        PackName = currentPack.Name,
+        SeasonYear = nextYear,
+        BridgedYears = [],
+    };
 
     private static DiscoveredPack Inspect(string directory)
     {

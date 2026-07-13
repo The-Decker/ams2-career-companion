@@ -229,7 +229,11 @@ public static class SeasonEndPipeline
             int seasonXp = XpMath.PerSeason(
                 xpRules.Levels.XpSources.PerSeason, playerPosition, seasonCompleted: true);
             seasonEndXp = Math.Max(0, player.Xp + seasonXp);
-            seasonEndLevel = xpRules.Levels.XpCurve.LevelForTotalXp(seasonEndXp);
+            seasonEndLevel = CharacterLevelProgression.LevelForTotalXp(
+                player.Character.ProgressionVersion,
+                seasonEndXp,
+                context.Pack.Season.Year,
+                xpRules);
             events.Add(new JournalEvent
             {
                 Phase = JournalPhases.PlayerXp,
@@ -310,6 +314,11 @@ public static class SeasonEndPipeline
             // The per-error injury load is a WITHIN-season tally: consumed by the roll above, it resets
             // so it never carries into next season's start state (SeasonRollover copies the end state).
             SeasonInjuryLoad = 0.0,
+            // A season-ending injury / minor suspension heals over the break — the driver returns next
+            // season. Deceased is TERMINAL, so it is deliberately NOT reset here (it carries verbatim,
+            // exactly as the SMGP CareerOver floor does). (Character death & injury §3.3.)
+            SeasonEndingInjury = false,
+            RaceSuspensionRemaining = 0,
         };
 
         // ---- SMGP season fold (M3 slice 4) — only for a career carrying the mode's state ----

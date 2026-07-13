@@ -113,20 +113,50 @@ public static class CareerStore
         Microsoft.Data.Sqlite.SqliteTransaction? transaction = null)
     {
         byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(pack, CoreJson.Options);
+        return PinPackEnvelope(
+            db, pack.Manifest.PackId, pack.Manifest.Version, bytes, pinnedUtc, transaction);
+    }
+
+    /// <summary>Pins already-enveloped pack bytes verbatim. Creation uses this for its five-file
+    /// envelopes, including future packs in a v2 campaign plan. The identity is immutable: the same
+    /// id/version may be reused only when its byte hash is identical.</summary>
+    public static string PinPackEnvelope(
+        CareerDatabase db,
+        string packId,
+        string packVersion,
+        byte[] bytes,
+        string pinnedUtc,
+        Microsoft.Data.Sqlite.SqliteTransaction? transaction = null)
+    {
+        ArgumentNullException.ThrowIfNull(db);
+        ArgumentException.ThrowIfNullOrWhiteSpace(packId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(packVersion);
+        ArgumentNullException.ThrowIfNull(bytes);
+
+        var embedded = PinnedPackEnvelope.LoadSeasonPack(bytes);
+        if (!string.Equals(embedded.Manifest.PackId, packId, StringComparison.Ordinal) ||
+            !string.Equals(embedded.Manifest.Version, packVersion, StringComparison.Ordinal))
+        {
+            throw new ArgumentException(
+                $"Pinned bytes contain {embedded.Manifest.PackId} {embedded.Manifest.Version}, not " +
+                $"the requested key {packId} {packVersion}.",
+                nameof(bytes));
+        }
+
         string sha256 = Convert.ToHexStringLower(SHA256.HashData(bytes));
 
         using (var existing = db.Command(
                    "SELECT sha256 FROM pinned_pack WHERE pack_id = @id AND version = @version;",
                    transaction,
-                   ("@id", pack.Manifest.PackId),
-                   ("@version", pack.Manifest.Version)))
+                   ("@id", packId),
+                   ("@version", packVersion)))
         {
             if (existing.ExecuteScalar() is string storedSha)
             {
                 if (string.Equals(storedSha, sha256, StringComparison.Ordinal))
                     return sha256;
                 throw new InvalidOperationException(
-                    $"Pack {pack.Manifest.PackId} {pack.Manifest.Version} is already pinned with " +
+                    $"Pack {packId} {packVersion} is already pinned with " +
                     "different content — pinned packs are immutable; bump the pack version instead.");
             }
         }
@@ -137,8 +167,8 @@ public static class CareerStore
             VALUES (@id, @version, @sha, @json, @utc);
             """,
             transaction,
-            ("@id", pack.Manifest.PackId),
-            ("@version", pack.Manifest.Version),
+            ("@id", packId),
+            ("@version", packVersion),
             ("@sha", sha256),
             ("@json", bytes),
             ("@utc", pinnedUtc));
@@ -214,6 +244,32 @@ public static class CareerStore
     /// </summary>
     public static long StartNextSeason(
         CareerDatabase db, Companion.Core.Career.TransitionPlan plan, SeasonPack toPack, string utc)
+        => StartNextSeasonCore(db, plan, toPack, utc, pinPack: true);
+
+    /// <summary>Starts a v2 plan entry from bytes already pinned at career creation. The expected
+    /// hash is checked before the transition and the mutable pack directory is never consulted.</summary>
+    public static long StartNextPinnedSeason(
+        CareerDatabase db,
+        Companion.Core.Career.TransitionPlan plan,
+        string packVersion,
+        string expectedSha256,
+        string utc)
+    {
+        var pinned = ReadPinnedPack(db, plan.ToPackId, packVersion);
+        if (!string.Equals(pinned.Sha256, expectedSha256, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException(
+                $"Pinned pack {plan.ToPackId} {packVersion} does not match the campaign plan " +
+                $"(plan {expectedSha256}, stored {pinned.Sha256}).");
+        var toPack = PinnedPackEnvelope.LoadSeasonPack(pinned.PackJson);
+        return StartNextSeasonCore(db, plan, toPack, utc, pinPack: false);
+    }
+
+    private static long StartNextSeasonCore(
+        CareerDatabase db,
+        Companion.Core.Career.TransitionPlan plan,
+        SeasonPack toPack,
+        string utc,
+        bool pinPack)
     {
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(
@@ -238,7 +294,8 @@ public static class CareerStore
                 "before transitioning into the next era.");
 
         using var transaction = db.Connection.BeginTransaction();
-        PinPack(db, toPack, utc, transaction);
+        if (pinPack)
+            PinPack(db, toPack, utc, transaction);
         long seasonId = StartSeason(
             db, plan.ToYear, toPack.Manifest.PackId, toPack.Manifest.Version, transaction);
         StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart, plan.Player, transaction);

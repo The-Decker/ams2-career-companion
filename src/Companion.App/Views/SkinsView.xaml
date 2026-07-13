@@ -11,26 +11,26 @@
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="8,2" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Background" Value="{StaticResource FieldBrush}" />
+            <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Tone}" Value="Good">
-                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Tone}" Value="Warn">
-                    <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="SkinChipText" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Tone}" Value="Good">
-                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Tone}" Value="Warn">
-                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -50,11 +50,11 @@
 
             <!-- over-cap warning: the historical field is bigger than the class's livery cap -->
             <Border Margin="0,10,0,0" Padding="12,9" CornerRadius="6"
-                    Background="{StaticResource WarningDimBrush}"
+                    Background="{DynamicResource WarningDimBrush}"
                     Visibility="{Binding ExceedsCap, Converter={StaticResource BoolVisible}}">
                 <StackPanel>
                     <TextBlock Text="More cars than liveries" FontWeight="SemiBold"
-                               Foreground="{StaticResource WarningBrush}" />
+                               Foreground="{DynamicResource WarningBrush}" />
                     <TextBlock Text="{Binding CapWarning}" Style="{StaticResource Body}" TextWrapping="Wrap"
                                Margin="0,3,0,0" />
                 </StackPanel>
@@ -64,7 +64,7 @@
                  (1983<->1985, 1990<->SMGP...) — this panel shows which season owns the car models
                  and switches them (backup-first). The same swap runs automatically at race setup. -->
             <Border Margin="0,14,0,0" Padding="14,11" CornerRadius="8"
-                    Background="{StaticResource SurfaceAltBrush}"
+                    Background="{DynamicResource SurfaceAltBrush}"
                     Visibility="{Binding HasSkinSeason, Converter={StaticResource BoolVisible}}">
                 <StackPanel>
                     <DockPanel>
@@ -78,8 +78,8 @@
                             </TextBlock>
                         </Button>
                         <TextBlock Style="{StaticResource H2}" VerticalAlignment="Center">
-                            <Run Text="Skin season" /><Run Text="  ·  " Foreground="{StaticResource TextFaintBrush}" /><Run
-                                Text="{Binding SkinSeasonKey, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                            <Run Text="Skin season" /><Run Text="  ·  " Foreground="{DynamicResource TextFaintBrush}" /><Run
+                                Text="{Binding SkinSeasonKey, Mode=OneWay}" Foreground="{DynamicResource AccentTextBrush}" />
                         </TextBlock>
                     </DockPanel>
                     <TextBlock Text="{Binding SkinSeasonSummary}" Style="{StaticResource Body}"
@@ -104,24 +104,24 @@
 
             <!-- YOUR CAR crib — the headline: the exact livery to pick in-game -->
             <Border Margin="0,20,0,0" Padding="18,14" CornerRadius="8"
-                    Background="{StaticResource SurfaceAltBrush}"
-                    BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                    Background="{DynamicResource SurfaceAltBrush}"
+                    BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
                     Visibility="{Binding HasPlayerCar, Converter={StaticResource BoolVisible}}">
                 <StackPanel>
                     <TextBlock Style="{StaticResource H2}" Margin="0,0,0,2">
-                        <Run Text="Your car" /><Run Text="  ·  " Foreground="{StaticResource TextFaintBrush}" /><Run
-                            Text="{Binding PlayerDriverName, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                        <Run Text="Your car" /><Run Text="  ·  " Foreground="{DynamicResource TextFaintBrush}" /><Run
+                            Text="{Binding PlayerDriverName, Mode=OneWay}" Foreground="{DynamicResource AccentTextBrush}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource Body}" TextWrapping="Wrap"
                                Text="On AMS2's vehicle-selection screen, pick this exact livery (case-sensitive) so your car looks right — the app can't set it for you:" />
                     <Border Margin="0,8,0,0" Padding="12,8" CornerRadius="6"
-                            Background="{StaticResource FieldBrush}">
+                            Background="{DynamicResource FieldBrush}">
                         <DockPanel>
                             <Button DockPanel.Dock="Right" Content="Copy" MinWidth="64"
                                     Command="{Binding CopyPlayerLiveryCommand}" Margin="10,0,0,0" />
                             <TextBox Text="{Binding PlayerLiveryName, Mode=OneWay}" IsReadOnly="True"
                                      BorderThickness="0" Background="Transparent"
-                                     Foreground="{StaticResource TextBrush}" FontFamily="Consolas" FontSize="14"
+                                     Foreground="{DynamicResource TextBrush}" FontFamily="{StaticResource MonoFont}" FontSize="14"
                                      VerticalAlignment="Center" VerticalContentAlignment="Center" />
                         </DockPanel>
                     </Border>
@@ -141,18 +141,20 @@
                         <Border Style="{StaticResource Panel}" Padding="14,10" Margin="0,0,0,6">
                             <DockPanel>
                                 <!-- status chip -->
-                                <Border DockPanel.Dock="Right" Style="{StaticResource SkinChip}">
+                                <Border DockPanel.Dock="Right" Style="{StaticResource SkinChip}"
+                                        ToolTip="{Binding Detail, FallbackValue='Skin binding status for this driver'}">
                                     <TextBlock Text="{Binding StatusLabel}" Style="{StaticResource SkinChipText}" />
                                 </Border>
                                 <!-- copy button -->
                                 <Button DockPanel.Dock="Right" Content="Copy" MinWidth="56" Margin="0,0,10,0"
-                                        VerticalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         ToolTip="Copy this exact AMS2 livery name"
                                         Command="{Binding DataContext.CopyLiveryCommand,
                                                   RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}" />
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="★ " Foreground="{StaticResource AccentBrush}" FontWeight="Bold"
+                                        <TextBlock Text="★ " Foreground="{DynamicResource AccentTextBrush}" FontWeight="Bold"
                                                    VerticalAlignment="Center"
                                                    Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}" />
                                         <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" FontSize="14"
@@ -162,7 +164,8 @@
                                         </TextBlock>
                                     </StackPanel>
                                     <TextBlock Text="{Binding LiveryName}" Style="{StaticResource Muted}"
-                                               FontFamily="Consolas" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                               FontFamily="{StaticResource MonoFont}" Margin="0,3,0,0" TextWrapping="Wrap"
+                                               ToolTip="The exact livery_name written to the AMS2 custom-AI file" />
                                     <TextBlock Text="{Binding Detail}" Style="{StaticResource Faint}"
                                                Margin="0,2,0,0" TextWrapping="Wrap"
                                                Visibility="{Binding Detail, Converter={StaticResource StringVisible}}" />
@@ -196,10 +199,10 @@
                         Visibility="{Binding StageBanner, Converter={StaticResource NullCollapsed}}">
                     <Border.Style>
                         <Style TargetType="Border">
-                            <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -244,10 +247,10 @@
                         Visibility="{Binding ActivationBanner, Converter={StaticResource NullCollapsed}}">
                     <Border.Style>
                         <Style TargetType="Border">
-                            <Setter Property="Background" Value="{StaticResource WarningDimBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ActivationSucceeded}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource SuccessDimBrush}" />
+                                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -265,7 +268,7 @@
                                             Command="{Binding DataContext.ActivateLiveryCommand,
                                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding}" />
-                                    <TextBlock Text="{Binding}" FontFamily="Consolas" VerticalAlignment="Center"
+                                    <TextBlock Text="{Binding}" FontFamily="{StaticResource MonoFont}" VerticalAlignment="Center"
                                                TextWrapping="Wrap" />
                                 </DockPanel>
                             </Border>
@@ -290,7 +293,7 @@
                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
                                     <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
                                                Visibility="{Binding OverridesFolder, Converter={StaticResource NullCollapsed}}">
-                                        <Run Text="Overrides folder: " /><Run Text="{Binding OverridesFolder, Mode=OneWay}" FontFamily="Consolas" />
+                                        <Run Text="Overrides folder: " /><Run Text="{Binding OverridesFolder, Mode=OneWay}" FontFamily="{StaticResource MonoFont}" />
                                     </TextBlock>
                                     <TextBlock Style="{StaticResource Faint}" Margin="0,2,0,0" TextWrapping="Wrap"
                                                Visibility="{Binding Url, Converter={StaticResource NullCollapsed}}"

@@ -233,12 +233,16 @@ public sealed class EraSignAndContinueTests : IDisposable
                 ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
             },
             PerkIds = ["sunday_driver"],
+            CreationPerkIds = ["sunday_driver"],
+            ProgressionVersion = 1,
             CpUnspent = 3,
         };
 
         string acceptedTeam;
         using (var session = CreateAndPlaySeason(character))
         {
+            var review = session.SeasonReview(); // runs the season-end XP fold before development
+            Assert.NotNull(review);
             // Spend a development point on pace + bank a new perk before signing.
             int before = session.AvailableCharacterCp();
             Assert.True(before >= 2);
@@ -246,8 +250,6 @@ public sealed class EraSignAndContinueTests : IDisposable
             session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Perk("rain_man", 1));
             Assert.Equal(before - 2, session.AvailableCharacterCp()); // pending spends reduce the pool now
 
-            var review = session.SeasonReview();
-            Assert.NotNull(review);
             acceptedTeam = review!.Offers[0].TeamId;
             // A dedicated NEXT-YEAR (1968) pack → a real era changeover carries the spends across.
             TestPackBuilder.Write(
@@ -262,12 +264,30 @@ public sealed class EraSignAndContinueTests : IDisposable
 
         // Reopen into season 2: the spends applied at the transition — pace raised a step and the
         // banked perk is now on the driver.
-        using var reopened = CareerSessionService.OpenCareer(CareerPath, Environment());
-        var dossier = reopened.CharacterDossier();
-        Assert.NotNull(dossier);
-        Assert.Equal("Dev Driver", dossier!.Name);
-        Assert.Equal(0.55, dossier.Stats.First(s => s.Id == "pace").Value, 6); // 0.50 + one step
-        Assert.Contains(dossier.Perks, p => p.Id == "rain_man");
+        using (var reopened = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            var dossier = reopened.CharacterDossier();
+            Assert.NotNull(dossier);
+            Assert.Equal("Dev Driver", dossier!.Name);
+            Assert.Equal(0.55, dossier.Stats.First(s => s.Id == "pace").Value, 6); // 0.50 + one step
+            Assert.Contains(dossier.Perks, p => p.Id == "rain_man");
+            var paceNode = reopened.SkillTree()!.Branches.SelectMany(branch => branch.Nodes)
+                .Single(node => node.Id == "raise_pace_1");
+            Assert.Equal(Companion.Core.Character.SkillNodeState.Owned, paceNode.State);
+        }
+
+        using var replayDb = CareerDatabase.Open(CareerPath);
+        var replayRules = Environment().Rules;
+        var report = ReplayService.Resimulate(replayDb, unchecked((ulong)20260703), new ReplaySimInputs
+        {
+            AgingCurves = replayRules.AgingCurves,
+            Archetypes = replayRules.Archetypes,
+            Headlines = replayRules.Headlines,
+            PlayerDriverId = "driver.p",
+            PlayerAge = 1967 - 1940,
+            CharacterRules = replayRules.Character,
+        });
+        Assert.True(report.Identical, report.FirstDivergence?.Reason);
     }
 
     private static Companion.Core.Character.CharacterProfile DevCharacter() => new()
@@ -279,8 +299,21 @@ public sealed class EraSignAndContinueTests : IDisposable
             ["adaptability"] = 0.50, ["marketability"] = 0.50, ["durability"] = 0.50,
         },
         PerkIds = ["sunday_driver"],
+        CreationPerkIds = ["sunday_driver"],
+        ProgressionVersion = 1,
         CpUnspent = 3,
     };
+
+    /// <summary>Starts one year before the 1960s peak-age boundary. A 1968 same-pack carryover
+    /// must advance the live fold to age 28, matching replay's season-row calculation, so
+    /// wonderkid switches from its young XP branch to its veteran branch on both paths.</summary>
+    private static Companion.Core.Character.CharacterProfile CarryoverAgeWindowCharacter() =>
+        DevCharacter() with
+        {
+            Age = 27,
+            PerkIds = ["wonderkid"],
+            CreationPerkIds = ["wonderkid"],
+        };
 
     [Fact]
     public void Spend_DerivesTheCostFromTheRules_IgnoringACraftedCheapCost()
@@ -690,10 +723,11 @@ public sealed class EraSignAndContinueTests : IDisposable
     [Fact]
     public void NoNextYearPack_CarriesOverOnTheSameCar_AndResimulatesByteIdentical()
     {
-        using (var session = CreateAndPlaySeason())
+        using (var session = CreateAndPlaySeason(CarryoverAgeWindowCharacter()))
         {
             var review = session.SeasonReview();
             Assert.NotNull(review);
+            session.SpendCharacterPoint(Companion.Core.Character.CharacterSpend.Stat("pace", 1));
             session.AcceptOffer(review!.Offers[0].TeamId);
 
             // The packs root only has the 1967 car, so the career carries it into 1968 — a
@@ -735,6 +769,10 @@ public sealed class EraSignAndContinueTests : IDisposable
         {
             Assert.Equal(1968, s2.Summary.SeasonYear);
             Assert.Equal("Era Test Series", s2.Summary.SeriesName); // the SAME 1967 pack's series
+            Assert.Equal(
+                Companion.Core.Character.SkillNodeState.Owned,
+                s2.SkillTree()!.Branches.SelectMany(branch => branch.Nodes)
+                    .Single(node => node.Id == "raise_pace_1").State);
             while (!s2.Summary.SeasonComplete)
             {
                 var grid = s2.CurrentGrid();

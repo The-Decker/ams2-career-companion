@@ -24,6 +24,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     public const string StandingsTabKey = "standings";
     public const string CalendarTabKey = "calendar";
     public const string DriverTabKey = "driver";
+    public const string PaddockTabKey = "paddock";
     public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
     public const string SkinsTabKey = "skins";
@@ -53,11 +54,12 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         History = new HistoryViewModel(session);
         Calendar = new CalendarViewModel(session);
         Dossier = new DossierViewModel(session);
+        Paddock = new PaddockViewModel(session);
         Skins = new SkinsViewModel(session);
 
         Tabs =
         [
-            new HubTabViewModel(RaceTabKey, "Upcoming Race", "", Home, showInRail: false),
+            new HubTabViewModel(RaceTabKey, "Upcoming Race", "", Home, showInRail: true),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
             new HubTabViewModel(CalendarTabKey, "Calendar", "", Calendar),
             new HubTabViewModel(SkinsTabKey, "Skins", "", Skins),
@@ -68,6 +70,11 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         // The Driver dossier tab is present only when the career carries a character (depth 3).
         if (Dossier.HasCharacter)
             Tabs.Insert(2, new HubTabViewModel(DriverTabKey, "Driver", "", Dossier));
+
+        // The Paddock (driver/team preview) tab is present only for an SMGP career with the reference
+        // data loaded — it fields the whole SEGA-world grid's bios + predetermined stats + team stories.
+        if (Paddock.HasPaddock)
+            Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(PaddockTabKey, "Paddock", "", Paddock));
 
         SelectTab(Tabs[0]); // auto-select Race on open
     }
@@ -89,6 +96,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// <summary>The Driver dossier lens — the player's character, stats, perks and level/XP as the
     /// career unfolds. Present as a tab only when the career has a character (depth 3).</summary>
     public DossierViewModel Dossier { get; }
+
+    /// <summary>The Paddock lens (SMGP driver/team preview) — the whole grid's bios + predetermined
+    /// career stats + team stories. Present as a tab only for an SMGP career with reference data.</summary>
+    public PaddockViewModel Paddock { get; }
 
     /// <summary>The Skins lens: what livery/skin every car will show in AMS2, plus the crib for the
     /// player own-car pick. Always present (every career has a grid); refreshed per round.</summary>
@@ -181,6 +192,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         History.Refresh();
         Calendar.Refresh();
         Dossier.Refresh();
+        Paddock.Refresh();
         Skins.Refresh();
 
         if (RaceTab is { } race)
