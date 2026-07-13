@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Companion.Core.Character;
 using Companion.Core.Career;
 using Companion.Core.Determinism;
 
@@ -158,5 +160,44 @@ public class RoundUpdateTests
 
         var threeScorers = RoundUpdate.Apply(Context(finish: 4, teammateFinish: null, pointsPositions: 3));
         Assert.Equal("midfield", threeScorers.Events[0].Cause);
+    }
+
+    [Fact]
+    public void Level300Progression_ReportsLevel300InThePlayerXpJournalRow()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var character = new CharacterProfile
+        {
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.5,
+                ["oneLap"] = 0.5,
+                ["craft"] = 0.5,
+                ["racecraft"] = 0.5,
+                ["adaptability"] = 0.5,
+                ["marketability"] = 0.5,
+                ["durability"] = 0.5,
+            },
+            PerkIds = [],
+            ProgressionVersion = CharacterLevelProgression.Level300Version,
+        };
+        var context = Context(finish: 1);
+
+        var result = RoundUpdate.Apply(context with
+        {
+            Player = context.Player with
+            {
+                Character = character,
+                Level = 299,
+                Xp = 14_950,
+            },
+            CharacterRules = rules,
+        });
+
+        var xpEvent = Assert.Single(result.Events, e => e.Phase == JournalPhases.PlayerXp);
+        using var payload = JsonDocument.Parse(xpEvent.DeltaJson);
+        Assert.True(payload.RootElement.GetProperty("round").GetInt32() > 0);
+        Assert.Equal(300, payload.RootElement.GetProperty("level").GetInt32());
+        Assert.Equal(300, result.Player.Level);
     }
 }

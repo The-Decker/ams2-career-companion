@@ -675,9 +675,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var dossier = Companion.Core.Character.CharacterDossier.Build(
             projectedCharacter, player.Level, player.Xp, rules, currentAge,
             player.RaceSuspensionRemaining, player.SeasonEndingInjury, player.Deceased,
-            character.ProgressionVersion >= 1
-                ? rules.Levels.SoftCapForYear(Pack.Season.Year)
-                : null);
+            progressionYear: Pack.Season.Year);
         // Reflect spends made this season but not yet applied at a transition.
         int pending = PendingSpends().Sum(s => s.Cost);
         return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };

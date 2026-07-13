@@ -49,16 +49,21 @@ public sealed record CharacterDossier
     public static CharacterDossier Build(
         CharacterProfile character, int level, long xp, CharacterRules rules, int? age = null,
         int raceSuspensionRemaining = 0, bool seasonEndingInjury = false, bool deceased = false,
-        int? levelCap = null)
+        int? levelCap = null, int? progressionYear = null)
     {
-        var curve = rules.Levels.XpCurve;
-
-        // Cumulative XP required to have REACHED the current level, and the cost of the next level.
-        long cumulativeToLevel = 0;
-        for (int n = 2; n <= level; n++)
-            cumulativeToLevel += curve.XpForLevel(n);
-        int effectiveCap = Math.Min(curve.MaxLevel, levelCap ?? curve.MaxLevel);
-        long forNext = level >= effectiveCap ? 0 : curve.XpForLevel(level + 1);
+        // Cumulative XP required to have REACHED the current level, and the cost of the next level,
+        // selected through the same progression-version dispatcher the live/replay folds use.
+        long cumulativeToLevel = CharacterLevelProgression.CumulativeXpToLevel(
+            character.ProgressionVersion, level, rules);
+        int versionCap = CharacterLevelProgression.MaxLevel(
+            character.ProgressionVersion,
+            progressionYear ?? int.MaxValue,
+            rules);
+        int effectiveCap = Math.Min(versionCap, levelCap ?? versionCap);
+        long forNext = level >= effectiveCap
+            ? 0
+            : CharacterLevelProgression.XpForLevel(
+                character.ProgressionVersion, level + 1, rules);
 
         var stats = new List<DossierStat>();
         foreach (var stat in rules.Stats.TalentStats)
