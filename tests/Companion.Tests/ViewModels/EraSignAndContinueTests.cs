@@ -304,6 +304,17 @@ public sealed class EraSignAndContinueTests : IDisposable
         CpUnspent = 3,
     };
 
+    /// <summary>Starts one year before the 1960s peak-age boundary. A 1968 same-pack carryover
+    /// must advance the live fold to age 28, matching replay's season-row calculation, so
+    /// wonderkid switches from its young XP branch to its veteran branch on both paths.</summary>
+    private static Companion.Core.Character.CharacterProfile CarryoverAgeWindowCharacter() =>
+        DevCharacter() with
+        {
+            Age = 27,
+            PerkIds = ["wonderkid"],
+            CreationPerkIds = ["wonderkid"],
+        };
+
     [Fact]
     public void Spend_DerivesTheCostFromTheRules_IgnoringACraftedCheapCost()
     {
@@ -712,7 +723,7 @@ public sealed class EraSignAndContinueTests : IDisposable
     [Fact]
     public void NoNextYearPack_CarriesOverOnTheSameCar_AndResimulatesByteIdentical()
     {
-        using (var session = CreateAndPlaySeason(DevCharacter()))
+        using (var session = CreateAndPlaySeason(CarryoverAgeWindowCharacter()))
         {
             var review = session.SeasonReview();
             Assert.NotNull(review);

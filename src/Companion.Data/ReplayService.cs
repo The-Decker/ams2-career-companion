@@ -213,9 +213,14 @@ public static class ReplayService
 
         var previous = PreviousRoundState(db, seasonId, upTo, tx);
         var startTeams = StateStore.ReadTeamStates(db, seasonId, StateStore.StageStart, tx);
-        // The player's age THIS season = first-season age + year distance (the same rule the season
-        // end and replay use), so the age-window perk conditions fold identically on every path.
-        int playerAge = inputs.PlayerAge + (pack.Season.Year - CareerStore.ReadSeasons(db, tx)[0].Year);
+        // The player's age THIS season = first-season age + REAL season-row year distance. A
+        // same-pack carryover deliberately keeps the pinned pack's nominal year, so using
+        // pack.Season.Year here would freeze live age while replay (correctly) advances from the
+        // season row. Resolve the same persisted year on both paths.
+        var seasons = CareerStore.ReadSeasons(db, tx);
+        var currentSeason = seasons.FirstOrDefault(s => s.Id == seasonId)
+            ?? throw new InvalidOperationException($"Season {seasonId} does not exist in this career.");
+        int playerAge = inputs.PlayerAge + (currentSeason.Year - seasons[0].Year);
         var outcome = ComputeRoundFold(
             pack, masterSeed, inputs, startTeams,
             ChampionshipResults(pack, upTo),
