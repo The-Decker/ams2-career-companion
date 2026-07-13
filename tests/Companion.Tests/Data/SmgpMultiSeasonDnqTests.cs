@@ -77,6 +77,74 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         AssertResimulatesByteIdentically();
     }
 
+    [Fact]
+    public void FullCampaign_StopsAfterSeventeenSeasons_AndReplaysByteIdentical()
+    {
+        string packDirectory = Path.Combine(PacksRoot, "smgp-dnq-ladder");
+        TestPackBuilder.Write(DnqLadderPack(), packDirectory);
+
+        CareerSessionService session = CareerSessionService.CreateCareer(new CareerCreationRequest
+        {
+            PackDirectory = packDirectory,
+            CareerFilePath = CareerPath,
+            CareerName = "Seventeen Season Career",
+            MasterSeed = Seed,
+            PlayerLiveryName = SeatC,
+            SmgpMode = true,
+        }, Environment());
+
+        try
+        {
+            for (int ordinal = 1; ordinal <= SmgpRules.CampaignSeasons; ordinal++)
+            {
+                Assert.Equal(ordinal, session.CurrentSmgpBriefing()?.SeasonOrdinal);
+
+                while (!session.Summary.SeasonComplete)
+                    ApplyRound(session);
+
+                if (ordinal == SmgpRules.CampaignSeasons)
+                {
+                    Assert.Null(session.NextSeason());
+                    var reviewVm = new SeasonReviewViewModel(session);
+                    Assert.False(reviewVm.HasNextSeason);
+                    Assert.False(reviewVm.CanSign);
+                    Assert.False(reviewVm.SignAndContinueCommand.CanExecute(null));
+
+                    var terminal = Assert.Throws<InvalidOperationException>(
+                        () => session.StartNextSeason("team.c"));
+                    Assert.Contains("campaign is complete", terminal.Message, StringComparison.OrdinalIgnoreCase);
+                    break;
+                }
+
+                var next = session.NextSeason();
+                Assert.NotNull(next);
+                Assert.True(next.IsCarryover);
+                Assert.Equal("test-pack", next.PackId);
+
+                var review = session.SeasonReview();
+                Assert.NotNull(review);
+                Assert.NotEmpty(review.Offers);
+                string teamId = review.Offers[0].TeamId;
+                session.AcceptOffer(teamId);
+                session.StartNextSeason(teamId);
+
+                session.Dispose();
+                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+                session = CareerSessionService.OpenCareer(CareerPath, Environment());
+            }
+        }
+        finally
+        {
+            session.Dispose();
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        }
+
+        using (var db = CareerDatabase.Open(CareerPath))
+            Assert.Equal(SmgpRules.CampaignSeasons, CareerStore.ReadSeasons(db).Count);
+
+        AssertResimulatesByteIdentically();
+    }
+
     // ---------- scaffolding ----------
 
     private string PacksRoot => Path.Combine(_root, "packs");
@@ -88,7 +156,7 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         LocateInstall = static () => null,
         DocumentsDirectory = Path.Combine(_root, "docs"),
         RulesDirectory = ViewModelTestData.RulesDirectory,
-        PackSearchRoots = () => [PacksRoot],
+        PackSearchRoots = () => [PacksRoot, Path.Combine(AppContext.BaseDirectory, "packs")],
     };
 
     /// <summary>Five one-driver teams down the ladder, TWO rounds, each capping the grid at 4 → one car
@@ -184,6 +252,13 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
 
             var review = session.SeasonReview();
             Assert.NotNull(review);
+
+            // The full bundled root includes f1-1991, the exact historical pack that used to
+            // steal SMGP season 2. The service must keep this career on its pinned SMGP pack.
+            var next = session.NextSeason();
+            Assert.NotNull(next);
+            Assert.True(next.IsCarryover);
+            Assert.Equal("test-pack", next.PackId);
             session.AcceptOffer(review!.Offers[0].TeamId);
 
             var vm = new SeasonReviewViewModel(session);

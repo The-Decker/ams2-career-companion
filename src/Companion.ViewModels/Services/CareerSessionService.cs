@@ -3850,46 +3850,20 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     // ---------- era transition (M6 sign-and-continue) ----------
 
-    /// <summary>The next season the career rolls into — ALWAYS the very next calendar year (the
-    /// career never dead-ends). If a dedicated pack exists for that exact year it is a real era
-    /// CHANGEOVER into that pack; otherwise it is a CARRYOVER that reuses the current car/liveries
-    /// for one more year (the same pinned pack), carrying on until a later pack's year is reached.
-    /// Null only while the season is still in progress.</summary>
+    /// <summary>The next season the career rolls into. Historical careers advance one calendar
+    /// year at a time, changing only into ordinary historical packs. SMGP carries its pinned pack
+    /// through campaign season 17 and then terminates. Null while the season is in progress or at
+    /// the completed SMGP campaign summit.</summary>
     public NextSeasonInfo? NextSeason()
     {
         if (!SeasonComplete)
             return null;
 
-        int nextYear = _seasonYear + 1;
-        var changeover = PackDiscovery.NextAfter(
-            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()), _seasonYear);
-
-        // A dedicated pack whose year is exactly next year = the real car changeover.
-        if (changeover?.Manifest is not null && changeover.SeasonYear == nextYear)
-        {
-            return new NextSeasonInfo
-            {
-                IsCarryover = false,
-                PackDirectory = changeover.Directory,
-                PackId = changeover.Manifest.PackId,
-                PackName = changeover.Manifest.Name,
-                SeasonYear = nextYear,
-                BridgedYears = [],
-            };
-        }
-
-        // Otherwise carry the current car forward one year: either a later pack exists but is still
-        // a few years off (we carry over until we reach it) or there is no later pack at all (the
-        // career runs on this car indefinitely).
-        return new NextSeasonInfo
-        {
-            IsCarryover = true,
-            PackDirectory = "",
-            PackId = Pack.Manifest.PackId,
-            PackName = Pack.Manifest.Name,
-            SeasonYear = nextYear,
-            BridgedYears = [],
-        };
+        return PackDiscovery.PlanNextSeason(
+            Pack.Manifest,
+            _seasonYear,
+            _seasonOrdinal,
+            PackDiscovery.Discover(_environment.ResolvePackSearchRoots()));
     }
 
     /// <summary>Signs the accepted offer into the discovered next pack: builds the era
@@ -3906,6 +3880,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 "The season is not complete — finish every round before signing for the next era.");
         EnsureSeasonEnd();
 
+        var next = NextSeason()
+            ?? throw new InvalidOperationException(
+                "This career has no next season — the campaign is complete.");
+
         var accepted = StateStore.ReadOffers(_database, _seasonId).FirstOrDefault(o => o.Accepted);
         if (accepted is null)
             throw new InvalidOperationException(
@@ -3914,10 +3892,6 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             throw new InvalidOperationException(
                 $"The accepted offer is from '{accepted.Terms.TeamId}', not '{teamId}' — " +
                 "sign the offer you accepted.");
-
-        var next = NextSeason()
-            ?? throw new InvalidOperationException(
-                "The season is not complete — finish it before signing on for next year.");
 
         var driversEnd = StateStore.ReadDriverStates(_database, _seasonId, StateStore.StageEnd);
         var teamsEnd = StateStore.ReadTeamStates(_database, _seasonId, StateStore.StageEnd);

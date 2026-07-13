@@ -239,11 +239,11 @@ public interface ICareerSession
     /// clears the previous one) and journals the choice. Throws when the team made no offer.</summary>
     void AcceptOffer(string teamId);
 
-    /// <summary>The next era pack for sign-and-continue (M6). Null while the season is
-    /// incomplete or when no discovered pack has a season year greater than the current one.
-    /// v1 rule: the pack with the SMALLEST year strictly greater than the current season year
-    /// wins; the years in between are bridged, never blocked. Additive member — sessions
-    /// without era-transition support report "no next pack".</summary>
+    /// <summary>The next season for sign-and-continue. Null while the season is incomplete or
+    /// when a bounded campaign has reached its summit. Historical careers change only into an
+    /// ordinary historical pack for the exact next year and otherwise carry over; SMGP carries
+    /// its pinned pack through season 17. Additive member — sessions without transition support
+    /// report no next season.</summary>
     NextSeasonInfo? NextSeason() => null;
 
     /// <summary>Signs the ACCEPTED offer into the next era pack: builds the
