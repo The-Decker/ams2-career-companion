@@ -182,6 +182,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     {
         var files = SeasonPackFiles.Read(request.PackDirectory);
         var pack = files.Parse();
+        string selectedSourceSha256 = PinnedPackEnvelope.Sha256Of(files.ToPinnedEnvelope().ToBytes());
 
         // NAMeS-first baseline import (locked decision #7a): fold the user's installed AI
         // file into drivers.json BEFORE pinning, so the pinned pack IS the imported baseline
@@ -251,21 +252,25 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
         string playerDriverId = ResolvePlayerDriverId(pack, request.PlayerLiveryName);
 
-        if (File.Exists(request.CareerFilePath))
-            throw new InvalidOperationException(
-                $"'{request.CareerFilePath}' already exists — open it instead of creating over it.");
+        // An explicit v2 mode freezes its entire bounded horizon now. The selected pack includes
+        // every creation transform above; future packs are parsed and pre-pinned before the DB opens.
+        var selectedPin = PreparedCampaignPack.From(files, pack, selectedSourceSha256);
+        var campaign = CampaignCreationPlanner.Prepare(request, environment, selectedPin);
 
         string? directory = Path.GetDirectoryName(request.CareerFilePath);
         if (directory is { Length: > 0 })
             Directory.CreateDirectory(directory);
 
-        var envelope = files.ToPinnedEnvelope();
-        byte[] envelopeBytes = envelope.ToBytes();
-        string sha256 = PinnedPackEnvelope.Sha256Of(envelopeBytes);
+        // CreateNew is the ownership boundary. Two concurrent creators cannot both reserve this
+        // path, and failure cleanup below deletes only the file this call successfully reserved.
+        ReserveCareerFile(request.CareerFilePath);
+        bool ownsCareerFile = true;
 
-        var database = CareerDatabase.Open(request.CareerFilePath);
+        CareerDatabase? database = null;
+        bool creationCommitted = false;
         try
         {
+            database = CareerDatabase.Open(request.CareerFilePath);
             string nowUtc = environment.Clock.GetUtcNow().UtcDateTime.ToString("O");
             long seasonId;
 
@@ -278,11 +283,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     ("@seed", request.MasterSeed), ("@version", AppVersion),
                     ("@mortality", (int)request.Mortality));
 
-                Execute(database.Connection, transaction,
-                    "INSERT INTO pinned_pack (pack_id, version, sha256, pack_json, pinned_utc) " +
-                    "VALUES (@id, @packVersion, @sha, @blob, @utc);",
-                    ("@id", pack.Manifest.PackId), ("@packVersion", pack.Manifest.Version),
-                    ("@sha", sha256), ("@blob", envelopeBytes), ("@utc", nowUtc));
+                foreach (var pin in campaign?.DistinctPacks ?? [selectedPin])
+                {
+                    CareerStore.PinPackEnvelope(
+                        database,
+                        pin.Pack.Manifest.PackId,
+                        pin.Pack.Manifest.Version,
+                        pin.EnvelopeBytes,
+                        nowUtc,
+                        transaction);
+                }
 
                 Execute(database.Connection, transaction,
                     "INSERT INTO season (year, pack_id, pack_version, status) " +
@@ -316,14 +326,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 // player state, which is where the fold reads it deterministically.
                 if (request.Character is { } character)
                 {
+                    string characterDelta = campaign is null
+                        // Keep the legacy v0/v1 INPUT payload byte-for-byte unchanged.
+                        ? JsonSerializer.Serialize(
+                            new { name = character.Name, stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
+                            CoreJson.Options)
+                        : JsonSerializer.Serialize(campaign.CharacterInput, CoreJson.Options);
                     Execute(database.Connection, transaction,
                         "INSERT INTO journal (utc, season_id, round, phase, entity, delta_json, cause) " +
                         "VALUES (@utc, @season, NULL, @phase, 'player', @delta, 'career-created');",
                         ("@utc", nowUtc), ("@season", seasonId),
                         ("@phase", JournalPhases.PlayerCharacter),
-                        ("@delta", JsonSerializer.Serialize(
-                            new { name = character.Name, stats = character.Stats, perkIds = character.PerkIds, cpUnspent = character.CpUnspent },
-                            CoreJson.Options)));
+                        ("@delta", characterDelta));
                 }
 
                 // The chosen season field (v0.6.0): journal the creation INPUT row (provenance-excluded
@@ -342,9 +356,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 SeedStartStates(
                     database, seasonId, pack, playerDriverId, request.PlayerLiveryName,
                     request.Character, request.GridSelection, request.FormAware,
-                    request.SmgpMode, request.Mortality, transaction);
+                    request.SmgpMode || request.ExperienceMode == CareerExperienceModes.Smgp,
+                    request.Mortality,
+                    campaign?.Plan.Mode,
+                    campaign?.Plan,
+                    transaction);
 
                 transaction.Commit();
+                creationCommitted = true;
             }
 
             var session = new CareerSessionService(
@@ -362,8 +381,43 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         }
         catch
         {
-            database.Dispose();
+            database?.Dispose();
+            if (ownsCareerFile && !creationCommitted)
+                DeleteIncompleteCareerArtifacts(request.CareerFilePath);
             throw;
+        }
+    }
+
+    private static void ReserveCareerFile(string careerFilePath)
+    {
+        try
+        {
+            using var reservation = new FileStream(
+                careerFilePath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None);
+        }
+        catch (IOException) when (File.Exists(careerFilePath))
+        {
+            throw new InvalidOperationException(
+                $"'{careerFilePath}' already exists — open it instead of creating over it.");
+        }
+    }
+
+    private static void DeleteIncompleteCareerArtifacts(string careerFilePath)
+    {
+        foreach (string path in new[] { careerFilePath, careerFilePath + "-wal", careerFilePath + "-shm" })
+        {
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // Preserve the creation exception. A later gallery cleanup can surface a rare
+                // locked artifact, but the original validation/storage failure remains primary.
+            }
         }
     }
 
@@ -489,6 +543,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         bool formAware,
         bool smgpMode,
         MortalityMode mortality,
+        string? experienceMode,
+        CampaignProgressionPlan? campaignProgressionPlan,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -520,6 +576,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // character starts at level 1 with 0 XP.
             Character = character,
             Level = character is null ? 0 : 1,
+            ExperienceMode = experienceMode,
+            CampaignProgressionPlan = campaignProgressionPlan,
             // The chosen season field (null = whole pack → byte-identical). Carried forward each
             // round; the fold resolves the grid to exactly this field.
             GridSelection = gridSelection is { IncludesEverything: false } ? gridSelection : null,
@@ -3848,6 +3906,67 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     // ---------- era transition (M6 sign-and-continue) ----------
 
+    /// <summary>Returns the exact bounded v2 plan only when both sides of the locked gate are active.
+    /// Per the compatibility contract, progression below v2 OR an absent mode takes the byte-stable
+    /// legacy path. Once both are present, a missing/mismatched plan fails closed.</summary>
+    private CampaignProgressionPlan? ActiveBoundedCampaign()
+    {
+        var player = CurrentPlayerState();
+        int progressionVersion = player?.Character?.ProgressionVersion ?? 0;
+        if (progressionVersion < CharacterLevelProgression.Level300Version ||
+            player?.ExperienceMode is null)
+        {
+            return null;
+        }
+        if (progressionVersion != CharacterLevelProgression.Level300Version)
+            throw new NotSupportedException(
+                $"Character progression version {progressionVersion} is not supported by this build.");
+        if (!CareerExperienceModes.IsBoundedCampaign(player.ExperienceMode))
+            throw new InvalidOperationException(
+                $"Experience mode '{player.ExperienceMode}' cannot run in a bounded career session.");
+
+        var plan = player.CampaignProgressionPlan
+            ?? throw new InvalidDataException("The v2 career has an experience mode but no campaign plan.");
+        plan.Validate();
+        if (!string.Equals(plan.Mode, player.ExperienceMode, StringComparison.Ordinal))
+            throw new InvalidDataException("The stored experience mode and campaign-plan mode do not match.");
+        if (_seasonOrdinal < 1 || _seasonOrdinal > plan.PinnedSeasonSequence.Count)
+            throw new InvalidDataException(
+                $"Season ordinal {_seasonOrdinal} is outside the campaign's {plan.TotalSeasons}-season plan.");
+
+        var current = plan.PinnedSeasonSequence[_seasonOrdinal - 1];
+        if (!string.Equals(current.PackId, Pack.Manifest.PackId, StringComparison.Ordinal) ||
+            !string.Equals(current.PackVersion, Pack.Manifest.Version, StringComparison.Ordinal) ||
+            current.Year != _seasonYear)
+        {
+            throw new InvalidDataException(
+                "The open season does not match its pinned campaign-plan occurrence.");
+        }
+        _ = LoadPlannedPack(plan, current);
+        return plan;
+    }
+
+    private SeasonPack LoadPlannedPack(
+        CampaignProgressionPlan plan,
+        PinnedCampaignSeason occurrence)
+    {
+        var pinned = CareerStore.ReadPinnedPack(
+            _database, occurrence.PackId, occurrence.PackVersion);
+        if (!string.Equals(pinned.Sha256, occurrence.Sha256, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException(
+                $"Campaign plan hash {occurrence.Sha256} does not match pinned pack hash {pinned.Sha256} " +
+                $"for {occurrence.PackId} {occurrence.PackVersion}.");
+        var pack = PinnedPackEnvelope.LoadSeasonPack(pinned.PackJson);
+        if (!string.Equals(pack.Manifest.PackId, occurrence.PackId, StringComparison.Ordinal) ||
+            !string.Equals(pack.Manifest.Version, occurrence.PackVersion, StringComparison.Ordinal))
+        {
+            throw new InvalidDataException("The pinned pack bytes do not match their campaign-plan identity.");
+        }
+        if (plan.Mode == CareerExperienceModes.GrandPrixDynasty && pack.Season.Year != occurrence.Year)
+            throw new InvalidDataException("A Dynasty plan occurrence does not match its pinned pack year.");
+        return pack;
+    }
+
     /// <summary>The next season the career rolls into. Historical careers advance one calendar
     /// year at a time, changing only into ordinary historical packs. SMGP carries its pinned pack
     /// through campaign season 17 and then terminates. Null while the season is in progress or at
@@ -3856,6 +3975,30 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     {
         if (!SeasonComplete)
             return null;
+
+        if (ActiveBoundedCampaign() is { } campaign)
+        {
+            if (_seasonOrdinal >= campaign.PinnedSeasonSequence.Count)
+                return null;
+
+            var occurrence = campaign.PinnedSeasonSequence[_seasonOrdinal];
+            var nextPack = LoadPlannedPack(campaign, occurrence);
+            bool carryover = string.Equals(
+                    occurrence.PackId, Pack.Manifest.PackId, StringComparison.Ordinal) &&
+                string.Equals(
+                    occurrence.PackVersion, Pack.Manifest.Version, StringComparison.Ordinal);
+            return new NextSeasonInfo
+            {
+                IsCarryover = carryover,
+                PackDirectory = "",
+                PackId = occurrence.PackId,
+                PackName = nextPack.Manifest.Name,
+                SeasonYear = occurrence.Year,
+                BridgedYears = occurrence.Year <= _seasonYear + 1
+                    ? []
+                    : Enumerable.Range(_seasonYear + 1, occurrence.Year - _seasonYear - 1).ToArray(),
+            };
+        }
 
         return PackDiscovery.PlanNextSeason(
             Pack.Manifest,
@@ -3877,6 +4020,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             throw new InvalidOperationException(
                 "The season is not complete — finish every round before signing for the next era.");
         EnsureSeasonEnd();
+
+        var campaign = ActiveBoundedCampaign();
 
         var next = NextSeason()
             ?? throw new InvalidOperationException(
@@ -3917,8 +4062,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return;
         }
 
-        // A real era changeover into a later-year pack.
-        var toPack = SeasonPackFiles.Read(next.PackDirectory).Parse();
+        // A real era changeover into a later-year pack. V2 reads only the blob pre-pinned at
+        // creation; legacy careers retain their existing discovery + disk-read path.
+        PinnedCampaignSeason? plannedOccurrence = campaign is null
+            ? null
+            : campaign.PinnedSeasonSequence[_seasonOrdinal];
+        var toPack = plannedOccurrence is null
+            ? SeasonPackFiles.Read(next.PackDirectory).Parse()
+            : LoadPlannedPack(campaign!, plannedOccurrence);
         var plan = EraTransition.Build(
             Pack, toPack, driversEnd, teamsEnd, playerEnd, accepted.Terms,
             new StreamFactory(MasterSeedU), _environment.Rules.AgingCurves,
@@ -3930,7 +4081,19 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
 
-        CareerStore.StartNextSeason(_database, plan, toPack, NowUtc());
+        if (plannedOccurrence is null)
+        {
+            CareerStore.StartNextSeason(_database, plan, toPack, NowUtc());
+        }
+        else
+        {
+            CareerStore.StartNextPinnedSeason(
+                _database,
+                plan,
+                plannedOccurrence.PackVersion,
+                plannedOccurrence.Sha256,
+                NowUtc());
+        }
     }
 
     private static string? HeadlineText(string deltaJson)

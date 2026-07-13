@@ -505,13 +505,13 @@ public sealed record NextSeasonInfo
     /// <summary>True when this is a CARRYOVER: no dedicated pack exists for <see cref="SeasonYear"/>,
     /// so the career reuses the CURRENT car/liveries (the same pinned pack) for one more year — the
     /// grid having aged, retired, and refilled at season end. False for a real era CHANGEOVER into a
-    /// later-year pack (<see cref="PackDirectory"/> then points at that pack on disk; for a carryover
-    /// it is empty, since the pinned pack is reused, not re-read).</summary>
+    /// later-year pack. <see cref="PackDirectory"/> points at disk only on the legacy discovery path;
+    /// it is empty for a carryover and for v2, where the next bytes were pre-pinned at creation.</summary>
     public bool IsCarryover { get; init; }
 
     /// <summary>The years between the finished season and the next pack (ascending, empty
-    /// for consecutive years). With year-by-year carryover this is always empty — every year is
-    /// played, either on a dedicated pack or as a carryover — so no year is silently bridged.</summary>
+    /// for consecutive years). Legacy careers play every missing year as a carryover; a v2 Dynasty
+    /// deliberately jumps unavailable years in its creation-pinned faithful-pack sequence.</summary>
     public required IReadOnlyList<int> BridgedYears { get; init; }
 }
 

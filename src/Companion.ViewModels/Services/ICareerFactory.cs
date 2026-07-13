@@ -14,6 +14,11 @@ public sealed record CareerCreationRequest
 
     public required long MasterSeed { get; init; }
 
+    /// <summary>Explicit v2 Alpha experience id. Null preserves the exact legacy single-career
+    /// creation path; the current wizard intentionally leaves it null until the three-mode flow is
+    /// ready to create a complete progression-v2 profile and campaign atomically.</summary>
+    public string? ExperienceMode { get; init; }
+
     /// <summary>EXACT livery display name of the entry the player takes over (v1 locked
     /// decision: the player replaces that historical driver).</summary>
     public required string PlayerLiveryName { get; init; }
