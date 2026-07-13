@@ -137,6 +137,37 @@ public sealed class MortalityScreensRenderTests
         });
     }
 
+    [Fact]
+    public void HubView_LiveSmgpBriefing_ShowsLiveHubAndCollapsesCareerOver()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var view = new HubView
+            {
+                DataContext = new HubHost
+                {
+                    Home = new HomeHost
+                    {
+                        Briefing = new SmgpFloorHost
+                        {
+                            SmgpCareerOver = false,
+                            SmgpRoundHeader = "SAN MARINO · ROUND 1",
+                            SmgpCampaignLine = "SEASON 1 / 17",
+                        },
+                    },
+                },
+            };
+
+            Arrange(view, 1100, 820);
+
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)view.FindName("LiveHubSurfaces")).Visibility);
+            Assert.Equal(Visibility.Collapsed, ((FrameworkElement)view.FindName("SmgpCareerOverSurface")).Visibility);
+        });
+    }
+
     private static object CreateDeathHost(MortalityMode mode, bool fileDeleted, bool withRestore)
     {
         IReadOnlyList<SaveSlotInfo> slots = withRestore

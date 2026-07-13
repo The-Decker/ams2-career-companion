@@ -412,7 +412,8 @@
              voice instead of an obituary. This branch reads only the already-projected briefing. -->
         <views:SmgpCareerOverView x:Name="SmgpCareerOverSurface"
                                   Panel.ZIndex="20" DataContext="{Binding Home.Briefing}"
-                                  Visibility="{Binding Home.Briefing.SmgpCareerOver,
-                                                       Converter={StaticResource BoolVisible}}" />
+                                  Visibility="{Binding SmgpCareerOver,
+                                                       Converter={StaticResource BoolVisible},
+                                                       FallbackValue=Collapsed}" />
     </Grid>
 </UserControl>
