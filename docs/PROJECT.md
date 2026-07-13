@@ -28,10 +28,13 @@ A **Windows desktop app (WPF, .NET 10, single self‑contained exe `AMS2CareerCo
 
 **Product vision (`PLAN.md`, founding 2026‑07‑02):** faithful single historical seasons (never fantasy/mixed‑year grids — see locked directions), a real RPG career layer, and total determinism so a career is a reproducible artifact. The app OWNS the AMS2 staging (custom‑AI XML, liveries) so a mod manager can't undo it.
 
-### Two career modes
+### Three Alpha 1.0 career modes
 
-- **Semi‑historical F1 careers** — pick a real season pack (`packs/f1-1967` … `packs/f1-2020`), take a seat, race the calendar. Scoring is 100% data‑driven per era.
-- **SMGP replica mode** — a SEGA *Super Monaco GP* replica career (`packs/smgp-1`, `careerStyle:"smgp"`). Rival ladder, two‑wins seat swaps, title defense, a 17‑season campaign, DNQ field, the Paddock, dispatches, tycoon dashboard. **A. Senna is the permanent OP benchmark, never nerfed or dropped.** SMGP is a *separate career entity*, not a pack in the historical gallery.
+- **Grand Prix Dynasty** (`grandPrixDynasty`, working display name) — the driver-owner historical World Championship simulator, with a product horizon of 1960–2020. Every playable year remains a faithful single-season pack; unavailable years are never synthesized or mixed.
+- **Super Monaco GP** (`smgp`) — the SEGA *Super Monaco GP* replica career (`packs/smgp-1`, `careerStyle:"smgp"`). Rival ladder, two-wins seat swaps, title defense, a 17-season campaign, DNQ field, the Paddock, and dispatches. **A. Senna is the permanent OP benchmark, never nerfed or dropped.** SMGP remains a separate career entity.
+- **Racing Passport** (`racingPassport`, working display name) — one persistent character with multiple independently saved historical or SMGP career threads. The player may switch after an atomic race checkpoint; global XP/skills advance across the ordered portfolio while standings, seats, age, injury, death, and mode-specific state remain thread-local.
+
+The stable IDs/save boundaries are locked; display names may still change. Full contract: `docs/dev/career-modes-alpha1.md`.
 
 ---
 
@@ -243,11 +246,12 @@ The spend UI lives in **`SeasonReviewViewModel`** (`RaiseStat`/`BuyPerk` command
 
 The rework must preserve the exact determinism contract: unlocks ride the existing `player.statSpend` (or a new provenance‑excluded `player.respec`) input, cost re‑derived server‑side.
 
-### 7.8 PLANNED: character creation and progression v2 — level 500
+### 7.8 PLANNED: character creation and progression v2 — level 300
 
 `docs/dev/character-progression-v2.md` (2026‑07‑12) is the first-wave contract for new progression-version-2 careers. It preserves v0/v1 behavior and defines:
-- a deterministic integer level curve through **L500**, plus campaign-pinned XP normalization and a 499-SP lifetime pool paced to the career horizon;
+- a deterministic integer level curve through **L300**, plus campaign-pinned XP normalization and a 499-SP lifetime pool paced to the career horizon;
 - SMGP mastery by the season-16 review so season 17 can be driven with a complete build, and proportional pacing across historical starts through 2020;
+- mode-specific scaling for Grand Prix Dynasty, SMGP, and the Racing Passport portfolio without changing the universal L300 curve or 499-SP mastery budget;
 - **30 immutable Racing DNA identities** (`character-progression-v2-dna-catalog.md`);
 - **90 mastery skills**, exactly 10 in each of Pace, Racecraft, Physical, Mental, Business, Weather, Team, Media, and Era Flavor (`character-progression-v2-skill-catalog.md`);
 - a real wiring-diagram tree with prerequisite connectors, node details, a pending purchase plan, and atomic Confirm;
@@ -276,11 +280,11 @@ Design: `docs/dev/smgp-design.md` (adversarially verified), `docs/dev/smgp-17-se
 - **Live stats — player builds from zero:** `SmgpLiveStats.Accrue` tallies wins/podiums/poles/top‑5s/starts from actual classifications — pure display‑only. AI drivers carry a predetermined pre‑history baseline grown by live results; the PLAYER starts from ZERO. Surfaced on the briefing dossier + Paddock.
 - **Living‑world dispatches + world stories + career beats:** `SmgpDispatches()` newest‑first feed blends the player's own beats (`SmgpCareerBeats.Detect`) with reactive AI‑world stories (`SmgpWorldStories.Detect`: rival win streaks, Senna reasserting, leader change, title tightening — player excluded as subject). Bodies voiced through `SmgpDispatchCorpus` (`dispatches.json` templates, deterministic PCG32). All display‑only.
 - **SMGP news outlet + rival trash‑talk + almanac:** its OWN news outlet (`data/rules/news/smgp.json`, `NewsFacts.PreferredEra="smgp"`). Rival lines from `SmgpRivalQuotes` (per‑driver, per‑mood, deterministic seed, deadpan default "IT'S INTERESTING."). History tab's counterpart is `SmgpWorldHistory()` (What Really Happened almanac, venue‑keyed, unlocked once raced).
-- **Tycoon team‑mode read‑only spine:** `SmgpTeamDashboard()` — display‑only projection for the reserved top‑header team mode (player's team + every team ranked by a derived constructors' standing + flavour "team of the season" + budget tiers). NO fold mechanics. Seed of the future 1967+ Tycoon economy (P2/post‑SMGP, **not alpha**).
+- **Tycoon team-mode read-only spine:** `SmgpTeamDashboard()` — display-only projection of the player's team + every team ranked by derived constructors' standing + “team of the season” + budget tiers. It has no fold mechanics yet. Mike's 2026-07-12 three-mode decision moves the historical driver-owner experience into the Alpha 1.0 product contract as **Grand Prix Dynasty**; the actual ledger/economy remains implementation work, not something this projection already supplies.
 - **Determinism / fold spine:** all SMGP fold state is `SmgpState` (sealed record). Dictionaries kept in ordinal key order + STRUCTURAL Equals/GetHashCode (replay byte‑compares the serialized blob). New fields `[JsonIgnore(WhenWritingDefault)]`. Rival call is a versioned envelope input; battles fold to DERIVED `SmgpBattle`/`SmgpSeat` rows; oracle never touched.
 - **Art collection COMPLETE** (`data/ams2/ART-INVENTORY.md`, 2026‑07‑12): 34 portraits/cars/grid‑cars/flags, 24 team logos/photos/player‑images, 16 round cards, 27 sponsor logos, era‑art, both finale secrets. Optional track‑art/history‑art are the only gaps (clean fallbacks exist).
 
-**SMGP GUI state / the P0 gap:** shipping via App.xaml DataTemplates: RivalScreenView, PromotionView, SmgpFinaleView, BriefingView SMGP panel, cinematic StartingGridView, PaddockView, StandingsView rival highlight, Calendar/History. **The ONE remaining P0 alpha blocker = the character death/injury SCREENS** (GUI round 5, `docs/dev/codex-gui-round5-brief.md`): the wizard MortalityMode radio, Normal save/reload panel, ResultEntry Light/Medium/Heavy severity picker, injured sit‑out auto‑sim screen, death/permadeath screen. **Backend + VMs are shipped and tested** (`SitOutViewModel`, `DeathScreenModel`, `HomeViewModel.IsSitOutStep`/`CareerOver`/`DeathScreen`); the XAML is in the unmerged `codex/gui-round5` worktree. `docs/dev/smgp-finish-roadmap.md`: SMGP‑1.0 = alpha = a fresh career playable end‑to‑end with every shipped mechanic visible in the RC exe.
+**SMGP GUI state / the current SMGP release gap:** shipping via App.xaml DataTemplates: RivalScreenView, PromotionView, SmgpFinaleView, BriefingView SMGP panel, cinematic StartingGridView, PaddockView, StandingsView rival highlight, Calendar/History. The remaining P0 for the existing SMGP release is the character death/injury screens (GUI round 5, `docs/dev/codex-gui-round5-brief.md`): the wizard MortalityMode radio, Normal save/reload panel, ResultEntry Light/Medium/Heavy severity picker, injured sit-out auto-sim screen, death/permadeath screen. **Backend + VMs are shipped and tested** (`SitOutViewModel`, `DeathScreenModel`, `HomeViewModel.IsSitOutStep`/`CareerOver`/`DeathScreen`). The broader Product Alpha 1.0 now includes the three-mode contract and has additional work; `docs/dev/smgp-finish-roadmap.md` remains the SMGP milestone roadmap.
 
 ---
 
@@ -405,8 +409,8 @@ All VMs are CommunityToolkit.Mvvm partial `ObservableObject` with `[ObservablePr
 - **CoreJson canonical serialization** (camelCase, Rational as strings) is what makes byte‑comparison meaningful — don't change it.
 - **PowerShell‑authored JSON:** write `UTF8Encoding(false)` + validate via `System.Text.Json` (mojibake lesson).
 - **Lane discipline:** CODE never edits `src/Companion.App/**`; GUI never edits `Core`/`ViewModels`/`Data`/`tests` except the render‑harness stand‑ins. Slice‑0 stub commits unblock the parallel lane.
-- **"Done = alpha"** = SMGP‑1.0 = a fresh career playable end‑to‑end with every shipped mechanic visible in the RC exe. Mike's default: **build maximally, don't stop to ask.**
-- **Explicitly NOT alpha (P2/post‑SMGP):** Tycoon economy, life‑sim event deck, morale/form, negotiation minigame, Formula Junior 1960 prologue, shared‑memory auto‑capture (`docs/dev/auto-capture.md` — manual entry stays first‑class).
+- **SMGP-1.0 milestone:** a fresh SMGP career playable end-to-end with every shipped mechanic visible in the RC exe. **Product Alpha 1.0** now means the three-mode contract in `docs/dev/career-modes-alpha1.md`; the historical driver-owner and Passport work remain substantial implementation, not already-shipped behavior. Mike's default: **build maximally, don't stop to ask.**
+- **Still post-alpha unless separately promoted:** life-sim event deck, morale/form, negotiation minigame, Formula Junior 1960 prologue, shared-memory auto-capture (`docs/dev/auto-capture.md` — manual entry stays first-class). Historical driver-owner/tycoon mode itself is now an Alpha 1.0 target per `docs/dev/career-modes-alpha1.md`.
 
 ---
 
@@ -417,15 +421,15 @@ All VMs are CommunityToolkit.Mvvm partial `ObservableObject` with `[ObservablePr
 - Suite ~2100+ unit tests + ~67 render green; oracle 77/77.
 
 ### In flight
-- **P0 alpha blocker:** the character death/injury SCREENS (GUI round 5, `codex/gui-round5` worktree) — then RC rebuild+deploy+push (deliberately un‑rebuilt today, no GUI consumer yet).
-- **Immediate priority:** character creation/progression v2 (`docs/dev/character-progression-v2.md`) — level 500, 30 Racing DNA identities, 90 mastery skills, and the graphical/transactional skill tree, delivered in versioned waves without changing v0/v1 replay.
+- **P0 current-SMGP-release blocker:** the character death/injury screens — then RC rebuild+deploy+push. This is no longer the sole blocker for the broader three-mode Product Alpha 1.0 contract.
+- **Immediate priority:** character creation/progression v2 (`docs/dev/character-progression-v2.md`) — level 300, 30 Racing DNA identities, 90 mastery skills, and the graphical/transactional skill tree, delivered in versioned waves without changing v0/v1 replay.
 - **Roadmap tail (P1, not blockers, clean fallbacks):** living‑flavour data corpora, CampaignFlawless celebration hook, skin‑install ownership vs RCM.
 
 ### Doc map — where each design doc lives
 
 **Standing / evergreen:** `CLAUDE.md` (standing instructions + locked decisions + the dual‑role handoff), `AGENTS.md` (Codex guide — points to the two role charters), `PLAN.md` (founding vision). The two Codex charters live at `docs/dev/codex-head-of-coding.md` and `docs/dev/codex-head-of-gui.md`.
 
-**Live design (`docs/dev/`):** `character-progression-v2.md` (active level-500 contract) + `character-progression-v2-dna-catalog.md` + `character-progression-v2-skill-catalog.md`, `character-rpg-rework.md` (shipped-v1 history and bind contract), `smgp-finish-roadmap.md` (live roadmap), `character-death-injury.md`, `character-system.md`, `career-hub-design.md` (LOCKED) + `career-hub-build.md`, `smgp-design.md`, `smgp-17-seasons.md`, `upcoming-race-loop.md`, `ux-round.md`, `season-pack-format.md`, `career-sim.md`, `m5-fix-integration.md`, `app-shell.md`, `auto-capture.md`, `codex-gui-round5-brief.md`.
+**Live design (`docs/dev/`):** `career-modes-alpha1.md` (three-mode/save-boundary contract), `character-progression-v2.md` (active level-300 contract) + `character-progression-v2-dna-catalog.md` + `character-progression-v2-skill-catalog.md`, `character-rpg-rework.md` (shipped-v1 history and bind contract), `smgp-finish-roadmap.md` (live roadmap), `character-death-injury.md`, `character-system.md`, `career-hub-design.md` (LOCKED) + `career-hub-build.md`, `smgp-design.md`, `smgp-17-seasons.md`, `upcoming-race-loop.md`, `ux-round.md`, `season-pack-format.md`, `career-sim.md`, `m5-fix-integration.md`, `app-shell.md`, `auto-capture.md`, `codex-gui-round5-brief.md`.
 
 **Reference / research:** `docs/dev/oracle-fixtures.md`, `docs/dev/season-coverage.md`, `docs/dev/ams2-season-coverage.md`, `docs/dev/ams2-custom-race-reference.md`, `docs/dev/wet-weather-research.md`, `docs/dev/asset-inventory.md`; `docs/dev/audits/*` (per‑season/roster/news/funfacts/skins/responsive); `docs/research/*` (RESEARCH.md, extraction‑verification, local‑install‑inventory, 1967/1969/1983/2010 source‑parity).
 

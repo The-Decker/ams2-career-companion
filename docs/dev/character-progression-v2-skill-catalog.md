@@ -10,7 +10,7 @@ Classification:
 
 All IDs are new v2 mastery IDs and are append-only after release; none collide with the 42 shipped perk IDs. A mastery node may reference an immutable legacy effect set, but its ID, SP price, gates, and ownership are separate. Costs are first-wave targets. Every Requires cell below names exact stable IDs. Prerequisites are branch-local.
 
-Serialized `unlockLevel` gates are tier 1/L1, tier 2/L50, tier 3/L150, tier 4/L275, and tier 5/L400. Each family's two tier-5 endpoints share `<family>.capstone` as `exclusiveGroup`: one may be owned before L475, and the L475 mastery override permits the second.
+Serialized `unlockLevel` gates are tier 1/L1, tier 2/L30, tier 3/L90, tier 4/L165, and tier 5/L240. Each family's two tier-5 endpoints share `<family>.capstone` as `exclusiveGroup`. The second requires both L285 and the mode mastery checkpoint: the penultimate-season review for bounded campaigns, or 16 credited season-equivalents in Racing Passport. Level alone never unlocks every capstone early.
 
 All XP percentages in this draft apply to per-round XP only. Season-award XP remains unmodified unless a future version explicitly adds and journals a separate season-award rule.
 
@@ -161,10 +161,10 @@ Era conditions may depend only on journaled age, the pinned `AgingCurveSet` sele
 
 - Exactly **90 mastery nodes** ship in wave 1: 10 in each of nine families.
 - Draft skill cost is **280 SP**: Pace 33 + Racecraft 33 + Physical 33 + Mental 30 + Business 30 + Weather 30 + Team 31 + Media 30 + Era Flavor 30.
-- The worst seven-attribute rail path costs 119 SP, so the current maximum all-in draft is **399 SP**, leaving 100 of the L500 pool's 499 SP as a future-balance buffer.
+- The worst seven-attribute rail path costs 119 SP, so the current maximum all-in draft is **399 SP**, leaving 100 of the L300 pool's 499 SP as a future-balance buffer.
 - Later tuning should move the complete build toward 430–475 SP without exceeding 499. A version-selected load-time audit enforces the upper bound.
 - V2 prices live on new mastery IDs in a progression-version-2 catalog/wrapper. Existing creation CP prices, effects, and streams remain immutable: for example legacy `team_player`, `quiet_professional`, and `wonderkid` stay zero-cost creation traits, while legacy `superstition` and `one_trick` stay -1 CP. Their similarly named v2 mastery nodes use distinct `v2_*` IDs.
-- Creation-only `one_trick` is not a mastery node. `signature_focus` is the compatible v2 tree node; it preserves specialization without blocking the level-500 “master everything” promise.
+- Creation-only `one_trick` is not a mastery node. `signature_focus` is the compatible v2 tree node; it preserves specialization without blocking the level-300 “master everything” promise.
 - Final composed CAR scalars clamp to 0.900–1.100. Tests enumerate every legal v2 build and active condition, including the legacy character effects that can already stack roughly +0.032 unconditional net.
 - Aggregate clamps are mandatory for OPI retention, pace-anchor alpha, marketability, salary, age/decline, and error blame/floor-blend levers so combinations cannot invert mechanics.
 - Conditional effects require explicit, progression-versioned round, season, and transition evaluators. A tier/condition discovered after grid construction must never be used retroactively for EXPECTATION or CAR composition.

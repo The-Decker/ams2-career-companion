@@ -1,9 +1,10 @@
 # Character creation and progression v2
 
-_First-wave design, 2026-07-12. This document is the durable contract for the level-500 character rework. It supersedes the level/economy/tree direction in `character-rpg-rework.md` for new careers only. Existing careers remain on their original progression version._
+_First-wave design, 2026-07-12. This document is the durable contract for the level-300 character rework. It supersedes the level/economy/tree direction in `character-rpg-rework.md` for new careers only. Existing careers remain on their original progression version._
 
 Companion files:
 
+- `career-modes-alpha1.md` — the three-mode save, scaling, and replay boundaries.
 - `character-progression-v2-dna-catalog.md` — the 30 Racing DNA identities.
 - `character-progression-v2-skill-catalog.md` — the 90-node, nine-family mastery catalog.
 - `character-rpg-rework.md` — the shipped v1 implementation and bind-contract history.
@@ -11,10 +12,10 @@ Companion files:
 
 ## 1. Mike's locked vision
 
-1. The maximum character level is **500**.
-2. SMGP is a 17-season campaign. A great career can reach level 500 by the end of season 16, spend the final mastery points in that review, and drive season 17 with the complete build.
+1. The maximum character level is **300**.
+2. SMGP is a 17-season campaign. A great career can reach level 300 by the end of season 16, spend the final mastery points in that review, and drive season 17 with the complete build.
 3. Historical progression scales to the number of playable calendar seasons from the chosen start through 2020. A full 1960–2020 career is 61 seasons; a 1967–2020 career is 54.
-4. Level 500 provides enough lifetime Skill Points to own every v2 mastery node and max every authored attribute rail. Earlier levels must still force meaningful choices.
+4. Level 300 provides enough lifetime Skill Points to own every v2 mastery node and max every authored attribute rail. Earlier levels must still force meaningful choices. The 499-SP mastery budget is deliberately independent of the numeric level cap.
 5. Racing DNA expands from 13 presets to **30 persistent identities**. DNA is chosen at creation, is never part of a respec, and remains distinct even when the skill tree is complete.
 6. The mastery tree contains nine families: **Pace, Racecraft, Physical, Mental, Business, Weather, Team, Media, Era Flavor**.
 7. Every family ships with at least **10 skills**. Wave 1 targets exactly 90 skills.
@@ -74,7 +75,7 @@ The shipped system is a useful foundation, not something to mutate in place.
 | Persistence | `CharacterProfile` inside player-state JSON plus INPUT journal rows; no character columns/migration |
 | Replay | v1 external rules are not pinned, so existing IDs/effects and v0/v1 formulas must remain immutable |
 
-Changing only `maxLevel` from 30 to 500 is invalid. The 1.35 geometric step at level 500 is approximately 8×10^66 XP and overflows the current `double -> long`/cumulative-long implementation far before the cap. At 3 SP per level it would also grant 1,497 SP.
+Changing only `maxLevel` from 30 to 300 is still invalid. The shipped 1.35 geometric curve grows far beyond a useful career scale, and a fixed 3 SP per level would grant an arbitrary 897 SP. V2 therefore uses an integer level curve and maps its 299 level-ups proportionally onto the independently balanced 499-SP pool.
 
 ## 4. Versioned v2 domain model
 
@@ -98,15 +99,22 @@ CharacterProfile
 PlayerCareerState
   xpScaleRemainder          mutable rational carry, starts at 0
   campaignProgressionPlan
-    mode                    historical | smgp
+    mode                    grandPrixDynasty | smgp
     startYear
     endYear                 2020 for the initial historical campaign
+    pinnedSeasonSequence[]  ordered packId/version/year snapshot
     totalSeasons
-    masterySeason           totalSeasons - 1
+    masterySeason           max(1, totalSeasons - 1)
     plannedReferenceXp
     xpScaleNumerator
     xpScaleDenominator
-    maxLevel                500
+    maxLevel                300
+
+RacingPassportState (instead of one campaignProgressionPlan)
+  portfolioMasteryReference = 15_680
+  creditedReferenceProgress
+  creditedExperienceKeys[]  ordinal-sorted
+  contentSeasonCarry{}       ordinal-keyed by stable credited content-season key
 ```
 
 The exact snapshot may live in the creation journal payload and player-state JSON rather than a new SQLite table. No schema migration is required if the values remain additive JSON fields.
@@ -117,44 +125,49 @@ The 42 existing perk definitions, 15 v1 stat-node IDs, progression formulas, and
 
 `creationBaseline` is the authoritative lossless reset target. Attribute acquisition projects current values forward from that snapshot; reset never tries to subtract 0.05 increments from a clamped 0.99 value.
 
-## 5. Level 1–500 progression
+## 5. Level 1–300 progression
 
 ### 5.1 Integer XP thresholds
 
 V2 uses a deterministic integer curve, not an exponential floating-point curve:
 
 ```text
-xpForLevel(n) = 17 + floor(27 * (n - 2) / 498), for n = 2..500
+xpForLevel(n) = 40 + floor(21 * (n - 2) / 298), for n = 2..300
 ```
 
 Properties:
 
-- L2 costs 17 XP.
-- L100 costs 22 XP.
-- L250 costs 30 XP.
-- L400 costs 38 XP.
-- L500 costs 44 XP.
-- Cumulative L500 threshold is **14,972 XP**.
+- L2 costs 40 XP.
+- L100 costs 46 XP.
+- L150 costs 50 XP.
+- L200 costs 53 XP.
+- L250 costs 57 XP.
+- L300 costs 61 XP.
+- Cumulative L300 threshold is **14,951 XP**.
 - Every step is positive and non-decreasing; every cumulative threshold is strictly increasing.
 - All arithmetic is checked integer arithmetic and remains far below `Int64.MaxValue`.
 
 The existing v0/v1 geometric implementation stays intact behind version dispatch. `RoundUpdate`, `SeasonEndPipeline`, `CharacterDossier`, replay, and every progress-bar threshold must use the same version-selected curve service.
 
-The shipped `softCapByEra` table is a v1 rule only. Dispatch it when `ProgressionVersion == 1`, not `>= 1`. V2 has a hard level cap of 500 in its pinned campaign plan and uses the campaign-phase SP gate below; an era can never silently cap a v2 driver at L26–L30.
+The shipped `softCapByEra` table is a v1 rule only. Dispatch it when `ProgressionVersion == 1`, not `>= 1`. V2 has a hard level cap of 300 in its pinned campaign plan and uses the campaign-phase SP gate below; an era can never silently cap a v2 driver at L26–L30.
 
 ### 5.2 Campaign-normalized XP
 
-A 61-season historical career has far more races than 17-season SMGP. Raw XP cannot be compared without a pinned scale.
+A complete 61-season historical career has far more races than 17-season SMGP. Raw XP cannot be compared without a pinned scale.
 
-At creation, build a `CampaignProgressionPlan` from the pinned mode and calendar horizon. Define the high-performance reference for each non-final season as:
+For bounded Grand Prix Dynasty and SMGP saves, build a `CampaignProgressionPlan` at creation from an explicit ordered `pinnedSeasonSequence`. Dynasty includes only faithful playable packs available in the chosen start-through-2020 range at creation; later pack installs affect new saves only. Racing Passport uses the portfolio plan in §5.4 instead. Define the high-performance reference as:
 
 ```text
 referenceSeasonXp = 40 * championshipRoundCount + 340
-plannedReferenceXp = sum(referenceSeasonXp through the mastery season, excluding only the final playable season)
+plannedReferenceXp = totalSeasons == 1
+  ? referenceSeasonXp(the sole season)
+  : sum(referenceSeasonXp for every season before the final playable season)
 xpScale = 15,680 / plannedReferenceXp
 ```
 
 `15,680` is the 16-season SMGP champion reference (`16 × (16 × 40 + 340)`). SMGP therefore has scale 1. Historical careers receive a smaller scale when they have many more races/seasons and a larger scale when starting late. Store the rational numerator/denominator in the creation plan; never recompute it from a later mutable pack catalog.
+
+Only championship rounds award v2 progression XP. A non-championship event may still fold its authored local career effects, but it journals `eligibleRawXp=0` and contributes neither XP nor portfolio reference progress. This keeps the denominator and the award population identical.
 
 V2 uses exact rational carry, not floating-point or per-award nearest rounding:
 
@@ -167,14 +180,14 @@ nextRemainder = scaledNumerator % xpScaleDenominator
 
 Reduce the pinned numerator/denominator by their GCD at creation. Initialize the remainder to zero, persist it in player state, and journal its before/after value with every XP row. This carry makes the aggregate award exact for a given raw-XP total without rounding drift. A bad round may award no experience but can never erase experience already learned or delevel the driver. Journal the signed raw award, eligible award, applied award, and carry for audit. V0/v1 retain their current aggregate-XP floor behavior. XP remains a pure function of journaled results plus the pinned plan; no new RNG stream exists.
 
-This is a **can reach**, not an automatic-survival guarantee. A high-performing SMGP career reaches L500 during season 16 and can spend before season 17. A completion-only or steady top-ten run can finish below 500. A future accessibility option may add deterministic catch-up XP, but it is not the v2 default.
+This is a **can reach**, not an automatic-survival guarantee. A high-performing SMGP career reaches L300 during season 16 and can spend before season 17. A completion-only or steady top-ten run can finish below 300. A future accessibility option may add deterministic catch-up XP, but it is not the v2 default.
 
 ### 5.3 Skill Point schedule
 
-V2 earns one lifetime SP per level after level 1, subject to a campaign-phase cap:
+V2 maps 299 level-ups proportionally onto 499 lifetime SP, subject to a mode-phase cap:
 
 ```text
-levelPool(level) = clamp(level - 1, 0, 499)
+levelPool(level) = floor(499 * clamp(level - 1, 0, 299) / 299)
 seasonPool(completedSeasons) =
   floor(499 * clamp(completedSeasons, 0, masterySeason) / masterySeason)
 earnedSp = min(levelPool, seasonPool)
@@ -182,6 +195,16 @@ availableSp = earnedSp - skillPointsSpent
 ```
 
 V2 separates the character-creation budget from in-career Skill Points. DNA and creation-baseline customization spend a versioned **Creation Budget**; unused creation budget is forfeited and never carries into the 499-SP mastery pool. V0/v1 keep their current CP semantics unchanged.
+
+| Level | Cumulative XP | Lifetime level pool | Milestone |
+|---:|---:|---:|---|
+| 1 | 0 | 0 SP | Creation |
+| 30 | 1,174 | 48 SP | Tier 2 gate |
+| 90 | 3,793 | 148 SP | Tier 3 gate |
+| 165 | 7,422 | 273 SP | Tier 4 gate |
+| 240 | 11,446 | 398 SP | Tier 5 gate |
+| 285 | 14,050 | 473 SP | Mastery-override level gate; mode checkpoint also required |
+| 300 | 14,951 | 499 SP | Level/SP cap |
 
 For SMGP, `totalSeasons=17` and `masterySeason=16`:
 
@@ -193,11 +216,31 @@ For SMGP, `totalSeasons=17` and `masterySeason=16`:
 | 15 | 467 |
 | 16 | 499 |
 
-This prevents a fast XP build from completing the tree in the opening seasons while guaranteeing that an L500 driver has the full 499-point pool before the final season.
+This prevents a fast XP build from completing the tree in the opening seasons while guaranteeing that an L300 driver has the full 499-point pool before the final season. A level-up normally grants one or two SP; the cumulative mapping is authoritative, so no fractional SP is stored.
 
-For a 1960–2020 campaign, `masterySeason=60`, so the cap rises roughly 8–9 SP per completed season and reaches 499 after 2019. A 1967 start pins 53 mastery seasons and scales accordingly.
+When the complete 1960–2020 library exists, the pinned sequence contains 61 seasons and `masterySeason=60`, so the cap rises roughly 8–9 SP per completed season and reaches 499 after 2019. Until coverage is complete, Dynasty pins the actual ordered faithful packs and scales to that count; its creation screen must show the coverage snapshot. A later pack install never changes an existing plan.
 
-### 5.4 Content budget
+For a one-season 2020 campaign, pin `masterySeason=1` and include that sole season in `plannedReferenceXp`; this avoids division by zero and makes mastery possible only at campaign end. For every multi-season campaign, `plannedReferenceXp` ends after the penultimate playable season as described above.
+
+### 5.4 Three-mode scaling
+
+The universal L300 curve and 499-SP `levelPool` are identical in all Alpha 1.0 modes. The second pacing gate depends on the top-level mode:
+
+- `grandPrixDynasty`: a bounded campaign plan pinned from the chosen historical start through 2020; mastery is paced through the penultimate season (or the sole season for a one-season start).
+- `smgp`: a bounded 17-season plan; mastery is paced through season 16.
+- `racingPassport`: a portfolio plan, not one mutable campaign horizon. Each saved season normalizes to a 980-XP season-equivalent, and the portfolio gate reaches 499 SP after 16 uniquely credited season-equivalents.
+
+Passport uses:
+
+```text
+seasonScale = 980 / (40 * championshipRoundCount + 340)
+portfolioPool = floor(499 * min(creditedReferenceProgress, 15_680) / 15_680)
+earnedSp = min(levelPool, portfolioPool)
+```
+
+Historical credit keys include pack/year/round; SMGP keys include campaign-season ordinal/round. The pinned pack version stays in the activity payload for replay but does not create a second progression credit after a data update. A cloned thread may record its local result but cannot award the same global XP credit twice. Portfolio phase progress adds the exact rational `640 / championshipRoundCount` for each uniquely credited round plus 340 when that content season is first completed, totaling 980 per complete season-equivalent. Rational XP carry is keyed by stable credited content season, not by a clone/thread. Details and the required cross-thread activity ledger are in `career-modes-alpha1.md`.
+
+### 5.5 Content budget
 
 Wave 1 authors 90 mastery skills. The current draft family catalogs total 30–33 SP per family and **280 SP** across all nine families.
 
@@ -243,7 +286,7 @@ Rules:
 - Every `requires[]` entry is a stable mastery-node ID from the same catalog, never a display name.
 - Prerequisites form a validated DAG across one unified node namespace.
 - Cross-family prerequisites are forbidden in wave 1; this keeps each graph readable and avoids hidden ownership rules.
-- Tier-5 endpoints are mutually exclusive during ordinary progression; the mastery override lifts exclusivity at L475 so “max everything” is literally possible at L500.
+- Tier-5 endpoints are mutually exclusive during ordinary progression. The mastery override lifts exclusivity only when the driver is at least L285 **and** the mode's mastery checkpoint is complete, so “max everything” lands at the intended campaign/portfolio finale rather than early.
 - AI personality/talent deltas are EXPECTATION effects for a human player. Only `raceSkill` currently feeds expected finish; the other Custom AI personality fields are staged fiction unless an explicit CAREER lever says otherwise.
 - Only explicit CAR effects write player weight/power/drag.
 - All CAR paths are enumerated by tests; combined scalars clamp to 0.900–1.100 and must stay within an authored advantage envelope.
@@ -252,7 +295,7 @@ Rules:
 
 The 90-node catalog is stored in `character-progression-v2-skill-catalog.md`.
 
-Wave-1 level gates are explicit in every serialized node: tier 1 = L1, tier 2 = L50, tier 3 = L150, tier 4 = L275, and tier 5 = L400. A node must satisfy both its own gate and all prerequisites. The two tier-5 endpoints in each family share `<family>.capstone` as `exclusiveGroup`; before L475 only one may be owned, while L475+ enables the mastery override and permits the second. The override is a pure rule of persisted level/progression version, not a catalog mutation.
+Wave-1 level gates are explicit in every serialized node: tier 1 = L1, tier 2 = L30, tier 3 = L90, tier 4 = L165, and tier 5 = L240. A node must satisfy both its own gate and all prerequisites. The two tier-5 endpoints in each family share `<family>.capstone` as `exclusiveGroup`. The second may be owned only when `level >= 285` and `masteryCheckpointComplete` is true: bounded campaigns require `completedSeasons >= masterySeason`; Passport requires `creditedReferenceProgress >= 15_680`. The override is a pure rule of persisted progression state/version, not a catalog mutation.
 
 ## 8. Graphical tree and transaction UX
 
@@ -358,7 +401,7 @@ The UI must distinguish **Reset pending plan** (free, local) from **Reset commit
 
 ## 11. SMGP continuation prerequisite
 
-The level-500 SMGP schedule assumes 17 SMGP seasons. The current bundled discovery path violates that assumption: after SMGP's authored 1990 season, generic `NextAfter` can discover `f1-1991` and offer a historical changeover.
+The level-300 SMGP schedule assumes 17 SMGP seasons. The current bundled discovery path violates that assumption: after SMGP's authored 1990 season, generic `NextAfter` can discover `f1-1991` and offer a historical changeover.
 
 Before v2 progression ships:
 
@@ -373,10 +416,13 @@ This is a correctness prerequisite, not a balance preference.
 
 Every wave runs the full solution and adds targeted audits:
 
-- XP thresholds: positive, non-decreasing steps; strictly increasing cumulative values; L500 exactly 14,972 XP.
+- XP thresholds: positive, non-decreasing steps; strictly increasing cumulative values; L300 exactly 14,951 XP.
 - Campaign scale: rational, pinned, deterministic, no divide-by-zero, no mutable-pack dependency.
+- Dynasty sequence: ordered faithful pack snapshot is immutable; later pack installs affect new saves only.
+- XP eligibility: non-championship events award zero v2 progression XP and do not enter the denominator.
 - SP economy: never negative; never above 499; max legal catalog cost ≤499.
 - Graph: unique stable IDs, valid icons/families, acyclic prerequisites, tier/order monotonicity.
+- Mastery override: L285 alone is insufficient; every second capstone stays locked until the mode checkpoint.
 - Effects: closed lever/target/condition vocabulary, identity defaults, explicit CAR classification.
 - CAR path enumeration: final values within 0.900–1.100; aggregate advantage capped and calendar-weighted for conditional weather/long-race paths.
 - DNA: exactly 30 unique IDs; stat/trait budgets valid; persistent passive has a priced drawback; any authored choice is journaled.
@@ -394,10 +440,10 @@ Every wave runs the full solution and adds targeted audits:
 3. Add pinned `CampaignProgressionPlan` and complete creation provenance.
 4. Add player-car scalar clamping/validation and distinguish EXPECTATION/CAREER/CAR in projections.
 
-### Wave 1 — level 500 and SP economy
+### Wave 1 — level 300 and SP economy
 
 1. Implement the integer v2 curve and campaign XP normalization.
-2. Implement one-SP-per-level plus campaign-phase cap.
+2. Implement the proportional 499-SP level pool plus the mode-phase cap.
 3. Update fold, replay, dossier, review, and progress bar through one shared service.
 4. Ship determinism fixtures for historical and 17-season SMGP careers.
 
@@ -433,6 +479,6 @@ Every wave runs the full solution and adds targeted audits:
 
 These do not block Wave 0, but must be frozen before their owning wave:
 
-1. Should a historical career that starts after 1960 still be able to reach L500 by 2020? **Recommendation: yes; pin and rescale to its actual remaining horizon.**
-2. Should a merely surviving SMGP career be guaranteed L500, or only a great one? **Recommendation: great-career reachable, not automatic; retain performance meaning.**
-3. Should v2 DNA passives remain mechanical after all skills are maxed? **Recommendation: yes; otherwise every L500 driver becomes identical.**
+1. Should a historical career that starts after 1960 still be able to reach L300 by 2020? **Recommendation: yes; pin and rescale to its actual remaining horizon.**
+2. Should a merely surviving SMGP career be guaranteed L300, or only a great one? **Recommendation: great-career reachable, not automatic; retain performance meaning.**
+3. Should v2 DNA passives remain mechanical after all skills are maxed? **Recommendation: yes; otherwise every L300 driver becomes identical.**
