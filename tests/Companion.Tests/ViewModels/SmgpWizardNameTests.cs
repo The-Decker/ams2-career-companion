@@ -44,16 +44,19 @@ public sealed class SmgpWizardNameTests : IDisposable
         wizard.SelectedPack = Assert.Single(wizard.Packs, p => Path.GetFileName(p.Directory) == "smgp");
         wizard.NextCommand.Execute(null); // -> Verification
         wizard.ProceedAnyway = true;
-        wizard.NextCommand.Execute(null); // -> SeatPick
-        Assert.Equal(WizardStep.SeatPick, wizard.Step);
-
-        // SMGP offers only Level-D seats; pick one and advance into the character step.
-        var seat = wizard.Seats.First();
-        wizard.SelectedSeat = seat;
         wizard.NextCommand.Execute(null); // -> Character
         Assert.Equal(WizardStep.Character, wizard.Step);
-
         Assert.NotNull(wizard.Character);
+        Assert.Equal("You", wizard.Character!.Name); // identity exists before seat pick
+
+        wizard.NextCommand.Execute(null); // -> SeatPick
+        Assert.Equal(WizardStep.SeatPick, wizard.Step);
+        Assert.Null(wizard.SelectedSeat); // even SMGP requires an explicit card click
+        Assert.False(wizard.NextCommand.CanExecute(null));
+
+        // SMGP offers only Level-D seats; clicking one chooses the car without changing identity.
+        var seat = wizard.Seats.First();
+        wizard.SelectedSeat = seat;
         Assert.Equal("You", wizard.Character!.Name);            // the player is their own driver, not the seat's
         Assert.NotEqual(seat.DriverName, wizard.Character.Name);
     }

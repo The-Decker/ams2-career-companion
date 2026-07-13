@@ -266,11 +266,12 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.SelectedPack = Assert.Single(wizard.Packs);
         wizard.NextCommand.Execute(null);                 // -> Verification
         if (wizard.HasWarnings) wizard.ProceedAnyway = true;
+        wizard.NextCommand.Execute(null);                 // -> Character
+        Assert.Equal(WizardStep.Character, wizard.Step);
+        wizard.Character!.Name = "Renamed Driver";        // identity exists before the car pick
         wizard.NextCommand.Execute(null);                 // -> SeatPick
         var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
         wizard.SelectedSeat = seat;
-        wizard.NextCommand.Execute(null);                 // -> Character
-        wizard.Character!.Name = "Renamed Driver";        // the player changes their name
         wizard.NextCommand.Execute(null);                 // -> Grid (choices built on entry)
 
         // The player REPLACES the seat's driver on their own (locked) card — new name, not the AI's.
@@ -300,13 +301,25 @@ public sealed class CharacterWizardTests : IDisposable
         wizard.SelectedPack = Assert.Single(wizard.Packs);
         wizard.NextCommand.Execute(null);                 // -> Verification
         if (wizard.HasWarnings) wizard.ProceedAnyway = true;
-        wizard.NextCommand.Execute(null);                 // -> SeatPick
-        var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
-        wizard.SelectedSeat = seat;
         wizard.NextCommand.Execute(null);                 // -> Character (rules loaded)
         Assert.Equal(WizardStep.Character, wizard.Step);
         Assert.NotNull(wizard.Character);
-        Assert.Equal(seat.DriverName, wizard.Character!.Name); // driver name pre-filled from the seat
+        Assert.Equal("You", wizard.Character!.Name);      // seat-independent default
+
+        wizard.BackCommand.Execute(null);
+        Assert.Equal(WizardStep.Verification, wizard.Step);
+        wizard.NextCommand.Execute(null);
+        Assert.Equal(WizardStep.Character, wizard.Step);
+
+        wizard.Character.Name = "Chosen Driver";
+        wizard.NextCommand.Execute(null);                 // -> SeatPick
+        wizard.BackCommand.Execute(null);
+        Assert.Equal(WizardStep.Character, wizard.Step);
+        Assert.Equal("Chosen Driver", wizard.Character.Name); // back preserves the authored identity
+        wizard.NextCommand.Execute(null);                 // -> SeatPick again
+        var seat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
+        wizard.SelectedSeat = seat;
+        Assert.Equal(GridSeatChoice.PlayerImageKey(seat.TeamId), wizard.PlayerImageKey);
 
         wizard.NextCommand.Execute(null);                 // -> Grid (whole field by default)
         Assert.Equal(WizardStep.Grid, wizard.Step);
@@ -316,7 +329,7 @@ public sealed class CharacterWizardTests : IDisposable
 
         var request = factory.LastRequest!;
         Assert.NotNull(request.Character);
-        Assert.Equal(seat.DriverName, request.Character!.Name); // the named driver reached creation
+        Assert.Equal("Chosen Driver", request.Character!.Name); // the pre-seat identity reached creation
         // The default archetype's perks came through (profile lists them in perks.json order — a
         // deterministic order, so compared as a set here).
         Assert.Equal(

@@ -277,6 +277,8 @@ public sealed class MortalityWizardTests : IDisposable
         wizard.SelectedPack = Assert.Single(wizard.Packs);
         wizard.NextCommand.Execute(null);              // -> Verification
         if (wizard.HasWarnings) wizard.ProceedAnyway = true;
+        wizard.NextCommand.Execute(null);              // -> Character
+        Assert.Equal(WizardStep.Character, wizard.Step);
         wizard.NextCommand.Execute(null);              // -> SeatPick
         wizard.SelectedSeat = wizard.Seats.First();
         return wizard;
@@ -288,7 +290,6 @@ public sealed class MortalityWizardTests : IDisposable
         var wizard = WizardThroughSeat(out var factory);
         Assert.Equal(MortalityMode.Off, wizard.MortalityMode);
 
-        wizard.NextCommand.Execute(null);              // -> Character
         wizard.NextCommand.Execute(null);              // -> Grid
         wizard.NextCommand.Execute(null);              // -> Confirm
         wizard.NextCommand.Execute(null);              // Create
@@ -304,7 +305,6 @@ public sealed class MortalityWizardTests : IDisposable
         wizard.MortalityMode = MortalityMode.Hardcore;
         Assert.Contains("DELETES", wizard.MortalityModeSummary, StringComparison.OrdinalIgnoreCase);
 
-        wizard.NextCommand.Execute(null);              // -> Character
         wizard.NextCommand.Execute(null);              // -> Grid
         wizard.NextCommand.Execute(null);              // -> Confirm
         wizard.NextCommand.Execute(null);              // Create

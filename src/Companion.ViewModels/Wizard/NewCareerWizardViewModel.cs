@@ -19,12 +19,14 @@ public sealed class CareerCreatedEventArgs(ICareerSession session, string career
 }
 
 /// <summary>
-/// The four-step new-career wizard (app-shell contract):
+/// The new-career wizard (app-shell contract):
 ///  a. Season pick — packs from the exe-adjacent packs\ folder + Documents\AMS2CareerCompanion\Packs.
 ///  b. Content verification — PackStructuralValidator + PackContentValidator + installed-livery
 ///     scan. ERRORS BLOCK; warnings allow an explicit proceed-anyway.
-///  c. Seat pick — the pack's entries with driver ratings and team tier/reliability.
-///  d. Confirm — career name, master seed (random default, editable), rules-summary chip;
+///  c. Create driver — establish the player's identity before choosing a car.
+///  d. Seat pick — the pack's entries with driver ratings and team tier/reliability.
+///  e. Season grid — the field carried into the career.
+///  f. Confirm — career name, master seed (random default, editable), rules-summary chip;
 ///     Create pins the pack and creates the career DB.
 /// </summary>
 public sealed partial class NewCareerWizardViewModel : ObservableObject
@@ -84,7 +86,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public bool CanGoBack => Step > WizardStep.SeasonPick;
 
     /// <summary>The character step exists only when character rules are available (the app always
-    /// ships perks.json; a rules-less environment — some tests — skips straight to confirm).</summary>
+    /// ships perks.json; a rules-less environment — some tests — skips from verification to seat pick).</summary>
     public bool HasCharacterStep => _environment.RulesDirectory is not null;
 
     [RelayCommand(CanExecute = nameof(CanGoNext))]
@@ -103,13 +105,6 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 break;
 
             case WizardStep.Verification:
-                BuildSeats();
-                Step = WizardStep.SeatPick;
-                break;
-
-            case WizardStep.SeatPick:
-                // Flow (Mike): select car → create character → see the grid → confirm. Create the
-                // character first (when the mode has one), then the grid reveal is the last look.
                 if (HasCharacterStep)
                 {
                     PrepareCharacter();
@@ -117,12 +112,17 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
                 }
                 else
                 {
-                    BuildGridChoices();
-                    Step = WizardStep.Grid;
+                    BuildSeats();
+                    Step = WizardStep.SeatPick;
                 }
                 break;
 
             case WizardStep.Character:
+                BuildSeats();
+                Step = WizardStep.SeatPick;
+                break;
+
+            case WizardStep.SeatPick:
                 BuildGridChoices();
                 Step = WizardStep.Grid;
                 break;
@@ -143,11 +143,11 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (!CanGoBack)
             return;
-        // The grid step precedes confirm and follows the (possibly skipped) character step; step
-        // back over character straight to seat pick when the mode has no character.
+        // A rules-less environment skips Character on the way forward, so SeatPick must skip it on
+        // the way back as well. Every other step follows the enum's visual order.
         Step = Step switch
         {
-            WizardStep.Grid => HasCharacterStep ? WizardStep.Character : WizardStep.SeatPick,
+            WizardStep.SeatPick => HasCharacterStep ? WizardStep.Character : WizardStep.Verification,
             _ => Step - 1,
         };
     }
@@ -394,7 +394,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     partial void OnUseModdedFieldChanged(bool value) =>
         RefreshModdedFieldStatus(_environment.LocateInstall()?.InstallDirectory);
 
-    // ---------- step c: seat pick ----------
+    // ---------- step d: seat pick ----------
 
     public ObservableCollection<SeatOption> Seats { get; } = [];
 
@@ -503,8 +503,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             });
         }
 
-        if (smgp)
-            SelectedSeat = Seats.FirstOrDefault();
+        // Seat choice is always explicit. SMGP still filters to Level-D cars, but it no longer
+        // silently chooses the first one before the player clicks a card.
     }
 
     /// <summary>How many of the season's rounds an entry's rounds-range covers — used to pick the
@@ -644,7 +644,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         return new GridSelection { IncludedLiveries = included };
     }
 
-    // ---------- step c2: character (Increment 4a) ----------
+    // ---------- step c: character (Increment 4a) ----------
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoNext))]
@@ -657,12 +657,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
-        // The default driver name. SMGP: the player is their OWN driver (the clean-swap, not the seat's
-        // historical occupant), so the box seeds to "You" for you to personalise (Mike). A historical
-        // career instead pre-fills the seat's driver as a starting point (race AS them, or rename); an
-        // own entrant names themselves from an empty seed.
-        string? defaultName = IsSmgpPack ? "You" : (IsOwnEntrant ? null : SelectedSeat?.DriverName);
-        Character = new CharacterViewModel(_environment.Rules.Character, defaultName);
+        // Driver creation now precedes seat selection, so its identity cannot depend on a seat that
+        // has not been chosen yet. "You" is the stable starting point in every mode; the player can
+        // personalise it before seat selection and the selected seat card can then show that name.
+        Character = new CharacterViewModel(_environment.Rules.Character, "You");
         Character.PropertyChanged += OnCharacterChanged;
     }
 
@@ -675,7 +673,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         }
     }
 
-    // ---------- step d: confirm ----------
+    // ---------- step f: confirm ----------
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanGoNext))]
@@ -713,7 +711,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         DetectInstalledBaseline();
     }
 
-    // ---------- step d: NAMeS-first baseline import (locked decision #7a) ----------
+    // ---------- step f: NAMeS-first baseline import (locked decision #7a) ----------
 
     /// <summary>"Use your installed AI file as the season baseline" — defaults ON whenever
     /// the install has a parseable class XML for the pack's ams2Class.</summary>

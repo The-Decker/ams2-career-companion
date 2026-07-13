@@ -78,8 +78,8 @@ public sealed partial class CharacterViewModel : ObservableObject
 
     public IReadOnlyList<Archetype> Archetypes { get; }
 
-    /// <summary>The player's driver name — the identity the whole app will use. Pre-filled with the
-    /// seat's historical driver as a starting point; the player makes it their own.</summary>
+    /// <summary>The player's driver name — the identity the whole app will use. It is created before
+    /// seat selection, so its default is deliberately independent of the historical driver.</summary>
     [ObservableProperty]
     private string _name;
 

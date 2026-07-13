@@ -74,14 +74,14 @@ public sealed class SettingsConsumersTests : IDisposable
             settings: settings);
 
         wizard.SelectedPack = Assert.Single(wizard.Packs);
-        wizard.NextCommand.Execute(null);
+        wizard.NextCommand.Execute(null);          // -> Verification
         if (wizard.HasWarnings)
             wizard.ProceedAnyway = true;
-        wizard.NextCommand.Execute(null);
+        wizard.NextCommand.Execute(null);          // -> Character
+        Assert.Equal(WizardStep.Character, wizard.Step);
+        wizard.NextCommand.Execute(null);          // -> SeatPick
         wizard.SelectedSeat = wizard.Seats.First(s => s.LiveryName == TestPackBuilder.StockLivery2);
-        wizard.NextCommand.Execute(null);          // -> Character (rules loaded) or Grid (no rules)
-        if (wizard.Step == WizardStep.Character)
-            wizard.NextCommand.Execute(null);      // -> Grid (archetype preset is valid)
+        wizard.NextCommand.Execute(null);          // -> Grid
         wizard.NextCommand.Execute(null);          // -> Confirm
         Assert.Equal(WizardStep.Confirm, wizard.Step);
         return wizard;
