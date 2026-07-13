@@ -246,11 +246,18 @@
             <!-- The player's evolving SMGP campaign: a typed, chronological story projection over
                  folded results. RelativeSource is intentional because this page's ScrollViewer uses
                  the CharacterDossier as its inner DataContext. -->
-            <StackPanel Margin="0,24,0,0"
-                        Visibility="{Binding DataContext.HasSmgpNarrative,
-                                             RelativeSource={RelativeSource AncestorType=UserControl},
-                                             Converter={StaticResource BoolVisible}}">
-                <TextBlock Text="YOUR STORY" Style="{StaticResource H2}" />
+            <Expander x:Name="StoryExpander" Margin="0,24,0,0" IsExpanded="True"
+                      HorizontalContentAlignment="Stretch"
+                      Visibility="{Binding DataContext.HasSmgpNarrative,
+                                           RelativeSource={RelativeSource AncestorType=UserControl},
+                                           Converter={StaticResource BoolVisible}}">
+                <Expander.Header>
+                    <TextBlock Text="YOUR STORY" Style="{StaticResource H2}" />
+                </Expander.Header>
+                <StackPanel x:Name="StoryContent"
+                            Visibility="{Binding IsExpanded,
+                                                 RelativeSource={RelativeSource AncestorType=Expander},
+                                                 Converter={StaticResource BoolVisible}}">
                 <Border Style="{StaticResource AccentCallout}" Margin="0,8,0,12" Padding="14,10">
                     <StackPanel>
                         <TextBlock Text="LIVE CAMPAIGN" Style="{StaticResource Eyebrow}"
@@ -327,7 +334,8 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+                </StackPanel>
+            </Expander>
 
             <!-- skill tree -->
             <DockPanel Margin="0,28,0,8">
