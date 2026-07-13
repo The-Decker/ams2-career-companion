@@ -27,8 +27,8 @@ public sealed class DossierViewRenderTests
 
         public bool LevelUpPending { get; init; } = true;
         public int LevelsGained { get; init; } = 1;
-        public int SkillPointsAvailable { get; init; } = 4;
-        public int RespecTokens { get; init; } = 1;
+        public int SkillPointsAvailable => 4;
+        public int RespecTokens => 1;
         public required IReadOnlyList<SkillBranchViewModel> SkillTree { get; init; }
         public ICommand AcknowledgeLevelUpCommand { get; } = new StubCommand();
         public ICommand UnlockNodeCommand { get; } = new StubCommand();

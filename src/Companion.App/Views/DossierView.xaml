@@ -137,11 +137,13 @@
                                             Margin="10,0,0,0"
                                             Visibility="{Binding DataContext.SkillPointsAvailable,
                                                                  RelativeSource={RelativeSource AncestorType=UserControl},
-                                                                 Converter={StaticResource CountVisible}}">
+                                                                 Converter={StaticResource CountVisible},
+                                                                 Mode=OneWay}">
                                         <TextBlock Foreground="{DynamicResource AccentTextBrush}"
                                                    FontWeight="Bold">
                                             <Run Text="{Binding DataContext.SkillPointsAvailable,
-                                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                                                RelativeSource={RelativeSource AncestorType=UserControl},
+                                                                Mode=OneWay}" />
                                             <Run Text=" SKILL POINTS TO SPEND" />
                                         </TextBlock>
                                     </Border>
@@ -333,17 +335,20 @@
                     <Border Style="{StaticResource CompactChip}" Margin="0,0,7,0">
                         <TextBlock Style="{StaticResource Mono}" Foreground="{DynamicResource AccentTextBrush}">
                             <Run Text="{Binding DataContext.SkillPointsAvailable,
-                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                                RelativeSource={RelativeSource AncestorType=UserControl},
+                                                Mode=OneWay}" />
                             <Run Text=" SP" />
                         </TextBlock>
                     </Border>
                     <Border Style="{StaticResource CompactChip}"
                             Visibility="{Binding DataContext.RespecTokens,
                                                  RelativeSource={RelativeSource AncestorType=UserControl},
-                                                 Converter={StaticResource CountVisible}}">
+                                                 Converter={StaticResource CountVisible},
+                                                 Mode=OneWay}">
                         <TextBlock Style="{StaticResource Mono}">
                             <Run Text="{Binding DataContext.RespecTokens,
-                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                                RelativeSource={RelativeSource AncestorType=UserControl},
+                                                Mode=OneWay}" />
                             <Run Text=" RESPEC" />
                         </TextBlock>
                     </Border>
@@ -474,7 +479,8 @@
                                                                     CommandParameter="{Binding Mode=OneWay}"
                                                                     Visibility="{Binding DataContext.RespecTokens,
                                                                                          RelativeSource={RelativeSource AncestorType=UserControl},
-                                                                                         Converter={StaticResource CountVisible}}" />
+                                                                                         Converter={StaticResource CountVisible},
+                                                                                         Mode=OneWay}" />
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>
