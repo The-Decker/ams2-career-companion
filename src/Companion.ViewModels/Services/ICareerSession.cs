@@ -206,6 +206,11 @@ public interface ICareerSession
     /// default: sessions without the projection report no events, so existing fakes compile.</summary>
     IReadOnlyList<Companion.Core.Newsroom.NewsEvent> NewsroomEvents() => [];
 
+    /// <summary>The rendered living newsroom: every detected event voiced through the template
+    /// library (data\rules\newsroom), newest first. Display-only, deterministic per master
+    /// seed, re-rendered on read (never stored). Additive default: empty feed.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.NewsroomArticle> NewsroomFeed() => [];
+
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
     /// championship position, final reputation/OPI, the drivers' champion, and the season's key

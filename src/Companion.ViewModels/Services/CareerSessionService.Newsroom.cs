@@ -21,6 +21,37 @@ public sealed partial class CareerSessionService
     public IReadOnlyList<NewsEvent> NewsroomEvents() =>
         CareerNewsEvents.Detect(BuildNewsroomSeasons());
 
+    /// <summary>The rendered newsroom: every career event voiced through the template library,
+    /// newest first. Bodies re-render deterministically from the master seed on every call —
+    /// never stored, never a fold input. Empty when the newsroom packs are absent.</summary>
+    public IReadOnlyList<NewsroomArticle> NewsroomFeed()
+    {
+        var rules = _environment.Rules;
+        if (rules is null || rules.NewsroomCorpus.IsEmpty)
+        {
+            return [];
+        }
+
+        var identity = new NewsroomIdentity
+        {
+            PlayerName = PlayerDisplayName() ?? "",
+            PreferredEra = SmgpNewsEra,
+        };
+
+        var articles = new List<NewsroomArticle>();
+        foreach (var e in NewsroomEvents())
+        {
+            var article = NewsroomComposer.Compose(e, rules.NewsroomCorpus, rules.NewsDesks, identity, MasterSeedU);
+            if (article is not null)
+            {
+                articles.Add(article);
+            }
+        }
+
+        articles.Reverse(); // detection is chronological; the newsroom reads newest first
+        return articles;
+    }
+
     private IReadOnlyList<NewsroomSeason> BuildNewsroomSeasons()
     {
         var seasonsInput = new List<NewsroomSeason>();

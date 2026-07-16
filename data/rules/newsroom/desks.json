@@ -1,0 +1,48 @@
+{
+  "$comment": "Fictional editorial desks for the living newsroom (docs/dev/newsroom-history-overhaul.md D6). Parsed by Companion.Core.Newsroom.NewsDesks. A story's desk is rendezvous-assigned over the desks that prefer its category (generalists catch the rest), so the same story always carries the same masthead. Ids are stable data-format keys - never rename.",
+  "version": 1,
+  "desks": [
+    {
+      "id": "wire",
+      "name": "Grid Wire",
+      "monogram": "GW",
+      "tone": "straight news wire - fast, factual, no flourish",
+      "categories": ["raceReport", "qualifyingReport", "breakingNews", "confirmedAnnouncements", "injuriesAndReplacements", "weekendPreview"]
+    },
+    {
+      "id": "slipstream",
+      "name": "The Slipstream",
+      "monogram": "SL",
+      "tone": "serious weekly motorsport magazine - considered, human, long memory",
+      "categories": ["driverPerformance", "humanInterest", "rivalries", "veteranWatch", "rookieWatch", "seasonReview", "careerRetrospective"]
+    },
+    {
+      "id": "apex",
+      "name": "Apex Technical Review",
+      "monogram": "AT",
+      "tone": "technical journal - engineering first, verdicts second",
+      "categories": ["technicalDevelopments", "mechanicalReliability", "regulationChanges"]
+    },
+    {
+      "id": "whispers",
+      "name": "Paddock Whispers",
+      "monogram": "PW",
+      "tone": "paddock rumor column - sourced gossip, clearly labeled, never certain",
+      "categories": ["rumours", "driverTransfers", "contractNews", "teamPolitics", "operationalPressure"]
+    },
+    {
+      "id": "archive",
+      "name": "The Archive Desk",
+      "monogram": "AD",
+      "tone": "historical review - context, anniversaries, the long view",
+      "categories": ["historicalRetrospective", "anniversaryFeature"]
+    },
+    {
+      "id": "titlewatch",
+      "name": "Title Watch",
+      "monogram": "TW",
+      "tone": "championship analysis desk - the points table is the story",
+      "categories": ["championshipAnalysis", "recordsAndMilestones", "postRaceAnalysis"]
+    }
+  ]
+}

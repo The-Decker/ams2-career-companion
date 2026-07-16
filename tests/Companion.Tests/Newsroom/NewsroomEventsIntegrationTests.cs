@@ -49,6 +49,29 @@ public sealed class NewsroomEventsIntegrationTests : IDisposable
     }
 
     [Fact]
+    public void The_rendered_newsroom_feed_voices_the_weekend_with_real_names()
+    {
+        using var session = NewCareer();
+        ApplyRound(session, playerWins: true);
+
+        var feed = session.NewsroomFeed();
+
+        Assert.NotEmpty(feed);
+        var win = Assert.Single(feed, a => a.EventKind == NewsEventKind.RaceWon);
+        Assert.DoesNotContain("{", win.Headline + win.Body);
+        Assert.DoesNotContain("[[", win.Headline + win.Body);
+        Assert.NotEqual(EditorialTier.ArchiveOnly, win.Tier);
+        Assert.Contains(feed, a => a.EventKind == NewsEventKind.FirstWin);
+        Assert.Equal(feed[0].SeasonOrdinal, feed.Max(a => a.SeasonOrdinal)); // newest first
+        Assert.All(feed, a => Assert.False(string.IsNullOrWhiteSpace(a.Headline)));
+
+        // Deterministic re-render: a second read is byte-identical.
+        var again = session.NewsroomFeed();
+        Assert.Equal(feed.Select(a => a.Key + "|" + a.Headline + "|" + a.Body),
+            again.Select(a => a.Key + "|" + a.Headline + "|" + a.Body));
+    }
+
+    [Fact]
     public void A_retirement_reads_its_cause_from_the_journal()
     {
         using var session = NewCareer();

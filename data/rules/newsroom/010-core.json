@@ -1,0 +1,673 @@
+{
+  "$comment": "Core newsroom template pack - the exemplar the scaled content packs follow. Parsed by Companion.Core.Newsroom.NewsroomCorpus (grammar: {token}, {a:token}, {ord:token}, {token's}, {pool:name}, [[?token: optional segment]]). Template ids are rendezvous-selection keys: STABLE, never renamed, never reused. Situation guards ('when') narrow a template to the exact story - the most specific eligible tier always wins. Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "eras": [
+    { "key": "1960s", "fromYear": 1946, "toYear": 1969 },
+    { "key": "1970s", "fromYear": 1970, "toYear": 1979 },
+    { "key": "1980s", "fromYear": 1980, "toYear": 1989 },
+    { "key": "1990s", "fromYear": 1990, "toYear": 1999 },
+    { "key": "2000s", "fromYear": 2000, "toYear": 2009 },
+    { "key": "2010s", "fromYear": 2010, "toYear": 2029 },
+    { "key": "smgp", "fromYear": 9000, "toYear": 9099 }
+  ],
+  "pools": {
+    "dateline": {
+      "1960s": ["From the press tent[[?venue: at {venue}]].", "By wire[[?venue: from {venue}]].", "Filed from the paddock gate."],
+      "1980s": ["TRACKSIDE[[?venue: AT {venue}]] - the wire is hot.", "From the pit wall[[?venue: at {venue}]]."],
+      "2010s": ["Live[[?venue: from {venue}]].", "Push alert[[?venue: - {venue}]]."],
+      "smgp": ["TRACKSIDE WIRE[[?venue: - {venue}]].", "THE BIG BOARD LIGHTS UP[[?venue: AT {venue}]]."],
+      "default": ["Report[[?venue: from {venue}]].", "Dispatch[[?venue: from {venue}]], round {round}.", "From the circuit[[?venue: at {venue}]]."]
+    },
+    "cheerClose": {
+      "1960s": ["The garlands go on and the transporters roll for the next port of call.", "A good day's motoring, by any measure."],
+      "smgp": ["THE CROWD ROARS. THE LADDER TAKES NOTE.", "ANOTHER LINE ON THE BIG BOARD."],
+      "default": ["The team will enjoy this one on the flight home.", "Days like this are why the lights go green.", "The championship rolls on, but tonight belongs to them."]
+    },
+    "groanClose": {
+      "1960s": ["A long drive home, and much to think about.", "The mechanics pack in silence."],
+      "smgp": ["THE GARAGE GOES QUIET.", "THE LADDER DOES NOT WAIT FOR ANYONE."],
+      "default": ["The debrief will be a long one.", "Nobody said this championship would be kind.", "The next round cannot come soon enough."]
+    },
+    "champChatter": {
+      "default": ["The points table tells its own story.", "Every camp on the pit wall is recalculating.", "The arithmetic of the title race just moved."]
+    },
+    "paddockBuzz": {
+      "default": ["The paddock talked of little else by nightfall.", "Motorhome doors closed early tonight.", "More than one team manager was seen making notes."]
+    },
+    "wrenchNote": {
+      "default": ["The mechanics will be at it long after the grandstands empty.", "Somewhere in the garage, a component is going under the microscope.", "Reliability is a championship position, whatever the drivers say."]
+    }
+  },
+  "templates": [
+    {
+      "id": "race-won.wire.straight",
+      "event": "raceWon",
+      "headline": "{subject} wins[[?venue: at {venue}]]",
+      "deck": "Victory in round {round} of the {year} season[[?team: for {team}]]",
+      "summary": "{subject} took the win[[?venue: at {venue}]][[?expected: from an expected {ord:expected}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} won round {round}[[?venue: at {venue}]], the flag falling {player's} way after a drive that left little room for argument.",
+        "context": "[[?expected: The timing sheets had {subject} pegged around {ord:expected} before the start, which makes the result read better still.]] [[?champPosition: The win moves the championship account to {ord:champPosition} overall.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "race-won.first-ever",
+      "event": "raceWon",
+      "when": { "isFirstEver": true },
+      "headline": "BREAKTHROUGH: {subject} takes a first career victory[[?venue: at {venue}]]",
+      "deck": "The maiden win arrives in round {round}, {year}",
+      "summary": "A first career victory for {subject}[[?venue: at {venue}]] - the day every driver dreams about.",
+      "sections": {
+        "lead": "{pool:dateline} Every career has one line written in bold, and {subject} wrote it today: a first Grand Prix victory[[?venue: at {venue}]].",
+        "context": "First wins are not just results; they are permission slips. Rivals recalibrate, engineers push harder, and the driver who used to chase the leaders now knows exactly what the view from the front looks like.",
+        "impact": "[[?team: For {team}, the result is proof the faith was well placed.]] [[?expected: That the field expected {ord:expected} from this weekend only sharpens the point.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "race-won.drought-broken",
+      "event": "raceWon",
+      "when": { "minDrought": 10 },
+      "headline": "The wait is over: {subject} wins after {drought} races",
+      "deck": "A drought measured in seasons ends[[?venue: at {venue}]]",
+      "summary": "{subject} won for the first time in {drought} races.",
+      "sections": {
+        "lead": "{pool:dateline} Droughts end loudly. {drought} races after the last one, {subject} stood on the top step again[[?venue: at {venue}]], and the noise from the garage said everything about how long the wait had felt.",
+        "context": "Runs like this weigh on a driver: every near-miss gets replayed, every rival win gets counted. Today the counter resets to zero.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "race-won.title-clincher",
+      "event": "raceWon",
+      "when": { "clinchedTitle": true },
+      "headline": "CHAMPION. {subject} wins[[?venue: at {venue}]] and seals the title",
+      "deck": "The {year} World Championship is decided",
+      "summary": "{subject} clinched the {year} championship with victory in round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} It ends the only way a championship should: with the new champion first across the line. {subject} won round {round}[[?venue: at {venue}]] and with it the {year} title.",
+        "championship": "No arithmetic left, no permutations, no asterisks[[?gap: - the margin stands at {gap} points with the remaining rounds now academic]]. {pool:champChatter}",
+        "close": "The record books have a new line, and it is written in ink."
+      }
+    },
+    {
+      "id": "race-won.wet-master",
+      "event": "raceWon",
+      "when": { "isWet": true },
+      "headline": "{subject} masters the rain[[?venue: at {venue}]]",
+      "deck": "A wet-weather win in round {round}",
+      "summary": "{subject} won a soaked round {round}[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The rain sorts drivers into two groups, and {subject} spent the afternoon proving which one {player} belongs to, winning a treacherous round {round}[[?venue: at {venue}]].",
+        "context": "Visibility, standing water, and a field tiptoeing on slicks' edge - conditions that flatter nobody and expose everybody. Wins like this get remembered longer than the points suggest.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "race-won.led-championship",
+      "event": "raceWon",
+      "when": { "tookChampionshipLead": true },
+      "headline": "{subject} wins and takes the championship lead",
+      "deck": "Round {round} victory rewrites the title table",
+      "summary": "{subject} won round {round} and moved to the head of the standings.",
+      "sections": {
+        "lead": "{pool:dateline} Two prizes in one afternoon: {subject} took the flag[[?venue: at {venue}]] and the championship lead with it.",
+        "championship": "{pool:champChatter} [[?gap: The gap at the top now reads {gap} points.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "podium.standard",
+      "event": "podiumFinish",
+      "headline": "{subject} on the podium[[?venue: at {venue}]] with {ord:position}",
+      "deck": "Silverware in round {round}",
+      "summary": "{subject} finished {ord:position}[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} climbed the podium steps[[?venue: at {venue}]], converting round {round} into {a:ord:position}-place finish and a hatful of points.",
+        "context": "[[?expected: Set against an expected {ord:expected}, it is honest, valuable work.]] [[?champPosition: The standings now show {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "podium.first-ever",
+      "event": "firstPodium",
+      "headline": "A first podium for {subject}",
+      "deck": "The first taste of champagne arrives in round {round}, {year}",
+      "summary": "{subject} stood on a Grand Prix podium for the first time.",
+      "sections": {
+        "lead": "{pool:dateline} The first podium is the moment a career stops being a promise and starts being a record. {subject} collected it today[[?venue: at {venue}]][[?position: with {ord:position}]].",
+        "impact": "[[?team: {team} has been waiting for exactly this kind of afternoon.]] {pool:paddockBuzz}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "first-win.feature",
+      "event": "firstWin",
+      "headline": "The day it all changed: {player's} maiden victory",
+      "deck": "A feature on the first win, round {round}, {year}",
+      "summary": "How {subject} turned promise into a maiden Grand Prix win.",
+      "sections": {
+        "lead": "Some results are markers. A maiden win[[?venue: at {venue}]] is a border: everything before it was the apprenticeship, everything after is the career.",
+        "context": "Ask the old hands and they will tell you the first one is the hardest - the mind starts negotiating with the gap behind long before the flag. {subject} kept the negotiation short.",
+        "next": "The question the paddock asks now is the only one that matters: was it a peak, or a preview?",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "first-points.feature",
+      "event": "firstPoints",
+      "headline": "Off the mark: first points for {subject}",
+      "deck": "The scoreboard finally says yes",
+      "summary": "{subject} scored a first championship point[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} The hardest column in racing to fill is the first one. {subject} is off the mark[[?position: with {ord:position}]][[?venue: at {venue}]], and the season has a different shape now.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "first-start.debut",
+      "event": "firstStart",
+      "headline": "Debut day: {subject} joins the World Championship grid",
+      "deck": "A first Grand Prix start[[?venue: at {venue}]][[?team: with {team}]]",
+      "summary": "{subject} made a first championship start in round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} Every name in the record books started as a rookie on a grid somewhere. Today it was {player's} turn[[?venue: at {venue}]][[?team: , wearing {team's} colours]].",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "points.solid",
+      "event": "pointsFinish",
+      "headline": "{subject} banks points with {ord:position}[[?venue: at {venue}]]",
+      "summary": "{ord:position} and points for {subject} in round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} No headlines chased, none needed: {subject} brought the car home {ord:position}[[?venue: at {venue}]] and added to the season's account.",
+        "context": "[[?champPosition: The championship ledger reads {ord:champPosition} after round {round}.]] {pool:champChatter}"
+      }
+    },
+    {
+      "id": "midfield.quiet",
+      "event": "midfieldResult",
+      "headline": "A quiet afternoon: {subject} takes {ord:position}",
+      "summary": "{subject} finished {ord:position} in round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} Not every Sunday moves the needle. {subject} came home {ord:position}[[?venue: at {venue}]], a result that keeps the machinery honest and the points account unchanged.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "overperformed.analysis",
+      "event": "overperformed",
+      "headline": "Above the waterline: how {subject} turned {ord:expected} into {ord:position}",
+      "deck": "Analysis: a result the timing sheets did not predict",
+      "summary": "{subject} beat expectation by finishing {ord:position} against a predicted {ord:expected}.",
+      "sections": {
+        "lead": "The stopwatch said {ord:expected}. The flag said {ord:position}. The difference[[?venue: at {venue}]] was the driver.",
+        "stats": "Overdeliveries like this are the quiet currency of a career - team managers keep private lists of who extracts more than the car offers, and {subject} moved up that list today.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "underperformed.analysis",
+      "event": "underperformed",
+      "headline": "A day to forget: {subject} falls to {ord:position}",
+      "deck": "Analysis: where an expected {ord:expected} went missing",
+      "summary": "{subject} finished {ord:position} against an expected {ord:expected}.",
+      "sections": {
+        "lead": "On paper this was {a:ord:expected}-place car. On the road[[?venue: at {venue}]] it came home {ord:position}, and the gap between those two numbers is the story of {player's} afternoon.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "dnf.mechanical",
+      "event": "retiredMechanical",
+      "headline": "Machinery fails {subject}[[?venue: at {venue}]]",
+      "deck": "A mechanical retirement in round {round}",
+      "summary": "{subject} retired from round {round} with a mechanical failure.",
+      "sections": {
+        "lead": "{pool:dateline} The cruellest retirements are the ones the driver can do nothing about. {player's} race ended in the garage[[?venue: at {venue}]], the car unwilling to finish what its driver started.",
+        "reliability": "{pool:wrenchNote} [[?streak: This is now {streak} retirements in succession - a pattern, not an accident.]]",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "dnf.driver-error",
+      "event": "retiredDriverError",
+      "headline": "{subject} out of round {round} after an error",
+      "summary": "{subject} retired from round {round} after a driving mistake.",
+      "sections": {
+        "lead": "{pool:dateline} Racing drivers live at the edge of adhesion, and today {subject} found the far side of it[[?venue: at {venue}]]. The car is gathered up; the points are gone.",
+        "context": "The honest ones will tell you the mistakes teach more than the trophies. The debrief will test that theory.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "first-retirement.note",
+      "event": "firstRetirement",
+      "headline": "A first blank: {subject} learns the other side of racing",
+      "summary": "A first career retirement for {subject}.",
+      "sections": {
+        "lead": "Every career ledger has two columns, and {subject} filled in the second one for the first time today. Nobody escapes it; the good ones just visit rarely.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "pole.standard",
+      "event": "polePosition",
+      "headline": "{subject} takes pole[[?venue: at {venue}]]",
+      "deck": "Fastest of all in qualifying for round {round}",
+      "summary": "{subject} qualified on pole for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} One lap, no traffic, no excuses: {subject} put the car at the front of the grid[[?venue: for {venue}]], and Sunday now starts from the best seat in the house.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "first-pole.feature",
+      "event": "firstPole",
+      "headline": "First pole for {subject}",
+      "deck": "The single-lap breakthrough arrives in round {round}",
+      "summary": "{subject} took a first career pole position.",
+      "sections": {
+        "lead": "Race wins can be inherited; poles never are. {player's} first pole[[?venue: at {venue}]] is one lap of pure, unarguable speed, and the timing beam does not do sentiment.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "quali-surprise.swing",
+      "event": "qualifyingSurprise",
+      "headline": "Qualifying shock: {subject} lines up {ord:quali}",
+      "deck": "The grid[[?venue: at {venue}]] did not read the script",
+      "summary": "{subject} qualified {ord:quali}[[?expected: against an expected {ord:expected}]].",
+      "sections": {
+        "lead": "{pool:dateline} The grid sheet raised eyebrows down the pit lane: {subject} starts {ord:quali}[[?expected: where the form book said {ord:expected}]].",
+        "next": "Race day will confirm whether Saturday was a fluke or a warning.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "win-streak.milestone",
+      "event": "winStreak",
+      "headline": "{streak} in a row: {subject} keeps the run alive",
+      "deck": "The winning streak reaches {streak}",
+      "summary": "{subject} has now won {streak} consecutive races.",
+      "sections": {
+        "lead": "{pool:dateline} Winning once takes speed. Winning {streak} in succession takes something rarer - a car, a driver, and a team refusing to blink in the same season. The run continued[[?venue: at {venue}]] today.",
+        "championship": "{pool:champChatter}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "podium-streak.milestone",
+      "event": "podiumStreak",
+      "headline": "Metronome: {streak} straight podiums for {subject}",
+      "summary": "{subject} extended a podium streak to {streak} races.",
+      "sections": {
+        "lead": "Consistency is the least glamorous superpower in racing and the most valuable. {subject} has now stood on the rostrum {streak} times in succession.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "points-streak.milestone",
+      "event": "pointsStreak",
+      "headline": "{subject} makes it {streak} scoring finishes in a row",
+      "summary": "{subject} extended a points streak to {streak} races.",
+      "sections": {
+        "lead": "{pool:dateline} Quietly, relentlessly, {subject} keeps cashing cheques: {streak} consecutive rounds in the points after today[[?venue: at {venue}]].",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "retirement-streak.crisis",
+      "event": "retirementStreak",
+      "headline": "Crisis deepens: {streak} straight retirements for {subject}",
+      "deck": "The garage has questions and no answers yet",
+      "summary": "{subject} has now failed to finish {streak} races in succession.",
+      "sections": {
+        "lead": "{pool:dateline} One retirement is racing. {streak} in a row is a siege. {player's} season is being dismantled one non-finish at a time, and the garage knows it.",
+        "reliability": "{pool:wrenchNote}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "points-drought-ended.relief",
+      "event": "pointsDroughtEnded",
+      "headline": "Relief at last: {subject} scores after {drought} barren races",
+      "summary": "{subject} returned to the points after {drought} races without.",
+      "sections": {
+        "lead": "{pool:dateline} {drought} races is a long time to stare at a zero. {subject} finally put numbers on the board again[[?venue: at {venue}]], and the exhale from the garage was audible.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "lead-taken.player",
+      "event": "championshipLeadTaken",
+      "headline": "{subject} takes the championship lead",
+      "deck": "The title table has a new name on top after round {round}",
+      "summary": "{subject} moved to the top of the drivers' standings.",
+      "sections": {
+        "lead": "{pool:dateline} There is only one seat at the head of the table, and after round {round}[[?venue: at {venue}]] it belongs to {subject}.",
+        "championship": "{pool:champChatter} [[?gap: The advantage stands at {gap} points.]] Leading is a different sport: everyone behind has a target now, and it is painted on {player's} gearbox.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "lead-lost.player",
+      "event": "championshipLeadLost",
+      "headline": "{subject} surrenders the championship lead[[?rival: to {rival}]]",
+      "deck": "The standings turn after round {round}",
+      "summary": "{subject} dropped from the top of the standings[[?rival: behind {rival}]].",
+      "sections": {
+        "lead": "{pool:dateline} The view from the top never lasts by right. After round {round}, the table reads differently[[?rival: - {rival} now leads]] and {subject} is the one doing the chasing.",
+        "championship": "{pool:champChatter}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "lead-changed.neutral",
+      "event": "leadChangedHands",
+      "headline": "New name on top: {subject} leads the championship[[?rival: as {rival} slips]]",
+      "summary": "{subject} took over the championship lead after round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} The title race turned over at the top: {subject} now heads the standings[[?rival: , displacing {rival},]] after round {round}[[?venue: at {venue}]].",
+        "championship": "{pool:champChatter}"
+      }
+    },
+    {
+      "id": "title-tightens.watch",
+      "event": "titleFightTightens",
+      "headline": "Title race tightens: {gap} points cover the top of the table",
+      "deck": "Championship watch, round {round}",
+      "summary": "The championship gap at the top is down to {gap} points.",
+      "sections": {
+        "lead": "The comfortable phase of {player's} season is over - if it ever existed. With the calendar shortening, the gap at the top has closed to {gap} points, and every session from here is played for keeps.",
+        "championship": "{pool:champChatter}",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "showdown.finale",
+      "event": "finalRoundShowdown",
+      "headline": "It goes to the last round: {gap} points in it",
+      "deck": "One race left. Everything still to play for.",
+      "summary": "The championship will be decided at the final round, with {gap} points separating the contenders.",
+      "sections": {
+        "lead": "Seasons are long arguments, and this one will be settled in a single afternoon. {gap} points separate the contenders with one round remaining[[?subject: , and {subject} holds the high ground]].",
+        "championship": "{pool:champChatter} Winner takes the year. Everyone else takes the winter to think about it.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "clinch.early",
+      "event": "titleClinchedEarly",
+      "headline": "CHAMPION: {subject} seals the {year} title with rounds to spare",
+      "deck": "The arithmetic is over",
+      "summary": "{subject} clinched the {year} championship early.",
+      "sections": {
+        "lead": "{pool:dateline} The remaining rounds are now exhibition races as far as the title is concerned: {subject} is the {year} champion, the gap[[?gap: of {gap} points]] beyond mathematical reach.",
+        "championship": "Titles decided early are statements. Nobody backs into a championship with races in hand - it is taken, round after round, until the table gives up arguing.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "title-lost.player",
+      "event": "titleRaceLost",
+      "headline": "The dream dies: {player's} title challenge is mathematically over",
+      "deck": "Championship watch, round {round}",
+      "summary": "{subject} can no longer win the {year} championship.",
+      "sections": {
+        "lead": "There is no flag for this moment, no ceremony. Somewhere in the arithmetic after round {round}, {player's} championship ended[[?rival: - {rival} cannot be caught]].",
+        "context": "A title bid that reached the sharp end of the table does not vanish; it becomes the baseline for next year. But tonight it stings exactly as much as it should.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "champion.crowned",
+      "event": "championCrowned",
+      "headline": "{subject} is the {year} World Champion",
+      "deck": "The season's verdict is in",
+      "summary": "{subject} won the {year} drivers' championship.",
+      "sections": {
+        "lead": "The season asked its question over every round of the calendar, and the answer is {subject}: {year} World Champion.",
+        "championship": "{pool:champChatter}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "season-complete.review",
+      "event": "seasonCompleted",
+      "headline": "Season {season} closes: the {year} year in the books",
+      "deck": "Season review",
+      "summary": "The {year} season is complete.",
+      "sections": {
+        "lead": "The transporters are unloaded for the last time this year. The {year} season is finished - the results permanent, the arguments just beginning.",
+        "close": "Winter is for rebuilding: cars, budgets, and reputations alike."
+      }
+    },
+    {
+      "id": "season-started.preview",
+      "event": "seasonStarted",
+      "headline": "Lights out on {year}: a new season begins",
+      "deck": "Season preview[[?team: - {player} lines up with {team}]]",
+      "summary": "The {year} season is underway[[?team: with {player} at {team}]].",
+      "sections": {
+        "lead": "Winter's promises are due. The {year} championship season opens with every points column blank and every garage convinced this is their year[[?team: - none more so than {team}]].",
+        "next": "The first round always answers the winter's biggest question: who actually did their homework?",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "career-created.welcome",
+      "event": "careerCreated",
+      "headline": "A new name in the paddock: {player} arrives",
+      "deck": "The story starts here",
+      "summary": "{player} begins a World Championship career[[?team: with {team}]].",
+      "sections": {
+        "lead": "Every legend was once just a name on an entry list. {player} joins the championship[[?team: with {team}]], carrying nothing but a helmet bag and intentions.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "team-changed.move",
+      "event": "playerTeamChanged",
+      "headline": "{player} switches to {team}[[?rival: , leaving {rival}]]",
+      "deck": "Driver market: the move is official",
+      "summary": "{player} joins {team} for the {year} season.",
+      "sections": {
+        "lead": "The rumours are now a contract: {player} starts the {year} season in {team's} colours[[?rival: , closing the book on the {rival} chapter]].",
+        "context": "New team, new engineers, new political map. The stopwatch will not care about any of it - which is exactly why moves like this get made.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "milestone.counter",
+      "event": "careerMilestone",
+      "headline": "{milestone} career {counter} for {subject}",
+      "deck": "A round number for the record books",
+      "summary": "{subject} reached {milestone} career {counter}.",
+      "sections": {
+        "lead": "Round numbers are how a sport keeps score of a career. {subject} brought up {milestone} {counter} today[[?venue: at {venue}]], and the statisticians updated their ledgers.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "best-finish.improved",
+      "event": "bestFinishImproved",
+      "headline": "Career best: {subject} takes {ord:position}",
+      "summary": "A career-best finish of {ord:position} for {subject}.",
+      "sections": {
+        "lead": "{pool:dateline} Progress in racing is measured one place at a time. {ord:position}[[?venue: at {venue}]] is the best Sunday of {player's} career so far - emphasis on so far.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "standings-climb.move",
+      "event": "standingsClimb",
+      "headline": "{subject} climbs to {ord:champPosition} in the standings",
+      "summary": "{subject} moved up to {ord:champPosition} in the championship.",
+      "sections": {
+        "lead": "The table moved under the field today: {subject} jumped to {ord:champPosition} in the championship after round {round}.",
+        "championship": "{pool:champChatter}"
+      }
+    },
+    {
+      "id": "ai-streak.watch",
+      "event": "aiWinStreak",
+      "headline": "{subject} makes it {streak} wins on the trot",
+      "deck": "Can anybody stop the run?",
+      "summary": "{subject} has won {streak} consecutive races.",
+      "sections": {
+        "lead": "{pool:dateline} The rest of the field has a problem with a name on it: {subject}[[?winnerTeam: and {winnerTeam}]] took a {ord:streak} consecutive win[[?venue: at {venue}]], and nobody looks close to an answer.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "upset.winner",
+      "event": "upsetWinner",
+      "headline": "Shock of the season: {subject} wins for {winnerTeam}",
+      "deck": "An upset nobody's form book allowed",
+      "summary": "{subject} took an upset victory for {winnerTeam}.",
+      "sections": {
+        "lead": "{pool:dateline} Days like this are why they run the races: {subject} put {a:winnerTeam} on the top step[[?venue: at {venue}]], upending every assumption in the paddock about where wins are allowed to come from.",
+        "impact": "For the small teams, results like this are oxygen - proof the mountain can be climbed with the right afternoon and the nerve to take it.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "dominant.pole-to-flag",
+      "event": "dominantDisplay",
+      "headline": "Untouchable: {subject} converts pole into victory",
+      "deck": "A pole-to-flag statement[[?venue: at {venue}]]",
+      "summary": "{subject} led from pole to flag in round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} Some wins are struggles and some are statements. {subject} owned every meaningful lap[[?venue: at {venue}]] - fastest on Saturday, first on Sunday, and never seriously asked a question in between.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "team-promoted.rise",
+      "event": "teamPromoted",
+      "headline": "{subject} on the rise: the paddock takes notice",
+      "deck": "Team performance review, {year}",
+      "summary": "{subject} climbed the competitive order this season.",
+      "sections": {
+        "lead": "Garages talk, and this winter they are talking about {subject}: a season of genuine progress has moved the operation up the competitive order.",
+        "close": "{pool:wrenchNote}"
+      }
+    },
+    {
+      "id": "team-relegated.slide",
+      "event": "teamRelegated",
+      "headline": "Hard winter ahead for {subject}",
+      "deck": "Team performance review, {year}",
+      "summary": "{subject} slipped down the competitive order this season.",
+      "sections": {
+        "lead": "The stopwatch delivered its end-of-season verdict on {subject}, and it was not kind: the operation heads into winter having lost ground it will have to buy, build, or bleed to recover.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "offer.received",
+      "event": "offerReceived",
+      "headline": "Contract talk: {subject} tables an offer for {player}",
+      "deck": "Driver market",
+      "summary": "{player} received a contract offer from {subject}.",
+      "sections": {
+        "lead": "The driver market never sleeps, and it has {player's} name on its desk: {subject} has put a formal offer on the table for next season.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "seat-vacancy.market",
+      "event": "seatVacancy",
+      "headline": "Seat open[[?subject: : {subject} leaves a vacancy]]",
+      "deck": "Driver market",
+      "summary": "A race seat has opened in the paddock.",
+      "sections": {
+        "lead": "Nature abhors a vacuum and the driver market abhors an empty cockpit[[?subject: - {subject's} departure leaves exactly that]]. The phone lines are already warm.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "seat-filled.market",
+      "event": "seatFilled",
+      "headline": "{subject} takes the open seat[[?reason: at {reason}]]",
+      "deck": "Driver market: vacancy closed",
+      "summary": "{subject} was signed to fill an open race seat.",
+      "sections": {
+        "lead": "The music stopped and {subject} found a chair: the open seat is filled, and one more domino in the driver market has fallen.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "retirement-considered.whisper",
+      "event": "retirementConsidered",
+      "headline": "Is {subject} weighing the future?",
+      "deck": "Paddock talk[[?milestone: - at {milestone}, the question asks itself]]",
+      "summary": "Paddock talk suggests {subject} is considering retirement.",
+      "sections": {
+        "lead": "The quietest story in any paddock is a veteran doing arithmetic. Those close to {subject} say the sums are being done[[?milestone: - the calendar says {milestone}, and calendars are honest]].",
+        "context": "Nothing is decided, and nothing may be. But the conversations exist, and in this paddock, conversations have a way of becoming announcements.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "driver-retired.farewell",
+      "event": "driverRetired",
+      "headline": "{subject} calls time on a racing career",
+      "deck": "The paddock loses one of its own",
+      "summary": "{subject} has retired from the championship.",
+      "sections": {
+        "lead": "The grid will look different next season: {subject} is stepping away[[?milestone: at {milestone}]], closing a career the paddock will spend the winter measuring.",
+        "close": "Racing forgets no one who was worth remembering."
+      }
+    },
+    {
+      "id": "injured.sidelined",
+      "event": "playerInjured",
+      "headline": "{subject} injured[[?missRaces: - out for {missRaces}]]",
+      "deck": "Medical bulletin, round {round}",
+      "summary": "{subject} was injured in an accident[[?missRaces: and will miss {missRaces} races]].",
+      "sections": {
+        "lead": "{pool:dateline} The sport's oldest tax came due today: {subject} was hurt in an accident[[?venue: at {venue}]][[?missRaces: and will watch the next {missRaces} from the sidelines]].",
+        "close": "The car can be rebuilt by Tuesday. Drivers keep their own schedule."
+      }
+    },
+    {
+      "id": "injury.season-ending",
+      "event": "seasonEndingInjury",
+      "headline": "Season over: {subject} ruled out by injury",
+      "deck": "Medical bulletin",
+      "summary": "{player's} season has been ended by injury.",
+      "sections": {
+        "lead": "{pool:dateline} The medical bulletin nobody wanted: {player's} injuries will not heal on a racing calendar's schedule, and the season is over[[?venue: after the accident at {venue}]].",
+        "context": "Seasons end; careers resume. The paddock has seen enough comebacks to know which sentence matters more.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "died.tragedy",
+      "event": "playerDied",
+      "headline": "In memoriam: {subject}",
+      "deck": "The championship mourns",
+      "summary": "{subject} lost their life in a racing accident[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "Motor racing paid its terrible price today. {subject} lost their life in an accident[[?venue: at {venue}]], and everything else this sport does - the times, the points, the arguments - stopped mattering at once.",
+        "context": "The paddock is a small town. It buries its own with the flags lowered and the engines silent, and it remembers far longer than the record books require.",
+        "close": "The season will resume. It will not be the same."
+      }
+    },
+    {
+      "id": "sat-out.substitute",
+      "event": "satOutRound",
+      "headline": "{subject} sits out round {round}",
+      "deck": "Recovery continues",
+      "summary": "{subject} missed round {round} through injury.",
+      "sections": {
+        "lead": "{pool:dateline} The hardest race is the one watched from the pit wall: {subject} sat out round {round}[[?venue: at {venue}]], the recovery clock still running.",
+        "close": "{pool:groanClose}"
+      }
+    }
+  ]
+}

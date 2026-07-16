@@ -84,6 +84,15 @@ public sealed record CareerRulesData
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
     public required CarSpecCatalog CarSpecs { get; init; }
 
+    /// <summary>The living-newsroom template library (<c>data\rules\newsroom\*.json</c>): multi-
+    /// section article templates + era pools voicing the mode-agnostic event spine. DISPLAY-ONLY —
+    /// never a fold input; empty when the folder is absent (the newsroom feed then simply omits).</summary>
+    public required Companion.Core.Newsroom.NewsroomCorpus NewsroomCorpus { get; init; }
+
+    /// <summary>The fictional editorial desks (<c>data\rules\newsroom\desks.json</c>). DISPLAY-ONLY;
+    /// empty when absent (articles then carry no masthead).</summary>
+    public required Companion.Core.Newsroom.NewsDesks NewsDesks { get; init; }
+
     public static CareerRulesData Load(string rulesDirectory)
     {
         var character = CharacterRules.Parse(Read(rulesDirectory, "perks.json"));
@@ -107,6 +116,10 @@ public sealed record CareerRulesData
             SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
             SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
             CarSpecs = CarSpecCatalog.Load(rulesDirectory),
+            NewsroomCorpus = Companion.Core.Newsroom.NewsroomCorpus.LoadDirectory(
+                Path.Combine(rulesDirectory, "newsroom")),
+            NewsDesks = Companion.Core.Newsroom.NewsDesks.Load(
+                Path.Combine(rulesDirectory, "newsroom")),
         };
     }
 

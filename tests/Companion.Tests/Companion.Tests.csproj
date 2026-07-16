@@ -41,6 +41,8 @@
     <None Include="..\..\data\rules\car-specs.json" Link="Fixtures\rules\car-specs.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- The generative news-article corpora (data\rules\news\*.json) for the news-feed tests. -->
     <None Include="..\..\data\rules\news\*.json" Link="Fixtures\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The newsroom template packs + desks (data\rules\newsroom\*.json) for the composer/content tests. -->
+    <None Include="..\..\data\rules\newsroom\*.json" Link="Fixtures\rules\newsroom\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The SMGP rival-dossier trash-talk corpus, for the quote drift guard. -->
     <None Include="..\..\data\rules\smgp\*.json" Link="Fixtures\rules\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The real extracted AMS2 content library, for living validation of the shipped packs. -->
