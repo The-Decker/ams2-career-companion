@@ -1,0 +1,42 @@
+{
+  "$comment": "Divergence desk: real-history vs career-universe stories. The historical fact rides the {rival} token (the displaced winner/champion) and is always attributed as the real record; the career outcome is always framed as this universe's alternate timeline - never as a change to real history.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "history-diverged.race",
+      "event": "historyDiverged",
+      "headline": "Alternate timeline: {winner} wins where history chose {rival}",
+      "deck": "Divergence point[[?venue: at {venue}]], round {round} of {year}",
+      "summary": "In this universe, {winner} won round {round}; the historical record shows {rival}.",
+      "sections": {
+        "lead": "The record books and this championship have parted company[[?venue: at {venue}]]: in the real {year}, {rival} took this race. In the player's universe, the winner reads {winner}[[?winnerTeam: , for {winnerTeam}]].",
+        "context": "The Archive Desk keeps both columns side by side - the historical record stands untouched; this timeline simply wrote a different line.",
+        "close": "One changed result rarely stays contained. The desk will be watching where this timeline goes next."
+      }
+    },
+    {
+      "id": "history-diverged.champion",
+      "event": "historyDiverged",
+      "when": { "clinchedTitle": true },
+      "headline": "A different champion: this universe crowns {winner}",
+      "deck": "The {year} title diverges from the historical record",
+      "summary": "This universe's {year} champion is {winner}; history crowned {rival}.",
+      "sections": {
+        "lead": "The biggest divergence a season can produce: the {year} championship of this universe belongs to {winner}, where the historical record crowned {rival}.",
+        "context": "Every what-if argument in the sport starts exactly here - one season, two verdicts. The real {year} is unchanged in the archive; this timeline now carries its own.",
+        "close": "The Archive Desk files both champions, clearly labeled, one universe apart."
+      }
+    },
+    {
+      "id": "history-held.champion",
+      "event": "historyHeld",
+      "headline": "History holds: {winner} champion in both timelines",
+      "deck": "The {year} season converges with the record",
+      "summary": "This universe's {year} season crowned the same champion as history: {winner}.",
+      "sections": {
+        "lead": "For all the changed weekends along the way, the {year} season arrived at the same verdict as the record books: {winner}, champion in both timelines.",
+        "close": "Some outcomes, it seems, were simply meant."
+      }
+    }
+  ]
+}

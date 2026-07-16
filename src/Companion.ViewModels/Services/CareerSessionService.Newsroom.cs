@@ -16,10 +16,47 @@ namespace Companion.ViewModels.Services;
 /// </summary>
 public sealed partial class CareerSessionService
 {
-    /// <summary>Every detected newsroom event for the whole career, chronological. The raw
-    /// trigger feed the composer/selector layers consume; deterministic per career.</summary>
-    public IReadOnlyList<NewsEvent> NewsroomEvents() =>
-        CareerNewsEvents.Detect(BuildNewsroomSeasons());
+    /// <summary>Every detected newsroom event for the whole career, chronological — the spine
+    /// triggers plus, for historical-style careers with a documented reference year, the
+    /// real-history divergence events. Deterministic per career.</summary>
+    public IReadOnlyList<NewsEvent> NewsroomEvents()
+    {
+        var seasons = BuildNewsroomSeasons();
+        var events = new List<NewsEvent>(CareerNewsEvents.Detect(seasons));
+
+        if (!IsSmgpPack) // the SMGP universe is fiction; it never compares against real history
+        {
+            foreach (var season in seasons)
+            {
+                if (HistoricalSeason(season.Year) is { } historical)
+                {
+                    events.AddRange(CareerDivergence.ToNewsEvents(
+                        CareerDivergence.Compare(season, historical)));
+                }
+            }
+        }
+
+        return events.OrderBy(e => e.SeasonOrdinal).ThenBy(e => e.Round).ToList();
+    }
+
+    /// <summary>The real-history-vs-career-universe comparison for one season: what really
+    /// happened, what this universe produced, and where they part. Null for SMGP careers
+    /// (fictional canon) and for years without a documented reference season.</summary>
+    public SeasonDivergenceReport? SeasonDivergence(int seasonOrdinal)
+    {
+        if (IsSmgpPack)
+        {
+            return null;
+        }
+        var season = BuildNewsroomSeasons().FirstOrDefault(s => s.Ordinal == seasonOrdinal);
+        if (season is null)
+        {
+            return null;
+        }
+        return HistoricalSeason(season.Year) is { } historical
+            ? CareerDivergence.Compare(season, historical)
+            : null;
+    }
 
     /// <summary>The rendered newsroom: every career event voiced through the template library,
     /// newest first. Bodies re-render deterministically from the master seed on every call —

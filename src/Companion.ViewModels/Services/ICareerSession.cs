@@ -224,6 +224,10 @@ public interface ICareerSession
     /// verified history only, never mixed with career results). Additive default: empty.</summary>
     HistoryArchiveIndex HistoryArchive() => HistoryArchiveIndex.Empty;
 
+    /// <summary>Real history vs the career universe for one season — separate, labeled sides,
+    /// never blended. Null for SMGP (fiction) or undocumented years. Additive default: null.</summary>
+    SeasonDivergenceReport? SeasonDivergence(int seasonOrdinal) => null;
+
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
     /// championship position, final reputation/OPI, the drivers' champion, and the season's key
