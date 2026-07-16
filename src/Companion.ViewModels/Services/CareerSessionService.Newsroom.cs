@@ -52,6 +52,22 @@ public sealed partial class CareerSessionService
         return articles;
     }
 
+    /// <summary>The developing narrative threads (title fight, reliability crisis, rivalry,
+    /// injury recovery, driver market...) derived from the event spine. Display-only.</summary>
+    public IReadOnlyList<StoryThread> StoryThreads() =>
+        Companion.Core.Newsroom.StoryThreads.Build(NewsroomEvents());
+
+    /// <summary>The rumour ledger: fact-backed whispers with honest resolution links. The
+    /// original rumour story is never rewritten; resolution links the settling story.</summary>
+    public IReadOnlyList<RumorRecord> RumorBoard() =>
+        RumorBook.Build(NewsroomEvents());
+
+    /// <summary>The controlled editorial package for one round: importance-selected stories
+    /// (quiet 5 / busy 8 / big 12, capped 14) rather than everything the spine detected.</summary>
+    public IReadOnlyList<EditorialSelection> WeekendPackage(int seasonOrdinal, int round) =>
+        EditorialSelector.SelectRound(
+            NewsroomEvents().Where(e => e.SeasonOrdinal == seasonOrdinal && e.Round == round).ToList());
+
     private IReadOnlyList<NewsroomSeason> BuildNewsroomSeasons()
     {
         var seasonsInput = new List<NewsroomSeason>();

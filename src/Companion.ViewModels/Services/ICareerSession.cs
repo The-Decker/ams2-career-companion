@@ -211,6 +211,15 @@ public interface ICareerSession
     /// seed, re-rendered on read (never stored). Additive default: empty feed.</summary>
     IReadOnlyList<Companion.Core.Newsroom.NewsroomArticle> NewsroomFeed() => [];
 
+    /// <summary>Developing narrative threads over the event spine. Additive default: none.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.StoryThread> StoryThreads() => [];
+
+    /// <summary>The rumour ledger with honest resolution links. Additive default: none.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.RumorRecord> RumorBoard() => [];
+
+    /// <summary>The importance-selected editorial package for one round. Additive default: none.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.EditorialSelection> WeekendPackage(int seasonOrdinal, int round) => [];
+
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
     /// championship position, final reputation/OPI, the drivers' champion, and the season's key
