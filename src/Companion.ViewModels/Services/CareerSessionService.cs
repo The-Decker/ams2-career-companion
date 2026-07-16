@@ -35,7 +35,7 @@ namespace Companion.ViewModels.Services;
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
 /// </summary>
-public sealed class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAms2GameLaunch, IAiFileRestore, IDisposable
+public sealed partial class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAms2GameLaunch, IAiFileRestore, IDisposable
 {
     /// <summary><see cref="BaselineSource"/> value: the pinned baseline is pack-authored.</summary>
     public const string BaselineSourcePack = "pack";

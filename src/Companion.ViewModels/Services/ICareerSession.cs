@@ -199,6 +199,13 @@ public interface ICareerSession
     /// sessions without a news projection report an empty feed, so existing fakes compile.</summary>
     IReadOnlyList<NewsDispatch> ReadFeed() => [];
 
+    /// <summary>Every detected newsroom trigger for the whole career, chronological — the
+    /// mode-agnostic event spine (docs/dev/newsroom-history-overhaul.md D4) the editorial
+    /// layers select from and voice. A pure display-only projection over stored results,
+    /// journal, and folded states; deterministic per career; never a fold input. Additive
+    /// default: sessions without the projection report no events, so existing fakes compile.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.NewsEvent> NewsroomEvents() => [];
+
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
     /// championship position, final reputation/OPI, the drivers' champion, and the season's key
