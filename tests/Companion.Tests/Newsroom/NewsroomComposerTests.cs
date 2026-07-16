@@ -94,15 +94,20 @@ public class NewsroomComposerTests
     [Fact]
     public void TheMostSpecificSituationAlwaysWins()
     {
+        // The invariant is TIER, not identity: as the library grows, the winning template must
+        // always come from the most specific guard set the situation satisfies.
+        NewsroomTemplate WinnerFor(NewsEvent e) =>
+            Corpus.Templates.Single(t => t.Id == Compose(e)!.TemplateId);
+
         var plainWin = RichEvent();
         var firstWin = plainWin with { Facts = plainWin.Facts with { IsFirstEver = true } };
         var titleWin = plainWin with { Facts = plainWin.Facts with { ClinchedTitle = true } };
         var wetWin = plainWin with { Facts = plainWin.Facts with { IsWet = true } };
 
-        Assert.Equal("race-won.wire.straight", Compose(plainWin)!.TemplateId);
-        Assert.Equal("race-won.first-ever", Compose(firstWin)!.TemplateId);
-        Assert.Equal("race-won.title-clincher", Compose(titleWin)!.TemplateId);
-        Assert.Equal("race-won.wet-master", Compose(wetWin)!.TemplateId);
+        Assert.Empty(WinnerFor(plainWin).When); // nothing special happened: the generic tier
+        Assert.True(WinnerFor(firstWin).When.ContainsKey("isFirstEver"));
+        Assert.True(WinnerFor(titleWin).When.ContainsKey("clinchedTitle"));
+        Assert.True(WinnerFor(wetWin).When.ContainsKey("isWet"));
     }
 
     [Fact]
