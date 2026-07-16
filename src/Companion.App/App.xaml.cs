@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Companion.App.Audio;
 using Companion.App.Services;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
@@ -23,6 +24,7 @@ namespace Companion.App;
 public partial class App : Application
 {
     private ShellViewModel? _shell;
+    private AppAudioController? _audio;
 
     /// <summary>App-layer path registry used by the save UI to reopen a session after a whole-file
     /// restore. Render-only hosts never construct the composition root, so callers treat it as optional.</summary>
@@ -64,7 +66,17 @@ public partial class App : Application
                 stagedFileWatcherFactory: static () => new FileSystemFileWatcher(),
                 settings: settings);
 
-            var window = new MainWindow { DataContext = _shell };
+            // Audio is presentation-only and deliberately sits at the composition root. Music is
+            // controlled solely by the persistent manual player; navigation only emits explicitly
+            // opted-in interaction SFX. A machine without usable Windows media support still gets
+            // the complete app, just without the player.
+            TryInitializeAudio(settings);
+
+            var window = new MainWindow
+            {
+                DataContext = _shell,
+                MusicPlayerDataContext = _audio?.Player,
+            };
             MainWindow = window;
             window.Show();
         }
@@ -128,9 +140,64 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        DisposeAudio();
         _shell?.Dispose();
         base.OnExit(e);
     }
+
+    private void TryInitializeAudio(ISettingsService settings)
+    {
+        AppAudioController? audio = null;
+        try
+        {
+            audio = new AppAudioController(settings);
+            SoundAssist.Connect((cue, source) => audio.PlayEffect(cue, source));
+            Activated += OnApplicationActivated;
+            Deactivated += OnApplicationDeactivated;
+
+            // Transfer the completed lifetime to the App only after every setup step succeeds.
+            _audio = audio;
+            audio = null;
+        }
+        catch
+        {
+            // Audio must never turn an otherwise valid launch into the fatal startup dialog.
+            Activated -= OnApplicationActivated;
+            Deactivated -= OnApplicationDeactivated;
+            SoundAssist.Disconnect();
+            TryDisposeAudio(audio);
+            _audio = null;
+        }
+    }
+
+    private void DisposeAudio()
+    {
+        Activated -= OnApplicationActivated;
+        Deactivated -= OnApplicationDeactivated;
+        SoundAssist.Disconnect();
+
+        AppAudioController? audio = _audio;
+        _audio = null;
+        TryDisposeAudio(audio);
+    }
+
+    private static void TryDisposeAudio(IDisposable? audioLifetime)
+    {
+        try
+        {
+            audioLifetime?.Dispose();
+        }
+        catch
+        {
+            // Media teardown is decorative too. App/session disposal must always continue.
+        }
+    }
+
+    private void OnApplicationActivated(object? sender, EventArgs e) =>
+        _audio?.SetApplicationActive(true);
+
+    private void OnApplicationDeactivated(object? sender, EventArgs e) =>
+        _audio?.SetApplicationActive(false);
 
     private bool _reportingCrash;
 

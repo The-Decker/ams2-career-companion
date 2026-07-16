@@ -327,13 +327,55 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
         for (int round = 1; round <= 4; round++)
             ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" });
 
-        // A fifth round is refused at the fold entry — both paths, specifically for the SMGP floor.
-        var manual = Assert.Throws<InvalidOperationException>(() =>
-            ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" }));
+        // A fifth round is refused before even a rolled-back preview fold, and by both commit paths.
+        int roundBefore = session.CurrentRoundNumber;
+        var nextRound = PlayerLastDraft(session, new SmgpRivalCall { RivalDriverId = "driver.c" });
+        var preview = Assert.Throws<InvalidOperationException>(() => session.Preview(nextRound));
+        Assert.Contains("SMGP career is over", preview.Message);
+
+        var manual = Assert.Throws<InvalidOperationException>(() => session.Apply(nextRound));
         Assert.Contains("SMGP career is over", manual.Message);
 
         var auto = Assert.Throws<InvalidOperationException>(() => session.AutoSimulateRound());
         Assert.Contains("SMGP career is over", auto.Message);
+        Assert.Equal(roundBefore, session.CurrentRoundNumber);
+    }
+
+    [Fact]
+    public void FloorKnockOutOnFinalRound_RemainsTerminalOnReopen()
+    {
+        var pack = FinalRoundFloorPack();
+        string packDirectory = Path.Combine(_root, "packs", "final-floor-stop");
+        TestPackBuilder.Write(pack, packDirectory);
+        var environment = ViewModelTestData.Environment(
+            documentsDirectory: Path.Combine(_root, "docs", "final-floor-stop"),
+            library: FourSeatLibrary());
+        string careerPath = Path.Combine(_root, "careers", "final-floor-stop.ams2career");
+
+        using (var session = CareerSessionService.CreateCareer(
+                   new CareerCreationRequest
+                   {
+                       PackDirectory = packDirectory,
+                       CareerFilePath = careerPath,
+                       CareerName = "final-floor-stop",
+                       MasterSeed = Seed,
+                       PlayerLiveryName = SeatD,
+                       SmgpMode = true,
+                   },
+                   environment))
+        {
+            for (int round = 1; round <= 4; round++)
+                ApplyPlayerLast(session, new SmgpRivalCall { RivalDriverId = "driver.c" });
+
+            Assert.True(session.Summary.SeasonComplete);
+            var terminal = Assert.IsType<SmgpBriefingModel>(session.CurrentSmgpBriefing());
+            Assert.True(terminal.CareerOver);
+            Assert.Contains("ROUND 4", terminal.RoundHeader);
+        }
+
+        using var reopened = CareerSessionService.OpenCareer(careerPath, environment);
+        Assert.True(reopened.Summary.SeasonComplete);
+        Assert.True(Assert.IsType<SmgpBriefingModel>(reopened.CurrentSmgpBriefing()).CareerOver);
     }
 
     [Fact]
@@ -526,17 +568,22 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
 
     private static void ApplyPlayerLast(ICareerSession session, SmgpRivalCall rival)
     {
+        session.Apply(PlayerLastDraft(session, rival));
+    }
+
+    private static ResultDraft PlayerLastDraft(ICareerSession session, SmgpRivalCall rival)
+    {
         var others = session.CurrentGrid()
             .Select(s => s.DriverId)
             .Where(id => !string.Equals(id, session.Summary.PlayerDriverId, StringComparison.Ordinal))
             .ToList();
-        session.Apply(new ResultDraft
+        return new ResultDraft
         {
             Classified = others.Append(session.Summary.PlayerDriverId).ToList(),
             DidNotFinish = new Dictionary<string, string>(),
             Disqualified = [],
             SmgpRival = rival,
-        });
+        };
     }
 
     private static Companion.Ams2.ContentLibrary.Ams2ContentLibrary FiveSeatLibrary()
@@ -618,6 +665,16 @@ public sealed class SmgpBattleFoldDeterminismTests : IDisposable
                 Entry("team.c", "driver.c", "3", SeatC),
                 Entry("team.d", "driver.d", "4", SeatD),
             ],
+        };
+    }
+
+    private static SeasonPack FinalRoundFloorPack()
+    {
+        var pack = LadderPack();
+        return pack with
+        {
+            Season = pack.Season with { Rounds = pack.Season.Rounds.Take(4).ToArray() },
+            Entries = pack.Entries.Select(entry => entry with { Rounds = "1-4" }).ToArray(),
         };
     }
 

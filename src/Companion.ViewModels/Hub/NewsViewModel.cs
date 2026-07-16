@@ -40,14 +40,16 @@ public sealed partial class NewsViewModel : ObservableObject
 
     /// <summary>True when there is no news yet — the tab shows a friendly empty state
     /// ("no dispatches yet — run a race") instead of a blank panel.</summary>
-    public bool IsEmpty => Items.Count == 0;
+    public bool IsEmpty => Stories.Count == 0;
 
     /// <summary>Re-pull the feed (called on open and after every Apply).</summary>
     public void Refresh()
     {
+        var journalFeed = _session.ReadFeed();
         Items.Clear();
-        foreach (var dispatch in _session.ReadFeed())
+        foreach (var dispatch in journalFeed)
             Items.Add(new NewsItemViewModel(dispatch, showBody: !HeadlinesOnly));
+        RefreshUnifiedProjection(journalFeed);
         OnPropertyChanged(nameof(IsEmpty));
     }
 }

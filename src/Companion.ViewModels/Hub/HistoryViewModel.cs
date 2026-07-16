@@ -267,6 +267,9 @@ public sealed class SeasonCardViewModel
     public IReadOnlyList<string> Headlines => _card.Headlines;
 
     public bool HasHeadlines => _card.Headlines.Count > 0;
+
+    /// <summary>Only seasons with at least one applied round can open a truthful inspector.</summary>
+    public bool CanInspect => _card.RoundsApplied > 0;
 }
 
 /// <summary>The career records book row-set: labelled bests/counts/streaks for the view's grid.

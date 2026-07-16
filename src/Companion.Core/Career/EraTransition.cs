@@ -100,11 +100,15 @@ public static class EraTransition
         CharacterRules? characterRules = null,
         int? fromYearOverride = null,
         int? toYearOverride = null,
-        IReadOnlyList<CharacterRespec>? respecs = null) =>
+        IReadOnlyList<CharacterRespec>? respecs = null,
+        IReadOnlyList<CharacterSkillPlanInput>? skillPlans = null,
+        MasterySkillCatalog? masterySkills = null,
+        IReadOnlyList<CharacterSkillDevelopmentAction>? skillDevelopment = null) =>
         Build(
             fromPack, toPack, seasonEndResult.Drivers, seasonEndResult.Teams,
             playerState, acceptedOffer, streams, agingCurves, canonRetirements, spends, characterRules,
-            fromYearOverride, toYearOverride, respecs);
+            fromYearOverride, toYearOverride, respecs, skillPlans, masterySkills,
+            skillDevelopment);
 
     /// <summary>State-list overload for callers that persisted the season's end states and
     /// no longer hold the <see cref="SeasonEndResult"/> (the app's sign-and-continue flow).</summary>
@@ -122,7 +126,10 @@ public static class EraTransition
         CharacterRules? characterRules = null,
         int? fromYearOverride = null,
         int? toYearOverride = null,
-        IReadOnlyList<CharacterRespec>? respecs = null)
+        IReadOnlyList<CharacterRespec>? respecs = null,
+        IReadOnlyList<CharacterSkillPlanInput>? skillPlans = null,
+        MasterySkillCatalog? masterySkills = null,
+        IReadOnlyList<CharacterSkillDevelopmentAction>? skillDevelopment = null)
     {
         ArgumentNullException.ThrowIfNull(fromPack);
         ArgumentNullException.ThrowIfNull(toPack);
@@ -364,6 +371,11 @@ public static class EraTransition
                 devCharacter = CharacterProgress.ApplyAll(devCharacter, spends, characterRules);
             player = player with { Character = devCharacter };
         }
+
+        player = skillDevelopment is null
+            ? CharacterSkillPlanTransition.Apply(player, skillPlans, masterySkills)
+            : CharacterSkillDevelopmentTransition.Apply(
+                player, skillDevelopment, characterRules, masterySkills);
 
         return new TransitionPlan
         {

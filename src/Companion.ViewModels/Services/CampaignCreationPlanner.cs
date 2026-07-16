@@ -54,6 +54,15 @@ internal sealed record CampaignCreationPreparation
     public required IReadOnlyList<PreparedCampaignPack> DistinctPacks { get; init; }
 }
 
+/// <summary>The exact bounded plan and source packs resolved from the creation-time catalog.
+/// Both the wizard preview and the persistence boundary consume this result so displayed coverage
+/// cannot drift from the sequence that creation later pins.</summary>
+internal sealed record CampaignPlanResolution
+{
+    public required CampaignProgressionPlan Plan { get; init; }
+    public required IReadOnlyList<PreparedCampaignPack> Packs { get; init; }
+}
+
 /// <summary>Builds a bounded v2 plan from the creation-time pack catalog. It performs discovery once;
 /// later continuation consumes only the stored plan and these pre-pinned bytes.</summary>
 internal static class CampaignCreationPlanner
@@ -84,14 +93,7 @@ internal static class CampaignCreationPlanner
         if (request.Character is not { ProgressionVersion: CharacterLevelProgression.Level300Version } character)
             throw new InvalidOperationException("An explicit Alpha experience mode requires a progression-v2 character.");
 
-        bool selectedIsSmgp = string.Equals(
-            selected.Pack.Manifest.CareerStyle,
-            SmgpRules.CareerStyle,
-            StringComparison.Ordinal);
-        if (mode == CareerExperienceModes.Smgp && !selectedIsSmgp)
-            throw new InvalidOperationException("SMGP mode requires an SMGP-styled season pack.");
-        if (mode == CareerExperienceModes.GrandPrixDynasty && selectedIsSmgp)
-            throw new InvalidOperationException("Grand Prix Dynasty cannot start from an SMGP pack.");
+        ValidateModeCompatibility(mode, selected);
 
         var selectedReport = PackStructuralValidator.Validate(selected.Pack);
         if (selectedReport.HasErrors)
@@ -101,22 +103,8 @@ internal static class CampaignCreationPlanner
                     .Where(i => i.Severity == PackIssueSeverity.Error)
                     .Select(i => i.Message)));
 
-        CampaignProgressionPlan plan;
-        IReadOnlyList<PreparedCampaignPack> pins;
-        if (mode == CareerExperienceModes.Smgp)
-        {
-            plan = CampaignProgressionPlan.CreateSmgp(selected.Snapshot());
-            pins = [selected];
-        }
-        else
-        {
-            pins = DynastySequence(environment, selected);
-            plan = CampaignProgressionPlan.Create(
-                CareerExperienceModes.GrandPrixDynasty,
-                selected.Pack.Season.Year,
-                endYear: 2020,
-                pins.Select(p => p.Snapshot()));
-        }
+        var resolution = ResolveBoundedPlan(mode, environment, selected);
+        CampaignProgressionPlan plan = resolution.Plan;
 
         var input = new CharacterCreationInput
         {
@@ -124,18 +112,145 @@ internal static class CampaignCreationPlanner
             ExperienceMode = mode,
             CampaignProgressionPlan = plan,
         };
-        input.ValidateForNewCareer();
-        PlayerCarScalarPolicy.EnsureStagingCompatible(character, environment.Rules.Character);
+        input.ValidateForNewCareer(environment.Rules.RacingDna);
+        ValidateContextualRacingDnaChoice(
+            character,
+            request,
+            selected.Pack,
+            environment.Rules.RacingDna);
 
         return new CampaignCreationPreparation
         {
             Plan = plan,
             CharacterInput = input,
-            DistinctPacks = pins
+            DistinctPacks = resolution.Packs
                 .GroupBy(p => (p.Pack.Manifest.PackId, p.Pack.Manifest.Version))
                 .Select(g => g.First())
                 .ToArray(),
         };
+    }
+
+    /// <summary>Resolves the authoritative creation-time bounded plan without needing a character.
+    /// This is intentionally the one builder used by both <see cref="Prepare"/> and the wizard's
+    /// read-only preview. It performs the same Dynasty discovery or SMGP ordinal expansion and
+    /// returns the source pack objects needed by the eventual pin transaction.</summary>
+    internal static CampaignPlanResolution ResolveBoundedPlan(
+        string mode,
+        CareerEnvironment environment,
+        PreparedCampaignPack selected)
+    {
+        ArgumentNullException.ThrowIfNull(mode);
+        ArgumentNullException.ThrowIfNull(environment);
+        ArgumentNullException.ThrowIfNull(selected);
+        ValidateModeCompatibility(mode, selected);
+
+        if (mode == CareerExperienceModes.Smgp)
+        {
+            return new CampaignPlanResolution
+            {
+                Plan = CampaignProgressionPlan.CreateSmgp(selected.Snapshot()),
+                Packs = [selected],
+            };
+        }
+        if (mode != CareerExperienceModes.GrandPrixDynasty)
+            throw new InvalidOperationException(
+                $"Career experience mode '{mode}' is not a supported bounded campaign.");
+
+        var pins = DynastySequence(environment, selected);
+        return new CampaignPlanResolution
+        {
+            Plan = CampaignProgressionPlan.Create(
+                CareerExperienceModes.GrandPrixDynasty,
+                selected.Pack.Season.Year,
+                endYear: 2020,
+                pins.Select(p => p.Snapshot())),
+            Packs = pins,
+        };
+    }
+
+    private static void ValidateModeCompatibility(string mode, PreparedCampaignPack selected)
+    {
+        bool selectedIsSmgp = string.Equals(
+            selected.Pack.Manifest.CareerStyle,
+            SmgpRules.CareerStyle,
+            StringComparison.Ordinal);
+        if (mode == CareerExperienceModes.Smgp && !selectedIsSmgp)
+            throw new InvalidOperationException("SMGP mode requires an SMGP-styled season pack.");
+        if (mode == CareerExperienceModes.GrandPrixDynasty && selectedIsSmgp)
+            throw new InvalidOperationException("Grand Prix Dynasty cannot start from an SMGP pack.");
+    }
+
+    /// <summary>Closes the creation boundary around Racing DNA choices whose valid values come
+    /// from the selected campaign pack. The pure catalog can validate their shape, but only this
+    /// layer owns the final player seat and season-field input. Persisting a missing, displaced, or
+    /// benched rival would make the authored identity impossible to satisfy after creation.</summary>
+    private static void ValidateContextualRacingDnaChoice(
+        CharacterProfile character,
+        CareerCreationRequest request,
+        SeasonPack pack,
+        RacingDnaCatalog catalog)
+    {
+        var definition = catalog.Get(character.RacingDnaId!, character.RacingDnaVersion);
+        if (definition.Choice?.Kind is not { } kind)
+            return;
+
+        string choice = character.RacingDnaChoice!;
+        if (kind == RacingDnaChoiceKind.NationalityAffinity)
+        {
+            if (!pack.Drivers.Any(driver =>
+                    string.Equals(driver.Country, choice, StringComparison.Ordinal)))
+            {
+                throw new InvalidOperationException(
+                    $"Racing DNA nationality affinity '{choice}' is not present in the selected campaign roster.");
+            }
+            return;
+        }
+
+        if (kind != RacingDnaChoiceKind.RivalDriverId)
+            return;
+
+        if (!pack.Drivers.Any(driver => string.Equals(driver.Id, choice, StringComparison.Ordinal)))
+        {
+            throw new InvalidOperationException(
+                $"Racing DNA rival '{choice}' is not present in the selected campaign roster.");
+        }
+
+        var rivalEntries = pack.Entries
+            .Where(entry => string.Equals(entry.DriverId, choice, StringComparison.Ordinal))
+            .ToArray();
+        var rivalGuests = pack.Season.Rounds
+            .SelectMany(round => round.GuestEntries)
+            .Where(entry => string.Equals(entry.DriverId, choice, StringComparison.Ordinal))
+            .ToArray();
+        if (rivalEntries.Length == 0 && rivalGuests.Length == 0)
+        {
+            throw new InvalidOperationException(
+                $"Racing DNA rival '{choice}' has no seat in the selected campaign roster.");
+        }
+
+        var playerEntry = pack.Entries.FirstOrDefault(entry =>
+            string.Equals(entry.Ams2LiveryName, request.PlayerLiveryName, StringComparison.Ordinal));
+        if (playerEntry is not null && rivalEntries.Any(entry =>
+                string.Equals(entry.Number, playerEntry.Number, StringComparison.Ordinal)))
+        {
+            throw new InvalidOperationException(
+                $"Racing DNA rival '{choice}' occupies the seat the player is replacing.");
+        }
+        if (rivalGuests.Any(entry =>
+                string.Equals(entry.Ams2LiveryName, request.PlayerLiveryName, StringComparison.Ordinal)))
+        {
+            throw new InvalidOperationException(
+                $"Racing DNA rival '{choice}' occupies the guest seat the player is replacing.");
+        }
+
+        if (request.GridSelection is { IncludesEverything: false } selection &&
+            !rivalEntries.Select(entry => entry.Ams2LiveryName)
+                .Concat(rivalGuests.Select(entry => entry.Ams2LiveryName))
+                .Any(selection.Includes))
+        {
+            throw new InvalidOperationException(
+                $"Racing DNA rival '{choice}' is excluded from the selected season grid.");
+        }
     }
 
     private static IReadOnlyList<PreparedCampaignPack> DynastySequence(

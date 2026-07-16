@@ -37,6 +37,15 @@ public sealed class SettingsConsumersTests : IDisposable
     private static SettingsService Service(AppSettings? initial = null) =>
         new(new InMemorySettingsStore(initial));
 
+    private static ResultEntryViewModel OpenRace(HomeViewModel home)
+    {
+        home.EnterResultCommand.Execute(null);
+        var intro = Assert.IsType<SessionIntroViewModel>(home.CurrentContent);
+        Assert.Equal(SessionIntroKind.Race, intro.Kind);
+        intro.ContinueCommand.Execute(null);
+        return Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+    }
+
     // ---------- wizard: prefer-installed-baseline default (NAMeS-first) ----------
 
     private const string InstalledXml = """
@@ -131,8 +140,7 @@ public sealed class SettingsConsumersTests : IDisposable
         var settings = Service(new AppSettings { DefaultDifficulty = 108.0 });
         using var home = new HomeViewModel(new GridSession(), settings: settings);
 
-        home.EnterResultCommand.Execute(null);
-        var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+        var entry = OpenRace(home);
 
         Assert.Equal(108.0, entry.SliderUsed);
     }
@@ -144,8 +152,7 @@ public sealed class SettingsConsumersTests : IDisposable
         var session = new GridSession { SliderRecommendation = 97 };
         using var home = new HomeViewModel(session, settings: settings);
 
-        home.EnterResultCommand.Execute(null);
-        var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+        var entry = OpenRace(home);
 
         Assert.Equal(97.0, entry.SliderUsed);
     }
@@ -292,8 +299,7 @@ public sealed class SettingsConsumersTests : IDisposable
     public void Esc_OnConfirm_GoesBackToTheResultEntry_KeepingTheDraft()
     {
         using var home = new HomeViewModel(new GridSession(), settings: Service());
-        home.EnterResultCommand.Execute(null);
-        var entry = (ResultEntryViewModel)home.CurrentContent!;
+        var entry = OpenRace(home);
         foreach (string number in new[] { "1", "2" })
         {
             entry.Input = number;
@@ -310,7 +316,7 @@ public sealed class SettingsConsumersTests : IDisposable
     public void Esc_DuringResultEntry_IsLeftToTheGrammar()
     {
         using var home = new HomeViewModel(new GridSession(), settings: Service());
-        home.EnterResultCommand.Execute(null);
+        _ = OpenRace(home);
         Assert.False(home.TryEscapeBack()); // the shell must not steal Esc mid-entry
     }
 

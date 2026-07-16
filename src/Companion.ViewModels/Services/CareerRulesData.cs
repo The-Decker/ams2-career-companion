@@ -32,6 +32,14 @@ public sealed record CareerRulesData
     /// eagerly like the other rules so the live and replay paths see the identical instance.</summary>
     public required CharacterRules Character { get; init; }
 
+    /// <summary>The progression-v2 Racing DNA catalog. Definitions are resolved by exact
+    /// (id, version); no fold may silently substitute a later balance version.</summary>
+    public required RacingDnaCatalog RacingDna { get; init; }
+
+    /// <summary>The isolated progression-v2 90-skill graph plus seven attribute rails. It never
+    /// extends the legacy perks.json membership; v2 ownership resolves through this catalog only.</summary>
+    public required MasterySkillCatalog MasterySkills { get; init; }
+
     /// <summary>The SMGP rivals' per-driver, per-mood trash-talk (<c>data\rules\smgp\rival-quotes.json</c>).
     /// DISPLAY-ONLY — the briefing quote is never a fold input; empty (the deadpan default) when the
     /// file is absent, so a non-SMGP install or an un-updated data folder is unaffected.</summary>
@@ -76,23 +84,31 @@ public sealed record CareerRulesData
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
     public required CarSpecCatalog CarSpecs { get; init; }
 
-    public static CareerRulesData Load(string rulesDirectory) => new()
+    public static CareerRulesData Load(string rulesDirectory)
     {
-        AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
-        Archetypes = TeamArchetypeCatalog.Parse(Read(rulesDirectory, "career-team-archetypes.json")),
-        Headlines = HeadlineBank.Parse(Read(rulesDirectory, "career-headline-templates.json")),
-        NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
-        Character = CharacterRules.Parse(Read(rulesDirectory, "perks.json")),
-        SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
-        SmgpPitCrewAdvice = SmgpPitCrewAdvice.Load(rulesDirectory),
-        SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
-        SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
-        SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
-        SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
-        SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
-        SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
-        CarSpecs = CarSpecCatalog.Load(rulesDirectory),
-    };
+        var character = CharacterRules.Parse(Read(rulesDirectory, "perks.json"));
+        var racingDna = RacingDnaCatalog.Parse(Read(rulesDirectory, "racing-dna-v2.json"), character);
+        return new CareerRulesData
+        {
+            AgingCurves = AgingCurveSet.Parse(Read(rulesDirectory, "career-aging-curves.json")),
+            Archetypes = TeamArchetypeCatalog.Parse(Read(rulesDirectory, "career-team-archetypes.json")),
+            Headlines = HeadlineBank.Parse(Read(rulesDirectory, "career-headline-templates.json")),
+            NewsArticles = NewsArticleBank.LoadDirectory(Path.Combine(rulesDirectory, "news")),
+            Character = character,
+            RacingDna = racingDna,
+            MasterySkills = MasterySkillCatalog.Parse(
+                Read(rulesDirectory, "mastery-skills-v2.json"), character, racingDna),
+            SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
+            SmgpPitCrewAdvice = SmgpPitCrewAdvice.Load(rulesDirectory),
+            SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
+            SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
+            SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
+            SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
+            SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
+            SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
+            CarSpecs = CarSpecCatalog.Load(rulesDirectory),
+        };
+    }
 
     private static string Read(string rulesDirectory, string fileName)
     {

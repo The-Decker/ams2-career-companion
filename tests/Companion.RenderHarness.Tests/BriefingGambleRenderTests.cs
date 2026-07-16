@@ -26,6 +26,7 @@ public sealed class BriefingGambleRenderTests
             RoundCount = 16,
             PlayerDriverId = "driver.player",
             PlayerLiveryName = "Player Livery",
+            Opi = 0.0,
         };
 
         public BriefingModel? CurrentBriefing() => new()

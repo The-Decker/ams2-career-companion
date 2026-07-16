@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Career;
 using Companion.Data;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
@@ -16,6 +17,47 @@ namespace Companion.ViewModels.Start;
 /// </summary>
 public sealed partial class StartViewModel : ObservableObject
 {
+    private static readonly IReadOnlyList<CareerModeEntry> AlphaCareerModes = Array.AsReadOnly(
+    [
+        new CareerModeEntry
+        {
+            Id = CareerExperienceModes.GrandPrixDynasty,
+            DisplayName = "Grand Prix Dynasty",
+            Tagline = "Build a legacy through racing history.",
+            Description =
+                "Begin the faithful historical championship path. The current driver career is " +
+                "playable now; owner and team management will expand in later Alpha passes.",
+            PersistenceSummary =
+                "One save follows one chronological timeline. Its installed faithful seasons are pinned when you begin.",
+            AvailabilityLabel = "PLAYABLE FIRST PASS",
+            IsAvailable = true,
+        },
+        new CareerModeEntry
+        {
+            Id = CareerExperienceModes.Smgp,
+            DisplayName = "Super Monaco GP",
+            Tagline = "Climb the grid. Beat your rival. Take the crown.",
+            Description =
+                "Play the complete SEGA-inspired rival and seat-swap campaign across 17 seasons.",
+            PersistenceSummary = "One save follows the full authored Super Monaco GP campaign.",
+            AvailabilityLabel = "PLAYABLE NOW",
+            IsAvailable = true,
+        },
+        new CareerModeEntry
+        {
+            Id = CareerExperienceModes.RacingPassport,
+            DisplayName = "Racing Passport",
+            Tagline = "One driver. Many racing timelines.",
+            Description =
+                "Create one persistent driver, then start and resume independent historical or " +
+                "Super Monaco GP careers from a shared portfolio.",
+            PersistenceSummary =
+                "Driver progression is global; standings, seats, age, injuries and death stay local to each timeline.",
+            AvailabilityLabel = "COMING IN A LATER ALPHA PASS",
+            IsAvailable = false,
+        },
+    ]);
+
     private readonly IRecentCareersStore _store;
     private readonly ISettingsService? _settings;
     private readonly Func<string, bool> _careerFileExists;
@@ -52,6 +94,12 @@ public sealed partial class StartViewModel : ObservableObject
 
     public ObservableCollection<RecentCareer> RecentCareers { get; } = [];
 
+    /// <summary>
+    /// The three locked Alpha 1.0 experiences in main-menu order. The Passport card is deliberately
+    /// visible but unavailable until its one-database activity ledger and thread-local state exist.
+    /// </summary>
+    public IReadOnlyList<CareerModeEntry> CareerModes => AlphaCareerModes;
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ContinueCommand))]
     private RecentCareer? _selectedCareer;
@@ -78,6 +126,9 @@ public sealed partial class StartViewModel : ObservableObject
 
     /// <summary>Raised when the user wants the new-career wizard.</summary>
     public event EventHandler? NewCareerRequested;
+
+    /// <summary>Raised with the stable mode id selected from <see cref="CareerModes"/>.</summary>
+    public event EventHandler<CareerModeRequestedEventArgs>? CareerModeRequested;
 
     public void Refresh()
     {
@@ -131,6 +182,37 @@ public sealed partial class StartViewModel : ObservableObject
 
     [RelayCommand]
     private void NewCareer() => NewCareerRequested?.Invoke(this, EventArgs.Empty);
+
+    private bool CanStartCareerMode(object? parameter) =>
+        ResolveCareerMode(parameter)?.IsAvailable == true;
+
+    /// <summary>
+    /// Starts an available mode card. Accepts either the bound <see cref="CareerModeEntry"/> or its
+    /// stable id so Views can use the whole card or a simple string command parameter. The method
+    /// repeats the availability guard because commands can be invoked directly in tests/code even
+    /// when a UI would already have disabled the button.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanStartCareerMode))]
+    private void StartCareerMode(object? parameter)
+    {
+        var mode = ResolveCareerMode(parameter);
+        if (mode?.IsAvailable != true)
+            return;
+
+        CareerModeRequested?.Invoke(this, new CareerModeRequestedEventArgs(mode.Id));
+    }
+
+    private static CareerModeEntry? ResolveCareerMode(object? parameter)
+    {
+        string? id = parameter switch
+        {
+            CareerModeEntry entry => entry.Id,
+            string value => value,
+            _ => null,
+        };
+        return AlphaCareerModes.FirstOrDefault(mode =>
+            string.Equals(mode.Id, id, StringComparison.Ordinal));
+    }
 
     [RelayCommand]
     private void RemoveRecent(RecentCareer? career)

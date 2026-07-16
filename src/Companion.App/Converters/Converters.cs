@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -220,6 +221,63 @@ public sealed class HexBrushConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>
+/// Two view-model supplied team colours -> one frozen presentation brush. Replica teams with a
+/// two-colour identity receive an even diagonal split; single-colour and legacy teams remain solid.
+/// The converter deliberately knows nothing about team ids: the palette stays in the VM lane and
+/// this App-layer type only turns its two published hex values into WPF paint.
+/// </summary>
+public sealed class TeamAccentBrushConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (!TryColor(values.ElementAtOrDefault(0), out Color primary))
+            return Brushes.Transparent;
+
+        if (!TryColor(values.ElementAtOrDefault(1), out Color secondary) || primary == secondary)
+            return Frozen(new SolidColorBrush(primary));
+
+        var brush = new LinearGradientBrush
+        {
+            StartPoint = new Point(0, 0),
+            EndPoint = new Point(1, 1),
+        };
+        // Duplicate the midpoint stops so each identity reads as two crisp racing stripes rather
+        // than an invented blended colour between the authored primary and secondary.
+        brush.GradientStops.Add(new GradientStop(primary, 0));
+        brush.GradientStops.Add(new GradientStop(primary, 0.5));
+        brush.GradientStops.Add(new GradientStop(secondary, 0.5));
+        brush.GradientStops.Add(new GradientStop(secondary, 1));
+        return Frozen(brush);
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+
+    private static bool TryColor(object? value, out Color color)
+    {
+        color = default;
+        if (value is not string hex || string.IsNullOrWhiteSpace(hex))
+            return false;
+
+        try
+        {
+            color = (Color)ColorConverter.ConvertFromString(hex);
+            return true;
+        }
+        catch (Exception ex) when (ex is FormatException or ArgumentException or NotSupportedException)
+        {
+            return false;
+        }
+    }
+
+    private static T Frozen<T>(T brush) where T : Brush
+    {
+        brush.Freeze();
+        return brush;
+    }
+}
+
 /// <summary>A career (a <see cref="RecentCareer"/>, a year, or a name) → its era medium label
 /// ("TELEGRAM"/"FAX"/"EMAIL"), keyed off the stored season year for MRU entries; "" when no era
 /// resolves.</summary>
@@ -326,6 +384,103 @@ public sealed class TrackImageConverter : IValueConverter
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
+}
+
+/// <summary>
+/// Resolves an AMS2 track id to its shipped panoramic Calendar banner. The manifest and JPEG
+/// masters are WPF pack resources, so the art remains available in the self-contained executable.
+/// Unknown ids or malformed/corrupt resources return null and preserve the circuit-map fallback.
+/// </summary>
+public sealed class TrackBannerImageConverter : IValueConverter
+{
+    private const string ResourceRoot = "Assets/TrackBanners/";
+    private const string ManifestPath = ResourceRoot + "manifest.json";
+    private static readonly Lazy<IReadOnlyDictionary<string, string>> Manifest =
+        new(LoadManifest, LazyThreadSafetyMode.ExecutionAndPublication);
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is not string trackId || string.IsNullOrWhiteSpace(trackId) ||
+            !Manifest.Value.TryGetValue(trackId.Trim(), out string? relativePath))
+        {
+            return null;
+        }
+
+        try
+        {
+            var resource = Application.GetResourceStream(ResourceUri(ResourceRoot + relativePath));
+            if (resource is null)
+                return null;
+
+            using (resource.Stream)
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                image.StreamSource = resource.Stream;
+                image.EndInit();
+                image.Freeze();
+                return image;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or
+                                   NotSupportedException or ArgumentException or UriFormatException)
+        {
+            return null;
+        }
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+
+    private static IReadOnlyDictionary<string, string> LoadManifest()
+    {
+        try
+        {
+            var resource = Application.GetResourceStream(ResourceUri(ManifestPath));
+            if (resource is null)
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            using (resource.Stream)
+            using (var document = JsonDocument.Parse(resource.Stream))
+            {
+                if (!document.RootElement.TryGetProperty("tracks", out JsonElement tracks) ||
+                    tracks.ValueKind != JsonValueKind.Object)
+                {
+                    return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (JsonProperty entry in tracks.EnumerateObject())
+                {
+                    if (entry.Value.ValueKind != JsonValueKind.String)
+                        continue;
+
+                    string? path = entry.Value.GetString()?.Replace('\\', '/').TrimStart('/');
+                    if (string.IsNullOrWhiteSpace(entry.Name) || !IsSafeJpegPath(path))
+                        continue;
+                    result[entry.Name] = path!;
+                }
+                return result;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or
+                                   JsonException or ArgumentException or UriFormatException)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+    }
+
+    private static bool IsSafeJpegPath(string? path) =>
+        path is { Length: > 0 } &&
+        !path.Contains("..", StringComparison.Ordinal) &&
+        !path.Contains(':', StringComparison.Ordinal) &&
+        (path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+         path.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase));
+
+    private static Uri ResourceUri(string path) => new(
+        $"/AMS2CareerCompanion;component/{path}", UriKind.Relative);
 }
 
 /// <summary>bool IsExpanded → a Segoe MDL2 chevron glyph: ChevronDown (open) / ChevronRight
@@ -800,81 +955,14 @@ public sealed class CircuitGeometryConverter : IValueConverter
             }
             if (group.Children.Count == 0)
                 return null;
-            Geometry leveled = LevelToHorizontal(group);
-            leveled.Freeze();
-            return leveled;
+            group.Freeze();
+            return group;
         }
         catch (Exception ex) when (ex is System.Text.Json.JsonException or IOException or FormatException or InvalidOperationException)
         {
             // A bad/unreadable circuit file must never crash a screen — just show no map.
             return null;
         }
-    }
-
-    /// <summary>Auto-levels a circuit map: f1db paths are drawn in geographic orientation, so a circuit
-    /// that runs diagonally looks tilted (Watkins Glen / Montreal render near-vertical). Flatten the
-    /// outline, find its principal axis (PCA of the point cloud), and rotate the geometry so that
-    /// longest axis is horizontal — a consistent, level look across every map. Two guards: a circuit
-    /// that is already near-level keeps its authored orientation, and a near-round shape (no dominant
-    /// axis — principal spread ratio under ~1.25) is left alone because its PCA angle is unstable.
-    /// Pure geometry at load time, cached by the caller, no data regen. Public like
-    /// <see cref="LoadFrom"/> so the render harness can prove the leveling on real shipped data.</summary>
-    public static Geometry LevelToHorizontal(Geometry geometry)
-    {
-        var points = new List<Point>();
-        foreach (var figure in geometry.GetFlattenedPathGeometry().Figures)
-        {
-            points.Add(figure.StartPoint);
-            foreach (var segment in figure.Segments)
-            {
-                if (segment is PolyLineSegment poly)
-                    points.AddRange(poly.Points);
-                else if (segment is LineSegment line)
-                    points.Add(line.Point);
-            }
-        }
-        if (points.Count < 3)
-            return geometry;
-
-        double mx = points.Average(p => p.X), my = points.Average(p => p.Y);
-        double sxx = 0, syy = 0, sxy = 0;
-        foreach (var p in points)
-        {
-            double dx = p.X - mx, dy = p.Y - my;
-            sxx += dx * dx; syy += dy * dy; sxy += dx * dy;
-        }
-
-        // Eigenvalues of the 2×2 covariance = the spread along/across the principal axis. A shape
-        // without a dominant axis (ratio < ~1.25) has no stable "level", so keep it as authored.
-        double trace = sxx + syy;
-        double root = Math.Sqrt((sxx - syy) * (sxx - syy) + 4 * sxy * sxy);
-        double major = (trace + root) / 2, minor = (trace - root) / 2;
-        if (minor <= 0 || major / minor < 1.25)
-            return geometry;
-
-        // Principal-axis angle; rotating by its negative brings that axis to horizontal.
-        double angleDeg = 0.5 * Math.Atan2(2 * sxy, sxx - syy) * 180.0 / Math.PI;
-        if (Math.Abs(angleDeg) < 3.0)
-            return geometry; // already level enough — keep the authored orientation
-
-        var rotated = geometry.Clone();
-        var bounds = geometry.Bounds; // includes any existing transform
-        var level = new RotateTransform(
-            -angleDeg, bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
-        // COMPOSE with an existing transform (assigning would silently replace it — the shipped
-        // circuit paths carry none, but the utility must be correct for any geometry).
-        if (rotated.Transform is { } existing && !existing.Value.IsIdentity)
-        {
-            var group = new TransformGroup();
-            group.Children.Add(existing);
-            group.Children.Add(level);
-            rotated.Transform = group;
-        }
-        else
-        {
-            rotated.Transform = level;
-        }
-        return rotated;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
@@ -962,6 +1050,40 @@ public sealed class WidthToColumnsConverter : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>An element width to a small responsive column count. The parameter is
+/// <c>targetWidth|min|max</c> (defaults <c>360|1|3</c>). Unlike the wizard's intentionally dense
+/// <see cref='WidthToColumnsConverter'/>, reading surfaces must be able to collapse to one column
+/// at 920x620 and under the app's 130% root scale.</summary>
+public sealed class AdaptiveColumnsConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        double targetWidth = 360;
+        int min = 1;
+        int max = 3;
+        if (parameter is string text && text.Length > 0)
+        {
+            string[] parts = text.Split('|');
+            if (double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedWidth) &&
+                parsedWidth > 0)
+            {
+                targetWidth = parsedWidth;
+            }
+            if (parts.Length > 1 && int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedMin))
+                min = Math.Max(1, parsedMin);
+            if (parts.Length > 2 && int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedMax))
+                max = Math.Max(min, parsedMax);
+        }
+
+        return value is double width && width > 0 && !double.IsInfinity(width)
+            ? Math.Clamp((int)(width / targetWidth), min, max)
+            : min;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Starting-grid viewport width to the authored venue crop or its matching three-band
 /// layout. Wide screens retain the grandstand/track/pit composition; at the narrow shell viewport
 /// the image crops farther into the straight and the live two-file grid receives enough asphalt to
@@ -998,6 +1120,46 @@ public sealed class GlyphBrushConverter : IValueConverter
         value is string glyph && glyph.Length > 0
             ? glyph[0] switch { '▲' => Up, '▼' => Down, _ => Flat }
             : Flat;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>
+/// Maps authored semantic skill icon keys to the app's compact Segoe MDL2 symbol vocabulary.
+/// The catalog remains presentation-agnostic; unknown keys intentionally receive a stable
+/// telemetry glyph instead of exposing their raw identifier in the UI.
+/// </summary>
+public sealed class SkillIconKeyToGlyphConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        string key = value as string ?? "";
+        return key.ToLowerInvariant() switch
+        {
+            var text when text.Contains("weather", StringComparison.Ordinal) ||
+                              text.Contains("wet", StringComparison.Ordinal) => "\uE706",
+            var text when text.Contains("physical", StringComparison.Ordinal) ||
+                              text.Contains("fitness", StringComparison.Ordinal) ||
+                              text.Contains("stamina", StringComparison.Ordinal) => "\uE95B",
+            var text when text.Contains("mental", StringComparison.Ordinal) ||
+                              text.Contains("focus", StringComparison.Ordinal) => "\uE77B",
+            var text when text.Contains("business", StringComparison.Ordinal) ||
+                              text.Contains("contract", StringComparison.Ordinal) ||
+                              text.Contains("sponsor", StringComparison.Ordinal) => "\uE821",
+            var text when text.Contains("team", StringComparison.Ordinal) ||
+                              text.Contains("engineer", StringComparison.Ordinal) => "\uE716",
+            var text when text.Contains("media", StringComparison.Ordinal) ||
+                              text.Contains("fame", StringComparison.Ordinal) => "\uE8A5",
+            var text when text.Contains("era", StringComparison.Ordinal) ||
+                              text.Contains("legacy", StringComparison.Ordinal) => "\uE81C",
+            var text when text.Contains("pace", StringComparison.Ordinal) ||
+                              text.Contains("speed", StringComparison.Ordinal) => "\uE768",
+            var text when text.Contains("attribute", StringComparison.Ordinal) ||
+                              text.Contains("rail", StringComparison.Ordinal) => "\uE8D2",
+            _ => "\uE7C1",
+        };
+    }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();

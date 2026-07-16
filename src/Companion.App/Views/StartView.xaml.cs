@@ -33,10 +33,9 @@ public partial class StartView : UserControl
 
     private void SetCareerGarageOpen(bool open)
     {
-        MainMenuCommands.IsEnabled = !open;
+        MainMenuModeStage.IsEnabled = !open;
         CareerGarageBackdrop.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
         CareerGaragePanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
-        CareerGarageLabel.Text = open ? "CLOSE CAREER GARAGE" : "CAREER GARAGE";
 
         if (open)
         {
@@ -46,7 +45,7 @@ public partial class StartView : UserControl
         }
         else
         {
-            CareerGarageButton.Focus();
+            ModeCareerGarageButton.Focus();
         }
     }
 

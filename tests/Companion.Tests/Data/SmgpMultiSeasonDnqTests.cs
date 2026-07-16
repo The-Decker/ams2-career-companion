@@ -1,4 +1,5 @@
 using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.Core.Smgp;
@@ -45,6 +46,8 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         var s2Start = StateStore.ReadPlayerState(db, seasons[1].Id, StateStore.StageStart)!.Smgp!;
         Assert.True(s1Start.PerSeasonDnq); // seeded for a DNQ pack at creation
         Assert.True(s2Start.PerSeasonDnq); // carried across the rollover
+        Assert.True(s1Start.PerSeasonVariety);
+        Assert.True(s2Start.PerSeasonVariety);
         Assert.True(s1Start.StandingsReshuffle);
         Assert.True(s2Start.StandingsReshuffle);
     }
@@ -63,6 +66,25 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
                 pinnedSeasonOne, SeasonOneFinal(pinnedSeasonOne), SeatC);
             expected = SmgpDnqField.ForSeason(expected, 2, unchecked((ulong)Seed));
             Assert.Equal(expected.Entries, s2.Pack.Entries);
+
+            // Runtime entries now carry reshuffled drivers, but the starting-grid car image must
+            // remain attached to its authored physical livery. The display lookup is captured from
+            // the pinned pack before the reshuffle and never participates in the fold.
+            var authoredDriverByLivery = pinnedSeasonOne.Entries.ToDictionary(
+                entry => entry.Ams2LiveryName,
+                entry => entry.DriverId,
+                StringComparer.Ordinal);
+            var movedSeat = Assert.Single(
+                s2.Pack.Entries.Where(entry =>
+                    !string.Equals(
+                        authoredDriverByLivery[entry.Ams2LiveryName],
+                        entry.DriverId,
+                        StringComparison.Ordinal)).Take(1));
+            string fixedCarArtKey = Assert.IsType<string>(
+                s2.GridCarArtKeyForLivery(movedSeat.Ams2LiveryName));
+            Assert.Equal(authoredDriverByLivery[movedSeat.Ams2LiveryName], fixedCarArtKey);
+            Assert.NotEqual(movedSeat.DriverId, fixedCarArtKey);
+
             foreach (var round in s2.Pack.Season.Rounds)
             {
                 var expectedStarters = expected.Season.Rounds.Single(r => r.Round == round.Round)
@@ -78,10 +100,91 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
     }
 
     [Fact]
-    public void FullCampaign_StopsAfterSeventeenSeasons_AndReplaysByteIdentical()
+    public void LegacyCareer_WithoutStandingsReshuffle_KeepsAuthoredEntries_AndReplaysByteIdentical()
     {
         string packDirectory = Path.Combine(PacksRoot, "smgp-dnq-ladder");
         TestPackBuilder.Write(DnqLadderPack(), packDirectory);
+
+        SeasonPack pinnedSeasonOne;
+        using (var created = CareerSessionService.CreateCareer(new CareerCreationRequest
+        {
+            PackDirectory = packDirectory,
+            CareerFilePath = CareerPath,
+            CareerName = "Legacy Standings Career",
+            MasterSeed = Seed,
+            PlayerLiveryName = SeatC,
+            SmgpMode = true,
+        }, Environment()))
+        {
+            pinnedSeasonOne = created.Pack;
+        }
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+
+        // Recreate a pre-reshuffle career cell: false is omitted from the serialized start state,
+        // so load follows the exact same path as a save created before the gate existed.
+        using (var db = CareerDatabase.Open(CareerPath))
+        {
+            long seasonId = CareerStore.ReadSeasons(db).Single().Id;
+            var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!;
+            StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart,
+                start with { Smgp = start.Smgp! with { StandingsReshuffle = false } });
+
+            Assert.False(StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart)!.Smgp!.StandingsReshuffle);
+            Assert.DoesNotContain("standingsReshuffle", StartPlayerJson(db, seasonId), StringComparison.Ordinal);
+        }
+
+        using (var seasonOne = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            // Reverse every available grid so enabling the reshuffle would visibly change the entries.
+            while (!seasonOne.Summary.SeasonComplete)
+            {
+                var reversed = seasonOne.CurrentGrid().Select(seat => seat.DriverId).Reverse().ToList();
+                seasonOne.Apply(new ResultDraft
+                {
+                    Classified = reversed,
+                    DidNotFinish = new Dictionary<string, string>(),
+                    Disqualified = [],
+                });
+            }
+
+            var review = seasonOne.SeasonReview();
+            Assert.NotNull(review);
+            Assert.NotEmpty(review!.Offers);
+            string teamId = review.Offers[0].TeamId;
+            seasonOne.AcceptOffer(teamId);
+            seasonOne.StartNextSeason(teamId);
+        }
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+
+        Companion.Core.Smgp.SmgpState seasonTwoStart;
+        using (var db = CareerDatabase.Open(CareerPath))
+        {
+            var seasons = CareerStore.ReadSeasons(db);
+            Assert.Equal(2, seasons.Count);
+            seasonTwoStart = StateStore.ReadPlayerState(db, seasons[1].Id, StateStore.StageStart)!.Smgp!;
+            Assert.False(seasonTwoStart.StandingsReshuffle);
+            Assert.DoesNotContain("standingsReshuffle", StartPlayerJson(db, seasons[1].Id), StringComparison.Ordinal);
+        }
+
+        using (var seasonTwo = CareerSessionService.OpenCareer(CareerPath, Environment()))
+        {
+            Assert.Equal(pinnedSeasonOne.Entries, seasonTwo.Pack.Entries);
+
+            var wouldReshuffle = SmgpGridReshuffle.ForNextSeason(
+                pinnedSeasonOne, SeasonOneFinal(pinnedSeasonOne), seasonTwoStart.CurrentSeatLivery);
+            Assert.NotEqual(pinnedSeasonOne.Entries, wouldReshuffle.Entries);
+
+            ApplyRound(seasonTwo);
+        }
+
+        AssertResimulatesByteIdentically();
+    }
+
+    [Fact]
+    public void FullCampaign_StopsAfterSeventeenSeasons_AndReplaysByteIdentical()
+    {
+        string packDirectory = Path.Combine(PacksRoot, "smgp-dnq-ladder");
+        TestPackBuilder.Write(VersionTwoCampaignPack(), packDirectory);
 
         CareerSessionService session = CareerSessionService.CreateCareer(new CareerCreationRequest
         {
@@ -91,6 +194,8 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             MasterSeed = Seed,
             PlayerLiveryName = SeatC,
             SmgpMode = true,
+            ExperienceMode = CareerExperienceModes.Smgp,
+            Character = VersionTwoCharacter(),
         }, Environment());
 
         try
@@ -100,10 +205,24 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
                 Assert.Equal(ordinal, session.CurrentSmgpBriefing()?.SeasonOrdinal);
 
                 while (!session.Summary.SeasonComplete)
-                    ApplyRound(session);
+                    ApplyWinningRound(session);
+
+                if (ordinal == SmgpRules.CampaignSeasons - 1)
+                {
+                    var dossier = Assert.IsType<CharacterDossier>(session.CharacterDossier());
+                    Assert.Equal(CharacterLevelProgression.Level300Max, dossier.Level);
+                    Assert.Equal(CharacterProgressionV2Math.LifetimeSkillPoints,
+                        session.AvailableCharacterCp());
+                    Assert.Equal(CharacterProgressionV2Math.LifetimeSkillPoints, dossier.CpUnspent);
+                }
 
                 if (ordinal == SmgpRules.CampaignSeasons)
                 {
+                    var finale = Assert.IsType<SmgpFinaleModel>(session.SmgpFinale());
+                    Assert.True(finale.IsFlawless);
+                    Assert.Equal("ultimate", finale.HeroImageKey);
+                    Assert.Contains("17 CHAMPIONSHIPS", finale.Record);
+
                     Assert.Null(session.NextSeason());
                     var reviewVm = new SeasonReviewViewModel(session);
                     Assert.False(reviewVm.HasNextSeason);
@@ -142,7 +261,7 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         using (var db = CareerDatabase.Open(CareerPath))
             Assert.Equal(SmgpRules.CampaignSeasons, CareerStore.ReadSeasons(db).Count);
 
-        AssertResimulatesByteIdentically();
+        AssertResimulatesByteIdentically(playerAge: 23);
     }
 
     // ---------- scaffolding ----------
@@ -193,6 +312,63 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             Season = basePack.Season with
             {
                 Rounds = basePack.Season.Rounds.Select(r => r with { Grid = grid }).ToList(),
+            },
+        };
+    }
+
+    private static SeasonPack VersionTwoCampaignPack()
+    {
+        var pack = DnqLadderPack();
+        var template = pack.Season.Rounds[0];
+        return pack with
+        {
+            Entries = pack.Entries.Select(entry => entry with { Rounds = "1-16" }).ToArray(),
+            Season = pack.Season with
+            {
+                Rounds = Enumerable.Range(1, 16).Select(round => template with
+                {
+                    Round = round,
+                    Name = round == 16 ? "Monaco" : $"Campaign Round {round}",
+                    Date = $"1990-01-{round:00}",
+                }).ToArray(),
+            },
+        };
+    }
+
+    private static CharacterProfile VersionTwoCharacter()
+    {
+        var talent = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.70,
+            ["oneLap"] = 0.65,
+            ["craft"] = 0.60,
+            ["racecraft"] = 0.62,
+            ["adaptability"] = 0.58,
+        };
+        var meta = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["marketability"] = 0.50,
+            ["durability"] = 0.55,
+        };
+        return new CharacterProfile
+        {
+            Name = "Zeroforce",
+            Age = 23,
+            Stats = talent.Concat(meta).ToDictionary(pair => pair.Key, pair => pair.Value,
+                StringComparer.Ordinal),
+            PerkIds = [],
+            CreationPerkIds = [],
+            ProgressionVersion = CharacterLevelProgression.Level300Version,
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            ExpectationModelVersion = CharacterProfile.CurrentExpectationModelVersion,
+            RacingDnaId = "dna_circuit_specialist",
+            RacingDnaVersion = 1,
+            RacingDnaChoice = "technical",
+            CreationBaseline = new CharacterCreationBaseline
+            {
+                Stats = talent,
+                Meta = meta,
+                TraitIds = [],
             },
         };
     }
@@ -269,8 +445,8 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         return pinned;
     }
 
-    /// <summary>Applies one round with the player finishing first (the DNQ field determines who else is on
-    /// the grid; the player is always cap-protected).</summary>
+    /// <summary>Applies one round in resolved-grid order (the DNQ field determines who is present;
+    /// the player is always cap-protected).</summary>
     private static void ApplyRound(ICareerSession session)
     {
         var grid = session.CurrentGrid().Select(s => s.DriverId).ToList();
@@ -282,7 +458,21 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
         });
     }
 
-    private void AssertResimulatesByteIdentically()
+    /// <summary>Applies one round with the player explicitly first, independent of grid display order.</summary>
+    private static void ApplyWinningRound(ICareerSession session)
+    {
+        var classified = session.CurrentGrid().Select(s => s.DriverId).ToList();
+        Assert.True(classified.Remove(PlayerId), "The player must be present in every campaign round.");
+        classified.Insert(0, PlayerId);
+        session.Apply(new ResultDraft
+        {
+            Classified = classified,
+            DidNotFinish = new Dictionary<string, string>(),
+            Disqualified = [],
+        });
+    }
+
+    private void AssertResimulatesByteIdentically(int playerAge = 30)
     {
         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
         using var db = CareerDatabase.Open(CareerPath);
@@ -293,7 +483,7 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             Archetypes = rules.Archetypes,
             Headlines = rules.Headlines,
             PlayerDriverId = PlayerId,
-            PlayerAge = 30,
+            PlayerAge = playerAge,
             CharacterRules = rules.Character,
         });
         Assert.True(report.Identical,
@@ -312,5 +502,14 @@ public sealed class SmgpMultiSeasonDnqTests : IDisposable
             .ToList();
         return Companion.Core.Scoring.StandingsEngine.ComputeSeason(
             ChampionshipCalendar.ResolveScoring(pack), results).Final;
+    }
+
+    private static string StartPlayerJson(CareerDatabase db, long seasonId)
+    {
+        using var command = db.Connection.CreateCommand();
+        command.CommandText =
+            "SELECT state_json FROM player_state WHERE season_id = @season AND stage = 'start';";
+        command.Parameters.AddWithValue("@season", seasonId);
+        return (string)command.ExecuteScalar()!;
     }
 }

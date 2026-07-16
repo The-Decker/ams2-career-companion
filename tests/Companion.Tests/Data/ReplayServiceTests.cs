@@ -11,6 +11,12 @@ public class ReplayServiceTests
         Assert.True(DataJournalPhases.IsProvenance(JournalPhases.PlayerRespec));
     }
 
+    [Fact]
+    public void PlayerSkillPlan_IsAProvenanceExcludedInputPhase()
+    {
+        Assert.True(DataJournalPhases.IsProvenance(JournalPhases.PlayerSkillPlan));
+    }
+
     private static (CareerDatabase Db, long SeasonId, Companion.Core.Packs.SeasonPack Pack) PlayedCareer(TempDb tmp)
     {
         var db = CareerDatabase.Open(tmp.Path);

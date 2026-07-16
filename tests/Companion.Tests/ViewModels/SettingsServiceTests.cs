@@ -47,6 +47,25 @@ public sealed class SettingsServiceTests
     }
 
     [Fact]
+    public void UiScaleRange_Reaches160Percent_AndAppliesLive()
+    {
+        var (service, store) = NewService();
+        var vm = new SettingsViewModel(service, documentsDirectory: Path.GetTempPath());
+        AppSettings? observed = null;
+        service.Changed += (_, settings) => observed = settings;
+
+        Assert.Equal(90, vm.MinFontScalePercent);
+        Assert.Equal(160, vm.MaxFontScalePercent);
+
+        vm.FontScalePercent = 160;
+
+        Assert.NotNull(observed);
+        Assert.Equal(160, observed.FontScalePercent);
+        Assert.Equal(160, service.Current.FontScalePercent);
+        Assert.Equal(160, store.Load().FontScalePercent);
+    }
+
+    [Fact]
     public void Reset_ReturnsToDefaults_AndPersists()
     {
         var (service, store) = NewService(new AppSettings
@@ -101,18 +120,51 @@ public sealed class SettingsServiceTests
         vm.NewsDetail = NewsDetailLevel.HeadlinesOnly;
         Assert.Equal(NewsDetailLevel.HeadlinesOnly, service.Current.NewsDetail);
 
-        Assert.Equal(9, changes);          // one Changed per control touch — live-apply
-        Assert.Equal(9, store.SaveCount);  // and every change hit the store immediately
+        vm.SoundEnabled = false;
+        Assert.False(service.Current.SoundEnabled);
+
+        vm.MasterVolumePercent = 81;
+        Assert.Equal(81, service.Current.MasterVolumePercent);
+
+        vm.EffectsVolumePercent = 72;
+        Assert.Equal(72, service.Current.EffectsVolumePercent);
+
+        vm.AmbienceVolumePercent = 33;
+        Assert.Equal(33, service.Current.AmbienceVolumePercent);
+
+        vm.MusicVolumePercent = 41;
+        Assert.Equal(41, service.Current.MusicVolumePercent);
+
+        vm.MuteWhenUnfocused = false;
+        Assert.False(service.Current.MuteWhenUnfocused);
+
+        Assert.Equal(15, changes);          // one Changed per control touch — live-apply
+        Assert.Equal(15, store.SaveCount);  // and every change hit the store immediately
     }
 
     [Fact]
     public void ConstructingTheScreen_DoesNotWriteAnything()
     {
-        var (service, store) = NewService(new AppSettings { FontScalePercent = 120 });
+        var (service, store) = NewService(new AppSettings
+        {
+            FontScalePercent = 120,
+            SoundEnabled = false,
+            MasterVolumePercent = 62,
+            EffectsVolumePercent = 53,
+            AmbienceVolumePercent = 24,
+            MusicVolumePercent = 45,
+            MuteWhenUnfocused = false,
+        });
 
         var vm = new SettingsViewModel(service, documentsDirectory: Path.GetTempPath());
 
         Assert.Equal(120, vm.FontScalePercent); // loaded from the service...
+        Assert.False(vm.SoundEnabled);
+        Assert.Equal(62, vm.MasterVolumePercent);
+        Assert.Equal(53, vm.EffectsVolumePercent);
+        Assert.Equal(24, vm.AmbienceVolumePercent);
+        Assert.Equal(45, vm.MusicVolumePercent);
+        Assert.False(vm.MuteWhenUnfocused);
         Assert.Equal(0, store.SaveCount);       // ...without echoing anything back
     }
 
@@ -172,12 +224,24 @@ public sealed class SettingsServiceTests
         var vm = new SettingsViewModel(service, documentsDirectory: Path.GetTempPath());
         vm.FontScalePercent = 130;
         vm.MinimalNarrative = true;
+        vm.SoundEnabled = false;
+        vm.MasterVolumePercent = 7;
+        vm.EffectsVolumePercent = 8;
+        vm.AmbienceVolumePercent = 9;
+        vm.MusicVolumePercent = 10;
+        vm.MuteWhenUnfocused = false;
         vm.AddPackFolder(@"D:\Packs");
 
         vm.ResetCommand.Execute(null);
 
         Assert.Equal(100, vm.FontScalePercent);
         Assert.False(vm.MinimalNarrative);
+        Assert.True(vm.SoundEnabled);
+        Assert.Equal(80, vm.MasterVolumePercent);
+        Assert.Equal(70, vm.EffectsVolumePercent);
+        Assert.Equal(35, vm.AmbienceVolumePercent);
+        Assert.Equal(40, vm.MusicVolumePercent);
+        Assert.True(vm.MuteWhenUnfocused);
         Assert.Empty(vm.PackFolders);
         Assert.Equal(100, service.Current.FontScalePercent);
     }

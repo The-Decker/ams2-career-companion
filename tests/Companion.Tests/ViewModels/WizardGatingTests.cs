@@ -185,6 +185,57 @@ public sealed class WizardGatingTests : IDisposable
         Assert.NotEqual(0, defaultSeed); // Random(1234) never yields 0 here; documents the default was real
     }
 
+    [Fact]
+    public void ConfirmStatus_NotifiesForEveryDirectCreationDependency()
+    {
+        WritePack("notify", TestPackBuilder.TwoRoundPack());
+        var wizard = Wizard();
+        SelectPack(wizard, "notify");
+        wizard.NextCommand.Execute(null); // -> Verification
+        wizard.NextCommand.Execute(null); // -> SeatPick
+        var seat = wizard.Seats[1];
+        wizard.SelectedSeat = seat;
+        wizard.NextCommand.Execute(null); // -> Grid
+        wizard.NextCommand.Execute(null); // -> Confirm
+        Assert.True(wizard.CanCreate);
+
+        var notifications = new List<string?>();
+        wizard.PropertyChanged += (_, e) => notifications.Add(e.PropertyName);
+        void AssertCanCreateNotified(Action mutation)
+        {
+            notifications.Clear();
+            mutation();
+            Assert.Contains(nameof(NewCareerWizardViewModel.CanCreate), notifications);
+        }
+
+        AssertCanCreateNotified(() => wizard.CareerName = "");
+        Assert.False(wizard.CanCreate);
+        AssertCanCreateNotified(() => wizard.CareerName = "Notification test");
+        Assert.True(wizard.CanCreate);
+
+        AssertCanCreateNotified(() => wizard.MasterSeedText = "not-a-seed");
+        Assert.False(wizard.CanCreate);
+        AssertCanCreateNotified(() => wizard.MasterSeedText = "1234");
+        Assert.True(wizard.CanCreate);
+
+        AssertCanCreateNotified(() => wizard.SelectedSeat = null);
+        Assert.False(wizard.CanCreate);
+        AssertCanCreateNotified(() => wizard.SelectedSeat = seat);
+        Assert.True(wizard.CanCreate);
+
+        // Own-entrant text changes the creation request even while a valid seat remains selected.
+        AssertCanCreateNotified(() => wizard.CustomLiveryName = "My own livery");
+        Assert.True(wizard.CanCreate);
+        AssertCanCreateNotified(() => wizard.CustomLiveryName = "");
+        Assert.True(wizard.CanCreate);
+
+        // The field can change a context-bearing DNA verdict, so its cards must invalidate the
+        // confirm projection even when this legacy profile has no contextual DNA of its own.
+        var opponent = Assert.Single(wizard.GridChoices, card => !card.IsLocked);
+        AssertCanCreateNotified(() => opponent.IsIncluded = false);
+        Assert.True(wizard.CanCreate);
+    }
+
     // ---------- choose the grid (v0.6.0) ----------
 
     private NewCareerWizardViewModel WizardAtGrid(string folderName)

@@ -1,6 +1,21 @@
 namespace Companion.Core.Character;
 
 /// <summary>
+/// One display-ready mechanical effect with an explicit boundary label. <see cref="Text"/> remains
+/// the same ready-to-show phrase used by the legacy benefit/drawback lists; the raw condition is
+/// also retained so a graphical tree can distinguish conditional mechanics without parsing copy.
+/// </summary>
+public sealed record CharacterEffectLine
+{
+    public required string Kind { get; init; }
+    public required CharacterEffectClass Classification { get; init; }
+    public required string ClassificationLabel { get; init; }
+    public required string Text { get; init; }
+    public string? Condition { get; init; }
+    public bool IsConditional => !string.IsNullOrWhiteSpace(Condition);
+}
+
+/// <summary>
 /// Turns a perk's machine-readable <see cref="PerkEffect"/>s into plain-language lines, so the
 /// creator and the dossier can say what a perk actually does instead of showing opaque numbers
 /// (character depth 5). Pure and data-driven — falls back to a perk effect's authored note for any
@@ -8,13 +23,62 @@ namespace Companion.Core.Character;
 /// </summary>
 public static class PerkDescriber
 {
+    /// <summary>All non-empty effects in authored order, with their human-player boundary made explicit.</summary>
+    public static IReadOnlyList<CharacterEffectLine> Effects(Perk perk) =>
+        perk.Effects.Select(DescribeLine).Where(line => line.Text.Length > 0).ToList();
+
     /// <summary>The good things a perk does, in plain language (empty when it has none).</summary>
     public static IReadOnlyList<string> Benefits(Perk perk) =>
-        perk.Effects.Where(e => e.Kind == "benefit").Select(Describe).Where(s => s.Length > 0).ToList();
+        Benefits(Effects(perk));
+
+    /// <summary>The benefit text derived from an already-built effect-line collection.</summary>
+    public static IReadOnlyList<string> Benefits(IReadOnlyList<CharacterEffectLine> effects) =>
+        effects.Where(line => line.Kind == "benefit").Select(line => line.Text).ToList();
 
     /// <summary>The costs a perk carries, in plain language.</summary>
     public static IReadOnlyList<string> Drawbacks(Perk perk) =>
-        perk.Effects.Where(e => e.Kind == "drawback").Select(Describe).Where(s => s.Length > 0).ToList();
+        Drawbacks(Effects(perk));
+
+    /// <summary>The drawback text derived from an already-built effect-line collection.</summary>
+    public static IReadOnlyList<string> Drawbacks(IReadOnlyList<CharacterEffectLine> effects) =>
+        effects.Where(line => line.Kind == "drawback").Select(line => line.Text).ToList();
+
+    /// <summary>Builds one classified line, honoring an authored classification before legacy mapping.</summary>
+    public static CharacterEffectLine DescribeLine(PerkEffect effect)
+    {
+        CharacterEffectClass classification = effect.Classification ?? DefaultClassification(effect.Lever);
+        return CreateLine(effect.Kind, classification, Describe(effect), effect.Condition);
+    }
+
+    /// <summary>Builds a classified line for a projection-native effect such as a stat-raise node.</summary>
+    public static CharacterEffectLine CreateLine(
+        string kind,
+        CharacterEffectClass classification,
+        string text,
+        string? condition = null) => new()
+    {
+        Kind = kind,
+        Classification = classification,
+        ClassificationLabel = ClassificationLabel(classification),
+        Text = text,
+        Condition = condition,
+    };
+
+    /// <summary>Absent-field compatibility for every lever in the existing v1 perk catalog.</summary>
+    public static CharacterEffectClass DefaultClassification(string lever) => lever switch
+    {
+        "statDelta" => CharacterEffectClass.Expectation,
+        "carScalar" => CharacterEffectClass.Car,
+        _ => CharacterEffectClass.Career,
+    };
+
+    public static string ClassificationLabel(CharacterEffectClass classification) => classification switch
+    {
+        CharacterEffectClass.Expectation => "EXPECTATION",
+        CharacterEffectClass.Career => "CAREER",
+        CharacterEffectClass.Car => "CAR",
+        _ => throw new ArgumentOutOfRangeException(nameof(classification), classification, null),
+    };
 
     /// <summary>One effect as a short phrase (e.g. "Stronger race pace", "Faster car (real pace)",
     /// "Mistakes punished harder — in the wet").</summary>

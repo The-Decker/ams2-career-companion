@@ -35,7 +35,7 @@ namespace Companion.ViewModels.Services;
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
 /// </summary>
-public sealed class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAiFileRestore, IDisposable
+public sealed class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAms2GameLaunch, IAiFileRestore, IDisposable
 {
     /// <summary><see cref="BaselineSource"/> value: the pinned baseline is pack-authored.</summary>
     public const string BaselineSourcePack = "pack";
@@ -63,6 +63,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private readonly string _playerDriverId;
     private readonly int _playerFirstSeasonAge;
     private readonly SeasonScoringDefinition _scoringDefinition;
+    /// <summary>The authored SMGP car behind each fixed AMS2 livery. Captured from the pinned pack
+    /// before season-to-season driver reshuffles so display art follows the physical car/seat rather
+    /// than whichever driver currently occupies it. Display-only; never enters staging or the fold.</summary>
+    private readonly IReadOnlyDictionary<string, string> _gridCarArtKeyByLivery;
 
     /// <summary>The career-wide mortality mode (Off / Normal / Hardcore), read from the <c>career</c>
     /// table at create/open. Gates the Normal-only save &amp; reload surface. (Slice 1.)</summary>
@@ -107,23 +111,34 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         _environment = environment;
         CareerFilePath = careerFilePath;
         _seasonId = seasonId;
+        _gridCarArtKeyByLivery = string.Equals(
+                pack.Manifest.CareerStyle,
+                Companion.Core.Smgp.SmgpRules.CareerStyle,
+                StringComparison.Ordinal)
+            ? pack.Entries
+                .GroupBy(entry => entry.Ams2LiveryName, StringComparer.Ordinal)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.First().DriverId,
+                    StringComparer.Ordinal)
+            : new Dictionary<string, string>(StringComparer.Ordinal);
         // The season's real year (carryover-aware): the season row exists by now on both the
         // create and open paths. Fall back to the pack year only if it is somehow absent. Capture
         // the FIRST season's year too, so the driver's current age = created age + seasons since.
         var allSeasons = CareerStore.ReadSeasons(database);
-        // SMGP season 2+ runs a seeded per-season calendar (venues shuffled, fresh weather; Monaco
-        // stays the finale) — Mike's "second year is all random, weather much different". It is
-        // FOLD-INERT (venue + weather are display/staging-only and the grid/points/qualifiers stay
-        // with the round POSITION), so replay — which re-folds the stored raw results and never
-        // applies this — is byte-identical; only what the calendar shows and what the briefing tells
-        // you to set in AMS2 changes. Season 1 / non-SMGP → the pack verbatim.
+        // SMGP season 2+ can run a seeded per-season calendar (venues shuffled, fresh weather;
+        // Monaco stays the finale). Race names and pre-race condition inputs can reach derived rows,
+        // so this is a real fold input: the default-omitted start-state gate selects the SAME pure
+        // transform on live and replay. Legacy careers without the gate keep the authored calendar.
         int seasonOrdinal = 1;
         int seasonIndex = 0;
         for (int i = 0; i < allSeasons.Count; i++)
             if (allSeasons[i].Id == seasonId) { seasonIndex = i; seasonOrdinal = i + 1; break; }
         _seasonOrdinal = seasonOrdinal;
-        var variedPack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed);
         var startSmgp = StateStore.ReadPlayerState(database, seasonId, StateStore.StageStart)?.Smgp;
+        var variedPack = startSmgp?.PerSeasonVariety == true
+            ? Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(pack, seasonOrdinal, masterSeed)
+            : pack;
         if (startSmgp?.StandingsReshuffle == true && seasonIndex > 0 &&
             PreviousFinalStandings(database, allSeasons[seasonIndex - 1], pack) is { } previousFinal)
         {
@@ -600,6 +615,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     CurrentSeatLivery = playerLiveryName,
                     TwoPhasePromotion = true,
                     PerSeasonDnq = Companion.Core.Smgp.SmgpDnqField.HasDnqField(pack),
+                    PerSeasonVariety = true,
                     StandingsReshuffle = true,
                 }
                 : null,
@@ -730,12 +746,24 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             : null;
         var rules = _environment.Rules.Character;
         var projectedCharacter = CharacterProgress.ApplyRespecs(character, PendingRespecs());
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+        {
+            var projectedPlayer = ProjectConfirmedSkillDevelopment(
+                player with { Character = projectedCharacter }, PendingSkillDevelopment());
+            projectedCharacter = projectedPlayer.Character!;
+        }
         var dossier = Companion.Core.Character.CharacterDossier.Build(
             projectedCharacter, player.Level, player.Xp, rules, currentAge,
             player.RaceSuspensionRemaining, player.SeasonEndingInjury, player.Deceased,
-            progressionYear: Pack.Season.Year);
+            progressionYear: Pack.Season.Year,
+            campaignProgressionPlan: player.CampaignProgressionPlan,
+            completedSeasons: player.SeasonsCompleted,
+            masterySkills: _environment.Rules.MasterySkills,
+            racingDnaCatalog: _environment.Rules.RacingDna);
         // Reflect spends made this season but not yet applied at a transition.
-        int pending = PendingSpends().Sum(s => s.Cost);
+        int pending = character.ProgressionVersion == CharacterLevelProgression.Level300Version
+            ? 0
+            : PendingSpends().Sum(s => s.Cost);
         return pending == 0 ? dossier : dossier with { CpUnspent = Math.Max(0, dossier.CpUnspent - pending) };
     }
 
@@ -747,6 +775,215 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private IReadOnlyList<CharacterRespec> PendingRespecs() =>
         ReplayService.ReadCharacterRespecs(_database, _seasonId);
 
+    private IReadOnlyList<CharacterSkillDevelopmentAction> PendingSkillDevelopment(
+        SqliteTransaction? transaction = null) =>
+        ReplayService.ReadCharacterSkillDevelopment(_database, _seasonId, transaction);
+
+    /// <summary>Returns the persisted review state only when this session still owns the latest,
+    /// fully-folded season. In particular, an unresolved final SMGP promotion can have every raw
+    /// round present while the season is not complete and therefore cannot accept development.</summary>
+    private PlayerCareerState SkillPlanReviewState(SqliteTransaction? transaction)
+    {
+        object? latestValue = Scalar(
+            _database.Connection,
+            transaction,
+            "SELECT id FROM season ORDER BY id DESC LIMIT 1;");
+        if (latestValue is null || Convert.ToInt64(latestValue) != _seasonId)
+            throw new InvalidOperationException("This season is no longer the active career review.");
+
+        string? status = Convert.ToString(Scalar(
+            _database.Connection,
+            transaction,
+            "SELECT status FROM season WHERE id = @season;",
+            ("@season", _seasonId)), CultureInfo.InvariantCulture);
+        if (!string.Equals(status, SeasonStatus.Complete, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "Skill plans can only be confirmed from a completed season review.");
+        }
+
+        return StateStore.ReadPlayerState(
+                   _database, _seasonId, StateStore.StageEnd, transaction)
+               ?? throw new InvalidOperationException(
+                   "The completed season has no persisted end-state character to develop.");
+    }
+
+    private static MasteryProgressionFacts SkillPlanFacts(PlayerCareerState player)
+    {
+        var character = player.Character
+            ?? throw new InvalidOperationException("This career has no character to develop.");
+        if (character.ProgressionVersion != CharacterLevelProgression.Level300Version)
+            throw new InvalidOperationException("Atomic skill plans require a progression-v2 character.");
+        var campaign = player.CampaignProgressionPlan
+            ?? throw new InvalidOperationException(
+                "Progression-v2 development requires its pinned campaign progression plan.");
+        campaign.Validate();
+        int available = CharacterProgressionV2Math.SkillPoints(
+            player.Level,
+            player.SeasonsCompleted,
+            campaign.MasterySeason,
+            character.SkillPointsSpent).Available;
+        return new MasteryProgressionFacts(
+            player.Level,
+            available,
+            player.SeasonsCompleted >= campaign.MasterySeason);
+    }
+
+    private PlayerCareerState ProjectConfirmedSkillDevelopment(
+        PlayerCareerState player,
+        IReadOnlyList<CharacterSkillDevelopmentAction> actions,
+        SqliteTransaction? transaction = null)
+    {
+        if (actions.Count == 0)
+            return player;
+        if (ReplayService.ReadCharacterSpends(_database, _seasonId, transaction).Count > 0)
+        {
+            throw new InvalidOperationException(
+                "This pre-release v2 save contains legacy player.statSpend inputs. " +
+                "They cannot be mixed with atomic mastery plans without a deterministic migration.");
+        }
+        return CharacterSkillDevelopmentTransition.Apply(
+            player,
+            actions,
+            _environment.Rules.Character,
+            _environment.Rules.MasterySkills);
+    }
+
+    private static SkillTreeSnapshot MarkPending(
+        SkillTreeSnapshot tree,
+        IEnumerable<string> pendingIds)
+    {
+        var pending = pendingIds.ToHashSet(StringComparer.Ordinal);
+        if (pending.Count == 0)
+            return tree;
+        return tree with
+        {
+            Branches = tree.Branches.Select(branch => branch with
+            {
+                Nodes = branch.Nodes.Select(node => pending.Contains(node.Id)
+                    ? node with { State = SkillNodeState.Pending, LockReason = "" }
+                    : node).ToArray(),
+            }).ToArray(),
+        };
+    }
+
+    private static IEnumerable<CharacterSkillPlanEntry> ActivePendingSkillEntries(
+        IReadOnlyList<CharacterSkillDevelopmentAction> actions)
+    {
+        int start = 0;
+        for (int index = actions.Count - 1; index >= 0; index--)
+        {
+            if (actions[index] is CharacterSkillResetAction)
+            {
+                start = index + 1;
+                break;
+            }
+        }
+
+        return actions.Skip(start)
+            .OfType<CharacterSkillPlanAction>()
+            .SelectMany(action => action.Input.Entries);
+    }
+
+    public SkillPlanPreview PreviewSkillPlan(IReadOnlyList<string> orderedNodeIds)
+    {
+        ArgumentNullException.ThrowIfNull(orderedNodeIds);
+        var player = SkillPlanReviewState(transaction: null);
+        var confirmed = PendingSkillDevelopment();
+        var projected = ProjectConfirmedSkillDevelopment(player, confirmed);
+        var facts = SkillPlanFacts(projected);
+        var input = MasterySkillPlan.Prepare(
+            projected.Character!, orderedNodeIds, facts, _environment.Rules.MasterySkills);
+        var after = MasterySkillPlan.Apply(
+            projected.Character!, input, facts, _environment.Rules.MasterySkills);
+        int availableAfter = checked(facts.AvailableSkillPoints - input.TotalCost);
+        var tree = MasterySkillGraph.Build(
+            after,
+            projected.Level,
+            availableAfter,
+            _environment.Rules.MasterySkills,
+            facts.MasteryCheckpointComplete);
+        var pendingIds = ActivePendingSkillEntries(confirmed).Select(entry => entry.NodeId)
+            .Concat(input.Entries.Select(entry => entry.NodeId));
+        return new SkillPlanPreview
+        {
+            Input = input,
+            ProjectedTree = MarkPending(tree, pendingIds),
+            SkillPointsAfterPlan = availableAfter,
+        };
+    }
+
+    public void ApplySkillPlan(IReadOnlyList<string> orderedNodeIds)
+    {
+        ArgumentNullException.ThrowIfNull(orderedNodeIds);
+        using var transaction = _database.Connection.BeginTransaction();
+        var player = SkillPlanReviewState(transaction);
+        var confirmed = PendingSkillDevelopment(transaction);
+        var projected = ProjectConfirmedSkillDevelopment(player, confirmed, transaction);
+        var facts = SkillPlanFacts(projected);
+        var input = MasterySkillPlan.Prepare(
+            projected.Character!, orderedNodeIds, facts, _environment.Rules.MasterySkills);
+
+        JournalStore.Append(
+            _database,
+            _seasonId,
+            round: null,
+            new JournalEvent
+            {
+                Phase = JournalPhases.PlayerSkillPlan,
+                Entity = "player",
+                DeltaJson = JsonSerializer.Serialize(input, CoreJson.Options),
+                Cause = "development",
+            },
+            NowUtc(),
+            transaction);
+        transaction.Commit();
+    }
+
+    public SkillResetPreview? PreviewSkillReset()
+    {
+        if (_environment.RulesDirectory is null || !SeasonComplete)
+            return null;
+        var current = CurrentPlayerState();
+        if (current?.Character?.ProgressionVersion != CharacterLevelProgression.Level300Version)
+            return null;
+
+        var player = SkillPlanReviewState(transaction: null);
+        var projected = ProjectConfirmedSkillDevelopment(
+            player, PendingSkillDevelopment());
+        return CharacterSkillReset.Preview(
+            projected,
+            _environment.Rules.Character,
+            _environment.Rules.MasterySkills);
+    }
+
+    public void ApplySkillReset()
+    {
+        using var transaction = _database.Connection.BeginTransaction();
+        var player = SkillPlanReviewState(transaction);
+        var projected = ProjectConfirmedSkillDevelopment(
+            player, PendingSkillDevelopment(transaction), transaction);
+        var input = CharacterSkillReset.Prepare(
+            projected,
+            _environment.Rules.Character,
+            _environment.Rules.MasterySkills);
+
+        JournalStore.Append(
+            _database,
+            _seasonId,
+            round: null,
+            new JournalEvent
+            {
+                Phase = JournalPhases.PlayerSkillReset,
+                Entity = "player",
+                DeltaJson = JsonSerializer.Serialize(input, CoreJson.Options),
+                Cause = "development",
+            },
+            NowUtc(),
+            transaction);
+        transaction.Commit();
+    }
+
     /// <summary>The rules-backed skill-tree snapshot, including this season's pending development
     /// inputs so a just-bought node immediately projects as owned.</summary>
     public SkillTreeSnapshot? SkillTree()
@@ -757,45 +994,53 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (player?.Character is not { } character)
             return null;
         var rules = _environment.Rules.Character;
+
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+        {
+            var actions = PendingSkillDevelopment();
+            var projectedPlayer = ProjectConfirmedSkillDevelopment(player, actions);
+            var facts = SkillPlanFacts(projectedPlayer);
+            var tree = MasterySkillGraph.Build(
+                projectedPlayer.Character!,
+                projectedPlayer.Level,
+                facts.AvailableSkillPoints,
+                _environment.Rules.MasterySkills,
+                facts.MasteryCheckpointComplete);
+            return MarkPending(
+                tree,
+                ActivePendingSkillEntries(actions)
+                    .Select(entry => entry.NodeId));
+        }
+
         var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
         projected = CharacterProgress.ApplyAll(projected, PendingSpends(), rules);
         var snapshot = Companion.Core.Character.SkillTree.Build(
             projected, player.Level, AvailableCharacterCp(), rules);
-        if (character.ProgressionVersion != CharacterLevelProgression.Level300Version)
-            return snapshot;
-
-        return snapshot with
-        {
-            Branches = snapshot.Branches.Select(branch => branch with
-            {
-                Nodes = branch.Nodes.Select(node =>
-                {
-                    if (node.Kind != "perk" || node.State != SkillNodeState.Unlockable ||
-                        !rules.TryGetPerk(node.Id, out var perk) ||
-                        !PlayerCarScalarPolicy.HasConditionalCarScalar(perk))
-                    {
-                        return node;
-                    }
-                    return node with
-                    {
-                        State = SkillNodeState.Locked,
-                        LockReason = "Conditional CAR physics needs a persisted pre-race condition",
-                    };
-                }).ToArray(),
-            }).ToArray(),
-        };
+        return snapshot;
     }
 
-    /// <summary>Character points available to spend right now: the folded pool minus this season's
-    /// pending spends. 0 when the career has no character.</summary>
+    /// <summary>Version-selected development points available right now: the folded pool minus this
+    /// season's pending spends. 0 when the career has no character.</summary>
     public int AvailableCharacterCp()
     {
         var player = CurrentPlayerState();
         if (_environment.RulesDirectory is null || player?.Character is not { } character)
             return 0;
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+        {
+            var projectedPlayer = ProjectConfirmedSkillDevelopment(
+                player, PendingSkillDevelopment());
+            return SkillPlanFacts(projectedPlayer).AvailableSkillPoints;
+        }
         var projected = CharacterProgress.ApplyRespecs(character, PendingRespecs());
-        return CharacterProgress.AvailableCp(projected, player.Level, _environment.Rules.Character)
-               - PendingSpends().Sum(s => s.Cost);
+        int available = CharacterProgress.AvailableSkillPoints(
+            projected,
+            player.Level,
+            _environment.Rules.Character,
+            player.SeasonsCompleted,
+            player.CampaignProgressionPlan);
+        int afterPending = available - PendingSpends().Sum(s => s.Cost);
+        return afterPending;
     }
 
     /// <summary>Records a between-season development spend (character depth 4): raise a stat one step
@@ -809,6 +1054,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (player?.Character is not { } character)
             throw new InvalidOperationException("This career has no character to develop.");
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+        {
+            throw new InvalidOperationException(
+                "Progression-v2 development uses PreviewSkillPlan and ApplySkillPlan.");
+        }
         var rules = _environment.Rules.Character;
         var pendingSpends = PendingSpends();
         var projectedCharacter = CharacterProgress.ApplyRespecs(character, PendingRespecs());
@@ -933,6 +1183,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (_environment.RulesDirectory is null || player?.Character is not { } character)
             return [];
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+            return [];
         int available = AvailableCharacterCp();
         if (available <= 0)
             return [];
@@ -971,6 +1223,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (player?.Character is null)
             return 0;
+        if (player.Character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+            return 0;
         var rules = _environment.Rules.Character;
         int spent = JournalStore.ReadAll(_database).Count(row =>
             string.Equals(row.Phase, JournalPhases.PlayerRespec, StringComparison.Ordinal));
@@ -985,6 +1239,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var player = CurrentPlayerState();
         if (player?.Character is not { } character)
             throw new InvalidOperationException("This career has no character to respec.");
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version)
+        {
+            throw new InvalidOperationException(
+                "Version-2 skill resets spend XP; legacy milestone-token respecs are not supported.");
+        }
         if (RespecTokensAvailable() <= 0)
             throw new InvalidOperationException("No respec token is available.");
 
@@ -1100,6 +1359,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 Date = round.Date,
                 RealVenue = track.RealVenue is { Length: > 0 } venue ? venue : TrackName(track.Id),
                 Ams2TrackName = TrackName(track.Id),
+                TrackId = track.Id,
                 Laps = round.Laps,
                 Kind = kind,
                 UnusedAlternateName = unusedAlternate,
@@ -1163,6 +1423,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             : seats;
     }
 
+    /// <summary>Display-only authored nationality. The profile is the same folded start/current
+    /// identity replay reads; no grid, rating, or staging input is derived from this accessor.</summary>
+    public string? CurrentPlayerCountryCode() => CurrentCharacterProfile()?.CountryCode;
+
+    /// <summary>Display-only car-art identity for a fixed SMGP livery. The lookup is captured from
+    /// the pinned authored pack before runtime driver reshuffles, so promotions and later seasons
+    /// retain the correct physical car. Null outside SMGP or for an unknown/custom livery.</summary>
+    public string? GridCarArtKeyForLivery(string ams2LiveryName) =>
+        _gridCarArtKeyByLivery.GetValueOrDefault(ams2LiveryName);
+
     /// <summary>The sim's expected finish for the player this round, resolved EXACTLY as the fold's
     /// grid resolution (2-arg resolve with the player seat + character patch), so the Setup Gamble
     /// briefing shows the same number the bet is staked against. Null when the season is complete or
@@ -1183,7 +1453,15 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             return null; // the player's livery matches no entry this round
         }
         int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
-        return playerIndex < 0 ? null : SeatStrengthModel.ExpectedFinish(grid, playerIndex);
+        var player = CurrentPlayerState();
+        int modelVersion = player?.Character?.ExpectationModelVersion ?? 0;
+        double priorOpi = player?.Opi ?? 0.0;
+        var teamTiers = StateStore.ReadTeamStates(_database, _seasonId, StateStore.StageStart)
+            .ToDictionary(team => team.TeamId, team => team.Tier, StringComparer.Ordinal);
+        return playerIndex < 0
+            ? null
+            : SeatStrengthModel.ExpectedFinish(
+                grid, playerIndex, priorOpi, modelVersion, teamTiers);
     }
 
     /// <summary>What skin every car on the current round's grid will show — the read-only skin
@@ -1369,7 +1647,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// career). ONLY the "sim's view" resolves opt in (the shown expected finish + slider), so they
     /// equal what the fold scored. STAGING keeps this false — <c>GridStager.Build</c> applies the same
     /// nudge to the written AMS2 file, so applying it here too would double-count.</param>
-    private GridPlan ResolveGrid(int round, bool applyWeekendForm = false)
+    private GridPlan ResolveGrid(
+        int round,
+        bool applyWeekendForm = false,
+        bool applyPlayerCharacter = true)
     {
         // Resolve with the career's chosen field (v0.6.0) so the DISPLAY + staged AI file match what
         // the fold scores. Null selection = whole pack (byte-identical).
@@ -1398,13 +1679,17 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 {
                     Ams2LiveryName = smgp.CurrentSeatLivery,
                     DriverId = _playerDriverId,
-                    Character = CurrentCharacterPatch(),
+                    Character = applyPlayerCharacter ? CurrentCharacterPatch(round) : null,
                 },
                 CurrentGridSelection(), applyWeekendForm: applyWeekendForm);
         }
 
         return RoundGridResolver.Resolve(Pack, round,
-            new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+            new PlayerSeat
+            {
+                Ams2LiveryName = _playerLiveryName,
+                Character = applyPlayerCharacter ? CurrentCharacterPatch(round) : null,
+            },
             CurrentGridSelection(), applyWeekendForm: applyWeekendForm,
             seatOverrides: smgp?.AiSeatOverrides is { Count: > 0 } overrides ? overrides : null,
             playerSeatOverride: smgp?.CurrentSeatLivery);
@@ -1513,10 +1798,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     {
         if (!string.Equals(Pack.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal))
             return null;
-        // CurrentSmgpState() reads the latest folded state REGARDLESS of completion (unlike
-        // CurrentSmgpBriefing, which returns null once complete), so Titles/CareerOver are available at
-        // the season-17 fold moment. SeasonComplete gates to the summit fold, not mid-season.
-        if (!SeasonComplete || CurrentSmgpState() is not { } state)
+        // The current season's title is banked by SeasonEndPipeline in stage=end, AFTER the final
+        // round state. CurrentPlayerState() deliberately prefers that authoritative end state once
+        // the season is complete, so a perfect season-17 run sees all 17 titles and unlocks ultimate.jpg.
+        // Its normal round/start fallbacks keep an older completed career without stage=end readable.
+        if (!SeasonComplete || CurrentPlayerState()?.Smgp is not { } state)
             return null;
         if (!Companion.Core.Smgp.SmgpRules.CampaignComplete(_seasonOrdinal, state.CareerOver))
             return null;
@@ -1556,8 +1842,34 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// the panel never renders for a normal career. Vocabulary per docs/dev/smgp-design.md.</summary>
     public SmgpBriefingModel? CurrentSmgpBriefing()
     {
-        if (CurrentSmgpState() is not { } state || SeasonComplete)
+        if (CurrentSmgpState() is not { } state)
             return null;
+
+        // A floor knock-out on the authored final round is both SeasonComplete and terminal. Keep
+        // projecting the existing briefing bind so reopening that career still reaches the fired ending;
+        // ordinary completed SMGP seasons remain briefing-free and proceed to review/finale as before.
+        if (SeasonComplete)
+        {
+            if (!state.CareerOver)
+                return null;
+
+            int terminalRound = Math.Max(1, MaxAppliedRound);
+            var terminalPackRound = Pack.Season.Rounds.FirstOrDefault(r => r.Round == terminalRound);
+            return new SmgpBriefingModel
+            {
+                RoundHeader = $"{(terminalPackRound?.Name ?? $"Round {terminalRound}").ToUpperInvariant()} · ROUND {terminalRound}",
+                SeasonLine = "SEASON  -",
+                CareerLine = "",
+                AdviceLine = _environment.Rules.SmgpPitCrewAdvice.Line(
+                    terminalPackRound?.Name ?? "", QuoteSeed(terminalPackRound?.Name ?? "round", terminalRound)),
+                Titles = state.Titles,
+                SeasonOrdinal = _seasonOrdinal,
+                SeasonsTotal = Companion.Core.Smgp.SmgpRules.CampaignSeasons,
+                CareerOver = true,
+                ForcedChallengerDriverId = null,
+                Rivals = [],
+            };
+        }
 
         int round = CurrentRoundNumber;
         var packRound = Pack.Season.Rounds.FirstOrDefault(r => r.Round == round);
@@ -2891,30 +3203,151 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private bool CurrentFormAware() =>
         _formAware ??= StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.FormAware ?? false;
 
-    private PlayerCharacterPatch? _characterPatch;
-    private bool _characterPatchResolved;
+    private CharacterProfile? _characterProfile;
+    private bool _characterProfileResolved;
 
-    /// <summary>The career's character resolved into a grid patch, or null when it has no character
-    /// (or no character rules are loaded). Invariant across the career (perk ids + stats are fixed
-    /// at creation), so it is computed once and cached.</summary>
-    private PlayerCharacterPatch? CurrentCharacterPatch()
+    private CharacterProfile? CurrentCharacterProfile()
     {
-        if (_characterPatchResolved)
-            return _characterPatch;
-        _characterPatchResolved = true;
-
-        var character = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart)?.Character;
-        if (character is not null && _environment.RulesDirectory is not null)
+        if (!_characterProfileResolved)
         {
-            var rules = _environment.Rules.Character;
-            _characterPatch = new PlayerCharacterPatch
+            var start = StateStore.ReadPlayerState(
+                _database, _seasonId, StateStore.StageStart);
+            _characterProfile = start?.Character;
+
+            // Version 1 had no fallback for packs whose team performance scalars were all neutral,
+            // which let a Level-D SMGP car inherit a front-running P3 benchmark. An UNSTARTED career
+            // has no derived race rows to preserve, so upgrade its input profile in place. Once any
+            // result exists the version is immutable and replay keeps the exact historical formula.
+            if (start is not null &&
+                _characterProfile?.ProgressionVersion == CharacterLevelProgression.Level300Version &&
+                _characterProfile.ExpectationModelVersion == SeatStrengthModel.TeamAndPerformanceVersion &&
+                MaxAppliedRound == 0)
             {
-                Profile = character,
-                Modifiers = PerkResolver.Resolve(character, rules),
-                Rules = rules,
-            };
+                _characterProfile = _characterProfile with
+                {
+                    ExpectationModelVersion = CharacterProfile.CurrentExpectationModelVersion,
+                };
+                StateStore.UpsertPlayerState(
+                    _database,
+                    _seasonId,
+                    StateStore.StageStart,
+                    start with { Character = _characterProfile });
+            }
+            _characterProfileResolved = true;
         }
-        return _characterPatch;
+        return _characterProfile;
+    }
+
+    private bool CurrentCharacterRequiresRoundConditions()
+    {
+        var character = CurrentCharacterProfile();
+        return character?.ProgressionVersion == CharacterLevelProgression.Level300Version
+            && _environment.RulesDirectory is not null
+            && PlayerCarScalarPolicy.RequiresRoundConditions(
+                character,
+                _environment.Rules.Character,
+                _environment.Rules.MasterySkills);
+    }
+
+    private PlayerRoundConditionsInput? RoundConditionsForGrid(int round)
+    {
+        var stored = PlayerRoundConditionsStore.ReadRound(_database, _seasonId, Pack, round);
+        if (stored is not null)
+            return stored;
+        if (!CurrentCharacterRequiresRoundConditions())
+            return null;
+
+        bool? inferredWet = PlayerRoundConditions.TryInferIsWet(Pack, round);
+        if (inferredWet is null)
+            throw new InvalidOperationException(
+                $"Round {round} has mixed, dynamic, missing, or unknown race weather. " +
+                "Declare whether the player-car setup is wet or dry before staging this grid.");
+        return PlayerRoundConditions.Prepare(Pack, round, inferredWet.Value);
+    }
+
+    private PlayerRoundConditionsInput? EnsureRoundConditionsPersisted(int round)
+    {
+        if (!CurrentCharacterRequiresRoundConditions())
+            return PlayerRoundConditionsStore.ReadRound(_database, _seasonId, Pack, round);
+        var prepared = RoundConditionsForGrid(round)
+            ?? throw new InvalidOperationException(
+                $"Round {round} needs a pre-race player-car weather declaration.");
+        return PlayerRoundConditionsStore.Declare(
+            _database, _seasonId, Pack, prepared, NowUtc());
+    }
+
+    public bool? CurrentRoundIsWet()
+    {
+        if (SeasonComplete)
+            return null;
+        int round = CurrentRoundNumber;
+        return PlayerRoundConditionsStore.ReadRound(_database, _seasonId, Pack, round)?.IsWet
+            ?? PlayerRoundConditions.TryInferIsWet(Pack, round);
+    }
+
+    public bool CurrentRoundNeedsWeatherDeclaration()
+    {
+        if (SeasonComplete || !CurrentCharacterRequiresRoundConditions())
+            return false;
+        int round = CurrentRoundNumber;
+        return PlayerRoundConditionsStore.ReadRound(_database, _seasonId, Pack, round) is null
+            && PlayerRoundConditions.TryInferIsWet(Pack, round) is null;
+    }
+
+    public void DeclareCurrentRoundWeather(bool isWet)
+    {
+        if (SeasonComplete)
+            throw new InvalidOperationException("The season is complete — there is no round to declare.");
+        var character = CurrentCharacterProfile();
+        if (character?.ProgressionVersion != CharacterLevelProgression.Level300Version)
+            throw new InvalidOperationException(
+                "Pre-race player-car weather declarations belong to progression-v2 characters.");
+        PlayerRoundConditionsStore.Declare(
+            _database,
+            _seasonId,
+            Pack,
+            PlayerRoundConditions.Prepare(Pack, CurrentRoundNumber, isWet),
+            NowUtc());
+    }
+
+    /// <summary>The career's character resolved for one exact round. The profile is season-stable,
+    /// but wet/dry and long/short CAR effects are not, so only the profile is cached; modifiers are
+    /// re-resolved from the typed round facts on every grid projection.</summary>
+    private PlayerCharacterPatch? CurrentCharacterPatch(int round)
+    {
+        var character = CurrentCharacterProfile();
+        if (character is null || _environment.RulesDirectory is null)
+            return null;
+
+        var rules = _environment.Rules.Character;
+        var conditions = RoundConditionsForGrid(round);
+        var active = conditions is null
+            ? new HashSet<string>(StringComparer.Ordinal)
+            : new HashSet<string>(PlayerRoundConditions.ActiveConditions(conditions), StringComparer.Ordinal);
+        if (_environment.Rules.AgingCurves.TryForYear(Pack.Season.Year) is { } curve)
+        {
+            int age = _playerFirstSeasonAge + (_seasonYear - _firstSeasonYear);
+            if (age < curve.PeakAgeStart)
+            {
+                active.Add("ageLtPeak");
+                active.Add("ageBeforePeak");
+            }
+            else
+            {
+                active.Add("ageGtePeak");
+                active.Add("ageAtOrAfterPeak");
+            }
+        }
+
+        return new PlayerCharacterPatch
+        {
+            Profile = character,
+            Modifiers = CharacterModifierResolver.Resolve(
+                character, rules, _environment.Rules.MasterySkills, active),
+            Rules = rules,
+            MasterySkills = _environment.Rules.MasterySkills,
+            RoundConditions = conditions,
+        };
     }
 
     /// <summary>The player's chosen character name for this season, or null when there is none — the
@@ -2926,6 +3359,13 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     }
 
     // ---------- staging ----------
+
+    /// <summary>
+    /// OS/display-only handoff to the machine launcher configured by <see cref="CareerEnvironment"/>.
+    /// Staging remains a separate explicit step in the briefing ViewModel, so a launch is never
+    /// attempted after a failed or unconfirmed stage.
+    /// </summary>
+    public Ams2LaunchResult LaunchAms2() => _environment.Ams2Launcher.Launch();
 
     public StageOutcome StageCurrentGrid() => StageCurrentGrid(force: false);
 
@@ -3129,9 +3569,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         GridPlan plan;
         try
         {
+            // Commit the versioned player-car condition INPUT before the first AMS2 filesystem
+            // action. A failed/force-gated stage leaves the same immutable declaration behind, so
+            // retrying is idempotent and can never restage different conditional physics.
+            EnsureRoundConditionsPersisted(roundNumber);
             plan = ResolveGrid(roundNumber);
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex) when (
+            ex is InvalidOperationException or InvalidDataException or JsonException)
         {
             return Failed(messages, ex.Message);
         }
@@ -3352,7 +3797,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             try
             {
                 var fullField = RoundGridResolver.Resolve(Pack, roundNumber,
-                    new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch() },
+                    new PlayerSeat { Ams2LiveryName = _playerLiveryName, Character = CurrentCharacterPatch(roundNumber) },
                     CurrentGridSelection(), capToGridSize: false);
                 var byLivery = fullField.Seats
                     .GroupBy(s => s.Ams2LiveryName, StringComparer.Ordinal)
@@ -3621,6 +4066,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
     public ConfirmModel Preview(ResultDraft draft)
     {
+        if (_careerFileDeleted)
+            throw new InvalidOperationException(
+                "This career has ended - the driver was killed (Hardcore) and the save was deleted.");
+        var beforePlayer = CurrentPlayerState();
+        if (beforePlayer?.Deceased == true)
+            throw new InvalidOperationException(
+                "The driver has died - the career is over. In Normal mode, restore a save to continue.");
+        if (beforePlayer?.Smgp?.CareerOver == true)
+            throw new InvalidOperationException(
+                "The SMGP career is over - a rival took the last seat at the LEVEL D floor.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to score.");
 
@@ -3693,7 +4148,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     private RoundFoldResult PreviewFold(RoundResultEnvelope envelope, int roundNumber)
     {
         string nowUtc = NowUtc();
+        // Resolve every condition read before opening the rollback transaction. These helpers read
+        // the character/start state and the provenance journal; issuing either command without the
+        // ambient transaction after BeginTransaction makes Microsoft.Data.Sqlite reject the preview.
+        // Declare below revalidates the prepared input inside the transaction before staging it.
+        var preparedRoundConditions = CurrentCharacterRequiresRoundConditions()
+            ? RoundConditionsForGrid(roundNumber)
+                ?? throw new InvalidOperationException(
+                    $"Round {roundNumber} needs a pre-race player-car weather declaration.")
+            : null;
+
         using var transaction = _database.Connection.BeginTransaction();
+        if (preparedRoundConditions is not null)
+        {
+            PlayerRoundConditionsStore.Declare(
+                _database, _seasonId, Pack, preparedRoundConditions, nowUtc, transaction);
+        }
         ResultStore.Append(
             _database, _seasonId, roundNumber,
             JsonSerializer.Serialize(envelope, CoreJson.Options), nowUtc, "manual", transaction);
@@ -3729,6 +4199,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
         ValidateDraft(draft, roundNumber);
+
+        // A caller may enter a result without pressing the stage button. Persist the same pure
+        // candidate now (after draft validation, before the raw-result transaction); ambiguous
+        // weather still requires the explicit declaration seam and fails closed.
+        EnsureRoundConditionsPersisted(roundNumber);
 
         var envelope = BuildEnvelope(draft, roundNumber, packRound);
         string nowUtc = NowUtc();
@@ -3793,6 +4268,14 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         double slider = draft.SliderUsed
             ?? CurrentSliderRecommendation()
             ?? ReplayService.NeutralSlider;
+        var roundConditions = PlayerRoundConditionsStore.ReadRound(
+            _database, _seasonId, Pack, roundNumber)
+            ?? (CurrentCharacterRequiresRoundConditions() ? RoundConditionsForGrid(roundNumber) : null);
+        if (roundConditions is not null && draft.IsWet != roundConditions.IsWet)
+            throw new InvalidOperationException(
+                $"Round {roundNumber} was staged as " +
+                $"{(roundConditions.IsWet ? "wet" : "dry")}; the result cannot change " +
+                "the player-car physics after the race.");
         return new RoundResultEnvelope
         {
             Result = ToRoundResult(draft, roundNumber, packRound),
@@ -3800,7 +4283,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             PlayerDnfCause = PlayerDnfCauseFrom(draft),
             PlayerAccidentSeverity = PlayerAccidentSeverityFrom(draft),
             QualifyingOrder = draft.QualifyingOrder,
-            IsWet = draft.IsWet,
+            IsWet = roundConditions?.IsWet ?? draft.IsWet,
             CalledShot = draft.CalledShot,
             SmgpRival = draft.SmgpRival,
         };
@@ -3849,6 +4332,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             PlayerDriverId = _playerDriverId,
             PlayerAge = _playerFirstSeasonAge,
             CharacterRules = rules.Character,
+            MasterySkills = rules.MasterySkills,
         };
     }
 
@@ -4078,6 +4562,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // applied identically on the live and replay paths so the evolving driver re-derives.
         var spends = ReplayService.ReadCharacterSpends(_database, _seasonId);
         var respecs = ReplayService.ReadCharacterRespecs(_database, _seasonId);
+        var skillDevelopment = ReplayService.ReadCharacterSkillDevelopment(_database, _seasonId);
 
         if (next.IsCarryover)
         {
@@ -4087,7 +4572,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             string? livery = EraTransition.ResolveSeatLivery(Pack, teamId) ?? playerEnd.LiveryName;
             var startStates = SeasonRollover.Derive(
                 playerEnd, driversEnd, teamsEnd, teamId, livery,
-                spends, simInputs.CharacterRules, respecs);
+                spends, simInputs.CharacterRules, respecs,
+                skillPlans: null,
+                masterySkills: simInputs.MasterySkills,
+                skillDevelopment: skillDevelopment);
             CareerStore.StartCarryoverSeason(
                 _database, startStates, next.SeasonYear,
                 Pack.Manifest.PackId, Pack.Manifest.Version, NowUtc());
@@ -4109,7 +4597,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // Drive the boundary off the real SEASON years: after a carryover the finished season's
             // year runs ahead of this pack's nominal year, and the transition must start from it.
             fromYearOverride: _seasonYear, toYearOverride: next.SeasonYear,
-            respecs: respecs);
+            respecs: respecs,
+            skillPlans: null,
+            masterySkills: simInputs.MasterySkills,
+            skillDevelopment: skillDevelopment);
         if (plan.ValidationErrors.Count > 0)
             throw new InvalidOperationException(string.Join(" ", plan.ValidationErrors));
 
@@ -5436,7 +5927,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         // the player EXCLUDED (DNS). The order is generated now and STORED (so the championship advances
         // for the AI); the fold reads the PlayerDidNotStart flag to keep the player OPI-neutral + heal.
         var aiOrder = AutoRaceModel.ClassifiedOrder(
-            ResolveGrid(roundNumber).Seats, MasterSeedU, Pack.Season.Year, roundNumber);
+            ResolveGrid(roundNumber, applyPlayerCharacter: false).Seats,
+            MasterSeedU, Pack.Season.Year, roundNumber);
         var draft = new ResultDraft
         {
             Classified = aiOrder,

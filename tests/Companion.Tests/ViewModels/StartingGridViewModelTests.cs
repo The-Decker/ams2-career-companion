@@ -39,14 +39,42 @@ public sealed class StartingGridViewModelTests
 
         var vm = new StartingGridViewModel(
             grid, RoundGridResolver.SyntheticPlayerDriverId, sessionTitle: null,
-            conditions: null, playerCarArtDriverId: "driver.park_arai");
+            conditions: null, playerCarArtDriverId: "driver.park_arai",
+            playerCountryFlagKey: "country.brazil");
 
         var player = vm.Slots.Single(s => s.IsPlayer);
         Assert.Equal("driver.park_arai", player.CarKey);            // the car they drive, not the synthetic id
         Assert.Equal("player.lares", player.PortraitKey);           // still the team-coloured player image
+        Assert.Equal("country.brazil", player.CountryFlagKey);     // player country-keyed Brazil flag
 
         var ai = vm.Slots.Single(s => !s.IsPlayer);
         Assert.Equal("driver.ayrton_senna", ai.CarKey);            // every other seat keys off its own driver
+        Assert.Equal("driver.ayrton_senna", ai.CountryFlagKey);    // AI keeps existing driver-key flag
+    }
+
+    [Fact]
+    public void SmgpCarArt_FollowsTheFixedLivery_WhenDriversReshuffle()
+    {
+        var grid = new[]
+        {
+            // Park moved into Asselin's fixed Madonna #2 car for a later season.
+            Seat("driver.park_arai", "team.madonna", "Madonna #2 A. Asselin", isPlayer: false),
+            // The synthetic player now occupies Park's authored Lares #23 car.
+            Seat(RoundGridResolver.SyntheticPlayerDriverId, "team.lares", "Lares #23 P. Arai", isPlayer: true),
+        };
+        var carArtByLivery = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["Madonna #2 A. Asselin"] = "driver.alain_asselin",
+            ["Lares #23 P. Arai"] = "driver.park_arai",
+        };
+
+        var vm = new StartingGridViewModel(
+            grid, RoundGridResolver.SyntheticPlayerDriverId, sessionTitle: null,
+            playerCarArtDriverId: "driver.wrong_runtime_donor",
+            carArtKeyByLivery: carArtByLivery);
+
+        Assert.Equal("driver.alain_asselin", vm.Slots.Single(s => !s.IsPlayer).CarKey);
+        Assert.Equal("driver.park_arai", vm.Slots.Single(s => s.IsPlayer).CarKey);
     }
 
     [Fact]
@@ -74,6 +102,7 @@ public sealed class StartingGridViewModelTests
 
         Assert.False(vm.HasDnq);
         Assert.Empty(vm.Dnq);
+        Assert.Null(vm.Slots.Single().CountryFlagKey); // no donor flag for a legacy player
     }
 
     [Fact]

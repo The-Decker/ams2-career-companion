@@ -15,7 +15,9 @@ public sealed class StartingGridViewModel : ObservableObject
     public StartingGridViewModel(
         IReadOnlyList<GridSeat> orderedGrid, string playerDriverId, string? sessionTitle,
         GridConditions? conditions = null, string? playerCarArtDriverId = null,
-        IReadOnlyList<StartingGridDnq>? dnq = null)
+        IReadOnlyList<StartingGridDnq>? dnq = null,
+        string? playerCountryFlagKey = null,
+        IReadOnlyDictionary<string, string>? carArtKeyByLivery = null)
     {
         Title = string.IsNullOrEmpty(sessionTitle) ? "Starting grid" : $"Starting grid  ·  {sessionTitle}";
         Conditions = conditions ?? GridConditions.Unknown;
@@ -31,12 +33,28 @@ public sealed class StartingGridViewModel : ObservableObject
             // The player's own card shows the team-coloured player image (like the Season's Grid);
             // every other card shows the seat driver's portrait.
             PortraitKey: seat.IsPlayer ? GridSeatChoice.PlayerImageKey(seat.TeamId) : seat.DriverId,
-            // The car preview keys off the seat's driver — EXCEPT the player, whose distinct-driver id
-            // (driver.player-entrant, the SMGP clean-swap synthetic) has no car art, so their card
-            // rendered a blank car. The player physically drives the car they took over, so key their
-            // preview to that car's authored driver (passed in) — the exact team car they chose. Falls
-            // back to the seat id (a custom own-entrant livery with no authored car still shows nothing).
-            CarKey: seat.IsPlayer ? (playerCarArtDriverId ?? seat.DriverId) : seat.DriverId)).ToList();
+            // SMGP car art follows the fixed livery/seat, not the active driver: later-season
+            // reshuffles move drivers between physical cars. The existing player override remains
+            // the fallback for legacy sessions, then the active driver id for ordinary grids.
+            CarKey: ResolveCarKey(seat, playerCarArtDriverId, carArtKeyByLivery))
+        {
+            // AI flags retain their authored driver-keyed art. The player uses the immutable
+            // country selection; a legacy profile has no key and therefore shows no false donor flag.
+            CountryFlagKey = seat.IsPlayer ? playerCountryFlagKey : seat.DriverId,
+        }).ToList();
+    }
+
+    private static string ResolveCarKey(
+        GridSeat seat,
+        string? playerCarArtDriverId,
+        IReadOnlyDictionary<string, string>? carArtKeyByLivery)
+    {
+        if (carArtKeyByLivery is not null &&
+            carArtKeyByLivery.TryGetValue(seat.Ams2LiveryName, out string? fixedCarKey))
+        {
+            return fixedCarKey;
+        }
+        return seat.IsPlayer ? (playerCarArtDriverId ?? seat.DriverId) : seat.DriverId;
     }
 
     /// <summary>Heading — "Starting grid" plus the session label on a multi-race weekend.</summary>
@@ -81,6 +99,10 @@ public sealed record StartingGridSlot(
     int Position, string DriverId, string DriverName, string TeamId, string TeamName, string? Number,
     bool IsPlayer, string PortraitKey, string? CarKey)
 {
+    /// <summary>Key under <c>data/ams2/smgp/flags</c>. AI remains driver-keyed; the player receives
+    /// the country-keyed asset for their selected nationality. Null hides the flag for legacy players.</summary>
+    public string? CountryFlagKey { get; init; }
+
     public string DriverNameUpper => DriverName.ToUpperInvariant();
     public string TeamNameUpper => TeamName.ToUpperInvariant();
 
@@ -92,6 +114,10 @@ public sealed record StartingGridSlot(
 
     /// <summary>The team's accent colour ("#RRGGBB") — the position box, name accent and card edge.</summary>
     public string TeamColor => TeamPalette.For(TeamId);
+
+    /// <summary>The team's second livery colour. It equals <see cref="TeamColor"/> for a
+    /// single-colour/unmapped team, keeping the starting-grid binding contract branch-free.</summary>
+    public string TeamSecondaryColor => TeamPalette.SecondaryFor(TeamId);
 }
 
 /// <summary>The race-day conditions the starting-grid bars display (all display-only). Lap distance

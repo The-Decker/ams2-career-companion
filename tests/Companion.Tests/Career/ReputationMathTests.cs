@@ -1,4 +1,5 @@
 using Companion.Core.Career;
+using Companion.Core.Character;
 
 namespace Companion.Tests.Career;
 
@@ -43,6 +44,61 @@ public class ReputationMathTests
     }
 
     [Fact]
+    public void LegacyV0RoundRateRetainsShippedArithmeticAndIgnoresMasteryOnlyFields()
+    {
+        var v0 = new PlayerPerkModifiers
+        {
+            RepRoundMult = 2.0,
+            RepRoundGainMult = 0.10,
+            RepRoundSignedMult = 0.10,
+        };
+
+        Assert.Equal(1.0, ReputationMath.RoundDelta(7, 5, null, false, 5), 12);
+        Assert.Equal(2.0, ReputationMath.RoundDelta(7, 5, null, false, 5, v0), 12);
+        Assert.Equal(-2.0, ReputationMath.RoundDelta(3, 5, null, false, 5, v0), 12);
+    }
+
+    [Fact]
+    public void ActiveMasteryRoundRate_AppliesGainOnlyToPositiveDeltaAndSignedRateToBothSigns()
+    {
+        var active = new PlayerPerkModifiers
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            RepRoundGainMult = 1.20,
+            RepRoundSignedMult = 0.90,
+        };
+
+        Assert.Equal(1.08, ReputationMath.RoundDelta(7, 5, null, false, 5, active), 12);
+        Assert.Equal(-0.90, ReputationMath.RoundDelta(3, 5, null, false, 5, active), 12);
+    }
+
+    [Fact]
+    public void ActiveMasteryRoundRate_ClampsCombinedRateBeforeMarketability()
+    {
+        var upper = new PlayerPerkModifiers
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            RepRoundMult = 1.50,
+            RepRoundGainMult = 1.50,
+            RepRoundSignedMult = 1.50,
+            Marketability = 1.0,
+        };
+        var lower = new PlayerPerkModifiers
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            RepRoundMult = 0.50,
+            RepRoundGainMult = 0.50,
+            RepRoundSignedMult = 0.50,
+        };
+
+        // Rate caps at 1.40 before the 1.25 marketability factor.
+        Assert.Equal(1.75, ReputationMath.RoundDelta(7, 5, null, false, 5, upper), 12);
+        Assert.Equal(-1.75, ReputationMath.RoundDelta(3, 5, null, false, 5, upper), 12);
+        Assert.Equal(0.60, ReputationMath.RoundDelta(7, 5, null, false, 5, lower), 12);
+        Assert.Equal(-0.60, ReputationMath.RoundDelta(3, 5, null, false, 5, lower), 12);
+    }
+
+    [Fact]
     public void SeasonBonusByChampionshipPosition()
     {
         Assert.Equal(10.0, ReputationMath.SeasonDelta(1, 5), 12);
@@ -54,6 +110,26 @@ public class ReputationMathTests
 
         // Era/tier scaling applies at season end too.
         Assert.Equal(20.0, ReputationMath.SeasonDelta(1, 1), 12);
+    }
+
+    [Fact]
+    public void ActiveMasterySeasonRateClampsWhileLegacyV0DoesNot()
+    {
+        var upper = new PlayerPerkModifiers
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            RepSeasonMult = 2.0,
+        };
+        var lower = new PlayerPerkModifiers
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            RepSeasonMult = 0.20,
+        };
+        var v0 = new PlayerPerkModifiers { RepSeasonMult = 2.0 };
+
+        Assert.Equal(14.0, ReputationMath.SeasonDelta(1, 5, upper), 12);
+        Assert.Equal(6.0, ReputationMath.SeasonDelta(1, 5, lower), 12);
+        Assert.Equal(20.0, ReputationMath.SeasonDelta(1, 5, v0), 12);
     }
 
     [Fact]

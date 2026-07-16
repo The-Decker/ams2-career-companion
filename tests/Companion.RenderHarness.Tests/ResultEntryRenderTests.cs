@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Companion.App.Audio;
 using Companion.App.Views;
 using Companion.Core.Career;
 using Companion.Core.Grid;
@@ -369,6 +370,79 @@ public sealed class ResultEntryRenderTests
             Assert.True(handled, "Enter in the grammar box must be handled by the grammar.");
             Assert.Contains(vm.Classified, s => s.DriverId == "d.brabham");
             Assert.Equal("", vm.Input); // Submit cleared it
+        });
+    }
+
+    [Fact]
+    public void CandidateDoubleClick_PlacesCandidateAndPlaysBucketPlace_OnlyWhenResultChanges()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var played = new List<SoundEffectCue>();
+            SoundAssist.Connect(played.Add);
+            try
+            {
+                var vm = new ResultEntryViewModel(Grid(), PlayerId);
+                using var host = ViewHost.Show(vm);
+
+                vm.Input = "brab";
+                host.Layout();
+                Assert.Equal("d.brabham", vm.SelectedCandidate?.DriverId);
+
+                Assert.True(host.InvokeDoubleClick("OnCandidateDoubleClick", vm.SelectedCandidate!));
+                Assert.Contains(vm.Classified, s => s.DriverId == "d.brabham");
+                Assert.Equal([SoundEffectCue.BucketPlace], played);
+
+                // Submit cleared the pending grammar action. A stale second invocation is a
+                // handled no-op and must not imply that another car moved.
+                Assert.True(host.InvokeDoubleClick("OnCandidateDoubleClick", vm.SelectedCandidate));
+                Assert.Equal([SoundEffectCue.BucketPlace], played);
+            }
+            finally
+            {
+                SoundAssist.Disconnect();
+            }
+        });
+    }
+
+    [Fact]
+    public void RemainingDoubleClick_PlacesOrDnfsAndPlaysBucketPlace_OnlyAfterSuccessfulMove()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var played = new List<SoundEffectCue>();
+            SoundAssist.Connect(played.Add);
+            try
+            {
+                var vm = new ResultEntryViewModel(Grid(), PlayerId);
+                using var host = ViewHost.Show(vm);
+
+                GridSeat classified = vm.Remaining.Single(s => s.DriverId == "d.clark");
+                Assert.True(host.InvokeDoubleClick("OnRemainingDoubleClick", classified));
+                Assert.Contains(vm.Classified, s => s.DriverId == classified.DriverId);
+                Assert.Equal([SoundEffectCue.BucketPlace], played);
+
+                // This row can be stale for one dispatcher turn after the successful move.
+                // InsertAt rejects it, so the repeated gesture stays silent.
+                Assert.True(host.InvokeDoubleClick("OnRemainingDoubleClick", classified));
+                Assert.Equal([SoundEffectCue.BucketPlace], played);
+
+                vm.ToggleDnfPhaseCommand.Execute(null);
+                GridSeat retired = vm.Remaining.Single(s => s.DriverId == "d.hulme");
+                Assert.True(host.InvokeDoubleClick("OnRemainingDoubleClick", retired));
+                Assert.Contains(vm.Dnfs, d => d.Seat.DriverId == retired.DriverId);
+                Assert.Equal([SoundEffectCue.BucketPlace, SoundEffectCue.BucketPlace], played);
+            }
+            finally
+            {
+                SoundAssist.Disconnect();
+            }
         });
     }
 
@@ -845,6 +919,28 @@ public sealed class ResultEntryRenderTests
                 modifiers: null)
                 ?? throw new InvalidOperationException("OnPreviewKeyDown(object, KeyEventArgs) not found.");
             method.Invoke(View, [View, args]);
+            return args.Handled;
+        }
+
+        /// <summary>Invoke one of ResultEntryView's private ListBoxItem double-click handlers with
+        /// a realistic framework-element sender and mouse event. This exercises the actual App
+        /// gesture seam while keeping the test independent of virtualized list-item realization.</summary>
+        public bool InvokeDoubleClick(string handlerName, object? dataContext)
+        {
+            var sender = new ListBoxItem { DataContext = dataContext };
+            var args = new MouseButtonEventArgs(
+                InputManager.Current.PrimaryMouseDevice, 0, MouseButton.Left)
+            {
+                RoutedEvent = Control.MouseDoubleClickEvent,
+            };
+            var method = typeof(ResultEntryView).GetMethod(
+                handlerName,
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance,
+                binder: null,
+                types: [typeof(object), typeof(MouseButtonEventArgs)],
+                modifiers: null)
+                ?? throw new InvalidOperationException($"{handlerName}(object, MouseButtonEventArgs) not found.");
+            method.Invoke(View, [sender, args]);
             return args.Handled;
         }
 

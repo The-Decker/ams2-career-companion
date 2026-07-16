@@ -11,6 +11,15 @@ namespace Companion.Core.Character;
 /// </summary>
 public sealed record CharacterProfile
 {
+    /// <summary>The first supported production semantics for mastery-skill effects.</summary>
+    public const int CurrentMasteryEffectsVersion = 1;
+
+    /// <summary>
+    /// The tier-aware expected-finish model. Version 1 remains readable for folded careers; version
+    /// 2 supplies the missing team-car hierarchy when a pack authors every car at neutral scalars.
+    /// </summary>
+    public const int CurrentExpectationModelVersion = 2;
+
     /// <summary>All seven stats by id (pace/oneLap/craft/racecraft/adaptability + marketability/
     /// durability), each 0..1.</summary>
     public required IReadOnlyDictionary<string, double> Stats { get; init; }
@@ -21,6 +30,13 @@ public sealed record CharacterProfile
     /// dossier), rather than the historical driver whose seat they took. Empty for a legacy
     /// character created before naming existed (then the app falls back to the seat's driver).</summary>
     public string Name { get; init; } = "";
+
+    /// <summary>The player's authored three-letter country code. This is immutable identity and
+    /// presentation data only: it never changes ratings, physics, expectation, XP, or RNG. Null for
+    /// profiles created before country selection existed; omitted so those saves and replay inputs
+    /// retain their byte-identical JSON shape.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? CountryCode { get; init; }
 
     /// <summary>The driver's REAL age in their first season — the character's own age, set at
     /// creation, not borrowed from the historical driver whose seat they took. Drives the season-end
@@ -88,6 +104,24 @@ public sealed record CharacterProfile
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public IReadOnlyList<string>? AcquiredSkillIds { get; init; }
 
+    /// <summary>
+    /// Opt-in version for progression-v2 character mechanics: the persisted marketability meta-stat
+    /// and effects authored by <see cref="AcquiredSkillIds"/>. Profiles written before those
+    /// mechanics became active remain 0, so their historical folds keep the exact prior behavior.
+    /// Omitted at 0 for byte-compatible legacy state JSON.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int MasteryEffectsVersion { get; init; }
+
+    /// <summary>
+    /// Selects the expected-finish model used by the live fold and replay. Version 0 is the shipped
+    /// car+driver formula; version 1 adds the bounded folded-OPI adjustment; version 2 adds the
+    /// neutral-pack team-tier fallback. Omitted at 0 so legacy character state blobs and their
+    /// derived journals remain byte-identical.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int ExpectationModelVersion { get; init; }
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public IReadOnlyList<string>? AcquiredAttributeNodeIds { get; init; }
 
@@ -121,11 +155,14 @@ public sealed record CharacterProfile
             && CpSpent == other.CpSpent
             && ProgressionVersion == other.ProgressionVersion
             && RacingDnaVersion == other.RacingDnaVersion
+            && MasteryEffectsVersion == other.MasteryEffectsVersion
+            && ExpectationModelVersion == other.ExpectationModelVersion
             && SkillPointsSpent == other.SkillPointsSpent
             && XpSpentOnResets == other.XpSpentOnResets
             && SkillResetCount == other.SkillResetCount
             && Age == other.Age
             && string.Equals(Name, other.Name, StringComparison.Ordinal)
+            && string.Equals(CountryCode, other.CountryCode, StringComparison.Ordinal)
             && string.Equals(ChosenFlavor, other.ChosenFlavor, StringComparison.Ordinal)
             && string.Equals(RacingDnaId, other.RacingDnaId, StringComparison.Ordinal)
             && string.Equals(RacingDnaChoice, other.RacingDnaChoice, StringComparison.Ordinal)
@@ -145,11 +182,14 @@ public sealed record CharacterProfile
         hash.Add(CpSpent);
         hash.Add(ProgressionVersion);
         hash.Add(RacingDnaVersion);
+        hash.Add(MasteryEffectsVersion);
+        hash.Add(ExpectationModelVersion);
         hash.Add(SkillPointsSpent);
         hash.Add(XpSpentOnResets);
         hash.Add(SkillResetCount);
         hash.Add(Age);
         hash.Add(Name);
+        hash.Add(CountryCode);
         hash.Add(ChosenFlavor);
         hash.Add(RacingDnaId);
         hash.Add(RacingDnaChoice);

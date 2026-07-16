@@ -1,3 +1,4 @@
+using Companion.Ams2;
 using Companion.Core.Character;
 
 namespace Companion.ViewModels.Services;
@@ -113,6 +114,16 @@ public sealed class CareerSessionFactory(CareerEnvironment environment) : ICaree
 public interface IForceStaging
 {
     StageOutcome StageCurrentGrid(bool force);
+}
+
+/// <summary>
+/// Narrow machine-integration extension of <see cref="ICareerSession"/>. Keeping launch outside
+/// the base session contract preserves every existing fake while the real session delegates to
+/// the launcher configured by <see cref="CareerEnvironment"/>.
+/// </summary>
+public interface IAms2GameLaunch
+{
+    Ams2LaunchResult LaunchAms2();
 }
 
 /// <summary>

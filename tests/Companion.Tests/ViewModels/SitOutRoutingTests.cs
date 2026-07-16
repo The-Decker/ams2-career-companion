@@ -36,6 +36,7 @@ public sealed class SitOutRoutingTests
         // Even the explicit "Enter Result" action refuses to open manual entry while injured.
         home.EnterResultCommand.Execute(null);
         Assert.True(home.IsSitOutStep);
+        Assert.False(home.IsSessionIntroState);
         Assert.False(session.ManualApplied);
 
         // Continue folds the auto-simulated round; the injury heals, so the shell advances off the screen.

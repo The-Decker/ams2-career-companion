@@ -2,18 +2,81 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:Companion.App.Views"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
     <UserControl.Resources>
-        <!-- sortable header cell: click = sort, click again = flip -->
-        <Style x:Key="HeaderButton" TargetType="Button" BasedOn="{StaticResource SubtleButton}">
-            <Setter Property="Padding" Value="0,2" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-            <Setter Property="ToolTip" Value="Click to sort; click again to flip. Right-click for the column chooser." />
+        <!-- Modern segmented navigation. Tab/arrows and mouse still select the same items. -->
+        <Style x:Key="StandingsTabControl" TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border Padding="5" Background="{DynamicResource SurfaceBrush}"
+                                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
+                                    CornerRadius="9" HorizontalAlignment="Left">
+                                <TabPanel IsItemsHost="True" Background="Transparent" />
+                            </Border>
+                            <ContentPresenter Grid.Row="1" ContentSource="SelectedContent" Margin="0,12,0,0" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <!-- the column chooser (right-click any header row) -->
+        <Style x:Key="StandingsTabItem" TargetType="TabItem">
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="Focusable" Value="True" />
+            <Setter Property="IsTabStop" Value="True" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Chrome" MinHeight="38" Padding="15,8"
+                                Background="Transparent" BorderBrush="Transparent"
+                                BorderThickness="1" CornerRadius="6" Cursor="Hand">
+                            <ContentPresenter ContentSource="Header"
+                                              TextBlock.FontFamily="{StaticResource DisplayFont}"
+                                              TextBlock.FontWeight="SemiBold"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource EdgeStrongBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Setter TargetName="Chrome" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="StandingsHeaderButton" TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+            <Setter Property="Padding" Value="4,5" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        </Style>
+
         <ContextMenu x:Key="ColumnChooser">
             <MenuItem Header="Points (counted)" IsCheckable="True"
                       IsChecked="{Binding ShowCountedColumn, Mode=TwoWay}" StaysOpenOnClick="True" />
@@ -25,325 +88,529 @@
                       IsChecked="{Binding ShowPerRoundColumn, Mode=TwoWay}" StaysOpenOnClick="True" />
         </ContextMenu>
 
-        <!-- shared header row for the drivers/constructors tables. Header + rows are the SAME
-             shared-size grid (scope on each tab's DockPanel), so the columns can never drift
-             apart and Auto sizing means nothing clips at 130% UI scale. -->
-        <DataTemplate x:Key="TableHeader">
-            <Grid Margin="4,0,4,4" Background="Transparent"
-                  ContextMenu="{StaticResource ColumnChooser}"
-                  ToolTip="Right-click to choose columns">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Style="{StaticResource HeaderButton}"
-                         Content="{Binding PositionHeader}"
-                         Command="{Binding SortByCommand}" CommandParameter="position"
-                         ToolTip="Championship position — click to sort; click again to reverse" />
-                <Button Grid.Column="1" Style="{StaticResource HeaderButton}" HorizontalAlignment="Stretch"
-                         Content="{Binding NameHeader}"
-                         Command="{Binding SortByCommand}" CommandParameter="name"
-                         ToolTip="Driver or constructor — click to sort alphabetically" />
-                <Button Grid.Column="2" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
-                        HorizontalContentAlignment="Right"
-                         Content="{Binding DroppedHeader}"
-                         Command="{Binding SortByCommand}" CommandParameter="dropped"
-                         ToolTip="Dropped rounds: scores excluded by the season's best-N rule"
-                         Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
-                <Button Grid.Column="3" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
-                        HorizontalContentAlignment="Right"
-                         Content="{Binding GrossHeader}"
-                         Command="{Binding SortByCommand}" CommandParameter="gross"
-                         ToolTip="Gross points: total before the best-N rule removes dropped scores"
-                         Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
-                <Button Grid.Column="4" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
-                        HorizontalContentAlignment="Right"
-                         Content="{Binding PerRoundHeader}"
-                         Command="{Binding SortByCommand}" CommandParameter="perRound"
-                         ToolTip="P/R: average counted points per applied round"
-                         Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
-                <Button Grid.Column="5" Style="{StaticResource HeaderButton}" Margin="14,0,0,0"
-                        HorizontalContentAlignment="Right"
-                         Content="{Binding CountedHeader}"
-                         Command="{Binding SortByCommand}" CommandParameter="counted"
-                         ToolTip="Counted points: championship total after dropped rounds"
-                         Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
-            </Grid>
-        </DataTemplate>
-
-        <!-- one drivers/constructors table row; columns mirror the header layout via the shared
-             size groups above -->
-        <DataTemplate x:Key="StandingsRowTemplate">
-            <Border Margin="4,2" Padding="7,4" CornerRadius="5">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
-                        <Setter Property="BorderThickness" Value="3,0,0,0" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsPlayer}" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsRival}" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
+        <!-- Header/body share size groups. Only the name lane is fluid. -->
+        <DataTemplate x:Key="StandingsTableHeader">
+            <Border Margin="0,0,0,6" Padding="10,4"
+                    Background="{DynamicResource SurfaceAltBrush}"
+                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
+                    CornerRadius="7" ContextMenu="{StaticResource ColumnChooser}"
+                    ToolTip="Right-click to choose which statistics stay visible">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="44" SharedSizeGroup="StandingsPos" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" MinWidth="52" SharedSizeGroup="StandingsPos" />
+                        <ColumnDefinition Width="*" MinWidth="220" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding PositionText}" FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
-                    <!-- The name remains the keyboard/mouse Why? target; the role badges are explicit
-                         so player/rival identity never depends on colour alone. -->
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button Style="{StaticResource SubtleButton}" HorizontalContentAlignment="Left"
-                                HorizontalAlignment="Left" Padding="0" Content="{Binding DisplayName}"
-                                Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                CommandParameter="{Binding CompetitorId}"
-                                ToolTip="Why? — walk back the journal rows behind this number" />
-                        <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
-                                Background="{DynamicResource AccentDimBrush}"
-                                BorderBrush="{DynamicResource AccentBrush}"
-                                Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
-                            <TextBlock Text="YOU" Style="{StaticResource PixelBadge}"
-                                       Foreground="{DynamicResource AccentTextBrush}" />
-                        </Border>
-                        <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
-                                Background="{DynamicResource ErrorDimBrush}"
-                                BorderBrush="{DynamicResource ErrorBrush}"
-                                Visibility="{Binding IsRival, Converter={StaticResource BoolVisible}}">
-                            <TextBlock Text="RIVAL" Style="{StaticResource PixelBadge}"
-                                       Foreground="{DynamicResource ErrorBrush}" />
-                        </Border>
-                    </StackPanel>
-                    <TextBlock Grid.Column="2" Margin="14,0,0,0" Text="{Binding DroppedRoundsText}"
-                               TextAlignment="Right" Style="{StaticResource Faint}" VerticalAlignment="Center"
-                               ToolTip="Rounds dropped by the best-N rule"
-                               Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                    <TextBlock Grid.Column="3" Margin="14,0,0,0" Text="{Binding GrossText}"
-                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
-                               Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"
-                               ToolTip="Gross points before the best-N rule dropped anything"
-                               Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                    <TextBlock Grid.Column="4" Margin="14,0,0,0" Text="{Binding PerRoundText}"
-                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right"
-                               Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
-                               ToolTip="Average counted points per applied round"
-                               Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
-                    <TextBlock Grid.Column="5" Margin="14,0,0,0" Text="{Binding CountedText}" FontWeight="SemiBold"
-                               FontFamily="{StaticResource MonoFont}" TextAlignment="Right" VerticalAlignment="Center"
-                               ToolTip="Counted points (dropped results excluded)"
-                               Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}" />
+                    <Button Grid.Column="0" Style="{StaticResource StandingsHeaderButton}"
+                            Content="{Binding PositionHeader}" Command="{Binding SortByCommand}"
+                            CommandParameter="position" AutomationProperties.Name="Sort by championship position"
+                            ToolTip="Championship position — click to sort; click again to reverse" />
+                    <Button Grid.Column="1" Style="{StaticResource StandingsHeaderButton}"
+                            Content="{Binding NameHeader}" Command="{Binding SortByCommand}"
+                            CommandParameter="name" AutomationProperties.Name="Sort by name"
+                            ToolTip="Driver or constructor — click to sort alphabetically" />
+                    <Button Grid.Column="2" Style="{StaticResource StandingsHeaderButton}"
+                            Margin="14,0,0,0" HorizontalContentAlignment="Right"
+                            Content="{Binding DroppedHeader}" Command="{Binding SortByCommand}"
+                            CommandParameter="dropped" AutomationProperties.Name="Sort by dropped rounds"
+                            ToolTip="Rounds excluded by the season's best-N rule"
+                            Visibility="{Binding ShowDroppedColumn, Converter={StaticResource BoolVisible}}" />
+                    <Button Grid.Column="3" Style="{StaticResource StandingsHeaderButton}"
+                            Margin="14,0,0,0" HorizontalContentAlignment="Right"
+                            Content="{Binding GrossHeader}" Command="{Binding SortByCommand}"
+                            CommandParameter="gross" AutomationProperties.Name="Sort by gross points"
+                            ToolTip="Total points before dropped scores are removed"
+                            Visibility="{Binding ShowGrossColumn, Converter={StaticResource BoolVisible}}" />
+                    <Button Grid.Column="4" Style="{StaticResource StandingsHeaderButton}"
+                            Margin="14,0,0,0" HorizontalContentAlignment="Right"
+                            Content="{Binding PerRoundHeader}" Command="{Binding SortByCommand}"
+                            CommandParameter="perRound" AutomationProperties.Name="Sort by points per round"
+                            ToolTip="Average counted points per applied round"
+                            Visibility="{Binding ShowPerRoundColumn, Converter={StaticResource BoolVisible}}" />
+                    <Button Grid.Column="5" Style="{StaticResource StandingsHeaderButton}"
+                            Margin="14,0,0,0" HorizontalContentAlignment="Right"
+                            Content="{Binding CountedHeader}" Command="{Binding SortByCommand}"
+                            CommandParameter="counted" AutomationProperties.Name="Sort by counted points"
+                            ToolTip="Championship total after dropped scores"
+                            Visibility="{Binding ShowCountedColumn, Converter={StaticResource BoolVisible}}" />
                 </Grid>
             </Border>
         </DataTemplate>
-        <!-- one inspector contribution row: label · detail · value -->
+
+        <Style x:Key="StandingRowChrome" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="Padding" Value="10,7" />
+            <Setter Property="MinHeight" Value="52" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="7" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource EdgeStrongBrush}" />
+                </Trigger>
+                <DataTrigger Binding="{Binding IsPlayer}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                    <Setter Property="BorderThickness" Value="3,1,1,1" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsRival}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ErrorDimBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+                    <Setter Property="BorderThickness" Value="3,1,1,1" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PositionBadge" TargetType="Border">
+            <Setter Property="Width" Value="38" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding PositionText}" Value="1">
+                    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding PositionText}" Value="2">
+                    <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding PositionText}" Value="3">
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="StandingsRowTemplate">
+            <Border Style="{StaticResource StandingRowChrome}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="52" SharedSizeGroup="StandingsPos" />
+                        <ColumnDefinition Width="*" MinWidth="220" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsDropped" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsGross" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsPerRound" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="StandingsCounted" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Style="{StaticResource PositionBadge}">
+                        <TextBlock Text="{Binding PositionText}" FontFamily="{StaticResource MonoFont}"
+                                   FontSize="15" FontWeight="Bold" TextAlignment="Center"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PositionText}" Value="1">
+                                            <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource SubtleButton}" Padding="0"
+                                    HorizontalAlignment="Left" HorizontalContentAlignment="Left"
+                                    Content="{Binding DisplayName}" FontSize="14" FontWeight="SemiBold"
+                                    Foreground="{DynamicResource TextBrush}"
+                                    Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding CompetitorId}"
+                                    IsEnabled="{Binding DataContext.CanInspect, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    AutomationProperties.Name="{Binding DisplayName, StringFormat='Inspect {0} championship standing'}"
+                                    ToolTip="Open the Why? breakdown for this championship entry" />
+                            <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
+                                    Background="{DynamicResource AccentDimBrush}" BorderBrush="{DynamicResource AccentBrush}"
+                                    Visibility="{Binding IsPlayer, Converter={StaticResource BoolVisible}}">
+                                <TextBlock Text="YOU" Style="{StaticResource PixelBadge}" Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Border Style="{StaticResource CompactChip}" Padding="5,2" Margin="7,0,0,0"
+                                    Background="{DynamicResource ErrorDimBrush}" BorderBrush="{DynamicResource ErrorBrush}"
+                                    Visibility="{Binding IsRival, Converter={StaticResource BoolVisible}}">
+                                <TextBlock Text="RIVAL" Style="{StaticResource PixelBadge}" Foreground="{DynamicResource ErrorBrush}" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="CHAMPIONSHIP ENTRY" Style="{StaticResource Faint}"
+                                   FontFamily="{StaticResource MonoFont}" FontSize="9" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <Grid Grid.Column="2" Margin="14,0,0,0" VerticalAlignment="Center"
+                          Visibility="{Binding DataContext.ShowDroppedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}">
+                        <Border Style="{StaticResource CompactChip}" Background="{DynamicResource SurfaceAltBrush}"
+                                Visibility="{Binding HasDroppedRounds, Converter={StaticResource BoolVisible}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="DROP " Style="{StaticResource PixelBadge}" Foreground="{DynamicResource TextFaintBrush}" />
+                                <TextBlock Text="{Binding DroppedRoundsText}" FontFamily="{StaticResource MonoFont}"
+                                           FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="—" Style="{StaticResource Faint}" TextAlignment="Center"
+                                   Visibility="{Binding HasDroppedRounds, Converter={StaticResource BoolCollapsed}}" />
+                    </Grid>
+                    <StackPanel Grid.Column="3" Margin="14,0,0,0" VerticalAlignment="Center"
+                                Visibility="{Binding DataContext.ShowGrossColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="{Binding GrossText}" FontFamily="{StaticResource MonoFont}" FontSize="13" TextAlignment="Right" />
+                        <TextBlock Text="GROSS" Style="{StaticResource Faint}" FontSize="9" TextAlignment="Right" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="4" Margin="14,0,0,0" VerticalAlignment="Center"
+                                Visibility="{Binding DataContext.ShowPerRoundColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="{Binding PerRoundText}" FontFamily="{StaticResource MonoFont}" FontSize="13" TextAlignment="Right" />
+                        <TextBlock Text="AVG / ROUND" Style="{StaticResource Faint}" FontSize="9" TextAlignment="Right" />
+                    </StackPanel>
+                    <Border Grid.Column="5" MinWidth="80" Margin="14,0,0,0" Padding="10,6"
+                            Background="{DynamicResource AccentDimBrush}" BorderBrush="{DynamicResource AccentBrush}"
+                            BorderThickness="1" CornerRadius="6" VerticalAlignment="Center"
+                            Visibility="{Binding DataContext.ShowCountedColumn, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolVisible}}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding CountedText}" FontFamily="{StaticResource MonoFont}"
+                                       FontSize="16" FontWeight="Bold" TextAlignment="Right" Foreground="{DynamicResource AccentTextBrush}" />
+                            <TextBlock Text="COUNTED PTS" Style="{StaticResource PixelBadge}" FontSize="7"
+                                       TextAlignment="Right" Foreground="{DynamicResource AccentTextBrush}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <Style x:Key="MatrixCellButton" TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+            <Setter Property="Width" Value="60" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDropped}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                    <Setter Property="Opacity" Value="0.66" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="InspectorRowTemplate">
-            <DockPanel Margin="0,3">
-                <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="{StaticResource MonoFont}"
-                           FontWeight="SemiBold" TextAlignment="Right" MinWidth="56" Margin="8,0,0,0"
-                           Visibility="{Binding HasValue, Converter={StaticResource BoolVisible}}" />
-                <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" FontWeight="SemiBold" MinWidth="120" />
-                <TextBlock Text="{Binding Detail}" Style="{StaticResource Muted}" TextWrapping="Wrap"
-                           Visibility="{Binding HasDetail, Converter={StaticResource BoolVisible}}" />
-            </DockPanel>
+            <Border Margin="0,0,0,6" Padding="10,8" Background="{DynamicResource SurfaceAltBrush}"
+                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1" CornerRadius="5">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Value}" FontFamily="{StaticResource MonoFont}"
+                               FontWeight="SemiBold" TextAlignment="Right" MinWidth="62" Margin="10,0,0,0"
+                               Foreground="{DynamicResource AccentTextBrush}"
+                               Visibility="{Binding HasValue, Converter={StaticResource BoolVisible}}" />
+                    <TextBlock DockPanel.Dock="Left" Text="{Binding Label}" FontWeight="SemiBold"
+                               MinWidth="128" Margin="0,0,10,0" />
+                    <TextBlock Text="{Binding Detail}" Style="{StaticResource Muted}" TextWrapping="Wrap"
+                               Visibility="{Binding HasDetail, Converter={StaticResource BoolVisible}}" />
+                </DockPanel>
+            </Border>
         </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
-    <DockPanel>
-        <!-- first-run coach mark: the rules chip (ux-round §4) -->
-        <Border DockPanel.Dock="Top" Style="{StaticResource CoachMark}" Margin="0,0,0,10"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- The first-run coach mark now introduces the complete interaction model. -->
+        <Border Grid.Row="0" Style="{StaticResource CoachMark}" Margin="0,0,0,10"
                 Visibility="{Binding DataContext.CoachMarks.ShowStandingsRulesChip,
                              RelativeSource={RelativeSource AncestorType=views:HomeView},
                              Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" Style="{StaticResource CoachMarkGlyph}" />
-                <Button DockPanel.Dock="Right" Content="Got it" VerticalAlignment="Center"
-                        Margin="12,0,0,0"
+                <Button DockPanel.Dock="Right" Content="Got it" VerticalAlignment="Center" Margin="12,0,0,0"
                         ToolTip="Hide this tip for good (Settings → Reset brings tips back)"
                         Command="{Binding DataContext.CoachMarks.DismissStandingsRulesChipCommand,
                                   RelativeSource={RelativeSource AncestorType=views:HomeView}}" />
                 <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}"
-                           Text="The grey chip below is this season's rulebook in one line — points system, dropped-round rules and scoring quirks come from the season pack, exactly as scored. Click a column header to sort; right-click a header to choose columns." />
+                           Text="The scoring deck below is the season rulebook. Sort from any heading, right-click a heading to choose columns, and open any driver or round cell for its Why? breakdown." />
             </DockPanel>
         </Border>
 
-        <!-- rules-explainer chip -->
-        <Border DockPanel.Dock="Top" Style="{StaticResource Chip}" Margin="0,0,0,10">
-            <TextBlock Text="{Binding RulesChipText}" Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" />
+        <!-- Compact enough for the 560px tear-off, strong enough to anchor the full hub lens. -->
+        <Grid Grid.Row="1" Margin="2,0,2,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="CHAMPIONSHIP CONTROL" Style="{StaticResource PixelBadge}"
+                           FontSize="9" Foreground="{DynamicResource AccentTextBrush}" />
+                <TextBlock Text="Standings" Style="{StaticResource H1}" Margin="0,3,0,0" />
+                <TextBlock Text="Every point, every drop, every round — one live championship ledger."
+                           Style="{StaticResource Muted}" Margin="0,3,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+            <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16,0,0,1">
+                <Border Style="{StaticResource CompactChip}" Margin="0,0,6,0"
+                        Background="{DynamicResource AccentDimBrush}" BorderBrush="{DynamicResource AccentBrush}">
+                    <TextBlock Text="YOU" Style="{StaticResource PixelBadge}" Foreground="{DynamicResource AccentTextBrush}" />
+                </Border>
+                <Border Style="{StaticResource CompactChip}"
+                        Background="{DynamicResource ErrorDimBrush}" BorderBrush="{DynamicResource ErrorBrush}">
+                    <TextBlock Text="RIVAL" Style="{StaticResource PixelBadge}" Foreground="{DynamicResource ErrorBrush}" />
+                </Border>
+            </WrapPanel>
+        </Grid>
+
+        <!-- RulesParts becomes a scan-friendly scoring deck; RulesChipText stays as its tooltip. -->
+        <Border Grid.Row="2" Style="{StaticResource Panel}" Padding="0" Margin="0,0,0,12"
+                ToolTip="{Binding RulesChipText}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Background="{DynamicResource AccentBrush}" CornerRadius="8,0,0,8" />
+                <Grid Grid.Column="1" Margin="14,11,14,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Text="SCORING CONTROL" Style="{StaticResource Eyebrow}"
+                                   Foreground="{DynamicResource AccentTextBrush}" />
+                        <TextBlock DockPanel.Dock="Right" Text="RIGHT-CLICK A HEADING FOR COLUMNS"
+                                   Style="{StaticResource Faint}" FontFamily="{StaticResource MonoFont}"
+                                   TextAlignment="Right" />
+                    </DockPanel>
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding RulesParts}" Margin="0,8,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource CompactChip}" Margin="0,0,7,5">
+                                    <TextBlock Text="{Binding}" FontFamily="{StaticResource MonoFont}"
+                                               FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Grid>
         </Border>
 
-        <!-- no rounds yet -->
-        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,8,0,0"
-                   Text="No rounds applied yet — standings appear after the first result."
-                   Visibility="{Binding DriverRows.Count, Converter={StaticResource CountCollapsed}}" />
-
-        <!-- The VM owns the tab set (StandingsViewModel.Tabs): each TabItem's visibility binds
-             to a Show*Tab flag so no tab is ever hard-hidden in XAML. Drivers + Round matrix
-             appear once a round is applied; Constructors appears only for a season with a
-             constructors championship. SelectedTabIndex is guarded by the VM to never start on
-             a hidden tab, so every shown tab is switchable by mouse (click) and keyboard
-             (Tab/arrows — the TabItem style is keyboard-focusable, locked decision 8). -->
-        <TabControl SelectedIndex="{Binding SelectedTabIndex}"
+        <!-- The rulebook remains visible before round one; only the ledger is empty. -->
+        <Border Grid.Row="3" Style="{StaticResource Panel}" Padding="28"
+                Visibility="{Binding DriverRows.Count, Converter={StaticResource CountCollapsed}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460">
+                <Border Width="54" Height="54" Background="{DynamicResource AccentDimBrush}"
+                        BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" CornerRadius="27"
+                        HorizontalAlignment="Center">
+                    <TextBlock Text="&#xE9D2;" FontFamily="{StaticResource IconFont}" FontSize="24"
+                               Foreground="{DynamicResource AccentTextBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="THE LEDGER OPENS AFTER ROUND ONE" Style="{StaticResource H2}"
+                           TextAlignment="Center" Margin="0,14,0,0" TextWrapping="Wrap" />
+                <TextBlock Text="Apply the first race result and this screen will build the driver table, constructors table, and round-by-round matrix automatically."
+                           Style="{StaticResource Muted}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,7,0,0" />
+            </StackPanel>
+        </Border>
+        <!-- Physical items retain fixed persistence indexes; the VM decides visibility. -->
+        <TabControl Grid.Row="3" x:Name="ChampionshipTabs" Style="{StaticResource StandingsTabControl}"
+                    SelectedIndex="{Binding SelectedTabIndex}"
                     Visibility="{Binding DriverRows.Count, Converter={StaticResource CountVisible}}">
-            <TabItem Header="Drivers"
+            <TabItem Header="Drivers" Style="{StaticResource StandingsTabItem}"
+                     AutomationProperties.Name="Driver standings"
                      Visibility="{Binding ShowDriversTab, Converter={StaticResource BoolVisible}}">
-                <!-- proportional table cap (was a hard 760): ~65% of the lens, 760–1200 -->
-                <DockPanel HorizontalAlignment="Left" Grid.IsSharedSizeScope="True"
-                           MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=TabControl},
-                                      Converter={StaticResource WidthFraction}, ConverterParameter=0.65|760|1200}">
-                    <ContentPresenter DockPanel.Dock="Top" ContentTemplate="{StaticResource TableHeader}"
-                                      Content="{Binding}" />
-                    <!-- virtualized (ux-round §4): shared-drive eras classify 60+ drivers -->
-                    <ItemsControl Style="{StaticResource VirtualizedList}"
-                                  ItemsSource="{Binding DriverRows}"
-                                  ItemTemplate="{StaticResource StandingsRowTemplate}" />
-                </DockPanel>
+                <Border Style="{StaticResource Card}" Padding="12">
+                    <ScrollViewer x:Name="DriverTableScroller" HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Disabled" Focusable="False">
+                        <Grid MinWidth="820" Grid.IsSharedSizeScope="True"
+                              Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource StandingsTableHeader}" />
+                            <ItemsControl Grid.Row="1" Style="{StaticResource VirtualizedList}"
+                                          ItemsSource="{Binding DriverRows}"
+                                          ItemTemplate="{StaticResource StandingsRowTemplate}" />
+                        </Grid>
+                    </ScrollViewer>
+                </Border>
             </TabItem>
 
-            <TabItem Header="Constructors"
+            <TabItem Header="Constructors" Style="{StaticResource StandingsTabItem}"
+                     AutomationProperties.Name="Constructor standings"
                      Visibility="{Binding ShowConstructorsTab, Converter={StaticResource BoolVisible}}">
-                <DockPanel HorizontalAlignment="Left" Grid.IsSharedSizeScope="True"
-                           MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=TabControl},
-                                      Converter={StaticResource WidthFraction}, ConverterParameter=0.65|760|1200}">
-                    <ContentPresenter DockPanel.Dock="Top" ContentTemplate="{StaticResource TableHeader}"
-                                      Content="{Binding}" />
-                    <ItemsControl Style="{StaticResource VirtualizedList}"
-                                  ItemsSource="{Binding ConstructorRows}"
-                                  ItemTemplate="{StaticResource StandingsRowTemplate}" />
-                </DockPanel>
+                <Border Style="{StaticResource Card}" Padding="12">
+                    <ScrollViewer x:Name="ConstructorTableScroller" HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Disabled" Focusable="False">
+                        <Grid MinWidth="820" Grid.IsSharedSizeScope="True"
+                              Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource StandingsTableHeader}" />
+                            <ItemsControl Grid.Row="1" Style="{StaticResource VirtualizedList}"
+                                          ItemsSource="{Binding ConstructorRows}"
+                                          ItemTemplate="{StaticResource StandingsRowTemplate}" />
+                        </Grid>
+                    </ScrollViewer>
+                </Border>
             </TabItem>
 
-            <TabItem Header="Round matrix"
+            <TabItem Header="Round matrix" Style="{StaticResource StandingsTabItem}"
+                     AutomationProperties.Name="Round-by-round points matrix"
                      Visibility="{Binding ShowMatrixTab, Converter={StaticResource BoolVisible}}">
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Faint}" Margin="4,8,0,0"
-                               Text="Struck-through cells are dropped results (best-N rule); points per round as scored." />
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Focusable="False">
-                        <StackPanel>
-                            <!-- header row -->
-                            <StackPanel Orientation="Horizontal" Margin="4,0,4,4">
-                                <TextBlock Width="190" Text="Driver" Style="{StaticResource Muted}" FontWeight="SemiBold" />
-                                <ItemsControl ItemsSource="{Binding RoundHeaders}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
+                <Border Style="{StaticResource Card}" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <DockPanel Margin="2,0,2,9">
+                            <TextBlock DockPanel.Dock="Left" Text="ROUND LEDGER" Style="{StaticResource Eyebrow}"
+                                       Foreground="{DynamicResource AccentTextBrush}" />
+                            <TextBlock DockPanel.Dock="Right" Text="DIMMED + STRUCK THROUGH = DROPPED BY BEST-N"
+                                       Style="{StaticResource Faint}" FontFamily="{StaticResource MonoFont}"
+                                       TextAlignment="Right" />
+                        </DockPanel>
+                        <ScrollViewer Grid.Row="1" x:Name="RoundMatrixScroller"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto" Focusable="False">
+                            <StackPanel MinWidth="760">
+                                <Border Padding="8,5" Background="{DynamicResource SurfaceAltBrush}"
+                                        BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
+                                        CornerRadius="7" Margin="0,0,0,5">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="220" Text="DRIVER" Style="{StaticResource Eyebrow}"
+                                                   VerticalAlignment="Center" />
+                                        <ItemsControl ItemsSource="{Binding RoundHeaders}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Width="60" Height="34" Margin="2"
+                                                            Background="{DynamicResource SurfaceBrush}"
+                                                            BorderBrush="{DynamicResource EdgeBrush}"
+                                                            BorderThickness="1" CornerRadius="5">
+                                                        <TextBlock Text="{Binding}" Style="{StaticResource PixelBadge}"
+                                                                   FontSize="8" TextAlignment="Center"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextMutedBrush}" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                                <ItemsControl ItemsSource="{Binding MatrixRows}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <!-- 56 wide (was 48) so big values (25.5, 26+FL) never clip; header and
-                                                 body cells stay the same fixed width so the columns can't drift -->
-                                            <TextBlock Width="56" Text="{Binding}" Style="{StaticResource Muted}"
-                                                       FontWeight="SemiBold" TextAlignment="Center" />
+                                            <Border Margin="0,0,0,4" Padding="8,4"
+                                                    Background="{DynamicResource SurfaceBrush}"
+                                                    BorderBrush="{DynamicResource EdgeBrush}"
+                                                    BorderThickness="1" CornerRadius="7">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Width="220" Style="{StaticResource SubtleButton}"
+                                                            Padding="4,7" HorizontalContentAlignment="Left"
+                                                            Content="{Binding DisplayName}" FontWeight="SemiBold"
+                                                            Foreground="{DynamicResource TextBrush}"
+                                                            Command="{Binding DataContext.OpenInspectorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding DriverId}"
+                                                            IsEnabled="{Binding DataContext.CanInspect, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            AutomationProperties.Name="{Binding DisplayName, StringFormat='Inspect {0} season ledger'}"
+                                                            ToolTip="Open this driver's season-long Why? breakdown" />
+                                                    <ItemsControl ItemsSource="{Binding Cells}">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Button Style="{StaticResource MatrixCellButton}"
+                                                                        Command="{Binding DataContext.OpenCellInspectorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                        CommandParameter="{Binding InspectorRef}"
+                                                                        AutomationProperties.Name="{Binding Text, StringFormat='Inspect round score {0}'}"
+                                                                        ToolTip="Open the Why? breakdown for this driver and round">
+                                                                    <TextBlock Text="{Binding Text}" TextAlignment="Center"
+                                                                               FontFamily="{StaticResource MonoFont}"
+                                                                               FontSize="12" FontWeight="SemiBold">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsDropped}" Value="True">
+                                                                                        <Setter Property="Foreground" Value="{DynamicResource TextFaintBrush}" />
+                                                                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                </Button>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </StackPanel>
-                            <!-- driver × round cells -->
-                            <ItemsControl ItemsSource="{Binding MatrixRows}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="4,2">
-                                            <TextBlock Width="190" Text="{Binding DisplayName}" />
-                                            <ItemsControl ItemsSource="{Binding Cells}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Horizontal" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <!-- Each cell is a per-round "Why?" target: click (or focus +
-                                                             Enter/Space) walks that driver's journal narrowed to the
-                                                             round. A blank cell (InspectorRef null) still renders its
-                                                             number; the command no-ops on null. -->
-                                                        <Button Style="{StaticResource SubtleButton}" Padding="0" Width="56"
-                                                                Command="{Binding DataContext.OpenCellInspectorCommand,
-                                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                                CommandParameter="{Binding InspectorRef}"
-                                                                ToolTip="Why? — walk back this round for this driver">
-                                                            <TextBlock Text="{Binding Text}" TextAlignment="Center"
-                                                                       FontFamily="{StaticResource MonoFont}">
-                                                                <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding IsDropped}" Value="True">
-                                                                                <Setter Property="Foreground" Value="{DynamicResource TextFaintBrush}" />
-                                                                                <Setter Property="TextDecorations" Value="Strikethrough" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBlock.Style>
-                                                            </TextBlock>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </DockPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
             </TabItem>
         </TabControl>
-    </DockPanel>
 
-        <!-- The shared "Why?" inspector overlay (career-hub-design.md §5). Shown while an
-             inspector is open; the scrim + Close button (mouse) and the ESC key binding
-             (keyboard) both dismiss it — locked decision 8's parity. -->
-        <Border x:Name="InspectorScrim" Background="{DynamicResource ScrimBrush}"
+        <!-- Shared Why? inspector, scaled to the host instead of a fixed utility-dialog box. -->
+        <Border Grid.RowSpan="4" x:Name="InspectorScrim" Background="{DynamicResource ScrimBrush}"
                 Visibility="{Binding IsInspectorOpen, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}">
             <Border.InputBindings>
                 <KeyBinding Key="Esc" Command="{Binding CloseInspectorCommand}" />
             </Border.InputBindings>
-            <!-- proportional modal (was a fixed 520x440 — cramped on 1440p): half the lens wide,
-                 70% tall, never below the old size -->
-            <Border Margin="24" Padding="18"
+            <Border Margin="24" Padding="20"
                     MaxWidth="{Binding ActualWidth, ElementName=InspectorScrim,
-                               Converter={StaticResource WidthFraction}, ConverterParameter=0.5|520}"
+                               Converter={StaticResource WidthFraction}, ConverterParameter=0.56|520|900}"
                     MaxHeight="{Binding ActualHeight, ElementName=InspectorScrim,
-                                Converter={StaticResource WidthFraction}, ConverterParameter=0.7|440}"
+                                Converter={StaticResource WidthFraction}, ConverterParameter=0.74|440|860}"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Background="{DynamicResource SurfaceBrush}" CornerRadius="6"
-                    BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
+                    Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+                    BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
                     DataContext="{Binding SelectedInspector}">
-                <DockPanel>
-                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <DockPanel Margin="0,0,0,10">
                         <Button DockPanel.Dock="Right" VerticalAlignment="Top"
                                 Style="{StaticResource CloseButton}"
                                 AutomationProperties.Name="Close standings inspector"
                                 Command="{Binding DataContext.CloseInspectorCommand,
                                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                ToolTip="Close (Esc)" />
-                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" TextWrapping="Wrap" />
+                                audio:SoundAssist.Cue="Back" ToolTip="Close (Esc)" />
+                        <StackPanel>
+                            <TextBlock Text="WHY THIS NUMBER" Style="{StaticResource PixelBadge}"
+                                       FontSize="8" Foreground="{DynamicResource AccentTextBrush}" />
+                            <TextBlock Text="{Binding Title}" Style="{StaticResource H2}"
+                                       Margin="0,4,12,0" TextWrapping="Wrap" />
+                        </StackPanel>
                     </DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" TextWrapping="Wrap"
-                               Style="{StaticResource Muted}" Margin="0,0,0,10"
+                    <TextBlock Grid.Row="1" Text="{Binding Summary}" TextWrapping="Wrap"
+                               Style="{StaticResource Muted}" Margin="0,0,0,12"
                                Visibility="{Binding HasSummary, Converter={StaticResource BoolVisible}}" />
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-                        <ItemsControl ItemsSource="{Binding Rows}"
-                                      ItemTemplate="{StaticResource InspectorRowTemplate}" />
+                    <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollBarVisibility="Auto" Focusable="False">
+                        <ItemsControl ItemsSource="{Binding Rows}" ItemTemplate="{StaticResource InspectorRowTemplate}" />
                     </ScrollViewer>
-                </DockPanel>
+                </Grid>
             </Border>
         </Border>
     </Grid>

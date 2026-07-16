@@ -45,6 +45,16 @@ public static class DataJournalPhases
         // player.statSpend is a between-season player choice re-applied at the transition (character
         // depth 4) — an INPUT the round fold never regenerates, so exclude it too.
         || string.Equals(phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal)
+        // player.skillPlan is the progression-v2 ordered, atomic replacement for several
+        // player.statSpend rows. Its resulting next-season character state is replay-checked.
+        || string.Equals(phase, JournalPhases.PlayerSkillPlan, StringComparison.Ordinal)
+        // player.skillReset is the XP-funded destructive v2 tree reset. It is an INPUT; its
+        // resulting character state and reset counters are checked at the next boundary.
+        || string.Equals(phase, JournalPhases.PlayerSkillReset, StringComparison.Ordinal)
+        // player.roundConditions is the versioned, per-round player choice committed before AMS2
+        // staging. Replay reads it back and validates it against the raw result envelope; the fold
+        // never regenerates the source row, so only its derived effects are byte-compared.
+        || string.Equals(phase, JournalPhases.PlayerRoundConditions, StringComparison.Ordinal)
         || string.Equals(phase, JournalPhases.PlayerRespec, StringComparison.Ordinal)
         // player.gridSelection is the creation-time chosen field (v0.6.0) — its data rides in the
         // start player state (survives WipeDerived); the round fold never regenerates it, so exclude.
@@ -130,14 +140,17 @@ public static class JournalStore
         scope.Complete();
     }
 
-    public static IReadOnlyList<JournalRow> ReadSeason(CareerDatabase db, long seasonId)
+    public static IReadOnlyList<JournalRow> ReadSeason(
+        CareerDatabase db,
+        long seasonId,
+        SqliteTransaction? transaction = null)
     {
         using var command = db.Command(
             """
             SELECT seq, utc, season_id, round, phase, entity, delta_json, cause
             FROM journal WHERE season_id = @season ORDER BY seq;
             """,
-            null,
+            transaction,
             ("@season", seasonId));
         return ReadRows(command);
     }

@@ -1,4 +1,7 @@
 using Companion.Core.Numerics;
+using Companion.Core.Career;
+using Companion.Core.Character;
+using Companion.Data;
 using Companion.ViewModels.Services;
 
 namespace Companion.Tests.ViewModels;
@@ -50,7 +53,81 @@ public sealed class SessionServiceTests : IDisposable
         return target;
     }
 
+    private static CharacterProfile VersionOneExpectationCharacter()
+    {
+        var talent = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.50,
+            ["oneLap"] = 0.50,
+            ["craft"] = 0.50,
+            ["racecraft"] = 0.50,
+            ["adaptability"] = 0.50,
+        };
+        var meta = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["marketability"] = 0.50,
+            ["durability"] = 0.50,
+        };
+        return new CharacterProfile
+        {
+            Name = "Unstarted Driver",
+            Age = 22,
+            Stats = talent.Concat(meta).ToDictionary(
+                pair => pair.Key, pair => pair.Value, StringComparer.Ordinal),
+            PerkIds = [],
+            CreationPerkIds = [],
+            ProgressionVersion = CharacterLevelProgression.Level300Version,
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+            ExpectationModelVersion = 1,
+            RacingDnaId = "dna_all_rounder",
+            RacingDnaVersion = 1,
+            CreationBaseline = new CharacterCreationBaseline
+            {
+                Stats = talent,
+                Meta = meta,
+                TraitIds = [],
+            },
+        };
+    }
+
     // ---------- the full round-trip ----------
+
+    [Fact]
+    public void UnstartedVersionOneExpectationProfile_UpgradesBeforeFirstBenchmark()
+    {
+        var environment = ViewModelTestData.Environment(DocumentsDirectory);
+
+        using (CareerSessionService.CreateCareer(Request(), environment))
+        {
+        }
+
+        using (var oldDb = CareerDatabase.Open(CareerPath))
+        {
+            long oldSeasonId = Assert.Single(CareerStore.ReadSeasons(oldDb)).Id;
+            var oldStart = Assert.IsType<PlayerCareerState>(
+                StateStore.ReadPlayerState(oldDb, oldSeasonId, StateStore.StageStart));
+            StateStore.UpsertPlayerState(
+                oldDb,
+                oldSeasonId,
+                StateStore.StageStart,
+                oldStart with { Character = VersionOneExpectationCharacter() });
+        }
+
+        using (var session = CareerSessionService.OpenCareer(CareerPath, environment))
+        {
+            Assert.Null(session.Summary.Opi);
+            Assert.NotNull(session.CurrentExpectedFinish());
+        }
+
+        using var db = CareerDatabase.Open(CareerPath);
+        long seasonId = Assert.Single(CareerStore.ReadSeasons(db)).Id;
+        var start = StateStore.ReadPlayerState(db, seasonId, StateStore.StageStart);
+        CharacterProfile character = Assert.IsType<CharacterProfile>(start?.Character);
+        Assert.Equal(
+            CharacterProfile.CurrentExpectationModelVersion,
+            character.ExpectationModelVersion);
+        Assert.Empty(ResultStore.ReadSeasonResults(db, seasonId));
+    }
 
     [Fact]
     public void CreatePreviewApplyReopen_RoundTripsOnTheRealPack()

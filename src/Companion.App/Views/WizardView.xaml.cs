@@ -2,7 +2,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using Companion.App.Audio;
 using Companion.ViewModels.Wizard;
 
 namespace Companion.App.Views;
@@ -10,6 +14,7 @@ namespace Companion.App.Views;
 public partial class WizardView : UserControl
 {
     private int _seatCarouselIndex;
+    private bool _seatCarouselLoaded;
 
     public WizardView()
     {
@@ -47,19 +52,18 @@ public partial class WizardView : UserControl
 
     private void PageSeatCarousel(int direction)
     {
-        if (SeatCarousel.Items.Count == 0)
+        int count = SeatCarousel.Items.Count;
+        if (count == 0)
             return;
 
-        _seatCarouselIndex = Math.Clamp(
-            _seatCarouselIndex + direction,
-            0,
-            SeatCarousel.Items.Count - 1);
+        _seatCarouselIndex = ((_seatCarouselIndex + direction) % count + count) % count;
         SnapSeatCarousel();
     }
 
     private void OnSeatCarouselLoaded(object sender, RoutedEventArgs e)
     {
         _seatCarouselIndex = Math.Max(0, SeatCarousel.SelectedIndex);
+        _seatCarouselLoaded = true;
         QueueSeatCarouselSnap();
     }
 
@@ -71,7 +75,40 @@ public partial class WizardView : UserControl
             return;
 
         _seatCarouselIndex = SeatCarousel.SelectedIndex;
+        if (_seatCarouselLoaded && e.AddedItems.Count > 0)
+            SoundAssist.Play(SoundEffectCue.SeatConfirm);
         QueueSeatCarouselSnap();
+    }
+
+    /// <summary>
+    /// Each item stays viewport-wide so paging remains exact, but only the visible card may choose
+    /// a seat. This prevents the empty gutters around a centered card from behaving like a button.
+    /// </summary>
+    private void OnSeatCarouselPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is not DependencyObject source || !IsInsideSeatCard(source))
+            e.Handled = true;
+    }
+
+    private static bool IsInsideSeatCard(DependencyObject source)
+    {
+        DependencyObject? current = source;
+        while (current is not null)
+        {
+            if (current is FrameworkElement { Name: "SeatCardFrame" })
+                return true;
+            if (current is ListBox)
+                return false;
+
+            current = current switch
+            {
+                Visual or Visual3D => VisualTreeHelper.GetParent(current),
+                FrameworkContentElement content => content.Parent,
+                _ => LogicalTreeHelper.GetParent(current),
+            };
+        }
+
+        return false;
     }
 
     private void QueueSeatCarouselSnap() =>

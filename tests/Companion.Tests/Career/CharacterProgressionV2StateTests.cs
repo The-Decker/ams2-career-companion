@@ -18,9 +18,32 @@ public sealed class CharacterProgressionV2StateTests
         ChampionshipRoundCount = 16,
     });
 
+    private static CampaignProgressionPlan FractionalPlan() => CampaignProgressionPlan.Create(
+        CareerExperienceModes.GrandPrixDynasty,
+        1967,
+        2020,
+        [
+            new PinnedCampaignSeason
+            {
+                PackId = "f1-1967", PackVersion = "1.0.0", Sha256 = new string('a', 64),
+                Year = 1967, ChampionshipRoundCount = 11,
+            },
+            new PinnedCampaignSeason
+            {
+                PackId = "f1-1968", PackVersion = "1.0.0", Sha256 = new string('b', 64),
+                Year = 1968, ChampionshipRoundCount = 12,
+            },
+            new PinnedCampaignSeason
+            {
+                PackId = "f1-2020", PackVersion = "1.0.0", Sha256 = new string('c', 64),
+                Year = 2020, ChampionshipRoundCount = 17,
+            },
+        ]);
+
     private static CharacterProfile Profile() => new()
     {
         Name = "Zeroforce",
+        CountryCode = "BRA",
         Age = 23,
         Stats = new Dictionary<string, double>(StringComparer.Ordinal)
         {
@@ -69,6 +92,8 @@ public sealed class CharacterProgressionV2StateTests
         SkillPointsSpent = 0,
         XpSpentOnResets = 0,
         SkillResetCount = 0,
+        MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+        ExpectationModelVersion = CharacterProfile.CurrentExpectationModelVersion,
     };
 
     [Fact]
@@ -96,9 +121,11 @@ public sealed class CharacterProgressionV2StateTests
         Assert.DoesNotContain("racingDna", profileJson);
         Assert.DoesNotContain("creationBaseline", profileJson);
         Assert.DoesNotContain("acquiredSkillIds", profileJson);
+        Assert.DoesNotContain("masteryEffectsVersion", profileJson);
         Assert.DoesNotContain("skillPointsSpent", profileJson);
         Assert.DoesNotContain("xpSpentOnResets", profileJson);
         Assert.DoesNotContain("skillResetCount", profileJson);
+        Assert.DoesNotContain("countryCode", profileJson);
     }
 
     [Fact]
@@ -113,9 +140,9 @@ public sealed class CharacterProgressionV2StateTests
             Character = Profile(),
             Level = 30,
             Xp = 1_174,
-            ExperienceMode = CareerExperienceModes.Smgp,
-            CampaignProgressionPlan = Plan(),
-            XpScaleRemainder = 7,
+            ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+            CampaignProgressionPlan = FractionalPlan(),
+            XpScaleRemainder = 4,
         };
 
         string json = JsonSerializer.Serialize(state, CoreJson.Options);
@@ -123,11 +150,12 @@ public sealed class CharacterProgressionV2StateTests
 
         Assert.Equal(state, back);
         Assert.Equal(state.GetHashCode(), back.GetHashCode());
-        Assert.Equal(CareerExperienceModes.Smgp, back.ExperienceMode);
+        Assert.Equal(CareerExperienceModes.GrandPrixDynasty, back.ExperienceMode);
         Assert.Equal("dna_circuit_specialist", back.Character!.RacingDnaId);
+        Assert.Equal("BRA", back.Character.CountryCode);
         Assert.Equal("technical", back.Character.RacingDnaChoice);
         Assert.Equal(["rain_man"], back.Character.CreationBaseline!.TraitIds);
-        Assert.Equal(7, back.XpScaleRemainder);
+        Assert.Equal(4, back.XpScaleRemainder);
     }
 
     [Fact]
@@ -135,7 +163,11 @@ public sealed class CharacterProgressionV2StateTests
     {
         var input = new CharacterCreationInput
         {
-            Profile = NewProfile(),
+            Profile = NewProfile() with
+            {
+                MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+                ExpectationModelVersion = CharacterProfile.CurrentExpectationModelVersion,
+            },
             ExperienceMode = CareerExperienceModes.Smgp,
             CampaignProgressionPlan = Plan(),
         };
@@ -150,6 +182,10 @@ public sealed class CharacterProgressionV2StateTests
         Assert.Contains("racingDnaId", json);
         Assert.Contains("creationBaseline", json);
         Assert.Contains("campaignProgressionPlan", json);
+        Assert.Contains("masteryEffectsVersion", json);
+        Assert.Contains("expectationModelVersion", json);
+        Assert.Contains("\"countryCode\"", json);
+        Assert.Contains("\"BRA\"", json);
     }
 
     [Fact]
@@ -167,7 +203,30 @@ public sealed class CharacterProgressionV2StateTests
         Assert.Throws<InvalidOperationException>(() =>
             (valid with { Profile = valid.Profile with { RacingDnaId = null } }).ValidateForNewCareer());
         Assert.Throws<InvalidOperationException>(() =>
+            (valid with { Profile = valid.Profile with { Name = "   " } }).ValidateForNewCareer());
+        Assert.Throws<InvalidOperationException>(() =>
             (valid with { Profile = valid.Profile with { SkillPointsSpent = 1 } }).ValidateForNewCareer());
+        valid.ValidateForNewCareer();
+        Assert.Throws<NotSupportedException>(() =>
+            (valid with { Profile = valid.Profile with { MasteryEffectsVersion = 0 } }).ValidateForNewCareer());
+        Assert.Throws<NotSupportedException>(() =>
+            (valid with { Profile = valid.Profile with { MasteryEffectsVersion = 2 } }).ValidateForNewCareer());
+        Assert.Throws<NotSupportedException>(() =>
+            (valid with { Profile = valid.Profile with { ExpectationModelVersion = 0 } }).ValidateForNewCareer());
+        Assert.Throws<NotSupportedException>(() =>
+            (valid with { Profile = valid.Profile with { ExpectationModelVersion = 3 } }).ValidateForNewCareer());
+        Assert.Throws<InvalidOperationException>(() =>
+            (valid with
+            {
+                Profile = valid.Profile with
+                {
+                    ChosenFlavor = "notAWritableRating",
+                    CreationBaseline = valid.Profile.CreationBaseline! with
+                    {
+                        ChosenFlavor = "notAWritableRating",
+                    },
+                },
+            }).ValidateForNewCareer());
         Assert.Throws<InvalidOperationException>(() =>
             (valid with { Profile = valid.Profile with { CpUnspent = 1 } }).ValidateForNewCareer());
         Assert.Throws<InvalidOperationException>(() =>

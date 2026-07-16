@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.SmgpCareerOverView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
     <!-- The Level-D floor ending. This is the fired/relegated-out voice of the same terminal
          surface used for fatal accidents; its DataContext is the already-projected Briefing VM. -->
@@ -14,6 +15,7 @@
                         MinWidth="180" Padding="14,9"
                         Command="{Binding DataContext.GoToStartCommand,
                                           RelativeSource={RelativeSource AncestorType=Window}}"
+                        audio:SoundAssist.Cue="Back"
                         AutomationProperties.Name="Return to main menu" />
                 <TextBlock Text="THE PADDOCK MOVES ON" Style="{StaticResource Eyebrow}"
                            Foreground="{DynamicResource TextMutedBrush}"

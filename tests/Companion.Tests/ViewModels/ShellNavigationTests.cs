@@ -37,8 +37,12 @@ public sealed class ShellNavigationTests
         var shell = CreateShell(out _, out _);
         shell.Start.NewCareerCommand.Execute(null);
 
-        Assert.IsType<NewCareerWizardViewModel>(shell.Current);
+        var wizard = Assert.IsType<NewCareerWizardViewModel>(shell.Current);
         Assert.Same(shell.Wizard, shell.Current);
+        Assert.True(wizard.IsProgressionV2);
+        Assert.False(wizard.HasResolvedExperienceMode);
+        Assert.Null(wizard.ExperienceMode);
+        Assert.Equal("CAREER MODE PENDING", wizard.ExperienceModeLabel);
     }
 
     [Fact]
@@ -169,8 +173,7 @@ public sealed class ShellNavigationTests
     {
         using var home = new HomeViewModel(new FakeSession());
 
-        home.EnterResultCommand.Execute(null);
-        var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+        var entry = OpenRace(home);
         entry.Input = "1";
         entry.SubmitCommand.Execute(null);
 
@@ -186,8 +189,7 @@ public sealed class ShellNavigationTests
     public void Confirm_is_gated_on_a_complete_draft()
     {
         using var home = new HomeViewModel(new FakeSession());
-        home.EnterResultCommand.Execute(null);
-        var entry = (ResultEntryViewModel)home.CurrentContent!;
+        var entry = OpenRace(home);
 
         Assert.False(home.ConfirmResultCommand.CanExecute(null));
 
@@ -201,8 +203,7 @@ public sealed class ShellNavigationTests
     {
         var session = new FakeSession();
         using var home = new HomeViewModel(session);
-        home.EnterResultCommand.Execute(null);
-        CompleteRound((ResultEntryViewModel)home.CurrentContent!);
+        CompleteRound(OpenRace(home));
 
         home.ConfirmResultCommand.Execute(null);
         var confirm = Assert.IsType<ConfirmViewModel>(home.CurrentContent);
@@ -218,8 +219,7 @@ public sealed class ShellNavigationTests
     public void Confirm_back_returns_to_the_same_result_entry()
     {
         using var home = new HomeViewModel(new FakeSession());
-        home.EnterResultCommand.Execute(null);
-        var entry = (ResultEntryViewModel)home.CurrentContent!;
+        var entry = OpenRace(home);
         CompleteRound(entry);
 
         home.ConfirmResultCommand.Execute(null);
@@ -237,8 +237,7 @@ public sealed class ShellNavigationTests
 
         for (int round = 0; round < 2; round++)
         {
-            home.EnterResultCommand.Execute(null);
-            CompleteRound((ResultEntryViewModel)home.CurrentContent!);
+            CompleteRound(OpenRace(home));
             home.ConfirmResultCommand.Execute(null);
             ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
         }
@@ -265,8 +264,7 @@ public sealed class ShellNavigationTests
         using var home = new HomeViewModel(session);
 
         // Round 1: no recommendation yet — the neutral default.
-        home.EnterResultCommand.Execute(null);
-        var entry = (ResultEntryViewModel)home.CurrentContent!;
+        var entry = OpenRace(home);
         Assert.Equal(ResultEntryViewModel.NeutralSlider, entry.SliderUsed);
 
         CompleteRound(entry);
@@ -274,8 +272,7 @@ public sealed class ShellNavigationTests
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
 
         // Round 2: the fake session now recommends 97 — the prompt is prefilled with it.
-        home.EnterResultCommand.Execute(null);
-        var second = (ResultEntryViewModel)home.CurrentContent!;
+        var second = OpenRace(home);
         Assert.Equal(97.0, second.SliderUsed);
     }
 
@@ -407,8 +404,7 @@ public sealed class ShellNavigationTests
         hub.SelectTabByNumber(2); // wander off to the Standings lens
         Assert.Equal(HubViewModel.StandingsTabKey, hub.SelectedTab?.Key);
 
-        hub.Home.EnterResultCommand.Execute(null);
-        CompleteRound((ResultEntryViewModel)hub.Home.CurrentContent!);
+        CompleteRound(OpenRace(hub.Home));
         hub.Home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)hub.Home.CurrentContent!).ApplyCommand.Execute(null);
 
@@ -428,8 +424,7 @@ public sealed class ShellNavigationTests
         // Before any round: the fake's single season card has not started.
         Assert.Equal("Season not started", history.Seasons.Single().ResultText);
 
-        hub.Home.EnterResultCommand.Execute(null);
-        CompleteRound((ResultEntryViewModel)hub.Home.CurrentContent!);
+        CompleteRound(OpenRace(hub.Home));
         hub.Home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)hub.Home.CurrentContent!).ApplyCommand.Execute(null);
 
@@ -477,7 +472,10 @@ public sealed class ShellNavigationTests
         hub.SelectTabByNumber(3); // wander to News
         hub.GoToResultCommand.Execute(null);
         Assert.Equal(HubViewModel.RaceTabKey, hub.SelectedTab?.Key); // snapped back to Race
-        Assert.True(hub.Home.IsResultEntryState);                    // and opened result entry
+        Assert.True(hub.Home.IsSessionIntroState);                  // cinematic gate precedes entry
+        Assert.IsType<SessionIntroViewModel>(hub.Home.CurrentContent)
+            .ContinueCommand.Execute(null);
+        Assert.True(hub.Home.IsResultEntryState);
 
         hub.SelectTabByNumber(2); // wander to Standings
         hub.GoToBriefingCommand.Execute(null);
@@ -486,6 +484,15 @@ public sealed class ShellNavigationTests
     }
 
     // ---------- helpers / fakes ----------
+
+    private static ResultEntryViewModel OpenRace(HomeViewModel home)
+    {
+        home.EnterResultCommand.Execute(null);
+        var intro = Assert.IsType<SessionIntroViewModel>(home.CurrentContent);
+        Assert.Equal(SessionIntroKind.Race, intro.Kind);
+        intro.ContinueCommand.Execute(null);
+        return Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+    }
 
     private static ShellViewModel CreateShell(out FakeFactory factory, out FakeStore store)
     {

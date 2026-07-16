@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Companion.App.Audio;
 using Companion.Core.Grid;
 using Companion.ViewModels.ResultEntry;
 using Companion.ViewModels.Shell;
@@ -166,7 +167,16 @@ public partial class ResultEntryView : UserControl
     private void OnCandidateDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // The first click already moved SelectedCandidateIndex (two-way binding).
-        ViewModel?.SubmitCommand.Execute(null);
+        if (ViewModel is { } vm)
+        {
+            string before = PlacementStateOf(vm);
+            vm.SubmitCommand.Execute(null);
+
+            // SubmitCommand is intentionally void and can decline incomplete/stale input. Give
+            // the gesture tactile feedback only after the resolved result really changed.
+            if (!string.Equals(before, PlacementStateOf(vm), StringComparison.Ordinal))
+                SoundAssist.Play(SoundEffectCue.BucketPlace);
+        }
         e.Handled = true;
     }
 
@@ -176,13 +186,26 @@ public partial class ResultEntryView : UserControl
     {
         if (ViewModel is { } vm && DriverIdOf((sender as FrameworkElement)?.DataContext) is { } id)
         {
-            if (vm.IsDnfPhase)
-                vm.MarkDnf(id);
-            else
-                vm.InsertAt(id, vm.Classified.Count);
+            bool moved = vm.IsDnfPhase
+                ? vm.MarkDnf(id)
+                : vm.InsertAt(id, vm.Classified.Count);
+
+            if (moved)
+                SoundAssist.Play(SoundEffectCue.BucketPlace);
             e.Handled = true;
         }
     }
+
+    /// <summary>A compact fingerprint of the result buckets and classified order. Candidate
+    /// submission exposes a void command, so comparing this before/after distinguishes a real
+    /// placement (including a reorder) from an invalid or same-position no-op without reaching
+    /// into ViewModel implementation details.</summary>
+    private static string PlacementStateOf(ResultEntryViewModel vm) => string.Join('\u001e',
+    [
+        string.Join('\u001f', vm.Classified.Select(s => s.DriverId)),
+        string.Join('\u001f', vm.Dnfs.Select(d => d.Seat.DriverId)),
+        string.Join('\u001f', vm.Disqualified.Select(s => s.DriverId)),
+    ]);
 
     /// <summary>The inline M/A/O picker on a DNF row's editor. Picking m/a records a concrete
     /// cause and closes the editor (row → compact DISPLAY, via the VM clearing

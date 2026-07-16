@@ -27,7 +27,12 @@ public class SkinAssignmentResolverTests
 
         var car = Assert.Single(result.Assignments);
         Assert.Equal(SkinStatus.CustomSkin, car.Status);
+        Assert.Equal("driver.jbrabham", car.DriverId);
+        Assert.Equal("team.x", car.TeamId);
+        Assert.Equal("51", car.SkinSlot);
         Assert.Equal(VehicleDir, car.VehicleFolder);
+        Assert.Equal("51", result.ActiveLiverySlots["Brabham #3"]);
+        Assert.Equal(VehicleDir, result.ActiveCustomLiveryModels["Brabham #3"]);
         Assert.Equal(1, result.CustomSkinCount);
     }
 
@@ -42,6 +47,7 @@ public class SkinAssignmentResolverTests
 
         var car = Assert.Single(result.Assignments);
         Assert.Equal(SkinStatus.InstalledInactive, car.Status);
+        Assert.Equal("", car.SkinSlot);
         Assert.Equal(1, result.InactiveCount);
         Assert.Contains("Skoal #10", result.InactiveLiveries);
         Assert.DoesNotContain("Skoal #10", result.ActiveLiveries);
@@ -72,6 +78,26 @@ public class SkinAssignmentResolverTests
             plan, installedLiveries: [], LibraryWithStock("Stock Car #1"), installedAiNames: null);
 
         Assert.Equal(SkinStatus.StockDefault, Assert.Single(result.Assignments).Status);
+        Assert.Empty(result.ActiveCustomLiveryModels);
+    }
+
+    [Fact]
+    public void OfficialStockLivery_PublishesItsRealSlot()
+    {
+        var plan = PlanWith(Seat("Stock Car #1", "A. Driver"));
+        var result = SkinAssignmentResolver.Resolve(
+            plan,
+            installedLiveries: [],
+            Build(
+                stockLiveries: [],
+                officialLiveries: [new OfficialLivery { Name = "Stock Car #1", Slot = 17 }]),
+            installedAiNames: null);
+
+        var car = Assert.Single(result.Assignments);
+        Assert.Equal(SkinStatus.StockDefault, car.Status);
+        Assert.Equal("17", car.SkinSlot);
+        Assert.Equal("17", result.ActiveLiverySlots["Stock Car #1"]);
+        Assert.DoesNotContain("Stock Car #1", result.ActiveCustomLiveryModels);
     }
 
     [Fact]
@@ -238,7 +264,10 @@ public class SkinAssignmentResolverTests
 
     private static Ams2ContentLibrary LibraryWithStock(params string[] stock) => Build(stock);
 
-    private static Ams2ContentLibrary Build(IReadOnlyList<string> stockLiveries, int? cap = null) => new()
+    private static Ams2ContentLibrary Build(
+        IReadOnlyList<string> stockLiveries,
+        int? cap = null,
+        IReadOnlyList<OfficialLivery>? officialLiveries = null) => new()
     {
         Classes = new Dictionary<string, Ams2Class>(StringComparer.Ordinal)
         {
@@ -256,6 +285,12 @@ public class SkinAssignmentResolverTests
         LiveryCaps = cap is { } c
             ? new Dictionary<string, int>(StringComparer.Ordinal) { [VehicleClass] = c }
             : new Dictionary<string, int>(StringComparer.Ordinal),
+        OfficialLiveries = officialLiveries is null
+            ? new Dictionary<string, IReadOnlyList<OfficialLivery>>(StringComparer.Ordinal)
+            : new Dictionary<string, IReadOnlyList<OfficialLivery>>(StringComparer.Ordinal)
+            {
+                [VehicleClass] = officialLiveries,
+            },
         ExtractedFrom = "unit-test",
     };
 }

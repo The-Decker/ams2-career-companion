@@ -34,7 +34,10 @@ public static class SeasonRollover
         string? playerLiveryName,
         IReadOnlyList<CharacterSpend>? spends = null,
         CharacterRules? characterRules = null,
-        IReadOnlyList<CharacterRespec>? respecs = null)
+        IReadOnlyList<CharacterRespec>? respecs = null,
+        IReadOnlyList<CharacterSkillPlanInput>? skillPlans = null,
+        MasterySkillCatalog? masterySkills = null,
+        IReadOnlyList<CharacterSkillDevelopmentAction>? skillDevelopment = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(acceptedTeamId);
 
@@ -63,6 +66,11 @@ public static class SeasonRollover
                 character = CharacterProgress.ApplyAll(character, spends, characterRules);
             player = player with { Character = character };
         }
+
+        player = skillDevelopment is null
+            ? CharacterSkillPlanTransition.Apply(player, skillPlans, masterySkills)
+            : CharacterSkillDevelopmentTransition.Apply(
+                player, skillDevelopment, characterRules, masterySkills);
 
         return new SeasonStartStates
         {

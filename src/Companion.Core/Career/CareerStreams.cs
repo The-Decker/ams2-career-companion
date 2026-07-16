@@ -13,6 +13,10 @@ public static class CareerStreams
     public const string Headlines = "headlines";
     public const string TierDrift = "tier-drift";
 
+    /// <summary>The opt-in character-creation roll. The complete resulting profile is journaled as
+    /// INPUT and replay never consumes this stream. Keyed (character-gen, 0, rerollOrdinal, "player").</summary>
+    public const string CharacterGen = "character-gen";
+
     /// <summary>The opt-in season-end injury roll (character depth 6): drawn ONLY for a character
     /// carrying an injury-stream perk, so a default career consumes zero new draws and stays
     /// replay-compatible with pre-character saves. Keyed (injury, year, 0, "player").</summary>
@@ -55,6 +59,23 @@ public static class JournalPhases
     /// re-applied identically on replay, so it is provenance-excluded from the byte-compare like
     /// <see cref="PlayerCharacter"/>.</summary>
     public const string PlayerStatSpend = "player.statSpend";
+
+    /// <summary>An ordered progression-v2 mastery/attribute plan confirmed between seasons.
+    /// This is one versioned, atomic player-choice INPUT (round = null), applied at the next
+    /// season transition and re-applied identically on replay. The carried next-season character
+    /// state remains replay-checked; only this source INPUT row is provenance-excluded.</summary>
+    public const string PlayerSkillPlan = "player.skillPlan";
+
+    /// <summary>The progression-v2, XP-funded full-tree reset INPUT. The complete authoritative
+    /// cost and prior acquisition set are persisted so live and replay apply the same destructive
+    /// character-development choice without RNG or reverse-subtracting clamped attributes.</summary>
+    public const string PlayerSkillReset = "player.skillReset";
+
+    /// <summary>The progression-v2 player's authoritative pre-race weather and distance band for
+    /// one round. This versioned INPUT is committed before AMS2 staging so the live grid, staged
+    /// player-car scalars, result envelope and replay all resolve conditional CAR effects from the
+    /// same facts. It is provenance-excluded; the result envelope cross-checks its wet/dry value.</summary>
+    public const string PlayerRoundConditions = "player.roundConditions";
 
     /// <summary>A milestone-token respec choice, re-applied at the next transition. INPUT and
     /// provenance-excluded; its carried CharacterProfile effect is checked in the next start state.</summary>

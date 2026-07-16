@@ -483,3 +483,7 @@ $RECYCLE.BIN/
 
 dist/
 tools/_f1db/
+
+# Codex worktrees and agent scratch space
+.codex-worktrees/
+scratchpad/

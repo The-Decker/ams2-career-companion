@@ -28,11 +28,57 @@ public sealed class PerkDescriberTests
     [Fact]
     public void Describe_AppendsAConditionClause()
     {
-        Assert.Equal("Stronger wet-weather pace — in the wet",
-            PerkDescriber.Describe(new PerkEffect
-            {
-                Kind = "benefit", Lever = "statDelta", Target = "wetSkill", Magnitude = 0.3, Condition = "wetRound",
-            }));
+        var effect = new PerkEffect
+        {
+            Kind = "benefit", Lever = "statDelta", Target = "wetSkill", Magnitude = 0.3, Condition = "wetRound",
+        };
+
+        Assert.Equal("Stronger wet-weather pace — in the wet", PerkDescriber.Describe(effect));
+
+        var line = PerkDescriber.DescribeLine(effect);
+        Assert.Equal("Stronger wet-weather pace — in the wet", line.Text);
+        Assert.Equal("wetRound", line.Condition);
+        Assert.True(line.IsConditional);
+    }
+
+    [Theory]
+    [InlineData("statDelta", CharacterEffectClass.Expectation, "EXPECTATION")]
+    [InlineData("carScalar", CharacterEffectClass.Car, "CAR")]
+    [InlineData("opiRetention", CharacterEffectClass.Career, "CAREER")]
+    public void DescribeLine_MapsAbsentClassificationByLegacyLever(
+        string lever,
+        CharacterEffectClass expected,
+        string expectedLabel)
+    {
+        var line = PerkDescriber.DescribeLine(new PerkEffect
+        {
+            Kind = "benefit",
+            Lever = lever,
+            Target = lever == "carScalar" ? "power" : "gainSide",
+            Magnitude = 0.1,
+            Note = "Fallback",
+        });
+
+        Assert.Equal(expected, line.Classification);
+        Assert.Equal(expectedLabel, line.ClassificationLabel);
+        Assert.False(line.IsConditional);
+    }
+
+    [Fact]
+    public void DescribeLine_AuthoredClassificationOverridesLegacyMapping()
+    {
+        var line = PerkDescriber.DescribeLine(new PerkEffect
+        {
+            Kind = "benefit",
+            Lever = "statDelta",
+            Target = "raceSkill",
+            Magnitude = 0.1,
+            Classification = CharacterEffectClass.Career,
+        });
+
+        Assert.Equal(CharacterEffectClass.Career, line.Classification);
+        Assert.Equal("CAREER", line.ClassificationLabel);
+        Assert.Equal("Stronger race pace", line.Text);
     }
 
     [Fact]
@@ -43,8 +89,18 @@ public sealed class PerkDescriberTests
         var rules = Rules();
         foreach (var perk in rules.Perks)
         {
-            Assert.NotEmpty(PerkDescriber.Benefits(perk));
-            Assert.NotEmpty(PerkDescriber.Drawbacks(perk));
+            var effects = PerkDescriber.Effects(perk);
+            var benefits = PerkDescriber.Benefits(perk);
+            var drawbacks = PerkDescriber.Drawbacks(perk);
+
+            Assert.NotEmpty(benefits);
+            Assert.NotEmpty(drawbacks);
+            Assert.Equal(
+                effects.Where(line => line.Kind == "benefit").Select(line => line.Text),
+                benefits);
+            Assert.Equal(
+                effects.Where(line => line.Kind == "drawback").Select(line => line.Text),
+                drawbacks);
         }
     }
 }

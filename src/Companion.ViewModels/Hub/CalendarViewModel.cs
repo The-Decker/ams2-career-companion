@@ -75,6 +75,7 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
         DateText = entry.Date;
         RealVenue = entry.RealVenue;
         Ams2TrackName = entry.Ams2TrackName;
+        TrackId = entry.TrackId;
         LapsText = $"{entry.Laps.ToString(CultureInfo.InvariantCulture)} laps";
         Kind = entry.Kind;
         UnusedAlternateName = entry.UnusedAlternateName;
@@ -106,6 +107,8 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
     public string RealVenue { get; }
     /// <summary>The AMS2 track you will actually drive — the calendar's headline value.</summary>
     public string Ams2TrackName { get; }
+    /// <summary>The stable AMS2 layout key used by the embedded venue-banner manifest.</summary>
+    public string TrackId { get; }
     public string LapsText { get; }
     public SeasonTrackKind Kind { get; }
 

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Companion.App.Audio;
 using Companion.Core.Grid;
 using Companion.ViewModels.ResultEntry;
 
@@ -202,6 +203,7 @@ public static class ListDragDropBehavior
         data.SetData(SourceRoleFormat, role);
 
         _pressedDriverId = null;
+        SoundAssist.Play(SoundEffectCue.BucketPickup);
         DragDrop.DoDragDrop(element, data, DragDropEffects.Move);
     }
 
@@ -253,41 +255,26 @@ public static class ListDragDropBehavior
             return;
         }
 
-        switch (targetRole)
+        bool moved = targetRole switch
         {
-            case OrderRole when element is ItemsControl list:
-                DropOnOrder(vm, payload, InsertionIndex(list, e.GetPosition(list)));
-                break;
+            OrderRole when element is ItemsControl list =>
+                DropOnOrder(vm, payload, InsertionIndex(list, e.GetPosition(list))),
+            DnfRole => DropOnDnf(vm, payload),
+            DsqRole => ApplyToAll(payload.Ids, vm.MarkDsq),
+            RemainingRole => ApplyToAll(payload.Ids, vm.Unmark),
+            _ => false,
+        };
 
-            case DnfRole:
-                if (payload.Ids.Length > 1)
-                {
-                    vm.MarkDnfBulk(payload.Ids);
-                }
-                else if (vm.MarkDnf(payload.Ids[0]))
-                {
-                    // The inline reason picker appears on the freshly dropped row.
-                    vm.ReasonPickerDriverId = payload.Ids[0];
-                }
-                break;
-
-            case DsqRole:
-                foreach (string id in payload.Ids)
-                    vm.MarkDsq(id);
-                break;
-
-            case RemainingRole:
-                foreach (string id in payload.Ids)
-                    vm.Unmark(id);
-                break;
-        }
+        if (moved)
+            SoundAssist.Play(SoundEffectCue.BucketPlace);
     }
 
     /// <summary>Insert-before semantics at the indicator line. Reorders route through MoveTo
     /// (== the grammar's penalty reposition); everything else through InsertAt, which also
     /// pulls DNF/DSQ drivers back into the order.</summary>
-    private static void DropOnOrder(ResultEntryViewModel vm, DragPayload payload, int insertionIndex)
+    private static bool DropOnOrder(ResultEntryViewModel vm, DragPayload payload, int insertionIndex)
     {
+        bool moved = false;
         foreach (string id in payload.Ids)
         {
             if (payload.SourceRole == OrderRole)
@@ -297,13 +284,36 @@ public static class ListDragDropBehavior
                     continue;
                 // Removing the row from above the line shifts the line up by one.
                 int finalIndex = current < insertionIndex ? insertionIndex - 1 : insertionIndex;
-                vm.MoveTo(id, finalIndex);
+                moved |= vm.MoveTo(id, finalIndex);
             }
             else if (vm.InsertAt(id, insertionIndex))
             {
+                moved = true;
                 insertionIndex++; // keep multi-drops in their dragged order
             }
         }
+        return moved;
+    }
+
+    private static bool DropOnDnf(ResultEntryViewModel vm, DragPayload payload)
+    {
+        if (payload.Ids.Length > 1)
+            return vm.MarkDnfBulk(payload.Ids);
+
+        if (!vm.MarkDnf(payload.Ids[0]))
+            return false;
+
+        // The inline reason picker appears on the freshly dropped row.
+        vm.ReasonPickerDriverId = payload.Ids[0];
+        return true;
+    }
+
+    private static bool ApplyToAll(IEnumerable<string> ids, Func<string, bool> action)
+    {
+        bool changed = false;
+        foreach (string id in ids)
+            changed |= action(id);
+        return changed;
     }
 
     /// <summary>Every cross-role move is allowed; dropping back on the source list is not

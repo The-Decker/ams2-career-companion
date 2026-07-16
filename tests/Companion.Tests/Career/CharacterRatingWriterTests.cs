@@ -111,6 +111,23 @@ public sealed class CharacterRatingWriterTests
     }
 
     [Fact]
+    public void Apply_RejectsAnUnknownModifierRatingInsteadOfSilentlyDiscardingIt()
+    {
+        var modifiers = PlayerPerkModifiers.Identity with
+        {
+            TalentDeltas = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["notAWritableRating"] = 0.10,
+            },
+        };
+
+        var error = Assert.Throws<InvalidOperationException>(() =>
+            CharacterRatingWriter.Apply(Base(), Profile(), Rules(), modifiers));
+
+        Assert.Contains("unknown writable rating", error.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void FromArchetype_BuildsAResolvableInBudgetCharacter()
     {
         var rules = Rules();

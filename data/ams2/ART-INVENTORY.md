@@ -18,6 +18,7 @@ Regenerate the present/expected counts any time:
 (Get-ChildItem dist/data/ams2/portraits -Filter player.*.jpg).Count
 (Get-ChildItem dist/data/ams2/cars -Filter driver.*.png).Count
 (Get-ChildItem dist/data/ams2/smgp/flags -Filter driver.*.png).Count
+(Get-ChildItem dist/data/ams2/smgp/flags -Filter country.*.png).Count
 ```
 
 ## Summary
@@ -29,12 +30,15 @@ Regenerate the present/expected counts any time:
 | **per-team player images** (`player.<team>.jpg`) | 24 | 24 (SMGP teams) | ✅ complete |
 | **car previews** (`cars/<driverId>.png`) | 34 | 34 | ✅ complete; extractor writes directly to canonical `dist` |
 | **SMGP national flags** (`smgp/flags/<driverId>.png`) | 34 | 34 | ✅ complete; converted locally from installed AMS2 country flags |
+| **character nationality flags** (`smgp/flags/country.<slug>.png`) | 200 | 200 | ✅ complete; every selectable installed AMS2 country flag |
 | **SMGP grid-car miniatures** (`smgp/grid-cars/<driverId>.png`) | 34 | 34 | ✅ complete |
 | **team logos** (`smgp/logos/team.<team>.png`) | 24 | 24 | ✅ complete |
 | **round cards** (`smgp/rounds/<round>.jpg`) | 16 | 16 | ✅ complete |
 | **team photos** (`smgp/teams/<team>.jpg`) | 24 | 24 | ✅ complete |
+| **rival banners** (`smgp/banners/team.<team>.png`) | 24 | 24 | ✅ complete; exact 1040×200 hero aspect |
 | **sponsor logos** (`smgp/sponsors/<id>.png`) | 27 | 27 | ✅ complete |
 | **campaign finale secrets** (`smgp/finale/special.jpg`, `ultimate.jpg`) | 2 | 2 | ✅ present — Mike's 17-season reward images |
+| **embedded track banners** (`src/Companion.App/Assets/TrackBanners`) | 304 ids / 173 masters | every AMS2 track id | ✅ complete; 1920×440 |
 | **track-art** (`<trackId>.jpg`) | 0 | optional (one per AMS2 track id) | ○ none — optional drop-in, clean fallback |
 | **history-art** (`<year>.jpg`) | 0 | optional (one per season year) | ○ none — optional drop-in, clean fallback |
 
@@ -61,17 +65,25 @@ dardan, feet, joke, linden, losel, may, millions, and tyrant.
 The SMGP starting grid resolves `smgp/flags/<driverId>.png` so nationality remains an art-only,
 driver-keyed concern and does not duplicate roster logic in the ViewModel. The 34 canonical PNGs
 were converted locally from the matching 128×128 `GUI/CountryFlags/Flag_*.dds` files in Mike's AMS2
-installation. The synthetic player entry deliberately hides this slot because the character model
-does not author a nationality; showing the replaced AI driver's flag would be misleading.
+installation. Keep this `driver.*` compatibility set for authored AI-grid entries; the player's
+new explicit nationality resolves through the separate `country.*` keyspace below.
 
-## SMGP grid-car miniatures — ✅ 34/34 (dropped 2026-07-12)
+## Character nationality flags — ✅ 200/200
+
+`smgp/flags/country.<slug>.png` is the complete selectable character-country keyspace. The 200
+128×128 RGBA PNGs were converted losslessly from the local AMS2 `GUI/CountryFlags/Flag_*.dds` set,
+preserving each installed slug exactly and excluding the non-country `Flag_cancel.dds`. The
+character creator binds these keys through `CountryOptions`; `driver.*` remains intact for AI-grid
+compatibility.
+
+## SMGP grid-car miniatures — ✅ 34/34 (updated 2026-07-13)
 
 The SMGP pixel starting straight first resolves `smgp/grid-cars/<driverId>.png`, then falls back to
-the complete canonical `cars/<driverId>.png` set. Purpose-built miniatures should be 384×256
-transparent RGBA PNGs with consistent framing, a three-quarter overhead arcade view, and the nose
-pointing right to match the live side-preview fallback. Keep them driver-keyed: the 34 entries use
-five body silhouettes, and teammate liveries/numbers can differ. Never replace the canonical side
-previews to add these.
+the complete canonical `cars/<driverId>.png` set. Purpose-built miniatures are 384×512 transparent
+RGBA PNGs with consistent portrait framing and an overhead arcade view. The live grid rotates them
+90° clockwise and scales them to roughly 220×150, leaving the source reusable elsewhere. Keep them
+driver-keyed: the 34 entries use five body silhouettes, and teammate liveries/numbers can differ.
+Never replace the canonical side previews to add these.
 
 ## SMGP team art — ✅ complete (dropped 2026-07-12)
 
@@ -80,6 +92,7 @@ The Paddock / Tycoon team surfaces resolve, all now present:
 - **`smgp/teams/<team>.jpg`** — 24/24 team photos (the Paddock team detail + promotion screen).
 - **`smgp/rounds/<round>.jpg`** — 16/16 round cards (the calendar / upcoming-race hero).
 - **`smgp/sponsors/<id>.png`** — 27/27 sponsor logos (the Paddock Sponsors tab; `data/rules/smgp/sponsors.json`).
+- **`smgp/banners/team.<team>.png`** — 24/24 rival dossier heroes at the exact 1040×200 window aspect.
 
 All absent-tolerant (a missing file falls back to a coloured placeholder). Keep dropping new/updated
 art into `dist/data/ams2/smgp/<folder>/` and re-promote to the tracked tree when approved.
@@ -108,6 +121,10 @@ are not "missing" in the blocking sense. To add: `track-art/<trackId>.jpg` (trac
 `data/ams2/tracks.json`) shows on the Race Day briefing; `history-art/<year>.jpg` shows on the
 History tab's "what really happened" panel. Populate if/when we want that reference content to feel
 alive.
+
+The Calendar is already fully illustrated independently of those optional loose files: its embedded
+`TrackBanners/manifest.json` maps every current AMS2 track/layout id to one of 173 exact 1920×440
+panoramic venue masters. Layout variants may intentionally share a venue master.
 
 ## How to add art
 

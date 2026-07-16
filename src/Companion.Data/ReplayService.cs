@@ -49,6 +49,11 @@ public sealed record ReplaySimInputs
     /// a null value (or a character-free career) folds byte-identically to the pre-character sim.
     /// (Increment 4a.)</summary>
     public CharacterRules? CharacterRules { get; init; }
+
+    /// <summary>The progression-v2 mastery/attribute catalog. Optional so every legacy,
+    /// character-free, and mastery-effects-v0 replay remains byte-identical; required when an
+    /// active profile owns mastery skills or a stored development INPUT applies at a boundary.</summary>
+    public MasterySkillCatalog? MasterySkills { get; init; }
 }
 
 public sealed record ReplayReport
@@ -221,10 +226,21 @@ public static class ReplayService
         var currentSeason = seasons.FirstOrDefault(s => s.Id == seasonId)
             ?? throw new InvalidOperationException($"Season {seasonId} does not exist in this career.");
         int playerAge = inputs.PlayerAge + (currentSeason.Year - seasons[0].Year);
+        var envelope = upTo[^1].ToEnvelope();
+        var roundConditions = PlayerRoundConditionsStore.ReadRound(
+            db, seasonId, pack, round, tx);
+        ValidatePlayerRoundConditions(
+            previous.Player.Character,
+            inputs.CharacterRules,
+            inputs.MasterySkills,
+            pack,
+            round,
+            envelope,
+            roundConditions);
         var outcome = ComputeRoundFold(
             pack, masterSeed, inputs, startTeams,
             ChampionshipResults(pack, upTo),
-            upTo[^1].ToEnvelope(), round, playerAge, previous);
+            envelope, round, playerAge, previous, playerCarConditions: roundConditions);
 
         JournalStore.AppendMany(db, seasonId, round, outcome.Events, utc, tx);
         StateStore.InsertRoundPlayerState(db, seasonId, round, outcome.State, tx);
@@ -460,8 +476,35 @@ public static class ReplayService
         // Pre-read every input and stored artifact OUTSIDE the write transaction: the
         // regeneration below is pure computation over these plus the pack and seed.
         var acceptedOffers = ReadAcceptedOffers(db);
-        var preread = seasons
-            .Select(season => new StoredSeason(
+        var preread = new List<StoredSeason>(seasons.Count);
+        foreach (var season in seasons)
+        {
+            IReadOnlyList<CharacterSkillDevelopmentAction> skillDevelopment;
+            try
+            {
+                skillDevelopment = ReadCharacterSkillDevelopment(db, season.Id);
+            }
+            catch (Exception ex) when (
+                ex is InvalidOperationException or InvalidDataException or JsonException or NotSupportedException)
+            {
+                bool hasReset = JournalStore.ReadSeason(db, season.Id).Any(row =>
+                    string.Equals(row.Phase, JournalPhases.PlayerSkillReset, StringComparison.Ordinal));
+                return new ReplayReport
+                {
+                    Identical = false,
+                    ComparedRows = 0,
+                    FirstDivergence = new ReplayDivergence
+                    {
+                        SeasonId = season.Id,
+                        Index = 0,
+                        Reason = hasReset ? "skill-reset-validation" : "skill-plan-validation",
+                        StoredDeltaJson = ex.Message,
+                        RegeneratedDeltaJson = null,
+                    },
+                };
+            }
+
+            preread.Add(new StoredSeason(
                 season,
                 ResultStore.ReadSeasonResults(db, season.Id),
                 JournalStore.ReadSeason(db, season.Id)
@@ -472,8 +515,9 @@ public static class ReplayService
                 StateStore.ReadTeamStates(db, season.Id, StateStore.StageStart),
                 ReadCharacterSpends(db, season.Id),
                 ReadCharacterRespecs(db, season.Id),
-                ReadSmgpSwaps(db, season.Id)))
-            .ToList();
+                skillDevelopment,
+                ReadSmgpSwaps(db, season.Id)));
+        }
 
         int comparedRows = 0;
         ReplayDivergence? divergence = null;
@@ -494,6 +538,14 @@ public static class ReplayService
             seasonOrdinal++;
             var season = current.Season;
             var pack = packs[(season.PackId, season.PackVersion)];
+            // Per-season calendar variety is a fold input because race names reach headlines and
+            // venue length/weather can gate character effects. Apply the exact live transform from
+            // the pinned pack, ordinal and seed. The default-omitted flag keeps legacy saves inert.
+            if (current.StartPlayer?.Smgp?.PerSeasonVariety == true)
+            {
+                pack = Companion.Core.Smgp.SmgpSeasonVariety.ForSeason(
+                    pack, seasonOrdinal, unchecked((long)masterSeed));
+            }
             // Standings-driven winter reshuffle: the same pure entry transform the live session
             // applies before its per-season DNQ roll. The default-omitted start-state gate keeps
             // every legacy career on the authored grid.
@@ -510,6 +562,26 @@ public static class ReplayService
             // this replay re-derivation equals the live fold's grid by construction.
             if (current.StartPlayer?.Smgp?.PerSeasonDnq == true)
                 pack = Companion.Core.Smgp.SmgpDnqField.ForSeason(pack, seasonOrdinal, masterSeed);
+
+            IReadOnlyDictionary<int, PlayerRoundConditionsInput> seasonRoundConditions;
+            try
+            {
+                seasonRoundConditions = PlayerRoundConditionsStore.ReadSeason(
+                    db, season.Id, pack, transaction);
+            }
+            catch (Exception ex) when (
+                ex is InvalidOperationException or InvalidDataException or JsonException)
+            {
+                divergence = new ReplayDivergence
+                {
+                    SeasonId = season.Id,
+                    Index = 0,
+                    Reason = "round-conditions",
+                    StoredDeltaJson = ex.Message,
+                    RegeneratedDeltaJson = null,
+                };
+                break;
+            }
             var regenerated = new List<(int? Round, JournalEvent Event)>();
 
             // ---- follow-on seasons: start states must re-derive via the rollover (same
@@ -523,7 +595,8 @@ public static class ReplayService
                 {
                     divergence = VerifyRolloverStartStates(
                         previousSeason.Season, previousEnd, acceptedOffers, current,
-                        previousSeason.Spends, previousSeason.Respecs, inputs.CharacterRules);
+                        previousSeason.Spends, previousSeason.Respecs, previousSeason.SkillDevelopment,
+                        inputs.CharacterRules, inputs.MasterySkills);
                 }
                 else
                 {
@@ -532,7 +605,8 @@ public static class ReplayService
                     (divergence, transitionRows) = VerifyTransitionStartStates(
                         previousSeason.Season, fromPack, pack, previousEnd,
                         acceptedOffers, current, masterSeed, inputs,
-                        previousSeason.Spends, previousSeason.Respecs);
+                        previousSeason.Spends, previousSeason.Respecs,
+                        previousSeason.SkillDevelopment);
                     // The transition's journal rows were stored under this season before any
                     // round — regenerate them at the head of the sequence for the byte-compare.
                     foreach (var row in transitionRows)
@@ -559,15 +633,47 @@ public static class ReplayService
             {
                 if (ChampionshipCalendar.IsChampionshipRound(pack, stored.Round))
                     soFar.Add(stored.ToRoundResult());
+                var envelope = stored.ToEnvelope();
+                seasonRoundConditions.TryGetValue(stored.Round, out var playerCarConditions);
+                try
+                {
+                    ValidatePlayerRoundConditions(
+                        previousState.Player.Character,
+                        inputs.CharacterRules,
+                        inputs.MasterySkills,
+                        pack,
+                        stored.Round,
+                        envelope,
+                        playerCarConditions);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    divergence = new ReplayDivergence
+                    {
+                        SeasonId = season.Id,
+                        Index = regenerated.Count,
+                        Reason = "round-conditions",
+                        StoredDeltaJson = playerCarConditions is null
+                            ? null
+                            : DataJson.Serialize(playerCarConditions),
+                        RegeneratedDeltaJson = ex.Message,
+                    };
+                    break;
+                }
                 var outcome = ComputeRoundFold(
                     pack, masterSeed, inputs, current.StartTeams, soFar,
-                    stored.ToEnvelope(), stored.Round, playerAgeThisSeason, previousState,
-                    current.SmgpSwaps.TryGetValue(stored.Round, out var decided) ? decided : null);
+                    envelope, stored.Round, playerAgeThisSeason, previousState,
+                    playerCarConditions,
+                    swapDecision: current.SmgpSwaps.TryGetValue(stored.Round, out var decided)
+                        ? decided
+                        : null);
                 foreach (var journalEvent in outcome.Events)
                     regenerated.Add((stored.Round, journalEvent));
                 StateStore.InsertRoundPlayerState(db, season.Id, stored.Round, outcome.State, transaction);
                 previousState = outcome.State;
             }
+            if (divergence is not null)
+                break;
 
             // ---- season end, when it originally ran ----
             SeasonEndResult? seasonEnd = null;
@@ -582,6 +688,40 @@ public static class ReplayService
                 foreach (var journalEvent in seasonEnd.Events)
                     regenerated.Add((null, journalEvent));
                 PersistDerived(db, season.Id, seasonEnd, transaction);
+            }
+
+            // Provenance INPUTs are normally consumed by the following season boundary. Validate
+            // them here as well so a terminal campaign cannot hide a tampered reset/plan row simply
+            // because no next season exists yet. This is pure and does not alter stage=end.
+            if (current.SkillDevelopment.Count > 0)
+            {
+                if (seasonEnd is null)
+                {
+                    divergence = new ReplayDivergence
+                    {
+                        SeasonId = season.Id,
+                        Index = regenerated.Count,
+                        Reason = "skill-reset-validation",
+                        StoredDeltaJson = null,
+                        RegeneratedDeltaJson = "Character development requires a completed season end state.",
+                    };
+                    break;
+                }
+                try
+                {
+                    _ = CharacterSkillDevelopmentTransition.Apply(
+                        seasonEnd.Player,
+                        current.SkillDevelopment,
+                        inputs.CharacterRules,
+                        inputs.MasterySkills);
+                }
+                catch (Exception ex) when (
+                    ex is InvalidOperationException or NotSupportedException or ArgumentException)
+                {
+                    divergence = SkillDevelopmentDivergence(
+                        season.Id, current.SkillDevelopment, ex);
+                    break;
+                }
             }
 
             // ---- byte-compare this season's regenerated sequence against the journal ----
@@ -642,6 +782,37 @@ public static class ReplayService
         string? Headline,
         int? ExpectedFinish);
 
+    private static void ValidatePlayerRoundConditions(
+        CharacterProfile? character,
+        CharacterRules? rules,
+        MasterySkillCatalog? masterySkills,
+        SeasonPack pack,
+        int round,
+        RoundResultEnvelope envelope,
+        PlayerRoundConditionsInput? input)
+    {
+        if (input is not null)
+        {
+            PlayerRoundConditions.Validate(input, pack, round);
+            if (!envelope.PlayerDidNotStart &&
+                (envelope.IsWet is not bool envelopeWet || envelopeWet != input.IsWet))
+                throw new InvalidOperationException(
+                    $"Round {round}'s raw result weather does not match its persisted " +
+                    "pre-race player-car conditions.");
+        }
+
+        if (!envelope.PlayerDidNotStart &&
+            character?.ProgressionVersion == CharacterLevelProgression.Level300Version &&
+            rules is not null &&
+            PlayerCarScalarPolicy.RequiresRoundConditions(character, rules, masterySkills) &&
+            input is null)
+        {
+            throw new InvalidOperationException(
+                $"Round {round} is missing the persisted pre-race conditions required by its " +
+                "progression-v2 conditional player-car physics.");
+        }
+    }
+
     /// <summary>Pure fold of one round: standings events, then — when the player's seat is
     /// on the grid and the player appears in the result — the RoundUpdate events. Grid,
     /// teammate finish, expected finish, and the points cutoff are re-derived from
@@ -657,6 +828,7 @@ public static class ReplayService
         int round,
         int playerAge,
         RoundPlayerState previous,
+        PlayerRoundConditionsInput? playerCarConditions = null,
         // The player's post-race promotion decision for a two-phase smgp career (3c-2), or null.
         // Replay supplies the stored smgp.swap input so the pending offer resolves inline; the live
         // result-entry fold passes null (the offer stays pending for the promotion screen to answer).
@@ -677,25 +849,52 @@ public static class ReplayService
         var gridConditions = new HashSet<string>(StringComparer.Ordinal);
         if (hasCharacter)
         {
-            if (RaceLengthToken(pack, round) is { } raceLength)
-                gridConditions.Add(raceLength);
+            if (playerCarConditions is not null)
+            {
+                gridConditions.UnionWith(PlayerRoundConditions.ActiveConditions(playerCarConditions));
+            }
+            else
+            {
+                var lengthBand = PlayerRoundConditions.Prepare(pack, round, isWet: false).LengthBand;
+                if (lengthBand == PlayerRoundLengthBand.Long) gridConditions.Add("longRace");
+                if (lengthBand == PlayerRoundLengthBand.Short) gridConditions.Add("shortRace");
+            }
             // Weather (character depth #2): null = legacy/unknown → neither wetRound nor dryRound
             // fires, so pre-v4 saves replay byte-identically; a captured wet/dry flag fires the perk.
-            if (envelope.IsWet is bool wet)
+            if (playerCarConditions is null && envelope.IsWet is bool wet)
                 gridConditions.Add(wet ? "wetRound" : "dryRound");
             // Age window (prodigy/wonderkid/late_bloomer): the player's age this season vs the era's
             // peak-age start. Exactly one of the two fires per round, so a pre-peak youth and a
             // past-peak veteran fold the front-/back-loaded halves of those perks — deterministic
             // (age is a pure function of the season year offset), byte-identical without the perks.
             if (inputs.AgingCurves.TryForYear(pack.Season.Year) is { } curve)
-                gridConditions.Add(playerAge < curve.PeakAgeStart ? "ageLtPeak" : "ageGtePeak");
+            {
+                if (playerAge < curve.PeakAgeStart)
+                {
+                    gridConditions.Add("ageLtPeak");
+                    gridConditions.Add("ageBeforePeak");
+                }
+                else
+                {
+                    gridConditions.Add("ageGtePeak");
+                    gridConditions.Add("ageAtOrAfterPeak");
+                }
+            }
         }
 
         PlayerPerkModifiers? gridMods = hasCharacter
-            ? PerkResolver.Resolve(character!, inputs.CharacterRules!, gridConditions)
+            ? CharacterModifierResolver.Resolve(
+                character!, inputs.CharacterRules!, inputs.MasterySkills, gridConditions)
             : null;
-        PlayerCharacterPatch? gridPatch = hasCharacter
-            ? new PlayerCharacterPatch { Profile = character!, Modifiers = gridMods!, Rules = inputs.CharacterRules! }
+        PlayerCharacterPatch? gridPatch = hasCharacter && !envelope.PlayerDidNotStart
+            ? new PlayerCharacterPatch
+            {
+                Profile = character!,
+                Modifiers = gridMods!,
+                Rules = inputs.CharacterRules!,
+                MasterySkills = inputs.MasterySkills,
+                RoundConditions = playerCarConditions,
+            }
             : null;
 
         var grid = ResolvePlayerGrid(pack, round, previous.Player.LiveryName, gridPatch,
@@ -717,14 +916,33 @@ public static class ReplayService
         var roundConditions = new HashSet<string>(gridConditions, StringComparer.Ordinal);
         if (hasCharacter)
         {
-            if (playerTeamTier <= 2) roundConditions.Add("tierLte2");
-            if (playerTeamTier >= 4) roundConditions.Add("tierGte4");
+            if (playerTeamTier <= 2)
+            {
+                roundConditions.Add("tierLte2");
+                roundConditions.Add("tierAtMost2");
+            }
+            if (playerTeamTier >= 4)
+            {
+                roundConditions.Add("tierGte4");
+                roundConditions.Add("tierAtLeast4");
+            }
+
+            string? archetypeName = inputs.TeamArchetypeOverrides.TryGetValue(
+                playerSeat.TeamId, out string? explicitArchetype)
+                ? explicitArchetype
+                : inputs.Archetypes.DefaultArchetypeByTier.TryGetValue(
+                    Math.Clamp(playerTeamTier, 1, 5), out string? defaultArchetype)
+                    ? defaultArchetype
+                    : null;
+            if (string.Equals(archetypeName, "works", StringComparison.Ordinal))
+                roundConditions.Add("worksTeam");
         }
 
         // The round's scoring races (Increment 2e.2): usually one; a two-race weekend folds each
         // independently, THREADING the player state race → race, so OPI/rep/pace calibrate per race.
         // A single race runs the loop exactly once → the shipped fold, byte-identical.
         var raceSessions = envelope.Result.Sessions.Where(s => s.Kind == SessionKind.Race).ToList();
+        bool isChampionshipRound = ChampionshipCalendar.IsChampionshipRound(pack, round);
 
         // Score the player under the driver id of the SEAT they occupy THIS season, resolved from
         // their livery above — not a single career-global id. The two are identical in the first
@@ -792,7 +1010,8 @@ public static class ReplayService
             if (hasCharacter && dnf == DnfCause.DriverError)
                 raceConditions = new HashSet<string>(roundConditions, StringComparer.Ordinal) { "driverErrorDnf" };
             var raceMods = hasCharacter
-                ? PerkResolver.Resolve(character!, inputs.CharacterRules!, raceConditions)
+                ? CharacterModifierResolver.Resolve(
+                    character!, inputs.CharacterRules!, inputs.MasterySkills, raceConditions)
                 : null;
 
             // A driver-error DNF banks the perErrorAdd injury contribution toward the season injury
@@ -808,6 +1027,10 @@ public static class ReplayService
                 Grid = grid,
                 Player = player,
                 PlayerTeamTier = playerTeamTier,
+                TeamTiers = startTeams.ToDictionary(
+                    team => team.TeamId,
+                    team => team.Tier,
+                    StringComparer.Ordinal),
                 PlayerFinish = finish,
                 PlayerDnf = dnf,
                 HasTeammate = teammateIds.Count > 0,
@@ -824,6 +1047,8 @@ public static class ReplayService
                 Modifiers = raceMods,
                 CharacterRules = character is not null ? inputs.CharacterRules : null,
                 InjuryLoadDelta = injuryLoadDelta,
+                IsChampionshipRound = isChampionshipRound,
+                IsPrimaryRace = i == 0,
                 // The Setup Gamble is a per-round commitment resolved against the race — like the
                 // qualifying anchor, only the first race of a weekend carries it.
                 CalledShot = i == 0 ? envelope.CalledShot : null,
@@ -933,9 +1158,9 @@ public static class ReplayService
         return null;
     }
 
-    /// <summary>The round's grid with the player's seat marked, or null when the player has
-    /// no seat this round (no livery configured, or the entry's rounds range excludes it) —
-    /// then the round folds with the player state carried over unchanged.</summary>
+    /// <summary>The round's grid with the player's seat marked, or null only when no player
+    /// livery was configured. A non-null livery is a pinned contract: pack/profile/catalog
+    /// failures escape instead of being silently converted into a did-not-start round.</summary>
     private static GridPlan? ResolvePlayerGrid(
         SeasonPack pack, int round, string? liveryName, PlayerCharacterPatch? character = null,
         GridSelection? gridSelection = null, bool applyWeekendForm = false,
@@ -944,46 +1169,33 @@ public static class ReplayService
         if (liveryName is null)
             return null;
 
-        // Do this outside the absent-seat compatibility catch below. A v2 character carrying
-        // conditional CAR physics is an unsupported input contract, not a missing seat; swallowing
-        // it would commit a standings-only fold and hide the real staging/replay mismatch.
-        if (character?.Profile.ProgressionVersion == CharacterLevelProgression.Level300Version)
-            PlayerCarScalarPolicy.EnsureStagingCompatible(character.Profile, character.Rules);
-
         // The player takes a REAL seat even when the driver they replace did not start this round
         // historically (a per-round grid excludes non-starters). Resolve directly with the player
         // seat — the resolver adds the player's covering entry back to the grid — and treat an
-        // absent seat (the player's team is simply not entered this round) as "did not race".
+        // absent or malformed non-null seat as a contract failure.
         // Ratings Phase 3: applyWeekendForm (a FormAware career) makes the scored grid react to the
         // round's per-race form; false ⇒ byte-identical (existing careers + form-less packs).
         // SMGP (M3): the carried mode state reseats swapped drivers and puts the player in the car
         // the ladder earned them; null (every other career) ⇒ byte-identical.
-        try
+        // SMGP CLEAN-SWAP model: a DISTINCT player driver id seats the player DIRECTLY on their
+        // current car (smgp.CurrentSeatLivery), so the FOLD scores them under that distinct id —
+        // exactly matching the live display path (CareerSessionService.ResolveGrid). Its authored
+        // AI benches; no overrides. Pre-change SMGP careers (player id == a pack driver) fall to
+        // the override path below (byte-identical).
+        if (smgp is not null &&
+            string.Equals(playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
         {
-            // SMGP CLEAN-SWAP model: a DISTINCT player driver id seats the player DIRECTLY on their
-            // current car (smgp.CurrentSeatLivery), so the FOLD scores them under that distinct id —
-            // exactly matching the live display path (CareerSessionService.ResolveGrid). Its authored
-            // AI benches; no overrides. Pre-change SMGP careers (player id == a pack driver) fall to
-            // the override path below (byte-identical).
-            if (smgp is not null &&
-                string.Equals(playerDriverId, RoundGridResolver.SyntheticPlayerDriverId, StringComparison.Ordinal))
-            {
-                return RoundGridResolver.Resolve(
-                    pack, round,
-                    new PlayerSeat { Ams2LiveryName = smgp.CurrentSeatLivery, DriverId = playerDriverId, Character = character },
-                    gridSelection, applyWeekendForm: applyWeekendForm);
-            }
-
             return RoundGridResolver.Resolve(
-                pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
-                gridSelection, applyWeekendForm: applyWeekendForm,
-                seatOverrides: smgp?.AiSeatOverrides is { Count: > 0 } overrides ? overrides : null,
-                playerSeatOverride: smgp?.CurrentSeatLivery);
+                pack, round,
+                new PlayerSeat { Ams2LiveryName = smgp.CurrentSeatLivery, DriverId = playerDriverId, Character = character },
+                gridSelection, applyWeekendForm: applyWeekendForm);
         }
-        catch (InvalidOperationException)
-        {
-            return null;
-        }
+
+        return RoundGridResolver.Resolve(
+            pack, round, new PlayerSeat { Ams2LiveryName = liveryName, Character = character },
+            gridSelection, applyWeekendForm: applyWeekendForm,
+            seatOverrides: smgp?.AiSeatOverrides is { Count: > 0 } overrides ? overrides : null,
+            playerSeatOverride: smgp?.CurrentSeatLivery);
     }
 
     /// <summary>Whether this round is a longer- or shorter-than-median race for the season (by lap
@@ -1149,6 +1361,7 @@ public static class ReplayService
         IReadOnlyList<TeamCareerState> StartTeams,
         IReadOnlyList<CharacterSpend> Spends,
         IReadOnlyList<CharacterRespec> Respecs,
+        IReadOnlyList<CharacterSkillDevelopmentAction> SkillDevelopment,
         IReadOnlyDictionary<int, bool> SmgpSwaps);
 
     private static bool IsComplete(SeasonRecord season) =>
@@ -1186,6 +1399,7 @@ public static class ReplayService
         // id, exactly as the round fold does — so "champion" reads the driver's name, not their id.
         PlayerName = string.IsNullOrEmpty(player.Character?.Name) ? inputs.PlayerName : player.Character!.Name,
         CharacterRules = inputs.CharacterRules,
+        MasterySkills = inputs.MasterySkills,
     };
 
     /// <summary>Re-derives a follow-on season's start states from the previous season's
@@ -1200,7 +1414,9 @@ public static class ReplayService
         StoredSeason current,
         IReadOnlyList<CharacterSpend> spends,
         IReadOnlyList<CharacterRespec> respecs,
-        CharacterRules? characterRules)
+        IReadOnlyList<CharacterSkillDevelopmentAction> skillDevelopment,
+        CharacterRules? characterRules,
+        MasterySkillCatalog? masterySkills)
     {
         long seasonId = current.Season.Id;
         if (previousEnd is null)
@@ -1225,10 +1441,23 @@ public static class ReplayService
             };
         }
 
-        var derived = SeasonRollover.Derive(
-            previousEnd.Player, previousEnd.Drivers, previousEnd.Teams,
-            acceptedTeam, current.StartPlayer?.LiveryName,
-            spends, characterRules, respecs);
+        SeasonStartStates derived;
+        try
+        {
+            derived = SeasonRollover.Derive(
+                previousEnd.Player, previousEnd.Drivers, previousEnd.Teams,
+                acceptedTeam, current.StartPlayer?.LiveryName,
+                spends, characterRules, respecs,
+                skillPlans: null,
+                masterySkills: masterySkills,
+                skillDevelopment: skillDevelopment);
+        }
+        catch (Exception ex) when (
+            skillDevelopment.Count > 0 &&
+            ex is InvalidOperationException or NotSupportedException or ArgumentException)
+        {
+            return SkillDevelopmentDivergence(seasonId, skillDevelopment, ex);
+        }
 
         if (current.StartPlayer is null || derived.Player != current.StartPlayer)
         {
@@ -1268,7 +1497,8 @@ public static class ReplayService
             ulong masterSeed,
             ReplaySimInputs inputs,
             IReadOnlyList<CharacterSpend> spends,
-            IReadOnlyList<CharacterRespec> respecs)
+            IReadOnlyList<CharacterRespec> respecs,
+            IReadOnlyList<CharacterSkillDevelopmentAction> skillDevelopment)
     {
         long seasonId = current.Season.Id;
         if (previousEnd is null)
@@ -1311,12 +1541,25 @@ public static class ReplayService
         // carryover the FROM season's year runs ahead of the from-pack's year, and using the pack
         // year would re-bridge (double-age) the carried year. For every non-carryover boundary the
         // season year equals the pack year, so this is byte-identical for existing careers.
-        var plan = EraTransition.Build(
-            fromPack, toPack, previousEnd, previousEnd.Player, offer,
-            new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements,
-            spends, inputs.CharacterRules,
-            fromYearOverride: previousSeason.Year, toYearOverride: current.Season.Year,
-            respecs: respecs);
+        TransitionPlan plan;
+        try
+        {
+            plan = EraTransition.Build(
+                fromPack, toPack, previousEnd, previousEnd.Player, offer,
+                new StreamFactory(masterSeed), inputs.AgingCurves, inputs.CanonRetirements,
+                spends, inputs.CharacterRules,
+                fromYearOverride: previousSeason.Year, toYearOverride: current.Season.Year,
+                respecs: respecs,
+                skillPlans: null,
+                masterySkills: inputs.MasterySkills,
+                skillDevelopment: skillDevelopment);
+        }
+        catch (Exception ex) when (
+            skillDevelopment.Count > 0 &&
+            ex is InvalidOperationException or NotSupportedException or ArgumentException)
+        {
+            return (SkillDevelopmentDivergence(seasonId, skillDevelopment, ex), []);
+        }
         if (plan.ValidationErrors.Count > 0)
         {
             // A stored career started a season the plan would refuse today — the file was
@@ -1350,6 +1593,31 @@ public static class ReplayService
             StoredDeltaJson = stored is null ? null : DataJson.Serialize(stored),
             RegeneratedDeltaJson = DataJson.Serialize(regenerated),
         };
+
+    private static ReplayDivergence SkillPlanDivergence(long seasonId, Exception error) =>
+        new()
+        {
+            SeasonId = seasonId,
+            Index = 0,
+            Reason = "skill-plan-validation",
+            StoredDeltaJson = null,
+            RegeneratedDeltaJson = error.Message,
+        };
+
+    private static ReplayDivergence SkillDevelopmentDivergence(
+        long seasonId,
+        IReadOnlyList<CharacterSkillDevelopmentAction> actions,
+        Exception error) =>
+        actions.Any(action => action is CharacterSkillResetAction)
+            ? new ReplayDivergence
+            {
+                SeasonId = seasonId,
+                Index = 0,
+                Reason = "skill-reset-validation",
+                StoredDeltaJson = null,
+                RegeneratedDeltaJson = error.Message,
+            }
+            : SkillPlanDivergence(seasonId, error);
 
     private static void PersistDerived(
         CareerDatabase db, long seasonId, SeasonEndResult result, SqliteTransaction? transaction)
@@ -1403,15 +1671,61 @@ public static class ReplayService
     /// <summary>The between-season character-development spends journaled under a season (character
     /// depth 4), in order — the round fold never regenerates them (they are provenance-excluded), so
     /// they are read here and re-applied at the season's transition, live and on replay alike.</summary>
-    public static IReadOnlyList<CharacterSpend> ReadCharacterSpends(CareerDatabase db, long seasonId) =>
-        JournalStore.ReadSeason(db, seasonId)
+    public static IReadOnlyList<CharacterSpend> ReadCharacterSpends(
+        CareerDatabase db,
+        long seasonId,
+        SqliteTransaction? transaction = null) =>
+        JournalStore.ReadSeason(db, seasonId, transaction)
             .Where(r => string.Equals(r.Phase, JournalPhases.PlayerStatSpend, StringComparison.Ordinal))
             .Select(r => DataJson.Deserialize<CharacterSpend>(r.DeltaJson))
             .ToList();
 
+    /// <summary>The ordered, atomic progression-v2 acquisition plans confirmed under one season.
+    /// These provenance-excluded INPUTs are applied at the following season boundary in journal
+    /// sequence. An ambient transaction lets the live confirm path re-read and append atomically.</summary>
+    public static IReadOnlyList<CharacterSkillPlanInput> ReadCharacterSkillPlans(
+        CareerDatabase db,
+        long seasonId,
+        SqliteTransaction? transaction = null) =>
+        JournalStore.ReadSeason(db, seasonId, transaction)
+            .Where(r => string.Equals(r.Phase, JournalPhases.PlayerSkillPlan, StringComparison.Ordinal))
+            .Select(r => DataJson.Deserialize<CharacterSkillPlanInput>(r.DeltaJson))
+            .ToList();
+
+    /// <summary>All progression-v2 development INPUTs in append order. Keeping the two journal
+    /// phases interleaved is load-bearing: a plan followed by a reset and a replacement plan must
+    /// replay as acquire, clear, rebuild rather than as two grouped plan/reset batches.</summary>
+    public static IReadOnlyList<CharacterSkillDevelopmentAction> ReadCharacterSkillDevelopment(
+        CareerDatabase db,
+        long seasonId,
+        SqliteTransaction? transaction = null) =>
+        JournalStore.ReadSeason(db, seasonId, transaction)
+            .Where(row =>
+                string.Equals(row.Phase, JournalPhases.PlayerSkillPlan, StringComparison.Ordinal) ||
+                string.Equals(row.Phase, JournalPhases.PlayerSkillReset, StringComparison.Ordinal))
+            .Select(row =>
+                string.Equals(row.Phase, JournalPhases.PlayerSkillPlan, StringComparison.Ordinal)
+                    ? (CharacterSkillDevelopmentAction)new CharacterSkillPlanAction(
+                        DataJson.Deserialize<CharacterSkillPlanInput>(row.DeltaJson))
+                    : new CharacterSkillResetAction(
+                        DataJson.Deserialize<CharacterSkillResetInput>(row.DeltaJson)))
+            .ToList();
+
+    public static IReadOnlyList<CharacterSkillResetInput> ReadCharacterSkillResets(
+        CareerDatabase db,
+        long seasonId,
+        SqliteTransaction? transaction = null) =>
+        ReadCharacterSkillDevelopment(db, seasonId, transaction)
+            .OfType<CharacterSkillResetAction>()
+            .Select(action => action.Input)
+            .ToList();
+
     /// <summary>The milestone-token respec choices journaled under one season, in order.</summary>
-    public static IReadOnlyList<CharacterRespec> ReadCharacterRespecs(CareerDatabase db, long seasonId) =>
-        JournalStore.ReadSeason(db, seasonId)
+    public static IReadOnlyList<CharacterRespec> ReadCharacterRespecs(
+        CareerDatabase db,
+        long seasonId,
+        SqliteTransaction? transaction = null) =>
+        JournalStore.ReadSeason(db, seasonId, transaction)
             .Where(r => string.Equals(r.Phase, JournalPhases.PlayerRespec, StringComparison.Ordinal))
             .Select(r => DataJson.Deserialize<CharacterRespec>(r.DeltaJson))
             .ToList();

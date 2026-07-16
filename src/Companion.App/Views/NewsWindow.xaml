@@ -3,13 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:Companion.App.Views"
         xmlns:app="clr-namespace:Companion.App"
-        Title="Paddock news"
+        xmlns:audio="clr-namespace:Companion.App.Audio"
+        Title="SMGP Newsroom"
         Topmost="True"
         ShowInTaskbar="False"
         WindowStyle="None"
         ResizeMode="CanResize"
-        Width="400" Height="540"
-        MinWidth="300" MinHeight="240"
+        Width="560" Height="720"
+        MinWidth="420" MinHeight="360"
         Background="{DynamicResource BgBrush}"
         Foreground="{DynamicResource TextBrush}"
         FontFamily="{StaticResource BodyFont}" FontSize="{DynamicResource AppFontSize}">
@@ -26,9 +27,10 @@
                         app:WindowChromeAssist.IsDragRegion="True">
                     <DockPanel Margin="10,2,3,2">
                         <Button DockPanel.Dock="Right" Style="{StaticResource CloseButton}"
+                                audio:SoundAssist.Cue="Back"
                                 app:WindowChromeAssist.IsCloseButton="True"
                                 AutomationProperties.Name="Close paddock news" />
-                        <TextBlock Text="PADDOCK NEWS" Style="{StaticResource Eyebrow}" FontSize="11"
+                        <TextBlock Text="SMGP NEWSROOM" Style="{StaticResource Eyebrow}" FontSize="11"
                                    VerticalAlignment="Center" />
                     </DockPanel>
                 </Border>

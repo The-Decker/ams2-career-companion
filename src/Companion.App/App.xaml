@@ -54,6 +54,9 @@
             <DataTemplate DataType="{x:Type shell:StartingGridViewModel}">
                 <views:StartingGridView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type shell:SessionIntroViewModel}">
+                <views:SessionIntroView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type shell:RivalScreenViewModel}">
                 <views:RivalScreenView />
             </DataTemplate>

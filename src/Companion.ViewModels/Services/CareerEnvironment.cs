@@ -15,6 +15,12 @@ public sealed class CareerEnvironment
 {
     public required Ams2ContentLibrary ContentLibrary { get; init; }
 
+    /// <summary>
+    /// Machine boundary for launching AMS2. Custom/test environments default to a non-OS
+    /// implementation; only <see cref="CreateDefault"/> opts production into shell execution.
+    /// </summary>
+    public IAms2Launcher Ams2Launcher { get; init; } = UnavailableAms2Launcher.Instance;
+
     /// <summary>Locates the AMS2 install; null when none is found (every consumer must
     /// degrade gracefully — a missing install never crashes a flow).</summary>
     public required Func<Ams2Installation?> LocateInstall { get; init; }
@@ -69,6 +75,7 @@ public sealed class CareerEnvironment
     public static CareerEnvironment CreateDefault(string ams2DataDirectory) => new()
     {
         ContentLibrary = Ams2ContentLibrary.Load(ams2DataDirectory),
+        Ams2Launcher = new SteamAms2Launcher(),
         LocateInstall = static () => OperatingSystem.IsWindows() ? SteamLocator.FindAms2() : null,
         DocumentsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
         RulesDirectory = Path.Combine(

@@ -17,6 +17,21 @@ public static class PerkResolver
     /// constant so every call site — live and replay — resolves the same delta byte-for-byte.</summary>
     public const string DefaultChosenFlavor = "wetSkill";
 
+    /// <summary>The closed set of rating fields a persisted chosen-flavor input may target. Pace's
+    /// automatic <c>raceSkill</c> lever is intentionally excluded; these are the same ten choices
+    /// exposed by character creation and all are writable by <see cref="CharacterRatingWriter"/>.</summary>
+    public static IReadOnlyList<string> EligibleChosenFlavors { get; } = Array.AsReadOnly(
+        [
+            "wetSkill", "tyreManagement", "qualifyingSkill", "aggression", "defending",
+            "avoidanceOfMistakes", "consistency", "startReactions", "fuelManagement", "stamina",
+        ]);
+
+    private static readonly IReadOnlySet<string> EligibleChosenFlavorSet =
+        EligibleChosenFlavors.ToHashSet(StringComparer.Ordinal);
+
+    public static bool IsEligibleChosenFlavor(string? value) =>
+        value is not null && EligibleChosenFlavorSet.Contains(value);
+
     /// <summary>Resolve straight from a character profile — threads the profile's chosen flavor so
     /// One-Trick Pony's <c>chosenFlavor</c>/<c>lockToOne</c> bind to the rating the player picked.
     /// Prefer this overload wherever a full <see cref="CharacterProfile"/> is in hand.</summary>

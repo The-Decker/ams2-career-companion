@@ -56,12 +56,14 @@
     <conv:DsqReasonLabelConverter x:Key="DsqReasonLabel" />
     <conv:StringEqualsToVisibilityConverter x:Key="StringEqualsVisible" />
     <conv:GlyphBrushConverter x:Key="GlyphBrush" />
+    <conv:SkillIconKeyToGlyphConverter x:Key="SkillGlyph" />
     <conv:CandidatesVisibilityConverter x:Key="CandidatesVisible" />
     <conv:EraAccentBrushConverter x:Key="EraAccent" />
     <conv:HexBrushConverter x:Key="HexBrush" />
     <conv:EraLabelConverter x:Key="EraLabel" />
     <conv:EraImageConverter x:Key="EraImage" />
     <conv:TrackImageConverter x:Key="TrackImage" />
+    <conv:TrackBannerImageConverter x:Key="TrackBannerImage" />
     <conv:ExpandGlyphConverter x:Key="ExpandGlyph" />
     <conv:KeyedAssetImageConverter x:Key="AssetImage" />
     <conv:TeamAssetImageConverter x:Key="TeamAssetImage" />
@@ -77,6 +79,8 @@
     <conv:AspectRatioHeightConverter x:Key="AspectHeight" />
     <conv:WidthFractionConverter x:Key="WidthFraction" />
     <conv:WidthToColumnsConverter x:Key="WidthToColumns" />
+
+    <conv:AdaptiveColumnsConverter x:Key='AdaptiveColumns' />
 
     <!-- ===== typography ===== -->
     <Style TargetType="TextBlock">
@@ -242,7 +246,44 @@
                 <ControlTemplate TargetType="Button">
                     <!-- RenderTransform (post-layout) so the press/hover scale never nudges
                          neighbouring controls — the button just feels like it moves. -->
-                    <Grid RenderTransformOrigin="0.5,0.5">
+                    <Grid x:Name="VisualRoot" RenderTransformOrigin="0.5,0.5">
+                        <!-- CommonStates are mutually exclusive. The old independent trigger
+                             storyboards both held their final values, so Pressed could restore a
+                             stale hover wash after MouseOver had already exited. VisualStateManager
+                             stops the outgoing state before entering the next one. -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition To="MouseOver" GeneratedDuration="0:0:0.11" />
+                                    <VisualTransition To="Pressed" GeneratedDuration="0:0:0.07" />
+                                    <VisualTransition From="Pressed" GeneratedDuration="0:0:0.10" />
+                                    <VisualTransition GeneratedDuration="0:0:0.09" />
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.08" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="-1" Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.17" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressedInset" Storyboard.TargetProperty="Opacity" To="0.48" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="0.99" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="0.99" Duration="0" />
+                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="1" Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="VisualRoot" Storyboard.TargetProperty="Opacity" To="0.4" Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform x:Name="PressScale" ScaleX="1" ScaleY="1" />
@@ -269,59 +310,6 @@
                                           TextElement.Foreground="{TemplateBinding Foreground}"
                                           RecognizesAccessKey="True" />
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <!-- hover: a subtle lift (scale up) + faint wash -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.08" Duration="0:0:0.11" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0:0:0.11" EasingFunction="{StaticResource EaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0:0:0.11" EasingFunction="{StaticResource EaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="-1" Duration="0:0:0.11" EasingFunction="{StaticResource EaseOut}" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.10" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.10" EasingFunction="{StaticResource EaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.10" EasingFunction="{StaticResource EaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="0" Duration="0:0:0.10" EasingFunction="{StaticResource EaseOut}" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                        <!-- press: a quick, firm depress; release SPRINGS back with an overshoot -->
-                        <Trigger Property="IsPressed" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.17" Duration="0:0:0.09" />
-                                        <DoubleAnimation Storyboard.TargetName="PressedInset" Storyboard.TargetProperty="Opacity" To="0.48" Duration="0:0:0.09" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="0.99" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="0.99" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="1" Duration="0:0:0.09" EasingFunction="{StaticResource EaseIn}" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.08" Duration="0:0:0.10" />
-                                        <DoubleAnimation Storyboard.TargetName="PressedInset" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.10" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0:0:0.18" EasingFunction="{StaticResource SpringOutSoft}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0:0:0.18" EasingFunction="{StaticResource SpringOutSoft}" />
-                                        <DoubleAnimation Storyboard.TargetName="PressTranslate" Storyboard.TargetProperty="Y" To="-1" Duration="0:0:0.12" EasingFunction="{StaticResource EaseOut}" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.4" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -474,6 +462,8 @@
                         <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
                                           TextElement.Foreground="{DynamicResource TextBrush}"
                                           Margin="10,0,26,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                         <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True"
@@ -482,7 +472,10 @@
                                     BorderThickness="1" CornerRadius="5" Margin="0,2,0,0"
                                     MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                     MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                <ScrollViewer>
+                                <ScrollViewer
+                                    CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}"
+                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
                                     <ItemsPresenter />
                                 </ScrollViewer>
                             </Border>

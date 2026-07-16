@@ -12,9 +12,20 @@ public sealed class GridCharacterPatchTests
 {
     private static CharacterRules Rules() => CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
 
+    private static MasterySkillCatalog Catalog(CharacterRules rules) =>
+        MasterySkillCatalog.Parse(
+            CareerTestData.ReadRules("mastery-skills-v2.json"),
+            rules,
+            RacingDnaCatalog.Parse(CareerTestData.ReadRules("racing-dna-v2.json"), rules));
+
     private static PlayerCharacterPatch Patch(
         IReadOnlyList<string> perkIds, double pace = 0.5, double oneLap = 0.5,
-        int progressionVersion = CharacterLevelProgression.LegacyVersion)
+        int progressionVersion = CharacterLevelProgression.LegacyVersion,
+        PlayerRoundConditionsInput? roundConditions = null,
+        IReadOnlyList<string>? acquiredSkillIds = null,
+        int masteryEffectsVersion = 0,
+        MasterySkillCatalog? masterySkills = null,
+        PlayerPerkModifiers? suppliedModifiers = null)
     {
         var rules = Rules();
         var profile = new CharacterProfile
@@ -27,12 +38,25 @@ public sealed class GridCharacterPatchTests
                 ["marketability"] = 0.5, ["durability"] = 0.5,
             },
             PerkIds = perkIds,
+            AcquiredSkillIds = acquiredSkillIds,
+            MasteryEffectsVersion = masteryEffectsVersion,
         };
+        IReadOnlySet<string>? active = roundConditions is null
+            ? null
+            : PlayerRoundConditions.ActiveConditions(roundConditions);
         return new PlayerCharacterPatch
         {
             Profile = profile,
-            Modifiers = PerkResolver.Resolve(perkIds, rules),
+            // Missing/invalid mastery inputs must cross the grid resolver's trust boundary rather
+            // than failing while this test helper constructs the caller-supplied bundle.
+            Modifiers = suppliedModifiers ??
+                (masteryEffectsVersion == CharacterProfile.CurrentMasteryEffectsVersion &&
+                 acquiredSkillIds is { Count: > 0 } && masterySkills is not null
+                    ? CharacterModifierResolver.Resolve(profile, rules, masterySkills, active)
+                    : PerkResolver.Resolve(profile, rules, active)),
             Rules = rules,
+            MasterySkills = masterySkills,
+            RoundConditions = roundConditions,
         };
     }
 
@@ -257,5 +281,200 @@ public sealed class GridCharacterPatchTests
             }));
 
         Assert.Contains("conditional player-car physics", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Resolve_V2_ConditionalPlayerCarPhysics_UsesValidatedWetDryFacts()
+    {
+        var pack = CareerTestData.Pack();
+        var wetFacts = PlayerRoundConditions.Prepare(pack, 1, isWet: true);
+        var dryFacts = PlayerRoundConditions.Prepare(pack, 1, isWet: false);
+
+        GridSeat Player(PlayerRoundConditionsInput facts) =>
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+            {
+                Ams2LiveryName = CareerTestData.PlayerLivery,
+                Character = Patch(
+                    ["rain_man"],
+                    progressionVersion: CharacterLevelProgression.Level300Version,
+                    roundConditions: facts),
+            }).Seats.Single(seat => seat.IsPlayer);
+
+        var wet = Player(wetFacts);
+        var dry = Player(dryFacts);
+
+        Assert.True(wet.PlayerCarScalarsAuthoritative);
+        Assert.True(dry.PlayerCarScalarsAuthoritative);
+        Assert.Equal(0.028, wet.PowerScalar - dry.PowerScalar, 6);
+        Assert.Equal(wet.WeightScalar, dry.WeightScalar, 6);
+        Assert.Equal(wet.DragScalar, dry.DragScalar, 6);
+    }
+
+    [Fact]
+    public void Resolve_V0MasteryOwnership_IsInertWithoutACatalog()
+    {
+        var pack = CareerTestData.Pack();
+
+        GridSeat Player(IReadOnlyList<string>? acquired) =>
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+            {
+                Ams2LiveryName = CareerTestData.PlayerLivery,
+                Character = Patch(
+                    [],
+                    progressionVersion: CharacterLevelProgression.Level300Version,
+                    acquiredSkillIds: acquired,
+                    masteryEffectsVersion: 0,
+                    masterySkills: null),
+            }).Seats.Single(seat => seat.IsPlayer);
+
+        Assert.Equal(Player([]), Player(["physical_core_strength"]));
+    }
+
+    [Fact]
+    public void Resolve_ActiveCoreStrength_ChangesOnlyThePlayerWeightAndStaminaRating()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog catalog = Catalog(rules);
+        var pack = CareerTestData.Pack();
+        var baseline = RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+        {
+            Ams2LiveryName = CareerTestData.PlayerLivery,
+            Character = Patch(
+                [], progressionVersion: CharacterLevelProgression.Level300Version,
+                masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion,
+                masterySkills: catalog),
+        });
+        var patched = RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+        {
+            Ams2LiveryName = CareerTestData.PlayerLivery,
+            Character = Patch(
+                [], progressionVersion: CharacterLevelProgression.Level300Version,
+                acquiredSkillIds: ["physical_core_strength"],
+                masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion,
+                masterySkills: catalog),
+        });
+
+        GridSeat before = baseline.Seats.Single(seat => seat.IsPlayer);
+        GridSeat after = patched.Seats.Single(seat => seat.IsPlayer);
+        Assert.Equal(before.WeightScalar + 0.002, after.WeightScalar, 6);
+        Assert.NotNull(before.Ratings.Stamina);
+        Assert.NotNull(after.Ratings.Stamina);
+        Assert.Equal(before.Ratings.Stamina.Value + 0.06, after.Ratings.Stamina.Value, 6);
+        Assert.Equal(before.PowerScalar, after.PowerScalar, 6);
+        Assert.Equal(before.DragScalar, after.DragScalar, 6);
+        AssertAiSeatsUnchanged(baseline, patched);
+    }
+
+    [Fact]
+    public void Resolve_ConditionalMasteryCarPhysics_FailsWithoutTypedRoundFacts()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog catalog = Catalog(rules);
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RoundGridResolver.Resolve(CareerTestData.Pack(), 1, new PlayerSeat
+            {
+                Ams2LiveryName = CareerTestData.PlayerLivery,
+                Character = Patch(
+                    [], progressionVersion: CharacterLevelProgression.Level300Version,
+                    acquiredSkillIds: ["v2_rain_man"],
+                    masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion,
+                    masterySkills: catalog),
+            }));
+
+        Assert.Contains("conditional player-car physics", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Resolve_ConditionalMasteryCarPhysics_UsesOnlyValidatedWetDryFacts()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog catalog = Catalog(rules);
+        var pack = CareerTestData.Pack();
+
+        GridSeat Player(bool wet)
+        {
+            PlayerRoundConditionsInput facts = PlayerRoundConditions.Prepare(pack, 1, wet);
+            return RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+            {
+                Ams2LiveryName = CareerTestData.PlayerLivery,
+                Character = Patch(
+                    [], progressionVersion: CharacterLevelProgression.Level300Version,
+                    roundConditions: facts,
+                    acquiredSkillIds: ["v2_rain_man"],
+                    masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion,
+                    masterySkills: catalog),
+            }).Seats.Single(seat => seat.IsPlayer);
+        }
+
+        GridSeat wet = Player(true);
+        GridSeat dry = Player(false);
+        Assert.Equal(0.028, wet.PowerScalar - dry.PowerScalar, 6);
+        Assert.Equal(wet.WeightScalar, dry.WeightScalar, 6);
+        Assert.Equal(wet.DragScalar, dry.DragScalar, 6);
+    }
+
+    [Fact]
+    public void Resolve_ActiveMasteryCarScalars_IgnoreCallerForgedModifiers()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog catalog = Catalog(rules);
+        var pack = CareerTestData.Pack();
+        GridSeat baseline = RoundGridResolver.Resolve(
+            pack, 1, new PlayerSeat { Ams2LiveryName = CareerTestData.PlayerLivery })
+            .Seats.Single(seat => seat.IsPlayer);
+        var forged = PlayerPerkModifiers.Identity with
+        {
+            WeightScalarDelta = -0.20,
+            PowerScalarDelta = 0.20,
+            DragScalarDelta = -0.20,
+        };
+
+        GridSeat player = RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+        {
+            Ams2LiveryName = CareerTestData.PlayerLivery,
+            Character = Patch(
+                [], progressionVersion: CharacterLevelProgression.Level300Version,
+                acquiredSkillIds: ["physical_core_strength"],
+                masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion,
+                masterySkills: catalog,
+                suppliedModifiers: forged),
+        }).Seats.Single(seat => seat.IsPlayer);
+
+        Assert.Equal(baseline.WeightScalar + 0.002, player.WeightScalar, 6);
+        Assert.Equal(baseline.PowerScalar, player.PowerScalar, 6);
+        Assert.Equal(baseline.DragScalar, player.DragScalar, 6);
+    }
+
+    [Fact]
+    public void Resolve_ActiveMastery_FailsClosedForMissingCatalogAndUnknownOwnership()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog catalog = Catalog(rules);
+        var pack = CareerTestData.Pack();
+
+        var missing = Assert.Throws<InvalidOperationException>(() =>
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+            {
+                Ams2LiveryName = CareerTestData.PlayerLivery,
+                Character = Patch(
+                    [], progressionVersion: CharacterLevelProgression.Level300Version,
+                    acquiredSkillIds: ["physical_core_strength"],
+                    masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion),
+            }));
+        Assert.Contains("mastery-skill catalog", missing.Message, StringComparison.Ordinal);
+
+        var unknown = Assert.Throws<InvalidOperationException>(() =>
+            RoundGridResolver.Resolve(pack, 1, new PlayerSeat
+            {
+                Ams2LiveryName = CareerTestData.PlayerLivery,
+                Character = Patch(
+                    [], progressionVersion: CharacterLevelProgression.Level300Version,
+                    acquiredSkillIds: ["mastery.not-real"],
+                    masteryEffectsVersion: CharacterProfile.CurrentMasteryEffectsVersion,
+                    masterySkills: catalog,
+                    suppliedModifiers: PlayerPerkModifiers.Identity),
+            }));
+        Assert.Contains("unknown mastery skill", unknown.Message, StringComparison.Ordinal);
     }
 }

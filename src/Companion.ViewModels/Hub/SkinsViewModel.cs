@@ -5,6 +5,7 @@ using Companion.Ams2.Skins;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
+using Companion.ViewModels.Wizard;
 
 namespace Companion.ViewModels.Hub;
 
@@ -23,9 +24,12 @@ public enum SkinTone
 /// status + tone. A pure display record projected from a <see cref="SkinAssignment"/>.</summary>
 public sealed record SkinRow
 {
+    public string DriverId { get; init; } = "";
     public required string DriverName { get; init; }
+    public string TeamId { get; init; } = "";
     public required string TeamName { get; init; }
     public string? Number { get; init; }
+    public string SkinSlot { get; init; } = "";
     public required string LiveryName { get; init; }
     public required bool IsPlayer { get; init; }
     public required string StatusLabel { get; init; }
@@ -44,6 +48,30 @@ public sealed record SkinPackRef
     public string? OverridesFolder { get; init; }
 }
 
+/// <summary>A bind-ready skin/car preview. Art keys are stable driver/team ids consumed by the
+/// App's existing asset converter; null keys and an empty slot are the intentional fallback for
+/// an installed active livery that has no authored pack entry.</summary>
+public sealed record SkinPreview
+{
+    public required string LiveryName { get; init; }
+    public string DriverId { get; init; } = "";
+    public string DriverName { get; init; } = "";
+    public string TeamId { get; init; } = "";
+    public string TeamName { get; init; } = "";
+    public string VehicleModel { get; init; } = "";
+    public string? CarNumber { get; init; }
+    public string SkinSlot { get; init; } = "";
+    public string? PortraitKey { get; init; }
+    public string? CarKey { get; init; }
+    public string? TopCarKey { get; init; }
+
+    public bool HasPortrait => PortraitKey is { Length: > 0 };
+    public bool HasCarPreview => CarKey is { Length: > 0 } || TopCarKey is { Length: > 0 };
+    public bool HasSkinSlot => SkinSlot.Length > 0;
+
+    public static SkinPreview Unknown(string liveryName) => new() { LiveryName = liveryName };
+}
+
 /// <summary>One editable grid seat (the grid editor): rename the driver and/or rebind the seat to a
 /// different ACTIVE livery. Edits persist through the supplied callback (a cosmetic staging override,
 /// keyed by the seat's ORIGINAL livery) and land in the staged custom-AI file at the next stage —
@@ -52,6 +80,8 @@ public sealed partial class SeatEditor : ObservableObject
 {
     private readonly Action<string, SeatStagingOverride> _save;
     private readonly bool _loading;
+    private readonly IReadOnlyDictionary<string, SkinPreview> _previewsByLivery;
+    private SkinPreview _selectedPreview;
 
     public SeatEditor(
         string liveryKey,
@@ -60,15 +90,47 @@ public sealed partial class SeatEditor : ObservableObject
         string currentLivery,
         IReadOnlyList<string> liveryOptions,
         Action<string, SeatStagingOverride> save)
+        : this(
+            liveryKey,
+            originalDriverName,
+            currentDriverName,
+            currentLivery,
+            liveryOptions,
+            new SkinPreview
+            {
+                LiveryName = liveryKey,
+                DriverName = originalDriverName,
+            },
+            new Dictionary<string, SkinPreview>(StringComparer.Ordinal),
+            save)
+    {
+    }
+
+    public SeatEditor(
+        string liveryKey,
+        string originalDriverName,
+        string currentDriverName,
+        string currentLivery,
+        IReadOnlyList<string> liveryOptions,
+        SkinPreview originalPreview,
+        IReadOnlyDictionary<string, SkinPreview> previewsByLivery,
+        Action<string, SeatStagingOverride> save)
     {
         LiveryKey = liveryKey;
         OriginalDriverName = originalDriverName;
         LiveryOptions = liveryOptions;
+        OriginalPreview = originalPreview;
+        _previewsByLivery = previewsByLivery;
         _save = save;
 
         _loading = true;
         _driverName = currentDriverName;
         _selectedLivery = currentLivery;
+        _replacementSelection = !string.Equals(currentLivery, liveryKey, StringComparison.Ordinal) &&
+                                liveryOptions.Contains(currentLivery, StringComparer.Ordinal)
+            ? currentLivery
+            : null;
+        _selectedPreview = ResolvePreview(currentLivery);
         _loading = false;
     }
 
@@ -80,9 +142,20 @@ public sealed partial class SeatEditor : ObservableObject
     /// (so clearing back to it removes the override).</summary>
     public string OriginalDriverName { get; }
 
-    /// <summary>The liveries this seat can wear: its own original plus every ACTIVE livery for the
-    /// class. Picking one other than the original rebinds the seat's skin.</summary>
+    /// <summary>Active custom skins for this seat's exact vehicle model. Stock/vanilla liveries and
+    /// custom skins authored for a different model are deliberately absent.</summary>
     public IReadOnlyList<string> LiveryOptions { get; }
+
+    public bool HasLiveryOptions => LiveryOptions.Count > 0;
+
+    /// <summary>The current seat before any replacement selection.</summary>
+    public SkinPreview OriginalPreview { get; }
+
+    /// <summary>The selected replacement's authored identity/art/slot, or a blank preview when the
+    /// selected active livery is installed but not part of this season pack.</summary>
+    public SkinPreview SelectedPreview => _selectedPreview;
+
+    public bool IsReplacement => !string.Equals(SelectedLivery, LiveryKey, StringComparison.Ordinal);
 
     [ObservableProperty]
     private string _driverName;
@@ -90,9 +163,48 @@ public sealed partial class SeatEditor : ObservableObject
     [ObservableProperty]
     private string _selectedLivery;
 
+    /// <summary>The replacement-only menu selection. Null means keep the seat's current authored
+    /// skin; choosing a compatible custom skin updates <see cref="SelectedLivery"/>.</summary>
+    [ObservableProperty]
+    private string? _replacementSelection;
+
     partial void OnDriverNameChanged(string value) => Persist();
 
-    partial void OnSelectedLiveryChanged(string value) => Persist();
+    partial void OnSelectedLiveryChanged(string value)
+    {
+        string? replacement = !string.Equals(value, LiveryKey, StringComparison.Ordinal) &&
+                              LiveryOptions.Contains(value, StringComparer.Ordinal)
+            ? value
+            : null;
+        if (!string.Equals(_replacementSelection, replacement, StringComparison.Ordinal))
+        {
+            _replacementSelection = replacement;
+            OnPropertyChanged(nameof(ReplacementSelection));
+        }
+        _selectedPreview = ResolvePreview(value);
+        OnPropertyChanged(nameof(SelectedPreview));
+        OnPropertyChanged(nameof(IsReplacement));
+        Persist();
+    }
+
+    partial void OnReplacementSelectionChanged(string? value)
+    {
+        if (_loading)
+            return;
+
+        string next = string.IsNullOrEmpty(value) ? LiveryKey : value;
+        if (!string.Equals(SelectedLivery, next, StringComparison.Ordinal))
+            SelectedLivery = next;
+    }
+
+    private SkinPreview ResolvePreview(string liveryName)
+    {
+        if (string.Equals(liveryName, LiveryKey, StringComparison.Ordinal))
+            return OriginalPreview;
+        return _previewsByLivery.TryGetValue(liveryName, out var preview)
+            ? preview
+            : SkinPreview.Unknown(liveryName);
+    }
 
     private void Persist()
     {
@@ -147,6 +259,11 @@ public sealed partial class SkinsViewModel : ObservableObject
     /// Edits persist as cosmetic staging overrides applied to the custom-AI file at the next stage.</summary>
     public ObservableCollection<SeatEditor> Editors { get; } = [];
 
+    /// <summary>The editor shown in the detail pane. The player's seat is selected first when one
+    /// exists; an all-AI grid starts on its first seat.</summary>
+    [ObservableProperty]
+    private SeatEditor? _selectedEditor;
+
     /// <summary>True when there is at least one inactive livery to activate — shows the activator.</summary>
     [ObservableProperty]
     private bool _hasActivatable;
@@ -185,6 +302,26 @@ public sealed partial class SkinsViewModel : ObservableObject
     [ObservableProperty]
     private string? _playerDriverName;
 
+    /// <summary>The team-coloured player portrait key (<c>player.&lt;team&gt;</c>).</summary>
+    [ObservableProperty]
+    private string? _playerPortraitKey;
+
+    /// <summary>The authored side-view car-art key for the livery the player occupies.</summary>
+    [ObservableProperty]
+    private string? _playerCarKey;
+
+    /// <summary>The authored top-down car-art key for the livery the player occupies.</summary>
+    [ObservableProperty]
+    private string? _playerTopCarKey;
+
+    /// <summary>The player's real livery slot, blank when the installed/stock slot is unknown.</summary>
+    [ObservableProperty]
+    private string _playerSkinSlot = "";
+
+    /// <summary>The skin/entry car number (not a team ordinal), blank when unavailable.</summary>
+    [ObservableProperty]
+    private string? _playerCarNumber;
+
     /// <summary>The skin status of the player's own car — so the crib can warn when the livery the
     /// player must pick has no installed skin (they'll look default).</summary>
     [ObservableProperty]
@@ -202,44 +339,10 @@ public sealed partial class SkinsViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasMissingSkins;
 
-    // ---------- the Skin Season Manager panel (pack.json skinSeason) ----------
-
-    /// <summary>True when this pack declares a managed skin season — shows the season panel.</summary>
-    [ObservableProperty]
-    private bool _hasSkinSeason;
-
-    /// <summary>One line: is the declared season active on the install
-    /// (e.g. "2 of 3 car models on the f1-1985 skins").</summary>
-    [ObservableProperty]
-    private string _skinSeasonSummary = "";
-
-    /// <summary>The declared season key (e.g. "f1-1985"), for labels.</summary>
-    [ObservableProperty]
-    private string _skinSeasonKey = "";
-
-    /// <summary>True when the declared season is fully active — the panel shows a green tick
-    /// instead of the switch button.</summary>
-    [ObservableProperty]
-    private bool _skinSeasonActive;
-
-    /// <summary>True when the only blocker is an unrecognized (possibly hand-edited) installed
-    /// file — the panel offers "Overwrite anyway (backup first)".</summary>
-    [ObservableProperty]
-    private bool _skinSeasonRequiresForce;
-
-    /// <summary>Per-model status lines ("formula_retro_g3 — currently on the f1-1983 skins").</summary>
-    public ObservableCollection<string> SkinSeasonModels { get; } = [];
-
-    /// <summary>The outcome banner of the last season switch (null before any).</summary>
-    [ObservableProperty]
-    private string? _skinSeasonBanner;
-
-    [ObservableProperty]
-    private bool _skinSeasonSwitchSucceeded;
-
     public void Refresh()
     {
         var plan = _session.CurrentSkinAssignments();
+        var previewsByLivery = BuildReplacementPreviews(plan);
 
         Cars.Clear();
         foreach (var a in plan.Assignments)
@@ -264,8 +367,14 @@ public sealed partial class SkinsViewModel : ObservableObject
 
         if (plan.PlayerCar is { } player)
         {
+            var playerPreview = BuildOriginalPreview(player, previewsByLivery);
             PlayerLiveryName = player.LiveryName;
             PlayerDriverName = player.DriverName;
+            PlayerPortraitKey = GridSeatChoice.PlayerImageKey(player.TeamId);
+            PlayerCarKey = playerPreview.CarKey;
+            PlayerTopCarKey = playerPreview.TopCarKey;
+            PlayerSkinSlot = player.SkinSlot;
+            PlayerCarNumber = player.Number;
             PlayerStatusNote = player.Status == SkinStatus.CustomSkin
                 ? null
                 : "This livery has no custom skin installed yet — your car will look like the default until you add the pack's skins.";
@@ -274,6 +383,11 @@ public sealed partial class SkinsViewModel : ObservableObject
         {
             PlayerLiveryName = null;
             PlayerDriverName = null;
+            PlayerPortraitKey = null;
+            PlayerCarKey = null;
+            PlayerTopCarKey = null;
+            PlayerSkinSlot = "";
+            PlayerCarNumber = null;
             PlayerStatusNote = null;
         }
 
@@ -291,30 +405,149 @@ public sealed partial class SkinsViewModel : ObservableObject
             ActivatableLiveries.Add(name);
         HasActivatable = ActivatableLiveries.Count > 0;
 
-        RefreshSkinSeason();
-
-        // Editable grid: one row per seat, seeded from any saved override. Livery options = the
-        // seat's own livery plus every active livery for the class (so "keep original" is selectable
-        // and any rebind targets a livery that actually renders in-game).
+        // Editable grid: one row per seat, seeded from any saved override. The replacement menu is
+        // CUSTOM-only and exact-model-only. A formula_classic_g3m2 seat can never receive a stock
+        // livery or a custom skin authored for g3m1/g3m3/etc.
         var overrides = _session.SeatStagingOverrides();
         Editors.Clear();
+        SeatEditor? playerEditor = null;
         foreach (var a in plan.Assignments)
         {
             overrides.TryGetValue(a.LiveryName, out var ov);
             string currentName = ov?.DriverName is { Length: > 0 } n ? n : a.DriverName;
             string currentLivery = ov?.LiveryName is { Length: > 0 } l ? l : a.LiveryName;
 
-            var options = new List<string> { a.LiveryName };
-            if (!string.Equals(currentLivery, a.LiveryName, StringComparison.Ordinal))
-                options.Add(currentLivery);
-            options.AddRange(plan.ActiveLiveries.Where(x =>
-                !string.Equals(x, a.LiveryName, StringComparison.Ordinal) &&
-                !string.Equals(x, currentLivery, StringComparison.Ordinal)));
+            var originalPreview = BuildOriginalPreview(a, previewsByLivery);
+            var options = plan.ActiveCustomLiveryModels
+                .Where(pair => string.Equals(
+                    pair.Value,
+                    originalPreview.VehicleModel,
+                    StringComparison.OrdinalIgnoreCase))
+                .Select(pair => pair.Key)
+                .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-            Editors.Add(new SeatEditor(a.LiveryName, a.DriverName, currentName, currentLivery, options, SaveOverride));
+            // Old builds allowed cross-model and stock overrides. Retire those saved invalid
+            // selections immediately so they cannot still reach staging after the menu is fixed.
+            if (!string.Equals(currentLivery, a.LiveryName, StringComparison.Ordinal) &&
+                !options.Contains(currentLivery, StringComparer.Ordinal))
+            {
+                currentLivery = a.LiveryName;
+                SaveOverride(a.LiveryName, new SeatStagingOverride
+                {
+                    DriverName = ov?.DriverName,
+                    LiveryName = null,
+                });
+            }
+
+            var editor = new SeatEditor(
+                a.LiveryName,
+                a.DriverName,
+                currentName,
+                currentLivery,
+                options,
+                originalPreview,
+                previewsByLivery,
+                SaveOverride);
+            Editors.Add(editor);
+            if (a.IsPlayer)
+                playerEditor = editor;
         }
+        SelectedEditor = playerEditor ?? Editors.FirstOrDefault();
 
         OnPropertyChanged(nameof(HasPlayerCar));
+    }
+
+    /// <summary>Build the replacement selector's authored livery-to-car lookup. Pack identity owns
+    /// the art keys; the resolver's active-slot map owns the installed/official slot. A livery that
+    /// is active but absent from the pack deliberately yields a blank preview.</summary>
+    private IReadOnlyDictionary<string, SkinPreview> BuildReplacementPreviews(SkinAssignmentPlan plan)
+    {
+        int round = _session.Summary.CurrentRound;
+        var entriesByLivery = _session.Pack.Entries
+            .GroupBy(entry => entry.Ams2LiveryName, StringComparer.Ordinal)
+            .ToDictionary(
+                group => group.Key,
+                group => group.FirstOrDefault(entry =>
+                    RoundsRange.TryParse(entry.Rounds, out var range) && range.Contains(round))
+                    ?? group.First(),
+                StringComparer.Ordinal);
+        var driversById = _session.Pack.Drivers.ToDictionary(driver => driver.Id, StringComparer.Ordinal);
+        var teamsById = _session.Pack.Teams.ToDictionary(team => team.Id, StringComparer.Ordinal);
+        var assignmentSlots = plan.Assignments
+            .GroupBy(assignment => assignment.LiveryName, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.First().SkinSlot, StringComparer.Ordinal);
+
+        var previews = new Dictionary<string, SkinPreview>(StringComparer.Ordinal);
+        foreach (string liveryName in plan.ActiveLiveries
+                     .Concat(plan.Assignments.Select(assignment => assignment.LiveryName))
+                     .Distinct(StringComparer.Ordinal))
+        {
+            if (!entriesByLivery.TryGetValue(liveryName, out var entry))
+            {
+                previews[liveryName] = SkinPreview.Unknown(liveryName);
+                continue;
+            }
+
+            driversById.TryGetValue(entry.DriverId, out var driver);
+            teamsById.TryGetValue(entry.TeamId, out var team);
+            string slot = plan.ActiveLiverySlots.TryGetValue(liveryName, out string? activeSlot)
+                ? activeSlot
+                : assignmentSlots.GetValueOrDefault(liveryName, "");
+            previews[liveryName] = new SkinPreview
+            {
+                LiveryName = liveryName,
+                DriverId = entry.DriverId,
+                DriverName = driver?.Name ?? entry.DriverId,
+                TeamId = entry.TeamId,
+                TeamName = team?.Name ?? entry.TeamId,
+                VehicleModel = plan.ActiveCustomLiveryModels.GetValueOrDefault(
+                    liveryName,
+                    team?.CarVehicleIds.Count == 1 ? team.CarVehicleIds[0] : ""),
+                CarNumber = entry.Number,
+                SkinSlot = slot,
+                PortraitKey = entry.DriverId,
+                CarKey = entry.DriverId,
+                TopCarKey = entry.DriverId,
+            };
+        }
+        return previews;
+    }
+
+    private static SkinPreview BuildOriginalPreview(
+        SkinAssignment assignment,
+        IReadOnlyDictionary<string, SkinPreview> previewsByLivery)
+    {
+        previewsByLivery.TryGetValue(assignment.LiveryName, out var authored);
+        string? carKey = authored?.CarKey;
+        if (carKey is null &&
+            !string.IsNullOrEmpty(assignment.DriverId) &&
+            !string.Equals(
+                assignment.DriverId,
+                RoundGridResolver.SyntheticPlayerDriverId,
+                StringComparison.Ordinal))
+        {
+            carKey = assignment.DriverId;
+        }
+
+        return new SkinPreview
+        {
+            LiveryName = assignment.LiveryName,
+            DriverId = assignment.DriverId,
+            DriverName = assignment.DriverName,
+            TeamId = assignment.TeamId,
+            TeamName = assignment.TeamName,
+            VehicleModel = assignment.VehicleFolder is { Length: > 0 } model
+                ? model
+                : authored?.VehicleModel ?? "",
+            CarNumber = assignment.Number,
+            SkinSlot = assignment.SkinSlot,
+            PortraitKey = assignment.IsPlayer
+                ? GridSeatChoice.PlayerImageKey(assignment.TeamId)
+                : string.IsNullOrEmpty(assignment.DriverId) ? null : assignment.DriverId,
+            CarKey = carKey,
+            TopCarKey = carKey,
+        };
     }
 
     /// <summary>Persists one seat's grid-editor override through the session (rename / rebind). The
@@ -384,58 +617,6 @@ public sealed partial class SkinsViewModel : ObservableObject
         return string.Join("\n\n", lines);
     }
 
-    /// <summary>Re-reads the Skin Season Manager's status for this pack's declared season.</summary>
-    private void RefreshSkinSeason()
-    {
-        var status = _session.CurrentSkinSeasonStatus();
-        HasSkinSeason = status is not null;
-        SkinSeasonModels.Clear();
-        if (status is null)
-        {
-            SkinSeasonSummary = "";
-            SkinSeasonKey = "";
-            SkinSeasonActive = false;
-            SkinSeasonRequiresForce = false;
-            return;
-        }
-
-        SkinSeasonKey = status.Key;
-        SkinSeasonSummary = status.Summary;
-        SkinSeasonActive = status.IsFullyActive;
-        SkinSeasonRequiresForce = status.RequiresForce;
-        foreach (var m in status.Models)
-        {
-            string line = m.State switch
-            {
-                SkinSeasonModelState.Active => $"{m.Model} — on the {status.Key} skins ✓",
-                SkinSeasonModelState.NoActiveFile => $"{m.Model} — no active override yet (switching creates it)",
-                _ => $"{m.Model} — {m.Detail ?? m.State.ToString()}",
-            };
-            SkinSeasonModels.Add(line);
-        }
-    }
-
-    /// <summary>Switch the install onto this pack's declared skin season (backup-first). The
-    /// same swap runs automatically when you set up a race — this button is the explicit,
-    /// see-it-now version.</summary>
-    [RelayCommand]
-    private void ActivateSkinSeason() => ApplySkinSeason(force: false);
-
-    /// <summary>The force-gate escape hatch for an unrecognized (possibly hand-edited) installed
-    /// override — still backup-first.</summary>
-    [RelayCommand]
-    private void ForceActivateSkinSeason() => ApplySkinSeason(force: true);
-
-    private void ApplySkinSeason(bool force)
-    {
-        var result = _session.ActivateSkinSeason(force);
-        SkinSeasonSwitchSucceeded = result.Success;
-        SkinSeasonBanner = result.Errors.Count > 0
-            ? result.Message + "\n" + string.Join("\n", result.Errors)
-            : result.Message;
-        Refresh();
-    }
-
     /// <summary>Turn an installed-but-inactive livery ON in-game (assign it a real slot in the
     /// community override file, backup-first) — the fix for "installed but AMS2 doesn't show it".
     /// Re-projects afterwards so the newly-active livery moves out of the activatable list and any
@@ -483,9 +664,12 @@ public sealed partial class SkinsViewModel : ObservableObject
 
         return new SkinRow
         {
+            DriverId = a.DriverId,
             DriverName = a.DriverName,
+            TeamId = a.TeamId,
             TeamName = a.TeamName,
             Number = a.Number,
+            SkinSlot = a.SkinSlot,
             LiveryName = a.LiveryName,
             IsPlayer = a.IsPlayer,
             StatusLabel = label,

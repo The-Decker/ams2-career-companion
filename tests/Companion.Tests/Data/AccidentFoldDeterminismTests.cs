@@ -74,13 +74,18 @@ public sealed class AccidentFoldDeterminismTests : IDisposable
 
     private static void ApplyNormalRound(ICareerSession session)
     {
+        session.Apply(NormalRoundDraft(session));
+    }
+
+    private static ResultDraft NormalRoundDraft(ICareerSession session)
+    {
         var seats = session.CurrentGrid();
-        session.Apply(new ResultDraft
+        return new ResultDraft
         {
             Classified = seats.Select(s => s.DriverId).ToList(),
             DidNotFinish = new Dictionary<string, string>(),
             Disqualified = [],
-        });
+        };
     }
 
     private static ReplayReport Resimulate(CareerDatabase db, SeasonPack pack)
@@ -188,8 +193,14 @@ public sealed class AccidentFoldDeterminismTests : IDisposable
             var status = session.PlayerMortality();
             Assert.True(status.Deceased);
             Assert.False(status.CareerFileDeleted);
-            // Terminal: a dead driver takes no more rounds (Normal keeps the save to restore instead).
-            Assert.Throws<InvalidOperationException>(() => ApplyNormalRound(session));
+            // Terminal: a dead driver cannot even preview another fold, and takes no more rounds
+            // (Normal keeps the save to restore instead).
+            int roundBefore = session.CurrentRoundNumber;
+            var nextRound = NormalRoundDraft(session);
+            var preview = Assert.Throws<InvalidOperationException>(() => session.Preview(nextRound));
+            Assert.Contains("career is over", preview.Message);
+            Assert.Throws<InvalidOperationException>(() => session.Apply(nextRound));
+            Assert.Equal(roundBefore, session.CurrentRoundNumber);
         }
 
         Assert.True(File.Exists(careerPath)); // Normal never deletes

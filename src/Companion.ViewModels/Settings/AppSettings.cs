@@ -73,7 +73,9 @@ public sealed record AppSettings
 
     public const string DefaultAccentColor = "#4F8CFF";
     public const int MinFontScalePercent = 90;
-    public const int MaxFontScalePercent = 130;
+    public const int MaxFontScalePercent = 160;
+    public const int MinVolumePercent = 0;
+    public const int MaxVolumePercent = 100;
 
     /// <summary>The base theme names the appearance service can load (Theme.&lt;name&gt;.xaml).</summary>
     public const string ThemeDark = "dark";
@@ -102,7 +104,7 @@ public sealed record AppSettings
     /// files round-trip. No longer drives the runtime accent.</summary>
     public string AccentColor { get; init; } = DefaultAccentColor;
 
-    /// <summary>UI font scale in percent (90–130), applied to the root FontSize resource.</summary>
+    /// <summary>UI font scale in percent (90–160), applied to the root layout scale.</summary>
     public int FontScalePercent { get; init; } = 100;
 
     // ---------- racing ----------
@@ -128,6 +130,27 @@ public sealed record AppSettings
     /// <summary>How chatty the News tab is: full <see cref="NewsDetailLevel.Articles"/> by
     /// default, or headline-only readings that hide the expanded article body.</summary>
     public NewsDetailLevel NewsDetail { get; init; } = NewsDetailLevel.Articles;
+
+    // ---------- audio ----------
+
+    /// <summary>Master switch for all app-owned audio. Disabling it leaves the individual
+    /// bus levels intact so the previous mix is restored when sound is enabled again.</summary>
+    public bool SoundEnabled { get; init; } = true;
+
+    /// <summary>Overall app-audio level (0–100), applied ahead of the individual buses.</summary>
+    public int MasterVolumePercent { get; init; } = 80;
+
+    /// <summary>One-shot UI and milestone effects level (0–100).</summary>
+    public int EffectsVolumePercent { get; init; } = 70;
+
+    /// <summary>Looping environmental soundscape level (0–100).</summary>
+    public int AmbienceVolumePercent { get; init; } = 35;
+
+    /// <summary>Background music level (0–100).</summary>
+    public int MusicVolumePercent { get; init; } = 40;
+
+    /// <summary>Mute app-owned interface effects whenever the companion window is not focused.</summary>
+    public bool MuteWhenUnfocused { get; init; } = true;
 
     // ---------- staging (NAMeS-first, locked decision #7) ----------
 
@@ -204,6 +227,10 @@ public sealed record AppSettings
         AccentName = NormalizeAccentName(AccentName),
         AccentColor = NormalizeAccentColor(AccentColor) ?? DefaultAccentColor,
         FontScalePercent = Math.Clamp(FontScalePercent, MinFontScalePercent, MaxFontScalePercent),
+        MasterVolumePercent = Math.Clamp(MasterVolumePercent, MinVolumePercent, MaxVolumePercent),
+        EffectsVolumePercent = Math.Clamp(EffectsVolumePercent, MinVolumePercent, MaxVolumePercent),
+        AmbienceVolumePercent = Math.Clamp(AmbienceVolumePercent, MinVolumePercent, MaxVolumePercent),
+        MusicVolumePercent = Math.Clamp(MusicVolumePercent, MinVolumePercent, MaxVolumePercent),
         DefaultDifficulty = double.IsFinite(DefaultDifficulty)
             ? Math.Clamp(DefaultDifficulty, DifficultyModel.MinSlider, DifficultyModel.MaxSlider)
             : 100.0,

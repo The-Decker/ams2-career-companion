@@ -1,6 +1,8 @@
+using Companion.Core.Career;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
+using Companion.Core.Smgp;
 using Companion.ViewModels.Confirm;
 using Companion.ViewModels.ResultEntry;
 using Companion.ViewModels.Services;
@@ -31,6 +33,8 @@ public sealed class DeathScreenHandoffTests
 
         Assert.NotNull(home.CareerOver);
         Assert.True(home.CareerOver!.CareerFileDeleted);
+        Assert.True(home.IsCareerTerminal);
+        Assert.False(home.EnterResultCommand.CanExecute(null));
         Assert.Equal(0, session.SummaryReadsAfterApply); // Summary was never queried post-death
     }
 
@@ -48,7 +52,79 @@ public sealed class DeathScreenHandoffTests
         Assert.NotNull(home.CareerOver);
         Assert.True(home.CareerOver!.Deceased);
         Assert.False(home.CareerOver.CareerFileDeleted);
+        Assert.True(home.IsCareerTerminal);
+        Assert.False(home.EnterResultCommand.CanExecute(null));
         Assert.Equal(0, session.SummaryReadsAfterApply);
+    }
+
+    [Fact]
+    public void ReopenedNormalDeath_RoutesExistingTerminalBinds_AndDisablesRoundCommands()
+    {
+        var status = Status(deceased: true, deleted: false);
+        var screen = DeathScreenModel.Build(
+            mode: MortalityMode.Normal,
+            driverName: "Reopened Driver",
+            age: 31,
+            severity: AccidentSeverity.Heavy,
+            venue: "Monaco",
+            round: 4,
+            record: CareerRecordsBook.Empty,
+            seasons: [],
+            restoreSlots: []);
+        var session = new DeathSession
+        {
+            Death = status,
+            StartsDead = true,
+            Screen = screen,
+        };
+
+        using var home = new HomeViewModel(session);
+
+        Assert.Same(status, home.CareerOver);
+        Assert.Same(screen, home.DeathScreen);
+        Assert.True(home.IsCareerTerminal);
+        Assert.False(home.ShowBriefingCommand.CanExecute(null));
+        Assert.False(home.EnterResultCommand.CanExecute(null));
+        Assert.False(home.IsSessionIntroState);
+        Assert.True(home.IsBriefingState); // inert content underneath the App-owned terminal takeover
+    }
+
+    [Fact]
+    public void ReopenedSmgpFloor_UsesExistingBriefingBind_AndDisablesRoundCommands()
+    {
+        var session = new DeathSession
+        {
+            Death = Status(deceased: false, deleted: false),
+            RoundBriefing = new BriefingModel
+            {
+                Round = TestPackBuilder.TwoRoundPack().Season.Rounds[0],
+                VenueDisplayName = "Monaco",
+                IsPlaceholder = false,
+                Settings = [],
+            },
+            SmgpBriefing = new SmgpBriefingModel
+            {
+                RoundHeader = "MONACO · ROUND 5",
+                SeasonLine = "SEASON  P18 · 0 PTS",
+                CareerLine = "",
+                AdviceLine = "THE PADDOCK MOVES ON.",
+                Titles = 0,
+                SeasonOrdinal = 1,
+                SeasonsTotal = SmgpRules.CampaignSeasons,
+                CareerOver = true,
+                Rivals = [],
+            },
+        };
+
+        using var home = new HomeViewModel(session);
+
+        Assert.Null(home.CareerOver); // preserve the mortality-only GUI bind
+        Assert.True(home.Briefing.SmgpCareerOver); // preserve the existing SMGP GUI bind
+        Assert.True(home.IsCareerTerminal);
+        Assert.False(home.ShowBriefingCommand.CanExecute(null));
+        Assert.False(home.EnterResultCommand.CanExecute(null));
+        Assert.False(home.IsSessionIntroState);
+        Assert.True(home.IsBriefingState);
     }
 
     private static PlayerMortalityStatus Status(bool deceased, bool deleted) => new()
@@ -63,6 +139,7 @@ public sealed class DeathScreenHandoffTests
     private static void ApplyARound(HomeViewModel home)
     {
         home.EnterResultCommand.Execute(null);
+        Assert.IsType<SessionIntroViewModel>(home.CurrentContent).ContinueCommand.Execute(null);
         var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         entry.Input = "1";
         entry.SubmitCommand.Execute(null);
@@ -88,6 +165,14 @@ public sealed class DeathScreenHandoffTests
 
         public required PlayerMortalityStatus Death { get; init; }
 
+        public bool StartsDead { get; init; }
+
+        public DeathScreenModel? Screen { get; init; }
+
+        public BriefingModel? RoundBriefing { get; init; }
+
+        public SmgpBriefingModel? SmgpBriefing { get; init; }
+
         public int SummaryReadsAfterApply { get; private set; }
 
         public CareerSummary Summary
@@ -105,11 +190,16 @@ public sealed class DeathScreenHandoffTests
 
         public void Apply(ResultDraft draft) => _applied = true;
 
-        public PlayerMortalityStatus PlayerMortality() => Death;
+        public PlayerMortalityStatus PlayerMortality() => StartsDead || _applied
+            ? Death
+            : Status(deceased: false, deleted: false);
+
+        public DeathScreenModel? DeathScreen() => Screen;
 
         // The rest is delegated to the exhaustive fake (all used BEFORE apply, so the DB is "live").
         public SeasonPack Pack => _inner.Pack;
-        public BriefingModel? CurrentBriefing() => _inner.CurrentBriefing();
+        public BriefingModel? CurrentBriefing() => RoundBriefing ?? _inner.CurrentBriefing();
+        public SmgpBriefingModel? CurrentSmgpBriefing() => SmgpBriefing;
         public StageOutcome StageCurrentGrid() => _inner.StageCurrentGrid();
         public IReadOnlyList<GridSeat> CurrentGrid() => _inner.CurrentGrid();
         public ConfirmModel Preview(ResultDraft draft) => _inner.Preview(draft);

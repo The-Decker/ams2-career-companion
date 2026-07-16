@@ -21,12 +21,23 @@
        Sans Demo" (the Season's Grid card driver/team names). Referenced in Theme.xaml via
        /Fonts/#<family>. -->
   <ItemGroup>
-    <!-- Original generated key art for the full-bleed Formula-style game menu. Embedded so the
-         single-file build never depends on a loose image beside the executable. -->
-    <Resource Include="Assets\MainMenu\grand-prix-blue-hour.png" />
+    <!-- Mike's authored main-menu race photograph. Embedded so the single-file build never
+         depends on a loose image beside the executable. -->
+    <Resource Include="Assets\MainMenu\main-menu.png" />
+    <!-- Exact copy of the canonical full SMGP identity artwork. The start-menu mode card needs it
+         before any loose data tree is loaded and must never fall back to the cropped pack tile. -->
+    <Resource Include="Assets\MainMenu\smgp-mode.jpg" />
     <!-- Authored SMGP start-straight environment. Live cars, portraits and grid markings remain
          data-bound WPF overlays; only the static grandstand/track/pit complex is raster art. -->
     <Resource Include="Assets\StartingGrid\smgp-start-straight.png" />
+    <!-- Text-free session gates. All copy remains data-bound XAML for theme, scale and accessibility;
+         embedding the two masters once avoids a loose publish dependency and duplicate packaging. -->
+    <Resource Include="Assets\SessionIntros\*.png" />
+    <!-- Panoramic Calendar venue masters. The manifest maps all AMS2 track/layout ids onto
+         1920x440 JPEG pack resources, allowing layout variants at one venue to share a master. -->
+    <Resource Include="Assets\TrackBanners\manifest.json" />
+    <Resource Include="Assets\TrackBanners\**\*.jpg" />
+    <Resource Include="Assets\TrackBanners\**\*.jpeg" />
     <Resource Include="Fonts\Race Sport.ttf" />
     <Resource Include="Fonts\Retro Floral.ttf" />
     <Resource Include="Fonts\Microsport Bold.ttf" />
@@ -56,6 +67,13 @@
     <Resource Include="Fonts\Saira-Regular.ttf" />
     <Resource Include="Fonts\Saira-SemiBold.ttf" />
     <Resource Include="Fonts\Silkscreen-Regular.ttf" />
+    <!-- Music and generated SFX are streamed by WPF MediaPlayer, so they must remain loose beside
+         the single-file exe. Update (rather than Include) preserves SDK default-item handling while
+         adding build/publish copy metadata. -->
+    <None Update="Assets\Audio\**\*.*"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
   </ItemGroup>
 
   <!-- Refreshable data beside the exe (never compiled in): the extracted AMS2 content

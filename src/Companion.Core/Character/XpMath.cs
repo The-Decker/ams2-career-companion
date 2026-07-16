@@ -32,6 +32,12 @@ public static class XpMath
     /// bonuses); beat-teammate stacks only on a genuine finish.</summary>
     public static int PerRound(PerRoundXp cfg, RoundInputs r, PlayerPerkModifiers? mods = null)
     {
+        // Progression-v2 mastery rates have a catalog-wide aggregate cap. Keep that arithmetic on
+        // a separate path: legacy/v0 careers must retain the exact operation order below for
+        // byte-identical replay.
+        if (mods?.MasteryEffectsVersion == CharacterProfile.CurrentMasteryEffectsVersion)
+            return PerRoundWithMasteryRates(cfg, r, mods);
+
         // Per-cause XP multipliers from the character's perks (absent cause = ×1.0). Null mods (a
         // pre-character career, or one with no xpRate perk) leaves every multiplier at 1.0, so the
         // result is byte-identical to the shipped formula.
@@ -71,6 +77,47 @@ public static class XpMath
         double blanket = Mult("all") * Mult("ageWindow");
 
         return (int)Math.Round((finishTerm + bonus) * blanket, MidpointRounding.AwayFromZero);
+    }
+
+    private static int PerRoundWithMasteryRates(PerRoundXp cfg, RoundInputs r, PlayerPerkModifiers mods)
+    {
+        const double minRate = 0.0;
+        const double maxRate = 1.40;
+
+        double blanket = mods.XpMult("all") * mods.XpMult("ageWindow");
+
+        double finishRate = mods.XpMult("finishVsExpected") * blanket;
+        if (r.FinishPosition is int fp && fp > 3)
+            finishRate *= mods.XpMult("midfield");
+        finishRate = Math.Clamp(finishRate, minRate, maxRate);
+
+        // RoundXpFloorMultiplier is intentionally dormant. Its authored zero multiplier conflicts
+        // with the node's drawback classification, so the fixed XP floor remains in force until
+        // that effect is re-authored and its replay semantics are frozen.
+        double finishTerm = Math.Clamp(
+            (r.ExpectedFinish - r.EffectiveFinish) * cfg.FinishVsExpectedPerPlace,
+            cfg.FinishVsExpectedFloor,
+            cfg.FinishVsExpectedCap) * finishRate;
+
+        double Component(double amount, string cause) =>
+            amount * Math.Clamp(mods.XpMult(cause) * blanket, minRate, maxRate);
+
+        double bonus;
+        if (r.Dnf == DnfCause.DriverError)
+            bonus = Component(cfg.DnfDriverError, "dnfDriverError");
+        else if (r.Dnf == DnfCause.Mechanical)
+            bonus = Component(cfg.DnfMechanical, "dnfMechanical");
+        else if (r.FinishPosition is int position)
+            bonus = position == 1 ? Component(cfg.Win, "win")
+                : position <= 3 ? Component(cfg.Podium, "podium")
+                : r.ScoredPoints ? Component(cfg.Points, "points") : 0.0;
+        else
+            bonus = 0.0;
+
+        if (r.BeatTeammate && r.Dnf is null)
+            bonus += Component(cfg.BeatTeammate, "beatTeammate");
+
+        return (int)Math.Round(finishTerm + bonus, MidpointRounding.AwayFromZero);
     }
 
     /// <summary>Per-season XP: the best applicable championship-placement bonus plus the flat
