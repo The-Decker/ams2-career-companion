@@ -1,0 +1,475 @@
+{
+  "$comment": "Qualifying + career-milestone pack (prefix qm.): era-voiced pole coverage, split positive/negative qualifying upsets, streak escalation tiers, drought epics, per-counter career milestones, and second-take features for the career firsts so the rendezvous pick varies between careers. Follows 010-core.json format exactly; read-side only.",
+  "version": 1,
+  "pools": {
+    "qmGridColor": {
+      "1960s": [
+        "The timekeepers' ledger admits no argument.",
+        "One flying lap, hand-timed and final."
+      ],
+      "1980s": [
+        "One lap, everything turned up, no prisoners.",
+        "Saturday is for the brave, and the grid sheet proves it."
+      ],
+      "2010s": [
+        "Sector times do not negotiate.",
+        "The timing screens told the story before the pit wall could."
+      ],
+      "smgp": [
+        "THE CLOCK NEVER LIES.",
+        "ONE LAP TO RULE THE BOARD."
+      ],
+      "default": [
+        "The grid sheet is the weekend's first verdict.",
+        "Saturday pace is a promise; Sunday decides whether it is kept.",
+        "Qualifying tells the truth one lap at a time."
+      ]
+    },
+    "qmStreakBuzz": {
+      "1960s": [
+        "The scribes have taken to counting on their fingers.",
+        "Runs like this are the stuff of annuals and after-dinner speeches."
+      ],
+      "2010s": [
+        "The broadcast graphics team already has the streak counter built for next round.",
+        "The number is the story now, and everyone in the paddock knows it."
+      ],
+      "smgp": [
+        "THE COMBO METER IS GLOWING.",
+        "THE LADDER FEARS A HOT HAND."
+      ],
+      "default": [
+        "Runs like this bend a whole season around them.",
+        "The paddock has started keeping count out loud.",
+        "Streaks change how rivals race you - carefully."
+      ]
+    },
+    "qmFirstsNote": {
+      "1960s": [
+        "The old hands nodded; every one of them remembers their own first.",
+        "A fresh ledger has its first entry inked."
+      ],
+      "2010s": [
+        "The clip will do numbers by midnight.",
+        "Somewhere a highlights editor just saved the file twice."
+      ],
+      "smgp": [
+        "A NEW LINE ON THE BIG BOARD.",
+        "THE CROWD LEARNS A NEW NAME."
+      ],
+      "default": [
+        "Careers are built one first at a time.",
+        "Nobody forgets where they were for the first one.",
+        "The record book opens a fresh page and writes a name at the top."
+      ]
+    },
+    "qmDroughtSigh": {
+      "1960s": [
+        "The mechanics permitted themselves a smile, which is saying something."
+      ],
+      "1990s": [
+        "The press room checked the databases twice before believing it.",
+        "The statisticians closed one long-running file tonight."
+      ],
+      "smgp": [
+        "THE DRY SPELL SHATTERS.",
+        "THE BOARD REMEMBERS HOW TO SMILE."
+      ],
+      "default": [
+        "Relief has a sound, and the garage made it.",
+        "The zero is gone; the season breathes again.",
+        "Long waits make loud endings."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "qm.pole.1960s-report",
+      "event": "polePosition",
+      "eras": ["1960s"],
+      "headline": "Fastest time of the day: {subject} heads the grid[[?venue: at {venue}]]",
+      "deck": "Qualifying report, round {round} of {year}",
+      "summary": "{subject} set the fastest qualifying time for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} The timekeepers have completed their arithmetic and the answer is {subject}: fastest of all in practice for round {round}[[?venue: at {venue}]], and first away when the flag drops.",
+        "context": "{pool:qmGridColor} In an age when the watches are held by hand and the margins are read in tenths, heading the sheet is a plain statement of speed, and the paddock treats it as such.",
+        "close": "The grid forms up behind {player's} machine, and the rest must make their arrangements accordingly."
+      }
+    },
+    {
+      "id": "qm.pole.1970s-grit",
+      "event": "polePosition",
+      "eras": ["1970s"],
+      "headline": "{subject} steals pole[[?venue: at {venue}]]",
+      "deck": "Qualifying, round {round}: the front row has an owner",
+      "summary": "{subject} took pole position for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} In a session that rewarded the brave and punished everyone else, {subject} hung it all out when the track was at its quickest and came away with pole[[?venue: at {venue}]].",
+        "context": "{pool:qmGridColor} These are years when a pole lap means something animal - wings, slicks and horsepower barely on speaking terms, and a driver willing to arbitrate.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.pole.1980s-backpage",
+      "event": "polePosition",
+      "eras": ["1980s"],
+      "headline": "POLE! {subject} blitzes qualifying[[?venue: at {venue}]]",
+      "deck": "Round {round}: the front row starts here",
+      "summary": "{subject} grabbed pole for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} Strap in. {subject} threw one monster lap at the clock[[?venue: at {venue}]] and nobody answered it. Pole position, round {round}, end of argument.",
+        "stats": "{pool:qmGridColor} One lap on maximum attack settles more arguments than a season of press conferences.",
+        "close": "Sunday's question just got simpler: who is brave enough to take it off {player}?"
+      }
+    },
+    {
+      "id": "qm.pole.2010s-digital",
+      "event": "polePosition",
+      "eras": ["2010s"],
+      "headline": "{subject} takes pole[[?venue: at {venue}]] - and it was not close",
+      "deck": "Qualifying report, round {round}",
+      "summary": "{subject} topped qualifying for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} Quickest when it mattered: {subject} went to the top of the timing screens on the final runs and stayed there[[?venue: , locking down pole at {venue}]].",
+        "stats": "{pool:qmGridColor} [[?champPosition: The championship account currently reads {ord:champPosition}, and Sundays started from the front have a way of improving it.]]",
+        "next": "Lights out will tell us whether the race pace matches the headline lap."
+      }
+    },
+    {
+      "id": "qm.pole.smgp-arcade",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "headline": "POLE POSITION! {subject} OWNS THE CLOCK[[?venue: AT {venue}]]",
+      "deck": "ROUND {round}: THE FRONT SPOT IS TAKEN",
+      "summary": "{subject} takes pole for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} THE TIMING BOARD FLASHES ONE NAME: {subject}. FASTEST LAP OF QUALIFYING. FIRST LIGHT ON THE GRID FOR ROUND {round}.",
+        "impact": "{pool:qmGridColor} EVERY RIVAL SAW THE LAP. NONE OF THEM MATCHED IT.",
+        "close": "GREEN LIGHTS NEXT. HOLD ON."
+      }
+    },
+    {
+      "id": "qm.pole.wet",
+      "event": "polePosition",
+      "when": { "isWet": true },
+      "headline": "{subject} takes pole in the rain[[?venue: at {venue}]]",
+      "deck": "A soaked qualifying session finds its master",
+      "summary": "{subject} took pole in wet qualifying for round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} On a day when most of the field qualified with their elbows, {subject} qualified with fingertips: pole position on a streaming track[[?venue: at {venue}]], where every quick lap was a small act of defiance.",
+        "context": "Wet qualifying strips the sport to its oldest question - who trusts the car least and themselves most. The answer sits first on the grid for round {round}.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.first-pole.one-lap-truth",
+      "event": "firstPole",
+      "headline": "One lap changes everything: a first pole for {subject}",
+      "deck": "The breakthrough Saturday of {player's} career",
+      "summary": "{subject} claimed a maiden pole position in round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} There was a moment today when the whole timing sheet reorganised itself under one name, and the name was {subject}. First career pole[[?venue: , at {venue},]] and the grid suddenly reads differently.",
+        "stats": "{pool:qmGridColor} Poles are the purest data point in racing: no strategy, no luck, no inheritance. From today, {player's} single-lap ceiling is a matter of public record.",
+        "next": "The harder trick is doing it again. The paddock suspects this was not a one-off.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.quali-upset.giant-slayer",
+      "event": "qualifyingSurprise",
+      "when": { "minUpset": 5 },
+      "headline": "Where did that come from? {subject} storms to {ord:quali} on the grid",
+      "deck": "Qualifying upset[[?venue: at {venue}]]: the form book takes a beating",
+      "summary": "{subject} qualified a stunning {ord:quali}[[?expected: against an expected {ord:expected}]].",
+      "sections": {
+        "lead": "{pool:dateline} Someone forgot to tell {subject} where the car is supposed to qualify. {ord:quali} on the grid for round {round}[[?expected: , a full leap on the {ord:expected} the paddock had pencilled in]], and the timing sheet has some explaining to do.",
+        "context": "{pool:qmGridColor} Laps like this are either a setup gamble that landed or a driver operating above the machinery. Both readings make Sunday considerably more interesting.",
+        "next": "Holding the position over race distance is another matter entirely - which is exactly why the grandstands will be watching that part of the grid.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "qm.quali-upset.sensation",
+      "event": "qualifyingSurprise",
+      "when": { "minUpset": 8 },
+      "headline": "Sensation on Saturday: {subject} lines up {ord:quali}",
+      "deck": "One of the qualifying shocks of the season[[?venue: at {venue}]]",
+      "summary": "{subject} produced a sensational {ord:quali} in qualifying[[?expected: from an expected {ord:expected}]].",
+      "sections": {
+        "lead": "{pool:dateline} Every season produces one Saturday that nobody's model predicted. This was it: {subject}, {ord:quali} on the grid[[?expected: where the form said {ord:expected}]], and a pit lane full of engineers rechecking their data for an error that is not there.",
+        "stats": "Upsets of this size are not tow-and-track-position flukes; the lap had to be built in every sector, and it was. The onboard will be studied up and down the paddock tonight.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "qm.quali-shock.nowhere",
+      "event": "qualifyingSurprise",
+      "when": { "maxUpset": -5 },
+      "headline": "Alarm bells: {subject} buried down in {ord:quali}",
+      "deck": "A qualifying session goes badly wrong[[?venue: at {venue}]]",
+      "summary": "{subject} qualified only {ord:quali}[[?expected: against an expected {ord:expected}]].",
+      "sections": {
+        "lead": "{pool:dateline} The grid sheet made grim reading in {team's} garage: {subject} starts round {round} from {ord:quali}[[?expected: , nowhere near the {ord:expected} the pace suggested was available]]. Somewhere between the garage and the flying lap, the speed went missing.",
+        "context": "The debrief has one job tonight: decide whether this was the car, the lap or the traffic - because the answer changes what Sunday can still rescue.",
+        "next": "Race day now becomes recovery work: overtakes, strategy and a measure of luck, in roughly that order.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "qm.win-streak.run-is-real",
+      "event": "winStreak",
+      "when": { "minStreak": 3 },
+      "headline": "Make it {streak}: {subject} will not stop winning",
+      "deck": "The streak rolls on[[?venue: at {venue}]]",
+      "summary": "{subject} extended the winning run to {streak} races.",
+      "sections": {
+        "lead": "{pool:dateline} There is a particular quiet that settles over a paddock when one crew keeps winning. It was audible again today: {subject}, first again[[?venue: at {venue}]], {streak} in succession, and no obvious end in sight.",
+        "rivalry": "[[?rival: Somewhere down the pit lane, {rival} is running out of polite answers to the same question.]] {pool:qmStreakBuzz}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.win-streak.era-of-one",
+      "event": "winStreak",
+      "when": { "minStreak": 5 },
+      "headline": "This is domination: {streak} straight wins for {subject}",
+      "deck": "A season bends around one garage",
+      "summary": "{subject} has won {streak} consecutive races - domination territory.",
+      "sections": {
+        "lead": "Somewhere around the third win, a streak stops being form and starts being an era. At {streak} consecutive victories, {subject} is not competing in this championship so much as administering it.",
+        "stats": "Runs of five and more belong to a short and serious list. Whatever the ingredients - car, driver, team, nerve - all of them are present at once, and none of the rivals can find the missing one in their own garage.",
+        "championship": "{pool:champChatter}",
+        "close": "{pool:qmStreakBuzz}"
+      }
+    },
+    {
+      "id": "qm.podium-streak.habit",
+      "event": "podiumStreak",
+      "when": { "minStreak": 3 },
+      "headline": "{subject} banks {a:ord:streak} straight podium",
+      "deck": "Consistency becomes a habit[[?venue: at {venue}]]",
+      "summary": "{subject} has finished on the podium {streak} races running.",
+      "sections": {
+        "lead": "{pool:dateline} The rostrum is starting to feel like assigned seating: {subject} collected {a:ord:streak} consecutive podium[[?venue: at {venue}]][[?position: with {ord:position}]], and the points keep arriving in fat envelopes.",
+        "championship": "[[?champPosition: {ord:champPosition} in the table, and climbing the honest way.]] {pool:champChatter}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.podium-streak.iron-run",
+      "event": "podiumStreak",
+      "when": { "minStreak": 5 },
+      "headline": "The iron run: {streak} podiums in a row for {subject}",
+      "deck": "One of the great consistency streaks",
+      "summary": "{subject} extended a remarkable podium run to {streak} races.",
+      "sections": {
+        "lead": "Anyone can have a weekend. {streak} consecutive podiums is a season-within-a-season, and it is the kind of record engineers respect more than wins: it means the car was right, the driver was right, and nothing broke - over and over again.",
+        "stats": "Streaks of this length survive bad Saturdays, wrong tyre calls and first-lap chaos. That is what makes them rare, and what makes rivals quietly furious.",
+        "close": "{pool:qmStreakBuzz}"
+      }
+    },
+    {
+      "id": "qm.points-streak.bankable",
+      "event": "pointsStreak",
+      "when": { "minStreak": 5 },
+      "headline": "{streak} rounds, {streak} scores: {subject} is the safest bet in the paddock",
+      "deck": "The scoring run rolls on",
+      "summary": "{subject} has scored in {streak} consecutive rounds.",
+      "sections": {
+        "lead": "{pool:dateline} Championships are lost on zeroes, and {subject} has forgotten how to write one: {streak} consecutive rounds in the points after today[[?venue: at {venue}]], every weekend converted, nothing thrown away.",
+        "championship": "{pool:champChatter} [[?champPosition: The standings say {ord:champPosition}; the trend line says better.]]",
+        "close": "{pool:qmStreakBuzz}"
+      }
+    },
+    {
+      "id": "qm.win-drought.over",
+      "event": "winDroughtEnded",
+      "headline": "Winner again: {subject} ends the wait",
+      "deck": "A first win in {drought} races[[?venue: at {venue}]]",
+      "summary": "{subject} won for the first time in {drought} races.",
+      "sections": {
+        "lead": "{pool:dateline} The weight is off: {subject} stood on the top step again today[[?venue: at {venue}]], a first victory in {drought} races, and the celebration had the particular volume of something long postponed.",
+        "context": "Winless runs distort everything around a driver - the questions get slower and crueller, the near-misses heavier. All of it evaporated somewhere on the final lap.",
+        "close": "{pool:qmDroughtSigh}"
+      }
+    },
+    {
+      "id": "qm.win-drought.epic",
+      "event": "winDroughtEnded",
+      "when": { "minDrought": 15 },
+      "headline": "After {drought} races, the longest wait of {player's} career is over",
+      "deck": "An epic drought ends[[?venue: at {venue}]]",
+      "summary": "{subject} ended a winless run of {drought} races.",
+      "sections": {
+        "lead": "Some waits get so long they become part of a driver's biography. {drought} races - seasons of Sundays - separated {player's} last win from this one, and when the flag finally fell[[?venue: at {venue}]] the garage did not cheer so much as let go.",
+        "context": "Droughts of this length end careers more often than they end in victory. That this one finished the right way says everything about the stubbornness involved - driver, team, all of it.",
+        "impact": "[[?team: Inside {team} they will tell you nobody stopped believing. That is never quite true, which makes the ones who kept working all the more remarkable.]]",
+        "close": "{pool:qmDroughtSigh}"
+      }
+    },
+    {
+      "id": "qm.points-drought.epic",
+      "event": "pointsDroughtEnded",
+      "when": { "minDrought": 15 },
+      "headline": "The famine ends: {subject} scores after {drought} empty races",
+      "deck": "A points drought of rare length is finally over",
+      "summary": "{subject} scored for the first time in {drought} races.",
+      "sections": {
+        "lead": "{pool:dateline} For {drought} consecutive races the results column gave {subject} nothing at all. Today it finally paid out[[?venue: at {venue}]][[?position: - {ord:position}, and rarely has a modest finishing position been welcomed like a trophy]].",
+        "context": "Runs like that hollow a season out from the inside. Breaking one is less a result than a rescue.",
+        "close": "{pool:qmDroughtSigh}"
+      }
+    },
+    {
+      "id": "qm.milestone.wins",
+      "event": "careerMilestone",
+      "when": { "milestoneCounter": "wins" },
+      "headline": "Win number {milestone}: {subject} joins the big numbers",
+      "deck": "A landmark victory total",
+      "summary": "{subject} reached {milestone} career wins.",
+      "sections": {
+        "lead": "{pool:dateline} Victories are the currency of this sport, and {subject} just banked a round number: career win number {milestone}[[?venue: , delivered at {venue}]]. The company at that mark is select, and it knows it.",
+        "stats": "Count them back and every one tells a different story - the easy ones, the stolen ones, the ones that arrived in the rain. Totals like {milestone} are careers in shorthand.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.milestone.starts",
+      "event": "careerMilestone",
+      "when": { "milestoneCounter": "starts" },
+      "headline": "{milestone} starts: the long service of {subject}",
+      "deck": "A durability milestone for the record books",
+      "summary": "{subject} made {a:ord:milestone} career start.",
+      "sections": {
+        "lead": "{pool:dateline} Nobody accumulates {milestone} Grand Prix starts by accident. It takes speed enough to be wanted, toughness enough to keep the seat, and a plain love of the thing - {subject} lined up for the {ord:milestone} time today[[?venue: at {venue}]].",
+        "context": "Start counts are the sport's quietest statistic and its most honest: every single one had to be earned twice, once with a contract and once with a crash helmet.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.milestone.podiums",
+      "event": "careerMilestone",
+      "when": { "milestoneCounter": "podiums" },
+      "headline": "{milestone} podiums for {subject}",
+      "deck": "The silverware shelf reaches a round number",
+      "summary": "{subject} reached {milestone} career podiums.",
+      "sections": {
+        "lead": "{pool:dateline} The trophy cabinet needed a new shelf anyway: {subject} collected a {ord:milestone} career podium today[[?venue: at {venue}]][[?position: with {ord:position}]].",
+        "stats": "Podium totals measure something wins alone miss - the ability to be there, weekend after weekend, whatever the machinery allows. {milestone} of them is a body of work.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.best-finish.new-ceiling",
+      "event": "bestFinishImproved",
+      "headline": "New ceiling: {ord:position} is the best of {player's} career",
+      "deck": "A personal record falls in round {round}",
+      "summary": "{subject} set a career-best finish of {ord:position}.",
+      "sections": {
+        "lead": "{pool:dateline} Careers move in steps, and {subject} just climbed one: {ord:position}[[?venue: at {venue}]] is the highest {player} has ever finished, and the old mark is now just a line in the history.",
+        "next": "Personal bests have a way of resetting ambitions. The target now is simple: make today's ceiling tomorrow's floor.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-start.first-page",
+      "event": "firstStart",
+      "headline": "Chapter one: {player's} championship story begins",
+      "deck": "Debut[[?venue: at {venue}]][[?team: for {team}]], round {round} of {year}",
+      "summary": "{subject} started a first championship race.",
+      "sections": {
+        "lead": "Before the statistics, before the reputation, before any of it, there is a single unremarkable line on an entry list. {player's} line was printed this week, and today it turned into a racing career[[?venue: on the grid at {venue}]].",
+        "context": "[[?team: {team} took the chance; the driver repays it one clean weekend at a time.]] Debuts are not judged on results but on what the garage says afterwards - and garages notice everything.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-points.scoreboard",
+      "event": "firstPoints",
+      "headline": "{subject} is on the board",
+      "deck": "First career points arrive in round {round}",
+      "summary": "First championship points for {subject}[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} There is a club with no ceremony and a strict entrance requirement, and {subject} joined it today: championship scorers[[?position: , via {a:ord:position} place]][[?venue: at {venue}]].",
+        "impact": "Zeroes stop meaning never and start meaning not this week - that is what a first score changes. [[?team: For {team}, it is also the first hard evidence that the investment works.]]",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-top5.knocking",
+      "event": "firstTop5",
+      "headline": "Knocking on the door: a first top-five for {subject}",
+      "deck": "The front of the field gets a new neighbour",
+      "summary": "{subject} recorded a first career top-five finish[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} The gap between the midfield and the front is the widest in racing, and {subject} just crossed it: a first top-five finish[[?position: , {ord:position},]][[?venue: at {venue}]] - close enough to read the podium's paintwork.",
+        "next": "The order of a career's firsts rarely changes: top five, then the rostrum, then the champagne gets expensive. The next box is now in plain view.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-podium.view-from-there",
+      "event": "firstPodium",
+      "headline": "The view from up there: {player's} first podium",
+      "deck": "A maiden rostrum in round {round}, {year}",
+      "summary": "{subject} claimed a first career podium[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "Ask any driver what they remember about their first podium and they never say the trophy - they talk about the view: the crowd where the track used to be, the two others pretending they always knew. From today, {subject} has that memory[[?venue: , earned at {venue}]].",
+        "context": "[[?team: In {team's} garage the photographs are already being chosen.]] {pool:qmFirstsNote}",
+        "next": "First podiums redraw the target: the middle step is a rung, not a summit.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "qm.first-podium.smgp",
+      "event": "firstPodium",
+      "eras": ["smgp"],
+      "headline": "FIRST TROPHY! {subject} REACHES THE ROSTRUM",
+      "deck": "A MAIDEN PODIUM LIGHTS UP ROUND {round}",
+      "summary": "{subject} landed a first career podium[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} A NEW FACE ON THE PODIUM GRAPHIC! {subject} CLIMBED THE STEPS FOR THE FIRST TIME[[?position: - {ord:position} PLACE -]] AND THE CROWD MADE THE SPEAKERS REDUNDANT.",
+        "impact": "FIRST TROPHIES CHANGE EVERYTHING. THE LADDER HAS A NEW CLIMBER, AND EVERY RIVAL JUST FELT IT.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-win.anatomy",
+      "event": "firstWin",
+      "headline": "Anatomy of a first win: how {subject} finally broke through",
+      "deck": "Feature: the making of a maiden victory",
+      "summary": "The story behind {player's} first career win.",
+      "sections": {
+        "lead": "First wins look sudden and never are. Today's[[?venue: victory at {venue}]] was assembled from years of parts: the junior seasons, the near-misses, the Sundays that taught what pressure does at the front.",
+        "stats": "The record will show one line - round {round}, {year}, first place. The record is efficient and wrong; this was never one afternoon's work.",
+        "impact": "[[?team: {team} takes the constructor's share of the credit, and has earned it - maiden wins are team results wearing one driver's name.]]",
+        "next": "Every new winner is asked the same thing within the hour: can you do it again? The good ones do not answer with words.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-win.wire-flash",
+      "event": "firstWin",
+      "headline": "FLASH: maiden victory for {subject}[[?venue: at {venue}]]",
+      "deck": "First career win confirmed in round {round}",
+      "summary": "{subject} has won for the first time - confirmed.",
+      "sections": {
+        "lead": "{pool:dateline} Confirmed from race control: {subject} wins round {round}[[?venue: at {venue}]] - the first victory of {player's} championship career. [[?team: A first for the driver, another for {team}.]] Full timing to follow.",
+        "context": "The result stands as posted. The celebrations, by all accounts, will not be as brief as this bulletin.",
+        "close": "{pool:qmFirstsNote}"
+      }
+    },
+    {
+      "id": "qm.first-retirement.initiation",
+      "event": "firstRetirement",
+      "headline": "Welcome to the other column: {subject} retires for the first time",
+      "deck": "Every career meets this day eventually",
+      "summary": "{subject} recorded a first career retirement.",
+      "sections": {
+        "lead": "{pool:dateline} Until today, {player's} record had a strange purity to it: started everything, finished everything. That ended in round {round}[[?venue: at {venue}]], and the education is the better for it.",
+        "context": "Old mechanics say a driver does not really join the sport until it has broken their heart once. Consider the membership complete.",
+        "close": "{pool:groanClose}"
+      }
+    }
+  ]
+}

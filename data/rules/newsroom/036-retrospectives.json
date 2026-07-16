@@ -1,0 +1,270 @@
+{
+  "$comment": "Retrospectives pack (rt.) - the Archive Desk's long view. Alternate-timeline race cards and the changed-champion deep file (historyDiverged: the displaced fact rides {rival} and is ALWAYS attributed as the real record; the career outcome is always this universe's own timeline, never a change to history), history-held convergence notes, era-voiced season annuals (seasonCompleted), a career-retrospective starts milestone, and record-book champion features. Display-only content; follows 010-core's format exactly.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "rt.diverged.race.card",
+      "event": "historyDiverged",
+      "desks": ["archive"],
+      "headline": "One race, two records[[?venue: at {venue}]]",
+      "deck": "Archive card, {year}[[?round: , round {round}]]: the timelines part company",
+      "summary": "The record book gives this race to {rival}; this universe filed {winner}.",
+      "sections": {
+        "lead": "The Archive Desk opens a fresh card[[?venue: for {venue}]][[?round: , round {round} of {year}]]. Two lines are typed side by side: the historical record, which reads {rival}, and this timeline's result, which reads {winner}[[?winnerTeam: for {winnerTeam}]].",
+        "stats": "Both entries are correct. The real {year} keeps its winner, and nothing that happens in this championship reaches back to touch it; the career universe simply keeps a result of its own. The desk's job is not to choose between the columns - only to keep them straight.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.diverged.race.what-if",
+      "event": "historyDiverged",
+      "desks": ["archive"],
+      "headline": "A what-if goes on file: {winner} takes a race the record gave to {rival}",
+      "deck": "Divergence report[[?venue: from {venue}]], {year}",
+      "summary": "{winner} won a round the historical record assigns to {rival}.",
+      "sections": {
+        "lead": "Every bar argument in this sport starts with two words: what if. This weekend[[?venue: at {venue}]], one of them stopped being hypothetical. {winner} took a race that, in the real {year}, went to {rival}.",
+        "context": "To be clear, as this desk always is: the record stands. {rival} won this race in the world's {year}, and no afternoon in this championship amends that line. What this timeline has done is write its own answer alongside it, in its own column, under its own date.",
+        "next": "Divergences compound. A different winner means different points, different momentum, and occasionally a different December. The desk has opened a file and expects to add to it.",
+        "close": "{pool:rtLedgers}"
+      }
+    },
+    {
+      "id": "rt.diverged.race.margins",
+      "event": "historyDiverged",
+      "desks": ["archive"],
+      "headline": "History is thinner than it looks: {winner} rewrites a Sunday",
+      "deck": "The record and this timeline disagree[[?venue: about {venue}]]",
+      "summary": "This universe's round[[?round: {round}]] of {year} went to {winner}; history's went to {rival}.",
+      "sections": {
+        "lead": "The margin between the world that happened and a world that could have is usually a handful of seconds, spent somewhere unglamorous. Today this championship found them[[?venue: at {venue}]]: where the record book prints {rival}, this timeline prints {winner}.",
+        "impact": "[[?winnerTeam: For {winnerTeam}, it is a result their real-world ledger never collected here.]] The historical {year} is untouched in the archive - it always is. But the alternate column just grew a line that students of this career will argue about for seasons.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.diverged.race.ledger",
+      "event": "historyDiverged",
+      "desks": ["archive"],
+      "headline": "Two ledgers, one race: {winner} in this one, {rival} in the other",
+      "summary": "Round[[?round: {round}]] of {year} diverged from the historical record.",
+      "sections": {
+        "lead": "{pool:rtLedgers} The ledger of the real {year} shows {rival} winning this race. The ledger of this career shows {winner}. Both are kept in this office, three inches apart, and neither will ever be corrected - because neither is wrong.",
+        "stats": "Filed under divergences, {year}[[?venue: , {venue}]]: historical winner, {rival}; timeline winner, {winner}[[?winnerTeam: of {winnerTeam}]]. Cross-referenced for the end-of-season audit.",
+        "close": "The drawer closes. The season does not."
+      }
+    },
+    {
+      "id": "rt.diverged.champion.deep-file",
+      "event": "historyDiverged",
+      "when": { "clinchedTitle": true },
+      "desks": ["archive"],
+      "headline": "The year with two champions: this universe crowns {winner}, the record keeps {rival}",
+      "deck": "Deep file: how the {year} title left the rails of history",
+      "summary": "This timeline's {year} championship belongs to {winner}; the historical title belongs to {rival}.",
+      "sections": {
+        "lead": "In the world's {year}, the champion is {rival}. That line is carved, certified, and beyond the reach of this desk or anyone else's. But in the {year} this career has been living in since the spring, the crown sits on {winner}. The Archive Desk has waited all season to type this card, and types it with clean hands: nothing here amends history. Something here outgrew it.",
+        "context": "A championship diverges the way a river does - not at the sea, but at some unremarkable bend upstream. Somewhere in this season a result went the other way, then another leaned on it, and by the final round the arithmetic answered to a different name. The desk's file traces every branch, and the striking thing is how ordinary each one looks alone.",
+        "stats": "Both verdicts are bound into the annual, side by side and clearly labeled: {rival}, champion of the historical {year}; {winner}, champion of this timeline's. Neither entry footnotes the other. Neither needs to.",
+        "impact": "What changes now is not the past but the premise. Every season this career runs from here starts one step further from the shoreline of the record, and the archive grows a wing the real world never built.",
+        "close": "Two champions, one year, no contradiction. That is the whole business of this desk."
+      }
+    },
+    {
+      "id": "rt.held.champion.convergence-note",
+      "event": "historyHeld",
+      "desks": ["archive"],
+      "headline": "Convergence note: {winner}, champion in both books",
+      "deck": "The {year} season returns to the record",
+      "summary": "For all its detours, this timeline's {year} crowned the same champion as history: {winner}.",
+      "sections": {
+        "lead": "{pool:rtArchive} The desk's quietest card is the convergence note. Whatever this season did differently along the way - and the file shows that it did - the {year} championship arrived at the same door history was already standing at: {winner}.",
+        "context": "Convergence is its own finding. It suggests the title was not resting on any one Sunday's luck, but on something the season could not vote away no matter how it shuffled the weekends.",
+        "close": "The two ledgers touch, just here, and part again."
+      }
+    },
+    {
+      "id": "rt.held.champion.gravity",
+      "event": "historyHeld",
+      "desks": ["archive"],
+      "headline": "Some verdicts have gravity: {winner} again",
+      "deck": "Season audit, {year}: timeline convergent with the record",
+      "summary": "This universe's {year} title matched the historical record: {winner}.",
+      "sections": {
+        "lead": "A season is a thousand branching decisions, and this one wandered like any other - the file has the changed Sundays to prove it. Yet when the last flag fell on {year}, the champion's line read exactly as the record book always said it would: {winner}.",
+        "stats": "The desk stamps the season CONVERGENT and notes the curiosity for the winter reader: in a universe entirely free to disagree with history, the top of the table declined the invitation.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.season.annual.1960s",
+      "event": "seasonCompleted",
+      "eras": ["1960s"],
+      "headline": "The motoring year in review: {year} closes its account",
+      "deck": "An annual survey, prepared for the winter reader",
+      "summary": "The {year} season is entered into the annual - season {season} of the career file.",
+      "sections": {
+        "lead": "It falls to this desk, as the transporters are sheeted down for winter, to prepare the annual survey of {year}. The season is entered in a careful hand: the races run, the garlands awarded, the retirements honoured with a line apiece.",
+        "context": "The reader by the fire may judge the year at leisure. The paddock never could - it lived {year} one Sunday at a time, at racing speed, with no index to consult and no margin for hindsight.",
+        "close": "The annual is bound. The kettle goes on. The new cars are already being drawn."
+      }
+    },
+    {
+      "id": "rt.season.annual.1970s",
+      "event": "seasonCompleted",
+      "eras": ["1970s"],
+      "headline": "{year}, boxed with the decals and the press passes",
+      "deck": "The season file closes - season {season} of the career",
+      "summary": "The {year} season closes and goes to the archive.",
+      "sections": {
+        "lead": "Strip the year for parts and {year} reads like the decade it belongs to: loud, commercial, and brave to the point of argument. The season file closes tonight with every round accounted for and several still being argued about.",
+        "context": "This was racing in its negotiating years - money arriving faster than wisdom, speed arriving faster than either. The archive does not editorialise. It keeps everything, including the arguments.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.season.annual.1980s",
+      "event": "seasonCompleted",
+      "eras": ["1980s"],
+      "headline": "That was {year}: the back-page annual",
+      "deck": "Every headline we shouted this season, now in one drawer",
+      "summary": "The {year} season is done - season {season} goes in the books.",
+      "sections": {
+        "lead": "Cut out every back page we printed this year and you have {year} in a shoebox: the wins we screamed about, the blow-ups we mourned in 72-point type, the title maths we redid weekly and got wrong twice. Tonight the shoebox goes to the archive.",
+        "stats": "The year gets one drawer, the drawer gets one label, and the label gets no adjectives. The headlines used them all.",
+        "close": "See you at the launches. The next shoebox is already empty and waiting."
+      }
+    },
+    {
+      "id": "rt.season.annual.1990s",
+      "event": "seasonCompleted",
+      "eras": ["1990s"],
+      "headline": "The glossy year: {year} in retrospective",
+      "deck": "Season review special - career season {season}",
+      "summary": "A full-year retrospective closes the {year} file.",
+      "sections": {
+        "lead": "The season review lands with the December issue's weight: {year}, shot from every angle, printed on paper heavy enough to mean it. A year of pit-wall science and prime-time drama, closed, captioned, and filed.",
+        "context": "A nineties season is a television season - every round a broadcast, every championship swing replayed until it felt inevitable. The archive keeps the tapes and the doubts alike, because the doubts are usually where the truth was.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.season.annual.2000s",
+      "event": "seasonCompleted",
+      "eras": ["2000s"],
+      "headline": "{year} season review: the highlights package is archived",
+      "deck": "Season {season} of the career, cut to tape",
+      "summary": "The {year} season review is complete and archived.",
+      "sections": {
+        "lead": "The season ends the way the decade prefers: a montage, a rankings debate, and a winter of forums relitigating the stewards. {year} is cut, colour-graded, and shelved.",
+        "stats": "The archive logs the raw feeds next to the highlights - because in ten years somebody will swear a round happened differently, and this desk enjoys being right.",
+        "close": "Testing starts before the confetti is swept. The file stays open in spirit only."
+      }
+    },
+    {
+      "id": "rt.season.annual.2010s",
+      "event": "seasonCompleted",
+      "eras": ["2010s"],
+      "headline": "{year}, wrapped: the year in one scroll",
+      "deck": "Season {season} - the digital annual",
+      "summary": "The {year} season wrap is live in the archive.",
+      "sections": {
+        "lead": "The wrap drops the moment the season does: {year}, compressed into one scroll - the wins, the collapses, the graphs that spiked, and the single weekend nobody's timeline has recovered from.",
+        "context": "A modern season generates more data before Sunday lunch than early championships kept in a decade. The desk archives all of it and trusts none of it without a second source.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.season.annual.smgp",
+      "event": "seasonCompleted",
+      "eras": ["smgp"],
+      "headline": "SEASON {season} COMPLETE! {year} ENTERS THE HALL OF RECORDS",
+      "deck": "INSERT NEW SEASON TO CONTINUE",
+      "summary": "The {year} campaign is archived on the big board.",
+      "sections": {
+        "lead": "THE CHEQUERED FLAG FALLS ON {year} AND THE HALL OF RECORDS THROWS ITS DOORS WIDE! EVERY LAP, EVERY PASS, EVERY IMPOSSIBLE SAVE - CARVED INTO THE BIG BOARD FOREVER!",
+        "stats": "FINAL TALLY UPLOADED! THE LADDER REMEMBERS EVERYTHING AND FORGIVES NOTHING!",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.milestone.starts.career-retro",
+      "event": "careerMilestone",
+      "when": { "milestoneCounter": "starts" },
+      "headline": "{milestone} starts: the long road, measured",
+      "deck": "A career retrospective from the Archive Desk",
+      "summary": "{subject} reached {milestone} career starts[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "Wins are moments; starts are a life. {subject} took the {ord:milestone} green flag of a racing career today[[?venue: at {venue}]], and numbers like that are not driven so much as survived.",
+        "context": "Spread {milestone} starts across a desk and a career stops looking like a highlights reel: the seasons that flew, the seasons that had to be endured, the machinery trusted and the machinery forgiven. Every one of them began the same way - a grid, a light, a held breath.",
+        "stats": "The archive marks the card in the old style, the one reserved for accumulations rather than afternoons: {milestone} starts, each one filed, none of them free.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.champion.record-book",
+      "event": "championCrowned",
+      "headline": "A new line in the oldest table: {subject}, champion of {year}",
+      "deck": "The record book takes its annual signature",
+      "summary": "{subject} is entered in the record book as the {year} champion.",
+      "sections": {
+        "lead": "Titles are argued in seasons and settled in ink. The oldest table this sport keeps - the plain one, year beside name - takes its {year} entry tonight: {subject}.",
+        "championship": "The table does not record how. It does not note the weather, the luck, the rounds that nearly went the other way[[?gap: , or the {gap} points that ended up deciding everything]]. That austerity is the honour: everything a champion survived is compressed into one perfect line.",
+        "close": "{pool:rtArchive}"
+      }
+    },
+    {
+      "id": "rt.champion.long-view",
+      "event": "championCrowned",
+      "headline": "{subject} joins the shortest list in racing",
+      "deck": "Champion of {year} - the long view",
+      "summary": "{subject} won the {year} title; the archive takes the long view.",
+      "sections": {
+        "lead": "Thousands have started a Grand Prix. Hundreds have led one. The list {subject} joined today is the short one at the very top of the pyramid: champions, {year} edition.",
+        "context": "From this desk the title looks different than it does from the podium. Champions are how eras get their names - the seasons stop being numbers and start being somebody's years.",
+        "next": "The question the archive asks of every new champion is the one only time can answer: is this a line, or the first line of a chapter?",
+        "close": "{pool:rtArchive}"
+      }
+    }
+  ],
+  "pools": {
+    "rtArchive": {
+      "1960s": [
+        "Entered in the ledger in a careful hand, the ink left a moment to dry.",
+        "The clipping is pasted into the annual and the annual returned to its shelf."
+      ],
+      "1970s": [
+        "Boxed with the decals and the press passes, and the drawer still closes.",
+        "The file gains a loud year and loses none of its composure."
+      ],
+      "1980s": [
+        "Another folder for the cuttings drawer, filed under headlines we stand by.",
+        "The back-page files swallow one more year of shouting."
+      ],
+      "2010s": [
+        "Tagged, indexed, and searchable forever - the arguments move to the replies.",
+        "Committed to the database with a timestamp and no regrets."
+      ],
+      "smgp": [
+        "THE HALL OF RECORDS NEVER CLOSES!",
+        "FILED ON THE BIG BOARD IN LETTERS TEN FEET TALL!"
+      ],
+      "default": [
+        "The card is typed, stamped, and shelved where the winter arguments can find it.",
+        "Filed, cross-referenced, and left for whoever writes the history of this career.",
+        "The archive takes it without comment. That is the archive's whole opinion.",
+        "One more drawer in a room that only ever grows."
+      ]
+    },
+    "rtLedgers": {
+      "smgp": [
+        "TWO TIMELINES ON THE BOARD! BOTH COLUMNS TRUE!"
+      ],
+      "default": [
+        "Two columns, one desk, no contradiction.",
+        "The record is not on trial here; it is simply no longer alone.",
+        "History keeps its line. This timeline keeps writing its own."
+      ]
+    }
+  }
+}

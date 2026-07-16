@@ -1,8 +1,34 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.Core.Newsroom;
 using Companion.ViewModels.Services;
 
 namespace Companion.ViewModels.Hub;
+
+/// <summary>A developing-story card for the threads rail.</summary>
+public sealed record ThreadCardViewModel(
+    string Key,
+    string Title,
+    string TypeLabel,
+    string StateLabel,
+    IReadOnlyList<StoryThreadEntry> Entries)
+{
+    public bool IsActive => StateLabel is not ("RESOLVED" or "HISTORIC" or "DORMANT");
+    public string LatestSummary => Entries.Count > 0 ? Entries[^1].Summary : "";
+}
+
+/// <summary>A rumour-desk card. The claim is ALWAYS labeled speculation; a resolution links
+/// the settling story rather than rewriting the original.</summary>
+public sealed record RumorCardViewModel(
+    string RumorKey,
+    string Claim,
+    string StatusLabel,
+    string ResolutionNote,
+    string ResolvedByKey)
+{
+    public bool HasResolution => ResolvedByKey.Length > 0;
+    public bool IsOpen => StatusLabel == "RUMOUR - OPEN";
+}
 
 /// <summary>Presentation-only unified wire and article-reader state.</summary>
 public sealed partial class NewsViewModel
@@ -11,6 +37,11 @@ public sealed partial class NewsViewModel
     private readonly ObservableCollection<NewsStoryViewModel> _filteredStories = [];
     private readonly ObservableCollection<NewsStoryViewModel> _secondaryStories = [];
     private readonly ObservableCollection<NewsCategoryFilterViewModel> _availableCategories = [];
+    private readonly ObservableCollection<NewsStoryViewModel> _bookmarkedStories = [];
+    private readonly ObservableCollection<ThreadCardViewModel> _threads = [];
+    private readonly ObservableCollection<RumorCardViewModel> _rumors = [];
+    private readonly HashSet<string> _bookmarkOverlay = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _readThisSession = new(StringComparer.Ordinal);
     private NewsCategoryFilterViewModel? _selectedCategory;
     private string _searchText = "";
     private NewsStoryViewModel? _leadStory;
@@ -71,18 +102,84 @@ public sealed partial class NewsViewModel
 
     public bool HasSecondaryStories => _secondaryStories.Count > 0;
 
+    /// <summary>Bookmarked stories, newest first (schema v6 user preference).</summary>
+    public ObservableCollection<NewsStoryViewModel> BookmarkedStories => _bookmarkedStories;
+
+    /// <summary>The developing-story threads rail, active threads first.</summary>
+    public ObservableCollection<ThreadCardViewModel> Threads => _threads;
+
+    /// <summary>The rumour desk: fact-backed whispers, honestly resolved.</summary>
+    public ObservableCollection<RumorCardViewModel> Rumors => _rumors;
+
+    public bool HasBookmarks => _bookmarkedStories.Count > 0;
+
+    public bool HasThreads => _threads.Count > 0;
+
+    public bool HasRumors => _rumors.Count > 0;
+
+    public int UnreadCount => _stories.Count(story =>
+        story.IsUnread && !_readThisSession.Contains(story.Key));
+
+    public bool HasUnread => UnreadCount > 0;
+
     private void RefreshUnifiedProjection(IReadOnlyList<NewsDispatch> journalFeed)
     {
         string selectedCategoryKey = _selectedCategory?.Key ?? "all";
         string? selectedArticleKey = _isReaderOpen ? _selectedArticle?.Key : null;
         var timeline = _session.CareerTimeline();
+        var paddock = _session.SmgpPaddock();
+
+        var threads = _session.StoryThreads();
+        var threadKeyByStory = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var thread in threads)
+        {
+            foreach (var entry in thread.Entries)
+            {
+                threadKeyByStory.TryAdd(entry.StoryKey, thread.Key);
+            }
+        }
 
         Replace(_stories, NewsStoryProjection.Build(
             _session.SmgpDispatches(),
             journalFeed,
             timeline,
-            _session.SmgpPaddock(),
-            showBody: !HeadlinesOnly));
+            paddock,
+            showBody: !HeadlinesOnly,
+            newsroomArticles: _session.NewsroomFeed(),
+            readingState: _session.ReadingState(),
+            threadKeyByStory: threadKeyByStory,
+            smgpMode: paddock is not null));
+
+        _bookmarkOverlay.Clear();
+        foreach (var story in _stories.Where(story => story.IsBookmarked))
+        {
+            _bookmarkOverlay.Add(story.Key);
+        }
+        RebuildBookmarks();
+
+        Replace(_threads, threads
+            .OrderByDescending(thread => thread.SeasonOrdinal)
+            .ThenByDescending(thread => thread.LastRound)
+            .Select(thread => new ThreadCardViewModel(
+                thread.Key,
+                thread.Title,
+                ThreadTypeLabel(thread.Type),
+                thread.State.ToString().ToUpperInvariant(),
+                thread.Entries)));
+
+        Replace(_rumors, _session.RumorBoard()
+            .OrderByDescending(rumor => rumor.SeasonOrdinal)
+            .Select(rumor => new RumorCardViewModel(
+                rumor.RumorKey,
+                rumor.Claim,
+                rumor.Resolution switch
+                {
+                    RumorResolutionKind.Confirmed => "CONFIRMED",
+                    RumorResolutionKind.Denied => "DENIED",
+                    _ => "RUMOUR - OPEN",
+                },
+                rumor.ResolutionNote,
+                rumor.ResolvedByKey)));
         Replace(_availableCategories, NewsStoryProjection.BuildCategories(_stories));
         _selectedCategory = _availableCategories.FirstOrDefault(category =>
                                 string.Equals(category.Key, selectedCategoryKey, StringComparison.Ordinal))
@@ -111,9 +208,61 @@ public sealed partial class NewsViewModel
         OnPropertyChanged(nameof(IsLegacyLimited));
         OnPropertyChanged(nameof(SelectedArticle));
         OnPropertyChanged(nameof(IsReaderOpen));
+        OnPropertyChanged(nameof(HasThreads));
+        OnPropertyChanged(nameof(HasRumors));
+        OnPropertyChanged(nameof(UnreadCount));
+        OnPropertyChanged(nameof(HasUnread));
         OpenArticleCommand.NotifyCanExecuteChanged();
         OpenStoryCommand.NotifyCanExecuteChanged();
         CloseArticleCommand.NotifyCanExecuteChanged();
+    }
+
+    private static string ThreadTypeLabel(StoryThreadType type) => type switch
+    {
+        StoryThreadType.TitleFight => "Title fight",
+        StoryThreadType.ReliabilityCrisis => "Reliability",
+        StoryThreadType.WinDrought => "The drought",
+        StoryThreadType.HotStreak => "Hot streak",
+        StoryThreadType.InjuryRecovery => "Recovery",
+        StoryThreadType.Rivalry => "Rivalry",
+        StoryThreadType.DriverMarket => "Silly season",
+        _ => type.ToString(),
+    };
+
+    private void RebuildBookmarks()
+    {
+        _bookmarkedStories.Clear();
+        foreach (var story in _stories)
+        {
+            if (_bookmarkOverlay.Contains(story.Key))
+            {
+                _bookmarkedStories.Add(story);
+            }
+        }
+        OnPropertyChanged(nameof(HasBookmarks));
+    }
+
+    /// <summary>Toggles a story's bookmark: persisted immediately (schema v6), reflected in
+    /// the rail without a full feed re-render.</summary>
+    [RelayCommand]
+    private void ToggleBookmark(NewsStoryViewModel? story)
+    {
+        if (story is null)
+        {
+            return;
+        }
+
+        bool nowBookmarked = !_bookmarkOverlay.Contains(story.Key);
+        _session.SetStoryBookmark(story.Key, nowBookmarked);
+        if (nowBookmarked)
+        {
+            _bookmarkOverlay.Add(story.Key);
+        }
+        else
+        {
+            _bookmarkOverlay.Remove(story.Key);
+        }
+        RebuildBookmarks();
     }
 
     private bool CanOpenArticle(NewsStoryViewModel? story) =>
@@ -129,6 +278,15 @@ public sealed partial class NewsViewModel
 
         _selectedArticle = story;
         _isReaderOpen = true;
+
+        // Opening IS reading: persist once (the first-read timestamp is kept server-side).
+        if (story is not null && _readThisSession.Add(story.Key))
+        {
+            _session.MarkStoryRead(story.Key);
+            OnPropertyChanged(nameof(UnreadCount));
+            OnPropertyChanged(nameof(HasUnread));
+        }
+
         OnPropertyChanged(nameof(SelectedArticle));
         OnPropertyChanged(nameof(IsReaderOpen));
         OpenArticleCommand.NotifyCanExecuteChanged();
