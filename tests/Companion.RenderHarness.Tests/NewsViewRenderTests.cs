@@ -164,7 +164,7 @@ public sealed class NewsViewRenderTests
             Assert.True(vm.IsReaderOpen);
             Grid reader = Assert.IsType<Grid>(view.FindName("ArticleReader"));
             Assert.Equal(Visibility.Visible, reader.Visibility);
-            Assert.Contains("The recorded championship fight tightens after Italy.", host.VisibleTexts());
+            Assert.Contains("The title desk reads the championship after Italy.", host.VisibleTexts());
             var close = Assert.IsType<Button>(view.FindName("ArticleCloseButton"));
             Assert.True(close.Focusable);
             Assert.True(close.IsKeyboardFocusWithin || close.IsFocused);
@@ -273,8 +273,8 @@ public sealed class NewsViewRenderTests
             // Story-card badges: desk byline, editorial status, the visually distinct provenance
             // chip, layout tier, fine-grained category, unread marker and reading time — all text.
             string[] texts = host.VisibleTexts().ToArray();
-            Assert.Contains("Marco Vialli", texts);
-            Assert.Contains("MV", texts);
+            Assert.Contains("Apex Technical Review", texts);
+            Assert.Contains("AT", texts);
             Assert.Contains("ANALYSIS", texts);
             Assert.Contains("CAREER UNIVERSE", texts);
             Assert.Contains("STANDARD", texts);
@@ -289,11 +289,11 @@ public sealed class NewsViewRenderTests
             Assert.Equal(Visibility.Visible, unreadChip.Visibility);
 
             // Reader: the deck sits under the headline and the bookmark toggle round-trips.
-            var article = vm.Stories.Single(story => story.Key == "news:2:5:titleFightTightens");
+            var article = vm.Stories.Single(story => story.Key == "news:2:8:titleFightTightens");
             vm.OpenArticleCommand.Execute(article);
             host.Layout();
 
-            Assert.Contains("The desk weighs a five-round swing.", host.VisibleTexts());
+            Assert.Contains("The desk weighs an eight-round swing.", host.VisibleTexts());
             var bookmark = Assert.IsType<Button>(view.FindName("ArticleBookmarkButton"));
             Assert.True(bookmark.Focusable);
             Assert.True(bookmark.IsTabStop);
@@ -302,7 +302,7 @@ public sealed class NewsViewRenderTests
 
             bookmark.Command!.Execute(bookmark.CommandParameter);
             host.Layout();
-            Assert.Equal("news:2:5:titleFightTightens", Assert.Single(vm.BookmarkedStories).Key);
+            Assert.Equal("news:2:8:titleFightTightens", Assert.Single(vm.BookmarkedStories).Key);
             Assert.Contains("BOOKMARKED", host.VisibleTexts());
 
             bookmark.Command!.Execute(bookmark.CommandParameter);
@@ -321,7 +321,7 @@ public sealed class NewsViewRenderTests
         WpfRenderHarness.RunSta(() =>
         {
             var session = NewsSession.Populated();
-            session.ReadingStates["news:2:5:titleFightTightens"] =
+            session.ReadingStates["news:2:8:titleFightTightens"] =
                 new NewsReadingState { Bookmarked = true };
             var vm = new NewsViewModel(session);
             var view = new NewsView { DataContext = vm };
@@ -340,7 +340,8 @@ public sealed class NewsViewRenderTests
             Assert.Contains("THE TITLE FIGHT", texts);
             Assert.Contains("ESCALATING", texts);
             Assert.Contains("The gap closes to four points.", texts);
-            Assert.Contains("RUMOUR DESK", texts);
+            Assert.Contains("PADDOCK WHISPERS", texts);
+            Assert.Contains("SPECULATION / NOT CONFIRMED", texts);
             Assert.Contains("RUMOUR - OPEN", texts);
             Assert.Contains("Paddock talk links the champion with a shock exit.", texts);
             Assert.Contains("BOOKMARKS", texts);
@@ -357,6 +358,45 @@ public sealed class NewsViewRenderTests
             host.Layout();
             Assert.DoesNotContain("THE TITLE FIGHT", host.VisibleTexts());
             Assert.Contains("DEVELOPING STORIES", host.VisibleTexts());
+        });
+    }
+
+    [Fact]
+    public void EditorialTier_IsTheOnlyFrontPageCardScale_AndBriefsRemainOneLine()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new NewsViewModel(NewsSession.Populated());
+            var view = new NewsView { DataContext = vm };
+            using var host = Host.Show(view, 1600, 900);
+
+            var lead = Assert.IsType<Button>(view.FindName("LeadStoryButton"));
+            Assert.Equal("LEAD", AutomationProperties.GetHelpText(lead));
+            var leadArt = Assert.IsType<Grid>(view.FindName("LeadStoryArt"));
+            Assert.InRange(leadArt.ActualHeight, 279, 281);
+            Assert.Contains("The championship desk opens the front page.", host.VisibleTexts());
+
+            Button TierButton(string tier) => Descendants<Button>(view).Single(button =>
+                AutomationProperties.GetHelpText(button) == tier &&
+                button.DataContext is NewsStoryViewModel story &&
+                story.TierLabel == tier);
+
+            Button featured = TierButton("FEATURED");
+            Button standard = TierButton("STANDARD");
+            Button brief = TierButton("BRIEF");
+
+            Assert.True(featured.ActualHeight > standard.ActualHeight + 35,
+                "FEATURED must be materially larger than STANDARD because TierLabel says so.");
+            Assert.True(standard.ActualHeight > brief.ActualHeight + 45,
+                "BRIEF must collapse its art and read as a one-line dispatch.");
+            Assert.DoesNotContain(Descendants<TextBlock>(brief), text =>
+                text.IsVisible && text.Text == "A concise update that belongs only in the archive reader.");
+
+            var scroll = Assert.IsType<ScrollViewer>(view.FindName("NewsScroll"));
+            Assert.Equal(0, scroll.ScrollableWidth, precision: 1);
         });
     }
 
@@ -615,36 +655,114 @@ public sealed class NewsViewRenderTests
                         WhyText = "This article comes from the stored round journal.",
                     },
                 ],
-                // Living-newsroom surface: a desk-authored analysis piece (Standard tier so the
-                // round-8 TitleRace dispatch stays the lead), one developing thread, one rumour.
+                // Living-newsroom surface: one example of every editorial tier so the real XAML
+                // proves that LEAD/FEATURED/STANDARD/BRIEF - and nothing else - controls scale.
                 Newsroom =
                 [
                     new NewsroomArticle
                     {
-                        Key = "news:2:5:titleFightTightens",
+                        Key = "news:2:8:titleFightSpecial",
                         EventKind = NewsEventKind.TitleFightTightens,
                         Category = NewsroomCategory.ChampionshipAnalysis,
                         Status = EditorialStatus.Analysis,
                         Provenance = ContentProvenance.CareerUniverse,
                         SeasonOrdinal = 2,
                         SeasonYear = 1991,
-                        Round = 5,
-                        VenueName = "Britain",
+                        Round = 8,
+                        VenueName = "Italy",
                         SubjectName = "Mike Racer",
                         TeamName = "Bullets",
-                        DeskName = "Marco Vialli",
-                        DeskMonogram = "MV",
-                        Headline = "DESK VERDICT AT BRITAIN",
-                        Deck = "The desk weighs a five-round swing.",
+                        DeskName = "Title Watch",
+                        DeskMonogram = "TW",
+                        Headline = "TITLE FIGHT SPECIAL",
+                        Deck = "The championship desk opens the front page.",
+                        Summary = "The points picture changes after Italy.",
+                        Sections =
+                        [
+                            new NewsroomSection("body",
+                                "The title desk reads the championship after Italy."),
+                        ],
+                        ImportanceScore = 100,
+                        Tier = EditorialTier.Lead,
+                        ReadingSeconds = 120,
+                    },
+                    new NewsroomArticle
+                    {
+                        Key = "news:2:8:gridWireFeature",
+                        EventKind = NewsEventKind.TitleFightTightens,
+                        Category = NewsroomCategory.RaceReport,
+                        Status = EditorialStatus.Confirmed,
+                        Provenance = ContentProvenance.CareerUniverse,
+                        SeasonOrdinal = 2,
+                        SeasonYear = 1991,
+                        Round = 8,
+                        VenueName = "Italy",
+                        SubjectName = "A. Senna",
+                        TeamName = "Madonna",
+                        DeskName = "Grid Wire",
+                        DeskMonogram = "GW",
+                        Headline = "GRID WIRE: PRESSURE BUILDS",
+                        Deck = "The wire follows the front-row pressure.",
+                        Summary = "A featured dispatch with enough context to earn a larger card.",
+                        Sections =
+                        [
+                            new NewsroomSection("body", "The confirmed race report carries the feature slot."),
+                        ],
+                        ImportanceScore = 80,
+                        Tier = EditorialTier.Featured,
+                        ReadingSeconds = 75,
+                    },
+                    new NewsroomArticle
+                    {
+                        Key = "news:2:8:titleFightTightens",
+                        EventKind = NewsEventKind.TitleFightTightens,
+                        Category = NewsroomCategory.ChampionshipAnalysis,
+                        Status = EditorialStatus.Analysis,
+                        Provenance = ContentProvenance.CareerUniverse,
+                        SeasonOrdinal = 2,
+                        SeasonYear = 1991,
+                        Round = 8,
+                        VenueName = "Italy",
+                        SubjectName = "Mike Racer",
+                        TeamName = "Bullets",
+                        DeskName = "Apex Technical Review",
+                        DeskMonogram = "AT",
+                        Headline = "DESK VERDICT AT ITALY",
+                        Deck = "The desk weighs an eight-round swing.",
                         Summary = "An analysis piece from the rendered newsroom.",
                         Sections =
                         [
                             new NewsroomSection("body",
-                                "The newsroom weighs the title arithmetic after Britain."),
+                                "The newsroom weighs the title arithmetic after Italy."),
                         ],
-                        ImportanceScore = 40,
+                        ImportanceScore = 60,
                         Tier = EditorialTier.Standard,
                         ReadingSeconds = 45,
+                    },
+                    new NewsroomArticle
+                    {
+                        Key = "news:2:8:paddockBrief",
+                        EventKind = NewsEventKind.TitleFightTightens,
+                        Category = NewsroomCategory.TeamPolitics,
+                        Status = EditorialStatus.Reported,
+                        Provenance = ContentProvenance.CareerUniverse,
+                        SeasonOrdinal = 2,
+                        SeasonYear = 1991,
+                        Round = 8,
+                        VenueName = "Italy",
+                        SubjectName = "Mike Racer",
+                        TeamName = "Bullets",
+                        DeskName = "Paddock Whispers",
+                        DeskMonogram = "PW",
+                        Headline = "PADDOCK NOTE: CONTRACT TALKS",
+                        Summary = "A concise update that belongs only in the archive reader.",
+                        Sections =
+                        [
+                            new NewsroomSection("body", "The reported paddock note remains a brief."),
+                        ],
+                        ImportanceScore = 20,
+                        Tier = EditorialTier.Brief,
+                        ReadingSeconds = 25,
                     },
                 ],
                 Threads =
@@ -660,9 +778,9 @@ public sealed class NewsViewRenderTests
                         [
                             new StoryThreadEntry
                             {
-                                StoryKey = "news:2:5:titleFightTightens",
+                                StoryKey = "news:2:8:titleFightTightens",
                                 SeasonOrdinal = 2,
-                                Round = 5,
+                                Round = 8,
                                 Summary = "The gap closes to four points.",
                             },
                         ],

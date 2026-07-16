@@ -787,12 +787,37 @@
                 <StackPanel x:Name='EncyclopediaSection'
                             AutomationProperties.Name='Encyclopedia reference library'
                             Visibility='{Binding HasEncyclopedia, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}'>
-                    <TextBlock Text='THE ENCYCLOPEDIA' Style='{StaticResource Eyebrow}' Margin='1,2,0,8' />
+                    <Border x:Name='EncyclopediaMasthead' Style='{StaticResource Panel}'
+                            Padding='18,15' Margin='0,2,0,16'
+                            AutomationProperties.Name='Motorsport encyclopedia masthead'>
+                        <StackPanel>
+                            <Border Style='{StaticResource EditorialRule}' />
+                            <DockPanel Margin='0,9,0,0'>
+                                <Border DockPanel.Dock='Right' Style='{StaticResource ProvenanceChip}'
+                                        Margin='12,0,0,0' VerticalAlignment='Top'>
+                                    <StackPanel Orientation='Horizontal'>
+                                        <TextBlock Text='&#xE946;' FontFamily='{StaticResource IconFont}'
+                                                   Foreground='{DynamicResource AccentTextBrush}' Margin='0,0,6,0' />
+                                        <TextBlock Text='VERIFIED REFERENCE DATA' Style='{StaticResource Eyebrow}'
+                                                   Foreground='{DynamicResource AccentTextBrush}' />
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel>
+                                    <TextBlock Text='MOTORSPORT REFERENCE ARCHIVE' Style='{StaticResource Eyebrow}'
+                                               Foreground='{DynamicResource AccentTextBrush}' />
+                                    <TextBlock Text='THE ENCYCLOPEDIA' Style='{StaticResource EditorialMasthead}'
+                                               Margin='0,2,0,0' />
+                                    <TextBlock Text='Eras, technology, people, teams and circuits assembled from the verified record. Career outcomes remain visibly separate.'
+                                               Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,4,0,0' />
+                                </StackPanel>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
 
                     <!-- SEARCH THE ARCHIVE: one box over news dispatches, story threads and the
                          verified history. Results say WHY they matched; a searched-but-empty state
                          is announced instead of silently showing nothing. -->
-                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'>
+                    <Border Style='{StaticResource ArchiveReferenceCard}' Margin='0,0,0,16'>
                         <StackPanel>
                             <TextBlock Text='SEARCH THE ARCHIVE' Style='{StaticResource H2}' />
                             <TextBlock Text='One search across news dispatches, story threads and the verified historical record.'
@@ -854,10 +879,23 @@
                                     <ColumnDefinition Width='*' />
                                     <ColumnDefinition Width='*' />
                                 </Grid.ColumnDefinitions>
-                                <Border Style='{StaticResource Callout}' Margin='0,0,8,0' VerticalAlignment='Stretch'
-                                        Visibility='{Binding FeaturedEra, Converter={StaticResource NullCollapsed}}'>
-                                    <StackPanel>
-                                        <TextBlock Text='FEATURED ERA' Style='{StaticResource Eyebrow}' />
+                                 <Border Style='{StaticResource Callout}' Margin='0,0,8,0' VerticalAlignment='Stretch'
+                                         Visibility='{Binding FeaturedEra, Converter={StaticResource NullCollapsed}}'>
+                                     <StackPanel>
+                                         <Grid x:Name='FeaturedEraArtwork' Height='96' Margin='0,0,0,9'
+                                               Background='{DynamicResource SurfaceAltBrush}' ClipToBounds='True'
+                                               AutomationProperties.Name='Featured era artwork'>
+                                             <Border Style='{StaticResource AssetPlaceholderFrame}' Margin='5'>
+                                                 <TextBlock Text='&#xE8A5;' Style='{StaticResource AssetPlaceholderGlyph}' FontSize='26' />
+                                             </Border>
+                                             <Image Source='{Binding FeaturedEra.YearsLabel, Converter={StaticResource EraImage}}'
+                                                    Stretch='UniformToFill' />
+                                             <Border VerticalAlignment='Bottom' Background='{DynamicResource ScrimBrush}' Padding='7,4'>
+                                                 <TextBlock Text='{Binding FeaturedEra.YearsLabel}' Style='{StaticResource Mono}'
+                                                            Foreground='{DynamicResource TextBrush}' FontSize='10.5' />
+                                             </Border>
+                                         </Grid>
+                                         <TextBlock Text='FEATURED ERA' Style='{StaticResource Eyebrow}' />
                                         <TextBlock Text='{Binding FeaturedEra.Name}' FontWeight='SemiBold' FontSize='15'
                                                    TextWrapping='Wrap' Margin='0,3,0,0' />
                                         <TextBlock Text='{Binding FeaturedEra.YearsLabel}' Style='{StaticResource Faint}'
@@ -911,10 +949,18 @@
                             <ItemsControl ItemsSource='{Binding Eras}'>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Expander Margin='0,2,0,4'>
-                                            <Expander.Header>
-                                                <StackPanel Orientation='Horizontal'>
-                                                    <TextBlock Text='{Binding Name}' FontWeight='SemiBold' VerticalAlignment='Center' />
+                                         <Expander Margin='0,2,0,4'>
+                                             <Expander.Header>
+                                                 <StackPanel Orientation='Horizontal'>
+                                                     <Grid Width='76' Height='42' Margin='0,0,9,0'
+                                                           Background='{DynamicResource SurfaceAltBrush}' ClipToBounds='True'>
+                                                         <Border Style='{StaticResource AssetPlaceholderFrame}' Margin='3'>
+                                                             <TextBlock Text='&#xE8A5;' Style='{StaticResource AssetPlaceholderGlyph}' FontSize='17' />
+                                                         </Border>
+                                                         <Image Source='{Binding YearsLabel, Converter={StaticResource EraImage}}'
+                                                                Stretch='UniformToFill' />
+                                                     </Grid>
+                                                     <TextBlock Text='{Binding Name}' FontWeight='SemiBold' VerticalAlignment='Center' />
                                                     <TextBlock Text='{Binding YearsLabel}' Style='{StaticResource Faint}'
                                                                FontFamily='{StaticResource MonoFont}' Margin='8,0,0,0'
                                                                VerticalAlignment='Center' />
@@ -1146,32 +1192,42 @@
                                           MaxHeight='420' ItemsSource='{Binding TimelineEntries}'
                                           AutomationProperties.Name='Verified history timeline'>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin='0,0,6,7'>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width='52' />
-                                                <ColumnDefinition Width='*' />
-                                                <ColumnDefinition Width='Auto' />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text='{Binding Year}' FontFamily='{StaticResource MonoFont}' FontWeight='Bold'
-                                                       Foreground='{DynamicResource AccentTextBrush}' VerticalAlignment='Top' />
-                                            <StackPanel Grid.Column='1' Margin='0,0,10,0'>
-                                                <DockPanel>
-                                                    <Border DockPanel.Dock='Left' Style='{StaticResource CompactChip}'
-                                                            Margin='0,0,7,0' VerticalAlignment='Top'>
+                                     <DataTemplate>
+                                         <Grid Margin='0,0,6,8'>
+                                             <Grid.ColumnDefinitions>
+                                                 <ColumnDefinition Width='70' />
+                                                 <ColumnDefinition Width='*' />
+                                                 <ColumnDefinition Width='Auto' />
+                                             </Grid.ColumnDefinitions>
+                                             <Grid AutomationProperties.Name='Verified timeline rail'>
+                                                 <Border Width='2' Background='{DynamicResource EdgeBrush}'
+                                                         HorizontalAlignment='Center' VerticalAlignment='Stretch' />
+                                                 <Border Style='{StaticResource ProvenanceChip}' HorizontalAlignment='Center'
+                                                         VerticalAlignment='Top' Padding='7,4'>
+                                                     <TextBlock Text='{Binding Year}' FontFamily='{StaticResource MonoFont}'
+                                                                FontWeight='Bold' Foreground='{DynamicResource AccentTextBrush}' />
+                                                 </Border>
+                                             </Grid>
+                                             <Border Grid.Column='1' Style='{StaticResource ArchiveReferenceCard}'
+                                                     Padding='11,8' Margin='0,0,10,0'>
+                                             <StackPanel>
+                                                 <DockPanel>
+                                                     <Border DockPanel.Dock='Left' Style='{StaticResource CompactChip}'
+                                                             Margin='0,0,7,0' VerticalAlignment='Top'>
                                                         <TextBlock Text='{Binding CategoryLabel}' Style='{StaticResource Eyebrow}' />
                                                     </Border>
                                                     <TextBlock Text='{Binding Title}' FontWeight='SemiBold' TextWrapping='Wrap'
                                                                VerticalAlignment='Center' />
                                                 </DockPanel>
-                                                <TextBlock Text='{Binding Summary}' Style='{StaticResource Muted}' FontSize='12'
-                                                           TextWrapping='Wrap' Margin='0,2,0,0'
-                                                           Visibility='{Binding Summary, Converter={StaticResource StringVisible}}' />
-                                            </StackPanel>
-                                            <Border Grid.Column='2' Style='{StaticResource CompactChip}' VerticalAlignment='Top'>
-                                                <TextBlock Text='{Binding ProvenanceLabel}' Style='{StaticResource Eyebrow}' />
-                                            </Border>
-                                        </Grid>
+                                                 <TextBlock Text='{Binding Summary}' Style='{StaticResource Muted}' FontSize='12'
+                                                            TextWrapping='Wrap' Margin='0,2,0,0'
+                                                            Visibility='{Binding Summary, Converter={StaticResource StringVisible}}' />
+                                             </StackPanel>
+                                             </Border>
+                                             <Border Grid.Column='2' Style='{StaticResource ProvenanceChip}' VerticalAlignment='Top'>
+                                                 <TextBlock Text='{Binding ProvenanceLabel}' Style='{StaticResource Eyebrow}' />
+                                             </Border>
+                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -1186,58 +1242,96 @@
                         AutomationProperties.Name='Real history versus this universe'
                         Visibility='{Binding HasDivergence, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}'>
                     <StackPanel>
-                        <TextBlock Text='REAL HISTORY VS THIS UNIVERSE' Style='{StaticResource H2}' />
-                        <TextBlock Text='The historical record never changes; your universe is an alternate timeline beside it.'
-                                   Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,3,0,10' />
+                        <Border Style='{StaticResource EditorialRule}' Margin='0,0,0,10' />
+                        <DockPanel>
+                            <Border DockPanel.Dock='Right' Style='{StaticResource ProvenanceChip}'
+                                    Margin='12,0,0,0' VerticalAlignment='Top'>
+                                <TextBlock Text='TWO RECORDS / NEVER MERGED' Style='{StaticResource Eyebrow}'
+                                           Foreground='{DynamicResource AccentTextBrush}' />
+                            </Border>
+                            <StackPanel>
+                                <TextBlock Text='REAL HISTORY VS THIS UNIVERSE' Style='{StaticResource H2}' />
+                                <TextBlock Text='The verified result is locked on the left. The career result is presented separately on the right.'
+                                           Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,3,0,10' />
+                            </StackPanel>
+                        </DockPanel>
                         <Border Style='{StaticResource AccentCallout}' Margin='0,0,0,10'
                                 Visibility='{Binding DivergenceChampionLine, Converter={StaticResource StringVisible}}'>
                             <TextBlock Text='{Binding DivergenceChampionLine}' Foreground='{DynamicResource AccentTextBrush}'
                                        TextWrapping='Wrap' />
                         </Border>
-                        <Grid Margin='4,0,4,4'>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width='44' />
-                                <ColumnDefinition Width='*' />
-                                <ColumnDefinition Width='1.2*' />
-                                <ColumnDefinition Width='1.2*' />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column='2' Text='HISTORICAL RECORD' Style='{StaticResource Eyebrow}' Margin='8,0,0,0' />
-                            <TextBlock Grid.Column='3' Text='THIS UNIVERSE' Style='{StaticResource Eyebrow}' Margin='8,0,0,0' />
-                        </Grid>
-                        <ItemsControl ItemsSource='{Binding DivergenceRows}'>
+                        <ItemsControl x:Name='DivergenceRowsList' Style='{StaticResource VirtualizedList}'
+                                      MaxHeight='560' ItemsSource='{Binding DivergenceRows}'
+                                      AutomationProperties.Name='Separated history and career comparison rows'>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding='4,6' Margin='0,1' CornerRadius='4'>
-                                        <Border.Style>
-                                            <Style TargetType='Border'>
-                                                <Setter Property='Background' Value='Transparent' />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding='{Binding IsAlternate}' Value='True'>
-                                                        <Setter Property='Background' Value='{DynamicResource WarningDimBrush}' />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width='44' />
-                                                <ColumnDefinition Width='*' />
-                                                <ColumnDefinition Width='1.2*' />
-                                                <ColumnDefinition Width='1.2*' />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text='{Binding RoundLabel}' FontFamily='{StaticResource MonoFont}'
-                                                       Foreground='{DynamicResource TextMutedBrush}' VerticalAlignment='Top' />
-                                            <StackPanel Grid.Column='1'>
-                                                <TextBlock Text='{Binding Venue}' FontWeight='SemiBold' TextWrapping='Wrap' />
-                                                <Border Style='{StaticResource CompactChip}' HorizontalAlignment='Left' Margin='0,3,0,0'>
+                                    <Border Style='{StaticResource ArchiveReferenceCard}' Padding='10,9' Margin='0,0,0,9'>
+                                        <StackPanel>
+                                            <DockPanel Margin='0,0,0,8'>
+                                                <Border DockPanel.Dock='Left' Style='{StaticResource CompactChip}'
+                                                        Margin='0,0,8,0' VerticalAlignment='Center'>
+                                                    <TextBlock Text='{Binding RoundLabel}' FontFamily='{StaticResource MonoFont}' />
+                                                </Border>
+                                                <Border DockPanel.Dock='Right' Style='{StaticResource CompactChip}'
+                                                        Margin='8,0,0,0' VerticalAlignment='Center'>
                                                     <TextBlock Text='{Binding KindLabel}' Style='{StaticResource Eyebrow}' />
                                                 </Border>
-                                            </StackPanel>
-                                            <TextBlock Grid.Column='2' Text='{Binding HistoricalLine}' TextWrapping='Wrap'
-                                                       Margin='8,0,0,0' VerticalAlignment='Top' />
-                                            <TextBlock Grid.Column='3' Text='{Binding CareerLine}' TextWrapping='Wrap'
-                                                       Margin='8,0,0,0' VerticalAlignment='Top' />
-                                        </Grid>
+                                                <TextBlock Text='{Binding Venue}' FontFamily='{StaticResource DisplayFont}'
+                                                           FontSize='15' FontWeight='SemiBold' TextWrapping='Wrap'
+                                                           VerticalAlignment='Center' />
+                                            </DockPanel>
+                                            <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width='*' />
+                                                <ColumnDefinition Width='18' />
+                                                <ColumnDefinition Width='*' />
+                                            </Grid.ColumnDefinitions>
+                                                <Border Style='{StaticResource DivergenceHistoricalColumn}'
+                                                        AutomationProperties.Name='Historical record column'>
+                                                    <StackPanel>
+                                                        <DockPanel>
+                                                            <TextBlock DockPanel.Dock='Right' Text='LOCKED' Style='{StaticResource Eyebrow}'
+                                                                       Foreground='{DynamicResource TextMutedBrush}' />
+                                                            <TextBlock Text='HISTORICAL RECORD' Style='{StaticResource Eyebrow}' />
+                                                        </DockPanel>
+                                                        <Border Height='1' Background='{DynamicResource EdgeBrush}' Margin='0,6,0,7' />
+                                                        <TextBlock Text='{Binding HistoricalLine}' TextWrapping='Wrap'
+                                                                   FontWeight='SemiBold' VerticalAlignment='Top' />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Grid Grid.Column='1'>
+                                                    <Border Width='2' Background='{DynamicResource EdgeBrush}'
+                                                            HorizontalAlignment='Center' VerticalAlignment='Stretch' />
+                                                    <Border Style='{StaticResource CompactChip}' HorizontalAlignment='Center'
+                                                            VerticalAlignment='Center' Padding='3,5'>
+                                                        <TextBlock Text='VS' Style='{StaticResource PixelBadge}'
+                                                                   Foreground='{DynamicResource TextMutedBrush}' />
+                                                    </Border>
+                                                </Grid>
+                                                <Border Grid.Column='2' AutomationProperties.Name='This universe column'>
+                                                    <Border.Style>
+                                                        <Style TargetType='Border' BasedOn='{StaticResource DivergenceCareerColumn}'>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding='{Binding IsAlternate}' Value='True'>
+                                                                    <Setter Property='Background' Value='{DynamicResource WarningDimBrush}' />
+                                                                    <Setter Property='BorderBrush' Value='{DynamicResource WarningBrush}' />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <StackPanel>
+                                                        <DockPanel>
+                                                            <TextBlock DockPanel.Dock='Right' Text='{Binding KindLabel}' Style='{StaticResource Eyebrow}'
+                                                                       Foreground='{DynamicResource AccentTextBrush}' />
+                                                            <TextBlock Text='THIS UNIVERSE' Style='{StaticResource Eyebrow}' />
+                                                        </DockPanel>
+                                                        <Border Height='1' Background='{DynamicResource AccentBrush}' Margin='0,6,0,7' />
+                                                        <TextBlock Text='{Binding CareerLine}' TextWrapping='Wrap'
+                                                                   FontWeight='SemiBold' VerticalAlignment='Top' />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

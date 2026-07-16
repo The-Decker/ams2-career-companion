@@ -41,6 +41,8 @@ public sealed class HistoryEncyclopediaRenderTests
 
             // The encyclopedia block and every headed sub-section render from the bound data.
             Assert.Contains("THE ENCYCLOPEDIA", texts);
+            Assert.Contains("MOTORSPORT REFERENCE ARCHIVE", texts);
+            Assert.Contains("VERIFIED REFERENCE DATA", texts);
             Assert.Contains("SEARCH THE ARCHIVE", texts);
             Assert.Contains("FEATURED", texts);
             Assert.Contains("rotates daily", texts);
@@ -74,7 +76,35 @@ public sealed class HistoryEncyclopediaRenderTests
             Assert.Contains("HISTORICAL RECORD", texts);
             Assert.Contains("THIS UNIVERSE", texts);
             Assert.Contains("ALTERNATE OUTCOME", texts);
+            Assert.Contains("TWO RECORDS / NEVER MERGED", texts);
+            Assert.Contains("LOCKED", texts);
+            Assert.Contains("VS", texts);
             Assert.Contains(texts, text => text.StartsWith("Divergence point:", StringComparison.Ordinal));
+
+            var masthead = Assert.IsType<Border>(view.FindName("EncyclopediaMasthead"));
+            Assert.Equal("Motorsport encyclopedia masthead", AutomationProperties.GetName(masthead));
+            var eraArt = Assert.IsType<Grid>(view.FindName("FeaturedEraArtwork"));
+            Assert.InRange(eraArt.ActualHeight, 95, 97);
+
+            // Every comparison row repeats two independently boxed and named surfaces with a
+            // visible separator. The labels and borders survive the minimum viewport, so the
+            // career universe can never be visually mistaken for the source record.
+            var divergenceRows = Assert.IsType<ItemsControl>(view.FindName("DivergenceRowsList"));
+            Assert.True(VirtualizingPanel.GetIsVirtualizing(divergenceRows));
+            Assert.Equal(3, divergenceRows.Items.Count);
+            Border[] historicalColumns = Descendants<Border>(divergenceRows)
+                .Where(border => AutomationProperties.GetName(border) == "Historical record column")
+                .ToArray();
+            Border[] universeColumns = Descendants<Border>(divergenceRows)
+                .Where(border => AutomationProperties.GetName(border) == "This universe column")
+                .ToArray();
+            Assert.Equal(3, historicalColumns.Length);
+            Assert.Equal(3, universeColumns.Length);
+            Assert.All(historicalColumns, column => Assert.True(column.ActualWidth > 120));
+            Assert.All(universeColumns, column => Assert.True(column.ActualWidth > 120));
+            Assert.NotEqual(
+                historicalColumns[0].Background?.ToString(),
+                universeColumns[0].Background?.ToString());
 
             // The ~90-entry timeline is virtualized inside a bounded viewport: the first year is
             // realized, the last is not (its container is never created).

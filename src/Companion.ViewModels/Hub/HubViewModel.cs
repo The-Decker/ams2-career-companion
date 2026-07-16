@@ -62,7 +62,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             new HubTabViewModel(RaceTabKey, "Upcoming Race", "", Home, showInRail: true),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
             new HubTabViewModel(CalendarTabKey, "Calendar", "", Calendar),
-            new HubTabViewModel(SkinsTabKey, "Skins", "", Skins),
+            new HubTabViewModel(SkinsTabKey, "Grid Preview", "", Skins),
             new HubTabViewModel(HistoryTabKey, "History", "", History),
             new HubTabViewModel(NewsTabKey, "News", "", News),
         ];
@@ -101,8 +101,8 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// career stats + team stories. Present as a tab only for an SMGP career with reference data.</summary>
     public PaddockViewModel Paddock { get; }
 
-    /// <summary>The Skins lens: what livery/skin every car will show in AMS2, plus the crib for the
-    /// player own-car pick. Always present (every career has a grid); refreshed per round.</summary>
+    /// <summary>The read-only next-race grid preview: driver, team, car and livery at a glance.
+    /// Always present (every career has a grid); refreshed per round.</summary>
     public SkinsViewModel Skins { get; }
 
     /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives

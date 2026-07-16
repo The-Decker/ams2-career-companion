@@ -151,7 +151,11 @@ public partial class App : Application
         try
         {
             audio = new AppAudioController(settings);
-            SoundAssist.Connect((cue, source) => audio.PlayEffect(cue, source));
+            // Bind the delegate to the controller INSTANCE before the transfer-local is cleared.
+            // Capturing `audio` in a lambda made every click dereference null after `_audio = audio;
+            // audio = null`, and SoundAssist correctly swallowed that decorative-audio exception.
+            Action<SoundEffectCue, object?> effectPlayer = audio.PlayEffect;
+            SoundAssist.Connect(effectPlayer);
             Activated += OnApplicationActivated;
             Deactivated += OnApplicationDeactivated;
 

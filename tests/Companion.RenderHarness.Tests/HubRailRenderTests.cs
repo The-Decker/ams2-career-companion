@@ -95,7 +95,7 @@ public sealed partial class HubRailRenderTests
                 Tab(HubViewModel.StandingsTabKey, "Standings", "\uE9D9"),
                 Tab(HubViewModel.DriverTabKey, "Driver", "\uE77B"),
                 Tab(HubViewModel.CalendarTabKey, "Calendar", "\uE787"),
-                Tab(HubViewModel.SkinsTabKey, "Skins", "\uE790"),
+                Tab(HubViewModel.SkinsTabKey, "Grid Preview", "\uE790"),
                 Tab(HubViewModel.HistoryTabKey, "History", "\uE81C"),
                 Tab(HubViewModel.PaddockTabKey, "Paddock", "\uE716"),
                 Tab(HubViewModel.NewsTabKey, "News", "\uE789"),
