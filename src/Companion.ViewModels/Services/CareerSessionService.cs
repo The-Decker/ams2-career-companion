@@ -1318,6 +1318,22 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var teamNameById = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var t in Pack.Teams) teamNameById.TryAdd(t.Id, t.Name);
 
+        // Player availability per round (SMGP-300): applied rounds read the stored envelope's
+        // PlayerDidNotStart flag — an injury absence is never rewritten as participation — and
+        // future rounds project the ACTIVE suspension, so "you will miss the next 2 rounds" is
+        // visible on the calendar before it happens.
+        var satOutRounds = new HashSet<int>();
+        foreach (var stored in ResultStore.ReadSeasonResults(_database, _seasonId))
+        {
+            if (stored.ToEnvelope().PlayerDidNotStart)
+                satOutRounds.Add(stored.Round);
+        }
+        var availabilityState = CurrentPlayerState();
+        int projectedMisses = availabilityState?.Deceased == true || availabilityState?.SeasonEndingInjury == true
+            ? int.MaxValue
+            : availabilityState?.RaceSuspensionRemaining ?? 0;
+        int missesAssigned = 0;
+
         var schedule = new List<SeasonScheduleEntry>(Pack.Season.Rounds.Count);
         foreach (var round in Pack.Season.Rounds)
         {
@@ -1352,6 +1368,23 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             // An alternate that exists but is NOT the driven track (tick off / mod missing at creation).
             string? unusedAlternate = track.Alternate is { } alt && !alternateApplied ? TrackName(alt.Id) : null;
 
+            SchedulePlayerStatus playerStatus;
+            if (round.Round <= maxApplied)
+            {
+                playerStatus = satOutRounds.Contains(round.Round)
+                    ? SchedulePlayerStatus.SatOut
+                    : SchedulePlayerStatus.Raced;
+            }
+            else if (missesAssigned < projectedMisses)
+            {
+                playerStatus = SchedulePlayerStatus.WillMiss;
+                missesAssigned++;
+            }
+            else
+            {
+                playerStatus = SchedulePlayerStatus.Upcoming;
+            }
+
             schedule.Add(new SeasonScheduleEntry
             {
                 Round = round.Round,
@@ -1378,6 +1411,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 Status = round.Round <= maxApplied ? SeasonRoundStatus.Done
                     : round.Round == maxApplied + 1 ? SeasonRoundStatus.Next
                     : SeasonRoundStatus.Upcoming,
+                PlayerStatus = playerStatus,
             });
         }
         return schedule;
@@ -4078,6 +4112,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 "The SMGP career is over - a rival took the last seat at the LEVEL D floor.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to score.");
+        // The inverse of AutoSimulateRound's fit-check: an injured driver's round is auto-simulated,
+        // never entered manually. The hub already routes to the sit-out screen; this makes the rule
+        // hold for EVERY caller, so no path can score an injured player or stall the healing
+        // countdown (character death & injury §5).
+        if (beforePlayer is not null
+            && (beforePlayer.RaceSuspensionRemaining > 0 || beforePlayer.SeasonEndingInjury))
+            throw new InvalidOperationException(
+                "The driver is injured — this round is auto-simulated. Continue from the sit-out screen.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -4195,6 +4237,13 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to apply.");
+        // Same availability gate as Preview: an injured driver's round only ever folds through
+        // AutoSimulateRound (which requires the inverse), so manual scoring of an unfit player is
+        // impossible at the service layer, not merely unreachable in the shipped UI.
+        if (beforePlayer is not null
+            && (beforePlayer.RaceSuspensionRemaining > 0 || beforePlayer.SeasonEndingInjury))
+            throw new InvalidOperationException(
+                "The driver is injured — this round is auto-simulated. Continue from the sit-out screen.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -4208,11 +4257,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         var envelope = BuildEnvelope(draft, roundNumber, packRound);
         string nowUtc = NowUtc();
 
-        ReplayService.ImportAndFoldRound(
-            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc);
-
-        // App-level provenance row about the entry EVENT (excluded from the replay
-        // byte-compare like every provenance row) — the sim rows come from the fold.
+        // App-level provenance row about the entry EVENT (excluded from the replay byte-compare
+        // like every provenance row) — appended INSIDE the fold's atomic transaction, so a crash
+        // can never leave a folded round whose provenance (the news journal's dispatch source)
+        // silently vanished.
         var journalDelta = new ResultAppliedDelta
         {
             Round = roundNumber,
@@ -4222,15 +4270,18 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             DnfCount = draft.DidNotFinish.Count,
             DsqCount = draft.Disqualified.Count,
         };
-        JournalStore.Append(_database, _seasonId, roundNumber,
-            new JournalEvent
-            {
-                Phase = DataJournalPhases.ResultProvenance,
-                Entity = "round",
-                DeltaJson = JsonSerializer.Serialize(journalDelta, CoreJson.Options),
-                Cause = "result-entered",
-            },
-            nowUtc);
+        ReplayService.ImportAndFoldRound(
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc,
+            withTransaction: transaction => JournalStore.Append(_database, _seasonId, roundNumber,
+                new JournalEvent
+                {
+                    Phase = DataJournalPhases.ResultProvenance,
+                    Entity = "round",
+                    DeltaJson = JsonSerializer.Serialize(journalDelta, CoreJson.Options),
+                    Cause = "result-entered",
+                },
+                nowUtc,
+                transaction));
 
         // Character death & injury (Slice 3): detect a REAL Deceased transition this round. A Hardcore
         // death is the ONE destructive file op — physically delete the career file + every snapshot,
@@ -5455,6 +5506,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
 
             bool complete = string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
             var endState = complete ? StateStore.ReadPlayerState(_database, season.Id, StateStore.StageEnd) : null;
+            var startState = StateStore.ReadPlayerState(_database, season.Id, StateStore.StageStart);
 
             var headlines = JournalStore.ReadSeason(_database, season.Id)
                 .Where(r => string.Equals(r.Phase, JournalPhases.Headline, StringComparison.Ordinal))
@@ -5475,6 +5527,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                 PlayerIsChampion = playerIsChampion,
                 Headlines = headlines,
                 RoundLines = roundLines,
+                PlayerLevelAtStart = startState?.HasCharacter == true ? startState.Level : null,
+                PlayerLevelAtEnd = endState?.HasCharacter == true ? endState.Level : null,
             });
         }
 
@@ -5925,6 +5979,141 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     }
 
     /// <inheritdoc />
+    public RoundProgressionSummary? RoundProgression(int round)
+    {
+        if (CurrentPlayerState()?.HasCharacter != true)
+            return null;
+
+        // Walk this season's journaled player.xp rows in fold order: the level BEFORE the round is
+        // the last journaled level ahead of it (or the season-start snapshot), the movement is the
+        // row's own from→to — the fold's audit record, never recomputed.
+        var seasonStart = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart);
+        int previousLevel = seasonStart?.Level > 0 ? seasonStart.Level : 1;
+        foreach (var row in JournalStore.ReadSeason(_database, _seasonId))
+        {
+            if (!string.Equals(row.Phase, JournalPhases.PlayerXp, StringComparison.Ordinal)
+                || row.Round is not { } xpRound)
+            {
+                continue;
+            }
+
+            int levelAfter = ReadIntProperty(row.DeltaJson, "level");
+            if (xpRound == round)
+            {
+                long from = ReadLongProperty(row.DeltaJson, "from");
+                long to = ReadLongProperty(row.DeltaJson, "to");
+                return new RoundProgressionSummary
+                {
+                    Round = round,
+                    XpGained = to - from,
+                    LevelBefore = previousLevel,
+                    LevelAfter = levelAfter > 0 ? levelAfter : previousLevel,
+                    SkillPointsAvailable = CharacterDossier()?.CpUnspent ?? 0,
+                };
+            }
+
+            if (levelAfter > 0)
+                previousLevel = levelAfter;
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<CampaignTimelineEntry> CampaignTimeline()
+    {
+        var cards = CareerTimeline().Seasons;
+        var plan = CurrentPlayerState()?.CampaignProgressionPlan;
+        int horizon = IsSmgpPack
+            ? Companion.Core.Smgp.SmgpRules.CampaignSeasons
+            : plan?.TotalSeasons ?? cards.Count;
+        horizon = Math.Max(horizon, cards.Count);
+        if (horizon == 0)
+            return [];
+
+        // Sat-out rounds per season come from the (cached) event spine — the timeline never
+        // rewrites an injury absence as participation.
+        var satOutOrdinals = NewsroomEvents()
+            .Where(e => e.Kind == Companion.Core.Newsroom.NewsEventKind.SatOutRound)
+            .Select(e => e.SeasonOrdinal)
+            .ToHashSet();
+
+        var entries = new List<CampaignTimelineEntry>(horizon);
+        for (int ordinal = 1; ordinal <= horizon; ordinal++)
+        {
+            if (ordinal <= cards.Count)
+            {
+                var card = cards[ordinal - 1];
+                entries.Add(new CampaignTimelineEntry
+                {
+                    Ordinal = ordinal,
+                    State = card.IsComplete ? CampaignSeasonState.Completed : CampaignSeasonState.Current,
+                    Year = card.SeasonYear,
+                    PlayerPosition = card.PlayerPosition,
+                    PlayerChampion = card.PlayerIsChampion,
+                    MissedRounds = satOutOrdinals.Contains(ordinal),
+                });
+            }
+            else
+            {
+                entries.Add(new CampaignTimelineEntry
+                {
+                    Ordinal = ordinal,
+                    State = CampaignSeasonState.Locked,
+                    Year = plan is not null && ordinal <= plan.PinnedSeasonSequence.Count
+                        ? plan.PinnedSeasonSequence[ordinal - 1].Year
+                        : null,
+                });
+            }
+        }
+
+        return entries;
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<InjuryHistoryEntry> InjuryHistory()
+    {
+        var entries = new List<InjuryHistoryEntry>();
+        int ordinal = 0;
+        foreach (var season in CareerStore.ReadSeasons(_database))
+        {
+            ordinal++;
+            foreach (var row in JournalStore.ReadSeason(_database, season.Id))
+            {
+                if (!string.Equals(row.Phase, JournalPhases.PlayerAccident, StringComparison.Ordinal)
+                    || row.Round is not { } round)
+                {
+                    continue;
+                }
+
+                string outcome = ReadStringProperty(row.DeltaJson, "outcome");
+                if (outcome is not ("minorInjury" or "seasonEnding" or "death"))
+                {
+                    continue;
+                }
+
+                int miss = ReadIntProperty(row.DeltaJson, "missRaces");
+                entries.Add(new InjuryHistoryEntry
+                {
+                    SeasonOrdinal = ordinal,
+                    SeasonYear = season.Year,
+                    Round = round,
+                    Outcome = outcome,
+                    MissRaces = miss,
+                    Label = outcome switch
+                    {
+                        "minorInjury" => miss == 1 ? "Injured — missed 1 race" : $"Injured — missed {miss} races",
+                        "seasonEnding" => "Season-ending injury",
+                        _ => "Fatal accident",
+                    },
+                });
+            }
+        }
+
+        return entries;
+    }
+
+    /// <inheritdoc />
     public void AutoSimulateRound()
     {
         if (_careerFileDeleted)
@@ -5961,28 +6150,30 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             SliderUsed = ReplayService.NeutralSlider,
         };
         string nowUtc = NowUtc();
+        // The provenance row joins the fold's atomic transaction (same contract as Apply): a
+        // crash can never leave an auto-simulated round without its journal-feed dispatch row.
         ReplayService.ImportAndFoldRound(
-            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc);
-
-        JournalStore.Append(_database, _seasonId, roundNumber,
-            new JournalEvent
-            {
-                Phase = DataJournalPhases.ResultProvenance,
-                Entity = "round",
-                DeltaJson = JsonSerializer.Serialize(
-                    new ResultAppliedDelta
-                    {
-                        Round = roundNumber,
-                        RoundName = packRound.Name,
-                        WinnerDriverId = aiOrder.Count > 0 ? aiOrder[0] : null,
-                        ClassifiedCount = aiOrder.Count,
-                        DnfCount = 0,
-                        DsqCount = 0,
-                    },
-                    CoreJson.Options),
-                Cause = "auto-simulated",
-            },
-            nowUtc);
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc,
+            withTransaction: transaction => JournalStore.Append(_database, _seasonId, roundNumber,
+                new JournalEvent
+                {
+                    Phase = DataJournalPhases.ResultProvenance,
+                    Entity = "round",
+                    DeltaJson = JsonSerializer.Serialize(
+                        new ResultAppliedDelta
+                        {
+                            Round = roundNumber,
+                            RoundName = packRound.Name,
+                            WinnerDriverId = aiOrder.Count > 0 ? aiOrder[0] : null,
+                            ClassifiedCount = aiOrder.Count,
+                            DnfCount = 0,
+                            DsqCount = 0,
+                        },
+                        CoreJson.Options),
+                    Cause = "auto-simulated",
+                },
+                nowUtc,
+                transaction));
 
         if (SeasonComplete)
             EnsureSeasonEnd();

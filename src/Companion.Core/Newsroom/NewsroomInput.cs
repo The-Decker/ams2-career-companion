@@ -24,6 +24,15 @@ public sealed record NewsroomSeason
     public required IReadOnlyList<NewsroomRound> Rounds { get; init; }
     /// <summary>Season-end happenings shaped from journal rows (round = null in the journal).</summary>
     public IReadOnlyList<NewsroomSeasonNote> SeasonNotes { get; init; } = [];
+
+    /// <summary>The player's character level after the season-end awards folded, or null when the
+    /// career has no character (level milestones crossed at the season boundary detect off this).</summary>
+    public int? PlayerLevelAtSeasonEnd { get; init; }
+
+    /// <summary>True when completing this season completes the whole campaign (SMGP season 17 of
+    /// 17, or the final pinned season of a bounded historical campaign) — the career-retrospective
+    /// trigger.</summary>
+    public bool IsCampaignFinale { get; init; }
 }
 
 /// <summary>One applied round's facts. Only championship rounds drive standings triggers.</summary>
@@ -72,6 +81,11 @@ public sealed record NewsroomRound
     /// <summary>"" | "minorInjury" | "seasonEnding" | "death".</summary>
     public string AccidentOutcome { get; init; } = "";
     public int AccidentMissRaces { get; init; }
+
+    // Character progression (from the player.xp journal row)
+    /// <summary>The player's character level AFTER this round's XP folded; null when the career
+    /// has no character or the row predates level journaling.</summary>
+    public int? PlayerLevelAfter { get; init; }
 
     // SMGP colour (empty for historical careers)
     public string RivalName { get; init; } = "";

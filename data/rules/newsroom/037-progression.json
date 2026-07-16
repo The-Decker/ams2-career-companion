@@ -1,0 +1,168 @@
+{
+  "$comment": "Character-progression pack (prefix pg.): level-milestone cards, the Level 300 feature, the return-from-injury comeback report, and the campaign-completion career retrospective. Follows 010-core.json format exactly; read-side only — the events these voice are display projections of folded XP/injury facts, never fold inputs.",
+  "version": 1,
+  "pools": {
+    "pgLadder": {
+      "1960s": [
+        "Experience is the one part no supplier stocks.",
+        "The old hands say you earn your craft one Sunday at a time."
+      ],
+      "1990s": [
+        "The engineers grade everything now, and the driver's file keeps thickening.",
+        "Careers are databases these days, and this one's entries keep compounding."
+      ],
+      "2010s": [
+        "The performance analysts call it accumulated adaptive capacity. The garage calls it knowing what you're doing.",
+        "Every debrief adds a line; the file is becoming a book."
+      ],
+      "smgp": [
+        "THE METER FILLS. THE DRIVER GROWS.",
+        "ANOTHER RANK ON THE BIG LADDER.",
+        "EXPERIENCE BANKED. POWER UNLOCKED."
+      ],
+      "default": [
+        "Craft accumulates quietly, then all at once it is obvious.",
+        "Nobody hands out experience; it is collected the hard way.",
+        "The paddock keeps its own ledger of who is learning fastest."
+      ]
+    },
+    "pgComeback": {
+      "1960s": [
+        "The garage kept the seat warm the only way it knows: by racing without him and hating it.",
+        "Doctors' clearance in hand, gloves on, no ceremony."
+      ],
+      "2010s": [
+        "The medical delegate signed off, the sim work is done, and the timing screens will say the rest.",
+        "Fitness protocols cleared, the comeback begins where it stopped."
+      ],
+      "smgp": [
+        "THE SEAT REMEMBERS. THE GRID TAKES NOTE.",
+        "BACK FROM THE MEDICAL BAY, STRAIGHT TO THE FIGHT."
+      ],
+      "default": [
+        "Racing waits for no one, but a grid still notices who walks back in.",
+        "The hardest lap of a comeback is the first one.",
+        "A return date is a promise kept."
+      ]
+    },
+    "pgLegacy": {
+      "1960s": [
+        "The annuals will need a new chapter, and perhaps a new spine.",
+        "They will argue about this career in clubrooms for years."
+      ],
+      "2010s": [
+        "The retrospective packages are already cut; the numbers hold up under any edit.",
+        "Legacy debates start now, and the statistics arrive armed."
+      ],
+      "smgp": [
+        "THE CAMPAIGN BOARD READS: COMPLETE.",
+        "SEVENTEEN SEASONS. ONE NAME ON THE CABINET.",
+        "THE FINAL FLAG FALLS ON A FULL CAREER."
+      ],
+      "default": [
+        "Careers end; records argue on.",
+        "The record book closes gently on a career that filled it.",
+        "What remains now is the retelling."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "pg.level.card",
+      "event": "levelMilestone",
+      "headline": "{subject} climbs the development ladder[[?milestone: to grade {milestone}]]",
+      "deck": "Records desk, season {season}: the career file thickens",
+      "summary": "{subject}'s accumulated career development reached a new grade[[?venue: after {venue}]].",
+      "sections": {
+        "lead": "The records desk notes a quiet milestone[[?venue: out of {venue}]]: {subject}'s career development file has reached a new grade[[?milestone: — {milestone} on the 300-step ladder]]. These numbers are earned in race trim — expected finishes beaten, teammates measured, hard Sundays banked.",
+        "context": "{pool:pgLadder}",
+        "close": "The file stays open. The next grade is already being earned."
+      }
+    },
+    {
+      "id": "pg.level.feature",
+      "event": "levelMilestone",
+      "headline": "How {subject} keeps compounding[[?milestone: — grade {milestone} and climbing]]",
+      "deck": "Development feature, season {season}",
+      "summary": "A development feature on {subject} reaching a career development milestone.",
+      "sections": {
+        "lead": "Ask the engineers what changed and they will not point at the car. {subject} has reached a development milestone[[?milestone: — grade {milestone}]] — and the gains show up where data does not: braking references remembered, restarts anticipated, tyres asked politely instead of told.",
+        "stats": "The steps get steeper from here[[?milestone: — grade {milestone} of 300 already banked]][[?team: ; {team} knows exactly what it is holding]].",
+        "close": "{pool:pgLadder}"
+      }
+    },
+    {
+      "id": "pg.level300.feature",
+      "event": "level300Reached",
+      "headline": "Grade 300: {subject} completes the ladder",
+      "deck": "Records desk special: the development file reaches its final page",
+      "summary": "{subject} reached development grade 300 — the top of the ladder.",
+      "sections": {
+        "lead": "There is a number that almost nobody reaches, because reaching it requires nearly everything: seasons of them, in cars good and bad, healthy and hurt, on afternoons that rewarded and afternoons that only taught. {subject} has reached grade 300. The ladder has no further rungs.",
+        "context": "Grade 300 is not a lap-time; it is the record of a career's whole education. The stopwatch still has to be convinced every Sunday[[?team: — {team} will see to that]].",
+        "stats": "Three hundred grades, earned across every season entered. The record keepers checked the arithmetic twice; the arithmetic held.",
+        "close": "{pool:pgLegacy}"
+      }
+    },
+    {
+      "id": "pg.level300.card",
+      "event": "level300Reached",
+      "headline": "The ladder ends: {subject} at grade 300",
+      "deck": "Records card, season {season}",
+      "summary": "The development ledger records its maximum grade for {subject}.",
+      "sections": {
+        "lead": "The records desk stamps a page it rarely touches: grade 300, the ceiling of the development ledger, now carries {subject}'s name. Whatever is learned from here belongs to legend, not to the file.",
+        "close": "{pool:pgLadder}"
+      }
+    },
+    {
+      "id": "pg.comeback.report",
+      "event": "returnedFromInjury",
+      "headline": "{subject} returns to the grid[[?venue: at {venue}]]",
+      "deck": "Medical desk: cleared to race[[?missRaces: after {missRaces} missed]]",
+      "summary": "{subject} made a racing return[[?venue: at {venue}]][[?missRaces: after missing {missRaces}]].",
+      "sections": {
+        "lead": "The entry list carries a restored name: {subject} is back[[?venue: at {venue}]][[?missRaces: after {missRaces} rounds watched from elsewhere]]. The medical staff signed the clearance; the grid will conduct its own examination at lights out.",
+        "context": "{pool:pgComeback}",
+        "next": "Rhythm is the last thing to heal. The first stint tells the truth about the rest[[?expected: — the pit wall pencils in P{expected} and hopes to be embarrassed]].",
+        "close": "The seat was never anyone else's. It only waited."
+      }
+    },
+    {
+      "id": "pg.comeback.feature",
+      "event": "returnedFromInjury",
+      "headline": "The road back: {subject}'s comeback weekend",
+      "deck": "Feature, season {season}: a recovery measured in race distance",
+      "summary": "A feature on {subject}'s return from injury[[?missRaces: after {missRaces} missed rounds]].",
+      "sections": {
+        "lead": "Recoveries happen off camera: the stiff mornings, the patient physios, the calendar pages that go by with someone else's engine note in them. {subject}'s ended this weekend, where recoveries are actually finished — on the entry list[[?venue: at {venue}]].",
+        "impact": "[[?missRaces:{missRaces} rounds went unraced. ]]The championship arithmetic took its toll and does not apologise; comebacks are paid for in points already lost.",
+        "close": "{pool:pgComeback}"
+      }
+    },
+    {
+      "id": "pg.career.retrospective",
+      "event": "careerCompleted",
+      "headline": "The full distance: {subject}'s campaign is complete",
+      "deck": "Career retrospective: every season entered, the final one closed",
+      "summary": "{subject} completed the full campaign[[?milestone: — {milestone} seasons]].",
+      "sections": {
+        "lead": "Championships are won in a season; careers are won across all of them. {subject} has taken a campaign the full distance[[?milestone: — {milestone} seasons from first entry to final flag]]. The paddock does not applaud often; it did today.",
+        "stats": "The ledgers now close: starts, wins, the seasons of them — frozen where they stand, argument material forever.",
+        "impact": "Grids renew themselves; the standard this career set does not leave with it.",
+        "close": "{pool:pgLegacy}"
+      }
+    },
+    {
+      "id": "pg.career.card",
+      "event": "careerCompleted",
+      "headline": "Campaign complete: the record closes on {subject}",
+      "deck": "Records card: the final season is filed",
+      "summary": "The campaign record for {subject} is complete and archived.",
+      "sections": {
+        "lead": "The final season's file joins the rest, and for the first time the drawer closes flush: {subject}'s campaign is complete. Nothing further will be added; everything already there will be argued about indefinitely.",
+        "close": "{pool:pgLegacy}"
+      }
+    }
+  ]
+}

@@ -22,6 +22,11 @@ public static class CareerNewsEvents
     private static readonly int[] WinMilestones = [5, 10, 20, 25, 50, 75, 100];
     private static readonly int[] PodiumMilestones = [10, 25, 50, 100];
     private static readonly int[] StartMilestones = [25, 50, 100, 150, 200, 250, 300];
+
+    /// <summary>Character-level milestones worth a story (~11 across an exceptional career; the
+    /// 300 cap gets its own <see cref="NewsEventKind.Level300Reached"/> feature instead).</summary>
+    private static readonly int[] CharacterLevelMilestones = [25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275];
+    private const int CharacterLevelCap = 300;
     private const int WinDroughtThreshold = 10;
     private const int PointsDroughtThreshold = 5;
     private const int UpsetThreshold = 3;
@@ -54,7 +59,7 @@ public static class CareerNewsEvents
             if (!memory.CareerEnded)
             {
                 DetectSeasonNotes(season, events);
-                DetectSeasonEnd(season, events);
+                DetectSeasonEnd(season, memory, events);
             }
 
             memory.PreviousPlayerTeamId = season.PlayerTeamId;
@@ -96,6 +101,10 @@ public static class CareerNewsEvents
         {
             events.Add(Player(season, round.Round, NewsEventKind.SatOutRound, season.PlayerTeamName,
                 new NewsEventFacts { MissRaces = round.AccidentMissRaces }, round.Venue));
+            // Injury sit-outs are today's only DNS cause — remember the absence so the next
+            // genuine start reads as the comeback story.
+            memory.PendingInjuryReturn = true;
+            memory.MissedWhileInjured++;
         }
         else
         {
@@ -108,6 +117,8 @@ public static class CareerNewsEvents
         {
             return;
         }
+
+        EmitLevelMilestones(season, round.Round, round.Venue, round.PlayerLevelAfter, memory, events);
 
         DetectAiWorld(season, round, perSeason, events);
 
@@ -135,6 +146,22 @@ public static class CareerNewsEvents
             memory.Started = true;
             events.Add(Player(season, round.Round, NewsEventKind.FirstStart, season.PlayerTeamName,
                 venue: round.Venue));
+        }
+
+        // The first genuine start after injury sit-out rounds is the comeback story — emitted
+        // once per absence (the dedupe key is the comeback round itself).
+        if (memory.PendingInjuryReturn)
+        {
+            events.Add(Player(season, round.Round, NewsEventKind.ReturnedFromInjury, season.PlayerTeamName,
+                new NewsEventFacts
+                {
+                    MissRaces = memory.MissedWhileInjured,
+                    PlayerFinish = round.PlayerFinish,
+                    ExpectedFinish = round.ExpectedFinish,
+                    IsWet = round.IsWet == true,
+                }, round.Venue));
+            memory.PendingInjuryReturn = false;
+            memory.MissedWhileInjured = 0;
         }
 
         memory.CareerStarts++;
@@ -606,7 +633,7 @@ public static class CareerNewsEvents
         }
     }
 
-    private static void DetectSeasonEnd(NewsroomSeason season, List<NewsEvent> events)
+    private static void DetectSeasonEnd(NewsroomSeason season, CareerMemory memory, List<NewsEvent> events)
     {
         if (!season.Complete)
         {
@@ -622,6 +649,67 @@ public static class CareerNewsEvents
                 season.ChampionName, "", "",
                 new NewsEventFacts { ClinchedTitle = season.PlayerChampion }));
         }
+
+        // Season-end XP awards can cross milestone levels at the boundary too.
+        EmitLevelMilestones(season, SeasonEndRound, "", season.PlayerLevelAtSeasonEnd, memory, events);
+
+        if (season.IsCampaignFinale)
+        {
+            events.Add(Player(season, SeasonEndRound, NewsEventKind.CareerCompleted, season.PlayerTeamName,
+                new NewsEventFacts
+                {
+                    ClinchedTitle = season.PlayerChampion,
+                    MilestoneValue = season.Ordinal,
+                    MilestoneCounter = "seasons",
+                }));
+        }
+    }
+
+    /// <summary>Emits one story per character-level milestone crossed since the last observed
+    /// level, plus the Level 300 feature at the cap. Detection is monotonic over the chronological
+    /// walk, so re-detecting the same career emits the same set (the dedupe key carries the
+    /// threshold) and a milestone can never fire twice.</summary>
+    private static void EmitLevelMilestones(
+        NewsroomSeason season,
+        int round,
+        string venue,
+        int? levelAfter,
+        CareerMemory memory,
+        List<NewsEvent> events)
+    {
+        if (levelAfter is not int level)
+        {
+            return;
+        }
+
+        // Careers start at level 1; the first shaped value simply establishes the baseline when
+        // it did not cross anything.
+        int previous = memory.LastSeenLevel ?? 1;
+        if (level <= previous)
+        {
+            memory.LastSeenLevel = Math.Max(previous, level);
+            return;
+        }
+
+        foreach (int threshold in CharacterLevelMilestones)
+        {
+            if (previous < threshold && threshold <= level)
+            {
+                events.Add(Player(season, round, NewsEventKind.LevelMilestone, season.PlayerTeamName,
+                    new NewsEventFacts { MilestoneValue = threshold, MilestoneCounter = "level" },
+                    venue) with
+                { Discriminator = threshold.ToString(System.Globalization.CultureInfo.InvariantCulture) });
+            }
+        }
+
+        if (previous < CharacterLevelCap && level >= CharacterLevelCap)
+        {
+            events.Add(Player(season, round, NewsEventKind.Level300Reached, season.PlayerTeamName,
+                new NewsEventFacts { MilestoneValue = CharacterLevelCap, MilestoneCounter = "level" },
+                venue));
+        }
+
+        memory.LastSeenLevel = level;
     }
 
     private static void EmitStreakMilestone(
@@ -727,6 +815,9 @@ public static class CareerNewsEvents
         public int? BestFinish;
         public string PreviousPlayerTeamId = "";
         public string PreviousPlayerTeamName = "";
+        public int? LastSeenLevel;
+        public bool PendingInjuryReturn;
+        public int MissedWhileInjured;
     }
 
     private sealed class SeasonMemory

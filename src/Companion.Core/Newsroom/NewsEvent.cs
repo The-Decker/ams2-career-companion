@@ -89,6 +89,16 @@ public enum NewsEventKind
     // SMGP flavour (mode-gated; the SMGP beat detectors remain the source of richer beats)
     RivalryDeveloped,
     DnqDrama,
+
+    // Character progression (level milestones from the folded XP facts; display-only detection)
+    LevelMilestone,
+    Level300Reached,
+
+    // Medical comeback: the first start after injury sit-out rounds
+    ReturnedFromInjury,
+
+    // Campaign completion: the final pinned season closed — the career retrospective moment
+    CareerCompleted,
 }
 
 /// <summary>

@@ -95,9 +95,20 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     private void OnCareerCreated(object? sender, CareerCreatedEventArgs e)
     {
         Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName, e.Session.Summary.SeasonYear,
-            e.Session.Pack.Manifest.CareerStyle);
+            e.Session.Pack.Manifest.CareerStyle, TerminalState(e.Session));
         _currentCareerPath = e.CareerFilePath;
         AttachHome(e.Session);
+    }
+
+    /// <summary>The gallery badge state for a career as observed from its opened session:
+    /// "deceased" (Normal-mode death — the file stays as a viewable archive), "careerOver" (the
+    /// SMGP floor knock-out), or null for a live career.</summary>
+    private static string? TerminalState(ICareerSession session)
+    {
+        var mortality = session.PlayerMortality();
+        if (mortality.Deceased || mortality.CareerFileDeleted)
+            return "deceased";
+        return session.CurrentSmgpBriefing()?.CareerOver == true ? "careerOver" : null;
     }
 
     private void OpenCareer(string path)
@@ -117,7 +128,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         }
 
         Start.RecordCareer(path, session.Summary.CareerName, session.Summary.SeasonYear,
-            session.Pack.Manifest.CareerStyle);
+            session.Pack.Manifest.CareerStyle, TerminalState(session));
         _currentCareerPath = path;
         AttachHome(session);
     }

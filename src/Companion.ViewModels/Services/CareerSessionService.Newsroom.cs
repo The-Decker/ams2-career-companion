@@ -16,11 +16,23 @@ namespace Companion.ViewModels.Services;
 /// </summary>
 public sealed partial class CareerSessionService
 {
+    private IReadOnlyList<NewsEvent>? _newsroomEventsCache;
+    private ProjectionFingerprint _newsroomEventsFingerprint;
+
     /// <summary>Every detected newsroom event for the whole career, chronological — the spine
     /// triggers plus, for historical-style careers with a documented reference year, the
-    /// real-history divergence events. Deterministic per career.</summary>
+    /// real-history divergence events. Deterministic per career. Memoized per stored-state
+    /// fingerprint: detection is a pure projection over the immutable journal/results (D1/D4),
+    /// so the cache is exactly as fresh as the underlying rows — one refresh per fold/rollover
+    /// instead of a full-career recompute on every News/History/thread read.</summary>
     public IReadOnlyList<NewsEvent> NewsroomEvents()
     {
+        var fingerprint = ProjectionFingerprint.Read(_database);
+        if (_newsroomEventsCache is not null && fingerprint == _newsroomEventsFingerprint)
+        {
+            return _newsroomEventsCache;
+        }
+
         var seasons = BuildNewsroomSeasons();
         var events = new List<NewsEvent>(CareerNewsEvents.Detect(seasons));
 
@@ -36,8 +48,11 @@ public sealed partial class CareerSessionService
             }
         }
 
-        return events.OrderBy(e => e.SeasonOrdinal).ThenBy(e => e.Round).ToList();
+        _newsroomEventsCache = events.OrderBy(e => e.SeasonOrdinal).ThenBy(e => e.Round).ToList();
+        _newsroomEventsFingerprint = fingerprint;
+        return _newsroomEventsCache;
     }
+
 
     /// <summary>The real-history-vs-career-universe comparison for one season: what really
     /// happened, what this universe produced, and where they part. Null for SMGP careers
@@ -158,12 +173,33 @@ public sealed partial class CareerSessionService
                     string.Equals(e.Ams2LiveryName, startLivery, StringComparison.Ordinal))?.TeamId ?? ""
                 : "";
 
-            // One journal read feeds result causes, accidents, and the season notes below.
+            // One journal read feeds result causes, accidents, level facts, and the season notes below.
             var journalRows = JournalStore.ReadSeason(_database, season.Id);
             var resultRowByRound = new Dictionary<int, (string Cause, int? Expected, int? Actual, bool Dnf)>();
             var accidentByRound = new Dictionary<int, (string Outcome, int MissRaces)>();
+            var levelByRound = new Dictionary<int, int>();
+            int? seasonEndLevel = null;
             foreach (var row in journalRows)
             {
+                // The player.xp rows journal the level AFTER each award: per-round rows feed the
+                // round facts, the season-end award row (round = null) feeds the boundary fact.
+                if (string.Equals(row.Phase, JournalPhases.PlayerXp, StringComparison.Ordinal))
+                {
+                    int levelAfter = ReadIntProperty(row.DeltaJson, "level");
+                    if (levelAfter > 0)
+                    {
+                        if (row.Round is { } xpRound)
+                        {
+                            levelByRound[xpRound] = levelAfter;
+                        }
+                        else
+                        {
+                            seasonEndLevel = levelAfter;
+                        }
+                    }
+                    continue;
+                }
+
                 if (row.Round is not { } jr)
                 {
                     continue;
@@ -361,9 +397,16 @@ public sealed partial class CareerSessionService
                     MaxPointsPerRound = maxPerRound,
                     AccidentOutcome = accident.Outcome ?? "",
                     AccidentMissRaces = accident.MissRaces,
+                    PlayerLevelAfter = levelByRound.TryGetValue(s.Round, out var lvl) ? lvl : null,
                     RivalName = envelope.SmgpRival is { } rival ? DisplayName(rival.RivalDriverId) : "",
                 });
             }
+
+            // The campaign-finale flag: SMGP's fixed 17-season summit, or the final pinned season
+            // of a bounded progression-v2 campaign plan. Display-only detection input.
+            bool isCampaignFinale = IsSmgpPack
+                ? ordinal == Companion.Core.Smgp.SmgpRules.CampaignSeasons
+                : startState?.CampaignProgressionPlan is { } plan && ordinal == plan.TotalSeasons;
 
             seasonsInput.Add(new NewsroomSeason
             {
@@ -378,6 +421,10 @@ public sealed partial class CareerSessionService
                 PlayerTeamName = startTeamName,
                 Rounds = rounds,
                 SeasonNotes = BuildSeasonNotes(journalRows, driverNames, teamsById),
+                PlayerLevelAtSeasonEnd = seasonEndLevel ?? (rounds.Count > 0
+                    ? rounds.Where(r => r.PlayerLevelAfter is not null).Select(r => r.PlayerLevelAfter).LastOrDefault()
+                    : null),
+                IsCampaignFinale = isCampaignFinale,
             });
 
             string DisplayName(string driverId) =>
@@ -503,6 +550,21 @@ public sealed partial class CareerSessionService
             using var doc = JsonDocument.Parse(deltaJson);
             return doc.RootElement.TryGetProperty(property, out var v) && v.ValueKind == JsonValueKind.Number
                 ? v.GetInt32()
+                : 0;
+        }
+        catch (JsonException)
+        {
+            return 0;
+        }
+    }
+
+    private static long ReadLongProperty(string deltaJson, string property)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(deltaJson);
+            return doc.RootElement.TryGetProperty(property, out var v) && v.ValueKind == JsonValueKind.Number
+                ? v.GetInt64()
                 : 0;
         }
         catch (JsonException)

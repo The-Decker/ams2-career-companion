@@ -592,6 +592,7 @@ public sealed class CharacterDossierHubTests : IDisposable
         Xp = 0,
         XpIntoLevel = 0,
         XpForNextLevel = 100,
+        LevelCap = 300,
         CpUnspent = 0,
         Stats =
         [

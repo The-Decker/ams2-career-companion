@@ -470,6 +470,27 @@ public interface ICareerSession
     /// unknown. Additive default: no-op, so fakes compile.</summary>
     void DeleteSlot(string slotId) { }
 
+    // ---- SMGP-300: progression feedback + career-arc surfaces (display-only projections) ----
+
+    /// <summary>What one applied round did to the player's progression — XP applied, the level
+    /// movement, and the Skill Points now banked — projected from that round's journaled
+    /// <c>player.xp</c> row so the results flow can announce gains where they happen instead of
+    /// leaving them to be discovered on the Driver tab. Null for a career with no character, a
+    /// round with no XP row, or a not-yet-applied round. Additive default: null.</summary>
+    RoundProgressionSummary? RoundProgression(int round) => null;
+
+    /// <summary>The whole campaign arc as one timeline — every pinned season (SMGP's 17, or a
+    /// bounded Dynasty plan's horizon) with its Completed / Current / Locked state and, for played
+    /// seasons, the outcome. Legacy careers with no pinned horizon list played seasons only.
+    /// Additive default: empty.</summary>
+    IReadOnlyList<CampaignTimelineEntry> CampaignTimeline() => [];
+
+    /// <summary>The career's medical record: every journaled accident outcome (injury, season-ending,
+    /// fatal) with the round it landed on and the races it cost, oldest first. A pure projection of
+    /// the persisted accident rows — history never rewrites what the fold decided. Additive
+    /// default: empty.</summary>
+    IReadOnlyList<InjuryHistoryEntry> InjuryHistory() => [];
+
     SeasonPack Pack { get; }
 }
 
@@ -547,6 +568,27 @@ public sealed record SeasonScheduleEntry
     /// <summary>Progress marker: this round is Done (a result applied), Next (the upcoming round), or a
     /// later Upcoming round — so the calendar can walk the season.</summary>
     public SeasonRoundStatus Status { get; init; } = SeasonRoundStatus.Upcoming;
+
+    /// <summary>The PLAYER's participation for this round (SMGP-300): raced it, sat it out injured
+    /// (from the stored envelope — an absence is never rewritten as participation), will miss it
+    /// under the active injury, or an ordinary future round.</summary>
+    public SchedulePlayerStatus PlayerStatus { get; init; } = SchedulePlayerStatus.Upcoming;
+}
+
+/// <summary>The player's participation state for one calendar round.</summary>
+public enum SchedulePlayerStatus
+{
+    /// <summary>A future round the fit driver is expected to race.</summary>
+    Upcoming = 0,
+
+    /// <summary>An applied round the player started.</summary>
+    Raced = 1,
+
+    /// <summary>An applied round the injured player sat out (auto-simulated, DNS).</summary>
+    SatOut = 2,
+
+    /// <summary>A future round the active injury will force the player to miss.</summary>
+    WillMiss = 3,
 }
 
 /// <summary>One driver the pack pinned OUT of a round's grid (a DNQ), for the calendar's round detail.</summary>
@@ -636,6 +678,81 @@ public sealed record SitOutStatus
     /// <summary>The banner headline, e.g. "INJURED — auto-simulating round (2 remaining)" or
     /// "SEASON OVER — recovering".</summary>
     public required string Headline { get; init; }
+}
+
+/// <summary>What one applied round did to the player's progression — projected from that round's
+/// journaled <c>player.xp</c> row (the fold's own audit record), never recomputed.</summary>
+public sealed record RoundProgressionSummary
+{
+    public required int Round { get; init; }
+
+    /// <summary>XP the round actually applied (post campaign-scale for v2; the raw signed award
+    /// for legacy careers — legacy rounds can be negative).</summary>
+    public required long XpGained { get; init; }
+
+    public required int LevelBefore { get; init; }
+    public required int LevelAfter { get; init; }
+
+    /// <summary>Levels crossed by this one round (multi-level gains group into one number).</summary>
+    public int LevelsGained => Math.Max(0, LevelAfter - LevelBefore);
+
+    /// <summary>Development currency banked AFTER the round (Skill Points for v2, CP for legacy).</summary>
+    public required int SkillPointsAvailable { get; init; }
+}
+
+/// <summary>One season slot of the campaign timeline: 17 for SMGP, the pinned horizon for a
+/// bounded Dynasty plan, or only the played seasons for a legacy career.</summary>
+public sealed record CampaignTimelineEntry
+{
+    /// <summary>1-based career season ordinal.</summary>
+    public required int Ordinal { get; init; }
+
+    public required CampaignSeasonState State { get; init; }
+
+    /// <summary>The season's year when known (played seasons and pinned Dynasty seasons); null for
+    /// a locked SMGP future season, whose chronology is its ordinal.</summary>
+    public int? Year { get; init; }
+
+    /// <summary>The player's final championship position for a completed season; null otherwise.</summary>
+    public int? PlayerPosition { get; init; }
+
+    public bool PlayerChampion { get; init; }
+
+    /// <summary>True when the player sat out at least one round of this season through injury —
+    /// the timeline never rewrites an absence as participation.</summary>
+    public bool MissedRounds { get; init; }
+}
+
+/// <summary>Where a campaign timeline season stands.</summary>
+public enum CampaignSeasonState
+{
+    /// <summary>Not yet reachable — later than the active season.</summary>
+    Locked = 0,
+
+    /// <summary>The active season.</summary>
+    Current = 1,
+
+    /// <summary>Fully in the record books.</summary>
+    Completed = 2,
+}
+
+/// <summary>One entry of the career's medical record — a journaled accident outcome, verbatim.</summary>
+public sealed record InjuryHistoryEntry
+{
+    /// <summary>1-based career season ordinal the accident landed in.</summary>
+    public required int SeasonOrdinal { get; init; }
+
+    public required int SeasonYear { get; init; }
+    public required int Round { get; init; }
+
+    /// <summary>"minorInjury" | "seasonEnding" | "death" — the fold's persisted outcome token.</summary>
+    public required string Outcome { get; init; }
+
+    /// <summary>Races the outcome cost at the time it was rolled (0 for season-ending/death).</summary>
+    public int MissRaces { get; init; }
+
+    /// <summary>Ready-to-show label ("Injured — missed 2 races", "Season-ending injury", "Fatal accident").</summary>
+    public required string Label { get; init; }
 }
 
 public sealed record CareerSummary
@@ -779,6 +896,14 @@ public sealed record CareerSeasonCard
     /// the player's finish, the rival they named that round + the rival's finish, the leader after the round
     /// and the player's running points. Empty for a season with no applied round. Additive display-only.</summary>
     public IReadOnlyList<CareerSeasonRoundLine> RoundLines { get; init; } = [];
+
+    /// <summary>The player's character level when the season opened (the season-start snapshot);
+    /// null for a career with no character. Additive display-only (SMGP-300 §9.1).</summary>
+    public int? PlayerLevelAtStart { get; init; }
+
+    /// <summary>The player's character level after the season-end pipeline closed the season; null
+    /// while the season is in progress or for a career with no character.</summary>
+    public int? PlayerLevelAtEnd { get; init; }
 }
 
 /// <summary>One applied round in a season's "my career" breakdown for the History screen: the player's own

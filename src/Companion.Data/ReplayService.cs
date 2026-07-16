@@ -272,12 +272,17 @@ public static class ReplayService
         int round,
         RoundResultEnvelope envelope,
         string utc,
-        string source = "manual")
+        string source = "manual",
+        Action<Microsoft.Data.Sqlite.SqliteTransaction>? withTransaction = null)
     {
         using var transaction = db.Connection.BeginTransaction();
         ResultStore.Append(
             db, seasonId, round, DataJson.Serialize(envelope), utc, source, transaction);
         var fold = FoldRound(db, seasonId, pack, masterSeed, inputs, round, utc, transaction);
+        // The caller's app-level rows (result provenance) join the SAME atomic commit — a crash can
+        // never leave a folded round missing its provenance row (which Resimulate, rebuilding
+        // derived rows only, would never repair).
+        withTransaction?.Invoke(transaction);
         transaction.Commit();
         return fold;
     }

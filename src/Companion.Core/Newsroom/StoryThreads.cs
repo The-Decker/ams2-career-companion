@@ -188,17 +188,22 @@ public static class StoryThreads
         List<NewsEvent> season, int ordinal, bool complete, List<StoryThread> threads)
     {
         var beats = season.Where(e => e.Kind is NewsEventKind.PlayerInjured
-            or NewsEventKind.SeasonEndingInjury or NewsEventKind.SatOutRound).ToList();
+            or NewsEventKind.SeasonEndingInjury or NewsEventKind.SatOutRound
+            or NewsEventKind.ReturnedFromInjury).ToList();
         if (beats.Count == 0)
         {
             return;
         }
 
-        var lastBeat = beats[^1].Round;
-        var returned = season.Any(e => e.Round > lastBeat
-            && e.Kind is NewsEventKind.RaceWon or NewsEventKind.PodiumFinish
-                or NewsEventKind.PointsFinish or NewsEventKind.MidfieldResult
-                or NewsEventKind.Overperformed or NewsEventKind.Underperformed);
+        var lastAbsence = beats.Where(e => e.Kind != NewsEventKind.ReturnedFromInjury)
+            .Select(e => e.Round).DefaultIfEmpty(0).Max();
+        // The explicit comeback event is the honest resolver; a later classified result keeps
+        // covering older careers whose events predate ReturnedFromInjury detection.
+        var returned = beats.Any(e => e.Kind == NewsEventKind.ReturnedFromInjury && e.Round > lastAbsence)
+            || season.Any(e => e.Round > lastAbsence
+                && e.Kind is NewsEventKind.RaceWon or NewsEventKind.PodiumFinish
+                    or NewsEventKind.PointsFinish or NewsEventKind.MidfieldResult
+                    or NewsEventKind.Overperformed or NewsEventKind.Underperformed);
         var seasonEnding = beats.Any(e => e.Kind == NewsEventKind.SeasonEndingInjury);
 
         threads.Add(new StoryThread

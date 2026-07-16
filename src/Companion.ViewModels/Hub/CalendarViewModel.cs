@@ -91,6 +91,14 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
             _ => ("Stand-in", $"{Ams2TrackName} — stand-in for {RealVenue}"),
         };
 
+        PlayerStatus = entry.PlayerStatus;
+        PlayerStatusLabel = entry.PlayerStatus switch
+        {
+            SchedulePlayerStatus.SatOut => "SAT OUT — injured",
+            SchedulePlayerStatus.WillMiss => "WILL MISS — injured",
+            _ => "",
+        };
+
         UnusedAlternateNote = UnusedAlternateName is { Length: > 0 } alt
             ? $"Alternate available: {alt} — enable “Use alternate tracks” at career creation to race it."
             : "";
@@ -124,6 +132,15 @@ public sealed partial class CalendarRoundViewModel : ObservableObject
 
     public string? UnusedAlternateName { get; }
     public bool HasUnusedAlternate => UnusedAlternateName is { Length: > 0 };
+
+    /// <summary>The player's participation state for the round (raced / sat out injured / will
+    /// miss under the active injury / ordinary upcoming).</summary>
+    public SchedulePlayerStatus PlayerStatus { get; }
+
+    /// <summary>The injury chip ("SAT OUT — injured" / "WILL MISS — injured"); empty for ordinary
+    /// raced/upcoming rounds so the calendar stays quiet when the driver is fit.</summary>
+    public string PlayerStatusLabel { get; }
+    public bool HasPlayerStatus => PlayerStatusLabel.Length > 0;
 
     /// <summary>The "alternate available — enable at creation" hint (empty when none).</summary>
     public string UnusedAlternateNote { get; }

@@ -173,13 +173,58 @@ public sealed partial class DossierViewModel : ObservableObject
     /// <summary>True when there is an SMGP career story to show (the Driver tab renders the timeline).</summary>
     public bool HasSmgpNarrative => Timeline.Count > 0 || NarrativeIntro.Length > 0;
 
-    /// <summary>Dismisses the one-shot level-up moment.</summary>
+    /// <summary>Dismisses the one-shot level-up moment and persists the acknowledgment (a user
+    /// preference, never a fold input), so an unacknowledged level-up survives closing the app
+    /// instead of silently vanishing on the next open.</summary>
     [RelayCommand]
     public void AcknowledgeLevelUp()
     {
         LevelUpPending = false;
         LevelsGained = 0;
+        if (Dossier is { Level: > 0 } dossier)
+        {
+            _session.MarkStoryRead(LevelAckKeyPrefix
+                + dossier.Level.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        }
     }
+
+    /// <summary>Key prefix for persisted level-up acknowledgments in the career's reading-state
+    /// preference store (schema v6 — user preference, survives re-simulation, never a fold input).</summary>
+    private const string LevelAckKeyPrefix = "character:levelup:";
+
+    /// <summary>The highest level the player has acknowledged (0 = no marker yet).</summary>
+    private int LastAcknowledgedLevel()
+    {
+        int last = 0;
+        foreach (var key in _session.ReadingState().Keys)
+        {
+            if (key.StartsWith(LevelAckKeyPrefix, StringComparison.Ordinal)
+                && int.TryParse(
+                    key.AsSpan(LevelAckKeyPrefix.Length),
+                    System.Globalization.NumberStyles.None,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out int level))
+            {
+                last = Math.Max(last, level);
+            }
+        }
+        return last;
+    }
+
+    /// <summary>The career's immutable mortality setting, readable mid-career (the wizard was the
+    /// only surface that showed it). Display-only — the mode cannot change on an active career.</summary>
+    public string MortalityLabel => _session.Mortality switch
+    {
+        Companion.Core.Career.MortalityMode.Normal => "MORTALITY: NORMAL",
+        Companion.Core.Career.MortalityMode.Hardcore => "MORTALITY: HARDCORE",
+        _ => "MORTALITY: OFF",
+    };
+
+    /// <summary>The career's medical record — every journaled accident outcome, oldest first.</summary>
+    [ObservableProperty]
+    private IReadOnlyList<InjuryHistoryEntry> _injuryHistory = [];
+
+    public bool HasInjuryHistory => InjuryHistory.Count > 0;
 
     /// <summary>Unlocks one eligible perk/stat node through the existing authoritative spend seam.</summary>
     [RelayCommand]
@@ -338,7 +383,8 @@ public sealed partial class DossierViewModel : ObservableObject
         }
     }
 
-    /// <summary>Slice-0 command stub; respec behavior lands in Slice 5.</summary>
+    /// <summary>Refunds one owned tree node through the session's authoritative respec seam
+    /// (milestone-token funded for v1 nodes; v2 careers use the committed-tree reset instead).</summary>
     [RelayCommand]
     private void RespecNode(SkillNodeViewModel? node)
     {
@@ -357,6 +403,23 @@ public sealed partial class DossierViewModel : ObservableObject
         {
             LevelUpPending = true;
             LevelsGained += next.Level - previous;
+        }
+        else if (previousLevel is null && nextDossier is { Level: > 0 } opened)
+        {
+            // Session (re)opened: the banner derives from the persisted acknowledgment marker so
+            // an unacknowledged level-up survives an app restart. A career with no marker yet is
+            // seeded at its current level (silently — no banner for history already lived).
+            int acknowledged = LastAcknowledgedLevel();
+            if (acknowledged == 0)
+            {
+                _session.MarkStoryRead(LevelAckKeyPrefix
+                    + opened.Level.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+            else if (opened.Level > acknowledged)
+            {
+                LevelUpPending = true;
+                LevelsGained = opened.Level - acknowledged;
+            }
         }
 
         RefreshBindingSnapshot(nextDossier);
@@ -393,6 +456,10 @@ public sealed partial class DossierViewModel : ObservableObject
         var playerCard = _session.SmgpPaddock()?.Drivers.FirstOrDefault(d => d.IsPlayer);
         Timeline = playerCard?.Timeline ?? [];
         NarrativeIntro = playerCard?.NarrativeIntro ?? "";
+
+        // The medical record: every journaled accident outcome, verbatim from the fold's rows.
+        InjuryHistory = _session.InjuryHistory();
+        OnPropertyChanged(nameof(HasInjuryHistory));
 
         OnPropertyChanged(nameof(HasCharacter));
         OnPropertyChanged(nameof(CountryCode));

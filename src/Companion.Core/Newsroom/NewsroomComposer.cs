@@ -207,7 +207,10 @@ public static class NewsroomCategories
             or NewsEventKind.SeatFilled => NewsroomCategory.DriverTransfers,
         NewsEventKind.RetirementConsidered or NewsEventKind.DriverRetired => NewsroomCategory.VeteranWatch,
         NewsEventKind.PlayerInjured or NewsEventKind.SeasonEndingInjury
-            or NewsEventKind.PlayerDied => NewsroomCategory.InjuriesAndReplacements,
+            or NewsEventKind.PlayerDied
+            or NewsEventKind.ReturnedFromInjury => NewsroomCategory.InjuriesAndReplacements,
+        NewsEventKind.LevelMilestone or NewsEventKind.Level300Reached => NewsroomCategory.RecordsAndMilestones,
+        NewsEventKind.CareerCompleted => NewsroomCategory.CareerRetrospective,
         NewsEventKind.RivalryDeveloped => NewsroomCategory.Rivalries,
         NewsEventKind.SeasonCompleted => NewsroomCategory.SeasonReview,
         NewsEventKind.SeasonStarted or NewsEventKind.CareerCreated => NewsroomCategory.WeekendPreview,
@@ -223,7 +226,8 @@ public static class NewsroomCategories
         NewsEventKind.Overperformed or NewsEventKind.Underperformed or NewsEventKind.DominantDisplay
             or NewsEventKind.StandingsClimb => EditorialStatus.Analysis,
         NewsEventKind.HistoryDiverged or NewsEventKind.HistoryHeld
-            or NewsEventKind.SeasonCompleted => EditorialStatus.Retrospective,
+            or NewsEventKind.SeasonCompleted
+            or NewsEventKind.CareerCompleted => EditorialStatus.Retrospective,
         _ => EditorialStatus.Confirmed,
     };
 

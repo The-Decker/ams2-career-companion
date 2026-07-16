@@ -228,6 +228,7 @@ public class SeasonReviewViewModelTests
         Xp = 500,
         XpIntoLevel = 100,
         XpForNextLevel = 300,
+        LevelCap = 30,
         CpUnspent = 0,
         Stats =
         [
