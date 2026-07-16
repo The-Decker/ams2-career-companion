@@ -1,0 +1,68 @@
+<UserControl x:Class="Companion.App.Views.MusicPlayerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Visibility="{Binding RelativeSource={RelativeSource Self}, Path=DataContext, Converter={StaticResource NullCollapsed}}"
+             Focusable="False"
+             AutomationProperties.Name="Music player">
+    <Grid VerticalAlignment="Center" Margin="10,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition Width="*" MinWidth="150" MaxWidth="260" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="38" />
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Column="0" Style="{StaticResource IconButton}"
+                FontFamily="{StaticResource IconFont}" Content="&#xE892;" FontSize="12"
+                Padding="7,4" Command="{Binding PreviousCommand}"
+                AutomationProperties.Name="Previous music track"
+                ToolTip="Previous music track" />
+
+        <Button Grid.Column="1" Margin="3,0" Padding="10,4"
+                Command="{Binding TogglePlayCommand}">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource SubtleButton}">
+                    <Setter Property="Content" Value="PLAY" />
+                    <Setter Property="ToolTip" Value="Play music" />
+                    <Setter Property="AutomationProperties.Name" Value="Play music" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                            <Setter Property="Content" Value="PAUSE" />
+                            <Setter Property="ToolTip" Value="Pause music" />
+                            <Setter Property="AutomationProperties.Name" Value="Pause music" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Button Grid.Column="2" Style="{StaticResource IconButton}"
+                FontFamily="{StaticResource IconFont}" Content="&#xE893;" FontSize="12"
+                Padding="7,4" Command="{Binding NextCommand}"
+                AutomationProperties.Name="Next music track"
+                ToolTip="Next music track" />
+
+        <ComboBox Grid.Column="4" Height="28" MinWidth="150"
+                  ItemsSource="{Binding Tracks}"
+                  SelectedItem="{Binding SelectedTrack, Mode=TwoWay}"
+                  DisplayMemberPath="Title"
+                  AutomationProperties.Name="Music track"
+                  ToolTip="Choose a music track" />
+
+        <TextBlock Grid.Column="6" Text="VOL" Style="{StaticResource Faint}"
+                   FontSize="9" Margin="0,0,7,0" VerticalAlignment="Center" />
+        <Slider Grid.Column="7" Minimum="0" Maximum="100"
+                Value="{Binding VolumePercent, Mode=TwoWay}"
+                TickFrequency="5" IsSnapToTickEnabled="False"
+                VerticalAlignment="Center"
+                AutomationProperties.Name="Music player volume" />
+        <TextBlock Grid.Column="8" Text="{Binding VolumePercent, StringFormat={}{0}%}"
+                   Style="{StaticResource Faint}" FontFamily="{StaticResource MonoFont}"
+                   Margin="6,0,0,0" VerticalAlignment="Center" />
+    </Grid>
+</UserControl>

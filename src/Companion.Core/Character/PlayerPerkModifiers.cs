@@ -14,6 +14,12 @@ namespace Companion.Core.Character;
 /// </summary>
 public sealed record PlayerPerkModifiers
 {
+    /// <summary>
+    /// Nonzero only for a modifier bundle carrying the versioned mastery overlay. Consumers use
+    /// this transient marker to apply v2 aggregate caps without perturbing legacy perk arithmetic.
+    /// </summary>
+    public int MasteryEffectsVersion { get; init; }
+
     // ---- talent ratings + car scalars (additive deltas at grid resolve) ----
 
     /// <summary>Additive deltas onto the player seat's <c>PackDriverRatings</c> fields, keyed by
@@ -34,6 +40,16 @@ public sealed record PlayerPerkModifiers
     // ---- reputation ----
 
     public double RepRoundMult { get; init; } = 1.0;
+
+    /// <summary>Progression-v2's positive round-gain multiplier. It stays separate from the legacy
+    /// signed-round multiplier until <c>ReputationMath</c> knows the sign of the computed delta, so
+    /// the catalog's aggregate reputation clamp can be applied exactly once at the consumer.</summary>
+    public double RepRoundGainMult { get; init; } = 1.0;
+
+    /// <summary>Progression-v2's multiplier for every signed per-round reputation delta. Kept
+    /// separate from <see cref="RepRoundGainMult"/> for consumer-level composition and clamping.</summary>
+    public double RepRoundSignedMult { get; init; } = 1.0;
+
     public double RepSeasonMult { get; init; } = 1.0;
     public double Marketability { get; init; } = 0.5;
     public double UnderdogLowTierBonus { get; init; }
@@ -51,6 +67,11 @@ public sealed record PlayerPerkModifiers
     // ---- offers / economy ----
 
     public double OfferExperienceMult { get; init; } = 1.0;
+
+    /// <summary>Additive offer-score weight for low-tier seats. This is deliberately distinct from
+    /// <see cref="UnderdogLowTierBonus"/>, which changes reputation rather than contract interest.</summary>
+    public double LowTierOfferWeightBonus { get; init; }
+
     public double SalaryAskMult { get; init; } = 1.0;
     public double AgeRiskMult { get; init; } = 1.0;
     public int RepFloorRelaxTiers { get; init; }
@@ -61,10 +82,19 @@ public sealed record PlayerPerkModifiers
 
     public IReadOnlyDictionary<string, double> XpMults { get; init; } = EmptyDeltas;
 
+    /// <summary>Progression-v2 multiplier for the negative finish-vs-expectation XP floor. It is
+    /// kept separate from the ordinary XP cause multipliers so <c>XpMath</c> can compose and clamp
+    /// the final round multiplier exactly once.</summary>
+    public double RoundXpFloorMultiplier { get; init; } = 1.0;
+
     // ---- injury (opt-in; only live for a character carrying an injury-stream perk) ----
 
     public double InjuryDurabilityDelta { get; init; }
     public double InjuryBaseAdd { get; init; }
+
+    /// <summary>True when an active mastery drawback explicitly introduces injury risk. Protective
+    /// durability effects alone never opt a previously risk-free character into a new RNG stream.</summary>
+    public bool MasteryInjuryRisk { get; init; }
 
     // ---- level grants ----
 

@@ -262,8 +262,8 @@
       "description": "You come alive on race day. What you give up over one flying lap you claw back when it counts, wheel to wheel through the pack.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "raceSkill",       "magnitude": 0.06, "cpEquivalent": 1.0, "note": "higher expectedFinish contribution (0.3 weight)" },
-        { "kind": "drawback", "lever": "statDelta", "target": "qualifyingSkill", "magnitude": -0.06, "cpEquivalent": -1.0, "note": "rating mass redistributed, not gifted - starts further back" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "raceSkill",       "magnitude": 0.06, "cpEquivalent": 1.0, "note": "higher expectedFinish contribution (0.3 weight)" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "qualifyingSkill", "magnitude": -0.06, "cpEquivalent": -1.0, "note": "rating mass redistributed, not gifted - starts further back" }
       ]
     },
     {
@@ -275,9 +275,9 @@
       "description": "A flying-lap artist. Pole position is your art form; converting it on Sunday is somebody else's.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "qualifyingSkill", "magnitude": 0.08, "cpEquivalent": 1.0, "note": "grid-pace identity + briefing aid" },
-        { "kind": "drawback", "lever": "statDelta", "target": "raceSkill",       "magnitude": -0.05, "cpEquivalent": -0.9, "note": "lower race-day expectation" },
-        { "kind": "drawback", "lever": "xpRate",    "target": "finishVsExpected", "magnitude": -0.10, "cpEquivalent": -0.1, "note": "a good grid slot raises expectedFinish, shrinking overperformance XP" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "qualifyingSkill", "magnitude": 0.08, "cpEquivalent": 1.0, "note": "grid-pace identity + briefing aid" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "raceSkill",       "magnitude": -0.05, "cpEquivalent": -0.9, "note": "lower race-day expectation" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career",    "target": "finishVsExpected", "magnitude": -0.10, "cpEquivalent": -0.1, "note": "a good grid slot raises expectedFinish, shrinking overperformance XP" }
       ]
     },
     {
@@ -290,11 +290,11 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): the benefit is +0.015 power = +0.09 Strength REAL on-track pace EVERY round unconditionally, but the original drawbacks lived ENTIRELY on the opt-in 'injury' stream, so with the injury system disabled the perk became a pure-upside refund (strictly dominant). Fix: (1) a NON-INJURY, always-live drawback (fragile setup = avoidanceOfMistakes -0.10 + errorBlameScale +0.10) that alone justifies most of the refund whether or not injury is on; (2) the injury effects auto-enable the injury system for this character (spec sec 6.2), so the injury half is never a disabled freebie; (3) benefit trimmed 0.015 -> 0.012 so even with injury fully off the net is a genuine risk/reward, not a free +0.09 Strength.",
       "effects": [
-        { "kind": "benefit",  "lever": "carScalar",    "target": "power",           "magnitude": 0.012, "cpEquivalent": 1.2, "note": "+~0.12 CarScore (Strength +0.072), ~a third of a tier of real on-track pace, unconditional" },
-        { "kind": "drawback", "lever": "statDelta",    "target": "avoidanceOfMistakes", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE (non-injury): a knife-edge car bites back - materially more driver-error DNF exposure regardless of the injury setting" },
-        { "kind": "drawback", "lever": "opiErrorBlame","target": "scale",           "magnitude": 0.10, "cpEquivalent": -0.9, "note": "ALWAYS-LIVE (non-injury): errorBlameScale 1.10 - a crash off the edge costs 10% more OPI than the grid size, so mistakes are punished harder even with injury off" },
-        { "kind": "drawback", "lever": "injuryHazard", "target": "durabilityDelta", "magnitude": -0.20, "cpEquivalent": -1.2, "note": "INJURY (auto-enables the injury system for this character): treated -0.20 durability for the season-end injury roll" },
-        { "kind": "drawback", "lever": "injuryHazard", "target": "perErrorAdd",     "magnitude": 0.15, "condition": "driverErrorDnf", "cpEquivalent": -0.4, "note": "INJURY: each driver-error DNF adds +0.15 to that round's injury contribution" }
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car",    "target": "power",           "magnitude": 0.012, "cpEquivalent": 1.2, "note": "+~0.12 CarScore (Strength +0.072), ~a third of a tier of real on-track pace, unconditional" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",    "target": "avoidanceOfMistakes", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE (non-injury): a knife-edge car bites back - materially more driver-error DNF exposure regardless of the injury setting" },
+        { "kind": "drawback", "lever": "opiErrorBlame", "classification": "career","target": "scale",           "magnitude": 0.10, "cpEquivalent": -0.9, "note": "ALWAYS-LIVE (non-injury): errorBlameScale 1.10 - a crash off the edge costs 10% more OPI than the grid size, so mistakes are punished harder even with injury off" },
+        { "kind": "drawback", "lever": "injuryHazard", "classification": "career", "target": "durabilityDelta", "magnitude": -0.20, "cpEquivalent": -1.2, "note": "INJURY (auto-enables the injury system for this character): treated -0.20 durability for the season-end injury roll" },
+        { "kind": "drawback", "lever": "injuryHazard", "classification": "career", "target": "perErrorAdd",     "magnitude": 0.15, "condition": "driverErrorDnf", "cpEquivalent": -0.4, "note": "INJURY: each driver-error DNF adds +0.15 to that round's injury contribution" }
       ]
     },
     {
@@ -306,8 +306,8 @@
       "description": "You run the car light and nimble. It rewards you through the corners and punishes you down the straights - a gamble on the calendar's shape.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "carScalar", "target": "weight", "magnitude": -0.010, "cpEquivalent": 1.0, "note": "less weight = quicker (CarRating subtracts weight); +~0.10 CarScore" },
-        { "kind": "drawback", "lever": "carScalar", "target": "drag",   "magnitude": 0.010, "cpEquivalent": -1.0, "note": "more drag = slower; -~0.10 CarScore. Net ~0 across a mixed calendar, positive only on downforce circuits - situational" }
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "weight", "magnitude": -0.010, "cpEquivalent": 1.0, "note": "less weight = quicker (CarRating subtracts weight); +~0.10 CarScore" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "drag",   "magnitude": 0.010, "cpEquivalent": -1.0, "note": "more drag = slower; -~0.10 CarScore. Net ~0 across a mixed calendar, positive only on downforce circuits - situational" }
       ]
     },
     {
@@ -319,10 +319,10 @@
       "description": "A quiet technician who wrings every tenth from the setup sheet. A small, honest edge on every track - and no glamour to show for it.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "carScalar",     "target": "power", "magnitude": 0.010, "cpEquivalent": 1.5, "note": "small permanent real pace edge on every track; +~0.10 CarScore" },
-        { "kind": "benefit",  "lever": "carScalar",     "target": "drag",  "magnitude": -0.008, "cpEquivalent": 1.1, "note": "+~0.08 CarScore" },
-        { "kind": "drawback", "lever": "statDelta",     "target": "startReactions", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "a technician, not a launcher" },
-        { "kind": "drawback", "lever": "marketability", "magnitude": -0.10, "cpEquivalent": -0.4, "note": "quiet and unglamorous - rep grows slower; small enough that the pace anchor barely re-rates you" }
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car",     "target": "power", "magnitude": 0.010, "cpEquivalent": 1.5, "note": "small permanent real pace edge on every track; +~0.10 CarScore" },
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car",     "target": "drag",  "magnitude": -0.008, "cpEquivalent": 1.1, "note": "+~0.08 CarScore" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",     "target": "startReactions", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "a technician, not a launcher" },
+        { "kind": "drawback", "lever": "marketability", "classification": "career", "magnitude": -0.10, "cpEquivalent": -0.4, "note": "quiet and unglamorous - rep grows slower; small enough that the pace anchor barely re-rates you" }
       ]
     },
     {
@@ -334,9 +334,9 @@
       "description": "Thousands of development laps taught you to dial a car in fast. New machinery clicks for you sooner - but teams see a tester, not a racer.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "paceAnchorAlpha", "magnitude": 0.15, "cpEquivalent": 0.6, "note": "alpha 0.3 -> 0.45: the recommended slider + OPI expectation converge quicker in a new car/era" },
-        { "kind": "drawback", "lever": "offerWeight",     "target": "experience", "magnitude": -0.15, "cpEquivalent": -0.4, "note": "experience term x0.85 - read as a tester" },
-        { "kind": "drawback", "lever": "statDelta",       "target": "aggression", "magnitude": -0.03, "cpEquivalent": -0.2, "note": "slightly weaker overtaking narrative" }
+        { "kind": "benefit",  "lever": "paceAnchorAlpha", "classification": "career", "magnitude": 0.15, "cpEquivalent": 0.6, "note": "alpha 0.3 -> 0.45: the recommended slider + OPI expectation converge quicker in a new car/era" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career",     "target": "experience", "magnitude": -0.15, "cpEquivalent": -0.4, "note": "experience term x0.85 - read as a tester" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",       "target": "aggression", "magnitude": -0.03, "cpEquivalent": -0.2, "note": "slightly weaker overtaking narrative" }
       ]
     },
     {
@@ -348,9 +348,9 @@
       "description": "You brake deeper into the corner than anyone dares. It buys you positions on entry - and flat-spots, lock-ups and the occasional overshoot.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "aggression", "magnitude": 0.06, "cpEquivalent": 0.6, "note": "stronger overtaking narrative + overperformed headline chance" },
-        { "kind": "benefit",  "lever": "carScalar", "target": "power",      "magnitude": 0.006, "cpEquivalent": 0.6, "note": "small real entry-pace edge; +~0.06 CarScore" },
-        { "kind": "drawback", "lever": "statDelta", "target": "tyreManagement", "magnitude": -0.06, "cpEquivalent": -0.2, "note": "flat-spots and locked tyres cost you on long runs" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "aggression", "magnitude": 0.06, "cpEquivalent": 0.6, "note": "stronger overtaking narrative + overperformed headline chance" },
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "power",      "magnitude": 0.006, "cpEquivalent": 0.6, "note": "small real entry-pace edge; +~0.06 CarScore" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "tyreManagement", "magnitude": -0.06, "cpEquivalent": -0.2, "note": "flat-spots and locked tyres cost you on long runs" }
       ]
     },
 
@@ -364,11 +364,11 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): two defects. (1) top-level stream 'none' contradicted an effect's 'injury' stream - corrected to 'injury' so the loader registers it. (2) at cost 2 the perk was overpriced: aggression/defending are RATING-ONLY (inert on track - they drive fiction/rep/beat-teammate and self-tax via expectation, not real lap time), worth ~2.4 CP of benefit, but a wheel-to-wheel style needs real always-live crash drawbacks (~-1.4) to not be injury-off-dominant. 2.4 - 1.4 - 0.4(injury) = +0.6 ~= cost 1, not 2. Recosted to 1. The always-live avoidance+errorBlame half carries the price whether or not injury is on (injury-off net +1.0 ~= cost 1, never dominant). Archetype 'hard_charger' net falls 1->0, still in budget.",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta",   "target": "aggression", "magnitude": 0.10, "cpEquivalent": 1.6, "note": "overtaking machine; tags overperformed hero copy (rating-only - drives fiction/rep/beat-teammate, self-taxes via expectation)" },
-        { "kind": "benefit",  "lever": "statDelta",   "target": "defending",  "magnitude": 0.05, "cpEquivalent": 0.8, "note": "hard to pass, too" },
-        { "kind": "drawback", "lever": "statDelta",   "target": "avoidanceOfMistakes", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE: a hard charger crashes more - materially more driver-error DNF exposure whether or not injury is enabled" },
-        { "kind": "drawback", "lever": "opiErrorBlame","target": "scale", "magnitude": 0.08, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE: errorBlameScale 1.08 - the stewards blame the aggressor, so a crash costs more OPI" },
-        { "kind": "drawback", "lever": "injuryHazard","target": "baseAdd", "magnitude": 0.06, "cpEquivalent": -0.4, "note": "INJURY (auto-enables the injury system): a dangerous style - +0.06 base injury hazard; a small extra, NOT load-bearing (perk is cost-justified by the always-live drawbacks alone)" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",   "target": "aggression", "magnitude": 0.10, "cpEquivalent": 1.6, "note": "overtaking machine; tags overperformed hero copy (rating-only - drives fiction/rep/beat-teammate, self-taxes via expectation)" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",   "target": "defending",  "magnitude": 0.05, "cpEquivalent": 0.8, "note": "hard to pass, too" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",   "target": "avoidanceOfMistakes", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE: a hard charger crashes more - materially more driver-error DNF exposure whether or not injury is enabled" },
+        { "kind": "drawback", "lever": "opiErrorBlame", "classification": "career","target": "scale", "magnitude": 0.08, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE: errorBlameScale 1.08 - the stewards blame the aggressor, so a crash costs more OPI" },
+        { "kind": "drawback", "lever": "injuryHazard", "classification": "career","target": "baseAdd", "magnitude": 0.06, "cpEquivalent": -0.4, "note": "INJURY (auto-enables the injury system): a dangerous style - +0.06 base injury hazard; a small extra, NOT load-bearing (perk is cost-justified by the always-live drawbacks alone)" }
       ]
     },
     {
@@ -380,8 +380,8 @@
       "description": "All fire and no filter. You force moves that shouldn't work - and when they don't, you pay for them twice.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta",  "target": "aggression", "magnitude": 0.07, "cpEquivalent": 0.7, "note": "stronger overtaking narrative + small expectedFinish bump" },
-        { "kind": "drawback", "lever": "opiErrorBlame", "target": "scale", "magnitude": 0.15, "cpEquivalent": -1.7, "note": "errorBlameScale 1.15 - a crash is charged 15% beyond gridSize (capped): a mistake costs more OPI" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",  "target": "aggression", "magnitude": 0.07, "cpEquivalent": 0.7, "note": "stronger overtaking narrative + small expectedFinish bump" },
+        { "kind": "drawback", "lever": "opiErrorBlame", "classification": "career", "target": "scale", "magnitude": 0.15, "cpEquivalent": -1.7, "note": "errorBlameScale 1.15 - a crash is charged 15% beyond gridSize (capped): a mistake costs more OPI" }
       ]
     },
     {
@@ -393,9 +393,9 @@
       "description": "Ruthlessly calm. You almost never bin it, and the rare day you do the paddock forgives you - but you never force the improbable move.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta",     "target": "avoidanceOfMistakes", "magnitude": 0.08, "cpEquivalent": 1.2, "note": "far fewer driver-error DNFs in fiction" },
-        { "kind": "benefit",  "lever": "opiErrorBlame", "target": "scale", "magnitude": -0.15, "cpEquivalent": 1.4, "note": "errorBlameScale 0.85 - a rare mistake blames you less" },
-        { "kind": "drawback", "lever": "statDelta",     "target": "aggression", "magnitude": -0.06, "cpEquivalent": -0.6, "note": "you don't force it - slower rep climb, fewer overperformed bonuses" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",     "target": "avoidanceOfMistakes", "magnitude": 0.08, "cpEquivalent": 1.2, "note": "far fewer driver-error DNFs in fiction" },
+        { "kind": "benefit",  "lever": "opiErrorBlame", "classification": "career", "target": "scale", "magnitude": -0.15, "cpEquivalent": 1.4, "note": "errorBlameScale 0.85 - a rare mistake blames you less" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",     "target": "aggression", "magnitude": -0.06, "cpEquivalent": -0.6, "note": "you don't force it - slower rep climb, fewer overperformed bonuses" }
       ]
     },
     {
@@ -408,12 +408,12 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): floorBlend benefit is non-injury and always-live, but the injury durabilityDelta was pulling 0.6 CP of the pricing, so with injury off the perk paid 1 CP for ~0.4 CP of net value (mild trap). Fix: the always-live half (floorBlend + a new avoidanceOfMistakes flavor) now covers the cost; durability is trimmed and labelled UPSIDE; the pace drawback is the honest 'tenths left on the table'.",
       "effects": [
-        { "kind": "benefit",  "lever": "opiErrorBlame", "target": "floorBlend", "magnitude": 0.5, "cpEquivalent": 1.0, "note": "ALWAYS-LIVE: driver-error DNFs charged as (gridSize+expectedFinish)/2 instead of full gridSize" },
-        { "kind": "benefit",  "lever": "statDelta",     "target": "avoidanceOfMistakes", "magnitude": 0.06, "cpEquivalent": 0.5, "note": "ALWAYS-LIVE: fewer driver-error DNFs in the fiction" },
-        { "kind": "benefit",  "lever": "injuryHazard",  "target": "durabilityDelta", "magnitude": 0.10, "cpEquivalent": 0.3, "note": "INJURY UPSIDE (auto-enables the injury system): safer style - lower injury roll; a bonus, not load-bearing" },
-        { "kind": "drawback", "lever": "carScalar",     "target": "power", "magnitude": -0.008, "cpEquivalent": -0.5, "note": "ALWAYS-LIVE: pace left on the table; -~0.08 CarScore (Strength -0.048)" },
-        { "kind": "drawback", "lever": "statDelta",     "target": "aggression", "magnitude": -0.06, "cpEquivalent": -0.2, "note": "ALWAYS-LIVE: you never force the improbable move - fewer overperformed/beat-teammate moments" },
-        { "kind": "drawback", "lever": "xpRate",        "target": "win", "magnitude": -0.10, "cpEquivalent": -0.1, "note": "ALWAYS-LIVE: -10% win XP - the highs are rarer" }
+        { "kind": "benefit",  "lever": "opiErrorBlame", "classification": "career", "target": "floorBlend", "magnitude": 0.5, "cpEquivalent": 1.0, "note": "ALWAYS-LIVE: driver-error DNFs charged as (gridSize+expectedFinish)/2 instead of full gridSize" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",     "target": "avoidanceOfMistakes", "magnitude": 0.06, "cpEquivalent": 0.5, "note": "ALWAYS-LIVE: fewer driver-error DNFs in the fiction" },
+        { "kind": "benefit",  "lever": "injuryHazard", "classification": "career",  "target": "durabilityDelta", "magnitude": 0.10, "cpEquivalent": 0.3, "note": "INJURY UPSIDE (auto-enables the injury system): safer style - lower injury roll; a bonus, not load-bearing" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car",     "target": "power", "magnitude": -0.008, "cpEquivalent": -0.5, "note": "ALWAYS-LIVE: pace left on the table; -~0.08 CarScore (Strength -0.048)" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",     "target": "aggression", "magnitude": -0.06, "cpEquivalent": -0.2, "note": "ALWAYS-LIVE: you never force the improbable move - fewer overperformed/beat-teammate moments" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career",        "target": "win", "magnitude": -0.10, "cpEquivalent": -0.1, "note": "ALWAYS-LIVE: -10% win XP - the highs are rarer" }
       ]
     },
     {
@@ -425,9 +425,9 @@
       "description": "Chaos is a ladder. When others crash and the safety car flies, you are already three places up the road - as long as you gambled right.",
       "stream": "form-swing",
       "effects": [
-        { "kind": "benefit",  "lever": "reputationGainRate", "target": "round", "magnitude": 0.20, "condition": "driverErrorDnf", "cpEquivalent": 0.8, "note": "when rivals melt down (attrition rounds), your round rep gain +20% via the form-swing classification" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "startReactions", "magnitude": 0.06, "cpEquivalent": 0.4, "note": "first-lap positioning" },
-        { "kind": "drawback", "lever": "statDelta", "target": "consistency", "magnitude": -0.08, "cpEquivalent": -0.6, "note": "you gamble on chaos - steadier, safer results are worth less to you and variance is higher" }
+        { "kind": "benefit",  "lever": "reputationGainRate", "classification": "career", "target": "round", "magnitude": 0.20, "condition": "driverErrorDnf", "cpEquivalent": 0.8, "note": "when rivals melt down (attrition rounds), your round rep gain +20% via the form-swing classification" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "startReactions", "magnitude": 0.06, "cpEquivalent": 0.4, "note": "first-lap positioning" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "consistency", "magnitude": -0.08, "cpEquivalent": -0.6, "note": "you gamble on chaos - steadier, safer results are worth less to you and variance is higher" }
       ]
     },
 
@@ -441,12 +441,12 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): the load-bearing benefit was an injury-stream durabilityDelta +0.25 (cpEq 1.8). With injury disabled that benefit evaporated, leaving ageRisk-0.15 (1.2) against a REAL weight+0.010 = -0.06 Strength every round (-1.0) - you paid 2 CP for a net PACE LOSS => a trap when injury is off. Fix: the always-live ageRisk benefit now carries most of the value; the weight drawback is softened (0.010 -> 0.006) so the non-injury floor (~+0.9 CP of value for cost 2 is still a mild tax but no longer a strict trap - the whole point is you accept a pace tax for longevity); durability is now clearly labelled UPSIDE when injury is enabled. Also adds an always-live agingCurve declineAccel benefit so the longevity fantasy is real even with injury off.",
       "effects": [
-        { "kind": "benefit",  "lever": "offerWeight",  "target": "ageRisk", "magnitude": -0.20, "cpEquivalent": 1.4, "note": "ALWAYS-LIVE (non-injury): ageRisk term x0.80 - teams fear the clock less, offers keep coming late" },
-        { "kind": "benefit",  "lever": "agingCurve",   "target": "declineAccelMult", "magnitude": -0.40, "cpEquivalent": 1.2, "note": "ALWAYS-LIVE (non-injury): a body built to last - DeclineAccelPerYear x0.60, a gentler veteran tail whether or not the injury system is on" },
-        { "kind": "benefit",  "lever": "injuryHazard", "target": "durabilityDelta", "magnitude": 0.25, "cpEquivalent": 0.4, "note": "INJURY UPSIDE (auto-enables the injury system): far fewer lost rounds; injuries never remove more than 1 round - a bonus on top of an already cost-justified perk, never load-bearing" },
-        { "kind": "drawback", "lever": "carScalar",    "target": "weight", "magnitude": 0.006, "cpEquivalent": -0.6, "note": "ALWAYS-LIVE: heavier car - a permanent pace tax; -~0.06 CarScore (Strength -0.036)" },
-        { "kind": "drawback", "lever": "statDelta",    "target": "stamina", "magnitude": -0.04, "cpEquivalent": -0.2, "note": "ALWAYS-LIVE: bulk over finesse - fades a touch on the very longest runs" },
-        { "kind": "drawback", "lever": "reputationGainRate", "target": "round", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "ALWAYS-LIVE: a durable grinder is unglamorous - rep banks a touch slower" }
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career",  "target": "ageRisk", "magnitude": -0.20, "cpEquivalent": 1.4, "note": "ALWAYS-LIVE (non-injury): ageRisk term x0.80 - teams fear the clock less, offers keep coming late" },
+        { "kind": "benefit",  "lever": "agingCurve", "classification": "career",   "target": "declineAccelMult", "magnitude": -0.40, "cpEquivalent": 1.2, "note": "ALWAYS-LIVE (non-injury): a body built to last - DeclineAccelPerYear x0.60, a gentler veteran tail whether or not the injury system is on" },
+        { "kind": "benefit",  "lever": "injuryHazard", "classification": "career", "target": "durabilityDelta", "magnitude": 0.25, "cpEquivalent": 0.4, "note": "INJURY UPSIDE (auto-enables the injury system): far fewer lost rounds; injuries never remove more than 1 round - a bonus on top of an already cost-justified perk, never load-bearing" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car",    "target": "weight", "magnitude": 0.006, "cpEquivalent": -0.6, "note": "ALWAYS-LIVE: heavier car - a permanent pace tax; -~0.06 CarScore (Strength -0.036)" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation",    "target": "stamina", "magnitude": -0.04, "cpEquivalent": -0.2, "note": "ALWAYS-LIVE: bulk over finesse - fades a touch on the very longest runs" },
+        { "kind": "drawback", "lever": "reputationGainRate", "classification": "career", "target": "round", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "ALWAYS-LIVE: a durable grinder is unglamorous - rep banks a touch slower" }
       ]
     },
     {
@@ -459,12 +459,12 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): 1.8 of the 3.7 CP of benefit sat on injury-stream durabilityDelta +0.30. With injury disabled you paid 3 CP for peakShift+2 (1.2) + ageRisk (0.7) = 1.9 CP of value minus a real softCap drawback (-0.7) => net ~1.2 for cost 3, a trap. Fix: the ALWAYS-LIVE longevity benefits (peakShift, ageRisk, and a new declineAccel halving) now carry the full cost on their own; the injury durability is trimmed and re-labelled UPSIDE. The softCap drawback is the honest price of a long plateau over a high peak (pairs with the longevity axis).",
       "effects": [
-        { "kind": "benefit",  "lever": "agingCurve", "target": "peakShift", "magnitude": 3, "cpEquivalent": 1.5, "note": "ALWAYS-LIVE: player-local peak +3 years - decline starts later" },
-        { "kind": "benefit",  "lever": "agingCurve", "target": "declineAccelMult", "magnitude": -0.50, "cpEquivalent": 1.2, "note": "ALWAYS-LIVE: DeclineAccelPerYear halved - the classic ageless-veteran tail, real whether or not injury is enabled" },
-        { "kind": "benefit",  "lever": "offerWeight", "target": "ageRisk", "magnitude": -0.20, "cpEquivalent": 1.0, "note": "ALWAYS-LIVE: ageRisk term x0.80 - offers keep coming long past the peak" },
-        { "kind": "benefit",  "lever": "injuryHazard", "target": "durabilityDelta", "magnitude": 0.20, "cpEquivalent": 0.5, "note": "INJURY UPSIDE (auto-enables the injury system): durable grinder - low injury roll; a bonus, never load-bearing" },
-        { "kind": "drawback", "lever": "statPoints", "target": "softCap", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE: peak ceiling capped - no rating above 0.89 - a longer plateau, not a higher peak" },
-        { "kind": "drawback", "lever": "carScalar", "target": "weight", "magnitude": 0.008, "cpEquivalent": -0.5, "note": "ALWAYS-LIVE: a solid, unspectacular veteran's setup - a small permanent pace tax; -~0.08 CarScore (Strength -0.048)" }
+        { "kind": "benefit",  "lever": "agingCurve", "classification": "career", "target": "peakShift", "magnitude": 3, "cpEquivalent": 1.5, "note": "ALWAYS-LIVE: player-local peak +3 years - decline starts later" },
+        { "kind": "benefit",  "lever": "agingCurve", "classification": "career", "target": "declineAccelMult", "magnitude": -0.50, "cpEquivalent": 1.2, "note": "ALWAYS-LIVE: DeclineAccelPerYear halved - the classic ageless-veteran tail, real whether or not injury is enabled" },
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "ageRisk", "magnitude": -0.20, "cpEquivalent": 1.0, "note": "ALWAYS-LIVE: ageRisk term x0.80 - offers keep coming long past the peak" },
+        { "kind": "benefit",  "lever": "injuryHazard", "classification": "career", "target": "durabilityDelta", "magnitude": 0.20, "cpEquivalent": 0.5, "note": "INJURY UPSIDE (auto-enables the injury system): durable grinder - low injury roll; a bonus, never load-bearing" },
+        { "kind": "drawback", "lever": "statPoints", "classification": "career", "target": "softCap", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE: peak ceiling capped - no rating above 0.89 - a longer plateau, not a higher peak" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "weight", "magnitude": 0.008, "cpEquivalent": -0.5, "note": "ALWAYS-LIVE: a solid, unspectacular veteran's setup - a small permanent pace tax; -~0.08 CarScore (Strength -0.048)" }
       ]
     },
     {
@@ -477,11 +477,11 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): the entire refund was carried by an injury-stream durabilityDelta -0.30. With the injury system disabled that drawback evaporated, leaving raceSkill+0.06/qual+0.04 for a 2-CP refund minus only ageRisk - grossly dominant. Fix: keep a real ALWAYS-LIVE drawback (offerWeight ageRisk up materially: fragile reputation scares teams whether or not a bone actually breaks) that carries most of the refund, and cap the injury half so it is upside-risk, not the whole cost. raceSkill benefit is expectation-only (inert on track), so it self-taxes via a higher OPI bar too.",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta",   "target": "raceSkill", "magnitude": 0.06, "cpEquivalent": 1.0, "note": "raw talent bought at the cost of fragility - expectation-only (inert on track), so it also raises the OPI/rep bar" },
-        { "kind": "benefit",  "lever": "statDelta",   "target": "qualifyingSkill", "magnitude": 0.04, "cpEquivalent": 0.7, "note": "grid-pace identity" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "ageRisk", "magnitude": 0.35, "cpEquivalent": -1.4, "note": "ALWAYS-LIVE (non-injury): a body-of-glass reputation makes teams treat you as an age-risk from day one - ageRisk term counts ~35% heavier, drying up offers regardless of the injury setting" },
-        { "kind": "drawback", "lever": "reputationGainRate", "target": "season", "magnitude": -0.10, "cpEquivalent": -0.5, "note": "ALWAYS-LIVE (non-injury): a driver the paddock expects to break down never fully builds a legacy - season rep bonus x0.90" },
-        { "kind": "drawback", "lever": "injuryHazard","target": "durabilityDelta", "magnitude": -0.30, "cpEquivalent": -1.8, "note": "INJURY (auto-enables the injury system for this character): retirement/injury hazard sharply up; a hit forces an OPI-neutral missed round via the 'injury' stream - never sets finishing order, fully journaled/replayable" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",   "target": "raceSkill", "magnitude": 0.06, "cpEquivalent": 1.0, "note": "raw talent bought at the cost of fragility - expectation-only (inert on track), so it also raises the OPI/rep bar" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation",   "target": "qualifyingSkill", "magnitude": 0.04, "cpEquivalent": 0.7, "note": "grid-pace identity" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "ageRisk", "magnitude": 0.35, "cpEquivalent": -1.4, "note": "ALWAYS-LIVE (non-injury): a body-of-glass reputation makes teams treat you as an age-risk from day one - ageRisk term counts ~35% heavier, drying up offers regardless of the injury setting" },
+        { "kind": "drawback", "lever": "reputationGainRate", "classification": "career", "target": "season", "magnitude": -0.10, "cpEquivalent": -0.5, "note": "ALWAYS-LIVE (non-injury): a driver the paddock expects to break down never fully builds a legacy - season rep bonus x0.90" },
+        { "kind": "drawback", "lever": "injuryHazard", "classification": "career","target": "durabilityDelta", "magnitude": -0.30, "cpEquivalent": -1.8, "note": "INJURY (auto-enables the injury system for this character): retirement/injury hazard sharply up; a hit forces an OPI-neutral missed round via the 'injury' stream - never sets finishing order, fully journaled/replayable" }
       ]
     },
     {
@@ -494,13 +494,13 @@
       "stream": "injury",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): benefit power+0.012 = +0.072 Strength REAL on-track pace unconditionally, but ~2.7 CP of the ~3.7 CP drawback sat on the opt-in injury stream (baseAdd + perErrorAdd). With injury off the perk kept only a small rep-on-error drawback and refunded 2 CP for real pace - dominant. Fix: an always-live avoidanceOfMistakes drawback (a reckless style crashes more, injury or not) plus the rep-on-error drawback carry the refund without injury; injury effects trimmed to upside-risk and auto-enable the system.",
       "effects": [
-        { "kind": "benefit",  "lever": "carScalar", "target": "power", "magnitude": 0.012, "cpEquivalent": 1.2, "note": "+~0.12 CarScore (Strength +0.072) of raw aggression pace, unconditional real on-track" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "startReactions", "magnitude": 0.08, "cpEquivalent": 0.5, "note": "rocket launches" },
-        { "kind": "drawback", "lever": "statDelta", "target": "avoidanceOfMistakes", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE (non-injury): burning hot means more driver-error DNFs whether or not you get hurt" },
-        { "kind": "drawback", "lever": "reputationGainRate", "target": "round", "magnitude": -0.10, "condition": "driverErrorDnf", "cpEquivalent": -1.0, "note": "ALWAYS-LIVE (non-injury): a crash costs an extra rep hit on top of OPI blame" },
-        { "kind": "drawback", "lever": "opiErrorBlame", "target": "scale", "magnitude": 0.08, "cpEquivalent": -0.8, "note": "ALWAYS-LIVE (non-injury): errorBlameScale 1.08 - the paddock blames the hot-head first" },
-        { "kind": "drawback", "lever": "injuryHazard", "target": "baseAdd", "magnitude": 0.05, "cpEquivalent": -0.6, "note": "INJURY (auto-enables the injury system): +0.05 base injury hazard from a reckless style" },
-        { "kind": "drawback", "lever": "injuryHazard", "target": "perErrorAdd", "magnitude": 0.10, "condition": "driverErrorDnf", "cpEquivalent": -0.6, "note": "INJURY: each error adds +0.10 to the injury roll" }
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "power", "magnitude": 0.012, "cpEquivalent": 1.2, "note": "+~0.12 CarScore (Strength +0.072) of raw aggression pace, unconditional real on-track" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "startReactions", "magnitude": 0.08, "cpEquivalent": 0.5, "note": "rocket launches" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "avoidanceOfMistakes", "magnitude": -0.10, "cpEquivalent": -0.7, "note": "ALWAYS-LIVE (non-injury): burning hot means more driver-error DNFs whether or not you get hurt" },
+        { "kind": "drawback", "lever": "reputationGainRate", "classification": "career", "target": "round", "magnitude": -0.10, "condition": "driverErrorDnf", "cpEquivalent": -1.0, "note": "ALWAYS-LIVE (non-injury): a crash costs an extra rep hit on top of OPI blame" },
+        { "kind": "drawback", "lever": "opiErrorBlame", "classification": "career", "target": "scale", "magnitude": 0.08, "cpEquivalent": -0.8, "note": "ALWAYS-LIVE (non-injury): errorBlameScale 1.08 - the paddock blames the hot-head first" },
+        { "kind": "drawback", "lever": "injuryHazard", "classification": "career", "target": "baseAdd", "magnitude": 0.05, "cpEquivalent": -0.6, "note": "INJURY (auto-enables the injury system): +0.05 base injury hazard from a reckless style" },
+        { "kind": "drawback", "lever": "injuryHazard", "classification": "career", "target": "perErrorAdd", "magnitude": 0.10, "condition": "driverErrorDnf", "cpEquivalent": -0.6, "note": "INJURY: each error adds +0.10 to the injury roll" }
       ]
     },
     {
@@ -512,9 +512,9 @@
       "description": "Fitter than anyone on the grid. In the closing laps of a long race you are still hitting your marks while the field wilts - but the short sprints never test you.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "stamina", "magnitude": 0.12, "cpEquivalent": 0.5, "note": "fiction + condition tag" },
-        { "kind": "benefit",  "lever": "carScalar", "target": "drag", "magnitude": -0.010, "condition": "longRace", "cpEquivalent": 1.0, "note": "you don't fade - +~0.10 CarScore on long (>=60% distance) rounds" },
-        { "kind": "drawback", "lever": "carScalar", "target": "drag", "magnitude": 0.006, "condition": "shortRace", "cpEquivalent": -0.6, "note": "no fitness edge in a sprint, and you over-drive it - -~0.06 CarScore on short rounds" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "stamina", "magnitude": 0.12, "cpEquivalent": 0.5, "note": "fiction + condition tag" },
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "drag", "magnitude": -0.010, "condition": "longRace", "cpEquivalent": 1.0, "note": "you don't fade - +~0.10 CarScore on long (>=60% distance) rounds" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "drag", "magnitude": 0.006, "condition": "shortRace", "cpEquivalent": -0.6, "note": "no fitness edge in a sprint, and you over-drive it - -~0.06 CarScore on short rounds" }
       ]
     },
 
@@ -527,9 +527,9 @@
       "description": "A metronome. Good form sticks to you and a single bad Sunday barely dents your standing - but a breakout day doesn't rocket you up the market either.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "opiRetention", "magnitude": 0.05, "cpEquivalent": 0.8, "note": "OPI retention 0.8 -> 0.85: form persists, one bad round hurts less" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "consistency", "magnitude": 0.08, "cpEquivalent": 0.4, "note": "steadier finishes near expectation" },
-        { "kind": "drawback", "lever": "opiRetention", "magnitude": 0.05, "target": "gainSide", "cpEquivalent": -0.7, "note": "the same higher retention means a breakout moves OPI less (gain 0.2 -> 0.15) - stickier both ways", "$comment": "modeled as the paired gain-side reduction of the same retention lever" }
+        { "kind": "benefit",  "lever": "opiRetention", "classification": "career", "magnitude": 0.05, "cpEquivalent": 0.8, "note": "OPI retention 0.8 -> 0.85: form persists, one bad round hurts less" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "consistency", "magnitude": 0.08, "cpEquivalent": 0.4, "note": "steadier finishes near expectation" },
+        { "kind": "drawback", "lever": "opiRetention", "classification": "career", "magnitude": 0.05, "target": "gainSide", "cpEquivalent": -0.7, "note": "the same higher retention means a breakout moves OPI less (gain 0.2 -> 0.15) - stickier both ways", "$comment": "modeled as the paired gain-side reduction of the same retention lever" }
       ]
     },
     {
@@ -541,8 +541,8 @@
       "description": "Feast or famine. A breakout weekend sends you soaring up the market; a bad one can make your offers evaporate. High risk, high reward, no middle gear.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "opiRetention", "magnitude": -0.10, "target": "gainSide", "cpEquivalent": 0.8, "note": "retention 0.7 (gain 0.3): overperformances spike OPI fast, accelerating offer-score (opi weight up to 3.0 at works)" },
-        { "kind": "drawback", "lever": "opiRetention", "magnitude": -0.10, "cpEquivalent": -1.8, "note": "the same 0.7 retention means one bad round tanks OPI hard - offers can evaporate in a season; higher season-end variance. Refunds CP for the risk." }
+        { "kind": "benefit",  "lever": "opiRetention", "classification": "career", "magnitude": -0.10, "target": "gainSide", "cpEquivalent": 0.8, "note": "retention 0.7 (gain 0.3): overperformances spike OPI fast, accelerating offer-score (opi weight up to 3.0 at works)" },
+        { "kind": "drawback", "lever": "opiRetention", "classification": "career", "magnitude": -0.10, "cpEquivalent": -1.8, "note": "the same 0.7 retention means one bad round tanks OPI hard - offers can evaporate in a season; higher season-end variance. Refunds CP for the risk." }
       ]
     },
     {
@@ -554,8 +554,8 @@
       "description": "Utterly unshakeable. Nothing you do surprises anyone - for better and for worse. The steadiest climb on the grid, and the least dramatic.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "opiRetention", "magnitude": 0.06, "cpEquivalent": 1.0, "note": "retention 0.8 -> 0.86: near-immune to a single bad round" },
-        { "kind": "drawback", "lever": "opiRetention", "magnitude": 0.06, "target": "gainSide", "cpEquivalent": -1.0, "note": "a breakout barely moves OPI - lowest variance both ways; a pure temperament trait" }
+        { "kind": "benefit",  "lever": "opiRetention", "classification": "career", "magnitude": 0.06, "cpEquivalent": 1.0, "note": "retention 0.8 -> 0.86: near-immune to a single bad round" },
+        { "kind": "drawback", "lever": "opiRetention", "classification": "career", "magnitude": 0.06, "target": "gainSide", "cpEquivalent": -1.0, "note": "a breakout barely moves OPI - lowest variance both ways; a pure temperament trait" }
       ]
     },
     {
@@ -567,9 +567,9 @@
       "description": "You arrived fully formed and dazzled from day one - then reality caught up. A blazing start, a visible sophomore slump, and a lifetime's talent that nets out about even.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "raceSkill", "magnitude": 0.05, "condition": "ageLtPeak", "cpEquivalent": 0.9, "note": "while seasonsCompleted < 3 / pre-peak: +0.05 raceSkill for expectedFinish - a fast start" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "qualifyingSkill", "magnitude": 0.05, "condition": "ageLtPeak", "cpEquivalent": 0.6, "note": "" },
-        { "kind": "drawback", "lever": "statDelta", "target": "raceSkill", "magnitude": -0.02, "condition": "ageGtePeak", "cpEquivalent": -0.9, "note": "after the window the bonus reverses to a two-season slump (authored decay); net lifetime rating mass ~0, front-loaded" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "raceSkill", "magnitude": 0.05, "condition": "ageLtPeak", "cpEquivalent": 0.9, "note": "while seasonsCompleted < 3 / pre-peak: +0.05 raceSkill for expectedFinish - a fast start" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "qualifyingSkill", "magnitude": 0.05, "condition": "ageLtPeak", "cpEquivalent": 0.6, "note": "" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "raceSkill", "magnitude": -0.02, "condition": "ageGtePeak", "cpEquivalent": -0.9, "note": "after the window the bonus reverses to a two-season slump (authored decay); net lifetime rating mass ~0, front-loaded" }
       ]
     },
     {
@@ -581,10 +581,10 @@
       "description": "You learn most from the grim days. A DNF or a midfield slog teaches you plenty; a win teaches you nothing you didn't already know.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "xpRate", "target": "midfield", "magnitude": 0.50, "cpEquivalent": 0.8, "note": "+50% XP from midfield finishes (the bulk of most careers)" },
-        { "kind": "benefit",  "lever": "xpRate", "target": "dnfMechanical", "magnitude": 0.50, "cpEquivalent": 0.8, "note": "+50% XP from mechanical DNFs - you learn from every lap" },
-        { "kind": "drawback", "lever": "xpRate", "target": "win", "magnitude": -0.40, "cpEquivalent": -0.3, "note": "success breeds complacency" },
-        { "kind": "drawback", "lever": "xpRate", "target": "podium", "magnitude": -0.40, "cpEquivalent": -0.3, "note": "neutral over a mixed career, strong for a backmarker grind" }
+        { "kind": "benefit",  "lever": "xpRate", "classification": "career", "target": "midfield", "magnitude": 0.50, "cpEquivalent": 0.8, "note": "+50% XP from midfield finishes (the bulk of most careers)" },
+        { "kind": "benefit",  "lever": "xpRate", "classification": "career", "target": "dnfMechanical", "magnitude": 0.50, "cpEquivalent": 0.8, "note": "+50% XP from mechanical DNFs - you learn from every lap" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career", "target": "win", "magnitude": -0.40, "cpEquivalent": -0.3, "note": "success breeds complacency" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career", "target": "podium", "magnitude": -0.40, "cpEquivalent": -0.3, "note": "neutral over a mixed career, strong for a backmarker grind" }
       ]
     },
 
@@ -597,9 +597,9 @@
       "description": "You bring a chequebook and a logo the money-hungry teams can't refuse. Doors open up and down the paddock - except at the top, where they see a pay driver.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "income", "target": "payBudgetBu", "magnitude": 2.0, "cpEquivalent": 2.0, "note": "+2.0 BU/season pay budget that privateer/minnow archetypes weight (PayDriverWeight) - materially more offers from money-hungry teams" },
-        { "kind": "drawback", "lever": "marketability", "magnitude": -0.15, "condition": "tierGte4", "cpEquivalent": -0.5, "note": "works teams score your rep at 0.85x - the big teams doubt a chequebook driver" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "salaryAsk", "magnitude": 0.10, "cpEquivalent": -0.5, "note": "seen as expensive baggage at merit teams" }
+        { "kind": "benefit",  "lever": "income", "classification": "career", "target": "payBudgetBu", "magnitude": 2.0, "cpEquivalent": 2.0, "note": "+2.0 BU/season pay budget that privateer/minnow archetypes weight (PayDriverWeight) - materially more offers from money-hungry teams" },
+        { "kind": "drawback", "lever": "marketability", "classification": "career", "magnitude": -0.15, "condition": "tierGte4", "cpEquivalent": -0.5, "note": "works teams score your rep at 0.85x - the big teams doubt a chequebook driver" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "salaryAsk", "magnitude": 0.10, "cpEquivalent": -0.5, "note": "seen as expensive baggage at merit teams" }
       ]
     },
     {
@@ -611,9 +611,9 @@
       "description": "You'll drive for peanuts. Every skint team on the grid can afford you, so the offers pour in - but your bank balance never grows.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "offerWeight", "target": "salaryAsk", "magnitude": -0.40, "cpEquivalent": 1.2, "note": "salaryAsk x0.6 - a much smaller w4 subtraction, so more teams clear their threshold, especially minnows (salary weight 3.5)" },
-        { "kind": "drawback", "lever": "income", "target": "salaryOfferMult", "magnitude": -0.40, "cpEquivalent": -2.0, "note": "accepted salary x0.6 - less BU banked (matters for the Phase-2 ledger and BU-gated perks)" },
-        { "kind": "drawback", "lever": "marketability", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "cheap = low prestige" }
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "salaryAsk", "magnitude": -0.40, "cpEquivalent": 1.2, "note": "salaryAsk x0.6 - a much smaller w4 subtraction, so more teams clear their threshold, especially minnows (salary weight 3.5)" },
+        { "kind": "drawback", "lever": "income", "classification": "career", "target": "salaryOfferMult", "magnitude": -0.40, "cpEquivalent": -2.0, "note": "accepted salary x0.6 - less BU banked (matters for the Phase-2 ledger and BU-gated perks)" },
+        { "kind": "drawback", "lever": "marketability", "classification": "career", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "cheap = low prestige" }
       ]
     },
     {
@@ -625,10 +625,10 @@
       "description": "A star who knows their worth and charges for it. The pay is superb and the fame follows - but the thrifty end of the grid can't afford your tantrums.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "income", "target": "salaryOfferMult", "magnitude": 0.25, "cpEquivalent": 0.9, "note": "salary offers interpolate at 1.25x" },
-        { "kind": "benefit",  "lever": "marketability", "magnitude": 0.20, "cpEquivalent": 0.8, "note": "fame-driven podium reputation" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "salaryAsk", "magnitude": 0.40, "cpEquivalent": -2.0, "note": "salaryAsk term x1.4 - wage demands cost you thrifty privateer/minnow offers; with a minnow (salary weight 3.5) it can cost you the seat" },
-        { "kind": "drawback", "lever": "statDelta", "target": "consistency", "magnitude": -0.05, "cpEquivalent": -0.4, "note": "complacency - slightly more variance" }
+        { "kind": "benefit",  "lever": "income", "classification": "career", "target": "salaryOfferMult", "magnitude": 0.25, "cpEquivalent": 0.9, "note": "salary offers interpolate at 1.25x" },
+        { "kind": "benefit",  "lever": "marketability", "classification": "career", "magnitude": 0.20, "cpEquivalent": 0.8, "note": "fame-driven podium reputation" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "salaryAsk", "magnitude": 0.40, "cpEquivalent": -2.0, "note": "salaryAsk term x1.4 - wage demands cost you thrifty privateer/minnow offers; with a minnow (salary weight 3.5) it can cost you the seat" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "consistency", "magnitude": -0.05, "cpEquivalent": -0.4, "note": "complacency - slightly more variance" }
       ]
     },
     {
@@ -640,10 +640,10 @@
       "description": "No loyalty, only leverage. You chase the best seat every winter and never look back - which makes you rich in offers and poor in patience from any one team.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "opiRetention", "magnitude": -0.05, "target": "gainSide", "cpEquivalent": 0.5, "note": "you spike your market value fast off a hot run (gain 0.2 -> 0.25)" },
-        { "kind": "benefit",  "lever": "income", "target": "salaryOfferMult", "magnitude": 0.10, "cpEquivalent": 0.4, "note": "you always squeeze the wage" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "experience", "magnitude": -0.20, "cpEquivalent": -0.5, "note": "no team trusts a job-hopper's loyalty - experience term x0.8" },
-        { "kind": "drawback", "lever": "reputationGainRate", "target": "season", "magnitude": -0.15, "cpEquivalent": -0.4, "note": "no team-building legacy - season rep bonus x0.85" }
+        { "kind": "benefit",  "lever": "opiRetention", "classification": "career", "magnitude": -0.05, "target": "gainSide", "cpEquivalent": 0.5, "note": "you spike your market value fast off a hot run (gain 0.2 -> 0.25)" },
+        { "kind": "benefit",  "lever": "income", "classification": "career", "target": "salaryOfferMult", "magnitude": 0.10, "cpEquivalent": 0.4, "note": "you always squeeze the wage" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "experience", "magnitude": -0.20, "cpEquivalent": -0.5, "note": "no team trusts a job-hopper's loyalty - experience term x0.8" },
+        { "kind": "drawback", "lever": "reputationGainRate", "classification": "career", "target": "season", "magnitude": -0.15, "cpEquivalent": -0.4, "note": "no team-building legacy - season rep bonus x0.85" }
       ]
     },
     {
@@ -655,10 +655,10 @@
       "description": "You put down roots. Stay with a team and their faith in you compounds; the price is a wage that never keeps up with the mercenaries and a market that assumes you'll never leave.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "offerWeight", "target": "experience", "magnitude": 0.30, "cpEquivalent": 0.7, "note": "loyalty rewarded - experience term x1.3, more mid-career offers" },
-        { "kind": "benefit",  "lever": "reputationGainRate", "target": "season", "magnitude": 0.15, "cpEquivalent": 0.4, "note": "a legacy builds - season rep bonus x1.15" },
-        { "kind": "drawback", "lever": "income", "target": "salaryOfferMult", "magnitude": -0.15, "cpEquivalent": -0.6, "note": "loyal = underpaid - salary x0.85" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "salaryAsk", "magnitude": 0.10, "cpEquivalent": -0.5, "note": "the market assumes you'll re-sign cheap and doesn't chase you" }
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "experience", "magnitude": 0.30, "cpEquivalent": 0.7, "note": "loyalty rewarded - experience term x1.3, more mid-career offers" },
+        { "kind": "benefit",  "lever": "reputationGainRate", "classification": "career", "target": "season", "magnitude": 0.15, "cpEquivalent": 0.4, "note": "a legacy builds - season rep bonus x1.15" },
+        { "kind": "drawback", "lever": "income", "classification": "career", "target": "salaryOfferMult", "magnitude": -0.15, "cpEquivalent": -0.6, "note": "loyal = underpaid - salary x0.85" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "salaryAsk", "magnitude": 0.10, "cpEquivalent": -0.5, "note": "the market assumes you'll re-sign cheap and doesn't chase you" }
       ]
     },
 
@@ -671,10 +671,10 @@
       "description": "When the rain comes you drive on another plane entirely. When it stays dry you are merely mortal - a specialist at the mercy of the sky.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "wetSkill", "magnitude": 0.30, "cpEquivalent": 0.6, "note": "towering wet-round identity" },
-        { "kind": "benefit",  "lever": "carScalar", "target": "power", "magnitude": 0.020, "condition": "wetRound", "cpEquivalent": 1.4, "note": "real pace edge ONLY on wet rounds; +~0.20 CarScore" },
-        { "kind": "drawback", "lever": "carScalar", "target": "power", "magnitude": -0.008, "condition": "dryRound", "cpEquivalent": -0.8, "note": "dry-weather complacency; -~0.08 CarScore. Wet rounds are the calendar minority so this bites most weekends" },
-        { "kind": "drawback", "lever": "statDelta", "target": "tyreManagement", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "adaptability average drops on dry rounds" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "wetSkill", "magnitude": 0.30, "cpEquivalent": 0.6, "note": "towering wet-round identity" },
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "power", "magnitude": 0.020, "condition": "wetRound", "cpEquivalent": 1.4, "note": "real pace edge ONLY on wet rounds; +~0.20 CarScore" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "power", "magnitude": -0.008, "condition": "dryRound", "cpEquivalent": -0.8, "note": "dry-weather complacency; -~0.08 CarScore. Wet rounds are the calendar minority so this bites most weekends" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "tyreManagement", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "adaptability average drops on dry rounds" }
       ]
     },
     {
@@ -687,9 +687,9 @@
       "stream": "none",
       "$auditNote": "REBALANCED (balance audit 2026-07-05): at dry +0.010 / wet -0.030 the calendar-expected on-track Strength was slightly POSITIVE on a typical dry-majority calendar (0.8*+0.06 + 0.2*-0.18 = +0.012), making a cost-0 perk mildly dominant on dry-heavy packs. Deepened the wet penalty to -0.040 so the expectation is genuinely ~neutral-to-negative (0.8*+0.06 + 0.2*-0.24 = +0.0 exactly at ~20% wet, negative on wetter packs) - a true situational playstyle trait, dominant on no calendar. Magnitude -0.040 stays within the +/-0.015... note: carScalar per-lever cap in the spec is +/-0.015 per EFFECT, but conditional weather swings are the intended exception (rain_man already runs +0.020/-0.008); the wet minority makes the calendar-weighted delta small. If the loader enforces a hard +/-0.015 carScalar cap, split this into two -0.020 wet effects or raise the documented weather-conditional cap to +/-0.040 (see spec sec 4.1d).",
       "effects": [
-        { "kind": "benefit",  "lever": "carScalar", "target": "power", "magnitude": 0.010, "condition": "dryRound", "cpEquivalent": 1.0, "note": "real pace edge on the dry majority of rounds; +~0.10 CarScore" },
-        { "kind": "drawback", "lever": "carScalar", "target": "power", "magnitude": -0.040, "condition": "wetRound", "cpEquivalent": -0.8, "note": "you can't feel the grip in the wet; -~0.40 CarScore on the rare wet round - deep enough that the calendar-weighted expectation is neutral, never a free cost-0 edge" },
-        { "kind": "drawback", "lever": "statDelta", "target": "wetSkill", "magnitude": -0.20, "cpEquivalent": -0.2, "note": "openly weak in the rain" }
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "power", "magnitude": 0.010, "condition": "dryRound", "cpEquivalent": 1.0, "note": "real pace edge on the dry majority of rounds; +~0.10 CarScore" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "power", "magnitude": -0.040, "condition": "wetRound", "cpEquivalent": -0.8, "note": "you can't feel the grip in the wet; -~0.40 CarScore on the rare wet round - deep enough that the calendar-weighted expectation is neutral, never a free cost-0 edge" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "wetSkill", "magnitude": -0.20, "cpEquivalent": -0.2, "note": "openly weak in the rain" }
       ]
     },
     {
@@ -701,9 +701,9 @@
       "description": "You make a set of tyres last a lifetime. In a long race you come alive as others crawl to the flag on ruined rubber - but there's nothing to save in a sprint.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "tyreManagement", "magnitude": 0.12, "cpEquivalent": 0.4, "note": "long-run master" },
-        { "kind": "benefit",  "lever": "carScalar", "target": "drag", "magnitude": -0.012, "condition": "longRace", "cpEquivalent": 1.2, "note": "tyre saving = end-of-race pace on long (>=60% distance) rounds; +~0.12 CarScore" },
-        { "kind": "drawback", "lever": "carScalar", "target": "drag", "magnitude": 0.010, "condition": "shortRace", "cpEquivalent": -1.0, "note": "no thermal window in a sprint, and over-managing costs you; -~0.10 CarScore" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "tyreManagement", "magnitude": 0.12, "cpEquivalent": 0.4, "note": "long-run master" },
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "drag", "magnitude": -0.012, "condition": "longRace", "cpEquivalent": 1.2, "note": "tyre saving = end-of-race pace on long (>=60% distance) rounds; +~0.12 CarScore" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "drag", "magnitude": 0.010, "condition": "shortRace", "cpEquivalent": -1.0, "note": "no thermal window in a sprint, and over-managing costs you; -~0.10 CarScore" }
       ]
     },
     {
@@ -715,9 +715,9 @@
       "description": "A master of the economy run. When the tank matters you eke out an advantage nobody else can find - and when it doesn't, you're just lifting and coasting for nothing.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "fuelManagement", "magnitude": 0.12, "cpEquivalent": 0.4, "note": "economy master" },
-        { "kind": "benefit",  "lever": "carScalar", "target": "weight", "magnitude": -0.008, "condition": "longRace", "cpEquivalent": 0.8, "note": "run lighter on fuel = quicker on long rounds; +~0.08 CarScore" },
-        { "kind": "drawback", "lever": "carScalar", "target": "power", "magnitude": -0.012, "condition": "shortRace", "cpEquivalent": -1.2, "note": "sprint flat-out means your economy habit just costs lap time; -~0.12 CarScore" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "fuelManagement", "magnitude": 0.12, "cpEquivalent": 0.4, "note": "economy master" },
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "weight", "magnitude": -0.008, "condition": "longRace", "cpEquivalent": 0.8, "note": "run lighter on fuel = quicker on long rounds; +~0.08 CarScore" },
+        { "kind": "drawback", "lever": "carScalar", "classification": "car", "target": "power", "magnitude": -0.012, "condition": "shortRace", "cpEquivalent": -1.2, "note": "sprint flat-out means your economy habit just costs lap time; -~0.12 CarScore" }
       ]
     },
 
@@ -730,8 +730,8 @@
       "description": "Heroics in a hopeless car make your name faster than anyone's. But once you finally land a good seat, the same drives that were miracles are merely expected.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "underdogMultiplier", "target": "lowTierBonus", "magnitude": 0.25, "condition": "tierLte2", "cpEquivalent": 1.6, "note": "+0.25 to UnderdogMultiplier in tier<=2 seats - rep banks fast in a minnow (the common early-career seat)" },
-        { "kind": "drawback", "lever": "underdogMultiplier", "target": "topTierMult", "magnitude": -0.15, "condition": "tierGte4", "cpEquivalent": -0.7, "note": "round + season rep x0.85 in tier>=4 seats - top-team results impress less, capping the snowball" }
+        { "kind": "benefit",  "lever": "underdogMultiplier", "classification": "career", "target": "lowTierBonus", "magnitude": 0.25, "condition": "tierLte2", "cpEquivalent": 1.6, "note": "+0.25 to UnderdogMultiplier in tier<=2 seats - rep banks fast in a minnow (the common early-career seat)" },
+        { "kind": "drawback", "lever": "underdogMultiplier", "classification": "career", "target": "topTierMult", "magnitude": -0.15, "condition": "tierGte4", "cpEquivalent": -0.7, "note": "round + season rep x0.85 in tier>=4 seats - top-team results impress less, capping the snowball" }
       ]
     },
     {
@@ -743,9 +743,9 @@
       "description": "Everyone's known you for years and everyone trusts you. More doors open than your results deserve - until the miles on the clock finally scare the teams off all at once.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "offerWeight", "target": "experience", "magnitude": 0.50, "cpEquivalent": 0.8, "note": "experience term x1.5 for the player" },
-        { "kind": "benefit",  "lever": "offerWeight", "target": "repFloorRelax", "magnitude": 1, "cpEquivalent": 0.7, "note": "rep floors relaxed one tier - more teams talk to a veteran" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "ageRisk", "magnitude": 1.0, "cpEquivalent": -1.0, "note": "ageRisk term counts double - a sharper late-career cliff" }
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "experience", "magnitude": 0.50, "cpEquivalent": 0.8, "note": "experience term x1.5 for the player" },
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "repFloorRelax", "magnitude": 1, "cpEquivalent": 0.7, "note": "rep floors relaxed one tier - more teams talk to a veteran" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "ageRisk", "magnitude": 1.0, "cpEquivalent": -1.0, "note": "ageRisk term counts double - a sharper late-career cliff" }
       ]
     },
     {
@@ -757,9 +757,9 @@
       "description": "Factory-honed and marked as a genuine front-runner. The raw pace is real and the works teams covet you - but the game will always ask more of you to prove it.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "raceSkill", "magnitude": 0.08, "cpEquivalent": 2.6, "note": "genuine pace lift to SeatStrengthModel.Strength and a real front-runner identity" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "qualifyingSkill", "magnitude": 0.05, "cpEquivalent": 1.4, "note": "front-runner grid pace" },
-        { "kind": "drawback", "lever": "reputationGainRate", "target": "both", "magnitude": -0.15, "cpEquivalent": -1.0, "note": "the raised expectedFinish is the built-in self-tax: you must beat a stiffer expected finish for the same OPI/rep/XP, and the difficulty recommendation rises with your talent - modeled here as a -15% rep gain the career must overcome" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "raceSkill", "magnitude": 0.08, "cpEquivalent": 2.6, "note": "genuine pace lift to SeatStrengthModel.Strength and a real front-runner identity" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "qualifyingSkill", "magnitude": 0.05, "cpEquivalent": 1.4, "note": "front-runner grid pace" },
+        { "kind": "drawback", "lever": "reputationGainRate", "classification": "career", "target": "both", "magnitude": -0.15, "cpEquivalent": -1.0, "note": "the raised expectedFinish is the built-in self-tax: you must beat a stiffer expected finish for the same OPI/rep/XP, and the difficulty recommendation rises with your talent - modeled here as a -15% rep gain the career must overcome" }
       ]
     },
     {
@@ -771,10 +771,10 @@
       "description": "A model professional inside the garage. The engineers give you their best and your team-mate their data - but you'll defer on strategy when it matters, and rarely take the ruthless win.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "carScalar", "target": "power", "magnitude": 0.006, "cpEquivalent": 0.6, "note": "the crew's best setup - a small real pace edge; +~0.06 CarScore" },
-        { "kind": "benefit",  "lever": "offerWeight", "target": "experience", "magnitude": 0.15, "cpEquivalent": 0.3, "note": "a trusted operator" },
-        { "kind": "drawback", "lever": "statDelta", "target": "aggression", "magnitude": -0.06, "cpEquivalent": -0.6, "note": "you defer, you don't force the issue - fewer overperformed/beat-teammate moments" },
-        { "kind": "drawback", "lever": "reputationGainRate", "target": "round", "magnitude": -0.10, "cpEquivalent": -0.3, "note": "the selfless number-two banks acclaim slower" }
+        { "kind": "benefit",  "lever": "carScalar", "classification": "car", "target": "power", "magnitude": 0.006, "cpEquivalent": 0.6, "note": "the crew's best setup - a small real pace edge; +~0.06 CarScore" },
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "experience", "magnitude": 0.15, "cpEquivalent": 0.3, "note": "a trusted operator" },
+        { "kind": "drawback", "lever": "statDelta", "classification": "expectation", "target": "aggression", "magnitude": -0.06, "cpEquivalent": -0.6, "note": "you defer, you don't force the issue - fewer overperformed/beat-teammate moments" },
+        { "kind": "drawback", "lever": "reputationGainRate", "classification": "career", "target": "round", "magnitude": -0.10, "cpEquivalent": -0.3, "note": "the selfless number-two banks acclaim slower" }
       ]
     },
 
@@ -787,9 +787,9 @@
       "description": "The press adore you and the sponsors follow. Your fame - and pay - climb faster than your results, but stardom prices you out of the cheap seats you might need on the way down.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "marketability", "magnitude": 0.15, "cpEquivalent": 0.8, "note": "scales the rep term into OfferScore + nudges SalaryOffer up ~10%" },
-        { "kind": "benefit",  "lever": "reputationGainRate", "target": "both", "magnitude": 0.10, "cpEquivalent": 0.5, "note": "the glamour amplifies every result's rep" },
-        { "kind": "drawback", "lever": "offerWeight", "target": "salaryAsk", "magnitude": 0.15, "cpEquivalent": -0.7, "note": "salaryAsk raised ~15%: with a works team (salary weight 1.0) it nets positive, with a minnow (weight 3.5) it can net NEGATIVE and cost you the seat" }
+        { "kind": "benefit",  "lever": "marketability", "classification": "career", "magnitude": 0.15, "cpEquivalent": 0.8, "note": "scales the rep term into OfferScore + nudges SalaryOffer up ~10%" },
+        { "kind": "benefit",  "lever": "reputationGainRate", "classification": "career", "target": "both", "magnitude": 0.10, "cpEquivalent": 0.5, "note": "the glamour amplifies every result's rep" },
+        { "kind": "drawback", "lever": "offerWeight", "classification": "career", "target": "salaryAsk", "magnitude": 0.15, "cpEquivalent": -0.7, "note": "salaryAsk raised ~15%: with a works team (salary weight 1.0) it nets positive, with a minnow (weight 3.5) it can net NEGATIVE and cost you the seat" }
       ]
     },
     {
@@ -801,10 +801,10 @@
       "description": "You let the stopwatch do the talking. The press ignore you and your fame crawls - but you never say the wrong thing, and cost-conscious teams love a driver with no entourage.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "offerWeight", "target": "salaryAsk", "magnitude": -0.15, "cpEquivalent": 0.7, "note": "no star wages - a smaller w4 subtraction, so thrifty privateer/minnow teams court you" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "consistency", "magnitude": 0.04, "cpEquivalent": 0.2, "note": "no distractions" },
-        { "kind": "drawback", "lever": "marketability", "magnitude": -0.15, "cpEquivalent": -0.7, "note": "rep climbs ~10% slower - the rep-floor gates to top seats stay shut longer despite the pace" },
-        { "kind": "drawback", "lever": "income", "target": "salaryOfferMult", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "low profile = modest pay" }
+        { "kind": "benefit",  "lever": "offerWeight", "classification": "career", "target": "salaryAsk", "magnitude": -0.15, "cpEquivalent": 0.7, "note": "no star wages - a smaller w4 subtraction, so thrifty privateer/minnow teams court you" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "consistency", "magnitude": 0.04, "cpEquivalent": 0.2, "note": "no distractions" },
+        { "kind": "drawback", "lever": "marketability", "classification": "career", "magnitude": -0.15, "cpEquivalent": -0.7, "note": "rep climbs ~10% slower - the rep-floor gates to top seats stay shut longer despite the pace" },
+        { "kind": "drawback", "lever": "income", "classification": "career", "target": "salaryOfferMult", "magnitude": -0.05, "cpEquivalent": -0.2, "note": "low profile = modest pay" }
       ]
     },
     {
@@ -816,8 +816,8 @@
       "description": "A driver of rituals and lucky charms. It makes for wonderful copy - and a form that wobbles from race to race for reasons no engineer can chart.",
       "stream": "form-swing",
       "effects": [
-        { "kind": "benefit",  "lever": "marketability", "magnitude": 0.10, "cpEquivalent": 0.5, "note": "colourful character - rich journal/headline flavour and a small fame bump" },
-        { "kind": "drawback", "lever": "opiRetention", "magnitude": -0.04, "cpEquivalent": -1.5, "note": "a deterministic per-round form wobble via the 'form-swing' stream nudges your effective consistency +/-0.05 for that round only (journaled), so expected-finish stability wavers race to race - fully replayable, never your choice, sometimes helps, sometimes bites; refunds CP for the volatility" }
+        { "kind": "benefit",  "lever": "marketability", "classification": "career", "magnitude": 0.10, "cpEquivalent": 0.5, "note": "colourful character - rich journal/headline flavour and a small fame bump" },
+        { "kind": "drawback", "lever": "opiRetention", "classification": "career", "magnitude": -0.04, "cpEquivalent": -1.5, "note": "a deterministic per-round form wobble via the 'form-swing' stream nudges your effective consistency +/-0.05 for that round only (journaled), so expected-finish stability wavers race to race - fully replayable, never your choice, sometimes helps, sometimes bites; refunds CP for the volatility" }
       ]
     },
 
@@ -830,9 +830,9 @@
       "description": "You peak when others are already declining. Your best years come late and last long - but you start closer to your ceiling and climb to it slowly.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "agingCurve", "target": "peakShift", "magnitude": 3, "cpEquivalent": 1.0, "note": "player-local PeakAgeStart/End +3 - decline starts later, a long career holds its expectedFinish" },
-        { "kind": "benefit",  "lever": "xpRate", "target": "ageWindow", "magnitude": 0.25, "condition": "ageGtePeak", "cpEquivalent": 0.5, "note": "+25% XP once past peak - keep growing when others fade" },
-        { "kind": "drawback", "lever": "xpRate", "target": "ageWindow", "magnitude": -0.30, "condition": "ageLtPeak", "cpEquivalent": -0.5, "note": "-30% XP while young - an unremarkable youth (this IS the 'slow early growth'); total XP ~neutral, back-loaded" }
+        { "kind": "benefit",  "lever": "agingCurve", "classification": "career", "target": "peakShift", "magnitude": 3, "cpEquivalent": 1.0, "note": "player-local PeakAgeStart/End +3 - decline starts later, a long career holds its expectedFinish" },
+        { "kind": "benefit",  "lever": "xpRate", "classification": "career", "target": "ageWindow", "magnitude": 0.25, "condition": "ageGtePeak", "cpEquivalent": 0.5, "note": "+25% XP once past peak - keep growing when others fade" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career", "target": "ageWindow", "magnitude": -0.30, "condition": "ageLtPeak", "cpEquivalent": -0.5, "note": "-30% XP while young - an unremarkable youth (this IS the 'slow early growth'); total XP ~neutral, back-loaded" }
       ]
     },
     {
@@ -844,8 +844,8 @@
       "description": "You burst onto the scene fully formed and improved faster than anyone thought possible - and then the well ran dry at your peak while the grinders kept climbing.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "xpRate", "target": "ageWindow", "magnitude": 0.40, "condition": "ageLtPeak", "cpEquivalent": 0.8, "note": "+40% per-round XP while age < eraPeakAgeStart - front-loads the whole growth arc" },
-        { "kind": "drawback", "lever": "xpRate", "target": "ageWindow", "magnitude": -0.25, "condition": "ageGtePeak", "cpEquivalent": -0.8, "note": "-25% per-round XP once at/past peak - the spigot slams shut; net lifetime XP ~neutral, front-loaded" }
+        { "kind": "benefit",  "lever": "xpRate", "classification": "career", "target": "ageWindow", "magnitude": 0.40, "condition": "ageLtPeak", "cpEquivalent": 0.8, "note": "+40% per-round XP while age < eraPeakAgeStart - front-loads the whole growth arc" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career", "target": "ageWindow", "magnitude": -0.25, "condition": "ageGtePeak", "cpEquivalent": -0.8, "note": "-25% per-round XP once at/past peak - the spigot slams shut; net lifetime XP ~neutral, front-loaded" }
       ]
     },
     {
@@ -857,9 +857,9 @@
       "description": "You reinvent yourself every time the machinery changes. Era transitions that break other drivers barely touch you - but chasing every new trend means you never fully master one.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "agingCurve", "target": "declineAccelMult", "magnitude": -0.50, "cpEquivalent": 1.2, "note": "player-local DeclineAccelPerYear halved - a graceful, long veteran tail" },
-        { "kind": "benefit",  "lever": "statDelta", "target": "raceSkill", "magnitude": 0.03, "condition": "eraTransition", "cpEquivalent": 1.4, "note": "keep +0.03 raceSkill at each era transition that re-baselining would otherwise strip - compounds across a multi-era career" },
-        { "kind": "drawback", "lever": "xpRate", "target": "all", "magnitude": -0.15, "cpEquivalent": -0.6, "note": "-15% all XP - effort spread thin adapting; longevity bought with a lower ceiling" }
+        { "kind": "benefit",  "lever": "agingCurve", "classification": "career", "target": "declineAccelMult", "magnitude": -0.50, "cpEquivalent": 1.2, "note": "player-local DeclineAccelPerYear halved - a graceful, long veteran tail" },
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "raceSkill", "magnitude": 0.03, "condition": "eraTransition", "cpEquivalent": 1.4, "note": "keep +0.03 raceSkill at each era transition that re-baselining would otherwise strip - compounds across a multi-era career" },
+        { "kind": "drawback", "lever": "xpRate", "classification": "career", "target": "all", "magnitude": -0.15, "cpEquivalent": -0.6, "note": "-15% all XP - effort spread thin adapting; longevity bought with a lower ceiling" }
       ]
     },
     {
@@ -871,8 +871,8 @@
       "description": "You have one weapon, honed to perfection, and nothing else. That single specialism is untouchable - and it is the only thing about you that will ever grow.",
       "stream": "none",
       "effects": [
-        { "kind": "benefit",  "lever": "statDelta", "target": "chosenFlavor", "magnitude": 0.30, "cpEquivalent": 1.0, "note": "one chosen flavor rating locked high at creation (free, outside creationRange) + level points auto-assign to it" },
-        { "kind": "drawback", "lever": "statPoints", "target": "lockToOne", "magnitude": 1, "cpEquivalent": -2.0, "note": "that rating is the ONLY flavor stat level points may raise - every other flavor stat frozen at creation value forever; refunds CP but kills build flexibility" }
+        { "kind": "benefit",  "lever": "statDelta", "classification": "expectation", "target": "chosenFlavor", "magnitude": 0.30, "cpEquivalent": 1.0, "note": "one chosen flavor rating locked high at creation (free, outside creationRange) + level points auto-assign to it" },
+        { "kind": "drawback", "lever": "statPoints", "classification": "career", "target": "lockToOne", "magnitude": 1, "cpEquivalent": -2.0, "note": "that rating is the ONLY flavor stat level points may raise - every other flavor stat frozen at creation value forever; refunds CP but kills build flexibility" }
       ]
     }
 

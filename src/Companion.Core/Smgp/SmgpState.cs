@@ -76,6 +76,13 @@ public sealed record SmgpState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool PerSeasonDnq { get; init; }
 
+    /// <summary>New-career gate for deterministic season-to-season calendar variety. When true,
+    /// <see cref="SmgpSeasonVariety.ForSeason"/> is applied from the same pinned pack, ordinal and
+    /// master seed on BOTH live and replay paths. Omitted false keeps legacy careers on the authored
+    /// calendar and preserves their existing derived journal bytes.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool PerSeasonVariety { get; init; }
+
     /// <summary>New-career gate for the standings-driven between-season entry reshuffle. Omitted
     /// when false so legacy SMGP careers keep their authored entries byte-identically.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -133,6 +140,7 @@ public sealed record SmgpState
             && FloorLosses == other.FloorLosses
             && TwoPhasePromotion == other.TwoPhasePromotion
             && PerSeasonDnq == other.PerSeasonDnq
+            && PerSeasonVariety == other.PerSeasonVariety
             && StandingsReshuffle == other.StandingsReshuffle
             && Equals(PendingSwap, other.PendingSwap)
             && Tallies.SequenceEqual(other.Tallies)
@@ -150,6 +158,7 @@ public sealed record SmgpState
         hash.Add(FloorLosses);
         hash.Add(TwoPhasePromotion);
         hash.Add(PerSeasonDnq);
+        hash.Add(PerSeasonVariety);
         hash.Add(StandingsReshuffle);
         hash.Add(PendingSwap);
         foreach (var pair in Tallies)

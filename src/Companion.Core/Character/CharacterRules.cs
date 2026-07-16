@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Companion.Core.Json;
 
 namespace Companion.Core.Character;
@@ -447,6 +448,18 @@ public sealed record RespecRules
     public bool RespecForbidsCreationBudgetChange { get; init; }
 }
 
+/// <summary>
+/// The boundary an effect changes for the human player. Expectation effects alter the benchmark or
+/// staged driver identity, Career effects alter Companion progression/evaluation, and Car effects
+/// physically alter the player car's AMS2 weight/power/drag scalars.
+/// </summary>
+public enum CharacterEffectClass
+{
+    Expectation = 0,
+    Career = 1,
+    Car = 2,
+}
+
 /// <summary>One machine-readable effect of a perk on a named sim lever. Benefit and drawback are
 /// both effects, so <c>Σ cpEquivalent</c> is the net cost and the audit is arithmetic.</summary>
 public sealed record PerkEffect
@@ -456,6 +469,14 @@ public sealed record PerkEffect
 
     /// <summary>The lever (statDelta, carScalar, opiRetention, …) — see character-system.md §7.2.</summary>
     public required string Lever { get; init; }
+
+    /// <summary>
+    /// Optional authored boundary classification. Older rules omit this field; projections then
+    /// classify <c>statDelta</c> as Expectation, <c>carScalar</c> as Car, and every other existing
+    /// lever as Career. Null stays omitted on serialization so legacy rule shapes round-trip.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public CharacterEffectClass? Classification { get; init; }
 
     /// <summary>Lever-specific: the rating field, scalar axis, or sub-target this effect moves.
     /// Null for single-target levers (marketability, paceAnchorAlpha).</summary>

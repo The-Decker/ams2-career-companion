@@ -336,6 +336,8 @@ internal sealed class FakeCareerSession : ICareerSession
     /// <summary>The dossier surfaced to the Driver tab / review development block (null = no character).</summary>
     public CharacterDossier? Dossier { get; set; }
 
+    public int CharacterDossierReadCount { get; private set; }
+
     /// <summary>Points the review's development block shows as available.</summary>
     public int Cp { get; set; }
 
@@ -345,15 +347,63 @@ internal sealed class FakeCareerSession : ICareerSession
     /// <summary>Perks the review's development block offers for purchase.</summary>
     public List<PurchasablePerk> Buyable { get; } = [];
 
-    public CharacterDossier? CharacterDossier() => Dossier;
+    public CharacterDossier? CharacterDossier()
+    {
+        CharacterDossierReadCount++;
+        return Dossier;
+    }
 
     public SkillTreeSnapshot? Tree { get; set; }
 
-    public SkillTreeSnapshot? SkillTree() => Tree ?? SkillTreeSnapshot.Empty;
+    public int SkillTreeReadCount { get; private set; }
+
+    public SkillTreeSnapshot? SkillTree()
+    {
+        SkillTreeReadCount++;
+        return Tree ?? SkillTreeSnapshot.Empty;
+    }
+
+    public Func<IReadOnlyList<string>, SkillPlanPreview>? SkillPlanPreviewer { get; set; }
+
+    public Exception? ApplySkillPlanThrows { get; set; }
+
+    public List<IReadOnlyList<string>> AppliedSkillPlans { get; } = [];
+
+    public SkillPlanPreview PreviewSkillPlan(IReadOnlyList<string> orderedNodeIds) =>
+        SkillPlanPreviewer?.Invoke(orderedNodeIds)
+        ?? throw new NotSupportedException("No fake skill-plan preview is configured.");
+
+    public void ApplySkillPlan(IReadOnlyList<string> orderedNodeIds)
+    {
+        if (ApplySkillPlanThrows is not null)
+            throw ApplySkillPlanThrows;
+        AppliedSkillPlans.Add(orderedNodeIds.ToArray());
+    }
+
+    public SkillResetPreview? SkillResetQuote { get; set; }
+
+    public Exception? ApplySkillResetThrows { get; set; }
+
+    public int AppliedSkillResetCount { get; private set; }
+
+    public SkillResetPreview? PreviewSkillReset() => SkillResetQuote;
+
+    public void ApplySkillReset()
+    {
+        if (ApplySkillResetThrows is not null)
+            throw ApplySkillResetThrows;
+        AppliedSkillResetCount++;
+    }
 
     public int RespecTokenCount { get; set; }
 
-    public int RespecTokensAvailable() => RespecTokenCount;
+    public int RespecTokenReadCount { get; private set; }
+
+    public int RespecTokensAvailable()
+    {
+        RespecTokenReadCount++;
+        return RespecTokenCount;
+    }
 
     public List<string> Respecs { get; } = [];
 
@@ -410,7 +460,13 @@ internal sealed class FakeCareerSession : ICareerSession
     /// <summary>The team the player drives for, surfaced to the Driver dossier.</summary>
     public string? TeamName { get; set; }
 
-    public string? PlayerTeamName() => TeamName;
+    public int PlayerTeamNameReadCount { get; private set; }
+
+    public string? PlayerTeamName()
+    {
+        PlayerTeamNameReadCount++;
+        return TeamName;
+    }
 
     // ---------- SMGP promotion / demotion (3c-2 / 3c-3) ----------
 
@@ -446,7 +502,13 @@ internal sealed class FakeCareerSession : ICareerSession
         Promotion = null;
     }
 
-    public int AvailableCharacterCp() => Cp;
+    public int AvailableCharacterCpReadCount { get; private set; }
+
+    public int AvailableCharacterCp()
+    {
+        AvailableCharacterCpReadCount++;
+        return Cp;
+    }
 
     public IReadOnlyList<PurchasablePerk> PurchasablePerks() =>
         Buyable.Where(p => p.Cost <= Cp).ToList();

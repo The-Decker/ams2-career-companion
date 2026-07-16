@@ -19,6 +19,17 @@ namespace Companion.App;
 /// </summary>
 public partial class MainWindow : Window
 {
+    /// <summary>
+    /// App-owned player state shown in the persistent shell header. This is intentionally
+    /// separate from the shell DataContext so adding the player cannot disturb navigation.
+    /// Assigning null hides the compact player completely.
+    /// </summary>
+    public object? MusicPlayerDataContext
+    {
+        get => MusicPlayer.DataContext;
+        set => MusicPlayer.DataContext = value;
+    }
+
     public MainWindow()
     {
         InitializeComponent();

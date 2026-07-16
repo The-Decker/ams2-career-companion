@@ -4,6 +4,7 @@ using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.ViewModels.Services;
+using StageLaunchStateValue = Companion.ViewModels.Briefing.StageLaunchState;
 
 namespace Companion.ViewModels.Briefing;
 
@@ -16,6 +17,19 @@ public enum StageBannerTone
     Success,
     Info,
     Error,
+}
+
+/// <summary>
+/// Frozen GUI contract for the combined Stage &amp; Launch action. These are display/OS states
+/// only; none participates in the career fold.
+/// </summary>
+public enum StageLaunchState
+{
+    Ready,
+    ChangedExternally,
+    ReapplyRequired,
+    StagingFailed,
+    LaunchFailed,
 }
 
 /// <summary>
@@ -51,6 +65,18 @@ public sealed partial class BriefingViewModel : ObservableObject
         if (_watcher is not null)
             _watcher.Changed += OnWatchedFileChanged;
         Refresh();
+        if (_session is IAms2GameLaunch && !SeasonComplete)
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.Ready,
+                "Ready to stage the current grid (backup-first) and launch AMS2 through Steam.");
+        }
+        else
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.LaunchFailed,
+                "Direct AMS2 launch is unavailable for this session; the existing Stage-only controls remain available.");
+        }
     }
 
     /// <summary>Raised with the exact text the view should copy to the clipboard
@@ -128,6 +154,12 @@ public sealed partial class BriefingViewModel : ObservableObject
     /// <summary>The number of cars on this round's grid — the safe end of the call range.</summary>
     private int _gridSize;
 
+    /// <summary>
+    /// A reputation bet unlocks only after one folded race has measured the player's real pace.
+    /// Before that, car/driver data can set an internal benchmark but cannot justify a public bet.
+    /// </summary>
+    private bool _hasPaceSample;
+
     /// <summary>The finish the player has called (1-based), or null for no bet. Rides the round's raw
     /// envelope when the result is applied and is resolved by the fold only when it is a real gamble
     /// (bolder than <see cref="ExpectedFinish"/>). Reset each round.</summary>
@@ -137,7 +169,7 @@ public sealed partial class BriefingViewModel : ObservableObject
 
     /// <summary>True when a gamble can be offered at all: the player has a seat and the expectation
     /// leaves room to call something bolder (you cannot out-call an expected pole).</summary>
-    public bool CanGamble => !SeasonComplete && ExpectedFinish is > 1;
+    public bool CanGamble => !SeasonComplete && _hasPaceSample && ExpectedFinish is > 1;
 
     /// <summary>True when the player has committed a call this round.</summary>
     public bool HasCalledShot => CalledShot is not null;
@@ -151,11 +183,11 @@ public sealed partial class BriefingViewModel : ObservableObject
             if (ExpectedFinish is not { } expected)
                 return "";
             if (CalledShot is not { } called)
-                return $"The sim expects you around P{expected}. Call a bolder finish to stake reputation on it.";
+                return $"Team benchmark: around P{expected}. Choose a better finish only if you want to risk reputation.";
             if (!Companion.Core.Career.CalledShotMath.IsGamble(called, expected))
-                return $"P{called} isn't a gamble — call better than P{expected} to put reputation on the line.";
+                return $"P{called} does not beat the P{expected} team benchmark. Choose P{expected - 1} or better to place a bet.";
             double stake = Companion.Core.Career.CalledShotMath.Stake(called, expected);
-            return $"Called P{called}: staking {stake:0.#} reputation — hit it for +{stake:0.#}, miss for −{stake:0.#}.";
+            return $"Bet: finish P{called} or better. Hit it for +{stake:0.#} reputation; miss for -{stake:0.#}.";
         }
     }
 
@@ -407,6 +439,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             // Setup Gamble: a fresh round starts with no bet; expose the expectation the call is made
             // against (and the grid size that bounds a safe call).
             ExpectedFinish = _session.CurrentExpectedFinish();
+            _hasPaceSample = _session.Summary.Opi is not null;
             _gridSize = _session.CurrentGrid().Count;
             CalledShot = null;
 
@@ -445,6 +478,7 @@ public sealed partial class BriefingViewModel : ObservableObject
             DifficultyRecommendation = null;
             FuelNote = null;
             ExpectedFinish = null;
+            _hasPaceSample = false;
             _gridSize = 0;
             CalledShot = null;
             SmgpBriefing = null;
@@ -456,6 +490,9 @@ public sealed partial class BriefingViewModel : ObservableObject
         OnPropertyChanged(nameof(CanGamble));
         OnPropertyChanged(nameof(CalledShotSummary));
         RaiseProgressChanged();
+        StageAndLaunchCommand.NotifyCanExecuteChanged();
+        ReapplyAndLaunchCommand.NotifyCanExecuteChanged();
+        CancelReapplyCommand.NotifyCanExecuteChanged();
     }
 
     // ---------- checklist ticks & progress ----------
@@ -561,6 +598,40 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     private bool _stagedFileTouchedExternally;
 
+    /// <summary>The frozen state value the Stage &amp; Launch GUI binds directly.</summary>
+    [ObservableProperty]
+    private StageLaunchStateValue _stageLaunchState = StageLaunchStateValue.Ready;
+
+    /// <summary>Short exact state label; the GUI does not need to format enum names.</summary>
+    public string StageLaunchStatus => StageLaunchState switch
+    {
+        StageLaunchStateValue.Ready => "Ready",
+        StageLaunchStateValue.ChangedExternally => "Changed Externally",
+        StageLaunchStateValue.ReapplyRequired => "Reapply Required",
+        StageLaunchStateValue.StagingFailed => "Staging Failed",
+        StageLaunchStateValue.LaunchFailed => "Launch Failed",
+        _ => "Ready",
+    };
+
+    /// <summary>Plain-language detail for the current combined-action state.</summary>
+    [ObservableProperty]
+    private string _stageLaunchMessage = "";
+
+    /// <summary>
+    /// True only when the GUI must show the explicit Cancel / Reapply &amp; Launch choice.
+    /// Reapplication never occurs implicitly.
+    /// </summary>
+    public bool StageLaunchChoiceRequired =>
+        StageLaunchState is StageLaunchStateValue.ReapplyRequired;
+
+    private bool CanStageAndLaunch => !SeasonComplete && _session is IAms2GameLaunch;
+
+    private bool CanReapplyAndLaunch =>
+        StageLaunchChoiceRequired && !SeasonComplete &&
+        _session is IForceStaging && _session is IAms2GameLaunch;
+
+    private bool CanCancelReapply => StageLaunchChoiceRequired;
+
     public IReadOnlyList<string> StageMessages => LastStageOutcome?.Messages ?? [];
 
     /// <summary>The banner color the view renders: green (staged or no-op match), amber for
@@ -592,21 +663,146 @@ public sealed partial class BriefingViewModel : ObservableObject
     public bool CanForceStage => _session is IForceStaging;
 
     [RelayCommand]
-    private void StageGrid() => RunStage(force: false);
+    private void StageGrid() => ApplyStageOnlyOutcome(
+        StageWithWatcherPaused(_session.StageCurrentGrid));
 
     [RelayCommand]
     private void ForceStageGrid()
     {
         if (_session is IForceStaging forceStaging)
-            ApplyOutcome(forceStaging.StageCurrentGrid(force: true));
+            ApplyStageOnlyOutcome(StageWithWatcherPaused(
+                () => forceStaging.StageCurrentGrid(force: true)));
     }
 
-    private void RunStage(bool force)
+    /// <summary>
+    /// Primary combined action. An external edit is never overwritten here: the first click only
+    /// enters the explicit reapply choice and performs no staging or launch.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanStageAndLaunch))]
+    private void StageAndLaunch()
     {
-        if (force && _session is IForceStaging forceStaging)
-            ApplyOutcome(forceStaging.StageCurrentGrid(force: true));
+        if (StagedFileTouchedExternally)
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.ReapplyRequired,
+                "The staged CustomAIDrivers file changed externally. Nothing was overwritten or launched. " +
+                "Choose Reapply & Launch to take a fresh backup and continue, or Cancel.");
+            return;
+        }
+
+        CompleteStageAndLaunch(StageWithWatcherPaused(_session.StageCurrentGrid));
+    }
+
+    /// <summary>The only combined action allowed to force a re-stage.</summary>
+    [RelayCommand(CanExecute = nameof(CanReapplyAndLaunch))]
+    private void ReapplyAndLaunch()
+    {
+        if (_session is not IForceStaging forceStaging)
+            return;
+
+        CompleteStageAndLaunch(StageWithWatcherPaused(
+            () => forceStaging.StageCurrentGrid(force: true)));
+    }
+
+    /// <summary>Declines the reapply choice. No filesystem or process action occurs.</summary>
+    [RelayCommand(CanExecute = nameof(CanCancelReapply))]
+    private void CancelReapply()
+    {
+        if (StagedFileTouchedExternally)
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.ChangedExternally,
+                "The external change was kept. Stage & Launch is paused. Select Stage & Launch to review " +
+                "a backup-first reapply, or leave the external file untouched.");
+        }
         else
-            ApplyOutcome(_session.StageCurrentGrid());
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.Ready,
+                "Launch canceled. Your installed file was not overwritten and AMS2 was not launched.");
+        }
+    }
+
+    /// <summary>
+    /// Stop monitoring before our own write, then let <see cref="ApplyOutcome"/> restart the watch
+    /// only after staging finishes. This prevents FileSystemWatcher from reporting our write as an
+    /// external edit.
+    /// </summary>
+    private StageOutcome StageWithWatcherPaused(Func<StageOutcome> stage)
+    {
+        _watcher?.Stop();
+        return stage();
+    }
+
+    private void ApplyStageOnlyOutcome(StageOutcome outcome)
+    {
+        ApplyOutcome(outcome);
+        if (outcome.Success)
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.Ready,
+                "The grid is staged and watched. Stage & Launch will verify it again before opening Steam.");
+        }
+        else if (outcome.BlockedByForceGate)
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.ReapplyRequired,
+                "The installed CustomAIDrivers file requires explicit confirmation. Choose Reapply & Launch " +
+                "to take a timestamped backup and continue, or Cancel.");
+        }
+        else
+        {
+            SetStageLaunchState(StageLaunchStateValue.StagingFailed, StageBanner);
+        }
+    }
+
+    private void CompleteStageAndLaunch(StageOutcome outcome)
+    {
+        // ApplyOutcome starts the watcher on every success/no-op BEFORE the process handoff.
+        ApplyOutcome(outcome);
+
+        if (!outcome.Success)
+        {
+            if (outcome.BlockedByForceGate)
+            {
+                SetStageLaunchState(
+                    StageLaunchStateValue.ReapplyRequired,
+                    "The installed CustomAIDrivers file requires explicit confirmation. Choose Reapply & Launch " +
+                    "to take a timestamped backup and continue, or Cancel.");
+            }
+            else
+            {
+                SetStageLaunchState(StageLaunchStateValue.StagingFailed, StageBanner);
+            }
+            return;
+        }
+
+        if (_session is not IAms2GameLaunch gameLaunch)
+        {
+            SetStageLaunchState(
+                StageLaunchStateValue.LaunchFailed,
+                "The grid was staged successfully, but direct AMS2 launch is unavailable. " +
+                "Launch AMS2 through Steam; the staged file has been kept.");
+            return;
+        }
+
+        var launch = gameLaunch.LaunchAms2();
+        SetStageLaunchState(
+            launch.Success ? StageLaunchStateValue.Ready : StageLaunchStateValue.LaunchFailed,
+            launch.Success
+                ? launch.Message + " The staged CustomAIDrivers file remains watched for outside changes."
+                : launch.Message + " The grid was staged successfully and has been kept; you can retry launching.");
+    }
+
+    private void SetStageLaunchState(StageLaunchStateValue state, string message)
+    {
+        StageLaunchState = state;
+        StageLaunchMessage = message;
+        OnPropertyChanged(nameof(StageLaunchStatus));
+        OnPropertyChanged(nameof(StageLaunchChoiceRequired));
+        StageAndLaunchCommand.NotifyCanExecuteChanged();
+        ReapplyAndLaunchCommand.NotifyCanExecuteChanged();
+        CancelReapplyCommand.NotifyCanExecuteChanged();
     }
 
     private void ApplyOutcome(StageOutcome outcome)
@@ -666,6 +862,11 @@ public sealed partial class BriefingViewModel : ObservableObject
             string.Equals(path, written, StringComparison.OrdinalIgnoreCase))
         {
             StagedFileTouchedExternally = true;
+            SetStageLaunchState(
+                StageLaunchStateValue.ChangedExternally,
+                "The staged CustomAIDrivers file changed externally. Nothing will be reapplied automatically. " +
+                "Stage & Launch is paused. Select Stage & Launch to review a backup-first reapply, or leave " +
+                "the external file untouched.");
         }
     }
 }

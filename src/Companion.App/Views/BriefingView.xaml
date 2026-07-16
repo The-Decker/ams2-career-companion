@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.BriefingView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
     <ScrollViewer x:Name="BriefingScroll" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
@@ -196,9 +197,11 @@
                     <WrapPanel Margin="0,18,0,0"
                                Visibility="{Binding SeasonComplete, Converter={StaticResource BoolCollapsed}}">
                         <Button x:Name="StageButton" Content="Set up this race in AMS2" Style="{StaticResource AccentButton}"
+                                audio:SoundAssist.Cue="Navigate"
                                 MinWidth="200" Margin="0,0,10,8" Click="OnStageClick"
                                 ToolTip="Writes this round's drivers and skins into AMS2 (backup-first) so the grid matches your career" />
                         <Button x:Name="ForceStageButton" Content="Overwrite anyway (backup first)" Margin="0,0,10,8"
+                                audio:SoundAssist.Cue="Warning"
                                 Click="OnForceStageClick"
                                 ToolTip="Your installed AI is a community file — this overwrites it; a timestamped backup is still taken first">
                             <Button.Style>
@@ -229,6 +232,7 @@
                              Binds up to the hosting HomeView; absent there (e.g. the render harness) it
                              simply disables. -->
                         <Button Content="Continue  ⏎" Style="{StaticResource AccentButton}"
+                                audio:SoundAssist.Cue="Confirm"
                                 MinWidth="150" Margin="0,0,10,8"
                                 Command="{Binding DataContext.EnterResultCommand,
                                           RelativeSource={RelativeSource AncestorType=views:HomeView}}"
@@ -244,8 +248,10 @@
                                 <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}"
                                            Text="This writes the round's generated AI grid into your AMS2 install. Any existing file is backed up first with a timestamp — and if your installed file already matches, nothing is written at all." />
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                    <Button Content="Stage grid" Style="{StaticResource AccentButton}" Click="OnStageConfirm" />
-                                    <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel" />
+                                    <Button Content="Stage grid" Style="{StaticResource AccentButton}" Click="OnStageConfirm"
+                                            audio:SoundAssist.Cue="Confirm" />
+                                    <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel"
+                                            audio:SoundAssist.Cue="Back" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -262,7 +268,8 @@
                                 <TextBlock TextWrapping="Wrap" Style="{StaticResource Body}" Margin="0,8,0,0"
                                            Text="Overwrite anyway takes a timestamped backup first, and season end offers one-click restore of the original." />
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                    <Button Content="Overwrite anyway (backup first)" Click="OnForceStageConfirm">
+                                    <Button Content="Overwrite anyway (backup first)" Click="OnForceStageConfirm"
+                                            audio:SoundAssist.Cue="Destructive">
                                         <Button.Style>
                                             <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                                 <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
@@ -271,7 +278,8 @@
                                             </Style>
                                         </Button.Style>
                                     </Button>
-                                    <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel" />
+                                    <Button Content="Cancel" Margin="8,0,0,0" Click="OnStagePopupCancel"
+                                            audio:SoundAssist.Cue="Back" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -417,21 +425,21 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Setup Gamble: the pre-race called shot (4b). Stake reputation on beating the sim's
-                         expected finish; only shown when the round leaves room to call something bolder.
+                    <!-- Optional reputation bet: unlocked only after one completed race has calibrated
+                         player pace, and shown only when the team benchmark leaves room for a harder call.
                          (BoolVisible: true => Visible — BoolCollapsed is the INVERSE converter and had
                          this panel backwards since 4b shipped; the render test now pins visibility.) -->
                     <Border x:Name="GamblePanel" Style="{StaticResource Panel}" Margin="0,12,0,0"
                             Visibility="{Binding CanGamble, Converter={StaticResource BoolVisible}}">
                         <StackPanel>
-                            <TextBlock Text="Setup Gamble — call your shot" FontWeight="SemiBold" Margin="0,0,0,6" />
+                            <TextBlock Text="Optional reputation bet" FontWeight="SemiBold" Margin="0,0,0,6" />
                             <TextBlock Text="{Binding CalledShotSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" />
                             <WrapPanel Margin="0,10,0,0">
-                                <Button Content="Bolder ◂" Command="{Binding CallBolderCommand}" MinWidth="90" Margin="0,0,8,8"
-                                        ToolTip="Call a better finish (a lower position) — a bolder gamble stakes more reputation" />
-                                <Button Content="▸ Safer" Command="{Binding CallSaferCommand}" Margin="0,0,8,8" MinWidth="90"
-                                        ToolTip="Ease the call one place" />
-                                <Button x:Name="GambleNoBetButton" Content="No bet" Command="{Binding ClearCallCommand}"
+                                <Button Content="Harder target ◂" Command="{Binding CallBolderCommand}" MinWidth="120" Margin="0,0,8,8"
+                                        ToolTip="Choose a better finishing target and risk more reputation" />
+                                <Button Content="▸ Easier target" Command="{Binding CallSaferCommand}" Margin="0,0,8,8" MinWidth="120"
+                                        ToolTip="Ease the target by one finishing position" />
+                                <Button x:Name="GambleNoBetButton" Content="Clear bet" Command="{Binding ClearCallCommand}"
                                         Margin="0,0,8,8" MinWidth="80"
                                         Visibility="{Binding HasCalledShot, Converter={StaticResource BoolVisible}}"
                                         ToolTip="Withdraw the gamble for this round" />

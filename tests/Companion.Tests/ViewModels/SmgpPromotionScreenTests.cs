@@ -128,6 +128,7 @@ public sealed class SmgpPromotionScreenTests : IDisposable
         using var home = new HomeViewModel(session);
 
         home.EnterResultCommand.Execute(null);
+        Assert.IsType<SessionIntroViewModel>(home.CurrentContent).ContinueCommand.Execute(null);
         var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         entry.Input = "1";
         entry.SubmitCommand.Execute(null);
@@ -240,6 +241,7 @@ public sealed class SmgpPromotionScreenTests : IDisposable
     private static void ApplyARound(HomeViewModel home)
     {
         home.EnterResultCommand.Execute(null);
+        Assert.IsType<SessionIntroViewModel>(home.CurrentContent).ContinueCommand.Execute(null);
         var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         entry.Input = "1";
         entry.SubmitCommand.Execute(null);

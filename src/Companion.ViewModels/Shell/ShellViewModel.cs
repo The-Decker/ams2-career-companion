@@ -45,6 +45,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         Start = new StartViewModel(recentCareers, _settings);
         Start.ContinueRequested += (_, path) => OpenCareer(path);
         Start.NewCareerRequested += (_, _) => BeginWizard();
+        Start.CareerModeRequested += (_, request) => BeginWizard(request.ExperienceMode);
 
         _current = Start;
         InstallStatus = ComposeInstallStatus(environment);
@@ -72,11 +73,19 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     // ---------- navigation ----------
 
-    private void BeginWizard()
+    private void BeginWizard(string? experienceMode = null)
     {
         StatusError = null;
         _beforeSettings = null;
-        var wizard = new NewCareerWizardViewModel(_environment, _factory, settings: _settings);
+        // Mode cards enter an explicit, pack-filtered v2 flow. The retained generic New Career
+        // command uses the pre-card compatibility behavior: its selected pack resolves SMGP vs
+        // Dynasty after parsing. Direct wizard callers still opt into v2 explicitly.
+        var wizard = new NewCareerWizardViewModel(
+            _environment,
+            _factory,
+            settings: _settings,
+            experienceMode: experienceMode,
+            inferExperienceModeFromPack: experienceMode is null);
         wizard.CareerCreated += OnCareerCreated;
         Wizard = wizard;
         OnPropertyChanged(nameof(Wizard));

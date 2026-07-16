@@ -141,7 +141,7 @@ public static class RoundGridResolver
         {
             int patchIndex = seats.FindIndex(s => s.IsPlayer);
             if (patchIndex >= 0)
-                seats[patchIndex] = ApplyCharacter(seats[patchIndex], characterPatch);
+                seats[patchIndex] = ApplyCharacter(seats[patchIndex], characterPatch, pack, packRound);
         }
 
         return new GridPlan
@@ -542,7 +542,11 @@ public static class RoundGridResolver
     /// <summary>Patches the player seat's ratings (talent stats + perk deltas) and car scalars
     /// (perk deltas) from the character. Null character returns the seat verbatim, so a pre-character
     /// career resolves a byte-identical grid.</summary>
-    private static GridSeat ApplyCharacter(GridSeat seat, PlayerCharacterPatch? character)
+    private static GridSeat ApplyCharacter(
+        GridSeat seat,
+        PlayerCharacterPatch? character,
+        SeasonPack pack,
+        PackRound round)
     {
         if (character is null)
             return seat;
@@ -550,20 +554,36 @@ public static class RoundGridResolver
         var mods = character.Modifiers;
         if (character.Profile.ProgressionVersion == CharacterLevelProgression.Level300Version)
         {
-            PlayerCarScalarPolicy.EnsureStagingCompatible(character.Profile, character.Rules);
+            PlayerCarScalarPolicy.EnsureStagingCompatible(
+                character.Profile,
+                character.Rules,
+                character.RoundConditions,
+                pack,
+                round.Round,
+                character.MasterySkills);
+            // Never trust a caller-supplied scalar bundle for v2. Re-resolve the three physical
+            // axes from the authored profile/rules and the validated typed round facts. The supplied
+            // modifier still carries non-CAR conditions (age/tier/etc.) for the rating writer.
+            var carMods = CharacterModifierResolver.Resolve(
+                character.Profile,
+                character.Rules,
+                character.MasterySkills,
+                character.RoundConditions is { } conditions
+                    ? PlayerRoundConditions.ActiveConditions(conditions)
+                    : null);
             // V2 has one physical truth: per-driver tuning wins per axis, otherwise the team axis;
             // add the character delta once, clamp the aggregate, then feed those exact values to
             // both the expectation model (seat fields) and AMS2 staging (CarTuning when present).
             var authoredTuning = seat.CarTuning;
             double weight = PlayerCarScalarPolicy.Compose(
                 authoredTuning?.WeightScalar ?? seat.WeightScalar,
-                mods.WeightScalarDelta);
+                carMods.WeightScalarDelta);
             double power = PlayerCarScalarPolicy.Compose(
                 authoredTuning?.PowerScalar ?? seat.PowerScalar,
-                mods.PowerScalarDelta);
+                carMods.PowerScalarDelta);
             double drag = PlayerCarScalarPolicy.Compose(
                 authoredTuning?.DragScalar ?? seat.DragScalar,
-                mods.DragScalarDelta);
+                carMods.DragScalarDelta);
             return seat with
             {
                 Ratings = CharacterRatingWriter.Apply(

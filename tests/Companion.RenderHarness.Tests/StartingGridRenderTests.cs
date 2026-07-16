@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Companion.App.Views;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
@@ -18,6 +19,29 @@ public sealed class StartingGridRenderTests
 {
     private const string PlayerId = "driver.hulme";
     private static readonly PackDriverRatings Ratings = new() { RaceSkill = 0.8, QualifyingSkill = 0.8 };
+
+    private static void AssertTeamAccent(Brush actual, string primaryHex, string secondaryHex)
+    {
+        Color primary = (Color)ColorConverter.ConvertFromString(primaryHex);
+        Color secondary = (Color)ColorConverter.ConvertFromString(secondaryHex);
+        if (primary == secondary)
+        {
+            Assert.Equal(primary, Assert.IsType<SolidColorBrush>(actual).Color);
+            return;
+        }
+
+        var split = Assert.IsType<LinearGradientBrush>(actual);
+        Assert.True(split.IsFrozen);
+        Assert.Equal(new Point(0, 0), split.StartPoint);
+        Assert.Equal(new Point(1, 1), split.EndPoint);
+        Assert.Equal(4, split.GradientStops.Count);
+        Assert.Equal(primary, split.GradientStops[0].Color);
+        Assert.Equal(primary, split.GradientStops[1].Color);
+        Assert.Equal(secondary, split.GradientStops[2].Color);
+        Assert.Equal(secondary, split.GradientStops[3].Color);
+        Assert.Equal(0.5, split.GradientStops[1].Offset);
+        Assert.Equal(0.5, split.GradientStops[2].Offset);
+    }
 
     private static GridSeat Seat(string id, string name, string number) => new()
     {
@@ -135,8 +159,8 @@ public sealed class StartingGridRenderTests
                 .Select(position => SmgpSeat(
                     position == 20 ? smgpPlayerId : position == 1 ? "driver.ayrton_senna" : $"driver.smoke_{position}",
                     position == 20 ? "You" : $"Arcade Driver {position}",
-                    $"team.smoke_{(position + 1) / 2}",
-                    $"Arcade Team {(position + 1) / 2}",
+                    position == 1 ? "team.madonna" : $"team.smoke_{(position + 1) / 2}",
+                    position == 1 ? "Madonna" : $"Arcade Team {(position + 1) / 2}",
                     position.ToString(),
                     isPlayer: position == 20))
                 .ToArray();
@@ -147,7 +171,11 @@ public sealed class StartingGridRenderTests
             var vm = new StartingGridViewModel(
                 grid, smgpPlayerId, "Preliminary Race",
                 new GridConditions { LapDistanceKm = 5.040, Weather = "Clear", TrackTempC = 29, AirTempC = 23 },
-                playerCarArtDriverId: "driver.giorgio_alberti", dnq: dnq);
+                playerCarArtDriverId: "driver.giorgio_alberti", dnq: dnq,
+                playerCountryFlagKey: "driver.george_turner");
+
+            Assert.Equal("driver.ayrton_senna", vm.Slots[0].CountryFlagKey);
+            Assert.Equal("driver.george_turner", vm.Slots[19].CountryFlagKey);
 
             var view = new StartingGridView { DataContext = vm };
             var home = new HomeView { DataContext = new ModeHost(), Content = view };
@@ -184,26 +212,159 @@ public sealed class StartingGridRenderTests
                 firstSlot.ContentTemplate.FindName("SmgpDriverVisuals", firstSlot));
             var portrait = Assert.IsAssignableFrom<FrameworkElement>(
                 firstSlot.ContentTemplate.FindName("SmgpPortraitFrame", firstSlot));
+            var portraitOutline = Assert.IsType<Border>(
+                firstSlot.ContentTemplate.FindName("SmgpPortraitOutline", firstSlot));
+            var timingCard = Assert.IsType<Border>(
+                firstSlot.ContentTemplate.FindName("SmgpTimingCard", firstSlot));
             var carBay = Assert.IsAssignableFrom<FrameworkElement>(
                 firstSlot.ContentTemplate.FindName("SmgpCarBay", firstSlot));
+            var carBayOutline = Assert.IsType<Border>(
+                firstSlot.ContentTemplate.FindName("SmgpGridBayOutline", firstSlot));
+            var car = Assert.IsType<Image>(
+                firstSlot.ContentTemplate.FindName("SmgpCarImage", firstSlot));
             var flag = Assert.IsAssignableFrom<FrameworkElement>(
                 firstSlot.ContentTemplate.FindName("SmgpFlagFrame", firstSlot));
+            var flagImage = Assert.IsType<Image>(
+                firstSlot.ContentTemplate.FindName("SmgpFlagImage", firstSlot));
+            var logo = Assert.IsType<Image>(
+                firstSlot.ContentTemplate.FindName("SmgpTeamLogoImage", firstSlot));
+            var driverName = Assert.IsType<TextBlock>(
+                firstSlot.ContentTemplate.FindName("SmgpDriverName", firstSlot));
+            var teamName = Assert.IsType<TextBlock>(
+                firstSlot.ContentTemplate.FindName("SmgpTeamName", firstSlot));
+            var positionMarker = Assert.IsType<Border>(
+                firstSlot.ContentTemplate.FindName("SmgpPositionMarker", firstSlot));
             Assert.True(firstSlot.ActualWidth >= 175);
-            Assert.Equal(136, card.ActualHeight);
-            Assert.Equal(54, portrait.ActualWidth);
+            Assert.Equal(190, card.ActualHeight);
+            Assert.Equal(new Thickness(3, 3, 3, 67), card.Margin);
+            Assert.Equal(84, portrait.ActualWidth);
+            Assert.Equal(84, portrait.ActualHeight);
+            Assert.Equal(new Thickness(3), portraitOutline.BorderThickness);
+            Assert.Equal(90, visuals.ColumnDefinitions[0].ActualWidth);
             Assert.Equal(0, Grid.GetColumn(portrait));
             Assert.Equal(2, Grid.GetColumn(carBay));
-            Assert.True(carBay.ActualWidth >= 100);
+            Assert.Equal(208, carBayOutline.MaxWidth);
+            Assert.Equal(HorizontalAlignment.Stretch, carBayOutline.HorizontalAlignment);
+            Assert.True(carBay.ActualWidth >= 85,
+                $"Expected a usable compact car bay, measured {carBay.ActualWidth:0.##}px in a {firstSlot.ActualWidth:0.##}px slot.");
             Assert.True(carBay.ActualWidth <= firstSlot.ActualWidth);
+            var rotation = Assert.IsType<RotateTransform>(car.LayoutTransform);
+            Assert.Equal(0, rotation.Angle);
+            Assert.Equal(150, car.Width);
+            Assert.Equal(220, car.Height);
+            var carCenterX = car.TranslatePoint(new Point(car.ActualWidth / 2, 0), carBay).X;
+            var outlineCenterX = carBayOutline.TranslatePoint(
+                new Point(carBayOutline.ActualWidth / 2, 0), carBay).X;
+            Assert.InRange(Math.Abs(carCenterX - carBay.ActualWidth / 2), 0, 0.5);
+            Assert.InRange(Math.Abs(outlineCenterX - carBay.ActualWidth / 2), 0, 0.5);
+            AssertTeamAccent(portraitOutline.BorderBrush, vm.Slots[0].TeamColor, vm.Slots[0].TeamSecondaryColor);
+            AssertTeamAccent(timingCard.BorderBrush, vm.Slots[0].TeamColor, vm.Slots[0].TeamSecondaryColor);
+            AssertTeamAccent(positionMarker.Background, vm.Slots[0].TeamColor, vm.Slots[0].TeamSecondaryColor);
+            Assert.NotNull(logo.Source);
+            Assert.Equal(15, driverName.FontSize);
+            Assert.Equal(12.5, teamName.FontSize);
+            Assert.True(positionMarker.ActualWidth >= 56);
+            Assert.Equal(44, flag.ActualWidth);
+            Assert.Equal(30, flag.ActualHeight);
+            Assert.Single(((Grid)flag).Children);
+            Assert.IsType<Image>(((Grid)flag).Children[0]);
             Assert.Equal(Visibility.Visible, flag.Visibility);
+            Assert.Equal(Visibility.Visible, flagImage.Visibility);
+            Assert.NotNull(flagImage.Source);
+
+            var positionTop = positionMarker.TranslatePoint(new Point(0, 0), visuals).Y;
+            var portraitTop = portrait.TranslatePoint(new Point(0, 0), visuals).Y;
+            var flagTop = flag.TranslatePoint(new Point(0, 0), visuals).Y;
+            Assert.InRange(positionTop, -0.5, 0.5);
+            Assert.InRange(portraitTop, 37.5, 38.5);
+            Assert.InRange(flagTop, 131.5, 132.5);
+            Assert.True(positionTop + positionMarker.ActualHeight < portraitTop,
+                "The position card must sit above the portrait without overlap.");
+            Assert.True(portraitTop + portrait.ActualHeight < flagTop,
+                "The country flag must sit below the portrait without overlap.");
+
+            var secondSlot = Assert.IsType<ContentPresenter>(slots.ItemContainerGenerator.ContainerFromIndex(1));
+            var thirdSlot = Assert.IsType<ContentPresenter>(slots.ItemContainerGenerator.ContainerFromIndex(2));
+            var firstTop = firstSlot.TranslatePoint(new Point(0, 0), slots).Y;
+            var secondTop = secondSlot.TranslatePoint(new Point(0, 0), slots).Y;
+            var thirdTop = thirdSlot.TranslatePoint(new Point(0, 0), slots).Y;
+            var secondStagger = Assert.IsType<TranslateTransform>(secondSlot.RenderTransform);
+            Assert.Equal(130, secondStagger.Y);
+            Assert.InRange(secondTop - firstTop, 129.5, 130.5);
+            Assert.InRange(thirdTop - firstTop, 259.5, 260.5);
 
             var playerSlot = Assert.IsType<ContentPresenter>(slots.ItemContainerGenerator.ContainerFromIndex(19));
             var playerFlag = Assert.IsAssignableFrom<FrameworkElement>(
                 playerSlot.ContentTemplate.FindName("SmgpFlagFrame", playerSlot));
+            var playerFlagImage = Assert.IsType<Image>(
+                playerSlot.ContentTemplate.FindName("SmgpFlagImage", playerSlot));
             var youBadge = Assert.IsAssignableFrom<FrameworkElement>(
                 playerSlot.ContentTemplate.FindName("SmgpYouBadge", playerSlot));
-            Assert.Equal(Visibility.Collapsed, playerFlag.Visibility);
+            var playerPortrait = Assert.IsAssignableFrom<FrameworkElement>(
+                playerSlot.ContentTemplate.FindName("SmgpPortraitFrame", playerSlot));
+            var playerVisuals = Assert.IsType<Grid>(
+                playerSlot.ContentTemplate.FindName("SmgpDriverVisuals", playerSlot));
+            var playerPortraitImage = Assert.IsType<Image>(
+                playerSlot.ContentTemplate.FindName("SmgpPortraitImage", playerSlot));
+            Assert.Equal(Visibility.Visible, playerFlag.Visibility);
+            Assert.Equal(Visibility.Visible, playerFlagImage.Visibility);
+            Assert.NotNull(playerFlagImage.Source);
             Assert.Equal(Visibility.Visible, youBadge.Visibility);
+            var playerScale = Assert.IsType<ScaleTransform>(playerPortrait.RenderTransform);
+            Assert.Equal(1.05, playerScale.ScaleX);
+            Assert.Equal(1.05, playerScale.ScaleY);
+            Assert.Equal(Stretch.UniformToFill, playerPortraitImage.Stretch);
+            Assert.True(playerPortrait.ActualWidth * playerScale.ScaleX <=
+                        playerVisuals.ColumnDefinitions[0].ActualWidth,
+                $"The {playerPortrait.ActualWidth * playerScale.ScaleX:0.##}px player portrait must fit " +
+                $"inside its {playerVisuals.ColumnDefinitions[0].ActualWidth:0.##}px rail without right-edge clipping.");
+        });
+    }
+
+    [Fact]
+    public void StartingGridView_LegacyPlayerWithoutCountry_CollapsesResolvedFlagFrame()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            const string legacyPlayerId = "driver.player-entrant";
+            GridSeat[] grid =
+            [
+                SmgpSeat(
+                    legacyPlayerId, "Legacy Player", "team.lares", "Lares", "23",
+                    isPlayer: true),
+            ];
+            var vm = new StartingGridViewModel(
+                grid, legacyPlayerId, "Preliminary Race",
+                new GridConditions
+                {
+                    LapDistanceKm = 5.040,
+                    Weather = "Clear",
+                    TrackTempC = 29,
+                    AirTempC = 23,
+                },
+                playerCarArtDriverId: "driver.park_arai");
+            Assert.Null(vm.Slots.Single().CountryFlagKey);
+
+            var view = new StartingGridView { DataContext = vm };
+            var home = new HomeView { DataContext = new ModeHost(), Content = view };
+            home.Measure(new Size(720, 500));
+            home.Arrange(new Rect(0, 0, 720, 500));
+            home.UpdateLayout();
+
+            var slots = Assert.IsType<ItemsControl>(view.FindName("SmgpSlotList"));
+            var playerSlot = Assert.IsType<ContentPresenter>(
+                slots.ItemContainerGenerator.ContainerFromIndex(0));
+            var flagFrame = Assert.IsAssignableFrom<FrameworkElement>(
+                playerSlot.ContentTemplate.FindName("SmgpFlagFrame", playerSlot));
+            var flagImage = Assert.IsType<Image>(
+                playerSlot.ContentTemplate.FindName("SmgpFlagImage", playerSlot));
+
+            Assert.Null(flagImage.Source);
+            Assert.Equal(Visibility.Collapsed, flagImage.Visibility);
+            Assert.Equal(Visibility.Collapsed, flagFrame.Visibility);
         });
     }
 
@@ -258,6 +419,20 @@ public sealed class StartingGridRenderTests
                 $"Expected the SMGP track to fill a wide monitor, but it measured {wide.TrackWidth:0.#}px.");
             Assert.True(wide.TrackWidth > compact.TrackWidth * 2,
                 $"Expected responsive growth from {compact.TrackWidth:0.#}px to {wide.TrackWidth:0.#}px.");
+
+            var slots = Assert.IsType<ItemsControl>(view.FindName("SmgpSlotList"));
+            var firstSlot = Assert.IsType<ContentPresenter>(
+                slots.ItemContainerGenerator.ContainerFromIndex(0));
+            var carBay = Assert.IsAssignableFrom<FrameworkElement>(
+                firstSlot.ContentTemplate.FindName("SmgpCarBay", firstSlot));
+            var carBayOutline = Assert.IsType<Border>(
+                firstSlot.ContentTemplate.FindName("SmgpGridBayOutline", firstSlot));
+            Assert.InRange(carBayOutline.ActualWidth, 207.5, 208.5);
+            var originalOutlineCap = carBay.MaxWidth
+                                     - carBayOutline.Margin.Left
+                                     - carBayOutline.Margin.Right;
+            var configuredReduction = 1 - carBayOutline.MaxWidth / originalOutlineCap;
+            Assert.InRange(configuredReduction, 0.34, 0.36);
         });
     }
 

@@ -33,6 +33,7 @@ public sealed class SkillTreeTests
         Assert.True(tree.Branches.Single(branch => branch.Id == "physical").IsMeta);
         Assert.False(tree.Branches.Single(branch => branch.Id == "pace").IsMeta);
         Assert.Equal(42 + 15, tree.Branches.Sum(branch => branch.Nodes.Count));
+        Assert.All(tree.Branches.SelectMany(branch => branch.Nodes), node => Assert.NotEmpty(node.Effects));
     }
 
     [Fact]
@@ -52,6 +53,46 @@ public sealed class SkillTreeTests
         var poor = SkillTree.Build(Character("engineers_favorite"), 6, 0, rules)
             .Branches.SelectMany(branch => branch.Nodes).Single(node => node.Id == "late_braker");
         Assert.Equal("Costs 1 SP", poor.LockReason);
+    }
+
+    [Fact]
+    public void Build_ClassifiesPerkAndStatNodeEffects()
+    {
+        var rules = Rules();
+        var rulesWithMetaRail = rules with
+        {
+            SkillTree = rules.SkillTree with
+            {
+                StatNodes = rules.SkillTree.StatNodes.Concat(
+                [
+                    new StatNodeRule
+                    {
+                        Id = "raise_marketability_test",
+                        Name = "Raise Marketability",
+                        Stat = "marketability",
+                        Branch = "business",
+                    },
+                ]).ToList(),
+            },
+        };
+
+        var nodes = SkillTree.Build(Character(), level: 1, availableSp: 3, rulesWithMetaRail)
+            .Branches.SelectMany(branch => branch.Nodes).ToDictionary(node => node.Id);
+
+        var talent = Assert.Single(nodes["raise_pace_1"].Effects);
+        Assert.Equal(CharacterEffectClass.Expectation, talent.Classification);
+        Assert.Equal("EXPECTATION", talent.ClassificationLabel);
+        Assert.Equal(nodes["raise_pace_1"].Benefits, [talent.Text]);
+
+        var meta = Assert.Single(nodes["raise_marketability_test"].Effects);
+        Assert.Equal(CharacterEffectClass.Career, meta.Classification);
+        Assert.Equal("CAREER", meta.ClassificationLabel);
+        Assert.Equal(nodes["raise_marketability_test"].Benefits, [meta.Text]);
+
+        var carPerk = nodes["rain_man"].Effects.First(line =>
+            line.Classification == CharacterEffectClass.Car);
+        Assert.Equal("CAR", carPerk.ClassificationLabel);
+        Assert.Contains(carPerk.Text, nodes["rain_man"].Benefits.Concat(nodes["rain_man"].Drawbacks));
     }
 
     [Fact]

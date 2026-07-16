@@ -1,0 +1,1248 @@
+{
+  "$comment": "Progression-v2 Racing DNA catalog. Definition ids and versioned effects are immutable once released; later balance changes must append a new definition version. DNA costs no Skill Points, survives resets, and every effect is deterministic from journaled career facts.",
+  "schemaVersion": 1,
+  "progressionVersion": 2,
+  "creationBudget": {
+    "version": 1,
+    "statSumCap": 4.2,
+    "traitBudget": 6,
+    "traitSpendMin": 0,
+    "traitSpendMax": 9,
+    "maxTraits": 5,
+    "talentRanges": {
+      "pace": [0.15, 0.85],
+      "oneLap": [0.15, 0.85],
+      "craft": [0.15, 0.85],
+      "racecraft": [0.15, 0.85],
+      "adaptability": [0.15, 0.85]
+    },
+    "metaRanges": {
+      "marketability": [0.15, 0.85],
+      "durability": [0.15, 0.85]
+    }
+  },
+  "definitions": [
+    {
+      "id": "dna_prodigy",
+      "version": 1,
+      "name": "The Prodigy",
+      "description": "Exceptional results accelerate a young star's reputation and offer momentum, but the paddock permanently judges every failure against a higher ceiling.",
+      "primaryFamily": "pace",
+      "secondaryFamily": "media",
+      "startingStats": {
+        "pace": 0.62,
+        "oneLap": 0.60,
+        "craft": 0.30,
+        "racecraft": 0.55,
+        "adaptability": 0.45
+      },
+      "startingMeta": {
+        "marketability": 0.70,
+        "durability": 0.40
+      },
+      "startingTraitIds": ["works_prodigy", "wonderkid", "glass_cannon"],
+      "persistentEffects": [
+        {
+          "key": "prodigyExceptionalResultMomentum",
+          "classification": "career",
+          "summary": "Exceptional results amplify reputation and offer-score movement.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "prodigyExpectationPressure",
+          "classification": "expectation",
+          "summary": "Expectations are harsher and failures lose reputation at the same amplified rate.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_pole_sitter",
+      "version": 1,
+      "name": "The Pole Sitter",
+      "description": "Qualifying against expectation is the center of this identity; Saturdays pay more, while Sundays and failed qualifying attempts pay less.",
+      "primaryFamily": "pace",
+      "secondaryFamily": "mental",
+      "startingStats": {
+        "pace": 0.48,
+        "oneLap": 0.78,
+        "craft": 0.52,
+        "racecraft": 0.50,
+        "adaptability": 0.45
+      },
+      "startingMeta": {
+        "marketability": 0.56,
+        "durability": 0.50
+      },
+      "startingTraitIds": ["qualifying_specialist", "late_braker", "metronome"],
+      "persistentEffects": [
+        {
+          "key": "poleSitterQualifyingReward",
+          "classification": "career",
+          "summary": "Qualifying versus expectation contributes additional XP and reputation.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "poleSitterSundayDiscount",
+          "classification": "career",
+          "summary": "Sunday progression is reduced and qualifying failures are more damaging.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_engineer",
+      "version": 1,
+      "name": "The Engineer",
+      "description": "Clean classified finishes turn into development credit for the current team, at the expense of personal fame and portable sponsor momentum.",
+      "primaryFamily": "pace",
+      "secondaryFamily": "team",
+      "startingStats": {
+        "pace": 0.50,
+        "oneLap": 0.48,
+        "craft": 0.70,
+        "racecraft": 0.42,
+        "adaptability": 0.60
+      },
+      "startingMeta": {
+        "marketability": 0.42,
+        "durability": 0.58
+      },
+      "startingTraitIds": ["engineers_favorite", "test_driver", "team_player"],
+      "persistentEffects": [
+        {
+          "key": "engineerDevelopmentCredit",
+          "classification": "career",
+          "summary": "A clean classified finish adds development credit for the current team.",
+          "magnitude": 1.0,
+          "unit": "flatScore",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "engineerPersonalBrandDiscount",
+          "classification": "career",
+          "summary": "Personal fame and sponsor gains are reduced, and banked team affinity is lost on departure.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_circuit_specialist",
+      "version": 1,
+      "name": "The Circuit Specialist",
+      "description": "One chosen circuit family becomes a permanent specialty; progression rises there and falls everywhere else.",
+      "primaryFamily": "pace",
+      "secondaryFamily": "era",
+      "startingStats": {
+        "pace": 0.56,
+        "oneLap": 0.52,
+        "craft": 0.48,
+        "racecraft": 0.48,
+        "adaptability": 0.72
+      },
+      "startingMeta": {
+        "marketability": 0.50,
+        "durability": 0.52
+      },
+      "startingTraitIds": ["one_trick", "adaptable", "sunday_driver"],
+      "persistentEffects": [
+        {
+          "key": "circuitSpecialistAffinityReward",
+          "classification": "career",
+          "summary": "Rounds in the persisted track family grant enhanced progression.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "circuitSpecialistOffFamilyDiscount",
+          "classification": "career",
+          "summary": "Rounds outside the persisted track family grant reduced progression.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ],
+      "choice": {
+        "kind": "trackFamily",
+        "prompt": "Choose the circuit family that defines this driver's specialty.",
+        "required": true,
+        "options": ["street", "power", "highSpeed", "technical"]
+      }
+    },
+    {
+      "id": "dna_hard_charger",
+      "version": 1,
+      "name": "The Hard Charger",
+      "description": "Positions gained and aggressive overperformance pay more, while lost positions, driver-error DNFs, and crash exposure carry larger penalties.",
+      "primaryFamily": "racecraft",
+      "secondaryFamily": "physical",
+      "startingStats": {
+        "pace": 0.55,
+        "oneLap": 0.52,
+        "craft": 0.30,
+        "racecraft": 0.82,
+        "adaptability": 0.45
+      },
+      "startingMeta": {
+        "marketability": 0.60,
+        "durability": 0.42
+      },
+      "startingTraitIds": ["hard_charger", "opportunist", "injury_prone"],
+      "persistentEffects": [
+        {
+          "key": "hardChargerPositionGainReward",
+          "classification": "career",
+          "summary": "Positions gained and aggressive overperformance receive enhanced XP and reputation.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "hardChargerErrorExposure",
+          "classification": "career",
+          "summary": "Lost positions, driver-error DNFs, and crash injury exposure carry larger penalties.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_giant_killer",
+      "version": 1,
+      "name": "The Giant Killer",
+      "description": "Beating stronger machinery is the prize; equal or superior equipment reduces the value of otherwise similar results.",
+      "primaryFamily": "racecraft",
+      "secondaryFamily": "team",
+      "startingStats": {
+        "pace": 0.58,
+        "oneLap": 0.50,
+        "craft": 0.42,
+        "racecraft": 0.68,
+        "adaptability": 0.50
+      },
+      "startingMeta": {
+        "marketability": 0.55,
+        "durability": 0.50
+      },
+      "startingTraitIds": ["underdog_hero", "opportunist", "hard_charger"],
+      "persistentEffects": [
+        {
+          "key": "giantKillerTierUpsetReward",
+          "classification": "career",
+          "summary": "Beating stronger team tiers increases OPI, XP, and reputation movement.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "giantKillerMachineryComfortPenalty",
+          "classification": "career",
+          "summary": "Results in equal or superior machinery provide reduced progression.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_closer",
+      "version": 1,
+      "name": "The Closer",
+      "description": "The final third of a season creates extra momentum, but the opening third develops slowly and a late collapse is especially costly.",
+      "primaryFamily": "racecraft",
+      "secondaryFamily": "mental",
+      "startingStats": {
+        "pace": 0.52,
+        "oneLap": 0.48,
+        "craft": 0.62,
+        "racecraft": 0.58,
+        "adaptability": 0.54
+      },
+      "startingMeta": {
+        "marketability": 0.44,
+        "durability": 0.58
+      },
+      "startingTraitIds": ["ice_in_the_veins", "metronome", "sunday_driver"],
+      "persistentEffects": [
+        {
+          "key": "closerLateSeasonMomentum",
+          "classification": "career",
+          "summary": "Results in the final third of a season receive stronger progression and reputation weighting.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "closerOpeningSeasonDrag",
+          "classification": "career",
+          "summary": "The opening third advances more slowly and a late collapse is penalized more heavily.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_duelist",
+      "version": 1,
+      "name": "The Duelist",
+      "description": "A chosen rival becomes the center of the career's competitive story; winning that duel pays heavily and losing it hurts disproportionately.",
+      "primaryFamily": "racecraft",
+      "secondaryFamily": "media",
+      "startingStats": {
+        "pace": 0.52,
+        "oneLap": 0.50,
+        "craft": 0.40,
+        "racecraft": 0.75,
+        "adaptability": 0.48
+      },
+      "startingMeta": {
+        "marketability": 0.68,
+        "durability": 0.45
+      },
+      "startingTraitIds": ["hard_charger", "media_darling", "hothead"],
+      "persistentEffects": [
+        {
+          "key": "duelistRivalryReward",
+          "classification": "career",
+          "summary": "Beating the persisted rival is heavily weighted for XP, reputation, and headlines.",
+          "magnitude": 0.20,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "duelistRivalryLossPenalty",
+          "classification": "career",
+          "summary": "The rest of the field matters less and losing to the persisted rival hurts disproportionately.",
+          "magnitude": 0.20,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ],
+      "choice": {
+        "kind": "rivalDriverId",
+        "prompt": "Choose the rival whose head-to-head result defines this driver's career.",
+        "required": true
+      }
+    },
+    {
+      "id": "dna_comeback_veteran",
+      "version": 1,
+      "name": "The Comeback Veteran",
+      "description": "Returns from injury, missed races, or unemployment are easier and retain an age-risk offer floor, while uninterrupted careers progress more slowly.",
+      "primaryFamily": "physical",
+      "secondaryFamily": "era",
+      "startingStats": {
+        "pace": 0.44,
+        "oneLap": 0.42,
+        "craft": 0.58,
+        "racecraft": 0.46,
+        "adaptability": 0.50
+      },
+      "startingMeta": {
+        "marketability": 0.46,
+        "durability": 0.70
+      },
+      "startingTraitIds": ["iron_constitution", "company_man", "stamina_freak"],
+      "persistentEffects": [
+        {
+          "key": "comebackVeteranRecoveryFloor",
+          "classification": "career",
+          "summary": "Recovery after injury, missed races, or unemployment is shorter and return offers retain an age-risk floor.",
+          "magnitude": 1.0,
+          "unit": "seasonCount",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "comebackVeteranContinuityDiscount",
+          "classification": "career",
+          "summary": "Continuous uninterrupted seasons generate progression more slowly.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_survivor",
+      "version": 1,
+      "name": "The Survivor",
+      "description": "The first serious accident each season is deterministically made less severe, but conservative perception limits elite interest and aggressive-result fame.",
+      "primaryFamily": "physical",
+      "secondaryFamily": "mental",
+      "startingStats": {
+        "pace": 0.42,
+        "oneLap": 0.40,
+        "craft": 0.65,
+        "racecraft": 0.48,
+        "adaptability": 0.55
+      },
+      "startingMeta": {
+        "marketability": 0.40,
+        "durability": 0.80
+      },
+      "startingTraitIds": ["iron_constitution", "safe_hands", "quiet_professional"],
+      "persistentEffects": [
+        {
+          "key": "survivorSafetyDowngrade",
+          "classification": "career",
+          "summary": "The first serious accident each season is downgraded by one deterministic severity step.",
+          "magnitude": 1.0,
+          "unit": "severityStep",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "survivorConservativeCeiling",
+          "classification": "expectation",
+          "summary": "Conservative perception reduces elite-team offer score and aggressive-result fame.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_iron_athlete",
+      "version": 1,
+      "name": "The Iron Athlete",
+      "description": "Long-distance events and dense calendars avoid recovery erosion and minor injuries heal faster, while sprint and qualifying achievements pay less.",
+      "primaryFamily": "physical",
+      "secondaryFamily": "pace",
+      "startingStats": {
+        "pace": 0.55,
+        "oneLap": 0.48,
+        "craft": 0.58,
+        "racecraft": 0.50,
+        "adaptability": 0.55
+      },
+      "startingMeta": {
+        "marketability": 0.48,
+        "durability": 0.78
+      },
+      "startingTraitIds": ["stamina_freak", "ironman", "fuel_saver"],
+      "persistentEffects": [
+        {
+          "key": "ironAthleteRecoveryProtection",
+          "classification": "career",
+          "summary": "Long-distance events and dense calendars avoid recovery erosion, and minor injuries heal faster.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "ironAthleteSprintDiscount",
+          "classification": "career",
+          "summary": "Sprint and qualifying achievements grant less XP and media value.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_all_rounder",
+      "version": 1,
+      "name": "The All-Rounder",
+      "description": "Weather, circuit, and machinery extremes are damped in both directions, creating a dependable identity without specialist peaks.",
+      "primaryFamily": "mental",
+      "secondaryFamily": "pace",
+      "startingStats": {
+        "pace": 0.45,
+        "oneLap": 0.45,
+        "craft": 0.50,
+        "racecraft": 0.48,
+        "adaptability": 0.50
+      },
+      "startingMeta": {
+        "marketability": 0.50,
+        "durability": 0.55
+      },
+      "startingTraitIds": ["consistency_king", "adaptable", "team_player"],
+      "persistentEffects": [
+        {
+          "key": "allRounderConditionDamping",
+          "classification": "career",
+          "summary": "Conditional weather, circuit, and machinery penalties are damped.",
+          "magnitude": 0.25,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "allRounderPeakCap",
+          "classification": "career",
+          "summary": "Conditional specialist bonuses are damped by the same identity ceiling.",
+          "magnitude": 0.25,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_points_machine",
+      "version": 1,
+      "name": "The Points Machine",
+      "description": "Consecutive classified finishes build a reliability dividend, but one DNF resets the streak and headline-grabbing results carry less commercial value.",
+      "primaryFamily": "mental",
+      "secondaryFamily": "physical",
+      "startingStats": {
+        "pace": 0.50,
+        "oneLap": 0.46,
+        "craft": 0.60,
+        "racecraft": 0.44,
+        "adaptability": 0.50
+      },
+      "startingMeta": {
+        "marketability": 0.40,
+        "durability": 0.66
+      },
+      "startingTraitIds": ["consistency_king", "ironman", "quiet_professional"],
+      "persistentEffects": [
+        {
+          "key": "pointsMachineReliabilityDividend",
+          "classification": "career",
+          "summary": "Consecutive classified finishes build a capped XP and contract-patience dividend.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "pointsMachineStreakReset",
+          "classification": "career",
+          "summary": "A DNF resets the streak, while wins and poles create less sponsor and headline value.",
+          "magnitude": 1.0,
+          "unit": "booleanOverride",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_ice_man",
+      "version": 1,
+      "name": "The Ice Man",
+      "description": "Title deciders and high-pressure rounds damp negative movement, while ordinary early and mid-season success advances more slowly.",
+      "primaryFamily": "mental",
+      "secondaryFamily": "racecraft",
+      "startingStats": {
+        "pace": 0.50,
+        "oneLap": 0.52,
+        "craft": 0.62,
+        "racecraft": 0.62,
+        "adaptability": 0.48
+      },
+      "startingMeta": {
+        "marketability": 0.42,
+        "durability": 0.62
+      },
+      "startingTraitIds": ["ice_in_the_veins", "quiet_professional", "metronome"],
+      "persistentEffects": [
+        {
+          "key": "iceManPressureLossDamping",
+          "classification": "career",
+          "summary": "Negative form and reputation movement is damped in title deciders and high-pressure rounds.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "iceManOrdinarySuccessDiscount",
+          "classification": "career",
+          "summary": "Ordinary early and mid-season success provides less progression.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_strategist",
+      "version": 1,
+      "name": "The Strategist",
+      "description": "A declared season objective shifts value from individual races into relationship and development credit at the campaign level.",
+      "primaryFamily": "mental",
+      "secondaryFamily": "team",
+      "startingStats": {
+        "pace": 0.48,
+        "oneLap": 0.46,
+        "craft": 0.72,
+        "racecraft": 0.52,
+        "adaptability": 0.58
+      },
+      "startingMeta": {
+        "marketability": 0.48,
+        "durability": 0.58
+      },
+      "startingTraitIds": ["team_player", "engineers_favorite", "consistency_king"],
+      "persistentEffects": [
+        {
+          "key": "strategistObjectiveCompletionCredit",
+          "classification": "career",
+          "summary": "Completing the persisted season objective grants relationship and development credit.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "strategistIndividualRaceDiscount",
+          "classification": "career",
+          "summary": "Individual-race XP is reduced and missing the declared objective forfeits the completion dividend.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ],
+      "choice": {
+        "kind": "seasonObjective",
+        "prompt": "Choose the season objective this driver will prioritize.",
+        "required": true,
+        "options": ["points", "teammate", "classification"]
+      }
+    },
+    {
+      "id": "dna_pay_driver",
+      "version": 1,
+      "name": "The Pay Driver",
+      "description": "Portable sponsor backing opens otherwise inaccessible offers, while sporting reputation, salary, and team patience remain limited by the stigma.",
+      "primaryFamily": "business",
+      "secondaryFamily": "media",
+      "startingStats": {
+        "pace": 0.30,
+        "oneLap": 0.32,
+        "craft": 0.45,
+        "racecraft": 0.42,
+        "adaptability": 0.40
+      },
+      "startingMeta": {
+        "marketability": 0.80,
+        "durability": 0.50
+      },
+      "startingTraitIds": ["sponsor_magnet", "media_darling", "underdog_hero"],
+      "persistentEffects": [
+        {
+          "key": "payDriverSponsorAccess",
+          "classification": "career",
+          "summary": "Portable sponsor backing opens offer shortlists and can bypass a normal reputation floor.",
+          "magnitude": 1.0,
+          "unit": "booleanOverride",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "payDriverStigmaPenalty",
+          "classification": "career",
+          "summary": "Salary, sporting reputation, and team patience are reduced by the pay-driver stigma.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_privateer",
+      "version": 1,
+      "name": "The Privateer",
+      "description": "Independent racing retains more income and reduces operating costs, while works-team interest and factory development are harder to earn.",
+      "primaryFamily": "business",
+      "secondaryFamily": "team",
+      "startingStats": {
+        "pace": 0.42,
+        "oneLap": 0.40,
+        "craft": 0.55,
+        "racecraft": 0.45,
+        "adaptability": 0.48
+      },
+      "startingMeta": {
+        "marketability": 0.48,
+        "durability": 0.52
+      },
+      "startingTraitIds": ["sponsor_magnet", "cheap_contract", "engineers_favorite"],
+      "persistentEffects": [
+        {
+          "key": "privateerIncomeRetention",
+          "classification": "career",
+          "summary": "Start and prize income retention rises while independent operating and repair costs fall.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "privateerFactoryInterestPenalty",
+          "classification": "career",
+          "summary": "Works-team interest and factory-development benefits are reduced.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_mercenary",
+      "version": 1,
+      "name": "The Mercenary",
+      "description": "Changing teams pays immediately and avoids adaptation loss, but loyalty, long contracts, and retention offers never develop fully.",
+      "primaryFamily": "business",
+      "secondaryFamily": "pace",
+      "startingStats": {
+        "pace": 0.58,
+        "oneLap": 0.52,
+        "craft": 0.42,
+        "racecraft": 0.50,
+        "adaptability": 0.68
+      },
+      "startingMeta": {
+        "marketability": 0.58,
+        "durability": 0.48
+      },
+      "startingTraitIds": ["mercenary", "cheap_contract", "adaptable"],
+      "persistentEffects": [
+        {
+          "key": "mercenarySigningPremium",
+          "classification": "career",
+          "summary": "Team switches grant a signing premium and remove the usual first-season adaptation penalty.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "mercenaryLoyaltyCeiling",
+          "classification": "career",
+          "summary": "Loyalty cannot rise above neutral, and long or retention contracts are weaker.",
+          "magnitude": 1.0,
+          "unit": "booleanOverride",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_rain_master",
+      "version": 1,
+      "name": "The Rain Master",
+      "description": "Wet-round overperformance receives a major progression premium, while dry-round results provide reduced growth.",
+      "primaryFamily": "weather",
+      "secondaryFamily": "racecraft",
+      "startingStats": {
+        "pace": 0.44,
+        "oneLap": 0.46,
+        "craft": 0.50,
+        "racecraft": 0.45,
+        "adaptability": 0.82
+      },
+      "startingMeta": {
+        "marketability": 0.50,
+        "durability": 0.50
+      },
+      "startingTraitIds": ["rain_man", "one_trick", "tyre_whisperer"],
+      "persistentEffects": [
+        {
+          "key": "rainMasterWetOverperformance",
+          "classification": "career",
+          "summary": "Wet-round overperformance grants strongly enhanced XP, OPI, and reputation.",
+          "magnitude": 0.20,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "rainMasterDryDiscount",
+          "classification": "career",
+          "summary": "Dry-round progression is reduced, especially when merely meeting expectation.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_storm_chaser",
+      "version": 1,
+      "name": "The Storm Chaser",
+      "description": "Mixed and changing conditions reward successful adaptation, while completely stable conditions reduce progression.",
+      "primaryFamily": "weather",
+      "secondaryFamily": "physical",
+      "startingStats": {
+        "pace": 0.46,
+        "oneLap": 0.44,
+        "craft": 0.50,
+        "racecraft": 0.46,
+        "adaptability": 0.72
+      },
+      "startingMeta": {
+        "marketability": 0.50,
+        "durability": 0.55
+      },
+      "startingTraitIds": ["rain_man", "adaptable", "fuel_saver"],
+      "persistentEffects": [
+        {
+          "key": "stormChaserMixedConditionAdaptation",
+          "classification": "career",
+          "summary": "Mixed or changing conditions damp penalties and reward successful adaptation.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "stormChaserStableConditionDiscount",
+          "classification": "career",
+          "summary": "Fully stable wet or dry rounds provide reduced progression.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_sunshine_specialist",
+      "version": 1,
+      "name": "The Sunshine Specialist",
+      "description": "Dry and hot results earn extra progression and sponsor value, while wet results receive a harsher expectation and reputation penalty.",
+      "primaryFamily": "weather",
+      "secondaryFamily": "pace",
+      "startingStats": {
+        "pace": 0.56,
+        "oneLap": 0.65,
+        "craft": 0.46,
+        "racecraft": 0.50,
+        "adaptability": 0.42
+      },
+      "startingMeta": {
+        "marketability": 0.68,
+        "durability": 0.48
+      },
+      "startingTraitIds": ["sunshine_specialist", "qualifying_specialist", "sponsor_magnet"],
+      "persistentEffects": [
+        {
+          "key": "sunshineSpecialistDryHotReward",
+          "classification": "career",
+          "summary": "Dry or hot qualifying and race results earn enhanced progression and sponsor value.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "sunshineSpecialistWetPenalty",
+          "classification": "expectation",
+          "summary": "Wet results carry a larger expectation and reputation penalty.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_journeyman",
+      "version": 1,
+      "name": "The Journeyman",
+      "description": "Lower-tier teams, unfamiliar classes, and emergency vacancies are easier to access, while elite salary and celebrity ceilings remain lower.",
+      "primaryFamily": "team",
+      "secondaryFamily": "era",
+      "startingStats": {
+        "pace": 0.42,
+        "oneLap": 0.40,
+        "craft": 0.60,
+        "racecraft": 0.45,
+        "adaptability": 0.52
+      },
+      "startingMeta": {
+        "marketability": 0.40,
+        "durability": 0.62
+      },
+      "startingTraitIds": ["journeyman", "cheap_contract", "safe_hands"],
+      "persistentEffects": [
+        {
+          "key": "journeymanVacancyAccess",
+          "classification": "career",
+          "summary": "Lower-tier teams, unfamiliar classes, and emergency vacancies use a reduced reputation floor for one-year offers.",
+          "magnitude": 1.0,
+          "unit": "booleanOverride",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "journeymanEliteCeiling",
+          "classification": "career",
+          "summary": "Top-team salary, celebrity growth, and long-term elite interest are reduced.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_loyalist",
+      "version": 1,
+      "name": "The Loyalist",
+      "description": "Consecutive seasons with one team build relationship, development, and patience, while changing teams erases the stack and adds an adaptation penalty.",
+      "primaryFamily": "team",
+      "secondaryFamily": "business",
+      "startingStats": {
+        "pace": 0.46,
+        "oneLap": 0.44,
+        "craft": 0.65,
+        "racecraft": 0.48,
+        "adaptability": 0.58
+      },
+      "startingMeta": {
+        "marketability": 0.42,
+        "durability": 0.65
+      },
+      "startingTraitIds": ["company_man", "team_player", "engineers_favorite"],
+      "persistentEffects": [
+        {
+          "key": "loyalistTeamTenureStack",
+          "classification": "career",
+          "summary": "Each consecutive season with one team stacks relationship, development, and contract patience.",
+          "magnitude": 1.0,
+          "unit": "seasonCount",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "loyalistDeparturePenalty",
+          "classification": "career",
+          "summary": "A team change erases the stack and imposes a first-season relationship penalty.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_team_leader",
+      "version": 1,
+      "name": "The Team Leader",
+      "description": "Constructor objectives and teammate success become part of the driver's reputation, while individual glory and win-focused commercial rewards are reduced.",
+      "primaryFamily": "team",
+      "secondaryFamily": "media",
+      "startingStats": {
+        "pace": 0.50,
+        "oneLap": 0.48,
+        "craft": 0.68,
+        "racecraft": 0.56,
+        "adaptability": 0.55
+      },
+      "startingMeta": {
+        "marketability": 0.62,
+        "durability": 0.58
+      },
+      "startingTraitIds": ["team_player", "company_man", "media_darling"],
+      "persistentEffects": [
+        {
+          "key": "teamLeaderConstructorCredit",
+          "classification": "career",
+          "summary": "Constructor objectives and teammate success contribute to reputation, relationship, and development.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "teamLeaderIndividualGloryDiscount",
+          "classification": "career",
+          "summary": "Individual glory, salary bonuses, and win-focused sponsor value are reduced.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_showman",
+      "version": 1,
+      "name": "The Showman",
+      "description": "Comebacks, upsets, and dramatic results generate larger headlines and sponsor movement, while routine points matter less and visible failure swings harder.",
+      "primaryFamily": "media",
+      "secondaryFamily": "racecraft",
+      "startingStats": {
+        "pace": 0.52,
+        "oneLap": 0.50,
+        "craft": 0.40,
+        "racecraft": 0.62,
+        "adaptability": 0.46
+      },
+      "startingMeta": {
+        "marketability": 0.74,
+        "durability": 0.48
+      },
+      "startingTraitIds": ["opportunist", "media_darling", "streaky"],
+      "persistentEffects": [
+        {
+          "key": "showmanDramaticResultBoost",
+          "classification": "career",
+          "summary": "Comebacks, upsets, and dramatic results amplify headlines and sponsor growth.",
+          "magnitude": 0.20,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "showmanVisibleFailureSwing",
+          "classification": "career",
+          "summary": "Routine points pay less and visible failure causes larger reputation swings.",
+          "magnitude": 0.20,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_quiet_professional",
+      "version": 1,
+      "name": "The Quiet Professional",
+      "description": "Media, scandal, and sponsor-health volatility is reduced and team patience improves, at the cost of celebrity and breakout upside.",
+      "primaryFamily": "media",
+      "secondaryFamily": "mental",
+      "startingStats": {
+        "pace": 0.48,
+        "oneLap": 0.48,
+        "craft": 0.68,
+        "racecraft": 0.50,
+        "adaptability": 0.55
+      },
+      "startingMeta": {
+        "marketability": 0.36,
+        "durability": 0.65
+      },
+      "startingTraitIds": ["quiet_professional", "safe_hands", "consistency_king"],
+      "persistentEffects": [
+        {
+          "key": "quietProfessionalVolatilityDamping",
+          "classification": "career",
+          "summary": "Media, scandal, and sponsor-health movement is damped while team patience improves.",
+          "magnitude": 0.20,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "quietProfessionalBreakoutCeiling",
+          "classification": "career",
+          "summary": "Celebrity ceiling, sponsor upside, and breakout-weekend gains are lower.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_national_hero",
+      "version": 1,
+      "name": "The National Hero",
+      "description": "Home-country races, teams, and compatible sponsors generate extra reputation and commercial value, while foreign opportunities apply a modest penalty.",
+      "primaryFamily": "media",
+      "secondaryFamily": "era",
+      "startingStats": {
+        "pace": 0.52,
+        "oneLap": 0.50,
+        "craft": 0.48,
+        "racecraft": 0.55,
+        "adaptability": 0.52
+      },
+      "startingMeta": {
+        "marketability": 0.82,
+        "durability": 0.50
+      },
+      "startingTraitIds": ["media_darling", "sponsor_magnet", "company_man"],
+      "persistentEffects": [
+        {
+          "key": "nationalHeroHomeAffinity",
+          "classification": "career",
+          "summary": "Home-country races, teams, and compatible sponsors enhance reputation and commercial value.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "nationalHeroForeignPenalty",
+          "classification": "career",
+          "summary": "Foreign teams and sponsors apply a modest offer-score penalty.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ],
+      "choice": {
+        "kind": "nationalityAffinity",
+        "prompt": "Choose the nationality affinity that defines this driver's home audience.",
+        "required": true
+      }
+    },
+    {
+      "id": "dna_late_bloomer",
+      "version": 1,
+      "name": "The Late Bloomer",
+      "description": "Early progression is deliberately slower, but later development accelerates and age-risk onset is deferred.",
+      "primaryFamily": "era",
+      "secondaryFamily": "mental",
+      "startingStats": {
+        "pace": 0.34,
+        "oneLap": 0.32,
+        "craft": 0.62,
+        "racecraft": 0.40,
+        "adaptability": 0.55
+      },
+      "startingMeta": {
+        "marketability": 0.42,
+        "durability": 0.65
+      },
+      "startingTraitIds": ["late_bloomer", "iron_constitution", "student_of_the_craft"],
+      "persistentEffects": [
+        {
+          "key": "lateBloomerCareerAcceleration",
+          "classification": "career",
+          "summary": "Later-career XP accelerates and age-risk onset is deferred.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "lateBloomerOpeningDiscount",
+          "classification": "career",
+          "summary": "Early-career XP is reduced and the opening career develops more slowly.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_old_school_racer",
+      "version": 1,
+      "name": "The Old School Racer",
+      "description": "Mechanical failures in unreliable machinery harm reputation less and dangerous-era teams value resilience, while modern commercial and technical teams are less interested.",
+      "primaryFamily": "era",
+      "secondaryFamily": "physical",
+      "startingStats": {
+        "pace": 0.52,
+        "oneLap": 0.44,
+        "craft": 0.62,
+        "racecraft": 0.60,
+        "adaptability": 0.48
+      },
+      "startingMeta": {
+        "marketability": 0.40,
+        "durability": 0.78
+      },
+      "startingTraitIds": ["iron_constitution", "safe_hands", "journeyman"],
+      "persistentEffects": [
+        {
+          "key": "oldSchoolRacerReliabilityShield",
+          "classification": "career",
+          "summary": "Mechanical DNFs in reliability-poor machinery damage reputation less and dangerous-era teams value resilience.",
+          "magnitude": 0.15,
+          "unit": "multiplierDelta",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "oldSchoolRacerModernTeamPenalty",
+          "classification": "career",
+          "summary": "Modern commercial, media, and technology-led teams score the driver less favorably.",
+          "magnitude": 5.0,
+          "unit": "flatScore",
+          "balanceValue": -1.0
+        }
+      ]
+    },
+    {
+      "id": "dna_era_chameleon",
+      "version": 1,
+      "name": "The Era Chameleon",
+      "description": "The first season after a class or era transition avoids unfamiliarity and grants adaptation XP, while repeated seasons in unchanged machinery build mastery and loyalty more slowly.",
+      "primaryFamily": "era",
+      "secondaryFamily": "weather",
+      "startingStats": {
+        "pace": 0.50,
+        "oneLap": 0.48,
+        "craft": 0.58,
+        "racecraft": 0.52,
+        "adaptability": 0.78
+      },
+      "startingMeta": {
+        "marketability": 0.48,
+        "durability": 0.62
+      },
+      "startingTraitIds": ["adaptable", "journeyman", "rain_man"],
+      "persistentEffects": [
+        {
+          "key": "eraChameleonTransitionAdaptation",
+          "classification": "career",
+          "summary": "The first season after a class or era transition avoids unfamiliarity penalties and grants adaptation XP.",
+          "magnitude": 1.0,
+          "unit": "seasonCount",
+          "balanceValue": 1.0
+        }
+      ],
+      "tradeoffEffects": [
+        {
+          "key": "eraChameleonStableMachineryDiscount",
+          "classification": "career",
+          "summary": "Repeated seasons in unchanged machinery build mastery and loyalty more slowly.",
+          "magnitude": 0.10,
+          "unit": "multiplierDelta",
+          "balanceValue": -1.0
+        }
+      ]
+    }
+  ]
+}

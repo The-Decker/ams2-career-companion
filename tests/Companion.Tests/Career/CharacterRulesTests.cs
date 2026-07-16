@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Companion.Core.Character;
+using Companion.Core.Json;
 
 namespace Companion.Tests.Career;
 
@@ -49,6 +50,29 @@ public sealed class CharacterRulesTests
         Assert.Contains(rainMan.Effects, e => e.Kind == "drawback");
 
         Assert.False(rules.TryGetPerk("no_such_perk", out _));
+    }
+
+    [Fact]
+    public void PerkEffect_ClassificationIsOptionalAndSerializesAsCamelCase()
+    {
+        var legacy = JsonSerializer.Deserialize<PerkEffect>(
+            """{ "kind":"benefit", "lever":"statDelta" }""", CoreJson.Options)!;
+
+        Assert.Null(legacy.Classification);
+        Assert.DoesNotContain(
+            "\"classification\"",
+            JsonSerializer.Serialize(legacy, CoreJson.Options),
+            StringComparison.Ordinal);
+
+        var authored = JsonSerializer.Deserialize<PerkEffect>(
+            """{ "kind":"benefit", "lever":"statDelta", "classification":"car" }""",
+            CoreJson.Options)!;
+
+        Assert.Equal(CharacterEffectClass.Car, authored.Classification);
+        Assert.Contains(
+            "\"classification\": \"car\"",
+            JsonSerializer.Serialize(authored, CoreJson.Options),
+            StringComparison.Ordinal);
     }
 
     [Fact]

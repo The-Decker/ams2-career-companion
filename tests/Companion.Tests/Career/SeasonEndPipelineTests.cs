@@ -6,6 +6,68 @@ namespace Companion.Tests.Career;
 
 public class SeasonEndPipelineTests
 {
+    private static CharacterRules Rules() =>
+        CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+
+    private static MasterySkillCatalog MasteryCatalog(CharacterRules rules) =>
+        MasterySkillCatalog.Parse(
+            CareerTestData.ReadRules("mastery-skills-v2.json"),
+            rules,
+            RacingDnaCatalog.Parse(CareerTestData.ReadRules("racing-dna-v2.json"), rules));
+
+    private static CharacterProfile MasteryCharacter(
+        IReadOnlyList<string> acquiredSkillIds,
+        int effectsVersion = CharacterProfile.CurrentMasteryEffectsVersion) => new()
+        {
+            Name = "Pat Player",
+            ProgressionVersion = CharacterLevelProgression.Level300Version,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.5,
+                ["oneLap"] = 0.5,
+                ["craft"] = 0.5,
+                ["racecraft"] = 0.5,
+                ["adaptability"] = 0.5,
+                ["marketability"] = 0.5,
+                ["durability"] = 0.5,
+            },
+            PerkIds = [],
+            AcquiredSkillIds = acquiredSkillIds,
+            MasteryEffectsVersion = effectsVersion,
+        };
+
+    private static PlayerCareerState VersionTwoPlayer(
+        PlayerCareerState player,
+        CharacterProfile character) => player with
+        {
+            Character = character,
+            ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+            CampaignProgressionPlan = FractionalVersionTwoPlan(),
+        };
+
+    private static CampaignProgressionPlan FractionalVersionTwoPlan() =>
+        CampaignProgressionPlan.Create(
+            CareerExperienceModes.GrandPrixDynasty,
+            1967,
+            2020,
+            [
+                new PinnedCampaignSeason
+                {
+                    PackId = "f1-1967", PackVersion = "1.0.0", Sha256 = new string('a', 64),
+                    Year = 1967, ChampionshipRoundCount = 11,
+                },
+                new PinnedCampaignSeason
+                {
+                    PackId = "f1-1968", PackVersion = "1.0.0", Sha256 = new string('b', 64),
+                    Year = 1968, ChampionshipRoundCount = 12,
+                },
+                new PinnedCampaignSeason
+                {
+                    PackId = "f1-2020", PackVersion = "1.0.0", Sha256 = new string('c', 64),
+                    Year = 2020, ChampionshipRoundCount = 17,
+                },
+            ]);
+
     // ---------- determinism ----------
 
     [Fact]
@@ -117,6 +179,234 @@ public class SeasonEndPipelineTests
     }
 
     [Fact]
+    public void VersionZeroCharacter_IgnoresTheMasteryCatalogExactly()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog mastery = MasteryCatalog(rules);
+        var context = CareerTestData.Context();
+        var character = MasteryCharacter(["business_commercial_titan"], effectsVersion: 0);
+        context = context with
+        {
+            CharacterRules = rules,
+            Player = VersionTwoPlayer(context.Player, character),
+        };
+
+        var withoutCatalog = SeasonEndPipeline.Run(context);
+        var withCatalog = SeasonEndPipeline.Run(context with { MasterySkills = mastery });
+
+        Assert.Equal(withoutCatalog.Events, withCatalog.Events);
+        Assert.Equal(withoutCatalog.Player, withCatalog.Player);
+        Assert.Equal(withoutCatalog.Drivers, withCatalog.Drivers);
+        Assert.Equal(withoutCatalog.Teams, withCatalog.Teams);
+        Assert.Equal(withoutCatalog.Offers, withCatalog.Offers);
+    }
+
+    [Fact]
+    public void ActiveMastery_UsesPreDriftHighTierAndDefaultOrExplicitWorksArchetype()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog mastery = MasteryCatalog(rules);
+        var character = MasteryCharacter(["v2_underdog_hero", "business_commercial_titan"]);
+        var context = CareerTestData.Context(playerReputation: 40.0);
+        context = context with
+        {
+            CharacterRules = rules,
+            MasterySkills = mastery,
+            Player = VersionTwoPlayer(context.Player, character) with
+            {
+                CurrentTeamId = "team.top",
+            },
+        };
+
+        var worksConditions = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "tierAtLeast4", "tierGte4", "worksTeam",
+        };
+        var worksMods = CharacterModifierResolver.Resolve(
+            character, rules, mastery, masteryConditions: worksConditions);
+        Assert.Equal(0.85, worksMods.RepSeasonMult, 12);
+        Assert.Equal(0.35, worksMods.Marketability, 12);
+
+        var defaultWorks = SeasonEndPipeline.Run(context);
+        double expectedWorks = ReputationMath.Apply(
+            context.Player.Reputation,
+            ReputationMath.SeasonDelta(3, 5, worksMods));
+        Assert.Equal(expectedWorks, defaultWorks.Player.Reputation, 12);
+
+        var tierOnlyConditions = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "tierAtLeast4", "tierGte4",
+        };
+        var privateerMods = CharacterModifierResolver.Resolve(
+            character, rules, mastery, masteryConditions: tierOnlyConditions);
+        Assert.Equal(0.85, privateerMods.RepSeasonMult, 12);
+        Assert.Equal(0.5, privateerMods.Marketability, 12);
+
+        var explicitPrivateer = SeasonEndPipeline.Run(context with
+        {
+            TeamArchetypeOverrides = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["team.top"] = "privateer",
+            },
+        });
+        double expectedPrivateer = ReputationMath.Apply(
+            context.Player.Reputation,
+            ReputationMath.SeasonDelta(3, 5, privateerMods));
+        Assert.Equal(expectedPrivateer, explicitPrivateer.Player.Reputation, 12);
+        Assert.NotEqual(defaultWorks.Player.Reputation, explicitPrivateer.Player.Reputation);
+    }
+
+    [Fact]
+    public void SeasonMasteryFacts_DoNotActivateLegacyTierConditionals()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog mastery = MasteryCatalog(rules);
+        var character = MasteryCharacter(["pace_rhythm"]) with
+        {
+            PerkIds = ["sponsor_magnet"],
+        };
+        var context = CareerTestData.Context(playerReputation: 40.0);
+        context = context with
+        {
+            CharacterRules = rules,
+            MasterySkills = mastery,
+            Player = VersionTwoPlayer(context.Player, character) with
+            {
+                CurrentTeamId = "team.top",
+            },
+        };
+
+        var masteryConditions = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "tierAtLeast4", "tierGte4", "worksTeam",
+        };
+        var expectedMods = CharacterModifierResolver.Resolve(
+            character,
+            rules,
+            mastery,
+            activeConditions: null,
+            masteryConditions: masteryConditions);
+        Assert.Equal(0.5, expectedMods.Marketability, 12);
+
+        var result = SeasonEndPipeline.Run(context);
+        double expectedReputation = ReputationMath.Apply(
+            context.Player.Reputation,
+            ReputationMath.SeasonDelta(3, 5, expectedMods));
+        Assert.Equal(expectedReputation, result.Player.Reputation, 12);
+    }
+
+    [Fact]
+    public void ActiveMastery_FlowsOfferExperienceAgePaySalaryAndReputationFloorEffects()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog mastery = MasteryCatalog(rules);
+        var character = MasteryCharacter(["business_paddock_fixture", "business_commercial_titan"]);
+        var context = CareerTestData.Context(playerReputation: 55.0) with
+        {
+            PlayerAge = 40,
+            CharacterRules = rules,
+            MasterySkills = mastery,
+        };
+        context = context with { Player = VersionTwoPlayer(context.Player, character) };
+
+        var result = SeasonEndPipeline.Run(context);
+        var modifiers = CharacterModifierResolver.Resolve(
+            character,
+            rules,
+            mastery,
+            masteryConditions: new HashSet<string>(StringComparer.Ordinal));
+
+        Assert.Equal(1, modifiers.RepFloorRelaxTiers);
+        Assert.InRange(result.Player.Reputation, 50.0, 69.9999);
+        PlayerOffer offer = Assert.Single(result.Offers, item => item.TeamId == "team.top");
+
+        int durabilityShift = SeasonEndPipeline.DurabilityAgeShift(character.Stat("durability"));
+        double ageRisk = SeasonEndPipeline.PlayerAgeRisk(
+            context.PlayerAge - durabilityShift,
+            context.AgingCurves.ForYear(context.Year).PeakAgeEnd,
+            modifiers);
+        double salaryAsk = Math.Max(1.0, result.Player.Reputation / 10.0);
+        TeamArchetype archetype = context.Archetypes.ForTeam(offer.Tier, archetypeName: null);
+        double ExpectedScore(PlayerPerkModifiers applied) => Math.Round(
+            TeamArchetypeCatalog.OfferScore(
+                archetype,
+                result.Player.Reputation,
+                result.Player.Opi,
+                result.Player.SeasonsCompleted,
+                salaryAsk,
+                ageRisk,
+                applied),
+            4);
+
+        Assert.Equal(ExpectedScore(modifiers), offer.Score, 12);
+        Assert.NotEqual(ExpectedScore(modifiers with { OfferExperienceMult = 1.0 }), offer.Score);
+        Assert.NotEqual(ExpectedScore(modifiers with { SalaryAskMult = 1.0 }), offer.Score);
+        Assert.NotEqual(ExpectedScore(modifiers with { AgeRiskMult = 1.0 }), offer.Score);
+        Assert.NotEqual(ExpectedScore(modifiers with { PayBudgetBu = 0.0 }), offer.Score);
+
+        double expectedSalary = context.Archetypes.SalaryOffer(
+            offer.Tier, result.Player.Reputation, modifiers);
+        Assert.Equal(expectedSalary, offer.SalaryBu, 12);
+        Assert.NotEqual(
+            context.Archetypes.SalaryOffer(offer.Tier, result.Player.Reputation),
+            offer.SalaryBu);
+    }
+
+    [Fact]
+    public void ActiveMasteryOwnedSkills_RequireThePinnedCatalogAtSeasonEnd()
+    {
+        CharacterRules rules = Rules();
+        var context = CareerTestData.Context();
+        context = context with
+        {
+            CharacterRules = rules,
+            Player = VersionTwoPlayer(context.Player, MasteryCharacter(["pace_rhythm"])),
+        };
+
+        var error = Assert.Throws<InvalidOperationException>(() => SeasonEndPipeline.Run(context));
+        Assert.Contains("mastery-skill catalog", error.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void MasteryInjuryBase_OptsIntoDeterministicRisk_ButProtectionAloneDoesNot()
+    {
+        CharacterRules rules = Rules();
+        MasterySkillCatalog mastery = MasteryCatalog(rules);
+        var risky = MasteryCharacter(["racecraft_switchback_school"]);
+        var riskModifiers = CharacterModifierResolver.Resolve(
+            risky,
+            rules,
+            mastery,
+            masteryConditions: new HashSet<string>(StringComparer.Ordinal));
+        double hazard = InjuryModel.Hazard(risky.Stat("durability"), riskModifiers);
+        ulong seed = Enumerable.Range(1, 10_000)
+            .Select(value => (ulong)value)
+            .First(value => new StreamFactory(value)
+                .CreateStream(CareerStreams.Injury, 1967, 0, "player")
+                .NextDouble() < hazard);
+
+        SeasonEndContext ContextFor(CharacterProfile character)
+        {
+            var seeded = CareerTestData.Context(masterSeed: seed);
+            return seeded with
+            {
+                CharacterRules = rules,
+                MasterySkills = mastery,
+                Player = VersionTwoPlayer(seeded.Player, character),
+            };
+        }
+
+        var firstRisk = SeasonEndPipeline.Run(ContextFor(risky));
+        var secondRisk = SeasonEndPipeline.Run(ContextFor(risky));
+        Assert.Contains(firstRisk.Events, item => item.Phase == JournalPhases.PlayerInjury);
+        Assert.Equal(firstRisk.Events, secondRisk.Events);
+
+        var protectionOnly = SeasonEndPipeline.Run(
+            ContextFor(MasteryCharacter(["physical_recovery_habits"])));
+        Assert.DoesNotContain(protectionOnly.Events, item => item.Phase == JournalPhases.PlayerInjury);
+    }
+
+    [Fact]
     public void VersionTwoSeasonXpCanReachLevel300InTheGoldenAge()
     {
         var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
@@ -146,6 +436,8 @@ public class SeasonEndPipelineTests
                 Character = character,
                 Level = 299,
                 Xp = 14_890,
+                ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+                CampaignProgressionPlan = FractionalVersionTwoPlan(),
             },
         });
 
@@ -153,6 +445,86 @@ public class SeasonEndPipelineTests
         var xpRow = result.Events.Single(e => e.Phase == JournalPhases.PlayerXp);
         using var delta = System.Text.Json.JsonDocument.Parse(xpRow.DeltaJson);
         Assert.Equal(300, delta.RootElement.GetProperty("level").GetInt32());
+    }
+
+    [Fact]
+    public void LegacySeasonXpRow_KeepsItsExactShape()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var context = CareerTestData.Context();
+        var character = new CharacterProfile
+        {
+            ProgressionVersion = CharacterLevelProgression.EraCappedVersion,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.5, ["oneLap"] = 0.5, ["craft"] = 0.5,
+                ["racecraft"] = 0.5, ["adaptability"] = 0.5,
+                ["marketability"] = 0.5, ["durability"] = 0.5,
+            },
+            PerkIds = [],
+        };
+
+        var result = SeasonEndPipeline.Run(context with
+        {
+            CharacterRules = rules,
+            Player = context.Player with { Character = character, Level = 1 },
+        });
+
+        var xpRow = result.Events.Single(e => e.Phase == JournalPhases.PlayerXp);
+        using var delta = System.Text.Json.JsonDocument.Parse(xpRow.DeltaJson);
+        Assert.Equal(
+            ["from", "to", "season", "level"],
+            delta.RootElement.EnumerateObject().Select(property => property.Name));
+    }
+
+    [Fact]
+    public void VersionTwoSeasonXp_AppliesPinnedScaleAndPersistsCarryWithAuditFields()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var context = CareerTestData.Context();
+        var plan = FractionalVersionTwoPlan();
+        var character = new CharacterProfile
+        {
+            ProgressionVersion = CharacterLevelProgression.Level300Version,
+            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+            {
+                ["pace"] = 0.5, ["oneLap"] = 0.5, ["craft"] = 0.5,
+                ["racecraft"] = 0.5, ["adaptability"] = 0.5,
+                ["marketability"] = 0.5, ["durability"] = 0.5,
+            },
+            PerkIds = [],
+        };
+        var player = context.Player with
+        {
+            Character = character,
+            Level = 1,
+            Xp = 0,
+            ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+            CampaignProgressionPlan = plan,
+            XpScaleRemainder = 3,
+        };
+
+        var result = SeasonEndPipeline.Run(context with
+        {
+            CharacterRules = rules,
+            Player = player,
+        });
+
+        var xpRow = result.Events.Single(e => e.Phase == JournalPhases.PlayerXp);
+        using var delta = System.Text.Json.JsonDocument.Parse(xpRow.DeltaJson);
+        var root = delta.RootElement;
+        int signedRawXp = root.GetProperty("signedRawXp").GetInt32();
+        var expected = CharacterProgressionV2Math.NormalizeXpAward(
+            signedRawXp, true, player.XpScaleRemainder, plan);
+
+        Assert.Equal(
+            ["from", "to", "season", "level", "signedRawXp", "eligibleRawXp", "appliedXp",
+                "remainderBefore", "remainderAfter"],
+            root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(signedRawXp, root.GetProperty("season").GetInt32());
+        Assert.Equal(expected.AppliedXp, root.GetProperty("appliedXp").GetInt64());
+        Assert.Equal(expected.RemainderAfter, result.Player.XpScaleRemainder);
+        Assert.Equal(player.Xp + expected.AppliedXp, result.Player.Xp);
     }
 
     [Fact]

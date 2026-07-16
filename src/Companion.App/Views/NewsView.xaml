@@ -1,16 +1,129 @@
 <UserControl x:Class="Companion.App.Views.NewsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              xmlns:views="clr-namespace:Companion.App.Views"
              xmlns:smgp="clr-namespace:Companion.Core.Smgp;assembly=Companion.Core"
              Focusable="False">
-    <DockPanel>
+    <UserControl.InputBindings>
+        <KeyBinding Key='Escape' Command='{Binding CloseArticleCommand}' />
+    </UserControl.InputBindings>
+    <UserControl.Resources>
+        <!-- Compact front-page dispatch. The explicit category and importance labels keep status
+             meaningful without depending on accent colour. -->
+        <DataTemplate x:Key='NewsSecondaryStoryTemplate'>
+            <Button Style='{StaticResource SubtleButton}' Padding='0' Margin='0,0,10,10'
+                    HorizontalContentAlignment='Stretch' VerticalContentAlignment='Stretch'
+                    Command='{Binding DataContext.OpenArticleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                    CommandParameter='{Binding}' Click='OnStoryOpened'
+                    audio:SoundAssist.Cue='Navigate'
+                    AutomationProperties.Name='{Binding Headline, Mode=OneWay}'>
+                <Border Style='{StaticResource Card}' Padding='0' ClipToBounds='True'>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height='118' />
+                            <RowDefinition Height='Auto' />
+                        </Grid.RowDefinitions>
+                        <Grid Background='{DynamicResource SurfaceAltBrush}'>
+                            <Border Style='{StaticResource AssetPlaceholderFrame}' Margin='8'>
+                                <TextBlock Text='&#xE8A5;' Style='{StaticResource AssetPlaceholderGlyph}' FontSize='30' />
+                            </Border>
+                            <Image Stretch='UniformToFill'
+                                   Source='{Binding TrackArtKey, Mode=OneWay, Converter={StaticResource TrackBannerImage}}'
+                                   Visibility='{Binding HasTrackArt, Converter={StaticResource BoolVisible}}' />
+                            <Image Stretch='UniformToFill'
+                                   Source='{Binding TeamArtKey, Mode=OneWay, Converter={StaticResource TeamAssetImage}, ConverterParameter=smgp/teams}'
+                                   Visibility='{Binding HasTeamArt, Converter={StaticResource BoolVisible}}' />
+                            <Image Stretch='UniformToFill' HorizontalAlignment='Right' Width='126'
+                                   Source='{Binding DriverPortraitKey, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=portraits}'
+                                   Visibility='{Binding HasDriverPortrait, Converter={StaticResource BoolVisible}}' />
+                            <Border VerticalAlignment='Bottom' Background='{DynamicResource ScrimBrush}' Padding='8,5'>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock='Right' Text='{Binding ImportanceLabel, Mode=OneWay}'
+                                               Style='{StaticResource Eyebrow}' Foreground='{DynamicResource TextBrush}' />
+                                    <TextBlock Text='{Binding DateLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10'
+                                               Foreground='{DynamicResource TextBrush}' />
+                                </DockPanel>
+                            </Border>
+                        </Grid>
+                        <StackPanel Grid.Row='1' Margin='12,11,12,13'>
+                            <DockPanel LastChildFill='True'>
+                                <Border DockPanel.Dock='Right' Style='{StaticResource CompactChip}' Margin='8,0,0,0'>
+                                    <TextBlock Text='{Binding RoundLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10' />
+                                </Border>
+                                <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}'
+                                           Foreground='{DynamicResource AccentTextBrush}' />
+                            </DockPanel>
+                            <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                       FontWeight='SemiBold' FontSize='16' TextWrapping='Wrap' TextTrimming='None'
+                                       Margin='0,6,0,0' />
+                            <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Muted}'
+                                       TextWrapping='Wrap' TextTrimming='WordEllipsis' MaxHeight='54' Margin='0,5,0,0'
+                                       Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Button>
+        </DataTemplate>
+
+        <!-- Dense all-story row for searching the complete deterministic archive. -->
+        <DataTemplate x:Key='NewsArchiveStoryTemplate'>
+            <Button Style='{StaticResource SubtleButton}' Padding='0' Margin='0,0,0,8'
+                    HorizontalContentAlignment='Stretch'
+                    Command='{Binding DataContext.OpenArticleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                    CommandParameter='{Binding}' Click='OnStoryOpened'
+                    audio:SoundAssist.Cue='Navigate'
+                    AutomationProperties.Name='{Binding Headline, Mode=OneWay}'>
+                <Border Style='{StaticResource Card}' Padding='0' ClipToBounds='True'>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width='132' />
+                            <ColumnDefinition Width='*' />
+                        </Grid.ColumnDefinitions>
+                        <Grid Background='{DynamicResource SurfaceAltBrush}'>
+                            <Border Style='{StaticResource AssetPlaceholderFrame}' Margin='7'>
+                                <TextBlock Text='&#xE8A5;' Style='{StaticResource AssetPlaceholderGlyph}' FontSize='26' />
+                            </Border>
+                            <Image Stretch='UniformToFill'
+                                   Source='{Binding TeamArtKey, Mode=OneWay, Converter={StaticResource TeamAssetImage}, ConverterParameter=smgp/teams}'
+                                   Visibility='{Binding HasTeamArt, Converter={StaticResource BoolVisible}}' />
+                            <Image Stretch='UniformToFill'
+                                   Source='{Binding DriverPortraitKey, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=portraits}'
+                                   Visibility='{Binding HasDriverPortrait, Converter={StaticResource BoolVisible}}' />
+                        </Grid>
+                        <StackPanel Grid.Column='1' Margin='13,10,14,11'>
+                            <DockPanel LastChildFill='True'>
+                                <WrapPanel DockPanel.Dock='Right' Margin='10,0,0,0'>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,5,0'>
+                                        <TextBlock Text='{Binding ImportanceLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                    </Border>
+                                    <Border Style='{StaticResource CompactChip}'>
+                                        <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                    </Border>
+                                </WrapPanel>
+                                <TextBlock Text='{Binding DateLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10.5'
+                                           Foreground='{DynamicResource TextMutedBrush}' />
+                            </DockPanel>
+                            <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                       FontWeight='SemiBold' FontSize='16' TextWrapping='Wrap' TextTrimming='None'
+                                       Margin='0,6,0,0' />
+                            <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Muted}'
+                                       TextWrapping='Wrap' TextTrimming='WordEllipsis' MaxHeight='40' Margin='0,4,0,0'
+                                       Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Button>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+    <DockPanel Visibility='Collapsed' IsHitTestVisible='False'>
         <!-- header: pop-out to an always-on-top companion window (decision 1: "own windows") -->
         <Border DockPanel.Dock="Top" Padding="24,16,20,10">
             <DockPanel>
-                <Button x:Name="PopOutButton" DockPanel.Dock="Right" Style="{StaticResource SubtleButton}"
+                <Button x:Name="LegacyPopOutButton" DockPanel.Dock="Right" Style="{StaticResource SubtleButton}"
                         Click="OnPopOut" Padding="8,4"
-                        ToolTip="Pop the news out into an always-on-top window — handy on a second monitor while you race"
+                        ToolTip="Pop the retired news control out into a companion window"
                         AutomationProperties.Name="Pop news out into its own window">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8A7;" FontSize="13"
@@ -171,7 +284,7 @@
                                                            VerticalAlignment="Center" />
                                             </DockPanel>
 
-                                            <!-- Journal headline → click expands to the full period article. -->
+                                            <!-- Retired journal headline expansion. -->
                                             <Button HorizontalContentAlignment="Stretch" Padding="0,7,0,3"
                                                     Background="Transparent" BorderBrush="Transparent"
                                                     Command="{Binding ToggleExpandedCommand}">
@@ -231,4 +344,316 @@
             </ScrollViewer>
         </Grid>
     </DockPanel>
+
+    <!-- Living newsroom front page. All stories are read-only projections over the already
+         deterministic dispatch and journal seams. -->
+    <DockPanel x:Name='NewsFrontPage'>
+        <Border DockPanel.Dock='Top' Padding='24,14,20,9'>
+            <DockPanel>
+                <Button x:Name='PopOutButton' DockPanel.Dock='Right' Style='{StaticResource SubtleButton}'
+                        audio:SoundAssist.Cue='Navigate' Click='OnPopOut' Padding='9,5'
+                        ToolTip='Open the newsroom in an always-on-top companion window'
+                        AutomationProperties.Name='Pop news out into its own window'>
+                    <StackPanel Orientation='Horizontal'>
+                        <TextBlock FontFamily='{StaticResource IconFont}' Text='&#xE8A7;' FontSize='13'
+                                   VerticalAlignment='Center' Margin='0,0,7,0' />
+                        <TextBlock Text='Pop out' />
+                    </StackPanel>
+                </Button>
+                <StackPanel>
+                    <TextBlock Text='SMGP NEWSROOM' Style='{StaticResource H1}' />
+                    <TextBlock Text='Championship reports, rivalries and paddock movement from the recorded career.'
+                               Style='{StaticResource Muted}' Margin='0,3,0,0' TextWrapping='Wrap' />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Border x:Name='NewsLoadingState' DockPanel.Dock='Top' Style='{StaticResource Panel}'
+                Margin='24,4,24,14' Padding='18'
+                AutomationProperties.Name='Newsroom loading'
+                Visibility='{Binding IsLoading, Converter={StaticResource BoolVisible}}'>
+            <StackPanel Orientation='Horizontal'>
+                <TextBlock Text='&#xE895;' FontFamily='{StaticResource IconFont}' FontSize='26'
+                           Foreground='{DynamicResource AccentTextBrush}' Margin='0,0,14,0' />
+                <StackPanel>
+                    <TextBlock Text='OPENING THE NEWS DESK' Style='{StaticResource Eyebrow}' />
+                    <TextBlock Text='Reading the deterministic dispatch archive.' Style='{StaticResource Muted}'
+                               Margin='0,3,0,0' />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border x:Name='NewsEmptyState' DockPanel.Dock='Top' Style='{StaticResource Panel}'
+                Margin='24,4,24,20' Padding='20'
+                AutomationProperties.Name='Newsroom empty'
+                Visibility='{Binding IsEmpty, Converter={StaticResource BoolVisible}}'>
+            <StackPanel Orientation='Horizontal'>
+                <TextBlock Text='&#xE7BA;' FontFamily='{StaticResource IconFont}' FontSize='30'
+                           Foreground='{DynamicResource TextMutedBrush}' Margin='0,0,14,0'
+                           VerticalAlignment='Center' />
+                <StackPanel>
+                    <TextBlock Text='THE WIRE IS QUIET' Style='{StaticResource Eyebrow}' />
+                    <TextBlock Text='Complete a race and truthful dispatches will begin filling this front page.'
+                               Style='{StaticResource Muted}' TextWrapping='Wrap' MaxWidth='560' Margin='0,3,0,0' />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer x:Name='NewsScroll' HorizontalScrollBarVisibility='Disabled'
+                      VerticalScrollBarVisibility='Auto' Focusable='True'
+                      AutomationProperties.Name='Newsroom front page'
+                      Visibility='{Binding IsEmpty, Converter={StaticResource BoolCollapsed}}'>
+            <StackPanel Margin='24,4,24,24' HorizontalAlignment='Stretch'
+                        MaxWidth='{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}, Converter={StaticResource WidthFraction}, ConverterParameter=0.94|0|1500}'>
+                <Border Style='{StaticResource Callout}' Padding='12,9' Margin='0,0,0,12'
+                        AutomationProperties.Name='Legacy news archive notice'
+                        Visibility='{Binding IsLegacyLimited, Converter={StaticResource BoolVisible}}'>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock='Left' Text='&#xE7BA;' FontFamily='{StaticResource IconFont}'
+                                   Foreground='{DynamicResource WarningBrush}' FontSize='20' Margin='0,0,11,0' />
+                        <StackPanel>
+                            <TextBlock Text='LEGACY NEWS ARCHIVE - AVAILABLE RECORDS ONLY' Style='{StaticResource Eyebrow}' />
+                            <TextBlock Text='Older careers can lack identity artwork and event links. Stored headlines and article text remain unchanged.'
+                                       Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,3,0,0' />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <Border Style='{StaticResource Panel}' Padding='12' Margin='0,0,0,14'>
+                    <DockPanel LastChildFill='True'>
+                        <Button DockPanel.Dock='Right' Style='{StaticResource SubtleButton}' Padding='9,5'
+                                Command='{Binding ClearFiltersCommand}' IsEnabled='{Binding HasActiveFilter}'
+                                AutomationProperties.Name='Clear newsroom filters'>
+                            <StackPanel Orientation='Horizontal'>
+                                <TextBlock Text='&#xE711;' FontFamily='{StaticResource IconFont}' Margin='0,0,7,0' />
+                                <TextBlock Text='Clear' />
+                            </StackPanel>
+                        </Button>
+                        <WrapPanel>
+                            <TextBox x:Name='NewsSearch' Width='280' MinWidth='180' Margin='0,0,8,0'
+                                     Text='{Binding SearchText, UpdateSourceTrigger=PropertyChanged}'
+                                     ToolTip='Search headlines, article text, drivers and teams'
+                                     AutomationProperties.Name='Search newsroom stories' />
+                            <ComboBox x:Name='NewsCategoryFilter' Width='230' MinWidth='170' Margin='0,0,8,0'
+                                      ItemsSource='{Binding AvailableCategories}' DisplayMemberPath='DisplayText'
+                                      SelectedItem='{Binding SelectedCategory}'
+                                      ToolTip='Filter newsroom stories by category'
+                                      AutomationProperties.Name='Newsroom category filter' />
+                        </WrapPanel>
+                    </DockPanel>
+                </Border>
+
+                <!-- One dominant story establishes front-page hierarchy. -->
+                <Button x:Name='LeadStoryButton' Style='{StaticResource SubtleButton}' Padding='0'
+                        HorizontalContentAlignment='Stretch' Margin='0,0,0,16'
+                        Command='{Binding OpenArticleCommand}' CommandParameter='{Binding LeadStory}'
+                        Click='OnStoryOpened' audio:SoundAssist.Cue='Navigate'
+                        AutomationProperties.Name='Open lead news story'
+                        Visibility='{Binding HasLeadStory, Converter={StaticResource BoolVisible}}'>
+                    <Border Style='{StaticResource Panel}' Padding='0' ClipToBounds='True'>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height='260' />
+                                <RowDefinition Height='Auto' />
+                            </Grid.RowDefinitions>
+                            <Grid DataContext='{Binding LeadStory}' Background='{DynamicResource SurfaceAltBrush}'>
+                                <Border Style='{StaticResource AssetPlaceholderFrame}' Margin='10'>
+                                    <TextBlock Text='&#xE8A5;' Style='{StaticResource AssetPlaceholderGlyph}' FontSize='52' />
+                                </Border>
+                                <Image Stretch='UniformToFill'
+                                       Source='{Binding TrackArtKey, Mode=OneWay, Converter={StaticResource TrackBannerImage}}'
+                                       Visibility='{Binding HasTrackArt, Converter={StaticResource BoolVisible}}' />
+                                <Image Stretch='UniformToFill'
+                                       Source='{Binding TeamArtKey, Mode=OneWay, Converter={StaticResource TeamAssetImage}, ConverterParameter=smgp/teams}'
+                                       Visibility='{Binding HasTeamArt, Converter={StaticResource BoolVisible}}' />
+                                <Image Stretch='UniformToFill' HorizontalAlignment='Right' Width='330'
+                                       Source='{Binding DriverPortraitKey, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=portraits}'
+                                       Visibility='{Binding HasDriverPortrait, Converter={StaticResource BoolVisible}}' />
+                                <Border VerticalAlignment='Bottom' Background='{DynamicResource ScrimBrush}' Padding='14,8'>
+                                    <DockPanel>
+                                        <Border DockPanel.Dock='Right' Style='{StaticResource CompactChip}' Margin='12,0,0,0'>
+                                            <TextBlock Text='{Binding ImportanceLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}'
+                                                       Foreground='{DynamicResource TextBrush}' />
+                                        </Border>
+                                        <TextBlock Text='{Binding DateLabel, Mode=OneWay}' Style='{StaticResource Mono}'
+                                                   Foreground='{DynamicResource TextBrush}' />
+                                    </DockPanel>
+                                </Border>
+                            </Grid>
+                            <StackPanel Grid.Row='1' DataContext='{Binding LeadStory}' Margin='18,15,18,18'>
+                                <WrapPanel>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'>
+                                        <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                    </Border>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'
+                                            Visibility='{Binding HasRound, Converter={StaticResource BoolVisible}}'>
+                                        <TextBlock Text='{Binding RoundLabel, Mode=OneWay}' Style='{StaticResource Mono}' />
+                                    </Border>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'
+                                            Visibility='{Binding HasDriver, Converter={StaticResource BoolVisible}}'>
+                                        <TextBlock Text='{Binding DriverName, Mode=OneWay}' />
+                                    </Border>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'
+                                            Visibility='{Binding HasTeam, Converter={StaticResource BoolVisible}}'>
+                                        <TextBlock Text='{Binding TeamName, Mode=OneWay}' />
+                                    </Border>
+                                </WrapPanel>
+                                <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                           FontSize='28' FontWeight='Bold' TextWrapping='Wrap' TextTrimming='None'
+                                           Margin='0,7,0,0' />
+                                <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Body}'
+                                           FontSize='15' TextWrapping='Wrap' TextTrimming='None' Margin='0,8,0,0'
+                                           Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Button>
+
+                <TextBlock Text='TOP DISPATCHES' Style='{StaticResource H2}' Margin='0,0,0,9'
+                           Visibility='{Binding HasSecondaryStories, Converter={StaticResource BoolVisible}}' />
+                <ItemsControl ItemsSource='{Binding SecondaryStories}'
+                              ItemTemplate='{StaticResource NewsSecondaryStoryTemplate}'
+                              Visibility='{Binding HasSecondaryStories, Converter={StaticResource BoolVisible}}'>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns='{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource AdaptiveColumns}, ConverterParameter=340|1|3}' />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <Border x:Name='NewsFilteredEmptyState' Style='{StaticResource Callout}' Padding='14,11'
+                        Margin='0,4,0,12' AutomationProperties.Name='No newsroom stories match the filters'
+                        Visibility='{Binding IsFilteredEmpty, Converter={StaticResource BoolVisible}}'>
+                    <TextBlock Text='No recorded stories match this search and category. Clear the filters to restore the full desk.'
+                               Style='{StaticResource Muted}' TextWrapping='Wrap' />
+                </Border>
+
+                <TextBlock Text='LATEST DISPATCHES' Style='{StaticResource H2}' Margin='0,12,0,4' />
+                <TextBlock Text='The complete searchable career desk, newest first.' Style='{StaticResource Muted}'
+                           Margin='0,0,0,9' />
+                <ItemsControl ItemsSource='{Binding FilteredStories}'
+                              ItemTemplate='{StaticResource NewsArchiveStoryTemplate}' />
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+
+    <!-- Article reader: one scrollable, keyboard-dismissable layer over the live desk. -->
+    <Grid x:Name='ArticleReader' Panel.ZIndex='20' Background='{DynamicResource ScrimBrush}'
+          Visibility='{Binding IsReaderOpen, Converter={StaticResource BoolVisible}}'
+          AutomationProperties.Name='News article reader'>
+        <Border Style='{StaticResource Panel}' Margin='24' Padding='0' MaxWidth='980'
+                HorizontalAlignment='Center' VerticalAlignment='Stretch'
+                DataContext='{Binding SelectedArticle}'>
+            <DockPanel>
+                <Border DockPanel.Dock='Top' Padding='14,10' Background='{DynamicResource SurfaceAltBrush}'
+                        BorderBrush='{DynamicResource EdgeBrush}' BorderThickness='0,0,0,1'>
+                    <DockPanel>
+                        <Button x:Name='ArticleCloseButton' DockPanel.Dock='Right'
+                                Style='{StaticResource CloseButton}'
+                                Command='{Binding DataContext.CloseArticleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                                Click='OnArticleClosed' audio:SoundAssist.Cue='Back'
+                                AutomationProperties.Name='Close news article' />
+                        <StackPanel>
+                            <TextBlock Text='SMGP NEWS DESK' Style='{StaticResource Eyebrow}' />
+                            <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Faint}'
+                                       Margin='0,2,0,0' />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <ScrollViewer x:Name='ArticleReaderScroll' HorizontalScrollBarVisibility='Disabled'
+                              VerticalScrollBarVisibility='Auto' Focusable='True'
+                              AutomationProperties.Name='Article content'>
+                    <StackPanel>
+                        <Grid Height='250' Background='{DynamicResource SurfaceAltBrush}'>
+                            <Border Style='{StaticResource AssetPlaceholderFrame}' Margin='10'>
+                                <TextBlock Text='&#xE8A5;' Style='{StaticResource AssetPlaceholderGlyph}' FontSize='50' />
+                            </Border>
+                            <Image Stretch='UniformToFill'
+                                   Source='{Binding TrackArtKey, Mode=OneWay, Converter={StaticResource TrackBannerImage}}'
+                                   Visibility='{Binding HasTrackArt, Converter={StaticResource BoolVisible}}' />
+                            <Image Stretch='UniformToFill'
+                                   Source='{Binding TeamArtKey, Mode=OneWay, Converter={StaticResource TeamAssetImage}, ConverterParameter=smgp/teams}'
+                                   Visibility='{Binding HasTeamArt, Converter={StaticResource BoolVisible}}' />
+                            <Image Stretch='UniformToFill' HorizontalAlignment='Right' Width='320'
+                                   Source='{Binding DriverPortraitKey, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=portraits}'
+                                   Visibility='{Binding HasDriverPortrait, Converter={StaticResource BoolVisible}}' />
+                            <Image Stretch='Uniform' HorizontalAlignment='Left' VerticalAlignment='Bottom'
+                                   Width='390' Margin='18,0,0,10'
+                                   Source='{Binding CarArtKey, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=cars}'
+                                   Visibility='{Binding HasCarArt, Converter={StaticResource BoolVisible}}' />
+                            <Border VerticalAlignment='Bottom' Background='{DynamicResource ScrimBrush}' Padding='14,7'>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock='Right' Text='{Binding ImportanceLabel, Mode=OneWay}'
+                                               Style='{StaticResource Eyebrow}' Foreground='{DynamicResource TextBrush}' />
+                                    <TextBlock Text='{Binding DateLabel, Mode=OneWay}' Style='{StaticResource Mono}'
+                                               Foreground='{DynamicResource TextBrush}' />
+                                </DockPanel>
+                            </Border>
+                        </Grid>
+
+                        <StackPanel Margin='24,20,24,28'>
+                            <WrapPanel>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'>
+                                    <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                </Border>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
+                                        Visibility='{Binding HasRound, Converter={StaticResource BoolVisible}}'>
+                                    <TextBlock Text='{Binding RoundLabel, Mode=OneWay}' Style='{StaticResource Mono}' />
+                                </Border>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
+                                        Visibility='{Binding HasVenue, Converter={StaticResource BoolVisible}}'>
+                                    <TextBlock Text='{Binding VenueName, Mode=OneWay}' />
+                                </Border>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
+                                        Visibility='{Binding HasDriver, Converter={StaticResource BoolVisible}}'>
+                                    <TextBlock Text='{Binding DriverName, Mode=OneWay}' />
+                                </Border>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
+                                        Visibility='{Binding HasTeam, Converter={StaticResource BoolVisible}}'>
+                                    <TextBlock Text='{Binding TeamName, Mode=OneWay}' />
+                                </Border>
+                            </WrapPanel>
+
+                            <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                       FontSize='31' FontWeight='Bold' TextWrapping='Wrap' TextTrimming='None'
+                                       Margin='0,8,0,0'
+                                       AutomationProperties.Name='{Binding Headline, Mode=OneWay}' />
+                            <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Body}'
+                                       FontSize='16' FontWeight='SemiBold' TextWrapping='Wrap' TextTrimming='None'
+                                       Margin='0,11,0,0'
+                                       Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                            <Border Height='1' Background='{DynamicResource EdgeBrush}' Margin='0,18,0,17' />
+                            <TextBlock Text='{Binding Body, Mode=OneWay}' Style='{StaticResource Body}'
+                                       FontSize='14.5' TextWrapping='Wrap' TextTrimming='None'
+                                       Visibility='{Binding HasBody, Converter={StaticResource BoolVisible}}' />
+
+                            <Border Style='{StaticResource Callout}' Padding='12,9' Margin='0,18,0,0'
+                                    Visibility='{Binding HasWhy, Converter={StaticResource BoolVisible}}'>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock='Left' Text='WHY' Style='{StaticResource PixelBadge}'
+                                               Foreground='{DynamicResource AccentTextBrush}' Margin='0,1,10,0' />
+                                    <TextBlock Text='{Binding WhyText, Mode=OneWay}' Style='{StaticResource Muted}'
+                                               TextWrapping='Wrap' TextTrimming='None' />
+                                </DockPanel>
+                            </Border>
+
+                            <Button x:Name='HistoryLinkButton' Style='{StaticResource SubtleButton}'
+                                    HorizontalAlignment='Left' Margin='0,20,0,0' Padding='12,7'
+                                    Tag='{Binding HistoryEventKey, Mode=OneWay}' Click='OnOpenHistory'
+                                    audio:SoundAssist.Cue='Navigate'
+                                    AutomationProperties.Name='Open the related History event'
+                                    Visibility='{Binding HasHistoryLink, Converter={StaticResource BoolVisible}}'>
+                                <StackPanel Orientation='Horizontal'>
+                                    <TextBlock Text='&#xE81C;' FontFamily='{StaticResource IconFont}' Margin='0,0,8,0' />
+                                    <TextBlock Text='Open related History event' />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
+    </Grid>
 </UserControl>

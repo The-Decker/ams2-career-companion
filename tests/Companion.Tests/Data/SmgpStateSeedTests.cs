@@ -67,12 +67,14 @@ public sealed class SmgpStateSeedTests : IDisposable
         Assert.Empty(start.Smgp.AiSeatOverrides);
         Assert.Equal(0, start.Smgp.Titles);
         Assert.False(start.Smgp.CareerOver);
+        Assert.True(start.Smgp.PerSeasonVariety);
 
         // The fold carries the state forward each round via record `with` — the last folded
         // round still holds the seat (nothing battled it away; no rival calls exist yet).
         var lastRound = StateStore.ReadRoundPlayerState(db, seasonId, 2)!;
         Assert.NotNull(lastRound.Player.Smgp);
         Assert.Equal(TestPackBuilder.StockLivery2, lastRound.Player.Smgp!.CurrentSeatLivery);
+        Assert.True(lastRound.Player.Smgp.PerSeasonVariety);
 
         // ...and the whole career re-simulates byte-identically (the determinism gate).
         var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
@@ -388,6 +390,19 @@ public sealed class SmgpStateSeedTests : IDisposable
         // WhenWritingNull is the byte-identity contract for every existing career's player_state.
         string json = JsonSerializer.Serialize(new PlayerCareerState { Reputation = 45.0 }, CoreJson.Options);
         Assert.DoesNotContain("smgp", json, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void LegacySmgpState_OmitsThePerSeasonVarietyGate()
+    {
+        string json = JsonSerializer.Serialize(new PlayerCareerState
+        {
+            Smgp = new SmgpState { CurrentSeatLivery = "Legacy Seat" },
+        }, CoreJson.Options);
+
+        Assert.DoesNotContain("perSeasonVariety", json, StringComparison.Ordinal);
+        var back = JsonSerializer.Deserialize<PlayerCareerState>(json, CoreJson.Options)!;
+        Assert.False(back.Smgp!.PerSeasonVariety);
     }
 
     [Fact]

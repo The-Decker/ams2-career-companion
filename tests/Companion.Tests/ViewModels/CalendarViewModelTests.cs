@@ -94,6 +94,21 @@ public class CalendarViewModelTests
     }
 
     [Fact]
+    public void ProjectsStableTrackIdForTheVenueBannerResolver()
+    {
+        SeasonScheduleEntry entry = Entry(
+            1, "San Marino", "Imola", "Imola_GP_1988", SeasonTrackKind.RealVenue) with
+        {
+            TrackId = "imola_88",
+        };
+
+        CalendarRoundViewModel round = Assert.Single(Vm(entry).Rounds);
+
+        Assert.Equal("imola_88", round.TrackId);
+        Assert.Equal("Imola_GP_1988", round.Ams2TrackName);
+    }
+
+    [Fact]
     public void Round_TogglesExpanded_AndExposesTheOriginalCircuit()
     {
         var session = new FakeCareerSession();

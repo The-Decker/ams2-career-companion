@@ -7,6 +7,55 @@ namespace Companion.Tests.Career;
 
 public class RoundUpdateTests
 {
+    private static CampaignProgressionPlan VersionTwoPlan() =>
+        CampaignProgressionPlan.CreateSmgp(new PinnedCampaignSeason
+        {
+            PackId = "smgp-1",
+            PackVersion = "1.0.0",
+            Sha256 = new string('a', 64),
+            Year = 1990,
+            ChampionshipRoundCount = 16,
+        });
+
+    private static CampaignProgressionPlan FractionalVersionTwoPlan() =>
+        CampaignProgressionPlan.Create(
+            CareerExperienceModes.GrandPrixDynasty,
+            1967,
+            2020,
+            [
+                new PinnedCampaignSeason
+                {
+                    PackId = "f1-1967", PackVersion = "1.0.0", Sha256 = new string('a', 64),
+                    Year = 1967, ChampionshipRoundCount = 11,
+                },
+                new PinnedCampaignSeason
+                {
+                    PackId = "f1-1968", PackVersion = "1.0.0", Sha256 = new string('b', 64),
+                    Year = 1968, ChampionshipRoundCount = 12,
+                },
+                new PinnedCampaignSeason
+                {
+                    PackId = "f1-2020", PackVersion = "1.0.0", Sha256 = new string('c', 64),
+                    Year = 2020, ChampionshipRoundCount = 17,
+                },
+            ]);
+
+    private static CharacterProfile VersionTwoCharacter() => new()
+    {
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.5,
+            ["oneLap"] = 0.5,
+            ["craft"] = 0.5,
+            ["racecraft"] = 0.5,
+            ["adaptability"] = 0.5,
+            ["marketability"] = 0.5,
+            ["durability"] = 0.5,
+        },
+        PerkIds = [],
+        ProgressionVersion = CharacterLevelProgression.Level300Version,
+    };
+
     private static RoundUpdateContext Context(
         int? finish,
         DnfCause? dnf = null,
@@ -34,6 +83,8 @@ public class RoundUpdateTests
         TeammateFinish = teammateFinish,
         SliderUsed = 90.0,
         PointsPositions = pointsPositions,
+        IsChampionshipRound = true,
+        IsPrimaryRace = true,
         Streams = new StreamFactory(seed),
         Headlines = CareerTestData.LoadHeadlines(),
         PlayerName = "Pat Player",
@@ -166,21 +217,7 @@ public class RoundUpdateTests
     public void Level300Progression_ReportsLevel300InThePlayerXpJournalRow()
     {
         var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
-        var character = new CharacterProfile
-        {
-            Stats = new Dictionary<string, double>(StringComparer.Ordinal)
-            {
-                ["pace"] = 0.5,
-                ["oneLap"] = 0.5,
-                ["craft"] = 0.5,
-                ["racecraft"] = 0.5,
-                ["adaptability"] = 0.5,
-                ["marketability"] = 0.5,
-                ["durability"] = 0.5,
-            },
-            PerkIds = [],
-            ProgressionVersion = CharacterLevelProgression.Level300Version,
-        };
+        var character = VersionTwoCharacter();
         var context = Context(finish: 1);
 
         var result = RoundUpdate.Apply(context with
@@ -190,6 +227,8 @@ public class RoundUpdateTests
                 Character = character,
                 Level = 299,
                 Xp = 14_950,
+                ExperienceMode = CareerExperienceModes.Smgp,
+                CampaignProgressionPlan = VersionTwoPlan(),
             },
             CharacterRules = rules,
         });
@@ -199,5 +238,134 @@ public class RoundUpdateTests
         Assert.True(payload.RootElement.GetProperty("round").GetInt32() > 0);
         Assert.Equal(300, payload.RootElement.GetProperty("level").GetInt32());
         Assert.Equal(300, result.Player.Level);
+    }
+
+    [Fact]
+    public void LegacyXpRow_IgnoresVersionTwoEligibilityGate_AndKeepsItsExactShape()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var character = VersionTwoCharacter() with
+        {
+            ProgressionVersion = CharacterLevelProgression.EraCappedVersion,
+        };
+        var context = Context(finish: 1);
+
+        var result = RoundUpdate.Apply(context with
+        {
+            IsChampionshipRound = false,
+            IsPrimaryRace = false,
+            Player = context.Player with { Character = character, Level = 1 },
+            CharacterRules = rules,
+        });
+
+        var xpEvent = Assert.Single(result.Events, e => e.Phase == JournalPhases.PlayerXp);
+        using var payload = JsonDocument.Parse(xpEvent.DeltaJson);
+        Assert.Equal(
+            ["from", "to", "round", "level"],
+            payload.RootElement.EnumerateObject().Select(property => property.Name));
+        Assert.True(payload.RootElement.GetProperty("round").GetInt32() > 0);
+        Assert.True(result.Player.Xp > context.Player.Xp);
+    }
+
+    [Fact]
+    public void VersionTwoChampionshipPrimaryRace_AppliesPinnedScaleAndPersistsCarry()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var plan = FractionalVersionTwoPlan();
+        var context = Context(finish: 1);
+        var player = context.Player with
+        {
+            Character = VersionTwoCharacter(),
+            Level = 1,
+            Xp = 0,
+            ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+            CampaignProgressionPlan = plan,
+            XpScaleRemainder = 3,
+        };
+
+        var result = RoundUpdate.Apply(context with
+        {
+            Player = player,
+            CharacterRules = rules,
+        });
+
+        var xpEvent = Assert.Single(result.Events, e => e.Phase == JournalPhases.PlayerXp);
+        using var payload = JsonDocument.Parse(xpEvent.DeltaJson);
+        var root = payload.RootElement;
+        int signedRawXp = root.GetProperty("signedRawXp").GetInt32();
+        var expected = CharacterProgressionV2Math.NormalizeXpAward(
+            signedRawXp, true, player.XpScaleRemainder, plan);
+
+        Assert.Equal(
+            ["from", "to", "round", "level", "signedRawXp", "eligibleRawXp", "appliedXp",
+                "remainderBefore", "remainderAfter"],
+            root.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(signedRawXp, root.GetProperty("round").GetInt32());
+        Assert.Equal(expected.EligibleRawXp, root.GetProperty("eligibleRawXp").GetInt64());
+        Assert.Equal(expected.AppliedXp, root.GetProperty("appliedXp").GetInt64());
+        Assert.Equal(expected.RemainderAfter, result.Player.XpScaleRemainder);
+        Assert.Equal(player.Xp + expected.AppliedXp, result.Player.Xp);
+    }
+
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void VersionTwoIneligibleRace_JournalsRawButAppliesZeroAndPreservesCarry(
+        bool isChampionshipRound,
+        bool isPrimaryRace)
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var plan = FractionalVersionTwoPlan();
+        var context = Context(finish: 1);
+        var player = context.Player with
+        {
+            Character = VersionTwoCharacter(),
+            Level = 1,
+            Xp = 0,
+            ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+            CampaignProgressionPlan = plan,
+            XpScaleRemainder = 3,
+        };
+
+        var result = RoundUpdate.Apply(context with
+        {
+            Player = player,
+            CharacterRules = rules,
+            IsChampionshipRound = isChampionshipRound,
+            IsPrimaryRace = isPrimaryRace,
+        });
+
+        var xpEvent = Assert.Single(result.Events, e => e.Phase == JournalPhases.PlayerXp);
+        using var payload = JsonDocument.Parse(xpEvent.DeltaJson);
+        var root = payload.RootElement;
+        Assert.True(root.GetProperty("signedRawXp").GetInt64() > 0);
+        Assert.Equal(0, root.GetProperty("eligibleRawXp").GetInt64());
+        Assert.Equal(0, root.GetProperty("appliedXp").GetInt64());
+        Assert.Equal(player.Xp, result.Player.Xp);
+        Assert.Equal(player.XpScaleRemainder, result.Player.XpScaleRemainder);
+    }
+
+    [Fact]
+    public void VersionTwoXpFailsClosedWithoutMatchingPinnedPlan()
+    {
+        var rules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json"));
+        var context = Context(finish: 1);
+        var player = context.Player with
+        {
+            Character = VersionTwoCharacter(),
+            Level = 1,
+            ExperienceMode = CareerExperienceModes.Smgp,
+        };
+
+        Assert.Throws<InvalidOperationException>(() => RoundUpdate.Apply(context with
+        {
+            Player = player,
+            CharacterRules = rules,
+        }));
+        Assert.Throws<InvalidOperationException>(() => RoundUpdate.Apply(context with
+        {
+            Player = player with { CampaignProgressionPlan = VersionTwoPlan(), ExperienceMode = CareerExperienceModes.GrandPrixDynasty },
+            CharacterRules = rules,
+        }));
     }
 }

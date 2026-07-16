@@ -22,12 +22,20 @@ public sealed class WeekendLoopTests
     // ---------- the qualifying step ----------
 
     [Fact]
-    public void Weekend_with_qualifying_opens_the_qualifying_step_before_the_race()
+    public void Weekend_with_qualifying_opens_the_cinematic_gate_before_the_qualifying_editor()
     {
         using var home = new HomeViewModel(new WeekendSession());
 
         home.EnterResultCommand.Execute(null);
 
+        var intro = AssertIntro(home, SessionIntroKind.Qualifying);
+        Assert.Equal("RACE WEEKEND", intro.Eyebrow);
+        Assert.Equal("QUALIFYING", intro.Title);
+        Assert.Equal("qualifying", intro.ArtworkKey);
+        Assert.Equal("Begin qualifying", intro.ActionLabel);
+        Assert.Contains("Interlagos", intro.Subtitle);
+
+        intro.ContinueCommand.Execute(null);
         var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         Assert.True(home.IsResultEntryState);
         Assert.True(home.IsQualifyingStep);
@@ -36,11 +44,18 @@ public sealed class WeekendLoopTests
     }
 
     [Fact]
-    public void Single_race_round_skips_the_qualifying_step()
+    public void Single_race_round_skips_qualifying_but_opens_the_race_cinematic_gate()
     {
         using var home = new HomeViewModel(new WeekendSession { Weekend = null });
 
         home.EnterResultCommand.Execute(null);
+
+        var intro = AssertIntro(home, SessionIntroKind.Race);
+        Assert.Equal("RACE DAY", intro.Eyebrow);
+        Assert.Equal("RACE", intro.Title);
+        Assert.Equal("race", intro.ArtworkKey);
+        Assert.Equal("Start the race", intro.ActionLabel);
+        intro.ContinueCommand.Execute(null);
 
         var entry = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         Assert.False(home.IsQualifyingStep);
@@ -53,8 +68,7 @@ public sealed class WeekendLoopTests
     {
         using var home = new HomeViewModel(new WeekendSession());
 
-        home.EnterResultCommand.Execute(null);
-        var qualifying = (ResultEntryViewModel)home.CurrentContent!;
+        var qualifying = OpenQualifying(home);
         // Qualify car #2 (Hulme) on pole, then car #1 (Brabham).
         Order(qualifying, "2", "1");
         Assert.True(home.ConfirmResultCommand.CanExecute(null)); // "Set the grid" is enabled
@@ -70,6 +84,7 @@ public sealed class WeekendLoopTests
 
         home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
         var race = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
         Assert.NotSame(qualifying, race);
         Assert.False(home.IsQualifyingStep);
@@ -82,16 +97,37 @@ public sealed class WeekendLoopTests
     }
 
     [Fact]
+    public void Starting_grid_wires_fixed_livery_car_art_from_the_session()
+    {
+        var session = new WeekendSession
+        {
+            GridCarArtKeys = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["Livery #1"] = "driver.authored_car_one",
+                ["Livery #2"] = "driver.authored_car_two",
+            },
+        };
+        using var home = new HomeViewModel(session);
+
+        Order(OpenQualifying(home), "2", "1");
+        home.ConfirmResultCommand.Execute(null);
+
+        var grid = Assert.IsType<StartingGridViewModel>(home.CurrentContent);
+        Assert.Equal("driver.authored_car_two", grid.Slots[0].CarKey);
+        Assert.Equal("driver.authored_car_one", grid.Slots[1].CarKey);
+    }
+
+    [Fact]
     public void Applying_the_race_writes_the_captured_qualifying_order_into_the_draft()
     {
         var session = new WeekendSession();
         using var home = new HomeViewModel(session);
 
-        home.EnterResultCommand.Execute(null);
-        Order((ResultEntryViewModel)home.CurrentContent!, "2", "1"); // pole Hulme, then Brabham
+        Order(OpenQualifying(home), "2", "1"); // pole Hulme, then Brabham
         home.ConfirmResultCommand.Execute(null);                     // set the grid → starting grid
         home.ConfirmResultCommand.Execute(null);                     // start the race → race entry
 
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1"); // race result
         home.ConfirmResultCommand.Execute(null);                     // → confirm interstitial
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
@@ -107,6 +143,7 @@ public sealed class WeekendLoopTests
         using var home = new HomeViewModel(session);
 
         home.EnterResultCommand.Execute(null);
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
         home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
@@ -122,16 +159,17 @@ public sealed class WeekendLoopTests
         using var home = new HomeViewModel(session);
 
         // Round 1: qualify + race + apply.
-        home.EnterResultCommand.Execute(null);
-        Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
+        Order(OpenQualifying(home), "1", "2");
         home.ConfirmResultCommand.Execute(null); // set the grid → starting grid
         home.ConfirmResultCommand.Execute(null); // start the race → race entry
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
         home.ConfirmResultCommand.Execute(null);
         ((ConfirmViewModel)home.CurrentContent!).ApplyCommand.Execute(null);
 
         // Round 2 must open the qualifying step again (the captured order was consumed).
         home.EnterResultCommand.Execute(null);
+        AssertIntro(home, SessionIntroKind.Qualifying).ContinueCommand.Execute(null);
         Assert.True(home.IsQualifyingStep);
         Assert.Equal("Qualifying", ((ResultEntryViewModel)home.CurrentContent!).SessionLabel);
     }
@@ -173,9 +211,10 @@ public sealed class WeekendLoopTests
         Assert.False(home.IsQualifyingStep);
         Assert.Equal("Continue  ⏎", home.ConfirmButtonText);
 
-        // Continue advances to qualifying (the rival step is done for this round).
+        // Continue advances to the qualifying cinematic (the rival step is done for this round).
         home.ConfirmResultCommand.Execute(null);
         Assert.False(home.IsRivalStep);
+        AssertIntro(home, SessionIntroKind.Qualifying).ContinueCommand.Execute(null);
         Assert.True(home.IsQualifyingStep);
     }
 
@@ -185,7 +224,8 @@ public sealed class WeekendLoopTests
         using var home = new HomeViewModel(new WeekendSession()); // no SmgpBriefing
         home.EnterResultCommand.Execute(null);
         Assert.False(home.IsRivalStep);
-        Assert.True(home.IsQualifyingStep); // straight to qualifying, byte-identical to the shipped loop
+        AssertIntro(home, SessionIntroKind.Qualifying).ContinueCommand.Execute(null);
+        Assert.True(home.IsQualifyingStep);
     }
 
     // ---------- two-race weekend (Increment 2e.3) ----------
@@ -209,6 +249,7 @@ public sealed class WeekendLoopTests
 
         // Qualifying → set the grid (pole: car #2 Hulme, then #1 Brabham).
         home.EnterResultCommand.Execute(null);
+        AssertIntro(home, SessionIntroKind.Qualifying).ContinueCommand.Execute(null);
         Assert.True(home.IsQualifyingStep);
         Order((ResultEntryViewModel)home.CurrentContent!, "2", "1");
         home.ConfirmResultCommand.Execute(null); // set the grid → starting grid
@@ -219,6 +260,9 @@ public sealed class WeekendLoopTests
         home.ConfirmResultCommand.Execute(null); // start the race → race entry
 
         // Race 1 (Feature) — NOT the round's last, so the primary action advances to the next race.
+        var featureIntro = AssertIntro(home, SessionIntroKind.Race);
+        Assert.Contains("Feature", featureIntro.Subtitle);
+        featureIntro.ContinueCommand.Execute(null);
         var feature = (ResultEntryViewModel)home.CurrentContent!;
         Assert.Equal("Feature", feature.SessionLabel);
         Assert.False(home.IsQualifyingStep);
@@ -227,6 +271,9 @@ public sealed class WeekendLoopTests
         home.ConfirmResultCommand.Execute(null);
 
         // Race 2 (Sprint) — the last race, so the primary action scores the round.
+        var sprintIntro = AssertIntro(home, SessionIntroKind.Race);
+        Assert.Contains("Sprint", sprintIntro.Subtitle);
+        sprintIntro.ContinueCommand.Execute(null);
         var sprint = (ResultEntryViewModel)home.CurrentContent!;
         Assert.NotSame(feature, sprint);
         Assert.Equal("Sprint", sprint.SessionLabel);
@@ -262,9 +309,11 @@ public sealed class WeekendLoopTests
         using var home = new HomeViewModel(session);
 
         home.EnterResultCommand.Execute(null); // no qualifying → straight to race 1
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
         Order((ResultEntryViewModel)home.CurrentContent!, "1", "2");
         home.ConfirmResultCommand.Execute(null); // → race 2
 
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
         var sprint = (ResultEntryViewModel)home.CurrentContent!;
         Order(sprint, "1", "2");
         home.ConfirmResultCommand.Execute(null); // → confirm
@@ -283,8 +332,7 @@ public sealed class WeekendLoopTests
     {
         using var home = new HomeViewModel(new WeekendSession());
 
-        home.EnterResultCommand.Execute(null);
-        var qualifying = (ResultEntryViewModel)home.CurrentContent!;
+        var qualifying = OpenQualifying(home);
         qualifying.Input = "2";
         qualifying.SubmitCommand.Execute(null);
 
@@ -301,8 +349,7 @@ public sealed class WeekendLoopTests
     {
         using var home = new HomeViewModel(new WeekendSession());
 
-        home.EnterResultCommand.Execute(null);
-        var qualifying = home.CurrentContent;
+        var qualifying = OpenQualifying(home);
 
         home.ShowStandingsCommand.Execute(null);
         Assert.True(home.IsStandingsState);
@@ -311,7 +358,123 @@ public sealed class WeekendLoopTests
         Assert.Same(qualifying, home.CurrentContent);
     }
 
+    [Fact]
+    public void Session_intro_survives_briefing_and_standings_navigation_until_continue()
+    {
+        using var home = new HomeViewModel(new WeekendSession());
+
+        home.EnterResultCommand.Execute(null);
+        var intro = AssertIntro(home, SessionIntroKind.Qualifying);
+
+        home.ShowBriefingCommand.Execute(null);
+        home.EnterResultCommand.Execute(null);
+        Assert.Same(intro, home.CurrentContent);
+
+        home.ShowStandingsCommand.Execute(null);
+        home.BackToRoundCommand.Execute(null);
+        Assert.Same(intro, home.CurrentContent);
+
+        intro.ContinueCommand.Execute(null);
+        Assert.True(home.IsQualifyingStep);
+    }
+
+    [Fact]
+    public void Starting_grid_survives_a_standings_round_trip()
+    {
+        using var home = new HomeViewModel(new WeekendSession());
+        Order(OpenQualifying(home), "1", "2");
+        home.ConfirmResultCommand.Execute(null);
+        var grid = Assert.IsType<StartingGridViewModel>(home.CurrentContent);
+
+        home.ShowStandingsCommand.Execute(null);
+        home.BackToRoundCommand.Execute(null);
+
+        Assert.Same(grid, home.CurrentContent);
+        Assert.True(home.IsStartingGridState);
+    }
+
+    [Fact]
+    public void Re_entering_an_already_created_race_editor_does_not_replay_its_intro()
+    {
+        using var home = new HomeViewModel(new WeekendSession { Weekend = null });
+
+        home.EnterResultCommand.Execute(null);
+        AssertIntro(home, SessionIntroKind.Race).ContinueCommand.Execute(null);
+        var race = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+        race.Input = "2";
+        race.SubmitCommand.Execute(null);
+
+        home.ShowBriefingCommand.Execute(null);
+        home.EnterResultCommand.Execute(null);
+
+        Assert.Same(race, home.CurrentContent);
+        Assert.False(home.IsSessionIntroState);
+        Assert.Equal(1, race.ResolvedCount);
+    }
+
+    [Fact]
+    public void Session_intro_continue_is_exactly_once()
+    {
+        int advances = 0;
+        var intro = new SessionIntroViewModel(
+            SessionIntroKind.Race,
+            "Monaco  ·  Round 1 of 16",
+            () => advances++);
+
+        intro.ContinueCommand.Execute(null);
+        intro.ContinueCommand.Execute(null);
+
+        Assert.Equal(1, advances);
+        Assert.False(intro.ContinueCommand.CanExecute(null));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Empty_grid_intro_failure_returns_to_the_briefing(bool qualifying)
+    {
+        var session = new WeekendSession
+        {
+            Weekend = qualifying
+                ? new PackWeekend
+                {
+                    Qualifying = new PackWeekendSession { Label = "Qualifying" },
+                    Races = [new PackWeekendRace { Id = "race", Label = "Grand Prix" }],
+                }
+                : null,
+            Grid = [],
+        };
+        using var home = new HomeViewModel(session);
+
+        home.EnterResultCommand.Execute(null);
+        var intro = AssertIntro(home, qualifying ? SessionIntroKind.Qualifying : SessionIntroKind.Race);
+        intro.ContinueCommand.Execute(null);
+
+        Assert.True(home.IsBriefingState);
+        Assert.False(home.IsSessionIntroState);
+        Assert.Contains("no grid", home.ContentError, StringComparison.OrdinalIgnoreCase);
+    }
+
     // ---------- helpers ----------
+
+    private static SessionIntroViewModel AssertIntro(HomeViewModel home, SessionIntroKind kind)
+    {
+        var intro = Assert.IsType<SessionIntroViewModel>(home.CurrentContent);
+        Assert.True(home.IsSessionIntroState);
+        Assert.False(home.IsResultEntryState);
+        Assert.False(home.ConfirmResultCommand.CanExecute(null));
+        Assert.Equal(kind, intro.Kind);
+        return intro;
+    }
+
+    private static ResultEntryViewModel OpenQualifying(HomeViewModel home)
+    {
+        home.EnterResultCommand.Execute(null);
+        AssertIntro(home, SessionIntroKind.Qualifying).ContinueCommand.Execute(null);
+        var qualifying = Assert.IsType<ResultEntryViewModel>(home.CurrentContent);
+        Assert.True(home.IsQualifyingStep);
+        return qualifying;
+    }
 
     /// <summary>Classifies the given car numbers in order through the result-entry grammar (pole
     /// first for qualifying, P1 first for a race) and asserts the draft is complete.</summary>
@@ -375,11 +538,19 @@ public sealed class WeekendLoopTests
         public StageOutcome StageCurrentGrid() =>
             new() { Success = true, WrittenPath = "X.xml", Messages = [] };
 
-        public IReadOnlyList<GridSeat> CurrentGrid() =>
+        public IReadOnlyList<GridSeat> Grid { get; init; } =
         [
             Seat("driver.brabham", "Jack Brabham", "1"),
             Seat("driver.hulme", "Denny Hulme", "2"),
         ];
+
+        public IReadOnlyList<GridSeat> CurrentGrid() => Grid;
+
+        public IReadOnlyDictionary<string, string> GridCarArtKeys { get; init; } =
+            new Dictionary<string, string>(StringComparer.Ordinal);
+
+        public string? GridCarArtKeyForLivery(string ams2LiveryName) =>
+            GridCarArtKeys.GetValueOrDefault(ams2LiveryName);
 
         public ConfirmModel Preview(ResultDraft draft) => new()
         {

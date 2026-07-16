@@ -49,7 +49,16 @@ public static class ReputationMath
             _ => 0.0,
         };
         double delta = (vsExpectation + podium) * multiplier + (beatTeammate ? 1.0 : 0.0);
-        return mods is null ? delta : delta * mods.RepRoundMult * Marketability(mods);
+        if (mods is null)
+            return delta;
+        if (mods.MasteryEffectsVersion != CharacterProfile.CurrentMasteryEffectsVersion)
+            return delta * mods.RepRoundMult * Marketability(mods);
+
+        double rate = mods.RepRoundMult * mods.RepRoundSignedMult;
+        if (delta > 0.0)
+            rate *= mods.RepRoundGainMult;
+        rate = Math.Clamp(rate, 0.60, 1.40);
+        return delta * rate * Marketability(mods);
     }
 
     /// <summary>Season-end bonus for championship position, tier-scaled.</summary>
@@ -64,7 +73,13 @@ public static class ReputationMath
             _ => 0.0, // null (unclassified/excluded) or outside the top 10
         };
         double delta = bonus * multiplier;
-        return mods is null ? delta : delta * mods.RepSeasonMult * Marketability(mods);
+        if (mods is null)
+            return delta;
+        if (mods.MasteryEffectsVersion != CharacterProfile.CurrentMasteryEffectsVersion)
+            return delta * mods.RepSeasonMult * Marketability(mods);
+
+        double rate = Math.Clamp(mods.RepSeasonMult, 0.60, 1.40);
+        return delta * rate * Marketability(mods);
     }
 
     /// <summary>The marketability pre-multiplier <c>1.0 + 0.5·(marketability − 0.5)</c> — neutral

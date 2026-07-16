@@ -15,6 +15,12 @@ public sealed record RoundUpdateContext
     /// <summary>Budget tier of the player's team this round (1–5).</summary>
     public required int PlayerTeamTier { get; init; }
 
+    /// <summary>
+    /// Folded start-of-season team tiers keyed by team id. Expectation model v2 uses this only as a
+    /// fallback when the resolved grid has no authored car-performance hierarchy.
+    /// </summary>
+    public IReadOnlyDictionary<string, int>? TeamTiers { get; init; }
+
     /// <summary>Classified finishing position; null on DNF (then <see cref="PlayerDnf"/> is required).</summary>
     public int? PlayerFinish { get; init; }
 
@@ -63,6 +69,14 @@ public sealed record RoundUpdateContext
     /// injury perk ⇒ the folded player state is byte-identical. (Task #18.)</summary>
     public double InjuryLoadDelta { get; init; }
 
+    /// <summary>Whether this event belongs to the championship domain. Version-2 XP uses the
+    /// pinned championship-round population; v0/v1 ignore this gate.</summary>
+    public required bool IsChampionshipRound { get; init; }
+
+    /// <summary>True only for the first race session in a weekend. The v2 denominator is authored
+    /// per championship round, so secondary races remain fold-visible but award no v2 XP.</summary>
+    public required bool IsPrimaryRace { get; init; }
+
     /// <summary>The Setup Gamble the player called before the race — the finishing position they bet
     /// on (1-based), or null for no bet. Resolved against the actual finish + the sim's expected
     /// finish only when it is a real gamble (called better than expected); otherwise a no-op, so a
@@ -101,7 +115,9 @@ public static class RoundUpdate
         int playerIndex = SeatStrengthModel.PlayerSeatIndex(grid);
 
         var mods = context.Modifiers;
-        int expected = SeatStrengthModel.ExpectedFinish(grid, playerIndex);
+        int expectationModelVersion = player.Character?.ExpectationModelVersion ?? 0;
+        int expected = SeatStrengthModel.ExpectedFinish(
+            grid, playerIndex, player.Opi, expectationModelVersion, context.TeamTiers);
         double effective = OpiMath.EffectiveFinish(expected, context.PlayerFinish, context.PlayerDnf, gridSize, mods);
 
         double newOpi = OpiMath.Update(player.Opi, expected, effective, mods);
@@ -153,6 +169,7 @@ public static class RoundUpdate
         // sequence is unchanged.
         long newXp = player.Xp;
         int newLevel = player.Level;
+        long newXpScaleRemainder = player.XpScaleRemainder;
         JournalEvent? xpEvent = null;
         if (player.Character is not null && context.CharacterRules is { } charRules)
         {
@@ -165,20 +182,59 @@ public static class RoundUpdate
                 Dnf: context.PlayerDnf),
                 context.Modifiers); // xpRate perks scale the gain per cause (null mods = shipped formula)
             // A hit Setup Gamble also rewards character growth (0 without a bet or on a miss).
-            xpRound += calledShotXpBonus;
-            newXp = Math.Max(0, player.Xp + xpRound);
-            newLevel = CharacterLevelProgression.LevelForTotalXp(
-                player.Character.ProgressionVersion,
-                newXp,
-                grid.Year,
-                charRules);
-            xpEvent = new JournalEvent
+            if (player.Character.ProgressionVersion == CharacterLevelProgression.Level300Version)
             {
-                Phase = JournalPhases.PlayerXp,
-                Entity = "player",
-                DeltaJson = CareerJson.Serialize(new { from = player.Xp, to = newXp, round = xpRound, level = newLevel }),
-                Cause = cause,
-            };
+                xpRound = checked(xpRound + calledShotXpBonus);
+                var plan = RequireVersionTwoPlan(player);
+                var normalized = CharacterProgressionV2Math.NormalizeXpAward(
+                    xpRound,
+                    context.IsChampionshipRound && context.IsPrimaryRace,
+                    player.XpScaleRemainder,
+                    plan);
+                newXp = checked(player.Xp + normalized.AppliedXp);
+                newXpScaleRemainder = normalized.RemainderAfter;
+                newLevel = CharacterLevelProgression.LevelForTotalXp(
+                    player.Character.ProgressionVersion,
+                    newXp,
+                    grid.Year,
+                    charRules);
+                xpEvent = new JournalEvent
+                {
+                    Phase = JournalPhases.PlayerXp,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        from = player.Xp,
+                        to = newXp,
+                        round = xpRound,
+                        level = newLevel,
+                        signedRawXp = normalized.SignedRawXp,
+                        eligibleRawXp = normalized.EligibleRawXp,
+                        appliedXp = normalized.AppliedXp,
+                        remainderBefore = normalized.RemainderBefore,
+                        remainderAfter = normalized.RemainderAfter,
+                    }),
+                    Cause = cause,
+                };
+            }
+            else
+            {
+                // Preserve the shipped v0/v1 arithmetic and delta shape byte-for-byte.
+                xpRound += calledShotXpBonus;
+                newXp = Math.Max(0, player.Xp + xpRound);
+                newLevel = CharacterLevelProgression.LevelForTotalXp(
+                    player.Character.ProgressionVersion,
+                    newXp,
+                    grid.Year,
+                    charRules);
+                xpEvent = new JournalEvent
+                {
+                    Phase = JournalPhases.PlayerXp,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new { from = player.Xp, to = newXp, round = xpRound, level = newLevel }),
+                    Cause = cause,
+                };
+            }
         }
 
         var events = new List<JournalEvent>
@@ -319,6 +375,7 @@ public static class RoundUpdate
                 QualifyingAnchor = newQualiAnchor,
                 Xp = newXp,
                 Level = newLevel,
+                XpScaleRemainder = newXpScaleRemainder,
                 SeasonInjuryLoad = player.SeasonInjuryLoad + context.InjuryLoadDelta,
             },
             Events = events,
@@ -351,4 +408,18 @@ public static class RoundUpdate
     }
 
     private static double Round4(double value) => Math.Round(value, 4);
+
+    private static CampaignProgressionPlan RequireVersionTwoPlan(PlayerCareerState player)
+    {
+        var plan = player.CampaignProgressionPlan
+            ?? throw new InvalidOperationException(
+                "A version-2 character requires a pinned campaign progression plan.");
+        plan.Validate();
+        if (!string.Equals(player.ExperienceMode, plan.Mode, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "The player's experience mode does not match the pinned campaign progression plan.");
+        }
+        return plan;
+    }
 }

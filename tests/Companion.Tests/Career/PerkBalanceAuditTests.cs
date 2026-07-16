@@ -136,6 +136,57 @@ public class PerkBalanceAuditTests
     // ---------- balance invariants (§4.1 / §11.4) ----------
 
     [Fact]
+    public void EveryShippedEffectHasExplicitClassificationWithPinnedDistribution()
+    {
+        var expectedCounts = new Dictionary<string, int>(StringComparer.Ordinal)
+        {
+            ["expectation"] = 41,
+            ["career"] = 82,
+            ["car"] = 21,
+        };
+        var actualCounts = expectedCounts.Keys.ToDictionary(
+            classification => classification,
+            _ => 0,
+            StringComparer.Ordinal);
+        int conditionalCarEffects = 0;
+
+        var root = Root();
+        foreach (var perk in Perks(root).EnumerateArray())
+        {
+            string id = perk.GetProperty("id").GetString()!;
+            foreach (var effect in perk.GetProperty("effects").EnumerateArray())
+            {
+                string lever = effect.GetProperty("lever").GetString()!;
+                Assert.True(effect.TryGetProperty("classification", out var authored) &&
+                            authored.ValueKind == JsonValueKind.String,
+                    $"Perk '{id}' lever '{lever}' must author an explicit effect classification.");
+
+                string classification = authored.GetString()!;
+                string expected = lever switch
+                {
+                    "statDelta" => "expectation",
+                    "carScalar" => "car",
+                    _ => "career",
+                };
+                Assert.Equal(expected, classification);
+                Assert.True(actualCounts.ContainsKey(classification),
+                    $"Perk '{id}' lever '{lever}' uses unknown classification '{classification}'.");
+                actualCounts[classification]++;
+
+                if (classification == "car" &&
+                    effect.TryGetProperty("condition", out var condition) &&
+                    condition.ValueKind == JsonValueKind.String)
+                {
+                    conditionalCarEffects++;
+                }
+            }
+        }
+
+        Assert.Equal(expectedCounts, actualCounts);
+        Assert.Equal(10, conditionalCarEffects);
+    }
+
+    [Fact]
     public void EveryPerkCpEquivalentSumMatchesItsDeclaredCost()
     {
         var root = Root();

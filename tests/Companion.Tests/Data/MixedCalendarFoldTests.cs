@@ -1,4 +1,5 @@
 using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.Data;
@@ -137,6 +138,43 @@ public sealed class MixedCalendarFoldTests
         PlayerAge = 27,
     };
 
+    private static CampaignProgressionPlan VersionTwoPlan() => CampaignProgressionPlan.Create(
+        CareerExperienceModes.GrandPrixDynasty,
+        1967,
+        2020,
+        [
+            new PinnedCampaignSeason
+            {
+                PackId = "mixed-calendar-pack",
+                PackVersion = "1.0.0",
+                Sha256 = new string('a', 64),
+                Year = 1967,
+                ChampionshipRoundCount = 3,
+            },
+        ]);
+
+    private static CharacterProfile VersionTwoCharacter() => new()
+    {
+        Stats = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["pace"] = 0.5, ["oneLap"] = 0.5, ["craft"] = 0.5,
+            ["racecraft"] = 0.5, ["adaptability"] = 0.5,
+            ["marketability"] = 0.5, ["durability"] = 0.5,
+        },
+        PerkIds = [],
+        ProgressionVersion = CharacterLevelProgression.Level300Version,
+    };
+
+    private static ReplaySimInputs VersionTwoInputs() => new()
+    {
+        AgingCurves = CareerTestData.LoadAgingCurves(),
+        Archetypes = CareerTestData.LoadArchetypes(),
+        Headlines = CareerTestData.LoadHeadlines(),
+        PlayerDriverId = "driver.a",
+        PlayerAge = 27,
+        CharacterRules = CharacterRules.Parse(CareerTestData.ReadRules("perks.json")),
+    };
+
     private static (CareerDatabase Db, long SeasonId, SeasonPack Pack) Setup(TempDb tmp)
     {
         var pack = Pack();
@@ -145,6 +183,25 @@ public sealed class MixedCalendarFoldTests
         CareerStore.PinPack(db, pack, Utc);
         long seasonId = CareerStore.StartSeason(db, 1967, pack.Manifest.PackId, pack.Manifest.Version);
         StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart, new PlayerCareerState());
+        return (db, seasonId, pack);
+    }
+
+    private static (CareerDatabase Db, long SeasonId, SeasonPack Pack) SetupVersionTwo(TempDb tmp)
+    {
+        var pack = Pack();
+        var db = CareerDatabase.Open(tmp.Path);
+        CareerStore.CreateCareer(db, "Mixed Calendar V2 Career", Seed, "0.6.0-test", Utc);
+        CareerStore.PinPack(db, pack, Utc);
+        long seasonId = CareerStore.StartSeason(db, 1967, pack.Manifest.PackId, pack.Manifest.Version);
+        StateStore.UpsertPlayerState(db, seasonId, StateStore.StageStart, new PlayerCareerState
+        {
+            Character = VersionTwoCharacter(),
+            Level = 1,
+            CurrentTeamId = "team.red",
+            LiveryName = "Red #1",
+            ExperienceMode = CareerExperienceModes.GrandPrixDynasty,
+            CampaignProgressionPlan = VersionTwoPlan(),
+        });
         return (db, seasonId, pack);
     }
 
@@ -240,6 +297,83 @@ public sealed class MixedCalendarFoldTests
 
         var report = ReplayService.Resimulate(db, pack, Seed, Inputs());
 
+        Assert.True(report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+    }
+
+    [Fact]
+    public void VersionTwoNonChampionshipRound_JournalsZeroEligibleXp_AndReplaysByteIdentical()
+    {
+        using var tmp = new TempDb();
+        var (db, seasonId, pack) = SetupVersionTwo(tmp);
+        using var _ = db;
+        var inputs = VersionTwoInputs();
+
+        ReplayService.ImportAndFoldRound(
+            db, seasonId, pack, Seed, inputs, round: 1,
+            new RoundResultEnvelope
+            {
+                Result = Result(pack, 1, "driver.a", "driver.b", "driver.c", "driver.d") with
+                {
+                    Sessions =
+                    [
+                        Result(pack, 1, "driver.a", "driver.b", "driver.c", "driver.d").Sessions[0],
+                        Result(pack, 1, "driver.b", "driver.a", "driver.d", "driver.c").Sessions[0],
+                    ],
+                },
+                SliderUsed = 100.0,
+            },
+            Utc);
+        var afterChampionship = StateStore.ReadRoundPlayerState(db, seasonId, 1)!.Player;
+
+        ReplayService.ImportAndFoldRound(
+            db, seasonId, pack, Seed, inputs, round: 2,
+            new RoundResultEnvelope
+            {
+                Result = Result(pack, 2, "driver.d", "driver.c", "driver.b", "driver.a"),
+                SliderUsed = 100.0,
+            },
+            Utc);
+        var afterNonChampionship = StateStore.ReadRoundPlayerState(db, seasonId, 2)!.Player;
+
+        var xpRows = JournalStore.ReadSeason(db, seasonId)
+            .Where(row => row.Phase == JournalPhases.PlayerXp && row.Round is 1 or 2)
+            .OrderBy(row => row.Round)
+            .ToArray();
+        Assert.Equal(3, xpRows.Length);
+
+        using (var championship = System.Text.Json.JsonDocument.Parse(xpRows[0].DeltaJson))
+        {
+            Assert.True(championship.RootElement.GetProperty("eligibleRawXp").GetInt64() > 0);
+            Assert.True(championship.RootElement.GetProperty("appliedXp").GetInt64() > 0);
+            Assert.Equal(championship.RootElement.GetProperty("to").GetInt64(), afterChampionship.Xp);
+            Assert.Equal(championship.RootElement.GetProperty("remainderAfter").GetInt64(),
+                afterChampionship.XpScaleRemainder);
+        }
+        using (var secondaryRace = System.Text.Json.JsonDocument.Parse(xpRows[1].DeltaJson))
+        {
+            var root = secondaryRace.RootElement;
+            Assert.Equal(0, root.GetProperty("eligibleRawXp").GetInt64());
+            Assert.Equal(0, root.GetProperty("appliedXp").GetInt64());
+            Assert.Equal(root.GetProperty("from").GetInt64(), root.GetProperty("to").GetInt64());
+            Assert.Equal(root.GetProperty("remainderBefore").GetInt64(),
+                root.GetProperty("remainderAfter").GetInt64());
+        }
+        using (var nonChampionship = System.Text.Json.JsonDocument.Parse(xpRows[2].DeltaJson))
+        {
+            var root = nonChampionship.RootElement;
+            Assert.NotEqual(0, root.GetProperty("signedRawXp").GetInt64());
+            Assert.Equal(0, root.GetProperty("eligibleRawXp").GetInt64());
+            Assert.Equal(0, root.GetProperty("appliedXp").GetInt64());
+            Assert.Equal(root.GetProperty("from").GetInt64(), root.GetProperty("to").GetInt64());
+            Assert.Equal(root.GetProperty("remainderBefore").GetInt64(),
+                root.GetProperty("remainderAfter").GetInt64());
+        }
+        Assert.Equal(afterChampionship.Xp, afterNonChampionship.Xp);
+        Assert.Equal(afterChampionship.XpScaleRemainder, afterNonChampionship.XpScaleRemainder);
+
+        var report = ReplayService.Resimulate(db, pack, Seed, inputs);
         Assert.True(report.Identical,
             $"diverged: {report.FirstDivergence?.Reason} stored={report.FirstDivergence?.StoredDeltaJson} " +
             $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");

@@ -49,6 +49,12 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.False(settings.MinimalNarrative);
         Assert.True(settings.EraThemingEnabled);                       // immersion: era skin on by default
         Assert.Equal(NewsDetailLevel.Articles, settings.NewsDetail);   // ...and full articles by default
+        Assert.True(settings.SoundEnabled);
+        Assert.Equal(80, settings.MasterVolumePercent);
+        Assert.Equal(70, settings.EffectsVolumePercent);
+        Assert.Equal(35, settings.AmbienceVolumePercent);
+        Assert.Equal(40, settings.MusicVolumePercent);
+        Assert.True(settings.MuteWhenUnfocused);
         Assert.True(settings.StandingsColumns.ShowGross);
         Assert.False(settings.StandingsColumns.ShowPerRound);
     }
@@ -66,6 +72,12 @@ public sealed class SettingsStoreTests : IDisposable
             AutoOpenBriefing = false,
             EraThemingEnabled = false,
             NewsDetail = NewsDetailLevel.HeadlinesOnly,
+            SoundEnabled = false,
+            MasterVolumePercent = 61,
+            EffectsVolumePercent = 52,
+            AmbienceVolumePercent = 23,
+            MusicVolumePercent = 44,
+            MuteWhenUnfocused = false,
             PreferInstalledBaseline = false,
             DiffAwareStaging = false,
             RestorePromptOnSeasonEnd = false,
@@ -89,6 +101,12 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal(2, reloaded.StandingsTabIndex);
         Assert.False(reloaded.EraThemingEnabled);
         Assert.Equal(NewsDetailLevel.HeadlinesOnly, reloaded.NewsDetail);
+        Assert.False(reloaded.SoundEnabled);
+        Assert.Equal(61, reloaded.MasterVolumePercent);
+        Assert.Equal(52, reloaded.EffectsVolumePercent);
+        Assert.Equal(23, reloaded.AmbienceVolumePercent);
+        Assert.Equal(44, reloaded.MusicVolumePercent);
+        Assert.False(reloaded.MuteWhenUnfocused);
     }
 
     [Fact]
@@ -113,6 +131,12 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.True(settings.MinimalNarrative);                // ...MinimalNarrative preserved...
         Assert.True(settings.EraThemingEnabled);               // ...and the new fields default in
         Assert.Equal(NewsDetailLevel.Articles, settings.NewsDetail);
+        Assert.True(settings.SoundEnabled);
+        Assert.Equal(80, settings.MasterVolumePercent);
+        Assert.Equal(70, settings.EffectsVolumePercent);
+        Assert.Equal(35, settings.AmbienceVolumePercent);
+        Assert.Equal(40, settings.MusicVolumePercent);
+        Assert.True(settings.MuteWhenUnfocused);
     }
 
     [Fact]
@@ -144,6 +168,12 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.True(root.TryGetProperty("fontScalePercent", out _));
         Assert.True(root.TryGetProperty("preferInstalledBaseline", out _));
         Assert.True(root.TryGetProperty("standingsColumns", out _));
+        Assert.True(root.TryGetProperty("soundEnabled", out _));
+        Assert.True(root.TryGetProperty("masterVolumePercent", out _));
+        Assert.True(root.TryGetProperty("effectsVolumePercent", out _));
+        Assert.True(root.TryGetProperty("ambienceVolumePercent", out _));
+        Assert.True(root.TryGetProperty("musicVolumePercent", out _));
+        Assert.True(root.TryGetProperty("muteWhenUnfocused", out _));
     }
 
     [Theory]
@@ -172,6 +202,10 @@ public sealed class SettingsStoreTests : IDisposable
               "fontScalePercent": 400,
               "defaultDifficulty": 9000,
               "standingsTabIndex": 99,
+              "masterVolumePercent": -1,
+              "effectsVolumePercent": 101,
+              "ambienceVolumePercent": -500,
+              "musicVolumePercent": 9000,
               "packFolders": ["  D:\\Packs  ", "", "d:\\packs"]
             }
             """);
@@ -182,6 +216,10 @@ public sealed class SettingsStoreTests : IDisposable
         Assert.Equal(AppSettings.MaxFontScalePercent, settings.FontScalePercent);
         Assert.Equal(120.0, settings.DefaultDifficulty); // DifficultyModel.MaxSlider
         Assert.Equal(2, settings.StandingsTabIndex);
+        Assert.Equal(AppSettings.MinVolumePercent, settings.MasterVolumePercent);
+        Assert.Equal(AppSettings.MaxVolumePercent, settings.EffectsVolumePercent);
+        Assert.Equal(AppSettings.MinVolumePercent, settings.AmbienceVolumePercent);
+        Assert.Equal(AppSettings.MaxVolumePercent, settings.MusicVolumePercent);
         Assert.Equal(new[] { @"D:\Packs" }, settings.PackFolders); // trimmed, deduped, no empties
     }
 

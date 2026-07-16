@@ -63,6 +63,11 @@ public sealed record SeasonEndContext
     /// character to scale the season reputation and the offer/salary scoring; null (or a
     /// character-free player) leaves the season end byte-identical. (Increment 4a.)</summary>
     public CharacterRules? CharacterRules { get; init; }
+
+    /// <summary>The pinned progression-v2 mastery catalog. Version-zero characters ignore this
+    /// value completely; a version-one character that owns mastery nodes requires it so replay and
+    /// live season-end folds resolve the same authored effects.</summary>
+    public MasterySkillCatalog? MasterySkills { get; init; }
 }
 
 public sealed record SeasonEndResult
@@ -168,18 +173,24 @@ public static class SeasonEndPipeline
 
         // ---- step 2: player reputation/OPI finals -------------------------------------
         var player = context.Player;
+        // Resolve the player's CURRENT tier before any season-end drift. The same pre-drift tier
+        // gates authored high/low-tier mastery effects and drives the established reputation math.
+        int playerTier = context.Teams
+            .FirstOrDefault(t => string.Equals(t.TeamId, player.CurrentTeamId, StringComparison.Ordinal))
+            ?.Tier ?? 3;
         // The player's character modifier (null for a character-free player or no rules → every
         // call below takes its exact shipped path, so the season end is byte-identical).
         PlayerPerkModifiers? characterMods = player.Character is { } chr && context.CharacterRules is { } crules
-            ? PerkResolver.Resolve(chr, crules)
+            ? CharacterModifierResolver.Resolve(
+                chr,
+                crules,
+                context.MasterySkills,
+                activeConditions: null,
+                masteryConditions: SeasonMasteryConditions(context, chr, playerTier))
             : null;
         int? playerPosition = final.Drivers
             .FirstOrDefault(d => string.Equals(d.DriverId, context.PlayerDriverId, StringComparison.Ordinal))
             ?.Position;
-        int playerTier = context.Teams
-            .FirstOrDefault(t => string.Equals(t.TeamId, player.CurrentTeamId, StringComparison.Ordinal))
-            ?.Tier ?? 3;
-
         double seasonRepDelta = ReputationMath.SeasonDelta(playerPosition, playerTier, characterMods);
         double finalRep = ReputationMath.Apply(player.Reputation, seasonRepDelta);
 
@@ -224,29 +235,68 @@ public static class SeasonEndPipeline
         // byte-identical and the f1db oracle is untouched.
         long seasonEndXp = player.Xp;
         int seasonEndLevel = player.Level;
+        long seasonEndXpScaleRemainder = player.XpScaleRemainder;
         if (player.Character is not null && context.CharacterRules is { } xpRules)
         {
             int seasonXp = XpMath.PerSeason(
                 xpRules.Levels.XpSources.PerSeason, playerPosition, seasonCompleted: true);
-            seasonEndXp = Math.Max(0, player.Xp + seasonXp);
-            seasonEndLevel = CharacterLevelProgression.LevelForTotalXp(
-                player.Character.ProgressionVersion,
-                seasonEndXp,
-                context.Pack.Season.Year,
-                xpRules);
-            events.Add(new JournalEvent
+            if (player.Character.ProgressionVersion == CharacterLevelProgression.Level300Version)
             {
-                Phase = JournalPhases.PlayerXp,
-                Entity = "player",
-                DeltaJson = CareerJson.Serialize(new
+                var plan = RequireVersionTwoPlan(player);
+                var normalized = CharacterProgressionV2Math.NormalizeXpAward(
+                    seasonXp,
+                    isEligible: true,
+                    player.XpScaleRemainder,
+                    plan);
+                seasonEndXp = checked(player.Xp + normalized.AppliedXp);
+                seasonEndXpScaleRemainder = normalized.RemainderAfter;
+                seasonEndLevel = CharacterLevelProgression.LevelForTotalXp(
+                    player.Character.ProgressionVersion,
+                    seasonEndXp,
+                    context.Pack.Season.Year,
+                    xpRules);
+                events.Add(new JournalEvent
                 {
-                    from = player.Xp,
-                    to = seasonEndXp,
-                    season = seasonXp,
-                    level = seasonEndLevel,
-                }),
-                Cause = "season-final",
-            });
+                    Phase = JournalPhases.PlayerXp,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        from = player.Xp,
+                        to = seasonEndXp,
+                        season = seasonXp,
+                        level = seasonEndLevel,
+                        signedRawXp = normalized.SignedRawXp,
+                        eligibleRawXp = normalized.EligibleRawXp,
+                        appliedXp = normalized.AppliedXp,
+                        remainderBefore = normalized.RemainderBefore,
+                        remainderAfter = normalized.RemainderAfter,
+                    }),
+                    Cause = "season-final",
+                });
+            }
+            else
+            {
+                // Preserve the shipped v0/v1 arithmetic and delta shape byte-for-byte.
+                seasonEndXp = Math.Max(0, player.Xp + seasonXp);
+                seasonEndLevel = CharacterLevelProgression.LevelForTotalXp(
+                    player.Character.ProgressionVersion,
+                    seasonEndXp,
+                    context.Pack.Season.Year,
+                    xpRules);
+                events.Add(new JournalEvent
+                {
+                    Phase = JournalPhases.PlayerXp,
+                    Entity = "player",
+                    DeltaJson = CareerJson.Serialize(new
+                    {
+                        from = player.Xp,
+                        to = seasonEndXp,
+                        season = seasonXp,
+                        level = seasonEndLevel,
+                    }),
+                    Cause = "season-final",
+                });
+            }
 
             // A level-up from the season's XP is worth a line in the news (progression made felt).
             if (seasonEndLevel > player.Level)
@@ -263,12 +313,12 @@ public static class SeasonEndPipeline
         }
 
         // ---- injury (character depth 6): a fragile driver risks a season-end injury ----------
-        // Only a character carrying an injury-stream perk rolls, so a default career (or a character
-        // with no injury perk) consumes no new draws and stays byte-identical. A hit sets reputation
-        // back (which feeds the offers below) but never touches a finishing position.
+        // Only a character carrying a legacy injury-stream perk or an explicit mastery injury-base
+        // drawback rolls, so protection alone and default careers consume no new draws. A hit sets
+        // reputation back (which feeds the offers below) but never touches a finishing position.
         if (characterMods is not null && player.Character is { } injuryChar
             && context.CharacterRules is { } injuryRules
-            && InjuryModel.HasInjuryPerk(injuryChar, injuryRules))
+            && (InjuryModel.HasInjuryPerk(injuryChar, injuryRules) || characterMods.MasteryInjuryRisk))
         {
             double hazard = InjuryModel.Hazard(
                 injuryChar.Stat("durability"), characterMods, player.SeasonInjuryLoad);
@@ -311,6 +361,7 @@ public static class SeasonEndPipeline
             SeasonsCompleted = player.SeasonsCompleted + 1,
             Xp = seasonEndXp,
             Level = seasonEndLevel,
+            XpScaleRemainder = seasonEndXpScaleRemainder,
             // The per-error injury load is a WITHIN-season tally: consumed by the roll above, it resets
             // so it never carries into next season's start state (SeasonRollover copies the end state).
             SeasonInjuryLoad = 0.0,
@@ -833,6 +884,59 @@ public static class SeasonEndPipeline
 
     private static string TeamName(SeasonPack pack, string teamId) =>
         pack.Teams.FirstOrDefault(t => string.Equals(t.Id, teamId, StringComparison.Ordinal))?.Name ?? teamId;
+
+    private static CampaignProgressionPlan RequireVersionTwoPlan(PlayerCareerState player)
+    {
+        var plan = player.CampaignProgressionPlan
+            ?? throw new InvalidOperationException(
+                "A version-2 character requires a pinned campaign progression plan.");
+        plan.Validate();
+        if (!string.Equals(player.ExperienceMode, plan.Mode, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "The player's experience mode does not match the pinned campaign progression plan.");
+        }
+        return plan;
+    }
+
+    /// <summary>Season-end knows only stable career facts. Version-zero profiles deliberately get
+    /// null so legacy conditional-perk resolution remains exact. Progression-v2 gets both spellings
+    /// of each tier predicate plus an explicit/default-archetype works-team fact; team names are
+    /// never inspected and round-local or transition facts are never inferred here.</summary>
+    private static IReadOnlySet<string>? SeasonMasteryConditions(
+        SeasonEndContext context,
+        CharacterProfile character,
+        int playerTier)
+    {
+        if (character.MasteryEffectsVersion != CharacterProfile.CurrentMasteryEffectsVersion)
+            return null;
+
+        var conditions = new HashSet<string>(StringComparer.Ordinal);
+        if (playerTier <= 2)
+        {
+            conditions.Add("tierAtMost2");
+            conditions.Add("tierLte2");
+        }
+        if (playerTier >= 4)
+        {
+            conditions.Add("tierAtLeast4");
+            conditions.Add("tierGte4");
+        }
+
+        string? archetype = null;
+        if (context.Player.CurrentTeamId is { } currentTeamId)
+            context.TeamArchetypeOverrides.TryGetValue(currentTeamId, out archetype);
+        if (archetype is null)
+        {
+            int clampedTier = Math.Clamp(playerTier, 1, 5);
+            if (!context.Archetypes.DefaultArchetypeByTier.TryGetValue(clampedTier, out archetype))
+                throw new KeyNotFoundException($"No default archetype for tier {clampedTier}.");
+        }
+        if (string.Equals(archetype, "works", StringComparison.Ordinal))
+            conditions.Add("worksTeam");
+
+        return conditions;
+    }
 
     private static double Round4(double value) => Math.Round(value, 4);
 }

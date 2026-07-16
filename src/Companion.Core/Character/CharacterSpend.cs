@@ -1,3 +1,5 @@
+using Companion.Core.Career;
+
 namespace Companion.Core.Character;
 
 /// <summary>
@@ -44,8 +46,8 @@ public static class CharacterRespecMath
     }
 }
 
-/// <summary>Pure character-progression helpers: how much CP a driver has to spend, and how a spend
-/// evolves the character.</summary>
+/// <summary>Pure character-progression helpers: how much development currency a driver has to
+/// spend, and how a spend evolves the character.</summary>
 public static class CharacterProgress
 {
     /// <summary>Character points available to spend right now: the creation leftover, plus the level
@@ -59,10 +61,40 @@ public static class CharacterProgress
             - character.CpSpent;
     }
 
+    /// <summary>
+    /// Version-selected development currency available right now. Legacy versions retain the exact
+    /// Character Point calculation above; version 2 projects the pinned campaign's proportional
+    /// Skill Point pool through both its level and completed-season gates.
+    /// </summary>
+    public static int AvailableSkillPoints(
+        CharacterProfile character,
+        int level,
+        CharacterRules rules,
+        int completedSeasons,
+        CampaignProgressionPlan? campaignProgressionPlan)
+    {
+        ArgumentNullException.ThrowIfNull(character);
+        ArgumentNullException.ThrowIfNull(rules);
+
+        return character.ProgressionVersion switch
+        {
+            CharacterLevelProgression.LegacyVersion or CharacterLevelProgression.EraCappedVersion =>
+                AvailableCp(character, level, rules),
+            CharacterLevelProgression.Level300Version => AvailableVersionTwoSkillPoints(
+                character,
+                level,
+                completedSeasons,
+                campaignProgressionPlan),
+            _ => throw new NotSupportedException(
+                $"Character progression version {character.ProgressionVersion} is not supported by this build."),
+        };
+    }
+
     /// <summary>Applies a spend to the character — raise a stat by one step (capped at
     /// <c>statCapPerRating</c>, which is higher than the creation cap, so a driver develops beyond
-    /// where they started) or add a perk — and charges the cost to <see cref="CharacterProfile.CpSpent"/>.
-    /// Pure; the caller validates affordability first.</summary>
+    /// where they started) or add a perk — and charges the version-selected lifetime-spend field
+    /// (<see cref="CharacterProfile.CpSpent"/> for v0/v1; <see cref="CharacterProfile.SkillPointsSpent"/>
+    /// for v2). Pure; the caller validates affordability first.</summary>
     public static CharacterProfile Apply(CharacterProfile character, CharacterSpend spend, CharacterRules rules)
     {
         var stats = new Dictionary<string, double>(character.Stats, StringComparer.Ordinal);
@@ -84,12 +116,20 @@ public static class CharacterProgress
             perks.Add(spend.Target);
         }
 
-        return character with
+        var evolved = character with
         {
             Stats = stats,
             PerkIds = perks,
             UnlockedSkillNodeIds = skillNodes.Count == 0 ? null : skillNodes,
-            CpSpent = character.CpSpent + spend.Cost,
+        };
+        return character.ProgressionVersion switch
+        {
+            CharacterLevelProgression.LegacyVersion or CharacterLevelProgression.EraCappedVersion =>
+                evolved with { CpSpent = character.CpSpent + spend.Cost },
+            CharacterLevelProgression.Level300Version =>
+                evolved with { SkillPointsSpent = character.SkillPointsSpent + spend.Cost },
+            _ => throw new NotSupportedException(
+                $"Character progression version {character.ProgressionVersion} is not supported by this build."),
         };
     }
 
@@ -107,6 +147,12 @@ public static class CharacterProgress
         CharacterProfile character,
         IReadOnlyList<CharacterRespec> respecs)
     {
+        if (character.ProgressionVersion == CharacterLevelProgression.Level300Version && respecs.Count > 0)
+        {
+            throw new InvalidOperationException(
+                "Version-2 skill resets spend XP; legacy milestone-token respecs are not supported.");
+        }
+
         foreach (var respec in respecs)
         {
             if (!character.PerkIds.Contains(respec.NodeId, StringComparer.Ordinal))
@@ -120,5 +166,25 @@ public static class CharacterProgress
             };
         }
         return character;
+    }
+
+    private static int AvailableVersionTwoSkillPoints(
+        CharacterProfile character,
+        int level,
+        int completedSeasons,
+        CampaignProgressionPlan? campaignProgressionPlan)
+    {
+        if (campaignProgressionPlan is null)
+        {
+            throw new InvalidOperationException(
+                "Version-2 progression requires a pinned campaign progression plan.");
+        }
+
+        campaignProgressionPlan.Validate();
+        return CharacterProgressionV2Math.SkillPoints(
+            level,
+            completedSeasons,
+            campaignProgressionPlan.MasterySeason,
+            character.SkillPointsSpent).Available;
     }
 }

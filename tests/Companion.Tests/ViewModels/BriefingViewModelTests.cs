@@ -18,10 +18,12 @@ public class BriefingViewModelTests
     {
         var pack = ViewModelTestData.RealPack();
         var round = pack.Season.Rounds.Single(r => r.Round == 3);
-        return new FakeCareerSession
+        var session = new FakeCareerSession
         {
             Briefing = BriefingComposer.Compose(pack, round, ViewModelTestData.RealLibrary.Value),
         };
+        session.Summary = session.Summary with { CurrentRound = 3, Opi = 0.0 };
+        return session;
     }
 
     private static StageOutcome SuccessOutcome(string? backupPath = null) => new()
@@ -85,19 +87,19 @@ public class BriefingViewModelTests
 
         Assert.True(vm.CanGamble);
         Assert.False(vm.HasCalledShot);
-        Assert.Contains("expects you around P10", vm.CalledShotSummary);
+        Assert.Contains("Team benchmark: around P10", vm.CalledShotSummary);
 
         // "Bolder" from no call starts one place better than expected (P9) — the base stake.
         vm.CallBolderCommand.Execute(null);
         Assert.Equal(9, vm.CalledShot);
         Assert.True(vm.HasCalledShot);
-        Assert.Contains("Called P9", vm.CalledShotSummary);
-        Assert.Contains("staking 3", vm.CalledShotSummary);
+        Assert.Contains("Bet: finish P9 or better", vm.CalledShotSummary);
+        Assert.Contains("+3 reputation", vm.CalledShotSummary);
 
         // Bolder again → P8, a bigger stake (4).
         vm.CallBolderCommand.Execute(null);
         Assert.Equal(8, vm.CalledShot);
-        Assert.Contains("staking 4", vm.CalledShotSummary);
+        Assert.Contains("+4 reputation", vm.CalledShotSummary);
 
         // Withdraw the bet.
         vm.ClearCallCommand.Execute(null);
@@ -106,14 +108,14 @@ public class BriefingViewModelTests
     }
 
     [Fact]
-    public void Gamble_ACallNoBolderThanExpected_IsFlaggedAsNotAGamble()
+    public void Gamble_ACallNoBolderThanExpected_ExplainsTheTeamBenchmark()
     {
         var session = SessionWithRealRound3();
         session.ExpectedFinish = 5;
         var vm = new BriefingViewModel(session) { CalledShot = 7 }; // behind the expected finish
 
         Assert.False(Companion.Core.Career.CalledShotMath.IsGamble(7, 5));
-        Assert.Contains("isn't a gamble", vm.CalledShotSummary);
+        Assert.Contains("does not beat the P5 team benchmark", vm.CalledShotSummary);
     }
 
     [Fact]
@@ -128,6 +130,20 @@ public class BriefingViewModelTests
         var poleFavourite = SessionWithRealRound3();
         poleFavourite.ExpectedFinish = 1;
         Assert.False(new BriefingViewModel(poleFavourite).CanGamble);
+    }
+
+    [Fact]
+    public void Gamble_HiddenOnTheFirstRaceUntilPaceIsCalibrated()
+    {
+        var firstRace = SessionWithRealRound3();
+        firstRace.ExpectedFinish = 10;
+        firstRace.Summary = firstRace.Summary with { CurrentRound = 1, Opi = null };
+
+        var vm = new BriefingViewModel(firstRace);
+
+        Assert.Equal(10, vm.ExpectedFinish);
+        Assert.False(vm.CanGamble);
+        Assert.Null(vm.CalledShot);
     }
 
     // ---------- staging banner ----------

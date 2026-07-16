@@ -138,6 +138,48 @@ public sealed partial class SettingsViewModel : ObservableObject
     partial void OnNewsDetailChanged(NewsDetailLevel value) =>
         Apply(s => s with { NewsDetail = value });
 
+    // ---------- audio ----------
+
+    public int MinVolumePercent => AppSettings.MinVolumePercent;
+
+    public int MaxVolumePercent => AppSettings.MaxVolumePercent;
+
+    [ObservableProperty]
+    private bool _soundEnabled = true;
+
+    partial void OnSoundEnabledChanged(bool value) =>
+        Apply(s => s with { SoundEnabled = value });
+
+    [ObservableProperty]
+    private int _masterVolumePercent = 80;
+
+    partial void OnMasterVolumePercentChanged(int value) =>
+        Apply(s => s with { MasterVolumePercent = value });
+
+    [ObservableProperty]
+    private int _effectsVolumePercent = 70;
+
+    partial void OnEffectsVolumePercentChanged(int value) =>
+        Apply(s => s with { EffectsVolumePercent = value });
+
+    [ObservableProperty]
+    private int _ambienceVolumePercent = 35;
+
+    partial void OnAmbienceVolumePercentChanged(int value) =>
+        Apply(s => s with { AmbienceVolumePercent = value });
+
+    [ObservableProperty]
+    private int _musicVolumePercent = 40;
+
+    partial void OnMusicVolumePercentChanged(int value) =>
+        Apply(s => s with { MusicVolumePercent = value });
+
+    [ObservableProperty]
+    private bool _muteWhenUnfocused = true;
+
+    partial void OnMuteWhenUnfocusedChanged(bool value) =>
+        Apply(s => s with { MuteWhenUnfocused = value });
+
     // ---------- staging (NAMeS-first) ----------
 
     [ObservableProperty]
@@ -229,6 +271,12 @@ public sealed partial class SettingsViewModel : ObservableObject
             AutoOpenBriefing = settings.AutoOpenBriefing;
             EraThemingEnabled = settings.EraThemingEnabled;
             NewsDetail = settings.NewsDetail;
+            SoundEnabled = settings.SoundEnabled;
+            MasterVolumePercent = settings.MasterVolumePercent;
+            EffectsVolumePercent = settings.EffectsVolumePercent;
+            AmbienceVolumePercent = settings.AmbienceVolumePercent;
+            MusicVolumePercent = settings.MusicVolumePercent;
+            MuteWhenUnfocused = settings.MuteWhenUnfocused;
             PreferInstalledBaseline = settings.PreferInstalledBaseline;
             DiffAwareStaging = settings.DiffAwareStaging;
             RestorePromptOnSeasonEnd = settings.RestorePromptOnSeasonEnd;

@@ -122,9 +122,13 @@
                     </MultiBinding>
                 </ScrollViewer.Tag>
                 <StackPanel Margin="14">
-                    <!-- Venue hero: SMGP gets its authored round image; every other career retains
-                         a high-contrast circuit-map field. Text uses the theme's media contract. -->
-                    <Border Height="244" CornerRadius="10" ClipToBounds="True"
+                    <!-- Every AMS2 track/layout resolves through the embedded panoramic banner
+                         manifest. A missing/corrupt master cleanly reveals the circuit map below. -->
+                    <Border x:Name="RoundHeroFrame" MinHeight="244"
+                            Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth,
+                                             Converter={StaticResource AspectHeight},
+                                             ConverterParameter=0.2291666667}"
+                            CornerRadius="10" ClipToBounds="True"
                             Background="{DynamicResource SurfaceAltBrush}"
                             BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
                         <Grid>
@@ -134,20 +138,13 @@
                                       Stroke="{DynamicResource AccentBrush}" StrokeThickness="11"
                                       StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                             </Viewbox>
-                            <Image x:Name="RoundHeroArt" Stretch="UniformToFill"
+                            <Image x:Name="RoundHeroArt"
+                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                   Stretch="Uniform" StretchDirection="Both"
                                    RenderOptions.BitmapScalingMode="HighQuality" IsHitTestVisible="False"
+                                   Source="{Binding TrackId, Mode=OneWay, Converter={StaticResource TrackBannerImage}}"
                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source,
-                                                        Converter={StaticResource NullCollapsed}}">
-                                <Image.Source>
-                                    <MultiBinding Converter="{StaticResource SmgpCalendarRoundArt}">
-                                        <Binding />
-                                        <Binding Path="DataContext.Home.Session"
-                                                 RelativeSource="{RelativeSource AncestorType={x:Type views:HubView}}" />
-                                        <Binding Path="Tag.Home.Session"
-                                                 RelativeSource="{RelativeSource AncestorType=Window}" />
-                                    </MultiBinding>
-                                </Image.Source>
-                            </Image>
+                                                        Converter={StaticResource NullCollapsed}}" />
                             <Border Background="{DynamicResource ScrimBrush}" Opacity="0.24" />
                             <Border Background="{DynamicResource MediaCaptionGradientBrush}" />
 

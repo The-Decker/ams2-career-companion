@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Ams2.CustomAi;
 using Companion.Ams2.Packs;
+using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.ViewModels.Services;
@@ -31,12 +33,17 @@ public sealed class CareerCreatedEventArgs(ICareerSession session, string career
 /// </summary>
 public sealed partial class NewCareerWizardViewModel : ObservableObject
 {
+    private const string CanonicalSmgpPackId = "smgp-1";
+
     private readonly CareerEnvironment _environment;
     private readonly ICareerFactory _factory;
     private readonly IReadOnlyList<string> _packSearchRoots;
     private readonly string _careersDirectory;
     private readonly Random _seedSource;
     private readonly ISettingsService? _settings;
+    private readonly string? _explicitExperienceMode;
+    private readonly bool _inferExperienceModeFromPack;
+    private string? _characterPackDirectory;
 
     private string? _packDirectory;
 
@@ -46,7 +53,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         IReadOnlyList<string>? packSearchRoots = null,
         string? careersDirectory = null,
         Random? seedSource = null,
-        ISettingsService? settings = null)
+        ISettingsService? settings = null,
+        string? experienceMode = null,
+        bool inferExperienceModeFromPack = false)
     {
         _environment = environment;
         _factory = factory;
@@ -59,11 +68,96 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         _careersDirectory = careersDirectory
             ?? Path.Combine(environment.DocumentsDirectory, "AMS2CareerCompanion", "Careers");
         _seedSource = seedSource ?? Random.Shared;
+        if (experienceMode is not null &&
+            experienceMode is not (CareerExperienceModes.GrandPrixDynasty or CareerExperienceModes.Smgp))
+        {
+            throw new ArgumentException(
+                "This single-career wizard supports only Grand Prix Dynasty or SMGP v2 creation.",
+                nameof(experienceMode));
+        }
+        _explicitExperienceMode = experienceMode;
+        _inferExperienceModeFromPack = inferExperienceModeFromPack;
 
         RefreshPacks();
+        EnterExplicitSmgpAtVerification();
     }
 
     public event EventHandler<CareerCreatedEventArgs>? CareerCreated;
+
+    /// <summary>The Alpha mode selected explicitly by a mode entry, or inferred by the production
+    /// single-career entry from the parsed pack: SMGP packs become <c>smgp</c>, every historical pack
+    /// becomes <c>grandPrixDynasty</c>. Direct callers retain the exact legacy path unless they opt
+    /// into either seam. Racing Passport owns a different container wizard.</summary>
+    public string? ExperienceMode => _explicitExperienceMode ??
+        (_inferExperienceModeFromPack && Pack is not null
+            ? IsSmgpPack
+                ? CareerExperienceModes.Smgp
+                : CareerExperienceModes.GrandPrixDynasty
+            : null);
+
+    public bool IsProgressionV2 => _explicitExperienceMode is not null || _inferExperienceModeFromPack;
+
+    public bool HasResolvedExperienceMode => ExperienceMode is not null;
+
+    /// <summary>Display-ready identity for the selected bounded campaign. Kept on the wizard so the
+    /// shell can describe the whole creation flow without deriving product names in XAML.</summary>
+    public string ExperienceModeLabel => ExperienceMode switch
+    {
+        CareerExperienceModes.Smgp => "SUPER MONACO GP WORLD CHAMPIONSHIP",
+        CareerExperienceModes.GrandPrixDynasty => "GRAND PRIX DYNASTY",
+        _ => IsProgressionV2 ? "CAREER MODE PENDING" : "LEGACY CAREER",
+    };
+
+    /// <summary>The exact creation-time plan currently previewed from the authoritative campaign
+    /// planner. It is null until a valid v2 pack has been parsed. Creation invokes the same planner
+    /// after applying any selected pack transforms and persists that returned plan.</summary>
+    public CampaignProgressionPlan? ResolvedCampaignPlan { get; private set; }
+
+    public int CampaignTotalSeasons => ResolvedCampaignPlan?.TotalSeasons ?? 0;
+
+    public int CampaignMasterySeason => ResolvedCampaignPlan?.MasterySeason ?? 0;
+
+    /// <summary>Display-ready immutable coverage snapshot. Dynasty enumerates the actual faithful
+    /// years instead of implying that missing years between the start and 2020 are playable.</summary>
+    public string CampaignCoverageSummary
+    {
+        get
+        {
+            if (ResolvedCampaignPlan is not { } plan)
+            {
+                return IsProgressionV2
+                    ? "SELECT A SEASON TO RESOLVE CAMPAIGN COVERAGE"
+                    : "LEGACY SINGLE-SEASON CAREER";
+            }
+
+            if (plan.Mode == CareerExperienceModes.Smgp)
+            {
+                return $"{plan.TotalSeasons} ORDINAL SEASONS  ·  " +
+                       $"MASTERY AFTER SEASON {plan.MasterySeason}";
+            }
+
+            string years = string.Join(", ", plan.PinnedSeasonSequence.Select(season => season.Year));
+            string seasons = plan.TotalSeasons == 1 ? "SEASON" : "SEASONS";
+            return $"{plan.TotalSeasons} FAITHFUL {seasons} PINNED  ·  " +
+                   $"PLAYABLE YEARS: {years}  ·  MASTERY AFTER SEASON {plan.MasterySeason}";
+        }
+    }
+
+    /// <summary>Truthful v2 pacing summary built from the same plan creation will persist.</summary>
+    public string CampaignPacingSummary => ResolvedCampaignPlan is null
+        ? IsProgressionV2
+            ? "SELECT A SEASON TO RESOLVE CAMPAIGN PACING"
+            : "ORIGINAL CHARACTER PROGRESSION RULES"
+        : $"{CampaignCoverageSummary}  ·  LEVEL {ResolvedCampaignPlan.MaxLevel}  ·  " +
+          $"{CharacterProgressionV2Math.LifetimeSkillPoints} CAREER SP";
+
+    /// <summary>Compact current character identity for the wizard's persistent license/status rail.</summary>
+    public string CharacterCreationSummary => Character is null
+        ? "DRIVER IDENTITY NOT CONFIGURED"
+        : Character.IsProgressionV2
+            ? $"{Character.Name.ToUpperInvariant()}  ·  {Character.CountrySummary}  ·  " +
+              $"RACING DNA: {Character.RacingDnaSummary}  ·  {Character.CreationTraitSummary}"
+            : $"ARCHETYPE: {Character.SelectedArchetype?.Name ?? "CUSTOM"}  ·  {Character.CreationTraitSummary}";
 
     // ---------- step state ----------
 
@@ -76,14 +170,21 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         WizardStep.SeasonPick => SelectedPack is { LoadError: null },
         WizardStep.Verification => !HasErrors && (!HasWarnings || ProceedAnyway),
-        WizardStep.SeatPick => SelectedSeat is not null || IsOwnEntrant,
-        WizardStep.Grid => GridChoices.Count(c => c.IsIncluded) >= 2,
+        WizardStep.SeatPick => (SelectedSeat is not null || IsOwnEntrant) && RacingDnaContextError is null,
+        WizardStep.Grid => GridChoices.Count(c => c.IsIncluded) >= 2 && RacingDnaContextError is null,
         WizardStep.Character => Character?.IsValid ?? true,
         WizardStep.Confirm => CanCreate,
         _ => false,
     };
 
-    public bool CanGoBack => Step > WizardStep.SeasonPick;
+    /// <summary>The explicit SMGP mode owns one authored pack, so Verification is its first visible
+    /// wizard step. Historical and generic entry still expose SeasonPick as their first step.</summary>
+    public bool CanGoBack => Step > FirstVisibleStep;
+
+    private WizardStep FirstVisibleStep =>
+        _explicitExperienceMode == CareerExperienceModes.Smgp
+            ? WizardStep.Verification
+            : WizardStep.SeasonPick;
 
     /// <summary>The character step exists only when character rules are available (the app always
     /// ships perks.json; a rules-less environment — some tests — skips from verification to seat pick).</summary>
@@ -152,7 +253,12 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         };
     }
 
-    partial void OnStepChanged(WizardStep value) => OnPropertyChanged(nameof(CanGoBack));
+    partial void OnStepChanged(WizardStep value)
+    {
+        OnPropertyChanged(nameof(CanGoBack));
+        OnPropertyChanged(nameof(RacingDnaContextError));
+        OnPropertyChanged(nameof(CanCreate));
+    }
 
     // ---------- step a: season pick ----------
 
@@ -163,6 +269,37 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private DiscoveredPack? _selectedPack;
 
+    partial void OnSelectedPackChanged(DiscoveredPack? value)
+    {
+        // SelectedPack is only a catalog pointer. Once it changes, none of the previously parsed
+        // pack state may continue to drive the mode label, campaign preview, seat, or field status.
+        // Keep the authored Character alive for Back-navigation; PrepareCharacter replaces it only
+        // after the newly selected pack has parsed and the player advances to Character again.
+        Pack = null;
+        _packDirectory = null;
+        PackLoadError = null;
+        SetResolvedCampaignPlan(null);
+
+        Seats.Clear();
+        SelectedSeat = null;
+        CustomLiveryName = "";
+        foreach (var old in GridChoices)
+            old.PropertyChanged -= OnGridChoiceChanged;
+        GridChoices.Clear();
+        _maxRoundGridSize = 0;
+
+        OnPropertyChanged(nameof(IsSmgpPack));
+        OnPropertyChanged(nameof(GridPickEnabled));
+        OnPropertyChanged(nameof(ExperienceMode));
+        OnPropertyChanged(nameof(HasResolvedExperienceMode));
+        OnPropertyChanged(nameof(ExperienceModeLabel));
+        OnPropertyChanged(nameof(IncludedCount));
+        OnPropertyChanged(nameof(MaxRaceCars));
+        OnPropertyChanged(nameof(AiOpponentCount));
+        OnPropertyChanged(nameof(RacingDnaContextError));
+        OnPropertyChanged(nameof(CanCreate));
+    }
+
     [ObservableProperty]
     private string? _packLoadError;
 
@@ -172,30 +309,125 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     {
         Packs.Clear();
         foreach (var pack in PackDiscovery.Discover(_packSearchRoots))
-            Packs.Add(pack);
+        {
+            if (IsCompatibleWithExplicitMode(pack))
+                Packs.Add(pack);
+        }
+    }
+
+    /// <summary>Mode-card SMGP entry never asks the player to choose the already-authored campaign.
+    /// Prefer the bundled canonical pack even when Documents contains another compatible pack;
+    /// otherwise use a deterministic readable fallback. When no candidate fully loads, Verification
+    /// owns the blocking error so the removed pack picker can never leak back into the SMGP route.</summary>
+    private void EnterExplicitSmgpAtVerification()
+    {
+        if (_explicitExperienceMode != CareerExperienceModes.Smgp)
+            return;
+
+        var candidates = Packs
+            .Where(pack => pack is { Manifest: not null, LoadError: null })
+            .OrderBy(pack => string.Equals(
+                pack.Manifest!.PackId,
+                CanonicalSmgpPackId,
+                StringComparison.Ordinal) ? 0 : 1)
+            .ThenBy(pack => pack.Manifest!.PackId, StringComparer.Ordinal)
+            .ThenBy(pack => pack.Directory, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        foreach (var candidate in candidates)
+        {
+            SelectedPack = candidate;
+            if (!LoadSelectedPack())
+                continue;
+
+            RunVerification();
+            Step = WizardStep.Verification;
+            return;
+        }
+
+        string detail = string.IsNullOrWhiteSpace(PackLoadError)
+            ? $"The bundled '{CanonicalSmgpPackId}' campaign pack is missing or unreadable."
+            : $"The Super Monaco GP campaign pack could not be loaded: {PackLoadError}";
+        SetBlockingVerificationError(detail);
+        Step = WizardStep.Verification;
+    }
+
+    private void SetBlockingVerificationError(string message)
+    {
+        VerificationItems.Clear();
+        VerificationItems.Add(new VerificationItem(IsError: true, message));
+        ProceedAnyway = false;
+        OnPropertyChanged(nameof(HasErrors));
+        OnPropertyChanged(nameof(HasWarnings));
+        OnPropertyChanged(nameof(CanGoNext));
+        NextCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool IsCompatibleWithExplicitMode(DiscoveredPack pack)
+    {
+        if (_explicitExperienceMode is null)
+            return true;
+
+        // An explicit card must never offer a pack from the other career entity. Unreadable
+        // manifests cannot be classified safely, so they remain available only to the retained
+        // generic/legacy discovery path where their load error can be inspected directly.
+        if (pack.Manifest is not { } manifest)
+            return false;
+
+        bool isSmgp = string.Equals(
+            manifest.CareerStyle,
+            Companion.Core.Smgp.SmgpRules.CareerStyle,
+            StringComparison.Ordinal);
+        return _explicitExperienceMode == CareerExperienceModes.Smgp
+            ? isSmgp
+            : !isSmgp;
     }
 
     private bool LoadSelectedPack()
     {
         PackLoadError = null;
+        SetResolvedCampaignPlan(null);
         try
         {
             var files = SeasonPackFiles.Read(SelectedPack!.Directory);
             Pack = files.Parse();
             _packDirectory = SelectedPack.Directory;
             OnPropertyChanged(nameof(IsSmgpPack));
+            OnPropertyChanged(nameof(ExperienceMode));
+            OnPropertyChanged(nameof(HasResolvedExperienceMode));
+            OnPropertyChanged(nameof(ExperienceModeLabel));
+            if (ExperienceMode is { } mode && !PackStructuralValidator.Validate(Pack).HasErrors)
+            {
+                var selected = PreparedCampaignPack.From(files, Pack);
+                SetResolvedCampaignPlan(
+                    CampaignCreationPlanner.ResolveBoundedPlan(mode, _environment, selected).Plan);
+            }
             OnPropertyChanged(nameof(GridPickEnabled));
             return true;
         }
-        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException or InvalidOperationException)
         {
             Pack = null;
             _packDirectory = null;
             PackLoadError = ex.Message;
             OnPropertyChanged(nameof(IsSmgpPack));
+            OnPropertyChanged(nameof(ExperienceMode));
+            OnPropertyChanged(nameof(HasResolvedExperienceMode));
+            OnPropertyChanged(nameof(ExperienceModeLabel));
+            SetResolvedCampaignPlan(null);
             OnPropertyChanged(nameof(GridPickEnabled));
             return false;
         }
+    }
+
+    private void SetResolvedCampaignPlan(CampaignProgressionPlan? plan)
+    {
+        ResolvedCampaignPlan = plan;
+        OnPropertyChanged(nameof(ResolvedCampaignPlan));
+        OnPropertyChanged(nameof(CampaignTotalSeasons));
+        OnPropertyChanged(nameof(CampaignMasterySeason));
+        OnPropertyChanged(nameof(CampaignCoverageSummary));
+        OnPropertyChanged(nameof(CampaignPacingSummary));
     }
 
     /// <summary>True when the selected pack is the SMGP replica: the wizard reshapes — seats
@@ -399,9 +631,16 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public ObservableCollection<SeatOption> Seats { get; } = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(PlayerImageKey), nameof(PlayerCarKey), nameof(PlayerCarSpec))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(CanCreate), nameof(PlayerImageKey), nameof(PlayerCarKey), nameof(PlayerCarSpec))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private SeatOption? _selectedSeat;
+
+    partial void OnSelectedSeatChanged(SeatOption? value)
+    {
+        OnPropertyChanged(nameof(RacingDnaContextError));
+        OnPropertyChanged(nameof(CanGoNext));
+        NextCommand.NotifyCanExecuteChanged();
+    }
 
     /// <summary>The team-coloured PLAYER image for the character screen — the team the player is
     /// joining (<c>data/ams2/portraits/player.&lt;team&gt;.jpg</c>, a team helmet), or a plain
@@ -441,7 +680,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// replacing a historical driver. When set it takes precedence over the seat selection; empty = the
     /// ordinary "pick a pack seat" flow (byte-identical to a career created before this field).</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(CanCreate))]
+    [NotifyPropertyChangedFor(nameof(IsOwnEntrant), nameof(RacingDnaContextError))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private string _customLiveryName = "";
 
@@ -622,7 +862,9 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(IncludedCount));
         OnPropertyChanged(nameof(MaxRaceCars));
         OnPropertyChanged(nameof(AiOpponentCount));
+        OnPropertyChanged(nameof(RacingDnaContextError));
         OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(CanCreate));
         NextCommand.NotifyCanExecuteChanged();
     }
 
@@ -647,7 +889,7 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     // ---------- step c: character (Increment 4a) ----------
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(CanCreate))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private CharacterViewModel? _character;
 
@@ -655,35 +897,139 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     /// the player edits it (a perk toggle can flip validity).</summary>
     private void PrepareCharacter()
     {
+        if (Character is not null &&
+            string.Equals(_characterPackDirectory, _packDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
         if (Character is not null)
             Character.PropertyChanged -= OnCharacterChanged;
         // Driver creation now precedes seat selection, so its identity cannot depend on a seat that
         // has not been chosen yet. "You" is the stable starting point in every mode; the player can
         // personalise it before seat selection and the selected seat card can then show that name.
-        Character = new CharacterViewModel(_environment.Rules.Character, "You");
+        long? characterSeed = null;
+        if (IsProgressionV2)
+        {
+            // V2 random DNA must use the exact seed that career creation will persist. Generate the
+            // default before Character; the existing Confirm field remains editable.
+            if (!long.TryParse(MasterSeedText, out long parsedSeed))
+            {
+                parsedSeed = _seedSource.NextInt64();
+                MasterSeedText = parsedSeed.ToString();
+            }
+            characterSeed = parsedSeed;
+        }
+        var campaignDriverIds = (Pack?.Entries ?? [])
+            .Select(entry => entry.DriverId)
+            .ToHashSet(StringComparer.Ordinal);
+        var choiceContext = new RacingDnaChoiceContext(
+            RivalDrivers: (Pack?.Drivers ?? [])
+                .Where(driver => campaignDriverIds.Contains(driver.Id))
+                .OrderBy(driver => driver.Id, StringComparer.Ordinal)
+                .Select(driver => new RacingDnaChoiceOption(driver.Id, driver.Name))
+                .ToArray(),
+            Nationalities: (Pack?.Drivers ?? [])
+                .Where(driver => !string.IsNullOrWhiteSpace(driver.Country))
+                .Select(driver => driver.Country!)
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(country => country, StringComparer.Ordinal)
+                .Select(country => new RacingDnaChoiceOption(country, country))
+                .ToArray());
+        Character = new CharacterViewModel(
+            _environment.Rules.Character,
+            "You",
+            IsProgressionV2 ? _environment.Rules.RacingDna : null,
+            IsProgressionV2 ? choiceContext : null,
+            IsProgressionV2
+                ? CharacterLevelProgression.Level300Version
+                : CharacterLevelProgression.EraCappedVersion,
+            masterSeed: characterSeed,
+            masterySkillCatalog: IsProgressionV2 ? _environment.Rules.MasterySkills : null);
+        _characterPackDirectory = _packDirectory;
         Character.PropertyChanged += OnCharacterChanged;
+        OnPropertyChanged(nameof(CharacterCreationSummary));
     }
 
     private void OnCharacterChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+        OnPropertyChanged(nameof(CharacterCreationSummary));
         if (e.PropertyName == nameof(CharacterViewModel.IsValid))
         {
+            OnPropertyChanged(nameof(RacingDnaContextError));
             OnPropertyChanged(nameof(CanGoNext));
+            OnPropertyChanged(nameof(CanCreate));
             NextCommand.NotifyCanExecuteChanged();
+        }
+    }
+
+    /// <summary>Cross-step validation for context-bearing DNA. The choice is authored before the
+    /// seat/grid, so a later selection cannot replace or exclude the chosen rival. This is a
+    /// creation-only guard; the persisted value remains the stable driver/country ID.</summary>
+    public string? RacingDnaContextError
+    {
+        get
+        {
+            if (Character is not { IsProgressionV2: true, SelectedRacingDna: { } dna } ||
+                string.IsNullOrWhiteSpace(Character.RacingDnaChoiceValue) || Pack is null)
+            {
+                return null;
+            }
+
+            string choice = Character.RacingDnaChoiceValue;
+            if (dna.ChoiceKind == RacingDnaChoiceKind.NationalityAffinity)
+            {
+                return Pack.Drivers.Any(driver =>
+                    string.Equals(driver.Country, choice, StringComparison.Ordinal))
+                    ? null
+                    : "The selected nationality affinity is not present in this campaign roster.";
+            }
+            if (dna.ChoiceKind != RacingDnaChoiceKind.RivalDriverId)
+                return null;
+
+            if (!IsOwnEntrant && SelectedSeat is { } seat && Pack.Entries.Any(entry =>
+                    string.Equals(entry.Number, seat.Number, StringComparison.Ordinal) &&
+                    string.Equals(entry.DriverId, choice, StringComparison.Ordinal)))
+            {
+                return "Your chosen rival occupies the seat you are replacing. Pick another rival or another seat.";
+            }
+
+            if (Step < WizardStep.Grid || GridChoices.Count == 0)
+                return null;
+            var rivalLiveries = Pack.Entries
+                .Where(entry => string.Equals(entry.DriverId, choice, StringComparison.Ordinal))
+                .Select(entry => entry.Ams2LiveryName)
+                .ToHashSet(StringComparer.Ordinal);
+            bool included = GridChoices
+                .Where(card => card.IsIncluded || card.IsLocked)
+                .SelectMany(card => card.Liveries)
+                .Any(rivalLiveries.Contains);
+            return included
+                ? null
+                : "Your chosen rival is excluded from the season grid. Include their seat or choose another rival.";
         }
     }
 
     // ---------- step f: confirm ----------
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(CanCreate))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private string _careerName = "";
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanGoNext))]
+    [NotifyPropertyChangedFor(nameof(CanGoNext), nameof(CanCreate))]
     [NotifyCanExecuteChangedFor(nameof(NextCommand))]
     private string _masterSeedText = "";
+
+    partial void OnMasterSeedTextChanged(string value)
+    {
+        if (!IsProgressionV2 || Character is null)
+            return;
+        if (long.TryParse(value, out long masterSeed))
+            Character.SetRandomBuildSeed(masterSeed);
+        else
+            Character.ClearRandomBuildSeed();
+    }
 
     [ObservableProperty]
     private string? _createError;
@@ -693,6 +1039,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
     public bool CanCreate =>
         Pack is not null &&
         (SelectedSeat is not null || IsOwnEntrant) &&
+        RacingDnaContextError is null &&
+        (!HasCharacterStep || Character?.IsValid == true) &&
         !string.IsNullOrWhiteSpace(CareerName) &&
         long.TryParse(MasterSeedText, out _);
 
@@ -828,6 +1176,20 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
         bool importBaseline = UseInstalledAiBaseline && _installedAiFileXml is not null;
         bool smgpMode = string.Equals(
             Pack?.Manifest.CareerStyle, Companion.Core.Smgp.SmgpRules.CareerStyle, StringComparison.Ordinal);
+        CharacterProfile? character;
+        try
+        {
+            character = Character is null
+                ? null
+                : IsProgressionV2
+                    ? Character.BuildVersionTwoProfile()
+                    : Character.BuildProfile();
+        }
+        catch (InvalidOperationException ex)
+        {
+            CreateError = ex.Message;
+            return;
+        }
         var request = new CareerCreationRequest
         {
             PackDirectory = _packDirectory!,
@@ -837,7 +1199,8 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             PlayerLiveryName = PlayerLivery!,
             CommunityBaselineXml = importBaseline ? _installedAiFileXml : null,
             CommunityBaselineSourcePath = importBaseline ? InstalledAiFilePath : null,
-            Character = Character?.BuildProfile(),
+            ExperienceMode = ExperienceMode,
+            Character = character,
             // The SMGP ladder needs the WHOLE authored field — its seat chains reference every
             // team's car, and a narrowed grid would make demotion/introduction targets unresolvable
             // (the resolver would then refuse the moves round after round). Mode on → whole pack.

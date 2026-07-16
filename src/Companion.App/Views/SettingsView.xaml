@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              xmlns:b="clr-namespace:Companion.App.Behaviors"
              Focusable="False">
     <UserControl.Resources>
@@ -24,8 +25,10 @@
         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                 <Button Content="Reset to defaults" Command="{Binding ResetCommand}"
+                        audio:SoundAssist.Cue="Warning"
                         ToolTip="Every setting back to its out-of-the-box value (applies immediately)" />
                 <Button Content="Done" Style="{StaticResource AccentButton}" MinWidth="96" Margin="10,0,0,0"
+                        audio:SoundAssist.Cue="Back"
                         Command="{Binding CloseCommand}"
                         ToolTip="Close settings (Esc works too) — changes are already applied and saved" />
             </StackPanel>
@@ -38,7 +41,7 @@
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
             <!-- centered settings column; label columns share one Auto size so nothing clips at
-                 130% UI scale -->
+                 the maximum 160% UI scale -->
             <StackPanel MaxWidth="760" HorizontalAlignment="Center" Grid.IsSharedSizeScope="True">
 
                 <!-- ===== appearance ===== -->
@@ -107,17 +110,80 @@
                                 </ItemsControl>
                             </StackPanel>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Font scale" Margin="0,14,0,0" />
-                            <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,14,0,0">
-                                <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right" FontFamily="{StaticResource MonoFont}"
-                                           Style="{StaticResource RowLabel}"
-                                           Text="{Binding FontScalePercent, StringFormat={}{0}%}" />
-                                <Slider Minimum="{Binding MinFontScalePercent}" Maximum="{Binding MaxFontScalePercent}"
-                                        Value="{Binding FontScalePercent}" TickFrequency="5" IsSnapToTickEnabled="True"
-                                        Margin="0,0,10,0"
-                                        ToolTip="UI text size, 90–130% — scales all text and spacing live across every screen and pop-out window (good for large / 4K monitors)" />
+                            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource RowLabel}" Text="UI size" Margin="0,14,0,0"
+                                       ToolTip="Scales the complete interface, including text, controls, and spacing." />
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,14,0,0">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right" FontFamily="{StaticResource MonoFont}"
+                                               Style="{StaticResource RowLabel}"
+                                               Text="{Binding FontScalePercent, StringFormat={}{0}%}" />
+                                    <Slider x:Name="UiSizeSlider"
+                                            Minimum="{Binding MinFontScalePercent}" Maximum="{Binding MaxFontScalePercent}"
+                                            Value="{Binding FontScalePercent}" TickFrequency="5" IsSnapToTickEnabled="True"
+                                            Margin="0,0,10,0"
+                                            ToolTip="UI size, 90–160% — scales interface text, controls, and spacing live across every screen and pop-out window." />
+                                </DockPanel>
+                                <TextBlock Style="{StaticResource Muted}" FontSize="10.5" Margin="0,4,52,0"
+                                           TextWrapping="Wrap"
+                                           Text="Scales the full interface live. Try 125–160% on a 1440p or 4K display." />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== audio ===== -->
+                <Border x:Name="AudioSettingsPanel" Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Audio" Style="{StaticResource SectionTitle}" />
+                        <TextBlock Style="{StaticResource SectionHint}"
+                                   Text="Use the top-bar player for music. Master affects all app audio; menu effects cover deliberate button cues only. Changes apply immediately." />
+
+                        <CheckBox x:Name="SoundEnabledCheckBox"
+                                  IsChecked="{Binding SoundEnabled}"
+                                  Content="Enable app audio"
+                                  ToolTip="Master switch for the music player and interface cues" />
+
+                        <Grid Margin="0,12,0,0" IsEnabled="{Binding SoundEnabled}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="170" SharedSizeGroup="SettingsLabel" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource RowLabel}" Text="Master volume" />
+                            <DockPanel Grid.Row="0" Grid.Column="1">
+                                <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right"
+                                           FontFamily="{StaticResource MonoFont}" Style="{StaticResource RowLabel}"
+                                           Text="{Binding MasterVolumePercent, StringFormat={}{0}%}" />
+                                <Slider x:Name="MasterVolumeSlider" Minimum="0" Maximum="100"
+                                        Value="{Binding MasterVolumePercent}" TickFrequency="5"
+                                        IsSnapToTickEnabled="True"
+                                        Margin="0,0,10,0" AutomationProperties.Name="Master volume" />
+                            </DockPanel>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,10,0,0"
+                                       Style="{StaticResource RowLabel}" Text="Menu effects" />
+                            <DockPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                                <Button DockPanel.Dock="Right" Content="Preview" Margin="10,0,0,0"
+                                        audio:SoundAssist.Cue="Confirm"
+                                        AutomationProperties.Name="Preview menu effects"
+                                        ToolTip="Play a typical menu effect at the current Master and Menu effects levels" />
+                                <TextBlock DockPanel.Dock="Right" Width="52" TextAlignment="Right"
+                                           FontFamily="{StaticResource MonoFont}" Style="{StaticResource RowLabel}"
+                                           Text="{Binding EffectsVolumePercent, StringFormat={}{0}%}" />
+                                <Slider Minimum="0" Maximum="100" Value="{Binding EffectsVolumePercent}"
+                                        TickFrequency="5" IsSnapToTickEnabled="True" Margin="0,0,10,0"
+                                        AutomationProperties.Name="Effects volume" />
                             </DockPanel>
                         </Grid>
+
+                        <CheckBox x:Name="MuteWhenUnfocusedCheckBox" Margin="0,12,0,0"
+                                  IsChecked="{Binding MuteWhenUnfocused}"
+                                  Content="Mute menu effects when another application has focus"
+                                  ToolTip="Music keeps playing in the background; interface cues stop while this app is inactive" />
                     </StackPanel>
                 </Border>
 
@@ -220,6 +286,7 @@
 
                         <DockPanel>
                             <Button DockPanel.Dock="Right" Content="Open" VerticalAlignment="Center"
+                                    audio:SoundAssist.Cue="Navigate"
                                     Click="OnOpenDefaultPacksFolder"
                                     ToolTip="Open this folder in Explorer" />
                             <StackPanel Margin="0,0,10,0">
@@ -242,6 +309,7 @@
                                                 Command="{Binding DataContext.RemovePackFolderCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}" />
                                         <Button DockPanel.Dock="Right" Content="Open" Style="{StaticResource SubtleButton}"
+                                                audio:SoundAssist.Cue="Navigate"
                                                 ToolTip="Open this folder in Explorer"
                                                 Click="OnOpenListedFolder" />
                                         <TextBlock Text="{Binding}" VerticalAlignment="Center"
@@ -251,6 +319,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <Button Content="Add folder…" HorizontalAlignment="Left" Margin="0,8,0,0"
+                                audio:SoundAssist.Cue="Navigate"
                                 Click="OnAddPackFolder"
                                 ToolTip="Pick a folder that contains season-pack subfolders" />
 
@@ -258,8 +327,10 @@
 
                         <StackPanel Orientation="Horizontal">
                             <Button Content="Open careers folder" Click="OnOpenCareersFolder"
+                                    audio:SoundAssist.Cue="Navigate"
                                     ToolTip="{Binding CareersFolder}" />
                             <Button Content="Open settings folder" Margin="10,0,0,0" Click="OnOpenSettingsFolder"
+                                    audio:SoundAssist.Cue="Navigate"
                                     ToolTip="{Binding SettingsFolder}" />
                         </StackPanel>
                     </StackPanel>

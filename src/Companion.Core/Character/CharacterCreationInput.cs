@@ -22,7 +22,7 @@ public sealed record CharacterCreationInput
 
     /// <summary>Validates a new v2 creation before it becomes an immutable INPUT row. Deserialization
     /// itself stays permissive so legacy state can still be inspected and migrated deliberately.</summary>
-    public void ValidateForNewCareer()
+    public void ValidateForNewCareer(RacingDnaCatalog? racingDnaCatalog = null)
     {
         if (Version != CurrentVersion)
             throw new NotSupportedException(
@@ -33,6 +33,8 @@ public sealed record CharacterCreationInput
             throw new InvalidOperationException("A v2 profile requires complete stat and perk collections.");
         if (Profile.ProgressionVersion != CharacterLevelProgression.Level300Version)
             throw new InvalidOperationException("The versioned creation envelope requires a progression-v2 profile.");
+        if (string.IsNullOrWhiteSpace(Profile.Name))
+            throw new InvalidOperationException("A new v2 character requires a driver name.");
         if (!CareerExperienceModes.IsKnown(ExperienceMode))
             throw new InvalidOperationException($"Unknown career experience mode '{ExperienceMode}'.");
 
@@ -86,6 +88,21 @@ public sealed record CharacterCreationInput
         }
         if (!string.Equals(baseline.ChosenFlavor, Profile.ChosenFlavor, StringComparison.Ordinal))
             throw new InvalidOperationException("Creation baseline flavor must match the profile flavor.");
+        if (Profile.ChosenFlavor is not null && !PerkResolver.IsEligibleChosenFlavor(Profile.ChosenFlavor))
+            throw new InvalidOperationException("A v2 creation flavor must name a supported writable rating.");
+
+        if (Profile.MasteryEffectsVersion != CharacterProfile.CurrentMasteryEffectsVersion)
+        {
+            throw new NotSupportedException(
+                $"A new v2 character requires mastery-effects version " +
+                $"{CharacterProfile.CurrentMasteryEffectsVersion}; received {Profile.MasteryEffectsVersion}.");
+        }
+        if (Profile.ExpectationModelVersion != CharacterProfile.CurrentExpectationModelVersion)
+        {
+            throw new NotSupportedException(
+                $"A new v2 character requires expectation-model version " +
+                $"{CharacterProfile.CurrentExpectationModelVersion}; received {Profile.ExpectationModelVersion}.");
+        }
 
         if (Profile.CpUnspent != 0 ||
             Profile.CpSpent != 0 ||
@@ -98,6 +115,11 @@ public sealed record CharacterCreationInput
         {
             throw new InvalidOperationException("A new v2 character cannot begin with acquired mastery or reset spend.");
         }
+
+        // Structural validation above intentionally remains usable without external rules for
+        // low-level serialization tests. The authoritative creation path always supplies the
+        // loaded catalog, which closes ID/version/choice and the separate v2 Creation Budget.
+        racingDnaCatalog?.ValidateCreation(Profile);
     }
 
     private static void ValidateBaselineMap(IReadOnlyDictionary<string, double> values, string label)

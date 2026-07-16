@@ -76,6 +76,12 @@ public sealed class XpMathTests
         XpMults = xpMults.ToDictionary(x => x.Cause, x => x.Mult, StringComparer.Ordinal),
     };
 
+    private static PlayerPerkModifiers MasteryMods(params (string Cause, double Mult)[] xpMults) =>
+        Mods(xpMults) with
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+        };
+
     [Fact]
     public void PerRound_BlanketMultipliers_ScaleTheWholeRound()
     {
@@ -94,6 +100,65 @@ public sealed class XpMathTests
         Assert.Equal(35, XpMath.PerRound(cfg, round, Mods(("ageWindow", 0.75))));
         // The two blanket multipliers compound: 46 * 0.85 * 1.40 = 54.74 → 55.
         Assert.Equal(55, XpMath.PerRound(cfg, round, Mods(("all", 0.85), ("ageWindow", 1.40))));
+    }
+
+    [Fact]
+    public void PerRound_ActiveMasteryRates_ComposeCauseBlanketAndMidfieldPerComponent()
+    {
+        var round = new XpMath.RoundInputs(
+            ExpectedFinish: 12, EffectiveFinish: 8, FinishPosition: 8,
+            ScoredPoints: true, BeatTeammate: false, Dnf: null);
+        var mods = MasteryMods(
+            ("finishVsExpected", 0.50),
+            ("midfield", 1.20),
+            ("points", 0.80),
+            ("all", 1.25),
+            ("ageWindow", 1.10));
+
+        // Finish: 24 * (.50 * 1.20 * 1.25 * 1.10) = 19.8.
+        // Points: 10 * (.80 * 1.25 * 1.10) = 11.0. Total 30.8 rounds to 31.
+        Assert.Equal(31, XpMath.PerRound(Round(), round, mods));
+    }
+
+    [Fact]
+    public void PerRound_ActiveMasteryRatesClampButLegacyV0RetainsItsUnclampedArithmetic()
+    {
+        var round = new XpMath.RoundInputs(
+            ExpectedFinish: 12, EffectiveFinish: 8, FinishPosition: 8,
+            ScoredPoints: true, BeatTeammate: false, Dnf: null);
+        var v0 = Mods(
+            ("finishVsExpected", 2.0), ("midfield", 2.0), ("points", 2.0),
+            ("all", 2.0), ("ageWindow", 2.0));
+        var active = v0 with
+        {
+            MasteryEffectsVersion = CharacterProfile.CurrentMasteryEffectsVersion,
+        };
+
+        // The legacy path is intentionally unchanged: ((24 * 2 * 2) + (10 * 2)) * 2 * 2.
+        Assert.Equal(464, XpMath.PerRound(Round(), round, v0));
+        // Active mastery clamps each final component rate to 1.40: (24 + 10) * 1.40 = 47.6.
+        Assert.Equal(48, XpMath.PerRound(Round(), round, active));
+    }
+
+    [Fact]
+    public void PerRound_ActiveMasteryClampAppliesToNegativeFinishTerm_AndXpFloorEffectStaysDormant()
+    {
+        var round = new XpMath.RoundInputs(
+            ExpectedFinish: 1, EffectiveFinish: 20, FinishPosition: 20,
+            ScoredPoints: false, BeatTeammate: false, Dnf: null);
+        var upper = MasteryMods(
+            ("finishVsExpected", 2.0), ("midfield", 2.0),
+            ("all", 2.0), ("ageWindow", 2.0)) with
+        {
+            RoundXpFloorMultiplier = 0.0,
+        };
+
+        // The configured -30 floor remains live, then the combined rate clamps to 1.40. If the
+        // disputed floor effect were consumed this would incorrectly become zero.
+        Assert.Equal(-42, XpMath.PerRound(Round(), round, upper));
+
+        var lower = MasteryMods(("finishVsExpected", -1.0));
+        Assert.Equal(0, XpMath.PerRound(Round(), round, lower));
     }
 
     [Fact]

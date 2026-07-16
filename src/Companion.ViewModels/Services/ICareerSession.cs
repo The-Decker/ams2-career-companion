@@ -27,6 +27,31 @@ public interface ICareerSession
     /// <summary>The current round's seats, in grid order, for the result-entry screen.</summary>
     IReadOnlyList<GridSeat> CurrentGrid();
 
+    /// <summary>The player's authored three-letter country code, or null for a legacy/no-character
+    /// career. A display-only identity read used by the dossier and starting-grid flag; it never
+    /// participates in race resolution. Additive default keeps existing session fakes compatible.</summary>
+    string? CurrentPlayerCountryCode() => null;
+
+    /// <summary>The authored car-art key behind a fixed AMS2 livery, captured before any SMGP
+    /// driver reshuffle. Display-only: starting-grid art follows the physical car/seat through
+    /// promotions and later seasons. Null outside SMGP or when unauthored. Additive default keeps
+    /// existing session fakes compatible.</summary>
+    string? GridCarArtKeyForLivery(string ams2LiveryName) => null;
+
+    /// <summary>The authoritative/pre-filled wet flag for the current round's progression-v2
+    /// player-car physics. Null means the pinned weather is ambiguous and the player must declare
+    /// wet or dry before the grid can be staged. Additive default keeps test doubles compatible.</summary>
+    bool? CurrentRoundIsWet() => null;
+
+    /// <summary>True only when conditional v2 player-car physics is active and the pinned race
+    /// weather cannot safely prefill wet/dry. The GUI can reveal its two-choice declaration panel.</summary>
+    bool CurrentRoundNeedsWeatherDeclaration() => false;
+
+    /// <summary>Persist the current round's explicit wet/dry declaration before AMS2 staging.
+    /// A conflicting second declaration or a declaration after a result exists fails closed.</summary>
+    void DeclareCurrentRoundWeather(bool isWet) =>
+        throw new InvalidOperationException("This career session cannot declare pre-race weather.");
+
     /// <summary>The sim's expected finishing position for the player this round (1-based), computed
     /// from the resolved grid exactly as the fold does — so the Setup Gamble briefing frames a call
     /// against the same number the bet is later staked on. Null when the season is complete or the
@@ -294,6 +319,26 @@ public interface ICareerSession
     void SpendCharacterPoint(CharacterSpend spend) => throw new NotSupportedException(
         "This career session does not support character development.");
 
+    /// <summary>Authoritatively previews an ordered progression-v2 acquisition without writing.
+    /// Costs, dependency order, gates, and the projected wiring graph all come from Core.</summary>
+    SkillPlanPreview PreviewSkillPlan(IReadOnlyList<string> orderedNodeIds) =>
+        throw new NotSupportedException("This career session does not support atomic skill plans.");
+
+    /// <summary>Confirms one ordered progression-v2 plan as a single all-or-nothing INPUT row.
+    /// The caller supplies stable node ids only; the session derives every persisted cost.</summary>
+    void ApplySkillPlan(IReadOnlyList<string> orderedNodeIds) =>
+        throw new NotSupportedException("This career session does not support atomic skill plans.");
+
+    /// <summary>Quotes the authoritative progression-v2 committed-tree reset without writing.
+    /// Null means this career does not use the v2 tree; ordinary affordability/empty-tree blocks
+    /// are carried by the preview so the GUI can explain them.</summary>
+    SkillResetPreview? PreviewSkillReset() => null;
+
+    /// <summary>Commits one XP-funded full-tree reset. The session derives the cost and prior
+    /// acquisition payload; callers never supply trusted reset values.</summary>
+    void ApplySkillReset() => throw new NotSupportedException(
+        "This career session does not support committed skill-tree resets.");
+
     /// <summary>The perks the driver can BUY with banked points right now (character depth 4): each
     /// positive-cost perk not already owned (or pending) that the player can currently afford, with
     /// its real cost and plain-language benefits/drawbacks. Empty for a career with no character or no
@@ -414,6 +459,9 @@ public sealed record SeasonScheduleEntry
     public required string RealVenue { get; init; }
     /// <summary>The AMS2 track actually driven this round (its library display name).</summary>
     public required string Ams2TrackName { get; init; }
+    /// <summary>The stable AMS2 track/layout id actually driven this round. Presentation assets
+    /// resolve by this key; the display name above is not a resource identifier.</summary>
+    public string TrackId { get; init; } = "";
     public required int Laps { get; init; }
     public required SeasonTrackKind Kind { get; init; }
     /// <summary>When the round has an alternate that is NOT the driven track (the player didn't enable

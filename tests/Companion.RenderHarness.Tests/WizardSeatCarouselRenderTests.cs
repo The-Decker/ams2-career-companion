@@ -4,8 +4,10 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Companion.App.Audio;
 using Companion.App.Views;
 using Companion.ViewModels.Wizard;
 
@@ -34,6 +36,31 @@ public sealed class WizardSeatCarouselRenderTests
 
             Assert.True(verify >= 0 && driver > verify && teamCar > driver,
                 "The breadcrumb must read Verify content, Driver, then Team & Car.");
+            Assert.Equal(Visibility.Collapsed, host.Find<TextBlock>("SeasonStepLabel")!.Visibility);
+            Assert.Equal("1 · Verify content", host.Find<TextBlock>("VerificationStepLabel")!.Text);
+            Assert.Equal("2 · Driver", host.Find<TextBlock>("DriverStepLabel")!.Text);
+            Assert.Equal("3 · Team & Car", host.Find<TextBlock>("TeamCarStepLabel")!.Text);
+            Assert.Equal("4 · Season Grid", host.Find<TextBlock>("SeasonGridStepLabel")!.Text);
+            Assert.Equal("5 · Confirm", host.Find<TextBlock>("ConfirmStepLabel")!.Text);
+        });
+    }
+
+    [Fact]
+    public void Breadcrumb_HistoricalModeRetainsSeasonAsStepOne()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            using var host = Host.Show(CarouselHost.Historical(), 1500);
+            Assert.Equal(Visibility.Visible, host.Find<TextBlock>("SeasonStepLabel")!.Visibility);
+            Assert.Equal("1 · Season", host.Find<TextBlock>("SeasonStepLabel")!.Text);
+            Assert.Equal("2 · Verify content", host.Find<TextBlock>("VerificationStepLabel")!.Text);
+            Assert.Equal("3 · Driver", host.Find<TextBlock>("DriverStepLabel")!.Text);
+            Assert.Equal("4 · Team & Car", host.Find<TextBlock>("TeamCarStepLabel")!.Text);
+            Assert.Equal("5 · Season Grid", host.Find<TextBlock>("SeasonGridStepLabel")!.Text);
+            Assert.Equal("6 · Confirm", host.Find<TextBlock>("ConfirmStepLabel")!.Text);
         });
     }
 
@@ -86,6 +113,84 @@ public sealed class WizardSeatCarouselRenderTests
             previous.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, previous));
             host.PumpLayout();
             Assert.True(scroller.HorizontalOffset < 1.5);
+
+            previous.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, previous));
+            host.PumpLayout();
+            Assert.True(Math.Abs(scroller.HorizontalOffset - (2 * scroller.ViewportWidth)) < 1.5,
+                "Previous from the first contract must wrap to the final contract.");
+
+            next.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, next));
+            host.PumpLayout();
+            Assert.True(scroller.HorizontalOffset < 1.5,
+                "Next from the final contract must wrap to the first contract.");
+        });
+    }
+
+    [Fact]
+    public void Carousel_InteractionChromeStaysInsideTheVisibleCard()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            using var host = Host.Show(CarouselHost.Smgp(), 2048);
+            var carousel = host.Find<ListBox>("SeatCarousel")!;
+            var first = Assert.IsType<ListBoxItem>(carousel.ItemContainerGenerator.ContainerFromIndex(0));
+            var card = host.FindNamed<Border>(first, "SeatCardFrame")!;
+
+            Assert.True(first.ActualWidth > card.ActualWidth + 100,
+                "The viewport page should be wider than its centered visible card at desktop width.");
+            Assert.InRange(card.ActualWidth, 1, 1240.1);
+            Assert.Equal(Cursors.Arrow, first.Cursor);
+            Assert.Null(first.ToolTip);
+            Assert.Equal(Cursors.Hand, card.Cursor);
+            Assert.Equal("Click to drive this car", card.ToolTip);
+
+            string[] forbiddenOuterChrome = ["Chrome", "HoverOverlay", "SelectionEdge"];
+            Assert.DoesNotContain(
+                Host.Descendants<FrameworkElement>(first),
+                element => forbiddenOuterChrome.Contains(element.Name, StringComparer.Ordinal));
+
+            first.IsSelected = true;
+            host.PumpLayout();
+            Assert.Equal(new Thickness(2), card.BorderThickness);
+        });
+    }
+
+    [Fact]
+    public void Carousel_ArrowsAndSeatChoiceUseDistinctSemanticCues()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var played = new List<SoundEffectCue>();
+            SoundAssist.Connect(played.Add);
+            try
+            {
+                using var host = Host.Show(CarouselHost.Smgp(), 1500);
+                var carousel = host.Find<ListBox>("SeatCarousel")!;
+                var previous = host.Find<Button>("SeatCarouselPrevious")!;
+                var next = host.Find<Button>("SeatCarouselNext")!;
+
+                Assert.Equal(SoundEffectCue.Navigate, SoundAssist.GetCue(previous));
+                Assert.Equal(SoundEffectCue.Navigate, SoundAssist.GetCue(next));
+
+                next.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, next));
+                host.PumpLayout();
+                Assert.Equal([SoundEffectCue.Navigate], played);
+
+                var first = Assert.IsType<ListBoxItem>(carousel.ItemContainerGenerator.ContainerFromIndex(0));
+                first.IsSelected = true;
+                host.PumpLayout();
+                Assert.Equal([SoundEffectCue.Navigate, SoundEffectCue.SeatConfirm], played);
+            }
+            finally
+            {
+                SoundAssist.Disconnect();
+            }
         });
     }
 
@@ -157,6 +262,7 @@ public sealed class WizardSeatCarouselRenderTests
         public WizardStep Step => WizardStep.SeatPick;
         public bool HasCharacterStep => true;
         public required bool IsSmgpPack { get; init; }
+        public string ExperienceMode => IsSmgpPack ? "smgp" : "grandPrixDynasty";
         public DriverStub Character { get; } = new() { Name = "Nova Reyes" };
         public ObservableCollection<SeatOption> Seats { get; } = [];
         public string CustomLiveryName { get; set; } = "";
@@ -277,7 +383,7 @@ public sealed class WizardSeatCarouselRenderTests
             PumpLayout();
         }
 
-        private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
+        internal static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
         {
             int count = VisualTreeHelper.GetChildrenCount(root);
             for (int i = 0; i < count; i++)

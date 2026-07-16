@@ -1,3 +1,4 @@
+using System.Globalization;
 using Companion.Ams2.ContentLibrary;
 using Companion.Ams2.Preflight;
 using Companion.Core.Grid;
@@ -43,7 +44,14 @@ public enum SkinStatus
 /// car has no custom-AI entry; its livery is a manual in-game pick).</summary>
 public sealed record SkinAssignment
 {
+    /// <summary>The resolved grid seat's stable driver id. This is identity, not display text.</summary>
+    public string DriverId { get; init; } = "";
+
     public required string DriverName { get; init; }
+
+    /// <summary>The resolved grid seat's stable team id. This is identity, not display text.</summary>
+    public string TeamId { get; init; } = "";
+
     public required string TeamName { get; init; }
     public string? Number { get; init; }
 
@@ -55,6 +63,10 @@ public sealed record SkinAssignment
     public required bool IsPlayer { get; init; }
 
     public required SkinStatus Status { get; init; }
+
+    /// <summary>The real in-game livery slot: the raw numeric custom-override slot, or the
+    /// official stock slot when the content library knows it. Empty when inactive or unknown.</summary>
+    public string SkinSlot { get; init; } = "";
 
     /// <summary>The Overrides vehicle folder the matched skin lives under (e.g.
     /// <c>brabham_bt26</c>), when <see cref="Status"/> is <see cref="SkinStatus.CustomSkin"/>;
@@ -89,6 +101,17 @@ public sealed record SkinAssignmentPlan
     /// override, OR a stock name), sorted — the pool the grid editor's livery picker offers, and
     /// what an AI can actually be bound to. Empty on <see cref="Empty"/>.</summary>
     public IReadOnlyList<string> ActiveLiveries { get; init; } = [];
+
+    /// <summary>Exact active livery NAME to real numeric in-game slot. Values are empty only for
+    /// legacy stock names whose official slot is not present in the content library.</summary>
+    public IReadOnlyDictionary<string, string> ActiveLiverySlots { get; init; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
+
+    /// <summary>Active CUSTOM livery NAME to the exact vehicle-folder/car-model it belongs to.
+    /// Stock liveries are deliberately absent: the replacement editor must never offer a vanilla
+    /// skin, and a custom skin may only be rebound onto another seat using this same model.</summary>
+    public IReadOnlyDictionary<string, string> ActiveCustomLiveryModels { get; init; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
 
     /// <summary>The livery NAMEs installed for this class as "##" placeholders but NOT switched on
     /// in-game (no real slot) — the pool the livery activator can turn on. Sorted. Empty on
@@ -177,6 +200,13 @@ public static class SkinAssignmentResolver
         var stock = library.Liveries.TryGetValue(plan.Ams2Class, out var entry)
             ? entry.StockLib1563.ToHashSet(StringComparer.Ordinal)
             : new HashSet<string>(StringComparer.Ordinal);
+        var official = library.OfficialLiveries.TryGetValue(plan.Ams2Class, out var officialLiveries)
+            ? officialLiveries
+            : [];
+        var officialByName = official
+            .GroupBy(livery => livery.Name, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+        stock.UnionWith(officialByName.Keys);
 
         // Every name that WOULD bind in-game — the near-miss search space for an unbound seat.
         var known = new HashSet<string>(overrideByName.Keys, StringComparer.Ordinal);
@@ -190,15 +220,20 @@ public static class SkinAssignmentResolver
             SkinStatus status;
             string? folder = null;
             string? nearMiss = null;
+            string skinSlot = "";
 
             if (overrideByName.TryGetValue(name, out var skin))
             {
                 status = skin.IsActive ? SkinStatus.CustomSkin : SkinStatus.InstalledInactive;
                 folder = skin.VehicleFolder;
+                if (skin.IsActive)
+                    skinSlot = skin.Slot;
             }
             else if (stock.Contains(name))
             {
                 status = SkinStatus.StockDefault;
+                if (officialByName.TryGetValue(name, out var stockLivery) && stockLivery.Slot > 0)
+                    skinSlot = stockLivery.Slot.ToString(CultureInfo.InvariantCulture);
             }
             else if (aiNames.Contains(name))
             {
@@ -216,12 +251,15 @@ public static class SkinAssignmentResolver
 
             return new SkinAssignment
             {
+                DriverId = seat.DriverId,
                 DriverName = seat.DriverName,
+                TeamId = seat.TeamId,
                 TeamName = seat.TeamName,
                 Number = seat.Number,
                 LiveryName = name,
                 IsPlayer = seat.IsPlayer,
                 Status = status,
+                SkinSlot = skinSlot,
                 VehicleFolder = folder,
                 NearMiss = nearMiss,
             };
@@ -235,9 +273,22 @@ public static class SkinAssignmentResolver
             .Where(l => !anyClassFolders || classFolders.Contains(l.VehicleFolder))
             .ToList();
         var activeNames = new HashSet<string>(StringComparer.Ordinal);
+        var activeSlots = new Dictionary<string, string>(StringComparer.Ordinal);
+        var activeCustomModels = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var l in inClass.Where(l => l.IsActive))
+        {
             activeNames.Add(l.Name);
+            activeSlots.TryAdd(l.Name, l.Slot);
+            activeCustomModels.TryAdd(l.Name, l.VehicleFolder);
+        }
         activeNames.UnionWith(stock);
+        foreach (string name in stock)
+        {
+            string slot = officialByName.TryGetValue(name, out var stockLivery) && stockLivery.Slot > 0
+                ? stockLivery.Slot.ToString(CultureInfo.InvariantCulture)
+                : "";
+            activeSlots.TryAdd(name, slot);
+        }
         var inactiveNames = inClass
             .Where(l => !l.IsActive && !activeNames.Contains(l.Name))
             .Select(l => l.Name)
@@ -250,6 +301,8 @@ public static class SkinAssignmentResolver
             Ams2Class = plan.Ams2Class,
             Assignments = assignments,
             ActiveLiveries = activeNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
+            ActiveLiverySlots = activeSlots,
+            ActiveCustomLiveryModels = activeCustomModels,
             InactiveLiveries = inactiveNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
             LiveryCap = liveryCap,
         };

@@ -16,7 +16,9 @@ public sealed class SkinsViewModelTests
         var session = new FakeCareerSession
         {
             SkinPlan = Plan(
-                Assign("A. Custom", "Team A", "Livery A", SkinStatus.CustomSkin, folder: "brabham_bt26"),
+                Assign(
+                    "A. Custom", "Team A", "Livery A", SkinStatus.CustomSkin,
+                    folder: "brabham_bt26", driverId: "driver.custom", teamId: "team.a", skinSlot: "61"),
                 Assign("B. Stock", "Team B", "Livery B", SkinStatus.StockDefault),
                 Assign("C. NameOnly", "Team C", "Livery C", SkinStatus.NameOnly),
                 Assign("D. Bogus", "Team D", "Livery D", SkinStatus.Unbound, nearMiss: "Livery d")),
@@ -25,6 +27,9 @@ public sealed class SkinsViewModelTests
         var vm = new SkinsViewModel(session);
 
         Assert.Equal(4, vm.Cars.Count);
+        Assert.Equal("driver.custom", vm.Cars[0].DriverId);
+        Assert.Equal("team.a", vm.Cars[0].TeamId);
+        Assert.Equal("61", vm.Cars[0].SkinSlot);
         Assert.Equal(SkinTone.Good, vm.Cars[0].Tone);
         Assert.Equal("Custom skin", vm.Cars[0].StatusLabel);
         Assert.Contains("brabham_bt26", vm.Cars[0].Detail);
@@ -217,10 +222,16 @@ public sealed class SkinsViewModelTests
                 Ams2Class = "F-Retro_Gen3",
                 Assignments =
                 [
-                    Assign("K. Acheson", "Skoal", "Skoal #10", SkinStatus.InstalledInactive),
-                    Assign("A. Senna", "McLaren", "McLaren #1", SkinStatus.CustomSkin),
+                    Assign("K. Acheson", "Skoal", "Skoal #10", SkinStatus.InstalledInactive, folder: "model.a"),
+                    Assign("A. Senna", "McLaren", "McLaren #1", SkinStatus.CustomSkin, folder: "model.a"),
                 ],
-                ActiveLiveries = ["McLaren #1", "Ferrari #27", "Williams #5"],
+                ActiveLiveries = ["McLaren #1", "Ferrari #27", "Williams #5", "Vanilla Stock #2"],
+                ActiveCustomLiveryModels = new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    ["McLaren #1"] = "model.a",
+                    ["Ferrari #27"] = "model.a",
+                    ["Williams #5"] = "model.b",
+                },
             },
         };
 
@@ -231,8 +242,104 @@ public sealed class SkinsViewModelTests
         Assert.Equal("Skoal #10", skoal.LiveryKey);
         Assert.Equal("K. Acheson", skoal.DriverName);
         Assert.Equal("Skoal #10", skoal.SelectedLivery);      // defaults to its own livery
-        Assert.Contains("Skoal #10", skoal.LiveryOptions);    // own livery selectable
-        Assert.Contains("Ferrari #27", skoal.LiveryOptions);  // + active liveries to rebind to
+        Assert.Null(skoal.ReplacementSelection);
+        Assert.Equal(["Ferrari #27", "McLaren #1"], skoal.LiveryOptions);
+        Assert.DoesNotContain("Vanilla Stock #2", skoal.LiveryOptions);
+        Assert.DoesNotContain("Williams #5", skoal.LiveryOptions);
+        Assert.Same(skoal, vm.SelectedEditor);                 // no player seat => first seat
+    }
+
+    [Fact]
+    public void PreviewContract_SelectsPlayerAndTracksKnownAndUnknownReplacementArt()
+    {
+        var pack = TestPackBuilder.TwoRoundPack();
+        var session = new FakeCareerSession
+        {
+            Pack = pack,
+            SkinPlan = new SkinAssignmentPlan
+            {
+                Ams2Class = TestPackBuilder.VintageClass,
+                Assignments =
+                [
+                    Assign(
+                        "Jack Brabham", "Brabham-Repco", TestPackBuilder.StockLivery1,
+                        SkinStatus.CustomSkin,
+                        driverId: "driver.brabham", teamId: "team.brabham",
+                        number: "1", skinSlot: "51"),
+                    Assign(
+                        "Nova Reyes", "Brabham-Repco", TestPackBuilder.StockLivery2,
+                        SkinStatus.CustomSkin,
+                        isPlayer: true,
+                        driverId: RoundGridResolver.SyntheticPlayerDriverId, teamId: "team.brabham",
+                        number: "2", skinSlot: "52"),
+                ],
+                ActiveLiveries =
+                [
+                    TestPackBuilder.StockLivery1,
+                    TestPackBuilder.StockLivery2,
+                    "Community Unknown #9",
+                ],
+                ActiveLiverySlots = new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    [TestPackBuilder.StockLivery1] = "51",
+                    [TestPackBuilder.StockLivery2] = "52",
+                    ["Community Unknown #9"] = "63",
+                },
+                ActiveCustomLiveryModels = new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    [TestPackBuilder.StockLivery1] = TestPackBuilder.VintageCar,
+                    [TestPackBuilder.StockLivery2] = TestPackBuilder.VintageCar,
+                    ["Community Unknown #9"] = TestPackBuilder.VintageCar,
+                },
+            },
+        };
+
+        var vm = new SkinsViewModel(session);
+
+        var editor = Assert.IsType<SeatEditor>(vm.SelectedEditor);
+        Assert.Equal(TestPackBuilder.StockLivery2, editor.LiveryKey);
+        Assert.Equal(RoundGridResolver.SyntheticPlayerDriverId, editor.OriginalPreview.DriverId);
+        Assert.Equal("player.brabham", editor.OriginalPreview.PortraitKey);
+        Assert.Equal("driver.hulme", editor.OriginalPreview.CarKey);
+        Assert.Equal("driver.hulme", editor.OriginalPreview.TopCarKey);
+        Assert.Equal("52", editor.OriginalPreview.SkinSlot);
+        Assert.Equal(TestPackBuilder.VintageCar, editor.OriginalPreview.VehicleModel);
+
+        Assert.Equal("player.brabham", vm.PlayerPortraitKey);
+        Assert.Equal("driver.hulme", vm.PlayerCarKey);
+        Assert.Equal("driver.hulme", vm.PlayerTopCarKey);
+        Assert.Equal("52", vm.PlayerSkinSlot);
+        Assert.Equal("2", vm.PlayerCarNumber);
+
+        var changed = new List<string>();
+        editor.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is { } name)
+                changed.Add(name);
+        };
+
+        editor.SelectedLivery = TestPackBuilder.StockLivery1;
+
+        Assert.True(editor.IsReplacement);
+        Assert.Equal("driver.brabham", editor.SelectedPreview.DriverId);
+        Assert.Equal("team.brabham", editor.SelectedPreview.TeamId);
+        Assert.Equal("1", editor.SelectedPreview.CarNumber);
+        Assert.Equal("51", editor.SelectedPreview.SkinSlot);
+        Assert.Equal("driver.brabham", editor.SelectedPreview.CarKey);
+        Assert.Equal("driver.brabham", editor.SelectedPreview.TopCarKey);
+        Assert.Contains(nameof(SeatEditor.SelectedPreview), changed);
+        Assert.Contains(nameof(SeatEditor.IsReplacement), changed);
+
+        editor.SelectedLivery = "Community Unknown #9";
+
+        Assert.True(editor.IsReplacement);
+        Assert.Equal("Community Unknown #9", editor.SelectedPreview.LiveryName);
+        Assert.Equal("", editor.SelectedPreview.DriverId);
+        Assert.Equal("", editor.SelectedPreview.TeamId);
+        Assert.Equal("", editor.SelectedPreview.SkinSlot);
+        Assert.Null(editor.SelectedPreview.PortraitKey);
+        Assert.Null(editor.SelectedPreview.CarKey);
+        Assert.Null(editor.SelectedPreview.TopCarKey);
     }
 
     [Fact]
@@ -253,8 +360,9 @@ public sealed class SkinsViewModelTests
         var session = Session("Skoal #10", "K. Acheson", active: ["Ferrari #27"]);
         var vm = new SkinsViewModel(session);
 
-        vm.Editors[0].SelectedLivery = "Ferrari #27";
+        vm.Editors[0].ReplacementSelection = "Ferrari #27";
 
+        Assert.Equal("Ferrari #27", vm.Editors[0].SelectedLivery);
         Assert.Equal("Ferrari #27", session.Overrides["Skoal #10"].LiveryName);
     }
 
@@ -281,6 +389,38 @@ public sealed class SkinsViewModelTests
 
         Assert.Equal("Renamed", vm.Editors[0].DriverName);
         Assert.Equal("Ferrari #27", vm.Editors[0].SelectedLivery);
+        Assert.Equal("Ferrari #27", vm.Editors[0].ReplacementSelection);
+    }
+
+    [Fact]
+    public void LegacyVanillaOrCrossModelOverride_IsClearedButDriverRenameSurvives()
+    {
+        var session = Session("Skoal #10", "K. Acheson", active: ["Ferrari #27"]);
+        session.SkinPlan = session.SkinPlan with
+        {
+            ActiveLiveries = ["Ferrari #27", "Vanilla Stock #2", "Wrong Model #5"],
+            ActiveCustomLiveryModels = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["Skoal #10"] = "model.a",
+                ["Ferrari #27"] = "model.a",
+                ["Wrong Model #5"] = "model.b",
+            },
+        };
+        session.Overrides["Skoal #10"] = new SeatStagingOverride
+        {
+            DriverName = "Renamed",
+            LiveryName = "Vanilla Stock #2",
+        };
+
+        var vm = new SkinsViewModel(session);
+
+        var editor = Assert.Single(vm.Editors);
+        Assert.Equal("Skoal #10", editor.SelectedLivery);
+        Assert.Null(editor.ReplacementSelection);
+        Assert.Equal("Renamed", session.Overrides["Skoal #10"].DriverName);
+        Assert.Null(session.Overrides["Skoal #10"].LiveryName);
+        Assert.DoesNotContain("Vanilla Stock #2", editor.LiveryOptions);
+        Assert.DoesNotContain("Wrong Model #5", editor.LiveryOptions);
     }
 
     [Fact]
@@ -321,8 +461,12 @@ public sealed class SkinsViewModelTests
         SkinPlan = new SkinAssignmentPlan
         {
             Ams2Class = "F-Retro_Gen3",
-            Assignments = [Assign(driver, "Team", livery, SkinStatus.CustomSkin)],
+            Assignments = [Assign(driver, "Team", livery, SkinStatus.CustomSkin, folder: "model.a")],
             ActiveLiveries = active ?? [],
+            ActiveCustomLiveryModels = (active ?? [])
+                .Append(livery)
+                .Distinct(StringComparer.Ordinal)
+                .ToDictionary(name => name, _ => "model.a", StringComparer.Ordinal),
         },
     };
 
@@ -330,10 +474,15 @@ public sealed class SkinsViewModelTests
 
     private static SkinAssignment Assign(
         string driver, string team, string livery, SkinStatus status,
-        bool isPlayer = false, string? folder = null, string? nearMiss = null) => new()
+        bool isPlayer = false, string? folder = null, string? nearMiss = null,
+        string driverId = "", string teamId = "", string? number = null, string skinSlot = "") => new()
     {
+        DriverId = driverId,
         DriverName = driver,
+        TeamId = teamId,
         TeamName = team,
+        Number = number,
+        SkinSlot = skinSlot,
         LiveryName = livery,
         IsPlayer = isPlayer,
         Status = status,

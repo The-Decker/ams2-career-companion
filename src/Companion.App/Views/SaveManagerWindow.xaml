@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:app="clr-namespace:Companion.App"
+        xmlns:audio="clr-namespace:Companion.App.Audio"
         Title="Career save points"
         Width="760" Height="620" MinWidth="620" MinHeight="480"
         WindowStyle="None" ResizeMode="CanResizeWithGrip"
@@ -24,6 +25,7 @@
                         app:WindowChromeAssist.IsDragRegion="True">
                     <DockPanel Margin="15,4,5,4">
                         <Button DockPanel.Dock="Right" Style="{StaticResource CloseButton}"
+                                audio:SoundAssist.Cue="Back"
                                 app:WindowChromeAssist.IsCloseButton="True"
                                 AutomationProperties.Name="Close career saves" />
                         <StackPanel VerticalAlignment="Center">
@@ -94,9 +96,11 @@
                                             <StackPanel Grid.Column="1" Orientation="Horizontal"
                                                         VerticalAlignment="Center" Margin="18,0,0,0">
                                                 <Button Content="RESTORE" Style="{StaticResource AccentButton}"
+                                                        audio:SoundAssist.Cue="Warning"
                                                         MinWidth="96" Click="OnRestore"
                                                         AutomationProperties.Name="Restore this save point" />
                                                 <Button Content="DELETE" Style="{StaticResource SubtleButton}"
+                                                        audio:SoundAssist.Cue="Destructive"
                                                         Foreground="{DynamicResource ErrorBrush}"
                                                         MinWidth="82" Margin="8,0,0,0" Click="OnDelete"
                                                         AutomationProperties.Name="Delete this save point" />
@@ -114,6 +118,7 @@
                         Padding="18,13">
                     <DockPanel>
                         <Button DockPanel.Dock="Right" Content="NEW SAVE POINT"
+                                audio:SoundAssist.Cue="Navigate"
                                 Style="{StaticResource AccentButton}" Padding="18,9"
                                 Click="OnCreateSave" AutomationProperties.Name="Create a new save point" />
                         <TextBlock Text="Restoring replaces the entire career timeline, including later race results."

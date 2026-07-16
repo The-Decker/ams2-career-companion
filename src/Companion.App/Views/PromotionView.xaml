@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.PromotionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
     <!-- The SMGP promotion / demotion screen (3c-3) — its own full-immersion step after the confirm,
          when the round moved seats. DataContext is a PromotionViewModel; its Model carries the new
@@ -16,10 +17,12 @@
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Stay put" MinWidth="120" Margin="0,0,10,0"
                         Command="{Binding DeclineCommand}"
+                        audio:SoundAssist.Cue="Back"
                         Visibility="{Binding CanDecline, Converter={StaticResource BoolVisible}}"
                         ToolTip="Decline the offer and keep your current seat" />
                 <Button Content="{Binding Model.AcceptLabel}" Style="{StaticResource AccentButton}"
                         MinWidth="180" FontWeight="Bold" Command="{Binding AcceptCommand}"
+                        audio:SoundAssist.Cue="Confirm"
                         ToolTip="Move to the new team from next round" />
             </WrapPanel>
         </Border>

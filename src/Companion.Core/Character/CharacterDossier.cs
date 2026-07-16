@@ -1,3 +1,5 @@
+using Companion.Core.Career;
+
 namespace Companion.Core.Character;
 
 /// <summary>
@@ -10,6 +12,10 @@ public sealed record CharacterDossier
 {
     public required string Name { get; init; }
 
+    /// <summary>The player's authored three-letter country code, or null for a legacy profile.
+    /// Display-only identity; the dossier never derives gameplay behavior from it.</summary>
+    public string? CountryCode { get; init; }
+
     /// <summary>The driver's CURRENT age (their created first-season age plus the seasons since), or
     /// null for a legacy character created before ages existed. A real, visible part of the driver.</summary>
     public int? Age { get; init; }
@@ -17,21 +23,35 @@ public sealed record CharacterDossier
     public required int Level { get; init; }
     public required long Xp { get; init; }
 
+    /// <summary>Explicit v2-facing name for the same monotonic total. Kept alongside
+    /// <see cref="Xp"/> so no existing binding is renamed.</summary>
+    public long LifetimeXp => Xp;
+
+    /// <summary>Lifetime XP not yet spent on committed v2 tree resets. Legacy dossiers expose
+    /// their lifetime total because they never spend this pool.</summary>
+    public long AvailableResetXp { get; init; }
+
     /// <summary>XP accumulated INTO the current level (0 at a fresh level).</summary>
     public required long XpIntoLevel { get; init; }
 
     /// <summary>XP required to advance from the current level to the next; 0 at the max level.</summary>
     public required long XpForNextLevel { get; init; }
 
-    /// <summary>Character points banked for between-season spending.</summary>
+    /// <summary>Development currency banked for between-season spending: legacy Character Points
+    /// for v0/v1, or Skill Points for v2. The stable member name preserves the VM bind contract.</summary>
     public required int CpUnspent { get; init; }
 
     public required IReadOnlyList<DossierStat> Stats { get; init; }
 
     public required IReadOnlyList<DossierPerk> Perks { get; init; }
 
+    /// <summary>The exact persisted progression-v2 Racing DNA identity. This is a display-only
+    /// projection: exposing its authored identity lines never activates a new fold mechanic.</summary>
+    public DossierRacingDna? RacingDna { get; init; }
+
     /// <summary>The season-end injury risk this driver carries ("Low"/"Moderate"/"High"), or null
-    /// when the character has no injury-stream perk (and so is never exposed to the roll).</summary>
+    /// when neither a legacy injury-stream perk nor a mastery injury-base drawback exposes the
+    /// character to the roll.</summary>
     public string? InjuryRisk { get; init; }
 
     /// <summary>The driver's CURRENT availability, folded from the accident/injury state
@@ -49,7 +69,9 @@ public sealed record CharacterDossier
     public static CharacterDossier Build(
         CharacterProfile character, int level, long xp, CharacterRules rules, int? age = null,
         int raceSuspensionRemaining = 0, bool seasonEndingInjury = false, bool deceased = false,
-        int? levelCap = null, int? progressionYear = null)
+        int? levelCap = null, int? progressionYear = null,
+        CampaignProgressionPlan? campaignProgressionPlan = null, int completedSeasons = 0,
+        MasterySkillCatalog? masterySkills = null, RacingDnaCatalog? racingDnaCatalog = null)
     {
         // Cumulative XP required to have REACHED the current level, and the cost of the next level,
         // selected through the same progression-version dispatcher the live/replay folds use.
@@ -75,6 +97,8 @@ public sealed record CharacterDossier
         foreach (string perkId in character.PerkIds)
         {
             if (rules.TryGetPerk(perkId, out var perk))
+            {
+                var effects = PerkDescriber.Effects(perk);
                 perks.Add(new DossierPerk
                 {
                     Id = perk.Id,
@@ -82,15 +106,23 @@ public sealed record CharacterDossier
                     Category = perk.Category,
                     Description = perk.Description,
                     Cost = perk.Cost,
-                    Benefits = PerkDescriber.Benefits(perk),
-                    Drawbacks = PerkDescriber.Drawbacks(perk),
+                    Effects = effects,
+                    Benefits = PerkDescriber.Benefits(effects),
+                    Drawbacks = PerkDescriber.Drawbacks(effects),
                 });
+            }
         }
 
+        DossierRacingDna? racingDna = ProjectRacingDna(character, racingDnaCatalog);
+
+        PlayerPerkModifiers modifiers = CharacterModifierResolver.Resolve(
+            character,
+            rules,
+            masterySkills);
         string? injuryRisk = null;
-        if (InjuryModel.HasInjuryPerk(character, rules))
+        if (InjuryModel.HasInjuryPerk(character, rules) || modifiers.MasteryInjuryRisk)
         {
-            double hazard = InjuryModel.Hazard(character.Stat("durability"), PerkResolver.Resolve(character, rules));
+            double hazard = InjuryModel.Hazard(character.Stat("durability"), modifiers);
             injuryRisk = hazard >= 0.30 ? "High" : hazard >= 0.16 ? "Moderate" : "Low";
         }
 
@@ -106,17 +138,57 @@ public sealed record CharacterDossier
         return new CharacterDossier
         {
             Name = character.Name,
+            CountryCode = character.CountryCode,
             Age = age,
             Level = level,
             Xp = xp,
+            AvailableResetXp = Math.Max(0L, xp - character.XpSpentOnResets),
             XpIntoLevel = Math.Max(0, xp - cumulativeToLevel),
             XpForNextLevel = forNext,
-            CpUnspent = CharacterProgress.AvailableCp(character, level, rules),
+            CpUnspent = CharacterProgress.AvailableSkillPoints(
+                character,
+                level,
+                rules,
+                completedSeasons,
+                campaignProgressionPlan),
             Stats = stats,
             Perks = perks,
+            RacingDna = racingDna,
             InjuryRisk = injuryRisk,
             Availability = availability,
             AvailabilityLabel = availabilityLabel,
+        };
+    }
+
+    private static DossierRacingDna? ProjectRacingDna(
+        CharacterProfile character,
+        RacingDnaCatalog? catalog)
+    {
+        if (character.ProgressionVersion != CharacterLevelProgression.Level300Version ||
+            catalog is null || string.IsNullOrWhiteSpace(character.RacingDnaId) ||
+            character.RacingDnaVersion <= 0)
+        {
+            return null;
+        }
+
+        RacingDnaDefinition definition = catalog.Get(
+            character.RacingDnaId,
+            character.RacingDnaVersion);
+        return new DossierRacingDna
+        {
+            Id = definition.Id,
+            Version = definition.Version,
+            Name = definition.Name,
+            Description = definition.Description,
+            PrimaryFamily = definition.PrimaryFamily,
+            PrimaryFamilyLabel = CharacterLabels.Category(definition.PrimaryFamily),
+            SecondaryFamily = definition.SecondaryFamily,
+            SecondaryFamilyLabel = CharacterLabels.Category(definition.SecondaryFamily),
+            PersistentEffects = definition.PersistentEffects.ToArray(),
+            TradeoffEffects = definition.TradeoffEffects.ToArray(),
+            ChoiceKind = definition.Choice?.Kind,
+            ChoicePrompt = definition.Choice?.Prompt,
+            ChoiceValue = character.RacingDnaChoice,
         };
     }
 }
@@ -152,8 +224,29 @@ public sealed record DossierPerk
     public required string Category { get; init; }
     public required string Description { get; init; }
     public required int Cost { get; init; }
+    public IReadOnlyList<CharacterEffectLine> Effects { get; init; } = [];
     public required IReadOnlyList<string> Benefits { get; init; }
     public required IReadOnlyList<string> Drawbacks { get; init; }
+}
+
+/// <summary>Display projection of one exact-version Racing DNA identity. Effect summaries are
+/// authored character identity only; this record does not opt a career into any new mechanic.</summary>
+public sealed record DossierRacingDna
+{
+    public required string Id { get; init; }
+    public int Version { get; init; }
+    public required string Name { get; init; }
+    public required string Description { get; init; }
+    public required string PrimaryFamily { get; init; }
+    public required string PrimaryFamilyLabel { get; init; }
+    public required string SecondaryFamily { get; init; }
+    public required string SecondaryFamilyLabel { get; init; }
+    public string FamilyLine => $"{PrimaryFamilyLabel} / {SecondaryFamilyLabel}";
+    public required IReadOnlyList<RacingDnaEffect> PersistentEffects { get; init; }
+    public required IReadOnlyList<RacingDnaEffect> TradeoffEffects { get; init; }
+    public RacingDnaChoiceKind? ChoiceKind { get; init; }
+    public string? ChoicePrompt { get; init; }
+    public string? ChoiceValue { get; init; }
 }
 
 /// <summary>Display labels for the character stats — shared by the creation wizard and the dossier

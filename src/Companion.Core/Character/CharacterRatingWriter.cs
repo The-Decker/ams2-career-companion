@@ -95,6 +95,7 @@ public static class CharacterRatingWriter
         "weatherTyreChanges" => r with { WeatherTyreChanges = value },
         "avoidanceOfForcedMistakes" => r with { AvoidanceOfForcedMistakes = value },
         "fuelManagement" => r with { FuelManagement = value },
-        _ => r, // an unknown field name is ignored (the load-time validator owns rejecting them)
+        _ => throw new InvalidOperationException(
+            $"Character modifier targets unknown writable rating field '{field}'."),
     };
 }

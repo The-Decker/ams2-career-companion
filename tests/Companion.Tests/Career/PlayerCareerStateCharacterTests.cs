@@ -129,6 +129,7 @@ public sealed class PlayerCareerStateCharacterTests
         Assert.DoesNotContain("progressionVersion", legacyJson);
         Assert.DoesNotContain("unlockedSkillNodeIds", legacyJson);
         Assert.DoesNotContain("creationPerkIds", legacyJson);
+        Assert.DoesNotContain("countryCode", legacyJson);
 
         var current = legacy with
         {
@@ -136,10 +137,13 @@ public sealed class PlayerCareerStateCharacterTests
             UnlockedSkillNodeIds = ["raise_pace_1"],
             CreationPerkIds = ["rain_man"],
             PerkIds = ["rain_man"],
+            CountryCode = "BRA",
         };
         string json = JsonSerializer.Serialize(current, CoreJson.Options);
         var back = JsonSerializer.Deserialize<CharacterProfile>(json, CoreJson.Options)!;
         Assert.Equal(current, back);
         Assert.Equal(current.GetHashCode(), back.GetHashCode());
+        Assert.Equal("BRA", back.CountryCode);
+        Assert.NotEqual(current, current with { CountryCode = "USA" });
     }
 }

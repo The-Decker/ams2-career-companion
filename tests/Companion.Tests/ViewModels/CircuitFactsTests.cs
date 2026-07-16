@@ -71,6 +71,7 @@ public sealed class CircuitFactsTests : IDisposable
 
         var schedule = session.SeasonSchedule();
         Assert.Equal(2, schedule.Count);
+        Assert.All(schedule, round => Assert.Equal(TestPackBuilder.Track, round.TrackId));
         string[] expected = ["Most pole positions: Juan Manuel Fangio (5).", "Home-crowd wins: 4."];
         Assert.Equal(expected, schedule[0].CircuitFacts);
         Assert.Empty(schedule[1].CircuitFacts);

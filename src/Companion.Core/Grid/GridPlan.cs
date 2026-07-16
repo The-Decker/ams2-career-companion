@@ -42,6 +42,16 @@ public sealed record PlayerCharacterPatch
     public required CharacterProfile Profile { get; init; }
     public required PlayerPerkModifiers Modifiers { get; init; }
     public required CharacterRules Rules { get; init; }
+
+    /// <summary>The pinned progression-v2 mastery catalog used to verify and resolve acquired
+    /// skill effects. Version-zero profiles never inspect it; an active profile with owned mastery
+    /// skills fails closed when it is absent.</summary>
+    public MasterySkillCatalog? MasterySkills { get; init; }
+
+    /// <summary>The versioned, round-specific facts that authorize progression-v2 conditional
+    /// player-car physics. Null is valid for legacy profiles and v2 profiles whose perks have no
+    /// conditional CAR effects; a conditional v2 build fails closed without it.</summary>
+    public PlayerRoundConditionsInput? RoundConditions { get; init; }
 }
 
 /// <summary>

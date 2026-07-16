@@ -1,6 +1,7 @@
 <UserControl x:Class="Companion.App.Views.WizardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:audio="clr-namespace:Companion.App.Audio"
              xmlns:wizard="clr-namespace:Companion.ViewModels.Wizard;assembly=Companion.ViewModels"
              xmlns:career="clr-namespace:Companion.Core.Career;assembly=Companion.Core"
              xmlns:views="clr-namespace:Companion.App.Views"
@@ -46,8 +47,12 @@
             <Setter Property="Padding" Value="10" />
             <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
             <Setter Property="Effect" Value="{StaticResource ControlElevationEffect}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="ToolTip" Value="Click to drive this car" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                <!-- The item is one viewport wide for deterministic paging, but the visible card is
+                     the only interactive surface. Keep hover paint on the card itself. -->
+                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
                              Value="True">
                     <Setter Property="BorderBrush" Value="{DynamicResource AccentHoverBrush}" />
                 </DataTrigger>
@@ -66,10 +71,15 @@
         <StackPanel DockPanel.Dock="Top">
             <TextBlock Text="New career" Style="{StaticResource H1}" />
             <WrapPanel Margin="0,10,0,12">
-                <TextBlock Text="1 &#x00B7; Season">
+                <TextBlock x:Name="SeasonStepLabel" Text="1 &#x00B7; Season">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Style.Triggers>
+                                <!-- Explicit SMGP entry has already selected its fixed replica pack;
+                                     never advertise the historical season-picker step. -->
+                                <DataTrigger Binding="{Binding ExperienceMode}" Value="smgp">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.SeasonPick}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -78,10 +88,14 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="2 &#x00B7; Verify content">
+                <TextBlock x:Name="VerificationStepLabel">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Setter Property="Text" Value="2 &#x00B7; Verify content" />
                             <Style.Triggers>
+                                <DataTrigger Binding="{Binding ExperienceMode}" Value="smgp">
+                                    <Setter Property="Text" Value="1 &#x00B7; Verify content" />
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Verification}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -90,11 +104,15 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock Text="3 &#x00B7; Driver"
+                <TextBlock x:Name="DriverStepLabel"
                            Visibility="{Binding HasCharacterStep, Converter={StaticResource BoolVisible}}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
+                            <Setter Property="Text" Value="3 &#x00B7; Driver" />
                             <Style.Triggers>
+                                <DataTrigger Binding="{Binding ExperienceMode}" Value="smgp">
+                                    <Setter Property="Text" Value="2 &#x00B7; Driver" />
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Character}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -103,7 +121,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock>
+                <TextBlock x:Name="TeamCarStepLabel">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Setter Property="Text" Value="4 &#x00B7; Team &amp; Car" />
@@ -111,6 +129,16 @@
                                 <DataTrigger Binding="{Binding HasCharacterStep}" Value="False">
                                     <Setter Property="Text" Value="3 &#x00B7; Team &amp; Car" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding ExperienceMode}" Value="smgp">
+                                    <Setter Property="Text" Value="3 &#x00B7; Team &amp; Car" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding ExperienceMode}" Value="smgp" />
+                                        <Condition Binding="{Binding HasCharacterStep}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Text" Value="2 &#x00B7; Team &amp; Car" />
+                                </MultiDataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.SeatPick}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -119,7 +147,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock>
+                <TextBlock x:Name="SeasonGridStepLabel">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Setter Property="Text" Value="5 &#x00B7; Season Grid" />
@@ -127,6 +155,16 @@
                                 <DataTrigger Binding="{Binding HasCharacterStep}" Value="False">
                                     <Setter Property="Text" Value="4 &#x00B7; Season Grid" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding ExperienceMode}" Value="smgp">
+                                    <Setter Property="Text" Value="4 &#x00B7; Season Grid" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding ExperienceMode}" Value="smgp" />
+                                        <Condition Binding="{Binding HasCharacterStep}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Text" Value="3 &#x00B7; Season Grid" />
+                                </MultiDataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Grid}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -135,7 +173,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <TextBlock>
+                <TextBlock x:Name="ConfirmStepLabel">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" BasedOn="{StaticResource StepLabel}">
                             <Setter Property="Text" Value="6 &#x00B7; Confirm" />
@@ -143,6 +181,16 @@
                                 <DataTrigger Binding="{Binding HasCharacterStep}" Value="False">
                                     <Setter Property="Text" Value="5 &#x00B7; Confirm" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding ExperienceMode}" Value="smgp">
+                                    <Setter Property="Text" Value="5 &#x00B7; Confirm" />
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding ExperienceMode}" Value="smgp" />
+                                        <Condition Binding="{Binding HasCharacterStep}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Text" Value="4 &#x00B7; Confirm" />
+                                </MultiDataTrigger>
                                 <DataTrigger Binding="{Binding Step}" Value="{x:Static wizard:WizardStep.Confirm}">
                                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                                     <Setter Property="FontWeight" Value="SemiBold" />
@@ -157,18 +205,22 @@
         <!-- footer: cancel / back / next -->
         <DockPanel DockPanel.Dock="Bottom" Margin="0,20,0,0">
             <Button DockPanel.Dock="Left" Content="Cancel"
+                    audio:SoundAssist.Cue="Back"
                     Style="{StaticResource SubtleButton}"
                     Command="{Binding DataContext.GoToStartCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button Content="_Back" MinWidth="96" Command="{Binding BackCommand}" />
+                <Button Content="_Back" MinWidth="96" Command="{Binding BackCommand}"
+                        audio:SoundAssist.Cue="Back" />
                 <Button MinWidth="140" Margin="10,0,0,0" Command="{Binding NextCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource AccentButton}">
                             <Setter Property="Content" Value="_Next" />
+                            <Setter Property="audio:SoundAssist.Cue" Value="Navigate" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Step}"
                                              Value="{x:Static wizard:WizardStep.Confirm}">
                                     <Setter Property="Content" Value="Create career" />
+                                    <Setter Property="audio:SoundAssist.Cue" Value="Confirm" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -294,6 +346,7 @@
                                        Text="• any extra folders you add under Settings → Data" />
                             <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                                 <Button Content="Open pack folder" Click="OnOpenPackFolder"
+                                        audio:SoundAssist.Cue="Navigate"
                                         ToolTip="Opens Documents\AMS2CareerCompanion\Packs in Explorer (created if missing)" />
                                 <TextBlock Style="{StaticResource Faint}" VerticalAlignment="Center" Margin="10,0,0,0"
                                            Text="then drop a pack in and hit Rescan below" />
@@ -551,6 +604,7 @@
                     <Button x:Name="SeatCarouselPrevious" Grid.Column="0"
                             Width="58" Height="118" HorizontalAlignment="Left" VerticalAlignment="Center"
                             Style="{StaticResource SubtleButton}"
+                            audio:SoundAssist.Cue="Navigate"
                             Click="OnPreviousSeatCard"
                             ToolTip="Previous car" AutomationProperties.Name="Previous car">
                         <TextBlock Text="&#xE76B;" FontFamily="{StaticResource IconFont}" FontSize="32" />
@@ -567,6 +621,7 @@
                                  ItemsSource="{Binding Seats}"
                                  SelectedItem="{Binding SelectedSeat, Mode=TwoWay}"
                                  SelectionChanged="OnSeatCarouselSelectionChanged"
+                                 PreviewMouseLeftButtonDown="OnSeatCarouselPreviewMouseLeftButtonDown"
                                  SelectionMode="Single" Background="Transparent"
                                  BorderThickness="0" Padding="0"
                                  AutomationProperties.Name="Available team and car contracts">
@@ -583,22 +638,36 @@
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
                             <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                <!-- The shared ListBoxItem template paints selection/hover over the
+                                     full paging viewport. This carousel deliberately removes that
+                                     chrome: SeatCardFrame owns every interaction visual. -->
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                                     <Setter Property="Width"
                                             Value="{Binding ViewportWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" />
                                     <Setter Property="MinHeight" Value="470" />
                                     <Setter Property="Padding" Value="0" />
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                     <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                    <Setter Property="ToolTip" Value="Click to drive this car" />
+                                    <Setter Property="Cursor" Value="Arrow" />
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                                     <Setter Property="AutomationProperties.Name" Value="{Binding DriverName}" />
                                     <Setter Property="AutomationProperties.HelpText"
                                             Value="{Binding TeamName, StringFormat='Team {0}. Click to choose this car.'}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                  TextElement.Foreground="{TemplateBinding Foreground}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
                                 </Style>
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Style="{StaticResource SeatCardFrame}" Padding="24,20"
+                                    <Border x:Name="SeatCardFrame" Style="{StaticResource SeatCardFrame}" Padding="24,20"
                                             Margin="18,4" MaxWidth="1240" HorizontalAlignment="Center"
                                             VerticalAlignment="Stretch">
                                         <Grid>
@@ -783,6 +852,7 @@
                     <Button x:Name="SeatCarouselNext" Grid.Column="2"
                             Width="58" Height="118" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Style="{StaticResource SubtleButton}"
+                            audio:SoundAssist.Cue="Navigate"
                             Click="OnNextSeatCard"
                             ToolTip="Next car" AutomationProperties.Name="Next car">
                         <TextBlock Text="&#xE76C;" FontFamily="{StaticResource IconFont}" FontSize="32" />
@@ -922,8 +992,10 @@
                             <StackPanel Margin="14,12,14,14">
                                 <TextBlock Text="DRIVER LICENSE" Style="{StaticResource Eyebrow}"
                                            Foreground="{DynamicResource AccentTextBrush}" />
-                                <TextBlock Text="CAREER ENTRY" FontFamily="{StaticResource DisplayFont}"
-                                           FontWeight="Bold" FontSize="16" Margin="0,2,0,10" />
+                                <TextBlock Text="{Binding ExperienceModeLabel, Mode=OneWay}"
+                                           FontFamily="{StaticResource DisplayFont}"
+                                           FontWeight="Bold" FontSize="14" TextWrapping="Wrap"
+                                           Margin="0,2,0,10" />
 
                                 <!-- Team-coloured player portrait with a graceful empty-art state. -->
                                 <Grid Width="136" Height="136" HorizontalAlignment="Center"
@@ -968,15 +1040,23 @@
                                     <Image Stretch="Uniform" HorizontalAlignment="Center" IsHitTestVisible="False"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                                            Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                 </Grid>
+                                <TextBlock Text="TEAM &amp; CAR SELECTED NEXT" Style="{StaticResource Faint}"
+                                           FontSize="8.5" TextAlignment="Center" Margin="0,-4,0,7"
+                                           Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolVisible}}" />
 
                                 <TextBlock Text="{Binding Character.Name, FallbackValue=YOUR DRIVER}"
                                            FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
                                            FontSize="15" TextAlignment="Center" TextWrapping="Wrap" />
-                                <TextBlock Text="{Binding Character.SelectedArchetype.Name, FallbackValue=SELECT AN ARCHETYPE, TargetNullValue=CUSTOM BUILD}"
+                                <TextBlock Text="{Binding Character.SelectedRacingDna.Name, Mode=OneWay, FallbackValue=SELECT RACING DNA, TargetNullValue=SELECT RACING DNA}"
                                            Style="{StaticResource Muted}" TextAlignment="Center"
-                                           TextWrapping="Wrap" Margin="0,2,0,8" />
+                                           TextWrapping="Wrap" Margin="0,2,0,8"
+                                           Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolVisible}}" />
+                                <TextBlock Text="{Binding Character.SelectedArchetype.Name, Mode=OneWay, FallbackValue=SELECT AN ARCHETYPE, TargetNullValue=CUSTOM BUILD}"
+                                           Style="{StaticResource Muted}" TextAlignment="Center"
+                                           TextWrapping="Wrap" Margin="0,2,0,8"
+                                           Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolCollapsed}}" />
 
                                 <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,8">
                                     <Border Style="{StaticResource CompactChip}" Margin="0,0,5,5">
@@ -984,14 +1064,37 @@
                                             <Run Text="AGE " /><Run Text="{Binding Character.Age}" FontWeight="Bold" />
                                         </TextBlock>
                                     </Border>
-                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,0,5">
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,0,5"
+                                            Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolCollapsed}}">
                                         <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10">
                                             <Run Text="PERKS " /><Run Text="{Binding Character.SelectedPerkCount, Mode=OneWay}" FontWeight="Bold" />
                                         </TextBlock>
                                     </Border>
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,0,5"
+                                            Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolVisible}}">
+                                        <TextBlock FontFamily="{StaticResource MonoFont}" FontSize="10">
+                                            <Run Text="TRAITS " /><Run Text="{Binding Character.SelectedPerkCount, Mode=OneWay}" FontWeight="Bold" />
+                                        </TextBlock>
+                                    </Border>
                                 </WrapPanel>
 
-                                <Border Style="{StaticResource AccentCallout}" Padding="9,7">
+                                <Border Style="{StaticResource AccentCallout}" Padding="9,7"
+                                        Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolVisible}}"
+                                        ToolTip="{Binding CampaignCoverageSummary, Mode=OneWay}">
+                                    <StackPanel>
+                                        <TextBlock Text="V2 BUILD SNAPSHOT" Style="{StaticResource Eyebrow}"
+                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                        <TextBlock Text="{Binding CharacterCreationSummary, Mode=OneWay}"
+                                                   Style="{StaticResource Body}" FontSize="9.5"
+                                                   TextWrapping="Wrap" Margin="0,3,0,0" />
+                                        <TextBlock Text="{Binding CampaignPacingSummary, Mode=OneWay}"
+                                                   Style="{StaticResource Faint}" FontSize="8.5"
+                                                   TextWrapping="Wrap" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource AccentCallout}" Padding="9,7"
+                                        Visibility="{Binding IsProgressionV2, Mode=OneWay, Converter={StaticResource BoolCollapsed}}">
                                     <StackPanel>
                                         <TextBlock Text="YOUR STORY STARTS HERE" Style="{StaticResource Eyebrow}"
                                                    Foreground="{DynamicResource AccentTextBrush}" />

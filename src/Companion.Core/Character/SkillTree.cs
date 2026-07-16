@@ -6,6 +6,11 @@ public enum SkillNodeState
     Owned = 0,
     Unlockable = 1,
     Locked = 2,
+    /// <summary>The normally-exclusive second capstone is available through the persisted
+    /// L285 + campaign-checkpoint mastery override.</summary>
+    Mastery = 3,
+    /// <summary>Reserved for the Wave-4 client-side acquisition transaction.</summary>
+    Pending = 4,
 }
 
 /// <summary>
@@ -16,11 +21,25 @@ public sealed record SkillNode
 {
     public required string Id { get; init; }
     public required string Name { get; init; }
+    public string Description { get; init; } = "";
     public required string Kind { get; init; }
     public required int Cost { get; init; }
     public required int Tier { get; init; }
     public required int UnlockLevel { get; init; }
     public required IReadOnlyList<string> Requires { get; init; }
+    /// <summary>Stable authored graph position. Zero preserves every legacy projection.</summary>
+    public int Order { get; init; }
+    /// <summary>App-layer icon resource key; empty for legacy nodes without authored art.</summary>
+    public string IconKey { get; init; } = "";
+    public string? ExclusiveGroup { get; init; }
+    public string? RailId { get; init; }
+    /// <summary>Display-safe authored rail label; empty for legacy and mastery nodes.</summary>
+    public string RailName { get; init; } = "";
+    /// <summary>Character stat advanced by this rail; empty for legacy and mastery nodes.</summary>
+    public string AttributeStatId { get; init; } = "";
+    public double? AttributeValueAfter { get; init; }
+    public bool IsMasteryOverride { get; init; }
+    public IReadOnlyList<CharacterEffectLine> Effects { get; init; } = [];
     public required IReadOnlyList<string> Benefits { get; init; }
     public required IReadOnlyList<string> Drawbacks { get; init; }
     public required SkillNodeState State { get; init; }
@@ -104,17 +123,20 @@ public static class SkillTree
         var (state, reason) = State(
             isOwned, level, perk.UnlockLevel, perk.Cost, availableSp, missing,
             creationOnly: perk.Cost <= 0, rules);
+        var effects = PerkDescriber.Effects(perk);
         return new SkillNode
         {
             Id = perk.Id,
             Name = perk.Name,
+            Description = perk.Description,
             Kind = "perk",
             Cost = perk.Cost,
             Tier = perk.Tier,
             UnlockLevel = perk.UnlockLevel,
             Requires = perk.Requires,
-            Benefits = PerkDescriber.Benefits(perk),
-            Drawbacks = PerkDescriber.Drawbacks(perk),
+            Effects = effects,
+            Benefits = PerkDescriber.Benefits(effects),
+            Drawbacks = PerkDescriber.Drawbacks(effects),
             State = state,
             LockReason = reason,
         };
@@ -133,17 +155,28 @@ public static class SkillTree
             isOwned, level, node.UnlockLevel, node.Cost, availableSp, missing,
             creationOnly: false, rules);
         string statName = CharacterLabels.Stat(node.Stat);
+        string benefit = $"+{rules.Levels.LevelGrants.StatStepValue:0.##} {statName}";
+        CharacterEffectClass classification = rules.Stats.TalentStats.Any(stat =>
+            string.Equals(stat.Id, node.Stat, StringComparison.Ordinal))
+            ? CharacterEffectClass.Expectation
+            : CharacterEffectClass.Career;
+        IReadOnlyList<CharacterEffectLine> effects =
+        [
+            PerkDescriber.CreateLine("benefit", classification, benefit),
+        ];
         return new SkillNode
         {
             Id = node.Id,
             Name = node.Name is { Length: > 0 } name ? name : $"Raise {statName}",
+            Description = benefit,
             Kind = "stat",
             Cost = node.Cost,
             Tier = node.Tier,
             UnlockLevel = node.UnlockLevel,
             Requires = node.Requires,
-            Benefits = [$"+{rules.Levels.LevelGrants.StatStepValue:0.##} {statName}"],
-            Drawbacks = [],
+            Effects = effects,
+            Benefits = PerkDescriber.Benefits(effects),
+            Drawbacks = PerkDescriber.Drawbacks(effects),
             State = state,
             LockReason = reason,
         };

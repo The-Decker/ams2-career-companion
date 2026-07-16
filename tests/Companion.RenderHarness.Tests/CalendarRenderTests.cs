@@ -1,4 +1,7 @@
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Companion.App.Views;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
@@ -14,6 +17,8 @@ namespace Companion.RenderHarness.Tests;
 /// without a render-time crash. Self-skips off Windows.</summary>
 public sealed class CalendarRenderTests
 {
+    private const double TrackBannerAspect = 440d / 1920d;
+
     private sealed class CalendarSession : ICareerSession
     {
         public CareerSummary Summary { get; } = new()
@@ -24,15 +29,18 @@ public sealed class CalendarRenderTests
 
         public IReadOnlyList<SeasonScheduleEntry> SeasonSchedule() =>
         [
-            new() { Round = 1, Name = "Monaco GP", Date = "1978-05-07", RealVenue = "Monaco",
-                    Ams2TrackName = "Monaco", Laps = 78, Kind = SeasonTrackKind.RealVenue },
+            new() { Round = 1, Name = "San Marino GP", Date = "1988-05-01",
+                    RealVenue = "Autodromo Internazionale Enzo e Dino Ferrari",
+                    TrackId = "imola_88", Ams2TrackName = "Imola_GP_1988", Laps = 61,
+                    Kind = SeasonTrackKind.RealVenue },
             new() { Round = 2, Name = "Belgian GP", Date = "1978-05-21", RealVenue = "Circuit Zolder",
-                    Ams2TrackName = "Zolder", Laps = 74, Kind = SeasonTrackKind.Alternate,
+                    TrackId = "Heusden", Ams2TrackName = "Zolder", Laps = 74, Kind = SeasonTrackKind.Alternate,
                     CircuitLayoutId = "zolder", CircuitCaption = "Zolder · 4.01 km · 10 turns",
                     CircuitHistory = "Zolder hosted the Belgian GP 1973-1984.",
                     CircuitFacts = ["Most wins here: Niki Lauda (2).", "Home-crowd wins: 1."] },
             new() { Round = 3, Name = "Dutch GP", Date = "1978-08-27", RealVenue = "Circuit Zandvoort",
-                    Ams2TrackName = "Hockenheim 1988", Laps = 44, Kind = SeasonTrackKind.StandIn,
+                    TrackId = "hockenheim_1988", Ams2TrackName = "Hockenheim 1988", Laps = 44,
+                    Kind = SeasonTrackKind.StandIn,
                     UnusedAlternateName = "Zolder" },
         ];
 
@@ -105,12 +113,71 @@ public sealed class CalendarRenderTests
             view.UpdateLayout();
 
             // Every round's FULL name renders exactly once (there are no short-name chips now).
-            Assert.Equal(1, CountText(view, "Monaco GP"));
+            Assert.Equal(1, CountText(view, "San Marino GP"));
             Assert.Equal(1, CountText(view, "Belgian GP"));
             Assert.Equal(1, CountText(view, "Dutch GP"));
 
             // The round with circuit data shows its map caption inline (no expand needed).
             Assert.Equal(1, CountText(view, "Zolder · 4.01 km · 10 turns"));
+        });
+    }
+
+    [Fact]
+    public void CalendarView_BindsDrivenTrackIdToEmbeddedRoundHero()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new CalendarViewModel(new CalendarSession());
+            var view = new CalendarView { DataContext = vm };
+            var roundList = Assert.IsType<ListBox>(view.FindName("RoundList"));
+            roundList.SelectedItem = vm.Rounds[0];
+
+            view.Measure(new Size(1200, 900));
+            view.Arrange(new Rect(0, 0, 1200, 900));
+            view.UpdateLayout();
+
+            Assert.Equal("imola_88", vm.Rounds[0].TrackId);
+            var hero = Assert.Single(Descendants<Image>(view), image => image.Name == "RoundHeroArt");
+            var bitmap = Assert.IsAssignableFrom<BitmapSource>(hero.Source);
+            Assert.Equal(1920, bitmap.PixelWidth);
+            Assert.Equal(440, bitmap.PixelHeight);
+            Assert.Equal(Visibility.Visible, hero.Visibility);
+        });
+    }
+
+    [Fact]
+    public void CalendarHero_UsesFullPanoramicAspect_WhenDetailColumnIsWide()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new CalendarViewModel(new CalendarSession());
+            var view = new CalendarView { DataContext = vm };
+            var roundList = Assert.IsType<ListBox>(view.FindName("RoundList"));
+            roundList.SelectedItem = vm.Rounds[0];
+
+            view.Measure(new Size(2048, 1200));
+            view.Arrange(new Rect(0, 0, 2048, 1200));
+            view.UpdateLayout();
+
+            var frame = Assert.Single(
+                Descendants<Border>(view),
+                border => border.Name == "RoundHeroFrame");
+            var hero = Assert.Single(
+                Descendants<Image>(view),
+                image => image.Name == "RoundHeroArt");
+
+            Assert.True(frame.ActualHeight > 300,
+                $"A wide Calendar should grow beyond the 244px compact floor; got {frame.ActualHeight:0.0}px.");
+            Assert.True(Math.Abs(frame.ActualHeight - frame.ActualWidth * TrackBannerAspect) <= 1.5,
+                $"Calendar hero should preserve 1920:440: width {frame.ActualWidth:0.0} -> expected " +
+                $"{frame.ActualWidth * TrackBannerAspect:0.0}, got {frame.ActualHeight:0.0}.");
+            Assert.Equal(Stretch.Uniform, hero.Stretch);
         });
     }
 

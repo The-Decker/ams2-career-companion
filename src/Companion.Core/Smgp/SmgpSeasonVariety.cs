@@ -15,14 +15,10 @@ namespace Companion.Core.Smgp;
 ///     the same year again.</item>
 /// </list>
 ///
-/// <para>DELIBERATELY FOLD-INERT. Only the fields the sim and fold never read move: the venue
-/// identity (name, track, laps, history, the venue's setup note) and the weather (all documented
-/// "display only — never a fold input"). The round POSITION keeps everything the fold does read —
-/// its number, date, championship flag, points, the grid size + baked DNQ qualifiers, and the
-/// weekend timing — so the resolved grid, the standings, and every journal row are identical to the
-/// un-varied pack. Results are stored as raw envelopes and re-folded on replay, so replay (which
-/// never applies this transform) stays byte-identical; the variety changes only what the calendar
-/// shows and which track/weather the briefing tells the player to set up in AMS2.</para>
+/// <para>This is a deterministic FOLD INPUT. Race names reach derived headlines, while laps and
+/// persisted weather can select character-effect conditions. Call sites therefore gate it per
+/// career and apply the same pure transform to the pinned pack on both live and replay paths.
+/// A legacy career whose gate is absent keeps the authored calendar byte-identically.</para>
 /// </summary>
 public static class SmgpSeasonVariety
 {
