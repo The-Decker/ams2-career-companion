@@ -99,6 +99,11 @@ public enum NewsEventKind
 
     // Campaign completion: the final pinned season closed — the career retrospective moment
     CareerCompleted,
+
+    // SMGP canon divergence (D9): the career's venue winner vs the almanac's remembered ruler.
+    // Fiction-provenance (SmgpFiction) — the SEGA canon must never read as verified history.
+    SmgpCanonDiverged,
+    SmgpCanonHeld,
 }
 
 /// <summary>

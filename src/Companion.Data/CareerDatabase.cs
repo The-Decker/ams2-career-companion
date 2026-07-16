@@ -36,6 +36,24 @@ public sealed class CareerDatabase : IDisposable
             }
 
             var database = new CareerDatabase(connection);
+
+            // Safety net before the schema chain runs: a genuine old-format file (version 1..N-1,
+            // never a freshly created empty DB) gets a one-time consistent sibling snapshot
+            // (`<name>.pre-v<N>.bak`) via VACUUM INTO, so even a future destructive migration —
+            // or a power loss mid-chain — always leaves a restorable pre-upgrade copy.
+            int preVersion = database.SchemaVersion;
+            if (preVersion > 0 && preVersion < Migrations.CurrentVersion)
+            {
+                string backupPath = $"{path}.pre-v{preVersion}.bak";
+                if (!File.Exists(backupPath))
+                {
+                    using var backup = connection.CreateCommand();
+                    backup.CommandText = "VACUUM INTO @target;";
+                    backup.Parameters.AddWithValue("@target", backupPath);
+                    backup.ExecuteNonQuery();
+                }
+            }
+
             Migrations.Apply(connection);
             return database;
         }

@@ -170,15 +170,18 @@ public interface ICareerSession
         Message = "This career session cannot switch skin seasons.",
     };
 
-    /// <summary>The grid editor's current per-seat COSMETIC overrides for this season, keyed by the
-    /// seat's original <c>ams2LiveryName</c>: a custom driver name and/or a rebound livery, applied
-    /// only to the staged custom-AI file (never the sim). Empty default so existing fakes compile.</summary>
+    /// <summary>The per-seat COSMETIC staging overrides this season still carries (renamed drivers /
+    /// rebound liveries), keyed by the seat's original <c>ams2LiveryName</c> and applied only to the
+    /// staged custom-AI file (never the sim). The grid EDITOR that wrote these was retired by the
+    /// read-only Grid Preview; stored rows keep applying, so the preview surfaces a count and a
+    /// clear affordance rather than hiding a silent edit. Empty default so existing fakes compile.</summary>
     IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
         new Dictionary<string, SeatStagingOverride>(StringComparer.Ordinal);
 
-    /// <summary>Saves one seat's grid-editor override (rename / rebind livery), keyed by its original
-    /// livery; an empty override clears it. Persisted per season OUTSIDE the journal, so the sim/fold
-    /// stay byte-identical. Applied at the next stage. Additive default: a no-op so fakes compile.</summary>
+    /// <summary>Saves one seat's cosmetic staging override, keyed by its original livery; an EMPTY
+    /// override clears the stored row (the Grid Preview's "clear legacy edits" path). Persisted per
+    /// season OUTSIDE the journal, so the sim/fold stay byte-identical. Applied at the next stage.
+    /// Additive default: a no-op so fakes compile.</summary>
     void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) { }
 
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
@@ -753,6 +756,11 @@ public sealed record InjuryHistoryEntry
 
     /// <summary>Ready-to-show label ("Injured — missed 2 races", "Season-ending injury", "Fatal accident").</summary>
     public required string Label { get; init; }
+
+    /// <summary>A non-graphic deterministic injury description ("bruised ribs") — display flavour
+    /// hashed from the persisted outcome's identity, never a reroll and never clinical advice.
+    /// Empty for a fatality (no clinical caption) and for legacy rows.</summary>
+    public string Description { get; init; } = "";
 }
 
 public sealed record CareerSummary

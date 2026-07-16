@@ -214,7 +214,9 @@ public static class NewsroomCategories
         NewsEventKind.RivalryDeveloped => NewsroomCategory.Rivalries,
         NewsEventKind.SeasonCompleted => NewsroomCategory.SeasonReview,
         NewsEventKind.SeasonStarted or NewsEventKind.CareerCreated => NewsroomCategory.WeekendPreview,
-        NewsEventKind.HistoryDiverged or NewsEventKind.HistoryHeld => NewsroomCategory.HistoricalRetrospective,
+        NewsEventKind.HistoryDiverged or NewsEventKind.HistoryHeld
+            or NewsEventKind.SmgpCanonDiverged
+            or NewsEventKind.SmgpCanonHeld => NewsroomCategory.HistoricalRetrospective,
         NewsEventKind.DnqDrama => NewsroomCategory.RaceReport,
         _ => NewsroomCategory.RaceReport,
     };
@@ -226,6 +228,7 @@ public static class NewsroomCategories
         NewsEventKind.Overperformed or NewsEventKind.Underperformed or NewsEventKind.DominantDisplay
             or NewsEventKind.StandingsClimb => EditorialStatus.Analysis,
         NewsEventKind.HistoryDiverged or NewsEventKind.HistoryHeld
+            or NewsEventKind.SmgpCanonDiverged or NewsEventKind.SmgpCanonHeld
             or NewsEventKind.SeasonCompleted
             or NewsEventKind.CareerCompleted => EditorialStatus.Retrospective,
         _ => EditorialStatus.Confirmed,
@@ -234,6 +237,9 @@ public static class NewsroomCategories
     public static ContentProvenance ProvenanceFor(NewsEventKind kind) => kind switch
     {
         NewsEventKind.HistoryHeld => ContentProvenance.VerifiedHistorical,
+        // The SEGA canon is FICTION: its divergence layer must badge as SMGP UNIVERSE, never as
+        // verified history and never silently as the career universe (D9's layer separation).
+        NewsEventKind.SmgpCanonDiverged or NewsEventKind.SmgpCanonHeld => ContentProvenance.SmgpFiction,
         _ => ContentProvenance.CareerUniverse,
     };
 }

@@ -95,6 +95,7 @@ public static class EditorialImportance
         NewsEventKind.StandingsClimb => 24,
         NewsEventKind.RetirementStreak => 24,
         NewsEventKind.LeadChangedHands => 24,
+        NewsEventKind.SmgpCanonDiverged => 26,
         NewsEventKind.SeatFilled => 22,
         NewsEventKind.SeatVacancy => 20,
         NewsEventKind.PointsStreak => 20,
@@ -104,6 +105,7 @@ public static class EditorialImportance
         NewsEventKind.BestFinishImproved => 18,
         NewsEventKind.DnqDrama => 18,
         NewsEventKind.HistoryHeld => 14,
+        NewsEventKind.SmgpCanonHeld => 12,
         NewsEventKind.MidfieldResult => 12,
         _ => 10,
     };

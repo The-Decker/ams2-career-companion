@@ -82,6 +82,29 @@ public sealed partial class SkinsViewModel : ObservableObject
 
     public string DnqHeader => $"DID NOT QUALIFY  •  {DidNotQualify.Count}";
 
+    /// <summary>Legacy grid-editor overrides (renamed drivers / rebound liveries) this career still
+    /// carries from before the read-only Grid Preview. Staging still applies them, so they must be
+    /// visible and clearable — never a silent hidden edit to the staged AI file.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasStagingOverrides), nameof(StagingOverridesNote))]
+    private int _stagingOverrideCount;
+
+    public bool HasStagingOverrides => StagingOverrideCount > 0;
+
+    public string StagingOverridesNote => StagingOverrideCount == 0
+        ? ""
+        : $"{StagingOverrideCount} legacy grid edit{(StagingOverrideCount == 1 ? "" : "s")} still apply at staging (renamed drivers / rebound skins from the old grid editor).";
+
+    /// <summary>Removes every legacy grid-editor override, so the next stage writes the pack's
+    /// authored grid untouched.</summary>
+    [RelayCommand]
+    private void ClearStagingOverrides()
+    {
+        foreach (var key in _session.SeatStagingOverrides().Keys.ToList())
+            _session.SetSeatStagingOverride(key, new SeatStagingOverride());
+        Refresh();
+    }
+
     public void Refresh()
     {
         string? selectedLivery = SelectedCar?.LiveryName;
@@ -116,6 +139,7 @@ public sealed partial class SkinsViewModel : ObservableObject
             ?? Cars.FirstOrDefault();
 
         UpdateSelectedPositionLabel();
+        StagingOverrideCount = _session.SeatStagingOverrides().Count;
         OnPropertyChanged(nameof(HasSelectedCar));
         OnPropertyChanged(nameof(HasDnq));
         OnPropertyChanged(nameof(DnqHeader));

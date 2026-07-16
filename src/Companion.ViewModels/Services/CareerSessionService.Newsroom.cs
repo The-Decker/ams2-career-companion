@@ -47,6 +47,12 @@ public sealed partial class CareerSessionService
                 }
             }
         }
+        else if (_environment.Rules?.SmgpWhatReallyHappened is { } almanac)
+        {
+            // The SMGP career diverges against its OWN canon (D9): the almanac's remembered venue
+            // rulers, labeled SmgpFiction — the fiction layer never touches the real-history path.
+            events.AddRange(Companion.Core.Smgp.SmgpCanonDivergence.Compare(seasons, almanac));
+        }
 
         _newsroomEventsCache = events.OrderBy(e => e.SeasonOrdinal).ThenBy(e => e.Round).ToList();
         _newsroomEventsFingerprint = fingerprint;

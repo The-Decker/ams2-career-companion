@@ -1616,8 +1616,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             _environment.Clock.GetUtcNow());
     }
 
-    /// <summary>The grid editor's per-seat cosmetic overrides for this season (v4 staging_override
-    /// table). Read-only projection over a non-journaled table — the sim never sees it.</summary>
+    /// <summary>The per-seat cosmetic staging overrides this season still carries (v4
+    /// staging_override table — written by the retired grid editor; the Grid Preview now surfaces
+    /// a count + clear affordance). Read-only projection over a non-journaled table — the sim
+    /// never sees it.</summary>
     public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
         StagingOverrideStore.Read(_database, _seasonId);
 
@@ -6106,6 +6108,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                         "seasonEnding" => "Season-ending injury",
                         _ => "Fatal accident",
                     },
+                    Description = InjuryFlavor.Describe(outcome, ordinal, round),
                 });
             }
         }
