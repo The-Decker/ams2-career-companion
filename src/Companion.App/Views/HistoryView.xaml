@@ -780,6 +780,471 @@
                     </StackPanel>
                 </Border>
 
+                <!-- ===== THE ENCYCLOPEDIA: the verified reference library (eras, subjects, the
+                     record books, the documented timeline) plus the unified archive search.
+                     Read-side only; the whole block hides honestly when no reference data ships
+                     (HasEncyclopedia false), and every sub-section gates on its own counts. -->
+                <StackPanel x:Name='EncyclopediaSection'
+                            AutomationProperties.Name='Encyclopedia reference library'
+                            Visibility='{Binding HasEncyclopedia, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}'>
+                    <TextBlock Text='THE ENCYCLOPEDIA' Style='{StaticResource Eyebrow}' Margin='1,2,0,8' />
+
+                    <!-- SEARCH THE ARCHIVE: one box over news dispatches, story threads and the
+                         verified history. Results say WHY they matched; a searched-but-empty state
+                         is announced instead of silently showing nothing. -->
+                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'>
+                        <StackPanel>
+                            <TextBlock Text='SEARCH THE ARCHIVE' Style='{StaticResource H2}' />
+                            <TextBlock Text='One search across news dispatches, story threads and the verified historical record.'
+                                       Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,3,0,8' />
+                            <TextBox x:Name='EncyclopediaSearchBox' MinWidth='260' MaxWidth='440' HorizontalAlignment='Left'
+                                     Text='{Binding ArchiveSearchText, UpdateSourceTrigger=PropertyChanged, Delay=250}'
+                                     ToolTip='Search the encyclopedia and the news archive'
+                                     AutomationProperties.Name='Search the encyclopedia and news archive' />
+                            <TextBlock Text='No matches in the archive.' Style='{StaticResource Muted}' Margin='0,8,0,0'
+                                       AutomationProperties.Name='Archive search empty'
+                                       Visibility='{Binding IsArchiveSearchEmpty, Converter={StaticResource BoolVisible}}' />
+                            <ItemsControl x:Name='ArchiveSearchResultsList' Style='{StaticResource VirtualizedList}'
+                                          MaxHeight='320' Margin='0,8,0,0'
+                                          ItemsSource='{Binding ArchiveSearchResults}'
+                                          AutomationProperties.Name='Archive search results'
+                                          Visibility='{Binding HasArchiveSearchResults, Converter={StaticResource BoolVisible}}'>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush='{DynamicResource EdgeBrush}' BorderThickness='0,0,0,1' Padding='2,7'>
+                                            <DockPanel>
+                                                <Border DockPanel.Dock='Left' Style='{StaticResource CompactChip}'
+                                                        Margin='0,0,8,0' VerticalAlignment='Top'>
+                                                    <TextBlock Text='{Binding Kind}' Style='{StaticResource Eyebrow}' />
+                                                </Border>
+                                                <Border DockPanel.Dock='Right' Style='{StaticResource CompactChip}'
+                                                        Margin='8,0,0,0' VerticalAlignment='Top'
+                                                        Visibility='{Binding Year, Converter={StaticResource CountVisible}}'>
+                                                    <TextBlock Text='{Binding Year}' FontFamily='{StaticResource MonoFont}' FontSize='11' />
+                                                </Border>
+                                                <StackPanel>
+                                                    <TextBlock Text='{Binding Title}' FontWeight='SemiBold' TextWrapping='Wrap' />
+                                                    <TextBlock Text='{Binding Subtitle}' Style='{StaticResource Muted}' FontSize='12'
+                                                               TextWrapping='Wrap'
+                                                               Visibility='{Binding Subtitle, Converter={StaticResource StringVisible}}' />
+                                                    <TextBlock Style='{StaticResource Faint}' Margin='0,2,0,0'
+                                                               Text="{Binding MatchedOn, Mode=OneWay, StringFormat='matched: {0}'}" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- FEATURED trio: a deterministic date-aware rotation from the reference data
+                         (seeded by career + calendar day in the ViewModel — holds still all day). -->
+                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'
+                            AutomationProperties.Name='Featured from the encyclopedia'>
+                        <StackPanel>
+                            <DockPanel Margin='0,0,0,10'>
+                                <TextBlock DockPanel.Dock='Right' Text='rotates daily' Style='{StaticResource Faint}'
+                                           VerticalAlignment='Center' />
+                                <TextBlock Text='FEATURED' Style='{StaticResource H2}' />
+                            </DockPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width='*' />
+                                    <ColumnDefinition Width='*' />
+                                    <ColumnDefinition Width='*' />
+                                </Grid.ColumnDefinitions>
+                                <Border Style='{StaticResource Callout}' Margin='0,0,8,0' VerticalAlignment='Stretch'
+                                        Visibility='{Binding FeaturedEra, Converter={StaticResource NullCollapsed}}'>
+                                    <StackPanel>
+                                        <TextBlock Text='FEATURED ERA' Style='{StaticResource Eyebrow}' />
+                                        <TextBlock Text='{Binding FeaturedEra.Name}' FontWeight='SemiBold' FontSize='15'
+                                                   TextWrapping='Wrap' Margin='0,3,0,0' />
+                                        <TextBlock Text='{Binding FeaturedEra.YearsLabel}' Style='{StaticResource Faint}'
+                                                   FontFamily='{StaticResource MonoFont}' Margin='0,2,0,0' />
+                                        <TextBlock Text='{Binding FeaturedEra.Overview}' Style='{StaticResource Muted}' FontSize='12'
+                                                   TextWrapping='Wrap' Margin='0,5,0,0' />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column='1' Style='{StaticResource Callout}' Margin='0,0,8,0' VerticalAlignment='Stretch'
+                                        Visibility='{Binding FeaturedDriver, Converter={StaticResource NullCollapsed}}'>
+                                    <StackPanel>
+                                        <TextBlock Text='FEATURED DRIVER' Style='{StaticResource Eyebrow}' />
+                                        <TextBlock Text='{Binding FeaturedDriver.Name}' FontWeight='SemiBold' FontSize='15'
+                                                   TextWrapping='Wrap' Margin='0,3,0,0' />
+                                        <TextBlock Text='{Binding FeaturedDriver.YearsLabel}' Style='{StaticResource Faint}'
+                                                   FontFamily='{StaticResource MonoFont}' Margin='0,2,0,0' />
+                                        <TextBlock Text='{Binding FeaturedDriver.StatLine}' Style='{StaticResource Muted}' FontSize='12'
+                                                   TextWrapping='Wrap' Margin='0,5,0,0' />
+                                        <TextBlock Text='{Binding FeaturedDriver.TitlesLabel}' Foreground='{DynamicResource WarningBrush}'
+                                                   FontSize='12' FontWeight='SemiBold' TextWrapping='Wrap' Margin='0,4,0,0'
+                                                   Visibility='{Binding FeaturedDriver.HasTitles, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}' />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column='2' Style='{StaticResource Callout}' VerticalAlignment='Stretch'
+                                        Visibility='{Binding FeaturedTeam, Converter={StaticResource NullCollapsed}}'>
+                                    <StackPanel>
+                                        <TextBlock Text='FEATURED TEAM' Style='{StaticResource Eyebrow}' />
+                                        <TextBlock Text='{Binding FeaturedTeam.Name}' FontWeight='SemiBold' FontSize='15'
+                                                   TextWrapping='Wrap' Margin='0,3,0,0' />
+                                        <TextBlock Text='{Binding FeaturedTeam.YearsLabel}' Style='{StaticResource Faint}'
+                                                   FontFamily='{StaticResource MonoFont}' Margin='0,2,0,0' />
+                                        <TextBlock Text='{Binding FeaturedTeam.StatLine}' Style='{StaticResource Muted}' FontSize='12'
+                                                   TextWrapping='Wrap' Margin='0,5,0,0' />
+                                        <Border Style='{StaticResource CompactChip}' Background='{DynamicResource WarningDimBrush}'
+                                                BorderBrush='{DynamicResource WarningBrush}' Margin='0,5,0,0'
+                                                Visibility='{Binding FeaturedTeam.CompletenessLabel, Converter={StaticResource StringVisible}, FallbackValue=Collapsed}'>
+                                            <TextBlock Text='{Binding FeaturedTeam.CompletenessLabel}' Style='{StaticResource Eyebrow}'
+                                                       Foreground='{DynamicResource WarningBrush}' />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- BROWSE THE ERAS: one expander per documented era. -->
+                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'
+                            Visibility='{Binding Eras.Count, Converter={StaticResource CountVisible}}'>
+                        <StackPanel>
+                            <TextBlock Text='BROWSE THE ERAS' Style='{StaticResource H2}' Margin='0,0,0,8' />
+                            <ItemsControl ItemsSource='{Binding Eras}'>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander Margin='0,2,0,4'>
+                                            <Expander.Header>
+                                                <StackPanel Orientation='Horizontal'>
+                                                    <TextBlock Text='{Binding Name}' FontWeight='SemiBold' VerticalAlignment='Center' />
+                                                    <TextBlock Text='{Binding YearsLabel}' Style='{StaticResource Faint}'
+                                                               FontFamily='{StaticResource MonoFont}' Margin='8,0,0,0'
+                                                               VerticalAlignment='Center' />
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <StackPanel Margin='20,8,4,10'>
+                                                <TextBlock Text='{Binding Overview}' Style='{StaticResource Body}' TextWrapping='Wrap' />
+                                                <ItemsControl ItemsSource='{Binding Characteristics}' Margin='0,8,0,0'
+                                                              Visibility='{Binding Characteristics.Count, Converter={StaticResource CountVisible}}'>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <DockPanel Margin='0,2'>
+                                                                <TextBlock DockPanel.Dock='Left' Text='•'
+                                                                           Foreground='{DynamicResource AccentTextBrush}'
+                                                                           Margin='0,0,8,0' VerticalAlignment='Top' />
+                                                                <TextBlock Text='{Binding}' Style='{StaticResource Muted}'
+                                                                           FontSize='12' TextWrapping='Wrap' />
+                                                            </DockPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <TextBlock Text='ENGINES' Style='{StaticResource Eyebrow}' Margin='0,10,0,2'
+                                                           Visibility='{Binding EngineTrends, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='{Binding EngineTrends}' Style='{StaticResource Muted}' TextWrapping='Wrap'
+                                                           Visibility='{Binding EngineTrends, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='SAFETY' Style='{StaticResource Eyebrow}' Margin='0,10,0,2'
+                                                           Visibility='{Binding SafetyContext, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='{Binding SafetyContext}' Style='{StaticResource Muted}' TextWrapping='Wrap'
+                                                           Visibility='{Binding SafetyContext, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='REGULATION CHANGES' Style='{StaticResource Eyebrow}' Margin='0,10,0,2'
+                                                           Visibility='{Binding RegulationChanges.Count, Converter={StaticResource CountVisible}}' />
+                                                <ItemsControl ItemsSource='{Binding RegulationChanges}'
+                                                              Visibility='{Binding RegulationChanges.Count, Converter={StaticResource CountVisible}}'>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <DockPanel Margin='0,2'>
+                                                                <TextBlock DockPanel.Dock='Left' Text='•'
+                                                                           Foreground='{DynamicResource AccentTextBrush}'
+                                                                           Margin='0,0,8,0' VerticalAlignment='Top' />
+                                                                <TextBlock Text='{Binding}' Style='{StaticResource Muted}'
+                                                                           FontSize='12' TextWrapping='Wrap' />
+                                                            </DockPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <TextBlock Text='LEGACY' Style='{StaticResource Eyebrow}' Margin='0,10,0,2'
+                                                           Visibility='{Binding Legacy, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='{Binding Legacy}' Style='{StaticResource Muted}' TextWrapping='Wrap'
+                                                           Visibility='{Binding Legacy, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='{Binding SourcesLabel}' Style='{StaticResource Faint}' FontSize='10.5'
+                                                           TextWrapping='Wrap' Margin='0,10,0,0'
+                                                           Visibility='{Binding SourcesLabel, Converter={StaticResource StringVisible}}' />
+                                            </StackPanel>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- TECHNOLOGY, REGULATION AND SAFETY: the first-class subjects. Incomplete
+                         records carry a PARTIALLY DOCUMENTED chip instead of invented facts. -->
+                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'
+                            Visibility='{Binding Subjects.Count, Converter={StaticResource CountVisible}}'>
+                        <StackPanel>
+                            <TextBlock Text='TECHNOLOGY, REGULATION AND SAFETY' Style='{StaticResource H2}' Margin='0,0,0,8' />
+                            <ItemsControl ItemsSource='{Binding Subjects}'>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander Margin='0,2,0,4'>
+                                            <Expander.Header>
+                                                <StackPanel Orientation='Horizontal'>
+                                                    <TextBlock Text='{Binding Title}' FontWeight='SemiBold' VerticalAlignment='Center' />
+                                                    <Border Style='{StaticResource CompactChip}' Margin='8,0,0,0' VerticalAlignment='Center'>
+                                                        <TextBlock Text='{Binding CategoryLabel}' Style='{StaticResource Eyebrow}' />
+                                                    </Border>
+                                                    <Border Style='{StaticResource CompactChip}' Background='{DynamicResource WarningDimBrush}'
+                                                            BorderBrush='{DynamicResource WarningBrush}' Margin='6,0,0,0' VerticalAlignment='Center'
+                                                            Visibility='{Binding CompletenessLabel, Converter={StaticResource StringVisible}}'>
+                                                        <TextBlock Text='{Binding CompletenessLabel}' Style='{StaticResource Eyebrow}'
+                                                                   Foreground='{DynamicResource WarningBrush}' />
+                                                    </Border>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <StackPanel Margin='20,8,4,10'>
+                                                <TextBlock Text='{Binding Summary}' Style='{StaticResource Body}' TextWrapping='Wrap'
+                                                           Visibility='{Binding Summary, Converter={StaticResource StringVisible}}' />
+                                                <ItemsControl ItemsSource='{Binding Body}' Margin='0,6,0,0'>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text='{Binding}' Style='{StaticResource Muted}' TextWrapping='Wrap'
+                                                                       Margin='0,0,0,6' />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <TextBlock Text='{Binding YearsLabel}' Style='{StaticResource Faint}'
+                                                           FontFamily='{StaticResource MonoFont}' Margin='0,4,0,0'
+                                                           Visibility='{Binding YearsLabel, Converter={StaticResource StringVisible}}' />
+                                                <TextBlock Text='{Binding SourcesLabel}' Style='{StaticResource Faint}' FontSize='10.5'
+                                                           TextWrapping='Wrap' Margin='0,8,0,0'
+                                                           Visibility='{Binding SourcesLabel, Converter={StaticResource StringVisible}}' />
+                                            </StackPanel>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- THE RECORD BOOKS: the verified leaders — drivers, teams, circuits.
+                         Height-bounded virtualized lists (the archive spans decades). -->
+                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'>
+                        <StackPanel>
+                            <TextBlock Text='THE RECORD BOOKS' Style='{StaticResource H2}' Margin='0,0,0,8' />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width='*' />
+                                    <ColumnDefinition Width='*' />
+                                    <ColumnDefinition Width='*' />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Margin='0,0,10,0'
+                                            Visibility='{Binding TopDrivers.Count, Converter={StaticResource CountVisible}}'>
+                                    <TextBlock Text='DRIVERS' Style='{StaticResource Eyebrow}' Margin='0,0,0,4' />
+                                    <ItemsControl x:Name='RecordBookDriversList' Style='{StaticResource VirtualizedList}'
+                                                  MaxHeight='400' ItemsSource='{Binding TopDrivers}'
+                                                  AutomationProperties.Name='Record book drivers'>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush='{DynamicResource EdgeBrush}' BorderThickness='0,0,0,1' Padding='2,7'>
+                                                    <StackPanel>
+                                                        <DockPanel>
+                                                            <TextBlock DockPanel.Dock='Right' Text='{Binding YearsLabel}'
+                                                                       Style='{StaticResource Faint}' FontFamily='{StaticResource MonoFont}'
+                                                                       Margin='8,0,0,0' VerticalAlignment='Center' />
+                                                            <TextBlock Text='{Binding Name}' FontWeight='SemiBold' TextWrapping='Wrap' />
+                                                        </DockPanel>
+                                                        <TextBlock Text='{Binding StatLine}' Style='{StaticResource Muted}' FontSize='12'
+                                                                   TextWrapping='Wrap' Margin='0,2,0,0' />
+                                                        <TextBlock Text='{Binding TitlesLabel}' Foreground='{DynamicResource WarningBrush}'
+                                                                   FontSize='12' FontWeight='SemiBold' TextWrapping='Wrap' Margin='0,2,0,0'
+                                                                   Visibility='{Binding HasTitles, Converter={StaticResource BoolVisible}}' />
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                                <StackPanel Grid.Column='1' Margin='0,0,10,0'
+                                            Visibility='{Binding TopTeams.Count, Converter={StaticResource CountVisible}}'>
+                                    <TextBlock Text='TEAMS' Style='{StaticResource Eyebrow}' Margin='0,0,0,4' />
+                                    <ItemsControl x:Name='RecordBookTeamsList' Style='{StaticResource VirtualizedList}'
+                                                  MaxHeight='400' ItemsSource='{Binding TopTeams}'
+                                                  AutomationProperties.Name='Record book teams'>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush='{DynamicResource EdgeBrush}' BorderThickness='0,0,0,1' Padding='2,7'>
+                                                    <StackPanel>
+                                                        <DockPanel>
+                                                            <TextBlock DockPanel.Dock='Right' Text='{Binding YearsLabel}'
+                                                                       Style='{StaticResource Faint}' FontFamily='{StaticResource MonoFont}'
+                                                                       Margin='8,0,0,0' VerticalAlignment='Center' />
+                                                            <TextBlock Text='{Binding Name}' FontWeight='SemiBold' TextWrapping='Wrap' />
+                                                        </DockPanel>
+                                                        <TextBlock Text='{Binding StatLine}' Style='{StaticResource Muted}' FontSize='12'
+                                                                   TextWrapping='Wrap' Margin='0,2,0,0' />
+                                                        <TextBlock Style='{StaticResource Faint}' TextWrapping='Wrap' Margin='0,2,0,0'
+                                                                   Text="{Binding LineageLabel, Mode=OneWay, StringFormat='Lineage: {0}'}"
+                                                                   Visibility='{Binding HasLineage, Converter={StaticResource BoolVisible}}' />
+                                                        <Border Style='{StaticResource CompactChip}' Background='{DynamicResource WarningDimBrush}'
+                                                                BorderBrush='{DynamicResource WarningBrush}' Margin='0,4,0,0'
+                                                                Visibility='{Binding CompletenessLabel, Converter={StaticResource StringVisible}}'>
+                                                            <TextBlock Text='{Binding CompletenessLabel}' Style='{StaticResource Eyebrow}'
+                                                                       Foreground='{DynamicResource WarningBrush}' />
+                                                        </Border>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                                <StackPanel Grid.Column='2'
+                                            Visibility='{Binding TopCircuits.Count, Converter={StaticResource CountVisible}}'>
+                                    <TextBlock Text='CIRCUITS' Style='{StaticResource Eyebrow}' Margin='0,0,0,4' />
+                                    <ItemsControl x:Name='RecordBookCircuitsList' Style='{StaticResource VirtualizedList}'
+                                                  MaxHeight='400' ItemsSource='{Binding TopCircuits}'
+                                                  AutomationProperties.Name='Record book circuits'>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush='{DynamicResource EdgeBrush}' BorderThickness='0,0,0,1' Padding='2,7'>
+                                                    <StackPanel>
+                                                        <DockPanel>
+                                                            <Border DockPanel.Dock='Right' Style='{StaticResource CompactChip}' Margin='8,0,0,0'>
+                                                                <TextBlock Text='{Binding EditionCount, StringFormat={}{0} editions}'
+                                                                           FontSize='11' />
+                                                            </Border>
+                                                            <TextBlock Text='{Binding Name}' FontWeight='SemiBold' TextWrapping='Wrap' />
+                                                        </DockPanel>
+                                                        <TextBlock Text='{Binding Place}' Style='{StaticResource Muted}' FontSize='12'
+                                                                   TextWrapping='Wrap' Margin='0,2,0,0'
+                                                                   Visibility='{Binding Place, Converter={StaticResource StringVisible}}' />
+                                                        <TextBlock Text='{Binding SpecLabel}' Style='{StaticResource Faint}'
+                                                                   FontFamily='{StaticResource MonoFont}' Margin='0,2,0,0'
+                                                                   Visibility='{Binding SpecLabel, Converter={StaticResource StringVisible}}' />
+                                                        <TextBlock Text='{Binding Facts[0]}' Style='{StaticResource Muted}' FontSize='12'
+                                                                   TextWrapping='Wrap' Margin='0,2,0,0'
+                                                                   Visibility='{Binding Facts[0], Converter={StaticResource StringVisible}, FallbackValue=Collapsed}' />
+                                                        <TextBlock Text='{Binding Facts[1]}' Style='{StaticResource Muted}' FontSize='12'
+                                                                   TextWrapping='Wrap' Margin='0,2,0,0'
+                                                                   Visibility='{Binding Facts[1], Converter={StaticResource StringVisible}, FallbackValue=Collapsed}' />
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- VERIFIED TIMELINE: every documented milestone, year by year. Compact,
+                         height-bounded and virtualized (the list spans ~90 entries). -->
+                    <Border Style='{StaticResource Panel}' Margin='0,0,0,16'
+                            Visibility='{Binding TimelineEntries.Count, Converter={StaticResource CountVisible}}'>
+                        <StackPanel>
+                            <TextBlock Text='VERIFIED TIMELINE' Style='{StaticResource H2}' />
+                            <TextBlock Text='Documented milestones in year order. Every entry carries its provenance.'
+                                       Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,3,0,8' />
+                            <ItemsControl x:Name='VerifiedTimelineList' Style='{StaticResource VirtualizedList}'
+                                          MaxHeight='420' ItemsSource='{Binding TimelineEntries}'
+                                          AutomationProperties.Name='Verified history timeline'>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin='0,0,6,7'>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width='52' />
+                                                <ColumnDefinition Width='*' />
+                                                <ColumnDefinition Width='Auto' />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text='{Binding Year}' FontFamily='{StaticResource MonoFont}' FontWeight='Bold'
+                                                       Foreground='{DynamicResource AccentTextBrush}' VerticalAlignment='Top' />
+                                            <StackPanel Grid.Column='1' Margin='0,0,10,0'>
+                                                <DockPanel>
+                                                    <Border DockPanel.Dock='Left' Style='{StaticResource CompactChip}'
+                                                            Margin='0,0,7,0' VerticalAlignment='Top'>
+                                                        <TextBlock Text='{Binding CategoryLabel}' Style='{StaticResource Eyebrow}' />
+                                                    </Border>
+                                                    <TextBlock Text='{Binding Title}' FontWeight='SemiBold' TextWrapping='Wrap'
+                                                               VerticalAlignment='Center' />
+                                                </DockPanel>
+                                                <TextBlock Text='{Binding Summary}' Style='{StaticResource Muted}' FontSize='12'
+                                                           TextWrapping='Wrap' Margin='0,2,0,0'
+                                                           Visibility='{Binding Summary, Converter={StaticResource StringVisible}}' />
+                                            </StackPanel>
+                                            <Border Grid.Column='2' Style='{StaticResource CompactChip}' VerticalAlignment='Top'>
+                                                <TextBlock Text='{Binding ProvenanceLabel}' Style='{StaticResource Eyebrow}' />
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- REAL HISTORY vs THIS UNIVERSE: the unchanged historical record beside what
+                     this career produced, side by side and clearly labeled. Alternate outcomes
+                     carry a chip AND a warning wash — the meaning never rides on colour alone. -->
+                <Border x:Name='DivergencePanel' Style='{StaticResource Panel}' Margin='0,0,0,18'
+                        AutomationProperties.Name='Real history versus this universe'
+                        Visibility='{Binding HasDivergence, Converter={StaticResource BoolVisible}, FallbackValue=Collapsed}'>
+                    <StackPanel>
+                        <TextBlock Text='REAL HISTORY VS THIS UNIVERSE' Style='{StaticResource H2}' />
+                        <TextBlock Text='The historical record never changes; your universe is an alternate timeline beside it.'
+                                   Style='{StaticResource Muted}' TextWrapping='Wrap' Margin='0,3,0,10' />
+                        <Border Style='{StaticResource AccentCallout}' Margin='0,0,0,10'
+                                Visibility='{Binding DivergenceChampionLine, Converter={StaticResource StringVisible}}'>
+                            <TextBlock Text='{Binding DivergenceChampionLine}' Foreground='{DynamicResource AccentTextBrush}'
+                                       TextWrapping='Wrap' />
+                        </Border>
+                        <Grid Margin='4,0,4,4'>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width='44' />
+                                <ColumnDefinition Width='*' />
+                                <ColumnDefinition Width='1.2*' />
+                                <ColumnDefinition Width='1.2*' />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column='2' Text='HISTORICAL RECORD' Style='{StaticResource Eyebrow}' Margin='8,0,0,0' />
+                            <TextBlock Grid.Column='3' Text='THIS UNIVERSE' Style='{StaticResource Eyebrow}' Margin='8,0,0,0' />
+                        </Grid>
+                        <ItemsControl ItemsSource='{Binding DivergenceRows}'>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding='4,6' Margin='0,1' CornerRadius='4'>
+                                        <Border.Style>
+                                            <Style TargetType='Border'>
+                                                <Setter Property='Background' Value='Transparent' />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding='{Binding IsAlternate}' Value='True'>
+                                                        <Setter Property='Background' Value='{DynamicResource WarningDimBrush}' />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width='44' />
+                                                <ColumnDefinition Width='*' />
+                                                <ColumnDefinition Width='1.2*' />
+                                                <ColumnDefinition Width='1.2*' />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text='{Binding RoundLabel}' FontFamily='{StaticResource MonoFont}'
+                                                       Foreground='{DynamicResource TextMutedBrush}' VerticalAlignment='Top' />
+                                            <StackPanel Grid.Column='1'>
+                                                <TextBlock Text='{Binding Venue}' FontWeight='SemiBold' TextWrapping='Wrap' />
+                                                <Border Style='{StaticResource CompactChip}' HorizontalAlignment='Left' Margin='0,3,0,0'>
+                                                    <TextBlock Text='{Binding KindLabel}' Style='{StaticResource Eyebrow}' />
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column='2' Text='{Binding HistoricalLine}' TextWrapping='Wrap'
+                                                       Margin='8,0,0,0' VerticalAlignment='Top' />
+                                            <TextBlock Grid.Column='3' Text='{Binding CareerLine}' TextWrapping='Wrap'
+                                                       Margin='8,0,0,0' VerticalAlignment='Top' />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
                 <!-- records book -->
                 <TextBlock Text='RECORDS AND MILESTONES' Style='{StaticResource H2}' Margin='0,0,0,10' />
                 <ItemsControl ItemsSource="{Binding Records.Rows}"

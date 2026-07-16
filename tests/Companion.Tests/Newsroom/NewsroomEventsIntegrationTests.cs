@@ -85,6 +85,54 @@ public sealed class NewsroomEventsIntegrationTests : IDisposable
     }
 
     [Fact]
+    public void Ai_dnf_causes_are_captured_on_v9_envelopes_and_replay_stays_identical()
+    {
+        SeasonPack pack;
+        string playerId;
+        using (var session = NewCareer())
+        {
+            pack = session.Pack;
+            playerId = session.Summary.PlayerDriverId;
+
+            // An AI car retires with a mechanical cause; the player wins.
+            var others = session.CurrentGrid()
+                .Select(s => s.DriverId)
+                .Where(id => !string.Equals(id, playerId, StringComparison.Ordinal))
+                .ToList();
+            session.Apply(new ResultDraft
+            {
+                Classified = new List<string> { playerId }.Concat(others.Skip(1)).ToList(),
+                DidNotFinish = new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    [others[0]] = "m",
+                },
+                Disqualified = [],
+            });
+        }
+
+        Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        using var db = CareerDatabase.Open(CareerPath);
+        var seasonId = CareerStore.ReadSeasons(db)[0].Id;
+        var stored = ResultStore.ReadSeasonResults(db, seasonId);
+        var envelope = stored[0].ToEnvelope();
+        Assert.Equal(RoundResultEnvelope.CurrentVersion, envelope.Version);
+        Assert.NotNull(envelope.AiDnfCauses);
+        Assert.Equal("m", envelope.AiDnfCauses!.Values.Single());
+
+        // Capture-only: the fold never reads it, so replay stays byte-identical.
+        var rules = CareerRulesData.Load(ViewModelTestData.RulesDirectory);
+        var report = ReplayService.Resimulate(db, pack, unchecked((ulong)Seed), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = playerId,
+            PlayerAge = 30,
+        });
+        Assert.True(report.Identical, report.FirstDivergence?.Reason);
+    }
+
+    [Fact]
     public void The_feed_is_deterministic_and_replay_stays_byte_identical()
     {
         SeasonPack pack;

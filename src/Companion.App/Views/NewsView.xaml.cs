@@ -1,6 +1,8 @@
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Companion.App.Audio;
@@ -189,4 +191,29 @@ public partial class NewsView : UserControl
         }
         return null;
     }
+}
+
+/// <summary>
+/// Live bookmark state for the reader's toggle button. The story records are immutable, so the
+/// overlay-backed <see cref="NewsViewModel.BookmarkedStories"/> collection is the session truth:
+/// membership by key decides filled/outline, and binding the collection's Count re-evaluates the
+/// trigger on every toggle. The story's own persisted <c>IsBookmarked</c> flag (seeded from
+/// schema-v6 reading state) is the fallback when the collection binding cannot resolve.
+/// </summary>
+public sealed class NewsBookmarkStateConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var story = values.Length > 2 ? values[2] as NewsStoryViewModel : null;
+        if (story is null)
+            return false;
+
+        if (values[0] is IEnumerable<NewsStoryViewModel> bookmarked)
+            return bookmarked.Any(candidate => string.Equals(candidate.Key, story.Key, StringComparison.Ordinal));
+
+        return values.Length > 3 && values[3] is bool persisted && persisted;
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
 }

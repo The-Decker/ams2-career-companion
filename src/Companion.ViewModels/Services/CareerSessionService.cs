@@ -4286,7 +4286,26 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             IsWet = roundConditions?.IsWet ?? draft.IsWet,
             CalledShot = draft.CalledShot,
             SmgpRival = draft.SmgpRival,
+            AiDnfCauses = AiDnfCausesFrom(draft),
         };
+    }
+
+    /// <summary>The AI drivers' raw DNF cause letters (v9, capture-only — the fold never reads
+    /// them; display readers name AI retirements). Null when no AI retired with a cause, so
+    /// such rounds serialize exactly as before.</summary>
+    private IReadOnlyDictionary<string, string>? AiDnfCausesFrom(ResultDraft draft)
+    {
+        Dictionary<string, string>? causes = null;
+        foreach (var (driverId, reason) in draft.DidNotFinish)
+        {
+            if (string.Equals(driverId, _playerDriverId, StringComparison.Ordinal)
+                || reason.Length == 0)
+            {
+                continue;
+            }
+            (causes ??= new Dictionary<string, string>(StringComparer.Ordinal))[driverId] = reason;
+        }
+        return causes;
     }
 
     /// <summary>The player's chosen accident severity, captured ONLY for the player's OWN accident ("a")

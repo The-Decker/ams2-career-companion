@@ -6,9 +6,11 @@ using System.Windows.Threading;
 using Companion.App.Audio;
 using Companion.App.Views;
 using Companion.Core.Grid;
+using Companion.Core.Newsroom;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
 using Companion.Core.Smgp;
+using Companion.Data;
 using Companion.ViewModels.Hub;
 using Companion.ViewModels.Services;
 
@@ -256,6 +258,108 @@ public sealed class NewsViewRenderTests
         });
     }
 
+    [Fact]
+    public void EditorialBadges_AndReaderDeckBookmark_RenderFromNewsroomMembers()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new NewsViewModel(NewsSession.Populated());
+            var view = new NewsView { DataContext = vm };
+            using var host = Host.Show(view, 1280, 860);
+
+            // Story-card badges: desk byline, editorial status, the visually distinct provenance
+            // chip, layout tier, fine-grained category, unread marker and reading time — all text.
+            string[] texts = host.VisibleTexts().ToArray();
+            Assert.Contains("Marco Vialli", texts);
+            Assert.Contains("MV", texts);
+            Assert.Contains("ANALYSIS", texts);
+            Assert.Contains("CAREER UNIVERSE", texts);
+            Assert.Contains("STANDARD", texts);
+            Assert.Contains("Championship analysis", texts);
+            Assert.Contains("45s read", texts);
+            Assert.Contains("NEW", texts);
+
+            // Header unread counter.
+            Assert.True(vm.HasUnread);
+            Assert.Contains($"{vm.UnreadCount} unread", texts);
+            Border unreadChip = Assert.IsType<Border>(view.FindName("UnreadCountChip"));
+            Assert.Equal(Visibility.Visible, unreadChip.Visibility);
+
+            // Reader: the deck sits under the headline and the bookmark toggle round-trips.
+            var article = vm.Stories.Single(story => story.Key == "news:2:5:titleFightTightens");
+            vm.OpenArticleCommand.Execute(article);
+            host.Layout();
+
+            Assert.Contains("The desk weighs a five-round swing.", host.VisibleTexts());
+            var bookmark = Assert.IsType<Button>(view.FindName("ArticleBookmarkButton"));
+            Assert.True(bookmark.Focusable);
+            Assert.True(bookmark.IsTabStop);
+            Assert.Equal("Toggle article bookmark", AutomationProperties.GetName(bookmark));
+            Assert.Contains("BOOKMARK", host.VisibleTexts());
+
+            bookmark.Command!.Execute(bookmark.CommandParameter);
+            host.Layout();
+            Assert.Equal("news:2:5:titleFightTightens", Assert.Single(vm.BookmarkedStories).Key);
+            Assert.Contains("BOOKMARKED", host.VisibleTexts());
+
+            bookmark.Command!.Execute(bookmark.CommandParameter);
+            host.Layout();
+            Assert.Empty(vm.BookmarkedStories);
+            Assert.Contains("BOOKMARK", host.VisibleTexts());
+        });
+    }
+
+    [Fact]
+    public void NewsroomRails_DevelopingRumourAndBookmarks_RenderAsCollapsibleSections()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = NewsSession.Populated();
+            session.ReadingStates["news:2:5:titleFightTightens"] =
+                new NewsReadingState { Bookmarked = true };
+            var vm = new NewsViewModel(session);
+            var view = new NewsView { DataContext = vm };
+            using var host = Host.Show(view, 1280, 860);
+
+            var threads = Assert.IsType<Expander>(view.FindName("ThreadsRail"));
+            var rumours = Assert.IsType<Expander>(view.FindName("RumourRail"));
+            var bookmarks = Assert.IsType<Expander>(view.FindName("BookmarksRail"));
+            Assert.Equal(Visibility.Visible, threads.Visibility);
+            Assert.Equal(Visibility.Visible, rumours.Visibility);
+            Assert.Equal(Visibility.Visible, bookmarks.Visibility);
+            Assert.True(threads.IsExpanded);
+
+            string[] texts = host.VisibleTexts().ToArray();
+            Assert.Contains("DEVELOPING STORIES", texts);
+            Assert.Contains("THE TITLE FIGHT", texts);
+            Assert.Contains("ESCALATING", texts);
+            Assert.Contains("The gap closes to four points.", texts);
+            Assert.Contains("RUMOUR DESK", texts);
+            Assert.Contains("RUMOUR - OPEN", texts);
+            Assert.Contains("Paddock talk links the champion with a shock exit.", texts);
+            Assert.Contains("BOOKMARKS", texts);
+
+            var bookmarkList = Assert.IsType<ItemsControl>(view.FindName("BookmarksList"));
+            Assert.Single(bookmarkList.Items);
+
+            // The rails must not introduce sideways scrolling.
+            var scroll = Assert.IsType<ScrollViewer>(view.FindName("NewsScroll"));
+            Assert.Equal(0, scroll.ScrollableWidth, precision: 1);
+
+            // Collapsing a rail hides its content while the header stays.
+            threads.IsExpanded = false;
+            host.Layout();
+            Assert.DoesNotContain("THE TITLE FIGHT", host.VisibleTexts());
+            Assert.Contains("DEVELOPING STORIES", host.VisibleTexts());
+        });
+    }
+
     private sealed class Host : IDisposable
     {
         private readonly Window _window;
@@ -392,6 +496,11 @@ public sealed class NewsViewRenderTests
         public SmgpPaddockModel? Paddock { get; init; }
         public IReadOnlyList<SmgpDispatch> Dispatches { get; init; } = [];
         public IReadOnlyList<NewsDispatch> Feed { get; init; } = [];
+        public IReadOnlyList<NewsroomArticle> Newsroom { get; init; } = [];
+        public IReadOnlyList<StoryThread> Threads { get; init; } = [];
+        public IReadOnlyList<RumorRecord> Rumors { get; init; } = [];
+        public Dictionary<string, NewsReadingState> ReadingStates { get; init; } =
+            new(StringComparer.Ordinal);
 
         public CareerSummary Summary => SummaryValue;
         public SeasonPack Pack { get; } = MinimalPack();
@@ -399,6 +508,20 @@ public sealed class NewsViewRenderTests
         public SmgpPaddockModel? SmgpPaddock() => Paddock;
         public IReadOnlyList<SmgpDispatch> SmgpDispatches() => Dispatches;
         public IReadOnlyList<NewsDispatch> ReadFeed() => Feed;
+        public IReadOnlyList<NewsroomArticle> NewsroomFeed() => Newsroom;
+        public IReadOnlyList<StoryThread> StoryThreads() => Threads;
+        public IReadOnlyList<RumorRecord> RumorBoard() => Rumors;
+        public IReadOnlyDictionary<string, NewsReadingState> ReadingState() => ReadingStates;
+
+        public void MarkStoryRead(string storyKey) =>
+            ReadingStates[storyKey] =
+                (ReadingStates.TryGetValue(storyKey, out var state) ? state : new NewsReadingState())
+                with { ReadUtc = "2026-01-01T00:00:00Z" };
+
+        public void SetStoryBookmark(string storyKey, bool bookmarked) =>
+            ReadingStates[storyKey] =
+                (ReadingStates.TryGetValue(storyKey, out var state) ? state : new NewsReadingState())
+                with { Bookmarked = bookmarked };
 
         public BriefingModel? CurrentBriefing() => null;
         public StageOutcome StageCurrentGrid() => new() { Success = true, Messages = [] };
@@ -490,6 +613,70 @@ public sealed class NewsViewRenderTests
                         Headline = "JOURNAL AT FRANCE",
                         Body = "The deterministic journal preserves the French result.",
                         WhyText = "This article comes from the stored round journal.",
+                    },
+                ],
+                // Living-newsroom surface: a desk-authored analysis piece (Standard tier so the
+                // round-8 TitleRace dispatch stays the lead), one developing thread, one rumour.
+                Newsroom =
+                [
+                    new NewsroomArticle
+                    {
+                        Key = "news:2:5:titleFightTightens",
+                        EventKind = NewsEventKind.TitleFightTightens,
+                        Category = NewsroomCategory.ChampionshipAnalysis,
+                        Status = EditorialStatus.Analysis,
+                        Provenance = ContentProvenance.CareerUniverse,
+                        SeasonOrdinal = 2,
+                        SeasonYear = 1991,
+                        Round = 5,
+                        VenueName = "Britain",
+                        SubjectName = "Mike Racer",
+                        TeamName = "Bullets",
+                        DeskName = "Marco Vialli",
+                        DeskMonogram = "MV",
+                        Headline = "DESK VERDICT AT BRITAIN",
+                        Deck = "The desk weighs a five-round swing.",
+                        Summary = "An analysis piece from the rendered newsroom.",
+                        Sections =
+                        [
+                            new NewsroomSection("body",
+                                "The newsroom weighs the title arithmetic after Britain."),
+                        ],
+                        ImportanceScore = 40,
+                        Tier = EditorialTier.Standard,
+                        ReadingSeconds = 45,
+                    },
+                ],
+                Threads =
+                [
+                    new StoryThread
+                    {
+                        Key = "thread:2:title-fight",
+                        Type = StoryThreadType.TitleFight,
+                        State = StoryThreadState.Escalating,
+                        Title = "THE TITLE FIGHT",
+                        SeasonOrdinal = 2,
+                        Entries =
+                        [
+                            new StoryThreadEntry
+                            {
+                                StoryKey = "news:2:5:titleFightTightens",
+                                SeasonOrdinal = 2,
+                                Round = 5,
+                                Summary = "The gap closes to four points.",
+                            },
+                        ],
+                    },
+                ],
+                Rumors =
+                [
+                    new RumorRecord
+                    {
+                        RumorKey = "rumor:2:veteran-exit",
+                        Subject = "driver.senna",
+                        Claim = "Paddock talk links the champion with a shock exit.",
+                        SeasonOrdinal = 2,
+                        Resolution = RumorResolutionKind.Open,
                     },
                 ],
             };

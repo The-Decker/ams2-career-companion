@@ -9,6 +9,64 @@
         <KeyBinding Key='Escape' Command='{Binding CloseArticleCommand}' />
     </UserControl.InputBindings>
     <UserControl.Resources>
+        <!-- Live bookmark state for the reader toggle (declared in NewsView.xaml.cs). -->
+        <views:NewsBookmarkStateConverter x:Key='NewsBookmarkState' />
+
+        <!-- One editorial badge row shared by every story card and the reader. Every chip
+             carries its own text so no meaning ever rides on colour alone; the provenance chip
+             is deliberately the only accent-framed one - it is the visible boundary between
+             simulated coverage and the real historical record. -->
+        <DataTemplate x:Key='NewsStoryBadgesTemplate'>
+            <WrapPanel>
+                <Border Style='{StaticResource CompactChip}' Margin='0,6,6,0'
+                        ToolTip='The desk that filed this story'
+                        Visibility='{Binding HasDesk, Converter={StaticResource BoolVisible}}'>
+                    <StackPanel Orientation='Horizontal'>
+                        <Border Background='{DynamicResource AccentDimBrush}' CornerRadius='3'
+                                Padding='4,1' Margin='0,0,6,0' VerticalAlignment='Center'>
+                            <TextBlock Text='{Binding DeskMonogram, Mode=OneWay}' Style='{StaticResource Eyebrow}'
+                                       Foreground='{DynamicResource AccentTextBrush}' />
+                        </Border>
+                        <TextBlock Text='{Binding DeskName, Mode=OneWay}' Style='{StaticResource Faint}'
+                                   FontSize='11' VerticalAlignment='Center' />
+                    </StackPanel>
+                </Border>
+                <Border Style='{StaticResource CompactChip}' Margin='0,6,6,0'
+                        Visibility='{Binding HasStatus, Converter={StaticResource BoolVisible}}'>
+                    <TextBlock Text='{Binding StatusLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                </Border>
+                <Border Margin='0,6,6,0' CornerRadius='4' Padding='6,3' BorderThickness='1'
+                        Background='{DynamicResource AccentDimBrush}' BorderBrush='{DynamicResource AccentBrush}'
+                        ToolTip='Provenance: whether this coverage is from your simulated career universe or the real historical record'
+                        Visibility='{Binding HasProvenance, Converter={StaticResource BoolVisible}}'>
+                    <StackPanel Orientation='Horizontal'>
+                        <TextBlock Text='&#xE946;' FontFamily='{StaticResource IconFont}' FontSize='10'
+                                   Foreground='{DynamicResource AccentTextBrush}' Margin='0,0,5,0'
+                                   VerticalAlignment='Center' />
+                        <TextBlock Text='{Binding ProvenanceLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}'
+                                   Foreground='{DynamicResource AccentTextBrush}' />
+                    </StackPanel>
+                </Border>
+                <Border Style='{StaticResource CompactChip}' Margin='0,6,6,0'
+                        ToolTip='Editorial layout tier'
+                        Visibility='{Binding HasTier, Converter={StaticResource BoolVisible}}'>
+                    <TextBlock Text='{Binding TierLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10' />
+                </Border>
+                <StackPanel Orientation='Horizontal' Margin='0,6,6,0' VerticalAlignment='Center'
+                            ToolTip='You have not opened this story yet'
+                            Visibility='{Binding IsUnread, Converter={StaticResource BoolVisible}}'>
+                    <Ellipse Width='7' Height='7' Fill='{DynamicResource AccentBrush}'
+                             Margin='0,0,5,0' VerticalAlignment='Center' />
+                    <TextBlock Text='NEW' Style='{StaticResource Eyebrow}'
+                               Foreground='{DynamicResource AccentTextBrush}' />
+                </StackPanel>
+                <TextBlock Text='{Binding ReadingTimeLabel, Mode=OneWay}' Style='{StaticResource Mono}'
+                           FontSize='10' Foreground='{DynamicResource TextMutedBrush}' Margin='0,6,6,0'
+                           VerticalAlignment='Center'
+                           Visibility='{Binding ReadingTimeLabel, Mode=OneWay, Converter={StaticResource StringVisible}}' />
+            </WrapPanel>
+        </DataTemplate>
+
         <!-- Compact front-page dispatch. The explicit category and importance labels keep status
              meaningful without depending on accent colour. -->
         <DataTemplate x:Key='NewsSecondaryStoryTemplate'>
@@ -51,8 +109,15 @@
                                 <Border DockPanel.Dock='Right' Style='{StaticResource CompactChip}' Margin='8,0,0,0'>
                                     <TextBlock Text='{Binding RoundLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10' />
                                 </Border>
-                                <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}'
-                                           Foreground='{DynamicResource AccentTextBrush}' />
+                                <Grid>
+                                    <!-- the fine editorial category wins over the coarse bucket when present -->
+                                    <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}'
+                                               Foreground='{DynamicResource AccentTextBrush}'
+                                               Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolCollapsed}}' />
+                                    <TextBlock Text='{Binding CategoryDetail, Mode=OneWay}' Style='{StaticResource Eyebrow}'
+                                               Foreground='{DynamicResource AccentTextBrush}'
+                                               Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolVisible}}' />
+                                </Grid>
                             </DockPanel>
                             <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
                                        FontWeight='SemiBold' FontSize='16' TextWrapping='Wrap' TextTrimming='None'
@@ -60,6 +125,8 @@
                             <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Muted}'
                                        TextWrapping='Wrap' TextTrimming='WordEllipsis' MaxHeight='54' Margin='0,5,0,0'
                                        Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                            <ContentControl Focusable='False' IsTabStop='False' Content='{Binding}'
+                                            ContentTemplate='{StaticResource NewsStoryBadgesTemplate}' />
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -97,8 +164,13 @@
                                     <Border Style='{StaticResource CompactChip}' Margin='0,0,5,0'>
                                         <TextBlock Text='{Binding ImportanceLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
                                     </Border>
-                                    <Border Style='{StaticResource CompactChip}'>
+                                    <Border Style='{StaticResource CompactChip}'
+                                            Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolCollapsed}}'>
                                         <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                    </Border>
+                                    <Border Style='{StaticResource CompactChip}'
+                                            Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolVisible}}'>
+                                        <TextBlock Text='{Binding CategoryDetail, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
                                     </Border>
                                 </WrapPanel>
                                 <TextBlock Text='{Binding DateLabel, Mode=OneWay}' Style='{StaticResource Mono}' FontSize='10.5'
@@ -110,6 +182,8 @@
                             <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Muted}'
                                        TextWrapping='Wrap' TextTrimming='WordEllipsis' MaxHeight='40' Margin='0,4,0,0'
                                        Visibility='{Binding HasStandfirst, Converter={StaticResource BoolVisible}}' />
+                            <ContentControl Focusable='False' IsTabStop='False' Content='{Binding}'
+                                            ContentTemplate='{StaticResource NewsStoryBadgesTemplate}' />
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -361,7 +435,16 @@
                     </StackPanel>
                 </Button>
                 <StackPanel>
-                    <TextBlock Text='SMGP NEWSROOM' Style='{StaticResource H1}' />
+                    <StackPanel Orientation='Horizontal'>
+                        <TextBlock Text='SMGP NEWSROOM' Style='{StaticResource H1}' />
+                        <Border x:Name='UnreadCountChip' Style='{StaticResource CompactChip}' Margin='12,0,0,0'
+                                VerticalAlignment='Center' ToolTip='Stories you have not opened yet'
+                                Visibility='{Binding HasUnread, Converter={StaticResource BoolVisible}}'>
+                            <TextBlock Text='{Binding UnreadCount, Mode=OneWay, StringFormat={}{0} unread}'
+                                       Style='{StaticResource Eyebrow}'
+                                       Foreground='{DynamicResource AccentTextBrush}' />
+                        </Border>
+                    </StackPanel>
                     <TextBlock Text='Championship reports, rivalries and paddock movement from the recorded career.'
                                Style='{StaticResource Muted}' Margin='0,3,0,0' TextWrapping='Wrap' />
                 </StackPanel>
@@ -482,8 +565,13 @@
                             </Grid>
                             <StackPanel Grid.Row='1' DataContext='{Binding LeadStory}' Margin='18,15,18,18'>
                                 <WrapPanel>
-                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'
+                                            Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolCollapsed}}'>
                                         <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                    </Border>
+                                    <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'
+                                            Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolVisible}}'>
+                                        <TextBlock Text='{Binding CategoryDetail, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
                                     </Border>
                                     <Border Style='{StaticResource CompactChip}' Margin='0,0,7,6'
                                             Visibility='{Binding HasRound, Converter={StaticResource BoolVisible}}'>
@@ -498,6 +586,8 @@
                                         <TextBlock Text='{Binding TeamName, Mode=OneWay}' />
                                     </Border>
                                 </WrapPanel>
+                                <ContentControl Focusable='False' IsTabStop='False' Content='{Binding}'
+                                                ContentTemplate='{StaticResource NewsStoryBadgesTemplate}' />
                                 <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
                                            FontSize='28' FontWeight='Bold' TextWrapping='Wrap' TextTrimming='None'
                                            Margin='0,7,0,0' />
@@ -528,11 +618,171 @@
                                Style='{StaticResource Muted}' TextWrapping='Wrap' />
                 </Border>
 
+                <!-- Developing-story threads: the desk's remembered narratives, derived read-only
+                     from the same deterministic event spine as the wire itself. -->
+                <Expander x:Name='ThreadsRail' IsExpanded='True' Margin='0,10,0,10'
+                          AutomationProperties.Name='Developing stories rail'
+                          Visibility='{Binding HasThreads, Converter={StaticResource BoolVisible}}'>
+                    <Expander.Header>
+                        <StackPanel Margin='4,0,0,0'>
+                            <TextBlock Text='DEVELOPING STORIES' Style='{StaticResource H2}' />
+                            <TextBlock Text='Running storylines the desk keeps returning to, round after round.'
+                                       Style='{StaticResource Muted}' Margin='0,3,0,0' />
+                        </StackPanel>
+                    </Expander.Header>
+                    <ItemsControl x:Name='ThreadsList' ItemsSource='{Binding Threads}' Margin='0,10,0,0'
+                                  VirtualizingPanel.IsVirtualizing='True'
+                                  VirtualizingPanel.VirtualizationMode='Recycling'>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style='{StaticResource Card}' Margin='0,0,0,8'>
+                                    <StackPanel>
+                                        <DockPanel LastChildFill='True'>
+                                            <WrapPanel DockPanel.Dock='Right' Margin='10,0,0,0'>
+                                                <Border Style='{StaticResource CompactChip}' Margin='0,0,5,0'>
+                                                    <TextBlock Text='{Binding TypeLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                                </Border>
+                                                <!-- the lifecycle chip always carries its state as text; the accent
+                                                     frame only underlines an ACTIVE thread, never replaces the word -->
+                                                <Border>
+                                                    <Border.Style>
+                                                        <Style TargetType='Border' BasedOn='{StaticResource CompactChip}'>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding='{Binding IsActive}' Value='True'>
+                                                                    <Setter Property='Background' Value='{DynamicResource AccentDimBrush}' />
+                                                                    <Setter Property='BorderBrush' Value='{DynamicResource AccentBrush}' />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Text='{Binding StateLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                                </Border>
+                                            </WrapPanel>
+                                            <TextBlock Text='{Binding Title, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
+                                                       FontWeight='SemiBold' FontSize='16' TextWrapping='Wrap' TextTrimming='None' />
+                                        </DockPanel>
+                                        <TextBlock Text='{Binding LatestSummary, Mode=OneWay}' Style='{StaticResource Muted}'
+                                                   TextWrapping='Wrap' TextTrimming='None' Margin='0,5,0,0'
+                                                   Visibility='{Binding LatestSummary, Mode=OneWay, Converter={StaticResource StringVisible}}' />
+                                        <ItemsControl ItemsSource='{Binding Entries}' Margin='0,8,0,0'>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DockPanel Margin='0,0,0,4' LastChildFill='True'>
+                                                        <Border DockPanel.Dock='Left' Style='{StaticResource CompactChip}'
+                                                                Margin='0,0,8,0' VerticalAlignment='Top'>
+                                                            <TextBlock Text='{Binding Round, Mode=OneWay, StringFormat=R{0}}'
+                                                                       Style='{StaticResource Mono}' FontSize='10' />
+                                                        </Border>
+                                                        <TextBlock Text='{Binding Summary, Mode=OneWay}' Style='{StaticResource Body}'
+                                                                   FontSize='12.5' TextWrapping='Wrap' TextTrimming='None' />
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+
+                <!-- Rumour desk: fact-backed whispers that always READ as speculation - the
+                     status chip is unconditional, and resolution links a later story rather
+                     than rewriting the original claim. -->
+                <Expander x:Name='RumourRail' IsExpanded='True' Margin='0,0,0,10'
+                          AutomationProperties.Name='Rumour desk rail'
+                          Visibility='{Binding HasRumors, Converter={StaticResource BoolVisible}}'>
+                    <Expander.Header>
+                        <StackPanel Margin='4,0,0,0'>
+                            <TextBlock Text='RUMOUR DESK' Style='{StaticResource H2}' />
+                            <TextBlock Text='Paddock whispers - speculation until the record confirms or denies it.'
+                                       Style='{StaticResource Muted}' Margin='0,3,0,0' />
+                        </StackPanel>
+                    </Expander.Header>
+                    <ItemsControl x:Name='RumourList' ItemsSource='{Binding Rumors}' Margin='0,10,0,0'
+                                  VirtualizingPanel.IsVirtualizing='True'
+                                  VirtualizingPanel.VirtualizationMode='Recycling'>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style='{StaticResource QuoteCard}'>
+                                    <StackPanel>
+                                        <DockPanel LastChildFill='True'>
+                                            <!-- ALWAYS visible: a rumour must never read as settled fact -->
+                                            <Border DockPanel.Dock='Right' Margin='10,0,0,0' VerticalAlignment='Top'>
+                                                <Border.Style>
+                                                    <Style TargetType='Border' BasedOn='{StaticResource CompactChip}'>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding='{Binding IsOpen}' Value='True'>
+                                                                <Setter Property='Background' Value='{DynamicResource WarningDimBrush}' />
+                                                                <Setter Property='BorderBrush' Value='{DynamicResource WarningBrush}' />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text='{Binding StatusLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                            </Border>
+                                            <TextBlock Text='FROM THE RUMOUR MILL' Style='{StaticResource Eyebrow}'
+                                                       VerticalAlignment='Center' />
+                                        </DockPanel>
+                                        <TextBlock Text='{Binding Claim, Mode=OneWay}' Style='{StaticResource Body}'
+                                                   FontStyle='Italic' TextWrapping='Wrap' TextTrimming='None'
+                                                   Margin='0,6,0,0' />
+                                        <TextBlock Text='{Binding ResolutionNote, Mode=OneWay}' Style='{StaticResource Muted}'
+                                                   TextWrapping='Wrap' TextTrimming='None' Margin='0,6,0,0'
+                                                   Visibility='{Binding HasResolution, Converter={StaticResource BoolVisible}}' />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Expander>
+
+                <!-- Bookmarks: the reader-kept shelf, same card language as the archive. -->
+                <Expander x:Name='BookmarksRail' IsExpanded='True' Margin='0,0,0,10'
+                          AutomationProperties.Name='Bookmarked stories rail'
+                          Visibility='{Binding HasBookmarks, Converter={StaticResource BoolVisible}}'>
+                    <Expander.Header>
+                        <StackPanel Margin='4,0,0,0'>
+                            <TextBlock Text='BOOKMARKS' Style='{StaticResource H2}' />
+                            <TextBlock Text='Stories you chose to keep - saved with the career.'
+                                       Style='{StaticResource Muted}' Margin='0,3,0,0' />
+                        </StackPanel>
+                    </Expander.Header>
+                    <ItemsControl x:Name='BookmarksList' ItemsSource='{Binding BookmarkedStories}'
+                                  ItemTemplate='{StaticResource NewsArchiveStoryTemplate}' Margin='0,10,0,0'
+                                  VirtualizingPanel.IsVirtualizing='True'
+                                  VirtualizingPanel.VirtualizationMode='Recycling'>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Expander>
+
                 <TextBlock Text='LATEST DISPATCHES' Style='{StaticResource H2}' Margin='0,12,0,4' />
                 <TextBlock Text='The complete searchable career desk, newest first.' Style='{StaticResource Muted}'
                            Margin='0,0,0,9' />
                 <ItemsControl ItemsSource='{Binding FilteredStories}'
-                              ItemTemplate='{StaticResource NewsArchiveStoryTemplate}' />
+                              ItemTemplate='{StaticResource NewsArchiveStoryTemplate}'
+                              VirtualizingPanel.IsVirtualizing='True'
+                              VirtualizingPanel.VirtualizationMode='Recycling'>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>
@@ -553,10 +803,70 @@
                                 Command='{Binding DataContext.CloseArticleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}'
                                 Click='OnArticleClosed' audio:SoundAssist.Cue='Back'
                                 AutomationProperties.Name='Close news article' />
+                        <!-- Bookmark toggle: the live BookmarkedStories overlay drives the filled
+                             state (its Count re-triggers the binding); the word always spells the
+                             state out, the glyph only echoes it. -->
+                        <Button x:Name='ArticleBookmarkButton' DockPanel.Dock='Right'
+                                Style='{StaticResource SubtleButton}' Margin='0,0,10,0' Padding='9,5'
+                                VerticalAlignment='Center'
+                                Command='{Binding DataContext.ToggleBookmarkCommand, RelativeSource={RelativeSource AncestorType=UserControl}}'
+                                CommandParameter='{Binding}'
+                                ToolTip='Keep this article on the BOOKMARKS rail of the front page'
+                                AutomationProperties.Name='Toggle article bookmark'>
+                            <StackPanel Orientation='Horizontal'>
+                                <TextBlock FontFamily='{StaticResource IconFont}' FontSize='12'
+                                           Margin='0,0,7,0' VerticalAlignment='Center'>
+                                    <TextBlock.Style>
+                                        <Style TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+                                            <Setter Property='Text' Value='&#xE734;' />
+                                            <Style.Triggers>
+                                                <DataTrigger Value='True'>
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter='{StaticResource NewsBookmarkState}'>
+                                                            <Binding Path='DataContext.BookmarkedStories' RelativeSource='{RelativeSource AncestorType=UserControl}' />
+                                                            <Binding Path='DataContext.BookmarkedStories.Count' RelativeSource='{RelativeSource AncestorType=UserControl}' />
+                                                            <Binding />
+                                                            <Binding Path='IsBookmarked' />
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property='Text' Value='&#xE735;' />
+                                                    <Setter Property='Foreground' Value='{DynamicResource AccentTextBrush}' />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock VerticalAlignment='Center'>
+                                    <TextBlock.Style>
+                                        <Style TargetType='TextBlock' BasedOn='{StaticResource {x:Type TextBlock}}'>
+                                            <Setter Property='Text' Value='BOOKMARK' />
+                                            <Style.Triggers>
+                                                <DataTrigger Value='True'>
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter='{StaticResource NewsBookmarkState}'>
+                                                            <Binding Path='DataContext.BookmarkedStories' RelativeSource='{RelativeSource AncestorType=UserControl}' />
+                                                            <Binding Path='DataContext.BookmarkedStories.Count' RelativeSource='{RelativeSource AncestorType=UserControl}' />
+                                                            <Binding />
+                                                            <Binding Path='IsBookmarked' />
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property='Text' Value='BOOKMARKED' />
+                                                    <Setter Property='Foreground' Value='{DynamicResource AccentTextBrush}' />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
                         <StackPanel>
                             <TextBlock Text='SMGP NEWS DESK' Style='{StaticResource Eyebrow}' />
                             <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Faint}'
-                                       Margin='0,2,0,0' />
+                                       Margin='0,2,0,0'
+                                       Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolCollapsed}}' />
+                            <TextBlock Text='{Binding CategoryDetail, Mode=OneWay}' Style='{StaticResource Faint}'
+                                       Margin='0,2,0,0'
+                                       Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolVisible}}' />
                         </StackPanel>
                     </DockPanel>
                 </Border>
@@ -594,8 +904,13 @@
 
                         <StackPanel Margin='24,20,24,28'>
                             <WrapPanel>
-                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
+                                        Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolCollapsed}}'>
                                     <TextBlock Text='{Binding CategoryLabel, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
+                                </Border>
+                                <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
+                                        Visibility='{Binding HasCategoryDetail, Converter={StaticResource BoolVisible}}'>
+                                    <TextBlock Text='{Binding CategoryDetail, Mode=OneWay}' Style='{StaticResource Eyebrow}' />
                                 </Border>
                                 <Border Style='{StaticResource CompactChip}' Margin='0,0,7,7'
                                         Visibility='{Binding HasRound, Converter={StaticResource BoolVisible}}'>
@@ -615,10 +930,16 @@
                                 </Border>
                             </WrapPanel>
 
+                            <ContentControl Focusable='False' IsTabStop='False' Content='{Binding}'
+                                            ContentTemplate='{StaticResource NewsStoryBadgesTemplate}' />
                             <TextBlock Text='{Binding Headline, Mode=OneWay}' FontFamily='{StaticResource DisplayFont}'
                                        FontSize='31' FontWeight='Bold' TextWrapping='Wrap' TextTrimming='None'
                                        Margin='0,8,0,0'
                                        AutomationProperties.Name='{Binding Headline, Mode=OneWay}' />
+                            <TextBlock Text='{Binding Deck, Mode=OneWay}' Style='{StaticResource Muted}'
+                                       FontSize='15.5' FontStyle='Italic' TextWrapping='Wrap' TextTrimming='None'
+                                       Margin='0,7,0,0'
+                                       Visibility='{Binding HasDeck, Converter={StaticResource BoolVisible}}' />
                             <TextBlock Text='{Binding Standfirst, Mode=OneWay}' Style='{StaticResource Body}'
                                        FontSize='16' FontWeight='SemiBold' TextWrapping='Wrap' TextTrimming='None'
                                        Margin='0,11,0,0'

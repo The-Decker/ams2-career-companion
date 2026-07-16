@@ -28,7 +28,7 @@ public sealed record ResultImport
 /// </summary>
 public sealed record RoundResultEnvelope
 {
-    public const int CurrentVersion = 8;
+    public const int CurrentVersion = 9;
 
     public int Version { get; init; } = CurrentVersion;
 
@@ -86,6 +86,15 @@ public sealed record RoundResultEnvelope
     /// anchor. It is deliberately NOT part of <see cref="RoundResult"/>, so it never reaches the
     /// standings engine — scoring and the f1db oracle are untouched.</summary>
     public IReadOnlyList<string>? QualifyingOrder { get; init; }
+
+    /// <summary>AI drivers' DNF cause letters as entered on the result screen ("m" mechanical /
+    /// "a" accident / "o" other), keyed by driver id (newsroom overhaul D12, v9). The result
+    /// screen always captured these but only the player's cause survived; now the raw letters
+    /// are stored so the reliability/incident desks can name AI retirements. CAPTURE-ONLY (the
+    /// v7 severity precedent): NOTHING in the fold consumes it, so a round carrying causes still
+    /// replays BYTE-IDENTICALLY, and null (every pre-v9 save, every round without AI DNFs)
+    /// degrades display to team-level phrasing. Display-only readers only — never a fold input.</summary>
+    public IReadOnlyDictionary<string, string>? AiDnfCauses { get; init; }
 
     /// <summary>Parses a stored payload, accepting both the current envelope shape and the
     /// version-1 bare-RoundResult shape (read with defaults).</summary>
