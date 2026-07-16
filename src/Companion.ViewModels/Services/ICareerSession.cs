@@ -220,6 +220,10 @@ public interface ICareerSession
     /// <summary>The importance-selected editorial package for one round. Additive default: none.</summary>
     IReadOnlyList<Companion.Core.Newsroom.EditorialSelection> WeekendPackage(int seasonOrdinal, int round) => [];
 
+    /// <summary>The computed history archive (entity profiles, eras, subjects, timeline —
+    /// verified history only, never mixed with career results). Additive default: empty.</summary>
+    HistoryArchiveIndex HistoryArchive() => HistoryArchiveIndex.Empty;
+
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
     /// championship position, final reputation/OPI, the drivers' champion, and the season's key

@@ -51,13 +51,13 @@
     <None Include="..\..\packs\**\*.json" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- The 1983 skin-season pointers are the active-livery source for F11983SourceParityTests. -->
     <None Include="..\..\data\ams2\skin-seasons\f1-1983\*.xml" Link="Fixtures\ams2\skin-seasons\f1-1983\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\..\data\history\1983.json" Link="Fixtures\history\1983.json" CopyToOutputDirectory="PreserveNewest" />
-    <!-- The 2010 Formula Reiza pointer + history fixture are pinned by F12010SourceParityTests. -->
+    <!-- The FULL historical reference set (60 season files + eras/subjects/aliases): the
+         history-archive entity index, era, and divergence tests aggregate over all of it
+         (real scale doubles as the large-archive fixture). Individual years pinned by
+         F11983/F12010 SourceParityTests and SmgpHistoryMappingTests ride the same glob. -->
+    <None Include="..\..\data\history\*.json" Link="Fixtures\history\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The 2010 Formula Reiza pointer is pinned by F12010SourceParityTests. -->
     <None Include="..\..\data\ams2\skin-seasons\f1-2010\*.xml" Link="Fixtures\ams2\skin-seasons\f1-2010\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\..\data\history\2010.json" Link="Fixtures\history\2010.json" CopyToOutputDirectory="PreserveNewest" />
-    <!-- The 1989 historical reference: smgp-1's per-round history pointers resolve against it
-         (the replica's circuits model the 1989 season) — validated by SmgpHistoryMappingTests. -->
-    <None Include="..\..\data\history\1989.json" Link="Fixtures\history\1989.json" CopyToOutputDirectory="PreserveNewest" />
     <!-- The smgp skin-season pointer set: smgp-1's entries bind against these override NAMEs
          verbatim — validated by SmgpRosterDriftTests. -->
     <None Include="..\..\data\ams2\skin-seasons\smgp\*.xml" Link="Fixtures\ams2\skin-seasons\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

@@ -68,6 +68,25 @@ public sealed partial class CareerSessionService
         EditorialSelector.SelectRound(
             NewsroomEvents().Where(e => e.SeasonOrdinal == seasonOrdinal && e.Round == round).ToList());
 
+    private HistoryArchiveIndex? _historyArchive;
+
+    /// <summary>The computed history archive: driver/team/circuit profiles aggregated from the
+    /// shipped verified season files, the authored eras/subjects/team-identity reference data,
+    /// and the verified-history timeline. Static app data — built once per session and cached.
+    /// Real history only; career-universe records never enter this index.</summary>
+    public HistoryArchiveIndex HistoryArchive()
+    {
+        if (_historyArchive is null)
+        {
+            var directory = _environment.HistoryDirectory;
+            var store = new HistoricalSeasonStore(directory);
+            _historyArchive = HistoryEntityIndex.Build(
+                store.ForYear,
+                Companion.Core.HistoryArchive.HistoryArchiveData.Load(directory));
+        }
+        return _historyArchive;
+    }
+
     private IReadOnlyList<NewsroomSeason> BuildNewsroomSeasons()
     {
         var seasonsInput = new List<NewsroomSeason>();

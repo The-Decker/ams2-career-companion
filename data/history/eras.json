@@ -1,0 +1,244 @@
+{
+  "source": "Era definitions authored for the AMS2 Career Companion history archive. Every statistical claim (champions, title runs, win counts, calendar lengths) is cross-checked against the repo's data/history/1967.json-2026.json season files, which are derived from the f1db dataset (CC BY 4.0, https://github.com/f1db/f1db). Points-system and dropped-score regulation notes follow docs/research/RESEARCH.md section 4. Era characterization prose rests only on widely-established, uncontroversial motorsport history and is labeled as such in each record's sources.",
+  "eras": [
+    {
+      "key": "three-litre-dfv",
+      "name": "The Three-Litre DFV Years",
+      "fromYear": 1967,
+      "toYear": 1976,
+      "overview": "The Cosworth DFV V8 arrived in 1967 - the season record shows Jim Clark winning its first race, the Dutch Grand Prix, for Lotus - and put competitive engines within reach of independent constructors for the first time in the three-litre formula. Bolted-on wings and, from 1968, open commercial sponsorship transformed both the look and the funding of the sport. Success circulated widely: the archive records seven different champions across these ten seasons, with Jackie Stewart taking three titles (1969, 1971, 1973) and Emerson Fittipaldi two (1972, 1974), while calendars grew from 11 rounds in 1967 to 16 by 1976.",
+      "definingCharacteristics": [
+        "Cosworth DFV availability let small specialist teams beat the factory giants",
+        "Aerodynamic wings appeared from 1968 and quickly became universal",
+        "Commercial sponsorship liveries replaced national racing colors from 1968",
+        "Seven different drivers' champions in ten seasons, per the season records",
+        "Lotus took four constructors' titles in the era (1968, 1970, 1972, 1973), per the season records",
+        "Jackie Stewart's safety campaigning began the sport's slow modernization"
+      ],
+      "engineTrends": "The three-litre formula matured around the Cosworth DFV V8, which offered independent teams race-winning power off the shelf; Ferrari's flat-12 and other bespoke engines provided the factory counterpoint.",
+      "safetyContext": "This was one of the deadliest stretches in championship history, and driver-led campaigning - most prominently by Jackie Stewart - forced barriers, circuit changes, and better medical provision. Jochen Rindt, the 1970 champion in the season record, remains the sport's only posthumous title winner.",
+      "regulationChanges": [
+        "Drivers' points scored 9-6-4-3-2-1 throughout, under the 1961-1990 table (RESEARCH.md section 4)",
+        "Dropped-score rules used split-half seasons from 1967 through this whole era, counting the best N results from each half of the year (RESEARCH.md section 4)",
+        "Half points were awarded at the shortened 1975 Spanish and Austrian races (RESEARCH.md section 4)",
+        "Wings and other aerodynamic devices, after early excesses, were regulated from 1969 onward (widely-established history)"
+      ],
+      "legacy": "The DFV-and-sponsorship model created the modern independent constructor and made Britain's 'garagiste' teams the sport's engine room; the era's safety reckoning began the process that eventually professionalized the whole championship.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/1967.json-1976.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "ground-effect",
+      "name": "Ground Effect and the Turbo Dawn",
+      "fromYear": 1977,
+      "toYear": 1982,
+      "overview": "Lotus's exploitation of underbody airflow rewrote car design: the season record shows the ground-effect Lotus of 1978 winning 8 of 16 rounds and sweeping both titles with Mario Andretti. Renault meanwhile introduced the 1.5-litre turbocharged engine in 1977, opening the technology war that would define the next decade. Competition stayed ferociously open - six different champions in six seasons per the season records - and it peaked in 1982, when 11 different drivers won races and Keke Rosberg took the title with a single victory.",
+      "definingCharacteristics": [
+        "Underbody ground effect generated unprecedented cornering speeds",
+        "Renault's 1977 turbo opened the turbocharged era alongside the aging DFV",
+        "Six different drivers' champions in six seasons (1977-1982), per the season records",
+        "The 1982 season produced 11 different race winners, per the season records",
+        "The FISA-FOCA governance war split the sport politically (widely-established history)"
+      ],
+      "engineTrends": "The Cosworth DFV remained the field's staple, but Renault's 1.5-litre turbo pointed the way forward, and by the early 1980s turbocharged engines from Renault, Ferrari, and BMW were winning regularly.",
+      "safetyContext": "Ground-effect cornering speeds outran circuit protection, and the 1982 season - scarred by the death of Gilles Villeneuve at Zolder and a career-ending injury to Didier Pironi (widely-established history) - hardened the case for banning underbody tunnels.",
+      "regulationChanges": [
+        "Split-half dropped-score rules continued through 1980; from 1981 a driver's best 11 results counted (RESEARCH.md section 4)",
+        "Only a constructor's best-placed car scored constructors' points through the late 1970s, with all cars counting from around 1980 (exact boundary flagged for verification in RESEARCH.md section 4)",
+        "Ground effect was banned for 1983 via mandatory flat-bottom regulations (widely-established history)"
+      ],
+      "legacy": "Ground effect proved aerodynamics could dwarf every other performance factor - a lesson the sport would relearn in 2022 - and the era's political battles produced the commercial structure of the modern championship.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/1977.json-1982.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "turbo-era",
+      "name": "The Turbo Era",
+      "fromYear": 1983,
+      "toYear": 1988,
+      "overview": "With flat bottoms mandated from 1983, engine power became the battleground, and the 1.5-litre turbos delivered outputs widely reported above 1,000 horsepower in qualifying trim. Nelson Piquet opened the era with the 1983 title for Brabham - widely recorded as the first championship won with turbo power - and McLaren and Williams split every constructors' crown from 1984 onward, per the season records. The era closed with the 1988 McLaren of Ayrton Senna and Alain Prost winning 15 of 16 rounds, per the season record, one of the most dominant campaigns ever logged.",
+      "definingCharacteristics": [
+        "1.5-litre turbocharged engines with four-figure qualifying horsepower (widely-established history)",
+        "Flat-bottom floors from 1983 shifted the arms race from aerodynamics to engines",
+        "McLaren or Williams won every constructors' title from 1984 to 1988, per the season records",
+        "Fuel limits and boost restrictions were progressively imposed to contain speeds",
+        "The Senna-Prost pairing at McLaren in 1988 produced 15 wins from 16 rounds, per the season record"
+      ],
+      "engineTrends": "Turbocharged 1.5-litre engines from BMW, TAG-Porsche, Honda, Renault, and Ferrari displaced the DFV entirely at the front; escalating boost brought escalating restrictions, and the turbo formula was outlawed after 1988.",
+      "safetyContext": "The flat-bottom rule of 1983 was itself a safety response to ground-effect speeds, and professionalized trackside medical response became standard through the decade (widely-established history).",
+      "regulationChanges": [
+        "Flat-bottom floors mandatory from 1983, ending ground-effect underbodies (widely-established history)",
+        "Progressive fuel-capacity and boost-pressure limits through the mid-1980s, ahead of a full turbo ban for 1989 (widely-established history)",
+        "Half points were awarded at the rain-shortened 1984 Monaco Grand Prix (RESEARCH.md section 4)",
+        "Dropped scores continued: best 11 results counted throughout 1981-1990 (RESEARCH.md section 4)"
+      ],
+      "legacy": "The turbo era established the manufacturer horsepower war as a defining feature of the sport and left a template - dominant engine partner plus elite team - that McLaren-Honda made canonical.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/1983.json-1988.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "na-return-electronics",
+      "name": "The Naturally Aspirated Return and the Electronics Age",
+      "fromYear": 1989,
+      "toYear": 1993,
+      "overview": "Turbos were banned for 1989 and 3.5-litre naturally aspirated engines took over, but the real revolution was electronic: active suspension, semi-automatic gearboxes, and traction control turned the cars into computing platforms. Two teams owned the era outright - the season records show McLaren taking the constructors' title in 1989, 1990, and 1991, and Williams in 1992 and 1993, with every drivers' crown going to Alain Prost (1989, 1993), Ayrton Senna (1990, 1991), or Nigel Mansell (1992). The Senna-Prost rivalry gave the period its defining sporting narrative.",
+      "definingCharacteristics": [
+        "3.5-litre naturally aspirated engines replaced the banned turbos from 1989",
+        "Active suspension, semi-automatic gearboxes, and traction control defined the technology race (widely-established history)",
+        "McLaren and Williams won every title, drivers' and constructors', in the era, per the season records",
+        "The Senna-Prost rivalry dominated the sporting storyline (widely-established history)",
+        "Driver aids were banned at the era's close, effective 1994 (widely-established history)"
+      ],
+      "engineTrends": "With turbos outlawed, 3.5-litre atmospherics in V8, V10, and V12 layouts competed openly; Honda and then Renault set the benchmark, and the V10 emerged as the compromise the field would eventually settle on.",
+      "safetyContext": "No driver was killed at a championship race weekend in these five seasons (widely-established history), even as electronically assisted cornering speeds kept climbing - a run that ended catastrophically at the start of the next era.",
+      "regulationChanges": [
+        "Turbocharged engines banned from 1989; 3.5-litre naturally aspirated engines mandated (widely-established history)",
+        "Points table changed to 10-6-4-3-2-1 from 1991, and from 1991 every result counted with no dropped scores (RESEARCH.md section 4)",
+        "Half points were awarded at the rain-shortened 1991 Australian Grand Prix (RESEARCH.md section 4)",
+        "Electronic driver aids including active suspension and traction control were banned for 1994 (widely-established history)"
+      ],
+      "legacy": "The era proved software could be a competitive weapon and forced the governing body into the recurring role of banning technology to preserve the driver's primacy; its abrupt, tragic end reshaped the sport's priorities.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/1989.json-1993.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "refuelling-era",
+      "name": "The Refuelling Era",
+      "fromYear": 1994,
+      "toYear": 2005,
+      "overview": "Refuelling returned in 1994 and made races strategic chess, fought as much on the pit wall as on the track. The era opened in tragedy at Imola and closed under the most sustained dominance the sport had seen: the season records show Michael Schumacher winning seven drivers' titles in this span - 1994 and 1995 with Benetton, then five straight with Ferrari from 2000 to 2004 - while Ferrari took six consecutive constructors' championships from 1999 to 2004. Williams' mid-1990s strength and McLaren's back-to-back drivers' titles in 1998 and 1999 bookended the Ferrari ascendancy, before Fernando Alonso and Renault ended it in 2005.",
+      "definingCharacteristics": [
+        "Mid-race refuelling (1994-2009) made pit strategy a primary competitive weapon",
+        "Michael Schumacher won seven drivers' titles within the era, per the season records",
+        "Ferrari took six consecutive constructors' championships, 1999-2004, per the season records",
+        "Grooved tyres from 1998 and a tyre war shaped car performance (widely-established history)",
+        "Post-Imola safety reform rebuilt cars, circuits, and procedures (widely-established history)"
+      ],
+      "engineTrends": "Engine capacity was cut from 3.5 to 3.0 litres from 1995, and the V10 became universal at the front - a formula of screaming, high-revving atmospherics that defined the sound of the period.",
+      "safetyContext": "The deaths of Roland Ratzenberger and Ayrton Senna at Imola in 1994 (widely-established history) triggered the most comprehensive safety overhaul in the sport's history: revised car and circuit standards, crash-test escalation, and a permanent research program, with the HANS device mandated near the era's end.",
+      "regulationChanges": [
+        "Mid-race refuelling reintroduced from 1994 (widely-established history)",
+        "Engine capacity reduced to 3.0 litres from 1995 (widely-established history)",
+        "Grooved dry tyres mandated from 1998 to cut cornering speeds (widely-established history)",
+        "Points extended to the top eight, 10-8-6-5-4-3-2-1, from 2003 (RESEARCH.md section 4)",
+        "One-set tyre rules in 2005 briefly banned mid-race tyre changes (widely-established history)"
+      ],
+      "legacy": "The era institutionalized modern safety engineering and strategic race management, and the Schumacher-Ferrari machine set the benchmark for integrated team-building that every subsequent dynasty has been measured against.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/1994.json-2005.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "v8-era",
+      "name": "The V8 Era",
+      "fromYear": 2006,
+      "toYear": 2013,
+      "overview": "Cost containment brought mandatory 2.4-litre V8s and development freezes from 2006, and the racing swung wide open before consolidating again: the season records show titles going to Renault (2006), Ferrari (2007), McLaren's Lewis Hamilton (2008), and the single-season Brawn team (2009) in successive years, followed by four straight drivers' and constructors' doubles for Sebastian Vettel and Red Bull from 2010 to 2013. Refuelling ended in 2010, and DRS with designed-to-degrade tyres arrived in 2011 to re-engineer overtaking.",
+      "definingCharacteristics": [
+        "Mandated 2.4-litre V8s with engine development freezes from 2006",
+        "Four different teams produced the drivers' champion across 2006-2009, per the season records",
+        "Brawn won both titles in its only season, 2009, per the season record",
+        "Vettel and Red Bull swept both championships four years running, 2010-2013, per the season records",
+        "Refuelling banned from 2010; DRS and high-degradation tyres introduced in 2011 (widely-established history)",
+        "Global financial pressure drove manufacturer exits and cost-cutting at the era's midpoint (widely-established history)"
+      ],
+      "engineTrends": "2.4-litre V8s under a development freeze put the emphasis on aerodynamics and exploitation of rules gray areas; KERS hybrid assistance appeared in 2009, was dropped, and returned in 2011 as a permanent fixture.",
+      "safetyContext": "The era passed without a race-weekend driver fatality, while a serious qualifying head injury in 2009 kept cockpit protection research active (widely-established history).",
+      "regulationChanges": [
+        "2.4-litre V8 engines mandated from 2006 (widely-established history)",
+        "Half points were awarded at the rain-shortened 2009 Malaysian Grand Prix (RESEARCH.md section 4)",
+        "Points table expanded to 25-18-15-12-10-8-6-4-2-1 for the top ten from 2010 (RESEARCH.md section 4)",
+        "Refuelling banned from 2010 (widely-established history)",
+        "DRS overtaking aid and Pirelli high-degradation tyres introduced in 2011 (widely-established history)"
+      ],
+      "legacy": "The V8 years normalized cost control and spec-like engine rules, and the DRS-plus-degrading-tyres package built in 2011 remained the sport's overtaking formula for over a decade.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/2006.json-2013.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "hybrid-era",
+      "name": "The Hybrid Era",
+      "fromYear": 2014,
+      "toYear": 2021,
+      "overview": "The 1.6-litre V6 turbo-hybrid power units introduced in 2014 rewarded thermal efficiency and integration, and Mercedes mastered them like no one else: the season records show eight consecutive constructors' championships from 2014 to 2021, with Lewis Hamilton taking six drivers' titles in the span and Nico Rosberg one (2016). The streak's sporting end came in 2021, when Max Verstappen took the drivers' crown for Red Bull in a season-long duel decided at the final round, even as Mercedes held the constructors' title, per the season records. A pandemic-compressed 17-round season in 2020 and the first sprint events in 2021 marked the era's closing years.",
+      "definingCharacteristics": [
+        "1.6-litre V6 turbo-hybrid power units with energy recovery from 2014",
+        "Mercedes won eight consecutive constructors' titles, 2014-2021, per the season records",
+        "Lewis Hamilton took six drivers' championships within the era, per the season records",
+        "The halo cockpit protection device became mandatory in 2018 (widely-established history)",
+        "The 2020 season ran a compressed 17-round calendar, per the season record, amid the global pandemic (widely-established history)",
+        "Sprint-format events debuted in 2021 (RESEARCH.md section 4)"
+      ],
+      "engineTrends": "Turbocharging returned in hybrid form: 1.6-litre V6 power units with kinetic and heat energy recovery, chasing thermal efficiency figures unprecedented in racing; Mercedes' power-unit advantage underpinned its dynasty.",
+      "safetyContext": "A 2014 crash at Suzuka that ultimately proved fatal to Jules Bianchi (widely-established history) led to the virtual safety car and accelerated cockpit protection work that culminated in the halo, mandatory from 2018 and credited in several subsequent accidents.",
+      "regulationChanges": [
+        "V6 turbo-hybrid power units with energy-recovery systems mandated from 2014 (widely-established history)",
+        "Double points were awarded at the 2014 season finale (RESEARCH.md section 4)",
+        "Halo cockpit protection mandatory from 2018 (widely-established history)",
+        "A fastest-lap bonus point for top-ten finishers from 2019 (RESEARCH.md section 4)",
+        "Sprint events from 2021 scored 3-2-1; half points were awarded at the shortened 2021 Belgian Grand Prix (RESEARCH.md section 4)",
+        "A team budget cap took effect in 2021 (widely-established history)"
+      ],
+      "legacy": "The hybrid formula tied the championship to road-relevant efficiency engineering and produced the longest team title streak in the archive; the budget cap introduced at its end reshaped how dominance could be built thereafter.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/2014.json-2021.json",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    },
+    {
+      "key": "ground-effect-reset",
+      "name": "The Ground-Effect Reset",
+      "fromYear": 2022,
+      "toYear": 2026,
+      "overview": "The 2022 technical reset brought ground-effect underbodies back after four decades, paired with the budget cap to compress the field. The season records show Max Verstappen extending his run to three more drivers' titles (2022-2024) with Red Bull taking the constructors' crowns of 2022 and 2023, before McLaren rose to win the constructors' championships of 2024 and 2025 and Lando Norris the 2025 drivers' title. Calendars reached 24 rounds by 2024, per the season records. The archive's 2026 season is in progress, with nine rounds recorded at authoring time and Mercedes winning seven of them.",
+      "definingCharacteristics": [
+        "Ground-effect floors returned under the 2022 technical regulations",
+        "The budget cap and aerodynamic-testing handicaps compressed competitive cycles (widely-established history)",
+        "Verstappen won the drivers' titles of 2022, 2023, and 2024, per the season records",
+        "McLaren won consecutive constructors' championships in 2024 and 2025, per the season records",
+        "Calendars expanded to 24 rounds by 2024, per the season records",
+        "Sprint weekends became a fixture with expanded points (RESEARCH.md section 4)"
+      ],
+      "engineTrends": "The V6 turbo-hybrid formula continued under a development freeze from 2022, with fully sustainable fuels and a revised next-generation power-unit formula scheduled for 2026 (widely-established history).",
+      "safetyContext": "Halo-era protections were repeatedly credited in serious accidents, and circuit, recovery, and extreme-weather protocols continued to tighten (widely-established history).",
+      "regulationChanges": [
+        "Ground-effect chassis regulations and 18-inch wheels from 2022 (widely-established history)",
+        "Sprint points extended to the top eight, 8 down to 1, from 2022 (RESEARCH.md section 4)",
+        "A sliding points scale for shortened races applied from 2022 (RESEARCH.md section 4)",
+        "The fastest-lap bonus point was abolished for 2025 (RESEARCH.md section 4)"
+      ],
+      "legacy": "The reset demonstrated that regulation design plus cost control could turn over the competitive order without a new engine formula; its full legacy is still being written, with the 2026 season in progress in this archive.",
+      "provenance": "verifiedHistorical",
+      "sources": [
+        "f1db (CC BY 4.0) via data/history/2022.json-2026.json (2026 season partial: nine rounds recorded)",
+        "docs/research/RESEARCH.md section 4",
+        "widely-established motorsport history (uncontroversial era characterization)"
+      ]
+    }
+  ]
+}

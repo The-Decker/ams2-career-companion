@@ -1,0 +1,454 @@
+{
+  "source": "Authored for the AMS2 Career Companion history archive. Statistical claims (champions, win counts, race winners) verified against the f1db dataset (CC BY 4.0, github.com/f1db/f1db) via the repo's data/history season files; points-system and dropped-score rules taken from docs/research/RESEARCH.md section 4; general characterizations rest on widely-established, uncontroversial motorsport history. No quotations from real people. ASCII punctuation only.",
+  "subjects": [
+    {
+      "id": "wings-and-the-aero-revolution",
+      "title": "Wings Arrive: The Aerodynamic Revolution of 1968",
+      "category": "technology",
+      "summary": "Bolt-on wings appeared during the 1968 season and permanently changed what a Grand Prix car was, before a spate of structural failures forced the first aerodynamic regulations in 1969.",
+      "body": [
+        "The 1967 grid was the last to race on mechanical grip alone: cigar-shaped cars whose speed came from engines, tyres and driver commitment. During 1968 teams began bolting aerofoils onto their cars, first as modest nose fins and engine-cover spoilers, then as full wings mounted on tall struts acting directly on the suspension. Downforce transformed cornering speeds almost immediately, and by season's end no front-running team could afford to run without it. Lotus, the pace-setter of the movement, took Graham Hill to the 1968 drivers' title and won five of the twelve rounds.",
+        "The first generation of wings was engineered with far more optimism than analysis. Struts flexed, mounts fractured, and several cars crashed heavily when their wings collapsed at speed - most alarmingly at the 1969 Spanish Grand Prix, where wing failures caused two violent Lotus accidents. The governing body responded mid-season with the sport's first real aerodynamic rules: the tall strut-mounted wings were outlawed, and wings were required to be fixed, size-limited, and attached to the sprung bodywork.",
+        "Everything that followed - ground effect, flat bottoms, diffusers, the modern obsession with aero efficiency - descends from this two-year period. From 1968 onward, Formula 1 design was as much an aerodynamic discipline as a mechanical one."
+      ],
+      "fromYear": 1968,
+      "toYear": 1969,
+      "relatedYears": [1967, 1968, 1969],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1968.json - 1968 champion and Lotus win count",
+        "Widely-established motorsport history - arrival of wings in 1968 and the 1969 high-wing ban (general characterization)"
+      ]
+    },
+    {
+      "id": "ground-effect-first-era",
+      "title": "Ground Effect: The First Era (1977-1982)",
+      "category": "technology",
+      "summary": "Lotus discovered that the underside of the car could generate enormous downforce, producing the dominant Lotus 79 and an arms race of sliding skirts that ended with the flat-bottom ban for 1983.",
+      "body": [
+        "Ground effect arrived with the Lotus 78 of 1977: inverted-wing sidepod profiles, sealed to the track by sliding skirts, turned the whole underbody into a downforce device. The concept matured into the Lotus 79 of 1978, one of the most dominant designs of its age - Lotus won eight of the sixteen rounds that season and took both titles, with Mario Andretti crowned champion. Rivals scrambled to copy the principle, and within two seasons virtually the entire grid was built around venturi tunnels and skirts.",
+        "The performance gains were violent. Cornering speeds leapt, and because the underbody only worked when held rigidly close to the road, suspension became brutally stiff and cars grew notoriously unforgiving - a skirt failure or a bump mid-corner could remove most of the downforce without warning. The governing body fought a running battle with the teams over skirts and ride heights in 1981, but the cars kept getting faster. The dangers of the era were laid bare in 1982, a season scarred by serious and fatal accidents, including the death of Gilles Villeneuve in qualifying at Zolder.",
+        "For 1983 the rules required flat bottoms between the wheels, killing the venturi car outright. Ground effect became the sport's great cautionary tale for four decades - until the 2022 regulations deliberately brought a tamed version of it back."
+      ],
+      "fromYear": 1977,
+      "toYear": 1982,
+      "relatedYears": [1977, 1978, 1979, 1980, 1981, 1982, 1983],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1978.json - 1978 champion, Lotus win count and constructors title",
+        "Widely-established motorsport history - Lotus 78/79 concept, skirt disputes, 1982 tragedies, flat-bottom rule for 1983 (general characterization)"
+      ]
+    },
+    {
+      "id": "ground-effect-modern-era",
+      "title": "Ground Effect Returns: The Venturi Cars of 2022",
+      "category": "technology",
+      "summary": "The 2022 technical regulations reintroduced underbody venturi tunnels - this time without skirts and under strict control - to let cars follow each other closely.",
+      "body": [
+        "Forty years after the flat-bottom ban, Formula 1 deliberately reversed its oldest technical taboo. The 2022 regulations reintroduced full-length underbody venturi tunnels as the car's primary downforce source, paired with simplified over-body aerodynamics. The reasoning inverted the 1982 logic: upper-surface aero of the 2010s generated turbulent wakes that ruined the following car's grip, whereas underbody downforce is far less sensitive to dirty air. The goal was closer racing, not raw speed.",
+        "The modern implementation kept the physics but removed the old failure modes - no sliding skirts, mandated floor geometry, and continuous load and deflection policing. The era's teething problem was porpoising, an aerodynamic bouncing at high speed that several teams struggled with through 2022 before rule tweaks and setup understanding subdued it. Red Bull mastered the new formula fastest, winning seventeen of the twenty-two rounds in 2022 as Max Verstappen took the title.",
+        "The venturi-floor concept remains the foundation of the current technical rules, making ground effect the rare Formula 1 technology to be banned as a menace and later reinstated as a solution."
+      ],
+      "fromYear": 2022,
+      "toYear": null,
+      "relatedYears": [2022, 2023, 2024],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/2022.json - 2022 champion and Red Bull win count",
+        "Widely-established motorsport history - 2022 venturi-floor regulations and porpoising (general characterization)"
+      ]
+    },
+    {
+      "id": "first-turbo-era",
+      "title": "The First Turbo Era (1977-1988)",
+      "category": "technology",
+      "summary": "Renault gambled on the 1.5-litre turbocharged engine option in 1977; within six years turbos ruled Formula 1, producing the most powerful cars the sport had seen before being regulated away and banned for 1989.",
+      "body": [
+        "The engine rules had long permitted a 1.5-litre forced-induction alternative to the 3.0-litre atmospheric formula, but nobody considered it viable until Renault entered a turbocharged car in 1977. Early reliability was so poor the project was widely mocked, yet the potential was undeniable: Jean-Pierre Jabouille scored the first turbo victory at the 1979 French Grand Prix, fittingly on home soil. Ferrari, BMW, Honda, Porsche and others followed, and in 1983 Nelson Piquet's BMW-powered Brabham made him the first drivers' champion of the turbo age.",
+        "By the mid-1980s the turbo was universal - the 1986 field was composed entirely of turbocharged cars - and qualifying engines running extreme boost produced power figures far beyond anything the atmospheric era had known, on chassis and tyres straining to contain them. The governing body reined the technology in progressively, cutting permitted boost and race fuel allowances through 1987 and 1988 to contain speeds and costs.",
+        "Even strangled, the best turbo package remained untouchable: in 1988 the McLaren-Honda partnership won fifteen of the season's sixteen races, with Ayrton Senna taking his first championship. It was the turbo's farewell - forced induction was banned outright from 1989, and would not return for a quarter of a century."
+      ],
+      "fromYear": 1977,
+      "toYear": 1988,
+      "relatedYears": [1977, 1979, 1983, 1986, 1987, 1988],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1979.json, 1983.json, 1988.json - 1979 French GP winner, 1983 and 1988 champions, McLaren 1988 win count",
+        "Widely-established motorsport history - Renault 1977 turbo debut, all-turbo 1986 field, boost and fuel restrictions, 1989 ban (general characterization)"
+      ]
+    },
+    {
+      "id": "naturally-aspirated-years",
+      "title": "The Naturally Aspirated Years (1989-2013)",
+      "category": "technology",
+      "summary": "Between the two turbo eras Formula 1 ran atmospheric engines for twenty-five seasons - 3.5 litres, then 3.0, then 2.4-litre V8s - culminating in the screaming high-revving engines that defined the sport's sound.",
+      "body": [
+        "When turbochargers were banned for 1989, Formula 1 entered a long atmospheric age. The first phase allowed 3.5-litre engines in a variety of configurations - V8s, V10s and V12s raced against each other, with McLaren-Honda winning ten of sixteen races in the ban's first season. Capacity was cut to 3.0 litres for 1995, and through the late 1990s the field converged on the V10 as the ideal compromise of power, weight and fuel consumption.",
+        "The V10's peak coincided with Ferrari's era of total command - fifteen wins from eighteen rounds in 2004, Michael Schumacher's final championship season. For 2006 the formula changed to 2.4-litre V8s, and as costs spiralled the governing body progressively froze engine development and imposed rev limits in the late 2000s, turning the engine from a competitive weapon into a near-spec component. What remained was the sound: the V8s and V10s revving toward 20,000 rpm gave this period an aural identity the sport has traded on ever since.",
+        "The atmospheric age closed after 2013. Its final seasons belonged to Red Bull and Sebastian Vettel, who won thirteen of nineteen races in 2013 before the hybrid regulations rewrote the sport's engineering priorities entirely."
+      ],
+      "fromYear": 1989,
+      "toYear": 2013,
+      "relatedYears": [1989, 1995, 2004, 2006, 2013],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1989.json, 2004.json, 2013.json - McLaren 1989, Ferrari 2004 and Red Bull 2013 win counts and champions",
+        "Widely-established motorsport history - 3.5/3.0/2.4-litre phases, engine freeze and rev limits in the late 2000s (general characterization)"
+      ]
+    },
+    {
+      "id": "hybrid-power-units",
+      "title": "Hybrid Power Units: From KERS to the Turbo-Hybrid Era",
+      "category": "technology",
+      "summary": "Energy recovery entered Formula 1 as optional KERS in 2009 and became the sport's core technology with the 1.6-litre turbo-hybrid power units of 2014, the most thermally efficient racing engines ever built.",
+      "body": [
+        "Hybridisation arrived tentatively: the 2009 rules permitted an optional Kinetic Energy Recovery System offering a modest push-to-pass boost. Heavy and expensive, KERS was dropped by agreement for 2010 and returned in 2011, but it was only a prologue. The true revolution came in 2014, when the normally aspirated V8s gave way to 1.6-litre V6 turbo-hybrid power units combining a kinetic motor-generator (MGU-K) with a unique heat-recovery unit on the turbocharger (MGU-H), all governed by strict fuel-flow limits. The engineering brief changed from peak power to total energy efficiency, and the resulting units achieved thermal efficiency figures unmatched in racing.",
+        "Mercedes interpreted the new formula best and converted that advantage into the longest sustained dominance in the sport's history: sixteen wins from nineteen races in 2014, nineteen from twenty-one in 2016, and eight consecutive constructors' championships from 2014 to 2021. Rivals needed years to close the gap, and the hybrid era's competitive order was shaped more by power-unit performance than any technical factor since the first turbo age.",
+        "The formula was refined rather than replaced for over a decade. A further overhaul arrived with the 2026 regulations, which dropped the complex MGU-H and substantially raised the electrical share of total power, paired with fully sustainable fuels - a bet that hybrid Formula 1 remains relevant to the road-car industry that funds it."
+      ],
+      "fromYear": 2009,
+      "toYear": null,
+      "relatedYears": [2009, 2011, 2014, 2016, 2021, 2026],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/2014.json, 2016.json and 2014-2021 season files - Mercedes win counts and constructors titles",
+        "Widely-established motorsport history - KERS 2009/2011, 2014 power-unit formula, 2026 overhaul direction (general characterization)"
+      ]
+    },
+    {
+      "id": "active-suspension",
+      "title": "Active Suspension: The Computer-Controlled Car",
+      "category": "technology",
+      "summary": "Computer-controlled suspension, pioneered by Lotus in the early 1980s and perfected by Williams in 1992-93, kept the car in its ideal aerodynamic window at all times - until it was banned with the other electronic aids for 1994.",
+      "body": [
+        "Active suspension replaced springs-and-dampers compromise with computed control: sensors and actuators holding the car's ride height and attitude constant regardless of fuel load, tyre wear or track surface. Lotus experimented with active systems in the early 1980s and proved the concept could win, taking victories with the active Lotus 99T in 1987. But the technology's full potential waited for cheaper computing and better modelling.",
+        "Williams delivered the definitive version. The FW14B of 1992 paired active suspension with traction control and a refined aerodynamic package, and the results were crushing - Williams won ten of sixteen races as Nigel Mansell dominated the championship, and repeated the feat in 1993 with another ten wins and Alain Prost's fourth title. A car that never pitched, rolled or squatted kept its aerodynamics in the ideal operating window at every moment, an advantage conventional cars could not answer.",
+        "That was precisely the problem. Active suspension was expensive, exclusive to the wealthiest teams, and seen as diminishing the driver's role. It was swept away in the blanket ban on electronic driver aids imposed for 1994, and has never returned."
+      ],
+      "fromYear": 1983,
+      "toYear": 1993,
+      "relatedYears": [1987, 1992, 1993, 1994],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1992.json, 1993.json - Williams win counts and champions",
+        "Widely-established motorsport history - Lotus active experiments and 1987 wins, 1994 ban (general characterization)"
+      ]
+    },
+    {
+      "id": "semi-automatic-gearbox",
+      "title": "The Semi-Automatic Gearbox",
+      "category": "technology",
+      "summary": "Ferrari's paddle-shift gearbox won on its 1989 debut and within a few seasons made the manual gear lever extinct in Formula 1.",
+      "body": [
+        "Ferrari introduced the electro-hydraulic semi-automatic gearbox on its 1989 car, replacing the gear lever with steering-wheel paddles. The system was fragile in testing and widely doubted - then Nigel Mansell won the car's very first race, the 1989 Brazilian Grand Prix. The advantages were fundamental: faster and more consistent shifts, both hands on the wheel through corners, and protection against the over-revs and missed gears that destroyed engines.",
+        "The rest of the grid converted as quickly as budgets allowed, and by the mid-1990s the manual gearbox was gone from the front of the field entirely. Development then turned to shift speed itself, culminating in the seamless-shift gearboxes of the 2000s that swap ratios with effectively no interruption in drive. The paddle-shift layout Ferrari debuted in 1989 remains, in refined form, on every Formula 1 car today - one of the sport's cleanest examples of a single innovation becoming universal."
+      ],
+      "fromYear": 1989,
+      "toYear": null,
+      "relatedYears": [1989],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1989.json - 1989 Brazilian Grand Prix winner (Nigel Mansell, Ferrari)",
+        "Widely-established motorsport history - semi-automatic gearbox adoption and seamless-shift development (general characterization)"
+      ]
+    },
+    {
+      "id": "tyre-war-and-single-supplier",
+      "title": "Tyre Wars and the Single Supplier",
+      "category": "technology",
+      "summary": "Formula 1 has alternated between fierce multi-supplier tyre wars and controlled single-supplier eras, each regime reshaping car design, race strategy and the competitive order.",
+      "body": [
+        "For most of the sport's first decades tyres were a competitive battleground. Multiple manufacturers supplied the field in the late 1960s and 1970s, and Michelin's arrival in 1977 brought radial construction to Formula 1, forcing a technological response from the incumbent crossply suppliers. When suppliers fought, development pace was ferocious and a tyre advantage could decide championships; when one supplier remained, tyres became a stable, equal commodity - Goodyear served long stretches of the 1980s and 1990s as the effective sole supplier.",
+        "Bridgestone's entry in 1997 reignited competition, and the rulemakers responded to rising cornering speeds by mandating grooved tyres from 1998, an unloved interim that lasted until slicks returned in 2009. The Michelin-Bridgestone war of 2001-2006 produced the modern era's ugliest tyre moment: at the 2005 United States Grand Prix, safety concerns over the Michelin tyre led every Michelin-shod team to withdraw after the formation lap, leaving six cars to start.",
+        "Since then Formula 1 has chosen control over competition: Bridgestone supplied the whole field from 2007 to 2010, and Pirelli has been sole supplier since 2011 - operating under a deliberate brief to produce tyres whose degradation creates strategic variety. The 2022 regulations brought the switch from 13-inch to 18-inch wheels, the largest change to the tyre package in decades."
+      ],
+      "fromYear": 1967,
+      "toYear": null,
+      "relatedYears": [1977, 1997, 1998, 2005, 2007, 2009, 2011, 2022],
+      "provenance": "verifiedHistorical",
+      "isComplete": false,
+      "sources": [
+        "Widely-established motorsport history - supplier eras, Michelin radials from 1977, grooved tyres 1998-2008, 2005 US GP withdrawal, Bridgestone and Pirelli sole-supplier periods (general characterization; exact supplier rosters per season not itemised here)"
+      ]
+    },
+    {
+      "id": "drs-overtaking-aid",
+      "title": "DRS: The Drag Reduction System",
+      "category": "technology",
+      "summary": "Introduced in 2011, the driver-operated opening rear wing gave following cars a straight-line speed boost in designated zones - the sport's most durable and most debated overtaking aid.",
+      "body": [
+        "The Drag Reduction System arrived in 2011 as a direct answer to the era's central complaint: cars generating enormous downforce could not follow closely enough to overtake. DRS lets the driver open a slot in the rear wing on designated straights, shedding drag for a burst of straight-line speed - but in races only when within one second of the car ahead at a measured detection point, making it a tool for the pursuer alone.",
+        "Its effect was immediate and its reception permanently divided. Overtaking numbers rose sharply, yet critics argued that a pass delivered by an activation zone is a device, not a duel. The system's zones and rules have been tuned circuit by circuit ever since, and the ground-effect regulations of 2022 - designed to let cars follow naturally - were widely framed as the beginning of the end for DRS. It has nonetheless remained part of the racing package, a reminder that aerodynamic problems are easier to patch than to solve."
+      ],
+      "fromYear": 2011,
+      "toYear": null,
+      "relatedYears": [2011, 2022],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - DRS introduction in 2011 and its one-second proximity rule (general characterization)"
+      ]
+    },
+    {
+      "id": "electronic-driver-aids-and-1994-ban",
+      "title": "Electronic Driver Aids and the 1994 Ban",
+      "category": "regulation",
+      "summary": "Traction control, active suspension, ABS and launch control proliferated in the early 1990s until a sweeping ban for 1994; traction control returned in 2001 because policing it proved impossible, and was finally eliminated by the standard ECU in 2008.",
+      "body": [
+        "The early 1990s were Formula 1's electronic arms race. Traction control, anti-lock brakes, launch control and active suspension spread through the field, reaching their peak in the Williams cars that won ten races in each of 1992 and 1993. The technology was extraordinary and, to the sport's rulers, corrosive: it rewarded software budgets over driver skill and priced smaller teams out of contention. For 1994 the governing body banned the lot - active suspension, traction control, ABS and launch control - in one of the most consequential regulatory strokes in the sport's history.",
+        "The ban's aftermath exposed its weakness: proving a negative inside a rival's software was close to impossible, and suspicion of hidden aids poisoned the mid-1990s paddock. The governing body eventually conceded the policing problem and re-legalised traction control during 2001, an admission that the rule could not be enforced rather than a change of philosophy.",
+        "The definitive solution was architectural. From 2008 every car ran a standard electronic control unit supplied to the whole field, making hidden traction control effectively impossible, and the aid was banned again - this time permanently. The episode remains the sport's defining case study in the difference between writing a rule and being able to enforce one."
+      ],
+      "fromYear": 1990,
+      "toYear": 2008,
+      "relatedYears": [1992, 1993, 1994, 2001, 2008],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1992.json, 1993.json - Williams win counts",
+        "Widely-established motorsport history - 1994 aids ban, 2001 traction-control re-legalisation, 2008 standard ECU (general characterization)"
+      ]
+    },
+    {
+      "id": "refuelling-era",
+      "title": "Refuelling: Allowed 1994, Banned 2010",
+      "category": "regulation",
+      "summary": "Mid-race refuelling, pioneered by Brabham in 1982 and banned in 1984, returned as a spectacle-driven rule from 1994 to 2009 before being abolished again on cost and safety grounds.",
+      "body": [
+        "Brabham reintroduced mid-race refuelling as a strategic weapon in 1982, running a light, fast car and swallowing the pit-stop time. The governing body banned the practice from 1984, mainly on safety grounds, and for a decade Grands Prix were run on a single tank.",
+        "Refuelling returned by regulation in 1994, sold as a spectacle: fuel loads became a strategic variable, and races were increasingly decided by stop timing and in-lap pace rather than on-track passing. The dangers announced themselves almost immediately with a pit-lane fire during a 1994 refuelling stop, and refuelling rigs, crews and fire risk remained a background anxiety for the rule's entire second life. Strategically it defined a generation - the multi-stop sprint-race template of the late 1990s and 2000s was built around the fuel stop.",
+        "From 2010 refuelling was banned again, this time for cost as much as safety, and cars have since started every race carrying their full fuel load. The change rebalanced the sport toward tyre management and race-long fuel efficiency, and pit stops collapsed from ten-second fuel-and-tyre operations to the sub-three-second tyre changes of the modern era."
+      ],
+      "fromYear": 1994,
+      "toYear": 2009,
+      "relatedYears": [1982, 1984, 1994, 2009, 2010],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - Brabham 1982 refuelling, 1984 ban, 1994 reintroduction and pit fire, 2010 ban (general characterization)"
+      ]
+    },
+    {
+      "id": "points-systems-history",
+      "title": "How the Points Have Been Scored (1967-present)",
+      "category": "regulation",
+      "summary": "From 9-6-4-3-2-1 with dropped scores, through 10-point wins, to the 25-point era with sprint and fastest-lap experiments - the scoring rules have been rewritten repeatedly, and each change reshaped how championships were won.",
+      "body": [
+        "From 1961 to 1990 a win was worth 9 points on the 9-6-4-3-2-1 scale, but the headline numbers hide the era's defining quirk: not every result counted. Between 1967 and 1980 seasons were split into halves with only a driver's best N results from each half scoring - in 1967, for example, the best five of the first six rounds plus the best four of the last five. From 1981 to 1990 drivers counted their best eleven results of the season. Discarded points decided real championships, and a driver could out-score a rival across the year yet lose the title on counted points.",
+        "Every result has counted since 1991, when the win was also raised to 10 points on the 10-6-4-3-2-1 scale. The 2003 revision (10-8-6-5-4-3-2-1) narrowed the win-to-second gap to two points to keep title fights alive, and the 2010 system stretched scoring to ten places with 25-18-15-12-10-8-6-4-2-1, the basis of the modern table. The era since has been one of experiments: double points for the 2014 finale (used once, never repeated), a bonus point for fastest lap for a top-ten finisher from 2019 until its abolition in 2025, and sprint races scoring 3-2-1 in 2021, expanded to 8-7-6-5-4-3-2-1 for the top eight from 2022.",
+        "Two structural rules complete the picture. Races stopped short of full distance have paid reduced points throughout the period - exactly six races were scored at half points under the pre-2022 rule, from the 1975 Spanish Grand Prix to the 2021 Belgian Grand Prix, before a sliding scale tied to race distance was introduced in 2022. And the constructors' championship, which has existed since 1958, counted only each team's best-placed car until the late 1970s; from around 1980 both cars have scored."
+      ],
+      "fromYear": 1967,
+      "toYear": null,
+      "relatedYears": [1967, 1981, 1991, 2003, 2010, 2014, 2019, 2021, 2022, 2025],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "docs/research/RESEARCH.md section 4 - verified per-era points tables, split-half dropped-score rules 1967-1980, best-11 rule 1981-1990, half-points race list, 2022 sliding scale, constructors best-car rule",
+        "f1db dataset (CC BY 4.0) - oracle-verified against official standings per the repo's test suite"
+      ]
+    },
+    {
+      "id": "qualifying-format-changes",
+      "title": "The Many Lives of Qualifying",
+      "category": "regulation",
+      "summary": "Grid-setting evolved from open practice-style sessions through one-lap runs to the knockout Q1-Q2-Q3 format of 2006, with a failed elimination experiment in 2016 and sprint weekends from 2021.",
+      "body": [
+        "For most of the sport's history, qualifying was simple: open timed sessions in which every driver chased a single fastest lap, in the later decades within a twelve-lap allowance. The format rewarded low-fuel, maximum-attack running and produced the iconic pole laps of the 1980s and 1990s, but it also left long stretches of empty track and offered television little structure.",
+        "The 2000s became a laboratory. From 2003 cars qualified one at a time on a single flying lap, guaranteeing every driver screen time at the cost of the session's tension; aggregate variations were briefly tried in 2005 before being abandoned. The lasting answer arrived in 2006: knockout qualifying, with the field progressively cut through Q1 and Q2 before a top-ten shootout in Q3. The format proved durable because it concentrates jeopardy at the end of every segment, and it remains in use today. Its one serious challenger was the elimination qualifying of 2016, which removed the slowest driver at fixed intervals - it produced empty tracks at the climax of sessions and was scrapped after just two events.",
+        "The 2021 season added a structural variant rather than a replacement: sprint weekends, where a short race sets or contributes to the grid and awards its own points. Qualifying's evolution tracks the sport's broader shift from a purist time-trial toward a designed television product - with the knockout format the rare change embraced by both camps."
+      ],
+      "fromYear": 1967,
+      "toYear": null,
+      "relatedYears": [2003, 2005, 2006, 2016, 2021],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - qualifying format chronology 2003/2005/2006/2016/2021 (general characterization)",
+        "docs/research/RESEARCH.md section 4 - sprint points from 2021"
+      ]
+    },
+    {
+      "id": "regulation-reset-2009",
+      "title": "The 2009 Regulation Reset",
+      "category": "regulation",
+      "summary": "Slick tyres returned, wings were radically resized, KERS appeared - and a loophole reading of the diffuser rules let the new Brawn team win both championships.",
+      "body": [
+        "The 2009 technical rules were the sport's most aggressive aerodynamic reset in a generation, written to cut downforce and improve overtaking. Cars appeared with wide, low front wings and tall, narrow rear wings, stripped of the winglets and appendages that had encrusted the previous generation; slick tyres returned after eleven seasons of grooves; and the optional KERS hybrid system made its debut.",
+        "The reset produced one of the sport's great upsets. Three teams - most famously the Honda project reborn as Brawn GP - read the new floor regulations to permit a double-deck diffuser, recovering downforce the rules had meant to remove. The interpretation survived protest, and Brawn's head start carried Jenson Button to the drivers' title and the team to the constructors' championship in its only season of existence, winning eight of seventeen races. Red Bull emerged as the reset's other winner, beginning the aerodynamic ascendancy that would deliver four consecutive title doubles from 2010 to 2013.",
+        "As a lesson in unintended consequences the 2009 reset is unmatched: a rulebook written to slow the cars instead crowned a team that found the fastest way through its gaps. The aerodynamic concept it established evolved through the hybrid era until the wider, faster car regulations of 2017 closed the cycle."
+      ],
+      "fromYear": 2009,
+      "toYear": 2016,
+      "relatedYears": [2009, 2010, 2013, 2017],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/2009.json, 2010.json, 2013.json - Brawn 2009 titles and win count, Red Bull 2010-2013 titles",
+        "Widely-established motorsport history - 2009 aero rules, slick return, KERS, double-diffuser dispute (general characterization)"
+      ]
+    },
+    {
+      "id": "regulation-reset-2022",
+      "title": "The 2022 Regulation Reset",
+      "category": "regulation",
+      "summary": "Ground-effect floors, simplified bodywork, 18-inch wheels and the new budget-cap framework combined in the largest simultaneous technical and financial reset in the sport's modern history.",
+      "body": [
+        "The 2022 regulations attacked the sport's problems on two fronts at once. Technically, the cars were redesigned around underbody ground effect with deliberately simplified upper surfaces, so that a following car lost far less downforce in another's wake; wheels grew from 13 to 18 inches with low-profile tyres. Financially, the reset landed on top of the newly introduced cost cap - first applied in 2021 - which for the first time limited what the wealthiest teams could spend, backed by real audit and penalty machinery.",
+        "Competitively, the reset's first chapter belonged to Red Bull, who won seventeen of twenty-two races in 2022 as Max Verstappen took his second title, while several rivals wrestled with porpoising and weight. But the deeper intent was structural: cars that could race closely, and a financial ceiling under which midfield teams could survive and eventually contend. The 2022 framework remains the foundation of the current era, with the 2026 power-unit and chassis overhaul built on top of its cost-control architecture rather than replacing it."
+      ],
+      "fromYear": 2022,
+      "toYear": null,
+      "relatedYears": [2021, 2022, 2026],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/2022.json - 2022 champion and Red Bull win count",
+        "Widely-established motorsport history - 2022 technical rules, 18-inch wheels, cost cap from 2021 (general characterization)"
+      ]
+    },
+    {
+      "id": "major-technical-bans",
+      "title": "Banned: Formula 1's Outlawed Innovations",
+      "category": "regulation",
+      "summary": "The fan car, the six-wheeler, the mass damper, the double diffuser and the F-duct - a recurring cycle in which a legal-but-unintended innovation wins, and the rulebook closes over it.",
+      "body": [
+        "Formula 1's technical history is punctuated by inventions that were legal when they won and illegal shortly afterward. The pattern's purest specimen is the Brabham BT46B fan car of 1978, which used an enormous rear fan - nominally for cooling - to suck the car onto the road. Niki Lauda won its only race, the 1978 Swedish Grand Prix, and the car was withdrawn under pressure before the concept could be contested again. Tyrrell's six-wheeled P34 met a gentler end: genuinely competitive in 1976, when Jody Scheckter won the Swedish Grand Prix in it, the concept faded as its bespoke small front tyres fell behind, and the rules later fixed four wheels as a requirement.",
+        "The modern era refined the cycle from outright bans to closed loopholes. Renault's tuned mass damper, a suspended weight that calmed the car over kerbs, was ruled an illegal movable aerodynamic influence during 2006. The double-deck diffusers that decided the 2009 championship survived their protest but were regulated away after 2010. McLaren's F-duct of 2010 - a driver-controlled airflow channel that stalled the rear wing on straights - lasted one season, as did the extreme exhaust-blown diffusers that followed, curtailed by exhaust-position rules for 2012.",
+        "The cycle is structural rather than accidental: the regulations define a design space, the best engineers find its unintended corners, and the governing body redraws the boundary. Every generation of the rulebook is, in part, a museum of the previous generation's cleverest ideas."
+      ],
+      "fromYear": 1976,
+      "toYear": null,
+      "relatedYears": [1976, 1978, 2006, 2009, 2010, 2011, 2012],
+      "provenance": "verifiedHistorical",
+      "isComplete": false,
+      "sources": [
+        "f1db dataset (CC BY 4.0) via data/history/1976.json, 1978.json - Swedish Grand Prix winners 1976 (Scheckter, Tyrrell) and 1978 (Lauda, Brabham)",
+        "Widely-established motorsport history - fan car withdrawal, mass damper ruling, double diffuser and F-duct bans (general characterization; the exact year the four-wheel requirement was codified is not asserted here)"
+      ]
+    },
+    {
+      "id": "survival-cell-development",
+      "title": "The Survival Cell: From Spaceframe to Carbon Fibre",
+      "category": "safety",
+      "summary": "The chassis evolved from a structure that merely held the car together into a crash structure built to keep the driver alive - aluminium monocoques, the carbon-fibre revolution of 1981, and the mandatory crash-test regime that followed.",
+      "body": [
+        "The monocoque chassis - a stressed-skin tub rather than a frame of welded tubes - entered Formula 1 with the Lotus 25 in 1962, and by the period covered here it was universal. But the early aluminium tubs were designed for stiffness and lightness, not crashworthiness; in a major accident they could tear open, and with fuel carried alongside the driver the consequences were routinely fatal. Structural safety in the 1970s advanced piecemeal: stronger bulkheads, deformable structures around the fuel, and rules pushing tanks toward the protected centre of the car.",
+        "The decisive leap was material. McLaren's MP4/1 of 1981 introduced the carbon-fibre composite monocoque, a structure both stiffer and lighter than aluminium - and, as its accident record soon demonstrated, vastly stronger in an impact. Skeptics had predicted carbon would shatter; instead drivers began walking away from crashes that would have destroyed an aluminium tub. Within a few seasons carbon construction was the norm, and the modern concept of the chassis as a survival cell was born.",
+        "Regulation then codified what the material made possible. Mandatory crash testing began in 1985 with frontal impact tests and expanded over the following decades into today's comprehensive regime of static load and dynamic impact tests on every survival cell design - front, rear, side and rollover. Together with higher cockpit sides from 1996, wheel tethers from the end of the 1990s, and anti-intrusion panels in the cell's flanks, the crash-tested carbon tub is the single largest reason modern drivers survive accidents at energies that were unsurvivable in 1967."
+      ],
+      "fromYear": 1967,
+      "toYear": null,
+      "relatedYears": [1981, 1985, 1996],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - Lotus 25 monocoque, McLaren MP4/1 carbon chassis 1981, crash tests from 1985, cockpit sides 1996, wheel tethers (general characterization)"
+      ]
+    },
+    {
+      "id": "circuit-safety-and-barriers",
+      "title": "Barriers, Run-Off and the Reshaping of the Circuits",
+      "category": "safety",
+      "summary": "From trees and earth banks to Armco, gravel traps, asphalt run-off and energy-absorbing barriers - the transformation of the racing environment saved as many lives as any change to the cars.",
+      "body": [
+        "In 1967 many Grand Prix venues were still essentially closed public roads: trees, ditches, embankments and buildings stood unprotected within metres of the racing line, and a mechanical failure in the wrong place was a death sentence regardless of the car's construction. The drivers themselves forced the first wave of change - the safety campaigns led from within the Grand Prix Drivers' Association in the late 1960s and 1970s demanded barriers, marshalling and medical cover as a condition of racing, and circuits that could not comply lost their races. The fourteen-mile Nurburgring Nordschleife, impossible to secure to the new standards, held its final championship Grand Prix in 1976.",
+        "Each era added a layer of protection. Steel Armco barriers spread through the early 1970s to separate cars from the scenery; catch fencing was tried and abandoned; gravel traps became the standard means of arresting a car before the wall. The deaths at Imola in 1994 triggered a second great wave: chicanes inserted into the fastest corners, walls pushed back, and a systematic FIA programme of circuit inspection and redesign. Purpose-built modern venues then normalised vast asphalt run-off areas, which slow a sliding car more predictably than gravel - at an accepted cost in punishing mistakes less.",
+        "Barrier technology itself became an engineering discipline: multi-row tyre barriers, and from the 2000s energy-absorbing systems such as TecPro blocks designed to cushion high-speed impacts at predictable rates. The modern circuit is a designed safety system - and the near-elimination of spectator and driver deaths from circuit environment failures is among the sport's least visible, most important achievements."
+      ],
+      "fromYear": 1967,
+      "toYear": null,
+      "relatedYears": [1970, 1976, 1994],
+      "provenance": "verifiedHistorical",
+      "isComplete": false,
+      "sources": [
+        "Widely-established motorsport history - GPDA-era circuit campaigns, Nordschleife's last championship GP in 1976, post-1994 circuit programme, run-off and barrier evolution (general characterization; individual circuit modification dates not itemised)"
+      ]
+    },
+    {
+      "id": "helmets-and-fire-protection",
+      "title": "Helmets, Overalls and the War on Fire",
+      "category": "safety",
+      "summary": "Full-face helmets from 1968, fire-resistant Nomex clothing, rubber bag fuel tanks from 1970 and the HANS device in 2003 progressively armoured the driver - fire, once the sport's greatest killer, became a survivable rarity.",
+      "body": [
+        "At the start of the period drivers raced in open-face helmets and cotton or treated overalls, and fire was the death they feared most: the cars carried large volumes of fuel in thin tanks that split in accidents. The counterattack came on two fronts at the close of the 1960s. Dan Gurney introduced the full-face helmet to Formula 1 in 1968, and fire-resistant Nomex clothing spread through the grid in the same years, layered into the multi-layer suits, gloves and balaclavas that became mandatory equipment. On the car, rubberised bag fuel tanks - flexible cells that deform rather than rupture - were mandated in 1970, followed by onboard extinguisher systems and dry-break fuel couplings.",
+        "The effect compounded over decades: fires that would have been fatal in 1968 became survivable in the 1980s and rare by the 2000s. Helmet development continued in parallel, from fireproof standards to ballistic protection against debris, including the Zylon visor reinforcement added in the 2010s. The 2003 season added the HANS device - a carbon collar tethering the helmet to restrain the head in a frontal impact - which eliminated the basilar skull fractures that had killed drivers across every earlier era.",
+        "The system faced its sternest modern test at the 2020 Bahrain Grand Prix, when Romain Grosjean's car penetrated a barrier and ignited; he escaped the fire after nearly half a minute, protected by his suit, helmet and the halo. The aftermath brought a further upgrade to suit fire-resistance standards - evidence that even the sport's oldest solved problem is never treated as closed."
+      ],
+      "fromYear": 1967,
+      "toYear": null,
+      "relatedYears": [1968, 1970, 2003, 2020],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - Gurney full-face helmet 1968, Nomex adoption, bag tanks 1970, HANS mandate 2003, Grosjean Bahrain 2020 fire and suit-standard response (general characterization)"
+      ]
+    },
+    {
+      "id": "medical-response-revolution",
+      "title": "The Medical Response Revolution",
+      "category": "safety",
+      "summary": "From improvised local ambulances to a professional trackside medical system - permanent medical cars, circuit medical centres, helicopter evacuation and the safety-car framework that manages a live circuit.",
+      "body": [
+        "Well into the 1970s, the medical response to a Grand Prix accident depended on whatever the host circuit had arranged - local ambulances, variable equipment, and no guarantee a doctor experienced in trauma would reach a driver in the critical first minutes. The transformation began in 1978, when Professor Sid Watkins was appointed to lead Formula 1's medical provision. Over the following two decades the sport built a standing system: a fully equipped medical car crewed by a trauma specialist following the field on the opening lap, mandatory circuit medical centres built and staffed to specification, resident extrication teams trained to remove a driver without worsening spinal injury, and helicopter evacuation to a designated hospital as a condition of racing.",
+        "The framework for managing the live circuit hardened alongside it. The safety car became a standing fixture from 1993, bringing a crashed circuit under control without abandoning the race; decades later the virtual safety car, introduced in 2015 after Jules Bianchi's accident at Suzuka, enforced slow speeds through danger zones without bunching the field. Accident data recorders, in-ear accelerometers and biometric gloves gave medical teams objective measures of the forces a driver had absorbed before they reached the car.",
+        "The measure of the system is in the accidents it converted from fatal to survivable: drivers now receive specialist trauma care within moments of any serious impact, at any race, anywhere in the world. Among all the sport's safety advances, the medical revolution is the one that operates every single weekend, whether or not anything goes wrong."
+      ],
+      "fromYear": 1978,
+      "toYear": null,
+      "relatedYears": [1978, 1993, 1994, 2015],
+      "provenance": "verifiedHistorical",
+      "isComplete": false,
+      "sources": [
+        "Widely-established motorsport history - Watkins appointment 1978, medical car and circuit medical requirements, safety car from 1993, virtual safety car 2015 (general characterization; individual requirement dates not itemised)"
+      ]
+    },
+    {
+      "id": "imola-1994-safety-reckoning",
+      "title": "Imola 1994 and the Safety Reckoning",
+      "category": "safety",
+      "summary": "The deaths of Roland Ratzenberger and Ayrton Senna at the 1994 San Marino Grand Prix ended an era of complacency and triggered the most comprehensive safety programme in the sport's history.",
+      "body": [
+        "Formula 1 entered 1994 without a driver fatality at a Grand Prix in a dozen years, and the sport had begun to believe its own safety record. The San Marino Grand Prix weekend at Imola destroyed that belief: Roland Ratzenberger was killed in qualifying, and Ayrton Senna - the sport's greatest star and reigning benchmark - died leading the race the following day. A weekend that also included a serious practice crash and a pit-lane incident forced the conclusion that the danger had never left; it had merely been waiting.",
+        "The response was immediate and then systemic. Within weeks, cars were slowed by emergency technical changes and pit-lane speed limits were imposed; within months an expert advisory group under Professor Sid Watkins was established to put safety research on a permanent scientific footing. The years that followed brought higher cockpit sides, stronger crash-test requirements, wheel tethers, circuit redesigns that removed or neutered the fastest unprotected corners, and a culture in which safety development became continuous rather than reactive.",
+        "The reckoning worked, by the harshest measure available: no driver died from injuries sustained at a world championship Grand Prix for over two decades afterward, until Jules Bianchi succumbed in 2015 to injuries from his 2014 Suzuka accident - a tragedy that itself triggered the next wave of change, including the virtual safety car and, ultimately, the halo. Imola 1994 remains the hinge of Formula 1 safety history: the point after which the sport stopped treating fatal risk as an acceptable constant."
+      ],
+      "fromYear": 1994,
+      "toYear": 1994,
+      "relatedYears": [1994, 1995, 2014, 2015],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - Ratzenberger and Senna deaths at Imola 1994, pit-lane speed limits and expert advisory group, Bianchi 2014-2015 (general characterization)",
+        "f1db dataset (CC BY 4.0) via data/history/1994.json - 1994 season context"
+      ]
+    },
+    {
+      "id": "the-halo",
+      "title": "The Halo",
+      "category": "safety",
+      "summary": "The titanium cockpit-protection hoop, mandatory since 2018, closed the last unprotected zone around the driver - and within a few seasons had demonstrably saved lives.",
+      "body": [
+        "The driver's head was the last exposed part of a Formula 1 car, and a sequence of accidents across motorsport in the 2010s - above all Jules Bianchi's fatal 2014 collision with a recovery vehicle at Suzuka - made frontal cockpit protection the sport's most urgent open problem. After on-track evaluation of competing concepts from 2016, the FIA mandated the halo for 2018: a titanium hoop over the cockpit, anchored at three points and built to withstand loads far beyond any previous cockpit structure.",
+        "Its introduction was fiercely contested on aesthetic and philosophical grounds - open cockpits were held by many to define the category. The argument did not survive contact with events. The device was credited with protecting drivers in a series of incidents almost immediately, most dramatically in Romain Grosjean's fiery barrier penetration at Bahrain in 2020 and Zhou Guanyu's overturned slide toward the barriers at Silverstone in 2022. Junior single-seater categories adopted the device alongside Formula 1, multiplying its effect across the sport.",
+        "The halo now reads as the final chapter of a fifty-year arc: chassis, fuel, circuits, medicine and restraint systems had each been rebuilt around driver survival, leaving the head as the remaining vulnerability. Closing it changed the sport's aesthetics and, measurably, its casualty record."
+      ],
+      "fromYear": 2018,
+      "toYear": null,
+      "relatedYears": [2014, 2016, 2018, 2020, 2022],
+      "provenance": "verifiedHistorical",
+      "isComplete": true,
+      "sources": [
+        "Widely-established motorsport history - halo mandate 2018 after 2016-2017 evaluation, Grosjean 2020 and Zhou 2022 incidents (general characterization)"
+      ]
+    }
+  ]
+}
