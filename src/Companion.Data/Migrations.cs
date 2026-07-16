@@ -154,6 +154,22 @@ public static class Migrations
         """
         ALTER TABLE career ADD COLUMN mortality_mode INTEGER NOT NULL DEFAULT 0;
         """,
+
+        // v6 — newsroom reading state (docs/dev/newsroom-history-overhaul.md D8). Per-story
+        // read/bookmark flags keyed by the story's stable dedupe key. USER PREFERENCE like
+        // staging_override — never journaled, never read by the fold, untouched by
+        // WipeDerived — so re-simulation stays byte-identical and an upgraded career reads
+        // exactly as before (no rows until the user reads/bookmarks something). Articles
+        // themselves are never stored (they re-render deterministically from the master
+        // seed); only the user's relationship to them persists.
+        """
+        CREATE TABLE news_reading_state (
+            story_key      TEXT NOT NULL PRIMARY KEY,
+            read_utc       TEXT,
+            bookmarked     INTEGER NOT NULL DEFAULT 0,
+            bookmarked_utc TEXT
+        );
+        """,
     ];
 
     public static int CurrentVersion => Scripts.Length;

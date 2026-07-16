@@ -228,6 +228,15 @@ public interface ICareerSession
     /// never blended. Null for SMGP (fiction) or undocumented years. Additive default: null.</summary>
     SeasonDivergenceReport? SeasonDivergence(int seasonOrdinal) => null;
 
+    /// <summary>Per-story read/bookmark state (schema v6, user preference — survives replay).
+    /// Additive defaults so existing fakes compile; the no-op setters suit fakes fine.</summary>
+    IReadOnlyDictionary<string, Companion.Data.NewsReadingState> ReadingState() =>
+        new Dictionary<string, Companion.Data.NewsReadingState>();
+
+    void MarkStoryRead(string storyKey) { }
+
+    void SetStoryBookmark(string storyKey, bool bookmarked) { }
+
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
     /// championship position, final reputation/OPI, the drivers' champion, and the season's key

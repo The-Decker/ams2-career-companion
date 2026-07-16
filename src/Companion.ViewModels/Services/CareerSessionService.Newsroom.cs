@@ -105,6 +105,17 @@ public sealed partial class CareerSessionService
         EditorialSelector.SelectRound(
             NewsroomEvents().Where(e => e.SeasonOrdinal == seasonOrdinal && e.Round == round).ToList());
 
+    /// <summary>Read/bookmark state for every story key the user has touched. USER PREFERENCE
+    /// (schema v6): never journaled, never a fold input, survives re-simulation.</summary>
+    public IReadOnlyDictionary<string, NewsReadingState> ReadingState() =>
+        NewsReadingStateStore.ReadAll(_database);
+
+    public void MarkStoryRead(string storyKey) =>
+        NewsReadingStateStore.MarkRead(_database, storyKey, NowUtc());
+
+    public void SetStoryBookmark(string storyKey, bool bookmarked) =>
+        NewsReadingStateStore.SetBookmark(_database, storyKey, bookmarked, NowUtc());
+
     private HistoryArchiveIndex? _historyArchive;
 
     /// <summary>The computed history archive: driver/team/circuit profiles aggregated from the
