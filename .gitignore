@@ -487,3 +487,9 @@ tools/_f1db/
 # Codex worktrees and agent scratch space
 .codex-worktrees/
 scratchpad/
+
+# The developer debug MENU is a real source folder (src/Companion.ViewModels/Debug/), NOT a
+# build-output "Debug/" directory. The generic [Dd]ebug/ rule near the top would otherwise silently
+# untrack these ViewModel sources, so re-include the directory (later rules win over earlier ones).
+!/src/Companion.ViewModels/Debug/
+!/src/Companion.ViewModels/Debug/**

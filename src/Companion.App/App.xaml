@@ -11,6 +11,7 @@
              xmlns:settings="clr-namespace:Companion.ViewModels.Settings;assembly=Companion.ViewModels"
              xmlns:shell="clr-namespace:Companion.ViewModels.Shell;assembly=Companion.ViewModels"
              xmlns:hub="clr-namespace:Companion.ViewModels.Hub;assembly=Companion.ViewModels"
+             xmlns:debug="clr-namespace:Companion.ViewModels.Debug;assembly=Companion.ViewModels"
              xmlns:views="clr-namespace:Companion.App.Views"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
@@ -86,6 +87,10 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type settings:SettingsViewModel}">
                 <views:SettingsView />
+            </DataTemplate>
+            <!-- developer debug menu (dynasty-passport-roadmap Piece 2) — dev-only, gated at runtime -->
+            <DataTemplate DataType="{x:Type debug:DebugMenuViewModel}">
+                <views:DebugMenuView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

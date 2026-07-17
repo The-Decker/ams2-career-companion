@@ -226,7 +226,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     /// <summary>The app-wide developer debug menu gate (default OFF, not in the normal Settings UI).
     /// Reads live from the settings seam. When false the debug keybind is a no-op and nothing renders;
-    /// unlock it with Ctrl+Alt+Shift+D (persists here) or the <c>AMS2_DEVMODE=1</c> environment
+    /// unlock it with Ctrl+Shift+F12 (persists here) or the <c>AMS2_DEVMODE=1</c> environment
     /// variable at startup.</summary>
     public bool DeveloperMode => _settings.Current.DeveloperMode;
 
@@ -235,7 +235,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     private string DebugCareersDirectory =>
         Path.Combine(_environment.DocumentsDirectory, "AMS2CareerCompanion", "DebugCareers");
 
-    /// <summary>The hidden UNLOCK chord (Ctrl+Alt+Shift+D): flips <see cref="DeveloperMode"/> and
+    /// <summary>The hidden UNLOCK chord (Ctrl+Shift+F12): flips <see cref="DeveloperMode"/> and
     /// PERSISTS it. Turning it on opens the debug overlay so the unlock is visibly confirmed; turning
     /// it off closes the overlay if it is showing.</summary>
     [RelayCommand]
@@ -282,7 +282,10 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         debug.PreviewRequested += OnDebugPreviewRequested;
         debug.ScreenRequested += OnDebugScreenRequested;
 
-        _beforeDebug = Current;
+        // Stash the pre-debug screen ONLY when opening from a non-debug context. Re-opening the menu
+        // from a debug-spawned leaf (a promotion/demotion preview) must not overwrite the real
+        // location with that transient leaf — so closing later still returns where the user was.
+        _beforeDebug ??= Current;
         Current = debug;
     }
 

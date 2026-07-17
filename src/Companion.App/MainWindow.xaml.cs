@@ -48,6 +48,24 @@ public partial class MainWindow : Window
         if (e.Handled || DataContext is not ShellViewModel shell)
             return;
 
+        // Developer chords (dynasty-passport-roadmap Piece 2) — resolved FIRST so they reach even a
+        // terminal screen (a dev may need to open the menu from a death/career-over surface). Neither
+        // chord uses Alt, so there is no AltGr collision (AltGr = Ctrl+Alt on international layouts) and
+        // no SystemKey remapping is needed. The persisting UNLOCK is a function key (Ctrl+Shift+F12) so
+        // it can never coincide with a character a user types.
+        if (e.Key == Key.F12 && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            shell.ToggleDeveloperModeCommand.Execute(null); // hidden unlock/lock (persists the flag)
+            e.Handled = true;
+            return;
+        }
+        if (e.Key == Key.D && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            shell.ToggleDebugCommand.Execute(null); // open/close the overlay — a no-op while locked
+            e.Handled = true;
+            return;
+        }
+
         // A fatal result replaces the whole Hub with the DB-free death screen. In Hardcore the
         // career database is already disposed and deleted, so no global Esc/tab accelerator may
         // reach hidden Hub/Home commands behind that terminal surface.

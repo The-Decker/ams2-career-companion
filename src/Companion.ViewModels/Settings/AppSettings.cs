@@ -69,7 +69,7 @@ public sealed record WindowPlacementSettings
 /// </summary>
 public sealed record AppSettings
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
 
     public const string DefaultAccentColor = "#4F8CFF";
     public const int MinFontScalePercent = 90;
@@ -89,6 +89,16 @@ public sealed record AppSettings
     public const string DefaultAccentName = "RoyalBlue";
 
     public int Version { get; init; } = CurrentVersion;
+
+    // ---------- developer (dynasty-passport-roadmap Piece 2 — the debug menu gate) ----------
+
+    /// <summary>The app-wide developer debug menu gate. OFF by default and deliberately NOT
+    /// surfaced in the normal Settings UI, so a shipped Release shows nothing and costs nothing
+    /// until it is unlocked. Unlocked for the session via the hidden Ctrl+Shift+F12 chord (which
+    /// persists it here) or the <c>AMS2_DEVMODE=1</c> environment variable read at startup. When
+    /// true, Ctrl+Shift+D opens the debug overlay; when false that keybind is a no-op and the
+    /// overlay never renders. Additive bool — an older settings file (no field) loads it false.</summary>
+    public bool DeveloperMode { get; init; }
 
     // ---------- appearance ----------
 

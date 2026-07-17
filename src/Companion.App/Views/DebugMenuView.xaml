@@ -1,0 +1,152 @@
+<UserControl x:Class="Companion.App.Views.DebugMenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="False">
+    <UserControl.Resources>
+        <Style x:Key="DebugSectionTitle" TargetType="TextBlock" BasedOn="{StaticResource H2}">
+            <Setter Property="Margin" Value="0,0,0,2" />
+        </Style>
+        <Style x:Key="DebugSectionHint" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="DebugButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Padding" Value="12,6" />
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel Margin="40,24">
+        <!-- header -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="Done" Style="{StaticResource AccentButton}" MinWidth="96"
+                        Command="{Binding CloseCommand}"
+                        ToolTip="Close the debug menu (Esc works too)" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Developer Debug Menu" Style="{StaticResource H1}" />
+                <TextBlock Style="{StaticResource Muted}"
+                           Text="Dev-only. Tier 1 creates REAL replay-safe careers; Tier 2 previews are display-only and never write a save." />
+            </StackPanel>
+        </DockPanel>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+            <StackPanel MaxWidth="900" HorizontalAlignment="Center">
+
+                <!-- ===== Tier 1: real careers ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Tier 1 — real careers (replay-safe)" Style="{StaticResource DebugSectionTitle}" />
+                        <TextBlock Style="{StaticResource DebugSectionHint}"
+                                   Text="Throwaway careers created through the real factory and advanced only through provenance-excluded INPUT seams. They resimulate byte-identical." />
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="Master seed" VerticalAlignment="Center" Margin="0,0,8,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <TextBox Width="140" Text="{Binding MasterSeed, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <WrapPanel>
+                            <Button Content="New Grand Prix Dynasty" Style="{StaticResource DebugButton}"
+                                    Command="{Binding OpenDynastyCommand}" />
+                            <Button Content="New Super Monaco GP" Style="{StaticResource DebugButton}"
+                                    Command="{Binding OpenSmgpCommand}" />
+                        </WrapPanel>
+
+                        <TextBlock Text="Open a specific pack" Margin="0,8,0,4"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <ItemsControl ItemsSource="{Binding Packs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center" />
+                                        <Button Grid.Column="1" Content="Open" Margin="0,0,6,0" Padding="10,4"
+                                                Command="{Binding DataContext.OpenPackCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}" />
+                                        <Button Grid.Column="2" Content="Open at season end" Padding="10,4"
+                                                Command="{Binding DataContext.OpenPackAtSeasonEndCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Style="{StaticResource Muted}" FontSize="12"
+                                   Visibility="{Binding HasPacks, Converter={StaticResource BoolCollapsed}}"
+                                   Text="No packs found on disk under the search roots." />
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== Tier 2: previews ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Tier 2 — previews (display-only, no save written)" Style="{StaticResource DebugSectionTitle}" />
+                        <TextBlock Style="{StaticResource DebugSectionHint}"
+                                   Text="A fake session feeds canned state to the real Views for states the fold cannot reach. Never resimulated, never persisted." />
+
+                        <WrapPanel>
+                            <Button Content="Racing Passport (unbuildable)" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewRacingPassportCommand}" />
+                            <Button Content="Death screen (Hardcore)" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewDeathHardcoreCommand}" />
+                            <Button Content="Death screen (Normal)" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewDeathNormalCommand}" />
+                            <Button Content="SMGP career over" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewSmgpCareerOverCommand}" />
+                            <Button Content="Injury (sit out)" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewInjuryCommand}" />
+                            <Button Content="Season-ending injury" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewSeasonEndingInjuryCommand}" />
+                            <Button Content="Campaign finale" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewFinaleCommand}" />
+                            <Button Content="Flawless finale" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewFlawlessFinaleCommand}" />
+                            <Button Content="Promotion offer" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewPromotionCommand}" />
+                            <Button Content="Demotion" Style="{StaticResource DebugButton}"
+                                    Command="{Binding PreviewDemotionCommand}" />
+                        </WrapPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock Text="Driver level" VerticalAlignment="Center" Margin="0,0,8,0"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <TextBox Width="80" Text="{Binding PreviewLevel, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <Button Content="Preview level screen" Padding="12,6"
+                                    Command="{Binding PreviewLevelScreenCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== Inspect / dump ===== -->
+                <Border Style="{StaticResource Panel}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Inspect" Style="{StaticResource DebugSectionTitle}" />
+                        <TextBlock Style="{StaticResource DebugSectionHint}"
+                                   Text="Reveal the spoiler-hidden SMGP future lore, or dump the current live career's journal and determinism state." />
+                        <WrapPanel>
+                            <Button Content="Reveal SMGP future lore" Style="{StaticResource DebugButton}"
+                                    Command="{Binding RevealSmgpLoreCommand}" />
+                            <Button Content="Dump journal / determinism" Style="{StaticResource DebugButton}"
+                                    Command="{Binding DumpJournalCommand}" />
+                        </WrapPanel>
+                        <TextBox Text="{Binding InspectorText, Mode=OneWay}" IsReadOnly="True"
+                                 FontFamily="Consolas, Cascadia Mono, monospace" FontSize="12"
+                                 TextWrapping="NoWrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                 MinHeight="120" MaxHeight="320" Margin="0,6,0,0"
+                                 Visibility="{Binding InspectorText, Converter={StaticResource StringVisible}}" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
