@@ -53,8 +53,11 @@ public sealed class DebugMenuTests : IDisposable
         };
     }
 
-    private DebugMenuViewModel NewMenu(ICareerFactory factory, Func<ICareerSession?>? current = null) =>
-        new(Environment(), factory, DebugCareersDir, current);
+    private DebugMenuViewModel NewMenu(
+        ICareerFactory factory,
+        Func<ICareerSession?>? current = null,
+        Func<string?>? currentPath = null) =>
+        new(Environment(), factory, DebugCareersDir, current, currentPath);
 
     private bool AnyCareerFileExists() =>
         Directory.Exists(_root) &&
@@ -182,6 +185,105 @@ public sealed class DebugMenuTests : IDisposable
         Assert.Equal(CareerExperienceModes.Smgp, factory.LastRequest!.ExperienceMode);
         Assert.True(factory.LastRequest.SmgpMode);
     }
+
+    // ---------- Tier 1: continue the open career ----------
+
+    [Fact]
+    public void AdvanceSeason_PlaysOutAnUnfinishedSeasonAndReopensFresh()
+    {
+        var factory = new FakeCareerFactory();
+        factory.Session.CompletesSeasonOnApply = true;
+        factory.Session.Grid = [Seat("driver.rival"), Seat("driver.player", isPlayer: true)];
+        string path = Path.Combine(_root, "careers", "live.ams2career");
+        var menu = NewMenu(factory, current: () => factory.Session, currentPath: () => path);
+        DebugCareerOpenedEventArgs? opened = null;
+        menu.RealCareerRequested += (_, e) => opened = e;
+
+        menu.AdvanceSeasonCommand.Execute(null);
+
+        Assert.NotEmpty(factory.Session.Applied);       // the season was played out via real Applies
+        Assert.Equal(path, factory.LastOpenedPath);     // reopened on the SAME file
+        Assert.Equal(path, opened!.CareerFilePath);
+        Assert.Equal("", menu.InspectorText);
+    }
+
+    [Fact]
+    public void AdvanceSeason_FromASeasonEndSignsAndStartsTheNextSeason()
+    {
+        var factory = new FakeCareerFactory();
+        factory.Session.Summary = factory.Session.Summary with { SeasonComplete = true };
+        factory.Session.Next = new NextSeasonInfo
+        {
+            PackDirectory = "",
+            PackId = "pack-b",
+            PackName = "Pack B",
+            SeasonYear = 1969,
+            IsCarryover = true,
+            BridgedYears = [],
+        };
+        factory.Session.Review = new SeasonReviewModel
+        {
+            SeasonYear = 1967,
+            PlayerPosition = 1,
+            FinalReputation = 80.0,
+            FinalOpi = 1.0,
+            Headlines = [],
+            Offers =
+            [
+                new SeasonOfferModel
+                {
+                    TeamId = "team.x", TeamName = "Team X", Tier = 3, SalaryBu = 10.0,
+                    Score = 1.0, Accepted = false,
+                },
+            ],
+        };
+        string path = Path.Combine(_root, "careers", "live.ams2career");
+        var menu = NewMenu(factory, current: () => factory.Session, currentPath: () => path);
+
+        menu.AdvanceSeasonCommand.Execute(null);
+
+        Assert.Equal(["team.x"], factory.Session.AcceptedOffers);
+        Assert.Equal(["team.x"], factory.Session.SignedTeams);
+        Assert.Equal(path, factory.LastOpenedPath);
+        Assert.Equal("", menu.InspectorText);
+    }
+
+    [Fact]
+    public void AdvanceSeason_OnAPreviewSaysNo()
+    {
+        var factory = new FakeCareerFactory();
+        var preview = DebugPreviews.Death(DebugPreviewPack.Build(1990, smgp: true));
+        var menu = NewMenu(factory, current: () => preview, currentPath: () => null);
+
+        menu.AdvanceSeasonCommand.Execute(null);
+
+        Assert.Contains("display-only", menu.InspectorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AdvanceSeason_WithNoOpenCareerSaysSo()
+    {
+        var menu = NewMenu(new FakeCareerFactory(), current: static () => null);
+
+        menu.AdvanceSeasonCommand.Execute(null);
+
+        Assert.Contains("No live career", menu.InspectorText, StringComparison.Ordinal);
+    }
+
+    private static Companion.Core.Grid.GridSeat Seat(string driverId, bool isPlayer = false) => new()
+    {
+        DriverId = driverId,
+        DriverName = driverId,
+        TeamId = "team.one",
+        TeamName = "Team One",
+        Ams2LiveryName = $"{driverId} livery",
+        Ratings = new Companion.Core.Packs.PackDriverRatings { RaceSkill = 0.8, QualifyingSkill = 0.8 },
+        Reliability = 0.9,
+        WeightScalar = 1.0,
+        PowerScalar = 1.0,
+        DragScalar = 1.0,
+        IsPlayer = isPlayer,
+    };
 
     [Fact]
     public void Tier1_TakesARealSeatFromThePack_NotThePreviewLivery()

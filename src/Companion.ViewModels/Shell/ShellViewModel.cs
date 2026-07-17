@@ -276,7 +276,8 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
             _environment,
             _factory,
             DebugCareersDirectory,
-            currentSession: () => _hub?.Home.Session);
+            currentSession: () => _hub?.Home.Session,
+            currentCareerPath: () => _currentCareerPath);
         debug.CloseRequested += (_, _) => CloseDebug();
         debug.RealCareerRequested += OnDebugRealCareerRequested;
         debug.PreviewRequested += OnDebugPreviewRequested;

@@ -145,6 +145,55 @@ public static class DebugCareerFactory
         return applied;
     }
 
+    /// <summary>Plays the current season out to its end through honest INPUT seams: a player-win
+    /// <c>Apply</c> per round, resolving (ACCEPTING) every deferred SMGP two-wins promotion offer
+    /// along the way so season end can actually fold — the ladder climb is the point of the replica.
+    /// A no-op on an already-complete season.</summary>
+    public static void FinishSeason(ICareerSession session)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        FastForwardToSeasonEnd(session);
+        // A well-behaved session clears one offer per resolve; the guard only fences a fake.
+        for (int guard = 0; guard < 8 && session.CurrentSmgpPromotion() is not null; guard++)
+        {
+            session.ResolveSmgpOffer(accept: true);
+            FastForwardToSeasonEnd(session); // resume when the offer interrupted mid-season
+        }
+    }
+
+    /// <summary>Advances the career exactly ONE SEASON END forward, mutating ONLY the given session:
+    /// plays out an unfinished season (<see cref="FinishSeason"/>); when the career already sat at a
+    /// season end, signs the first offer letter and starts the next season. NEVER reopens — the
+    /// caller owns the (now finished-season) session and reopens the file itself afterwards, exactly
+    /// like the shell's sign-and-continue flow. <paramref name="note"/> explains a stop that is not
+    /// an error: the campaign is complete, or no offer letter was rolled (a career-ending state).
+    /// Every step is a provenance-excluded INPUT, so the continued career resimulates
+    /// byte-identical.</summary>
+    public static void AdvanceToNextSeasonEnd(ICareerSession session, out string note)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        note = "";
+        bool enteredComplete = session.Summary.SeasonComplete;
+        FinishSeason(session);
+        if (!enteredComplete)
+            return;
+
+        if (session.NextSeason() is null)
+        {
+            note = "The campaign is complete — there is no next season.";
+            return;
+        }
+        var review = session.SeasonReview();
+        var offer = review?.Offers.FirstOrDefault();
+        if (offer is null)
+        {
+            note = "No offer letter to sign for the next season (the career may be over).";
+            return;
+        }
+        session.AcceptOffer(offer.TeamId);
+        session.StartNextSeason(offer.TeamId);
+    }
+
     /// <summary>Spends one Skill Point on the first affordable unlockable tree node, through the real
     /// atomic <c>ApplySkillPlan</c> INPUT seam (the ONLY legitimate v2 development injection point).
     /// Returns the acquired node id, or null when nothing is affordable/available. Try/catch guards a
@@ -207,14 +256,7 @@ public static class DebugCareerFactory
         int ordinal = session.CurrentSmgpBriefing()?.SeasonOrdinal ?? 1;
         while (ordinal < target)
         {
-            FastForwardToSeasonEnd(session);
-            // Resolve every deferred promotion (fast-forward stops at each one). Bounded: a
-            // well-behaved session clears one offer per resolve; the guard only fences a fake.
-            for (int guard = 0; guard < 8 && session.CurrentSmgpPromotion() is not null; guard++)
-            {
-                session.ResolveSmgpOffer(accept: true);
-                FastForwardToSeasonEnd(session); // resume when the offer interrupted mid-season
-            }
+            FinishSeason(session);
 
             var review = session.SeasonReview();
             var offer = review?.Offers.FirstOrDefault();

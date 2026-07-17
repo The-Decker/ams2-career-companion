@@ -40,7 +40,7 @@
                     <StackPanel>
                         <TextBlock Text="Tier 1 — real careers (replay-safe)" Style="{StaticResource DebugSectionTitle}" />
                         <TextBlock Style="{StaticResource DebugSectionHint}"
-                                   Text="Throwaway careers created through the real factory and advanced only through provenance-excluded INPUT seams. They resimulate byte-identical." />
+                                   Text="Throwaway careers created through the real factory and advanced only through provenance-excluded INPUT seams. They resimulate byte-identical. The Open buttons each start a FRESH throwaway; Advance continues the one currently open." />
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                             <TextBlock Text="Master seed" VerticalAlignment="Center" Margin="0,0,8,0"
@@ -91,6 +91,14 @@
                         <TextBlock Style="{StaticResource Muted}" FontSize="12"
                                    Visibility="{Binding HasPacks, Converter={StaticResource BoolCollapsed}}"
                                    Text="No packs found on disk under the search roots." />
+
+                        <TextBlock Text="Continue the open career" Margin="0,10,0,4"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <WrapPanel>
+                            <Button Content="Advance one season ▸" Style="{StaticResource DebugButton}"
+                                    Command="{Binding AdvanceSeasonCommand}"
+                                    ToolTip="Plays the open career one season end forward (signing from a season end) — the same file, resim-safe; monitors read it live" />
+                        </WrapPanel>
                     </StackPanel>
                 </Border>
 

@@ -49,12 +49,14 @@ public sealed partial class DebugMenuViewModel : ObservableObject
     private readonly ICareerFactory _factory;
     private readonly string _debugCareersDirectory;
     private readonly Func<ICareerSession?> _currentSession;
+    private readonly Func<string?> _currentCareerPath;
 
     public DebugMenuViewModel(
         CareerEnvironment environment,
         ICareerFactory factory,
         string debugCareersDirectory,
-        Func<ICareerSession?>? currentSession = null)
+        Func<ICareerSession?>? currentSession = null,
+        Func<string?>? currentCareerPath = null)
     {
         ArgumentNullException.ThrowIfNull(environment);
         ArgumentNullException.ThrowIfNull(factory);
@@ -64,6 +66,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         _factory = factory;
         _debugCareersDirectory = debugCareersDirectory;
         _currentSession = currentSession ?? (static () => null);
+        _currentCareerPath = currentCareerPath ?? (static () => null);
         _dnaOptions = new Lazy<IReadOnlyList<RacingDnaDefinition>>(LoadDnaOptions);
 
         Packs = new ObservableCollection<DebugPackEntry>(DiscoverPacks());
@@ -217,6 +220,52 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         CreateThrowaway(pack.Directory, mode, advance: true);
     }
 
+    /// <summary>Continue the CURRENTLY OPEN real career exactly one season end forward — the
+    /// season-by-season navigation the fresh-throwaway buttons can't give. Plays out an unfinished
+    /// season; from a season end, signs the first offer and plays the new season out too. The SAME
+    /// career file advances (every step a real INPUT, so it still resimulates byte-identical), then
+    /// the hub reopens on the continued career. The monitors (journal / economy dump) read it live
+    /// between clicks.</summary>
+    [RelayCommand]
+    private void AdvanceSeason()
+    {
+        var session = _currentSession();
+        if (session is null)
+        {
+            InspectorText = "No live career is open — open a Tier-1 career first.";
+            return;
+        }
+        if (session is PreviewCareerSession)
+        {
+            InspectorText = "A Tier-2 preview is display-only — there is no career to advance. " +
+                            "Open a Tier-1 career first.";
+            return;
+        }
+        if (_currentCareerPath() is not { } path)
+        {
+            InspectorText = "The open career has no file on disk to continue through.";
+            return;
+        }
+
+        try
+        {
+            DebugCareerFactory.AdvanceToNextSeasonEnd(session, out string note);
+
+            // Hand the shell a FRESH session on the continued file: AttachHome disposes the old hub
+            // — and its session — so the hub must never show the instance this menu advanced.
+            var fresh = _factory.Open(path);
+            DebugCareerFactory.FinishSeason(fresh); // play the just-signed season out; no-op at an end
+            if (note.Length > 0)
+                InspectorText = note;
+
+            RealCareerRequested?.Invoke(this, new DebugCareerOpenedEventArgs(fresh, path));
+        }
+        catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
+        {
+            InspectorText = $"Advance failed: {ex.Message}";
+        }
+    }
+
     private void CreateThrowaway(string packDirectory, string mode, bool advance)
     {
         try
@@ -231,7 +280,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
             var session = _factory.Create(request);
             if (advance)
             {
-                DebugCareerFactory.FastForwardToSeasonEnd(session);
+                DebugCareerFactory.FinishSeason(session);
                 DebugCareerFactory.TrySpendOneSkillPoint(session);
             }
 
