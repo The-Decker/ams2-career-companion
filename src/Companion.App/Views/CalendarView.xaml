@@ -90,6 +90,14 @@
                                TextTrimming="CharacterEllipsis" />
                     <TextBlock Text="{Binding RealVenue}" Style="{StaticResource Muted}" FontSize="10.5"
                                Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+                    <Border Style="{StaticResource CompactChip}" HorizontalAlignment="Left"
+                            Margin="0,4,0,0" Padding="6,2"
+                            Background="{DynamicResource WarningDimBrush}"
+                            BorderBrush="{DynamicResource WarningBrush}"
+                            Visibility="{Binding HasPlayerStatus, Converter={StaticResource BoolVisible}}">
+                        <TextBlock Text="{Binding PlayerStatusLabel}" Style="{StaticResource PixelBadge}"
+                                   FontSize="8" Foreground="{DynamicResource WarningBrush}" />
+                    </Border>
                     <!-- Kept inline as the compact circuit identifier and as the established render contract. -->
                     <TextBlock Text="{Binding CircuitCaption}" Style="{StaticResource Faint}" FontSize="9.5"
                                Margin="0,2,0,0" TextTrimming="CharacterEllipsis"
@@ -247,6 +255,13 @@
                                     </Border>
                                     <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6">
                                         <TextBlock Text="{Binding DateText}" Style="{StaticResource Mono}" FontSize="10" />
+                                    </Border>
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,6,6"
+                                            Background="{DynamicResource WarningDimBrush}"
+                                            BorderBrush="{DynamicResource WarningBrush}"
+                                            Visibility="{Binding HasPlayerStatus, Converter={StaticResource BoolVisible}}">
+                                        <TextBlock Text="{Binding PlayerStatusLabel}" Style="{StaticResource PixelBadge}"
+                                                   Foreground="{DynamicResource WarningBrush}" />
                                     </Border>
                                 </WrapPanel>
                                 <TextBlock Text="{Binding UnusedAlternateNote}" Style="{StaticResource Faint}"

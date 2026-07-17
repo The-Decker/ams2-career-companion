@@ -15,13 +15,26 @@
                        Text="{Binding PlayerSummaryText}" />
 
             <!-- offer letters: accept ONE (journaled) -->
-            <Border Style="{StaticResource Panel}" Margin="0,16,0,0"
-                    Visibility="{Binding HasOffers, Converter={StaticResource BoolVisible}}">
+            <Border x:Name="OfferLettersPanel" Margin="0,16,0,0">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding HasOffers}" Value="True" />
+                                    <Condition Binding="{Binding HasNextSeason}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <StackPanel>
                     <TextBlock Text="Offer letters" FontWeight="SemiBold" Margin="0,0,0,4" />
                     <TextBlock Style="{StaticResource Faint}" Margin="0,0,0,10" TextWrapping="Wrap"
                                Text="Each seat, written up in the medium of its era. Scored from your season-long reputation and overperformance; accepting is journaled and a new acceptance replaces the previous one." />
-                    <ItemsControl ItemsSource="{Binding Offers}">
+                    <ItemsControl x:Name="OfferLetters" ItemsSource="{Binding Offers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <!-- the offer as a period document (telegram / fax / email by era) -->
@@ -93,8 +106,21 @@
             </Border>
 
             <!-- character development: spend banked points before signing (depth 4) -->
-            <Border Style="{StaticResource Panel}" Margin="0,12,0,0"
-                    Visibility="{Binding HasCharacter, Converter={StaticResource BoolVisible}}">
+            <Border x:Name="DevelopmentPanel" Margin="0,12,0,0">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Panel}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding HasCharacter}" Value="True" />
+                                    <Condition Binding="{Binding HasNextSeason}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <StackPanel>
                     <DockPanel>
                         <TextBlock Text="Develop your driver" FontWeight="SemiBold" DockPanel.Dock="Left" />
@@ -158,15 +184,16 @@
             </Border>
 
             <!-- era transition: sign & continue (M6) -->
-            <Border Background="{DynamicResource AccentDimBrush}" CornerRadius="6" Padding="12,10" Margin="0,12,0,0">
+            <Border x:Name="TransitionPanel" Background="{DynamicResource AccentDimBrush}"
+                    CornerRadius="6" Padding="12,10" Margin="0,12,0,0">
                 <StackPanel>
-                    <TextBlock Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
+                    <TextBlock x:Name="TransitionText" Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap"
                                Text="{Binding EraTransitionText}" />
                     <!-- bridge note: skipped years age through deterministically -->
                     <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,6,0,0"
                                Text="{Binding BridgeNote}"
                                Visibility="{Binding HasBridgeNote, Converter={StaticResource BoolVisible}}" />
-                    <Button HorizontalAlignment="Left" MinWidth="180" Margin="0,10,0,0"
+                    <Button x:Name="SignAndContinueButton" HorizontalAlignment="Left" MinWidth="180" Margin="0,10,0,0"
                             Style="{StaticResource AccentButton}"
                             Content="{Binding SignButtonText}"
                             Command="{Binding SignAndContinueCommand}"

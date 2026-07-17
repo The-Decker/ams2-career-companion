@@ -33,12 +33,18 @@ public sealed partial class HubRailRenderTests
 
             var rail = Assert.IsType<Border>(view.FindName("HubRail"));
             var scroll = Assert.IsType<ScrollViewer>(view.FindName("HubRailScrollViewer"));
+            var levelChip = Assert.IsType<Border>(view.FindName("DriverLevelChip"));
+            var availabilityChip = Assert.IsType<Border>(view.FindName("DriverAvailabilityChip"));
             Button[] destinations = Descendants<Button>(view)
                 .Where(button => AutomationProperties.GetHelpText(button) ==
                     "Select this career workspace")
                 .ToArray();
 
             Assert.InRange(rail.ActualWidth, 176, 224);
+            Assert.Equal(Visibility.Visible, levelChip.Visibility);
+            Assert.Equal(Visibility.Visible, availabilityChip.Visibility);
+            Assert.True(levelChip.ActualWidth > 0);
+            Assert.True(availabilityChip.ActualWidth > 0);
             Assert.True(scroll.ActualHeight > 0);
             Assert.True(scroll.ScrollableHeight > 0,
                 "The compact 130% viewport must scroll instead of clipping a rail destination.");
@@ -140,6 +146,8 @@ public sealed partial class HubRailRenderTests
         public string StandingText => "P12";
         public string FormText => "";
         public bool HasForm => false;
+        public string DriverLevelText => "LV 137";
+        public string DriverAvailabilityLabel => "Injured — out 2 races";
     }
 
     private sealed class BriefingHost { public bool SmgpCareerOver => false; }

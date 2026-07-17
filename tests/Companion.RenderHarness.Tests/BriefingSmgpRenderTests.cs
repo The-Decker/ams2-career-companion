@@ -5,6 +5,7 @@ using Companion.App.Views;
 using Companion.Core.Grid;
 using Companion.Core.Packs;
 using Companion.Core.Scoring;
+using Companion.Core.Smgp;
 using Companion.ViewModels.Briefing;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Shell;
@@ -21,6 +22,7 @@ public sealed class BriefingSmgpRenderTests
     private sealed class SmgpSession : ICareerSession
     {
         public bool Forced { get; init; }
+        public bool LoreAvailable { get; init; } = true;
 
         public CareerSummary Summary { get; } = new()
         {
@@ -87,6 +89,16 @@ public sealed class BriefingSmgpRenderTests
             ],
         };
 
+        public SmgpSeasonLoreEntry? CurrentSeasonLore() => LoreAvailable
+            ? new SmgpSeasonLoreEntry
+            {
+                Ordinal = 1,
+                Title = "The Tenth Summer",
+                Subtitle = "Every victory raises the temperature.",
+                Era = "The Iron Circus",
+            }
+            : null;
+
         public SeasonPack Pack { get; } = new()
         {
             Manifest = new PackManifest
@@ -137,6 +149,9 @@ public sealed class BriefingSmgpRenderTests
             // rides into the race draft at Apply, so moving the UI onto its own screen changes nothing.
             var briefing = new BriefingViewModel(new SmgpSession());
             Assert.True(briefing.SmgpActive);
+            Assert.True(briefing.HasSmgpSeasonLore);
+            Assert.Equal("The Tenth Summer", briefing.SmgpSeasonTitle);
+            Assert.Equal("The Iron Circus", briefing.SmgpSeasonEra);
             Assert.True(briefing.SmgpPickEnabled);          // a free pick
             Assert.Null(briefing.SelectedSmgpRival);        // fresh round: unnamed
 
@@ -164,6 +179,10 @@ public sealed class BriefingSmgpRenderTests
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
+            Assert.Contains(Descendants<TextBlock>(view),
+                block => block.Text.Contains("The Tenth Summer", StringComparison.Ordinal));
+            Assert.Contains(Descendants<TextBlock>(view),
+                block => block.Text.Contains("The Iron Circus", StringComparison.Ordinal));
 
             // Named: the YES button yields to the confirmation banner (pins the actual visibility,
             // which a Bool-converter inversion would render fine but wrong).
@@ -206,6 +225,7 @@ public sealed class BriefingSmgpRenderTests
         {
             var vm = new BriefingViewModel(new SmgpSession { Forced = true });
             Assert.True(vm.SmgpForced);
+            Assert.True(vm.HasSmgpSeasonLore);
             Assert.False(vm.SmgpPickEnabled);
             // The forced challenger arrives ALREADY NAMED (no YES needed) and the call marks it.
             Assert.Equal("driver.gilberto_ceara", vm.NamedSmgpRival?.DriverId);
@@ -220,6 +240,42 @@ public sealed class BriefingSmgpRenderTests
             view.Arrange(new Rect(0, 0, 1000, 1200));
             view.UpdateLayout();
             Assert.True(view.ActualHeight > 0);
+            Assert.Contains(Descendants<TextBlock>(view),
+                block => block.Text.Contains("The Tenth Summer", StringComparison.Ordinal));
         });
+    }
+
+    [Fact]
+    public void BriefingView_LoreBlockCollapsesWhenTheSessionHasNoLore()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new BriefingViewModel(new SmgpSession { LoreAvailable = false });
+            Assert.False(vm.HasSmgpSeasonLore);
+
+            var view = new BriefingView { DataContext = vm };
+            view.Measure(new Size(1000, 1200));
+            view.Arrange(new Rect(0, 0, 1000, 1200));
+            view.UpdateLayout();
+
+            Assert.DoesNotContain(Descendants<TextBlock>(view),
+                block => block.Text.Contains("The Tenth Summer", StringComparison.Ordinal));
+        });
+    }
+
+    private static IEnumerable<T> Descendants<T>(DependencyObject root)
+        where T : DependencyObject
+    {
+        for (int index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(root, index);
+            if (child is T match)
+                yield return match;
+            foreach (T descendant in Descendants<T>(child))
+                yield return descendant;
+        }
     }
 }

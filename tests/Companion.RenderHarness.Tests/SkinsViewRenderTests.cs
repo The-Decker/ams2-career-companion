@@ -20,6 +20,15 @@ public sealed class SkinsViewRenderTests
 {
     private sealed class GridPreviewSession : ICareerSession
     {
+        private readonly Dictionary<string, SeatStagingOverride> _stagingOverrides =
+            new(StringComparer.Ordinal)
+            {
+                ["Lotus-Ford Cosworth #1 G. Hill"] = new SeatStagingOverride
+                {
+                    DriverName = "Legacy Nova",
+                },
+            };
+
         public CareerSummary Summary { get; } = new()
         {
             CareerName = "Render Career",
@@ -74,6 +83,17 @@ public sealed class SkinsViewRenderTests
                 ],
             },
         ];
+
+        public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
+            _stagingOverrides;
+
+        public void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride)
+        {
+            if (seatOverride.IsEmpty)
+                _stagingOverrides.Remove(liveryKey);
+            else
+                _stagingOverrides[liveryKey] = seatOverride;
+        }
 
         public BriefingModel? CurrentBriefing() => null;
         public StageOutcome StageCurrentGrid() => new() { Success = true, Messages = [] };
@@ -145,7 +165,40 @@ public sealed class SkinsViewRenderTests
 
             Assert.Empty(FindVisualChildren<TextBox>(view));
             Assert.Empty(FindVisualChildren<ComboBox>(view));
-            Assert.Equal(2, FindVisualChildren<Button>(view).Count());
+            Assert.IsType<Button>(view.FindName("PreviewPreviousCarButton"));
+            Assert.IsType<Button>(view.FindName("PreviewNextCarButton"));
+        });
+    }
+
+    [Fact]
+    public void GridPreview_ExposesAndClearsLegacyStagingOverrides()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = new GridPreviewSession();
+            var vm = new SkinsViewModel(session);
+            var view = new SkinsView { DataContext = vm };
+            view.Measure(new Size(1180, 900));
+            view.Arrange(new Rect(0, 0, 1180, 900));
+            view.UpdateLayout();
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+
+            Assert.True(vm.HasStagingOverrides);
+            Assert.Single(session.SeatStagingOverrides());
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(view.FindName("StagingOverridesNotice")).Visibility);
+
+            vm.ClearStagingOverridesCommand.Execute(null);
+            WpfRenderHarness.Pump(DispatcherPriority.DataBind);
+            view.UpdateLayout();
+
+            Assert.False(vm.HasStagingOverrides);
+            Assert.Empty(session.SeatStagingOverrides());
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<Border>(view.FindName("StagingOverridesNotice")).Visibility);
         });
     }
 

@@ -19,6 +19,65 @@
                        Text="🏁 Season complete — review the season, read your offer letters, and restore your AI file below." />
         </Border>
 
+        <!-- One non-blocking post-Apply announcement. It stays a single strip even when one race
+             crosses several levels, and disappears for character-free/no-progression folds. -->
+        <Border x:Name="ProgressionAnnouncement" DockPanel.Dock="Top"
+                Margin="20,10,20,0" Padding="14,9"
+                AutomationProperties.Name="Driver progression update"
+                AutomationProperties.LiveSetting="Polite">
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource AccentCallout}">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding LastProgression}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding LastProgression.XpGained}" Value="0" />
+                                <Condition Binding="{Binding LastProgression.LevelsGained}" Value="0" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <WrapPanel VerticalAlignment="Center">
+                <TextBlock Text="PROGRESSION" Style="{StaticResource PixelBadge}"
+                           Foreground="{DynamicResource AccentTextBrush}" Margin="0,1,12,0" />
+                <TextBlock x:Name="ProgressionXpText" FontFamily="{StaticResource MonoFont}"
+                           FontWeight="Bold" Margin="0,0,12,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding LastProgression.XpGained}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                    <Run Text="{Binding LastProgression.XpGained, Mode=OneWay, StringFormat={}{0:+0;-0;0}}" /><Run Text=" XP" />
+                </TextBlock>
+                <TextBlock x:Name="ProgressionLevelText" Margin="0,0,12,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding LastProgression.LevelsGained}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                    <Run Text="LEVEL " FontWeight="Bold" /><Run Text="{Binding LastProgression.LevelBefore, Mode=OneWay}" /><Run Text=" &#x2192; " /><Run Text="{Binding LastProgression.LevelAfter, Mode=OneWay}" FontWeight="Bold" /><Run Text="  (" /><Run Text="{Binding LastProgression.LevelsGained, Mode=OneWay, StringFormat=+{0}}" /><Run Text=")" />
+                </TextBlock>
+                <Border Style="{StaticResource CompactChip}" Padding="7,2">
+                    <TextBlock Foreground="{DynamicResource AccentTextBrush}" FontWeight="SemiBold">
+                        <Run Text="{Binding LastProgression.SkillPointsAvailable, Mode=OneWay}" /><Run Text=" SP BANKED" />
+                    </TextBlock>
+                </Border>
+            </WrapPanel>
+        </Border>
+
         <!-- two-state content: Briefing ⇄ Enter result (plus Confirm and Standings) -->
         <ContentControl Content="{Binding CurrentContent}" Focusable="False" Margin="20,16" />
     </DockPanel>

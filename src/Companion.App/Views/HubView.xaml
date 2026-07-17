@@ -95,6 +95,43 @@
                                    Text="{Binding Home.FormText}"
                                    ToolTip="Reputation and overperformance index after the last folded round"
                                    Visibility="{Binding Home.HasForm, Converter={StaticResource BoolVisible}}" />
+                        <WrapPanel Margin="0,5,0,0">
+                            <Border x:Name="DriverLevelChip" Style="{StaticResource CompactChip}"
+                                    Margin="0,0,6,3" Padding="7,2"
+                                    Background="{DynamicResource AccentDimBrush}"
+                                    BorderBrush="{DynamicResource AccentBrush}"
+                                    Visibility="{Binding Home.DriverLevelText, Converter={StaticResource NullCollapsed}}">
+                                <TextBlock Text="{Binding Home.DriverLevelText}" Style="{StaticResource PixelBadge}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Border x:Name="DriverAvailabilityChip" Margin="0,0,6,3" Padding="7,2"
+                                    Visibility="{Binding Home.DriverAvailabilityLabel, Converter={StaticResource NullCollapsed}}">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource CompactChip}">
+                                        <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Home.DriverAvailabilityLabel}" Value="Fit">
+                                                <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding Home.DriverAvailabilityLabel}" FontSize="10" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Home.DriverAvailabilityLabel}" Value="Fit">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
                     </StackPanel>
                 </DockPanel>
 

@@ -71,6 +71,7 @@
     <conv:LatestHubDispatchConverter x:Key="LatestHubDispatch" />
     <conv:SmgpPaddockRumorConverter x:Key="SmgpPaddockRumor" />
     <conv:SmgpPlayerTeamConverter x:Key="SmgpPlayerTeam" />
+    <conv:CampaignTimelineConverter x:Key="CampaignTimeline" />
     <conv:CalendarTask3DetailConverter x:Key="CalendarTask3Detail" />
     <conv:SmgpCalendarRoundArtConverter x:Key="SmgpCalendarRoundArt" />
     <conv:CalendarDnqVisibilityConverter x:Key="CalendarDnqVisible" />

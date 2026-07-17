@@ -72,6 +72,39 @@ public sealed class HistoryArchiveRenderTests
     }
 
     [Fact]
+    public void FreshCampaign_ShowsAllSeventeenSlotsBeforeRaceOne_WithCurrentState()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var session = ArchiveSession.Fresh();
+            using var hub = new HubViewModel(session);
+            var view = new HistoryView { DataContext = hub.History };
+            using var host = Host.Show(view, 1200, 760, hub);
+
+            var panel = Assert.IsType<Border>(view.FindName("CampaignTimelinePanel"));
+            var slots = Assert.IsType<ItemsControl>(view.FindName("CampaignTimelineSlots"));
+            var timelineScroll = Assert.IsType<ScrollViewer>(view.FindName("CampaignTimelineScroll"));
+
+            Assert.Equal(Visibility.Visible, panel.Visibility);
+            Assert.Equal(17, slots.Items.Count);
+            Assert.True(timelineScroll.Focusable);
+            Assert.True(timelineScroll.IsTabStop);
+            Assert.Equal("Campaign season timeline", AutomationProperties.GetName(timelineScroll));
+            Assert.Contains("arrow keys", AutomationProperties.GetHelpText(timelineScroll),
+                StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("17-SEASON CAMPAIGN", host.VisibleTexts());
+            Assert.Contains("The First Summer", host.VisibleTexts());
+            Assert.Contains("CURRENT", host.VisibleTexts());
+            Assert.Equal(
+                Visibility.Collapsed,
+                Assert.IsType<ScrollViewer>(view.FindName("HistoryScroll")).Visibility);
+        });
+    }
+
+    [Fact]
     public void SearchAndFilters_AreKeyboardReachable_AndExposeANamedFilteredEmptyState()
     {
         if (!WpfRenderHarness.IsSupported)
@@ -276,11 +309,13 @@ public sealed class HistoryArchiveRenderTests
         public SmgpPaddockModel? Paddock { get; init; }
         public IReadOnlyList<SmgpDispatch> Dispatches { get; init; } = [];
         public string? RivalId { get; init; }
+        public IReadOnlyList<CampaignTimelineEntry> Campaign { get; init; } = [];
 
         public CareerSummary Summary => SummaryValue;
         public SeasonPack Pack { get; } = MinimalPack();
 
         public CareerTimeline CareerTimeline() => Timeline;
+        public IReadOnlyList<CampaignTimelineEntry> CampaignTimeline() => Campaign;
         public SmgpPaddockModel? SmgpPaddock() => Paddock;
         public IReadOnlyList<SmgpDispatch> SmgpDispatches() => Dispatches;
         public string? CurrentSmgpRivalDriverId() => RivalId;
@@ -301,6 +336,7 @@ public sealed class HistoryArchiveRenderTests
         {
             SummaryValue = SummaryFor(round: 0, position: null),
             Timeline = Companion.ViewModels.Services.CareerTimeline.Empty,
+            Campaign = CampaignFor(current: 1, completed: 0),
         };
 
         public static ArchiveSession Legacy() => new()
@@ -320,6 +356,7 @@ public sealed class HistoryArchiveRenderTests
                 ],
                 Records = new CareerRecordsBook { TotalPoints = 1 },
             },
+            Campaign = CampaignFor(current: 1, completed: 0),
         };
 
         public static ArchiveSession Populated()
@@ -407,7 +444,38 @@ public sealed class HistoryArchiveRenderTests
                         TeamArtKey = "team.bullets",
                     },
                 ],
+                Campaign = CampaignFor(current: 2, completed: 1),
             };
+        }
+
+        private static IReadOnlyList<CampaignTimelineEntry> CampaignFor(int current, int completed)
+        {
+            string[] titles =
+            [
+                "The First Summer", "The Open Road", "The Heat Builds", "The Long Climb",
+                "The Fifth Campaign", "The New Order", "The Pressure Years", "The Narrow Margin",
+                "The Turning Point", "The Tenth Summer", "The Horsepower War", "The Reckoning",
+                "The Last Old Guard", "The Golden Chase", "The Penultimate Test",
+                "The Silver Jubilee", "The Crown of Crowns",
+            ];
+
+            return Enumerable.Range(1, 17)
+                .Select(ordinal => new CampaignTimelineEntry
+                {
+                    Ordinal = ordinal,
+                    State = ordinal <= completed
+                        ? CampaignSeasonState.Completed
+                        : ordinal == current
+                            ? CampaignSeasonState.Current
+                            : CampaignSeasonState.Locked,
+                    Year = ordinal <= completed ? 1989 + ordinal : null,
+                    Title = titles[ordinal - 1],
+                    Era = ordinal < 10 ? "The Iron Circus" : "The Golden Circus",
+                    PlayerPosition = ordinal <= completed ? 2 : null,
+                    PlayerChampion = ordinal == completed && completed > 0,
+                    MissedRounds = ordinal == 1 && completed > 0,
+                })
+                .ToArray();
         }
 
         private static CareerSeasonCard Season(int year, int seasonOrdinal)

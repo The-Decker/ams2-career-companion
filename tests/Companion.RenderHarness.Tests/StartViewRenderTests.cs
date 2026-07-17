@@ -27,6 +27,7 @@ public sealed class StartViewRenderTests
                 CareerName = "Formula One 1967",
                 LastOpenedUtc = DateTimeOffset.UnixEpoch,
                 SeasonYear = 1967,
+                TerminalState = "deceased",
             },
             new()
             {
@@ -35,12 +36,54 @@ public sealed class StartViewRenderTests
                 LastOpenedUtc = DateTimeOffset.UnixEpoch,
                 SeasonYear = 1988,
                 CareerStyle = "smgp",
+                TerminalState = "careerOver",
             },
         ];
 
         public IReadOnlyList<RecentCareer> Load() => _careers;
         public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null) { }
         public void Remove(string path) { }
+    }
+
+    [Fact]
+    public void StartView_CareerGarageBadgesTerminalCareersWithoutDisablingTheirArchives()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var vm = new StartViewModel(new FakeRecentStore());
+            var view = new StartView { DataContext = vm };
+            Arrange(view, 1920, 1080);
+
+            var garageButton = Assert.IsType<Button>(view.FindName("ModeCareerGarageButton"));
+            garageButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            WpfRenderHarness.Pump();
+            view.UpdateLayout();
+
+            var gallery = Assert.IsType<ListBox>(view.FindName("CareerGalleryList"));
+            Assert.Equal(2, gallery.Items.Count);
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(view.FindName("CareerGaragePanel")).Visibility);
+
+            gallery.UpdateLayout();
+            ListBoxItem[] cards = Enumerable.Range(0, gallery.Items.Count)
+                .Select(index => Assert.IsType<ListBoxItem>(
+                    gallery.ItemContainerGenerator.ContainerFromIndex(index)))
+                .ToArray();
+            Assert.All(cards, card => Assert.True(card.IsEnabled));
+
+            Border[] badges = Descendants<Border>(gallery)
+                .Where(border => border.Name == "TerminalCareerBadge")
+                .ToArray();
+            Assert.Equal(2, badges.Length);
+            Assert.Contains(badges,
+                badge => AutomationProperties.GetName(badge) == "IN MEMORIAM");
+            Assert.Contains(badges,
+                badge => AutomationProperties.GetName(badge) == "CAREER OVER");
+            Assert.All(badges, badge => Assert.Equal(Visibility.Visible, badge.Visibility));
+        });
     }
 
     [Fact]
