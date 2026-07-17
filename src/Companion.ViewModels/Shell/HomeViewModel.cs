@@ -99,9 +99,16 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _careerOver = mortality;
             _deathScreen = session.DeathScreen();
         }
+        // Reopening a bankrupt Dynasty career lands on the same terminal screen as the live
+        // handoff (economy §7). Death outranks the ledger when both ended the same round.
+        else if (session.BankruptcyScreen() is { } bankrupt)
+        {
+            _bankruptcyScreen = bankrupt;
+        }
 
-        // Both terminal routes keep the ordinary hub content inert underneath the App-owned takeover:
-        // mortality through CareerOver/DeathScreen, and the SMGP floor through Briefing.SmgpCareerOver.
+        // All terminal routes keep the ordinary hub content inert underneath the App-owned takeover:
+        // mortality through CareerOver/DeathScreen, the SMGP floor through Briefing.SmgpCareerOver,
+        // and Dynasty bankruptcy through BankruptcyScreen.
         if (IsCareerTerminal)
             _currentContent = Briefing;
         else if (_summary.SeasonComplete)
@@ -261,11 +268,22 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private DeathScreenModel? _deathScreen;
 
-    /// <summary>One additive terminal predicate over the two existing, frozen GUI bind contracts:
-    /// fatal mortality uses <see cref="CareerOver"/>, while the SMGP Level-D floor uses
-    /// <see cref="BriefingViewModel.SmgpCareerOver"/>. It changes navigation only; each ending keeps its
+    /// <summary>The Dynasty bankruptcy game-over projection (economy §7) — the collapse facts, the
+    /// career record, and (when saves exist) the restore slots. Set on the fatal settlement's
+    /// handoff and on reopening a bankrupt career; the App-owned bankruptcy takeover binds this.
+    /// Bankruptcy never deletes the file, so its reads are ordinary DB-backed ones.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsCareerTerminal))]
+    [NotifyCanExecuteChangedFor(nameof(ShowBriefingCommand), nameof(EnterResultCommand))]
+    private BankruptcyScreenModel? _bankruptcyScreen;
+
+    /// <summary>One additive terminal predicate over the three purpose-built projections:
+    /// fatal mortality uses <see cref="CareerOver"/>, the SMGP Level-D floor uses
+    /// <see cref="BriefingViewModel.SmgpCareerOver"/>, and Dynasty bankruptcy uses
+    /// <see cref="BankruptcyScreen"/>. It changes navigation only; each ending keeps its
     /// purpose-built projection and view.</summary>
-    public bool IsCareerTerminal => CareerOver is not null || Briefing.SmgpCareerOver;
+    public bool IsCareerTerminal =>
+        CareerOver is not null || Briefing.SmgpCareerOver || BankruptcyScreen is not null;
 
     public bool IsBriefingState => CurrentContent is BriefingViewModel;
     public bool IsResultEntryState => CurrentContent is ResultEntryViewModel;
@@ -787,6 +805,14 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             // The richer obituary/record model rides alongside — also DB-free after a Hardcore death
             // (captured pre-deletion), so this is safe even once the file is gone.
             DeathScreen = _session.DeathScreen();
+            return;
+        }
+
+        // Dynasty bankruptcy (economy §7): the settlement that folded the team hands off to its own
+        // takeover. The file survives (an ordinary DB-backed read), and death above outranks it.
+        if (_session.BankruptcyScreen() is { } wentBankrupt)
+        {
+            BankruptcyScreen = wentBankrupt;
             return;
         }
 

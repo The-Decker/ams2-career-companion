@@ -429,6 +429,12 @@ public interface ICareerSession
     /// Hardcore death, so it is safe to read after the DB is gone. Additive default: null, so fakes compile.</summary>
     DeathScreenModel? DeathScreen() => null;
 
+    /// <summary>The Dynasty bankruptcy game-over projection (docs/dev/dynasty-tycoon-economy.md §7)
+    /// when the team's economy folded — the collapse facts, the whole-career record, and (when saves
+    /// exist) the restore slots. Null while the team is solvent and for every non-economy career.
+    /// Additive default: null, so fakes compile.</summary>
+    BankruptcyScreenModel? BankruptcyScreen() => null;
+
     /// <summary>The player's SIT-OUT status when an injury forces the CURRENT round to be auto-simulated
     /// (character death &amp; injury §5), or null when the player races this round normally. The shell shows
     /// the sit-out screen (an "INJURED — auto-simulating" / "SEASON OVER — recovering" banner) with a

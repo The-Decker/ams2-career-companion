@@ -81,6 +81,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     /// lives. Immutable once the driver is dead (a dead career takes no more rounds).</summary>
     private DeathScreenModel? _deathScreen;
 
+    /// <summary>The bankruptcy game-over model (economy §7), memoised on first read after the team
+    /// folds. Bankruptcy never deletes the career file, so it always builds live from the intact DB.
+    /// Null while solvent (and for every non-economy career).</summary>
+    private BankruptcyScreenModel? _bankruptcyScreen;
+
     public SeasonPack Pack { get; }
 
     public string CareerFilePath { get; }
@@ -4155,6 +4160,11 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (beforePlayer?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over - a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal too (economy §7) — a folded team takes no more
+        // rounds, exactly like the two guards above.
+        if (beforePlayer?.Economy?.Bankrupt == true)
+            throw new InvalidOperationException(
+                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to score.");
         // The inverse of AutoSimulateRound's fit-check: an injured driver's round is auto-simulated,
@@ -4280,6 +4290,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (beforePlayer?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal too (economy §7) — a folded team takes no more
+        // rounds. All three guard sites (Preview/Apply/AutoSimulateRound) repeat this chain: a new
+        // terminal state that skips one leaves a scoring hole (the SMGP floor's original bug).
+        if (beforePlayer?.Economy?.Bankrupt == true)
+            throw new InvalidOperationException(
+                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to apply.");
         // Same availability gate as Preview: an injured driver's round only ever folds through
@@ -4346,8 +4362,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         }
 
         // A dead driver (Normal) banks no title and rolls no offers — the season does not "complete";
-        // the death screen (Slice 5) offers a restore instead.
-        if (SeasonComplete && !justDied)
+        // the death screen (Slice 5) offers a restore instead. A team that JUST went bankrupt
+        // (economy §7) is suppressed the same way: a folded team banks no title and rolls no
+        // offers; the bankruptcy screen (built lazily — the file survives) takes over.
+        bool justWentBankrupt = beforePlayer?.Economy?.Bankrupt != true
+            && CurrentPlayerState()?.Economy?.Bankrupt == true;
+        if (SeasonComplete && !justDied && !justWentBankrupt)
             EnsureSeasonEnd();
     }
 
@@ -5962,6 +5982,68 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             timeline.Records, timeline.Seasons, SaveSlots());
     }
 
+    /// <inheritdoc />
+    public BankruptcyScreenModel? BankruptcyScreen()
+    {
+        if (_careerFileDeleted)
+            return null; // a Hardcore death outranks the ledger — the death screen owns the ending
+        var player = CurrentPlayerState();
+        if (player?.Economy?.Bankrupt != true)
+            return null;
+        // Memoised: a bankrupt career takes no more rounds, so it never changes.
+        return _bankruptcyScreen ??= BuildBankruptcyScreen(player);
+    }
+
+    /// <summary>Assemble the bankruptcy-screen model from the folded journal + state: the terminal
+    /// <c>economy.bankruptcy</c> row (round, final balance, the grace that ran out), the whole
+    /// career record, and any restore slots. A pure read — no fold change, no new persistence,
+    /// so replay stays byte-identical. Mirrors <see cref="BuildDeathScreen"/>.</summary>
+    private BankruptcyScreenModel BuildBankruptcyScreen(PlayerCareerState player)
+    {
+        int? round = null;
+        string balance = player.Economy!.Balance.ToString();
+        int deficitRounds = player.Economy.DeficitRounds;
+        int graceRounds = 0;
+        var terminal = JournalStore.ReadSeason(_database, _seasonId)
+            .LastOrDefault(r => string.Equals(
+                r.Phase, JournalPhases.EconomyBankruptcy, StringComparison.Ordinal));
+        if (terminal is not null)
+        {
+            round = terminal.Round;
+            try
+            {
+                using var doc = JsonDocument.Parse(terminal.DeltaJson);
+                if (doc.RootElement.TryGetProperty("balance", out var b) && b.ValueKind == JsonValueKind.String)
+                    balance = b.GetString() ?? balance;
+                if (doc.RootElement.TryGetProperty("deficitRounds", out var d) && d.ValueKind == JsonValueKind.Number)
+                    deficitRounds = d.GetInt32();
+                if (doc.RootElement.TryGetProperty("graceRounds", out var g) && g.ValueKind == JsonValueKind.Number)
+                    graceRounds = g.GetInt32();
+            }
+            catch (JsonException) { }
+        }
+
+        var timeline = CareerTimeline();
+        string name = player.Character?.Name is { Length: > 0 } n ? n : PlayerDisplayName() ?? "The owner-driver";
+        string teamName = Pack.Teams
+            .FirstOrDefault(t => string.Equals(t.Id, player.CurrentTeamId, StringComparison.Ordinal))
+            ?.Name ?? player.CurrentTeamId ?? "the team";
+
+        return new BankruptcyScreenModel
+        {
+            DriverName = name,
+            TeamName = teamName,
+            Year = _seasonYear,
+            Round = round,
+            FinalBalance = balance,
+            DeficitRounds = deficitRounds,
+            GraceRounds = graceRounds,
+            Record = timeline.Records,
+            Seasons = timeline.Seasons,
+            RestoreSlots = SaveSlots(),
+        };
+    }
+
     /// <summary>The venue label for a round of the CURRENT season pack — the real historical venue when the
     /// track carries one, else the round's display name.</summary>
     private string? VenueForRound(int round)
@@ -6214,6 +6296,10 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         if (player?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal here too — the third of the three guard sites.
+        if (player?.Economy?.Bankrupt == true)
+            throw new InvalidOperationException(
+                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to simulate.");
         if (player is null || (player.RaceSuspensionRemaining == 0 && !player.SeasonEndingInjury))

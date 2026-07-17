@@ -34,19 +34,21 @@ public sealed record RecentCareer
 
     /// <summary>The career's terminal state as last observed at open/create: <c>"deceased"</c>
     /// (the driver died — the archive stays viewable), <c>"careerOver"</c> (the SMGP floor
-    /// knock-out), or <c>null</c> for a live career. Recorded so the gallery can badge a finished
-    /// career honestly instead of presenting it as playable. Not <c>required</c> — an older
-    /// <c>recent.json</c> reads it as null, back-compat.</summary>
+    /// knock-out), <c>"bankrupt"</c> (the Dynasty team folded — economy §7), or <c>null</c> for a
+    /// live career. Recorded so the gallery can badge a finished career honestly instead of
+    /// presenting it as playable. Not <c>required</c> — an older <c>recent.json</c> reads it as
+    /// null, back-compat.</summary>
     public string? TerminalState { get; init; }
 
     public bool IsTerminal => TerminalState is { Length: > 0 };
 
-    /// <summary>The gallery badge for a finished career ("IN MEMORIAM" / "CAREER OVER"); empty
-    /// for a live one.</summary>
+    /// <summary>The gallery badge for a finished career ("IN MEMORIAM" / "CAREER OVER" /
+    /// "BANKRUPT"); empty for a live one.</summary>
     public string TerminalBadge => TerminalState switch
     {
         "deceased" => "IN MEMORIAM",
         "careerOver" => "CAREER OVER",
+        "bankrupt" => "BANKRUPT",
         _ => "",
     };
 }
