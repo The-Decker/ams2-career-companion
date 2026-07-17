@@ -169,6 +169,51 @@ public sealed class SmgpSeasonLoreTests
     }
 
     [Fact]
+    public void NoPlayerLineNamesALiteralTeam()
+    {
+        // The guard that makes the "Minarae bug" impossible to reintroduce: the player's OWN team
+        // is dynamic (a creation choice that moves across the campaign), so it is ALWAYS the
+        // {playerTeam} token — never a literal team in a membership construction. World teams
+        // (Senna's Madonna, Nono's Minarae) stay literal, but they never sit in a PLAYER sentence.
+        // A player-marked line naming "<Team> garage/signing/seat/overalls" fails the build.
+        string[] teams =
+        [
+            "Azalea", "Bestowal", "Blanche", "Bullets", "Comet", "Cool", "Dardan", "Feet",
+            "Firenze", "Iris", "Joke", "Lares", "Linden", "Losel", "Madonna", "May", "Millions",
+            "Minarae", "Moon", "Orchis", "Rigel", "Serga", "Tyrant", "Zeroforce",
+        ];
+        // Phrases that describe ONLY the player in this lore (verified — never an AI driver).
+        string[] playerMarkers =
+        [
+            "the climber", "unheralded", "stranger at the anvil", "the new name",
+            "posted, without ceremony", "the newcomer",
+        ];
+        // Team-membership nouns: "<Team> garage" reads as "the player is AT that team".
+        string[] membership = ["garage", "signing", "seat", "overalls", "locker", "colours"];
+
+        foreach (var season in Lore.Seasons)
+        {
+            foreach (string text in AllStrings(season))
+            {
+                if (!playerMarkers.Any(m => text.Contains(m, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+                foreach (string team in teams)
+                {
+                    foreach (string noun in membership)
+                    {
+                        Assert.False(
+                            text.Contains($"{team} {noun}", StringComparison.OrdinalIgnoreCase),
+                            $"S{season.Ordinal} names the player at the literal team '{team} {noun}' — " +
+                            $"use the {SmgpSeasonLoreEntry.PlayerTeamToken} token instead. Line: {text}");
+                    }
+                }
+            }
+        }
+    }
+
+    [Fact]
     public void WithPlayerTeam_EmptyName_FallsBackGrammatically()
     {
         var season1 = Lore.ForOrdinal(1)!.WithPlayerTeam("");
