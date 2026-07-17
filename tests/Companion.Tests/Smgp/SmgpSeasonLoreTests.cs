@@ -127,6 +127,56 @@ public sealed class SmgpSeasonLoreTests
         }
     }
 
+    [Fact]
+    public void PlayerTeamIsAToken_NotBakedIn()
+    {
+        // The player's OWN team is a creation choice that changes across the campaign, so the lore
+        // must never hard-code one team as the player's. Season 1's arrival line is the canonical
+        // case: it carries the {playerTeam} token, not "Minarae" (the skeleton's original bug).
+        var season1 = Lore.ForOrdinal(1)!;
+        Assert.Contains(SmgpSeasonLoreEntry.PlayerTeamToken, season1.Subtitle, StringComparison.Ordinal);
+        Assert.DoesNotContain("Minarae garage", season1.Subtitle, StringComparison.OrdinalIgnoreCase);
+
+        // Any field that carries the token is a PLAYER reference — never a hard-coded team beside it.
+        foreach (var season in Lore.Seasons)
+        {
+            foreach (string text in AllStrings(season))
+            {
+                if (text.Contains(SmgpSeasonLoreEntry.PlayerTeamToken, StringComparison.Ordinal))
+                {
+                    Assert.DoesNotContain("Minarae", text, StringComparison.OrdinalIgnoreCase);
+                }
+            }
+        }
+    }
+
+    [Fact]
+    public void WithPlayerTeam_ResolvesEveryToken_ToTheRealTeam()
+    {
+        foreach (var season in Lore.Seasons)
+        {
+            var resolved = season.WithPlayerTeam("Zeroforce");
+            foreach (string text in AllStrings(resolved))
+            {
+                Assert.DoesNotContain(SmgpSeasonLoreEntry.PlayerTeamToken, text, StringComparison.Ordinal);
+            }
+        }
+
+        // The visible bug's exact fix: season 1 now names the driver's real team.
+        var season1 = Lore.ForOrdinal(1)!.WithPlayerTeam("Zeroforce");
+        Assert.Contains("Zeroforce garage", season1.Subtitle, StringComparison.Ordinal);
+        Assert.DoesNotContain("Minarae", season1.Subtitle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void WithPlayerTeam_EmptyName_FallsBackGrammatically()
+    {
+        var season1 = Lore.ForOrdinal(1)!.WithPlayerTeam("");
+        Assert.DoesNotContain(SmgpSeasonLoreEntry.PlayerTeamToken, season1.Subtitle, StringComparison.Ordinal);
+        // "the {playerTeam} garage" → "the home garage" — grammatical, never a raw token or "the  garage".
+        Assert.Contains("the home garage", season1.Subtitle, StringComparison.Ordinal);
+    }
+
     private static IEnumerable<string> AllStrings(SmgpSeasonLoreEntry season)
     {
         yield return season.Title;

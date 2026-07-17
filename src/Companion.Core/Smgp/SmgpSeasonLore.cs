@@ -69,9 +69,18 @@ public sealed class SmgpSeasonLore
 }
 
 /// <summary>One campaign season's authored identity. All prose is SMGP canon (fiction) written to
-/// be outcome-agnostic: the sim decides every result; the lore supplies the world around it.</summary>
+/// be outcome-agnostic: the sim decides every result; the lore supplies the world around it.
+///
+/// The player's OWN team is not baked into the canon — the player is a synthetic entry who joins
+/// whichever team they chose at creation and moves between teams across the campaign. Wherever the
+/// lore names the player's team it uses the <see cref="PlayerTeamToken"/> placeholder, resolved to
+/// the driver's ACTUAL team for the season being shown by <see cref="WithPlayerTeam"/>. The world's
+/// own teams (Madonna, Bullets, Minarae and the rest, with their canon drivers) stay literal.</summary>
 public sealed record SmgpSeasonLoreEntry
 {
+    /// <summary>The placeholder the authored lore uses for the player's team; replaced per season by
+    /// <see cref="WithPlayerTeam"/> so "the {playerTeam} garage" reads with the real team name.</summary>
+    public const string PlayerTeamToken = "{playerTeam}";
     /// <summary>1-based campaign season ordinal (1-17).</summary>
     public required int Ordinal { get; init; }
 
@@ -114,4 +123,50 @@ public sealed record SmgpSeasonLoreEntry
 
     /// <summary>Record/milestone opportunities plausible this season (2+).</summary>
     public IReadOnlyList<string> Milestones { get; init; } = [];
+
+    /// <summary>Resolves every <see cref="PlayerTeamToken"/> to the driver's ACTUAL team for the
+    /// season being shown, so the lore names the player's real team (dynamic across the campaign)
+    /// instead of a baked-in one. An empty team name (a career with no seat — never a live SMGP
+    /// career) reads "the home"; the surrounding prose always frames the token as "the {token}
+    /// &lt;noun&gt;" so that fallback stays grammatical. Returns the same instance when nothing
+    /// carries the token, so a lore file without player references is untouched.</summary>
+    public SmgpSeasonLoreEntry WithPlayerTeam(string? teamName)
+    {
+        string team = string.IsNullOrWhiteSpace(teamName) ? "home" : teamName!.Trim();
+
+        string Fill(string text) =>
+            text.Contains(PlayerTeamToken, StringComparison.Ordinal)
+                ? text.Replace(PlayerTeamToken, team, StringComparison.Ordinal)
+                : text;
+
+        IReadOnlyList<string> FillAll(IReadOnlyList<string> lines)
+        {
+            if (!lines.Any(l => l.Contains(PlayerTeamToken, StringComparison.Ordinal)))
+            {
+                return lines;
+            }
+            var result = new string[lines.Count];
+            for (int i = 0; i < lines.Count; i++)
+            {
+                result[i] = Fill(lines[i]);
+            }
+            return result;
+        }
+
+        return this with
+        {
+            Title = Fill(Title),
+            Subtitle = Fill(Subtitle),
+            Overview = Fill(Overview),
+            Preseason = Fill(Preseason),
+            Technical = Fill(Technical),
+            Safety = Fill(Safety),
+            Themes = FillAll(Themes),
+            Timeline = FillAll(Timeline),
+            Arcs = FillAll(Arcs),
+            Hooks = FillAll(Hooks),
+            Contenders = FillAll(Contenders),
+            Milestones = FillAll(Milestones),
+        };
+    }
 }

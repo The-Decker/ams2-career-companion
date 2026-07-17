@@ -6086,7 +6086,9 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         if (!IsSmgpPack || _environment.Rules?.SmgpSeasonLore is not { IsEmpty: false } lore)
             return null;
-        return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count);
+        // Resolve the {playerTeam} token to the driver's ACTUAL current team, so the season header
+        // names the team the player is really on (dynamic across the campaign), not a baked-in one.
+        return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count)?.WithPlayerTeam(CurrentPlayerTeamName());
     }
 
     /// <inheritdoc />
