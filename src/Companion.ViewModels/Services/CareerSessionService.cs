@@ -375,6 +375,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     request.Mortality,
                     campaign?.Plan.Mode,
                     campaign?.Plan,
+                    // The Dynasty owner economy: both halves of the gate — the pinned campaign mode
+                    // AND the creation opt-in. The rules are resolved only for an opted-in Dynasty
+                    // career, so a rules-directory-free caller (most tests) never touches them.
+                    request.DynastyEconomy && campaign?.Plan.Mode == CareerExperienceModes.GrandPrixDynasty
+                        ? environment.Rules.DynastyEconomy
+                        : null,
                     transaction);
 
                 transaction.Commit();
@@ -560,6 +566,7 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         MortalityMode mortality,
         string? experienceMode,
         CampaignProgressionPlan? campaignProgressionPlan,
+        Companion.Core.Dynasty.DynastyEconomyRules? economyRules,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -623,6 +630,18 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             // nothing (WhenWritingDefault) so a non-opted career's start blob is byte-identical;
             // Normal/Hardcore are carried forward each round via record `with`, exactly like FormAware.
             Mortality = mortality,
+            // The Dynasty owner economy: the caller resolved rules ONLY for an opted-in Dynasty
+            // career, so a non-null value IS the gate (mode + opt-in). The opening balance is
+            // pinned here from the starting team's tier, era-scaled — start state is INPUT, so a
+            // later rules edit never rewrites an existing career's opening funds. Null serializes
+            // to nothing (WhenWritingNull): every other career's start blob is byte-identical.
+            Economy = economyRules is null
+                ? null
+                : new Companion.Core.Dynasty.DynastyEconomyState
+                {
+                    Version = economyRules.SchemaVersion,
+                    Balance = economyRules.StartingFunds(playerTier, year),
+                },
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);

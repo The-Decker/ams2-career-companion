@@ -1,0 +1,87 @@
+{
+  "$comment": "Grand Prix Dynasty owner-economy balance tables (docs/dev/dynasty-tycoon-economy.md). Stylized game numbers, NOT historical financial claims. Base tables are 1960s-era units; every charge/credit scales by the season year's eraScaling index, so income and costs grow together across the timeline. All money values are exact rationals ('8000', '27/20'); strengthPerLevel is a rating-domain double, not money. schemaVersion is pinned into each career at creation — balance changes for NEW careers ride a new schema version, never a silent edit.",
+  "schemaVersion": 1,
+  "eraScaling": [
+    { "fromYear": 1950, "toYear": 1969, "index": "1" },
+    { "fromYear": 1970, "toYear": 1979, "index": "3" },
+    { "fromYear": 1980, "toYear": 1989, "index": "10" },
+    { "fromYear": 1990, "toYear": 1999, "index": "30" },
+    { "fromYear": 2000, "toYear": 2009, "index": "80" },
+    { "fromYear": 2010, "toYear": 2029, "index": "150" }
+  ],
+  "startingFundsByTier": {
+    "1": "18000",
+    "2": "30000",
+    "3": "45000",
+    "4": "70000",
+    "5": "100000"
+  },
+  "racePrizeByPosition": ["10000", "7000", "5000", "3500", "2500", "1800", "1200", "900", "600", "400"],
+  "racePrizeClassifiedDefault": "250",
+  "seasonPrizeByConstructorPosition": ["40000", "28000", "20000", "14000", "10000", "7000"],
+  "seasonPrizeDefault": "4000",
+  "appearanceMoney": "1500",
+  "entryFee": "500",
+  "logisticsPerRound": "1200",
+  "upkeepPerRound": "2000",
+  "repairs": {
+    "accidentLight": "1500",
+    "accidentMedium": "4000",
+    "accidentHeavy": "9000",
+    "mechanical": "2000",
+    "driverError": "2500",
+    "secondCarDnf": "2000"
+  },
+  "development": {
+    "baseCost": "8000",
+    "growth": "27/20",
+    "maxLevel": 8,
+    "carryover": "1/2",
+    "strengthPerLevel": 0.015,
+    "staffDiscountPerTier": "1/12"
+  },
+  "staff": [
+    { "tier": 1, "upkeepPerSeason": "6000" },
+    { "tier": 2, "upkeepPerSeason": "14000" },
+    { "tier": 3, "upkeepPerSeason": "24000" }
+  ],
+  "secondSeat": {
+    "retainedSalaryPerSeasonByTier": {
+      "1": "6000",
+      "2": "10000",
+      "3": "15000",
+      "4": "22000",
+      "5": "32000"
+    },
+    "payDriverBackingPerSeason": "12000"
+  },
+  "sponsors": {
+    "slots": { "title": 1, "major": 2, "minor": 3 },
+    "board": [
+      { "id": "sponsor.apex-lubricants", "name": "Apex Lubricants", "tierSlot": "minor", "fromYear": 1950, "toYear": 1975, "minReputation": 10, "signingBonus": "500", "perRace": "150", "perSeason": "1000", "podiumBonus": "150", "winBonus": "300", "titleBonus": "1000", "contractSeasons": 2 },
+      { "id": "sponsor.corsa-tyres", "name": "Corsa Tyre Company", "tierSlot": "minor", "fromYear": 1950, "toYear": 1985, "minReputation": 15, "signingBonus": "600", "perRace": "160", "perSeason": "1100", "podiumBonus": "150", "winBonus": "300", "titleBonus": "1200", "contractSeasons": 2 },
+      { "id": "sponsor.veloce-fuels", "name": "Veloce Fuels", "tierSlot": "minor", "fromYear": 1960, "toYear": 1995, "minReputation": 20, "signingBonus": "700", "perRace": "180", "perSeason": "1200", "podiumBonus": "180", "winBonus": "350", "titleBonus": "1300", "contractSeasons": 2 },
+      { "id": "sponsor.brandt-tools", "name": "Brandt Precision Tools", "tierSlot": "minor", "fromYear": 1970, "toYear": 2010, "minReputation": 15, "signingBonus": "600", "perRace": "160", "perSeason": "1100", "podiumBonus": "160", "winBonus": "320", "titleBonus": "1100", "contractSeasons": 2 },
+      { "id": "sponsor.nimbus-logistics", "name": "Nimbus Logistics", "tierSlot": "minor", "fromYear": 1985, "toYear": 2020, "minReputation": 20, "signingBonus": "700", "perRace": "170", "perSeason": "1200", "podiumBonus": "170", "winBonus": "340", "titleBonus": "1200", "contractSeasons": 2 },
+      { "id": "sponsor.pixelworks", "name": "Pixelworks Interactive", "tierSlot": "minor", "fromYear": 1995, "toYear": 2029, "minReputation": 20, "signingBonus": "700", "perRace": "180", "perSeason": "1200", "podiumBonus": "180", "winBonus": "360", "titleBonus": "1300", "contractSeasons": 2 },
+      { "id": "sponsor.hexa-parts", "name": "Hexa Performance Parts", "tierSlot": "minor", "fromYear": 2000, "toYear": 2029, "minReputation": 10, "signingBonus": "500", "perRace": "150", "perSeason": "1000", "podiumBonus": "150", "winBonus": "300", "titleBonus": "1000", "contractSeasons": 2 },
+      { "id": "sponsor.royal-albion-oil", "name": "Royal Albion Oil", "tierSlot": "major", "fromYear": 1950, "toYear": 1979, "minReputation": 35, "signingBonus": "2000", "perRace": "500", "perSeason": "3000", "podiumBonus": "400", "winBonus": "800", "titleBonus": "3000", "contractSeasons": 3 },
+      { "id": "sponsor.silverline", "name": "Silverline", "tierSlot": "major", "fromYear": 1965, "toYear": 1999, "minReputation": 40, "bestConstructorPositionRequired": 8, "signingBonus": "2500", "perRace": "550", "perSeason": "3500", "podiumBonus": "450", "winBonus": "900", "titleBonus": "3500", "contractSeasons": 3 },
+      { "id": "sponsor.continental-watches", "name": "Continental Chronographs", "tierSlot": "major", "fromYear": 1955, "toYear": 1989, "minReputation": 40, "signingBonus": "2200", "perRace": "520", "perSeason": "3200", "podiumBonus": "420", "winBonus": "850", "titleBonus": "3200", "contractSeasons": 3 },
+      { "id": "sponsor.aurora-airways", "name": "Aurora Airways", "tierSlot": "major", "fromYear": 1970, "toYear": 2005, "minReputation": 35, "signingBonus": "2000", "perRace": "500", "perSeason": "3000", "podiumBonus": "400", "winBonus": "800", "titleBonus": "3000", "contractSeasons": 3 },
+      { "id": "sponsor.vector-electronics", "name": "Vector Electronics", "tierSlot": "major", "fromYear": 1980, "toYear": 2015, "minReputation": 40, "bestConstructorPositionRequired": 8, "signingBonus": "2500", "perRace": "550", "perSeason": "3500", "podiumBonus": "450", "winBonus": "900", "titleBonus": "3500", "contractSeasons": 3 },
+      { "id": "sponsor.atlas-telecom", "name": "Atlas Telecom", "tierSlot": "major", "fromYear": 1990, "toYear": 2020, "minReputation": 40, "signingBonus": "2300", "perRace": "530", "perSeason": "3300", "podiumBonus": "430", "winBonus": "860", "titleBonus": "3300", "contractSeasons": 3 },
+      { "id": "sponsor.cryon-energy", "name": "Cryon Energy", "tierSlot": "major", "fromYear": 2005, "toYear": 2029, "minReputation": 35, "signingBonus": "2200", "perRace": "520", "perSeason": "3200", "podiumBonus": "450", "winBonus": "900", "titleBonus": "3400", "contractSeasons": 3 },
+      { "id": "sponsor.orbital-cloud", "name": "Orbital Cloud Systems", "tierSlot": "major", "fromYear": 2010, "toYear": 2029, "minReputation": 40, "bestConstructorPositionRequired": 8, "signingBonus": "2600", "perRace": "560", "perSeason": "3600", "podiumBonus": "460", "winBonus": "920", "titleBonus": "3600", "contractSeasons": 3 },
+      { "id": "sponsor.imperial-petroleum", "name": "Imperial Petroleum", "tierSlot": "title", "fromYear": 1950, "toYear": 1984, "minReputation": 55, "bestConstructorPositionRequired": 6, "signingBonus": "6000", "perRace": "1200", "perSeason": "8000", "podiumBonus": "800", "winBonus": "1500", "titleBonus": "12000", "contractSeasons": 3 },
+      { "id": "sponsor.monarch-gold", "name": "Monarch Gold", "tierSlot": "title", "fromYear": 1968, "toYear": 1998, "minReputation": 60, "bestConstructorPositionRequired": 5, "signingBonus": "7000", "perRace": "1300", "perSeason": "9000", "podiumBonus": "900", "winBonus": "1700", "titleBonus": "14000", "contractSeasons": 4 },
+      { "id": "sponsor.zenith-banking", "name": "Zenith International Bank", "tierSlot": "title", "fromYear": 1985, "toYear": 2012, "minReputation": 60, "bestConstructorPositionRequired": 5, "signingBonus": "7000", "perRace": "1300", "perSeason": "9000", "podiumBonus": "900", "winBonus": "1700", "titleBonus": "14000", "contractSeasons": 3 },
+      { "id": "sponsor.helios-motors", "name": "Helios Motor Corporation", "tierSlot": "title", "fromYear": 1995, "toYear": 2029, "minReputation": 65, "bestConstructorPositionRequired": 4, "signingBonus": "8000", "perRace": "1400", "perSeason": "10000", "podiumBonus": "1000", "winBonus": "1800", "titleBonus": "16000", "contractSeasons": 4 },
+      { "id": "sponsor.quantum-digital", "name": "Quantum Digital", "tierSlot": "title", "fromYear": 2012, "toYear": 2029, "minReputation": 60, "bestConstructorPositionRequired": 5, "signingBonus": "7500", "perRace": "1350", "perSeason": "9500", "podiumBonus": "950", "winBonus": "1750", "titleBonus": "15000", "contractSeasons": 3 }
+    ]
+  },
+  "bankruptcy": {
+    "graceRounds": 4,
+    "hardFloor": "-25000"
+  }
+}

@@ -89,6 +89,13 @@ public sealed record CareerRulesData
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
     public required CarSpecCatalog CarSpecs { get; init; }
 
+    /// <summary>The Grand Prix Dynasty owner-economy balance tables
+    /// (<c>data\rules\dynasty\economy.json</c>) — a REQUIRED fold input for economy careers
+    /// (prize/cost/sponsor/development/bankruptcy tables, all exact-rational money). Loaded
+    /// eagerly like perks.json so the live and replay paths see the identical instance; a
+    /// non-economy career never reads it.</summary>
+    public required Companion.Core.Dynasty.DynastyEconomyRules DynastyEconomy { get; init; }
+
     /// <summary>The living-newsroom template library (<c>data\rules\newsroom\*.json</c>): multi-
     /// section article templates + era pools voicing the mode-agnostic event spine. DISPLAY-ONLY —
     /// never a fold input; empty when the folder is absent (the newsroom feed then simply omits).</summary>
@@ -121,6 +128,7 @@ public sealed record CareerRulesData
             SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
             SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
             SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
+            DynastyEconomy = Companion.Core.Dynasty.DynastyEconomyRules.Load(rulesDirectory),
             CarSpecs = CarSpecCatalog.Load(rulesDirectory),
             NewsroomCorpus = Companion.Core.Newsroom.NewsroomCorpus.LoadDirectory(
                 Path.Combine(rulesDirectory, "newsroom")),
