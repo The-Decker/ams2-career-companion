@@ -46,6 +46,26 @@ public sealed class CampaignTimelineTests : IDisposable
     }
 
     [Fact]
+    public void LockedSeasonsRevealNothing_NoFutureSpoilers()
+    {
+        using var session = CreateSmgpCareer("nospoil");
+
+        var timeline = session.CampaignTimeline();
+
+        // A future season is an anonymous placeholder — its title, era and year stay hidden until
+        // the player reaches it. The campaign is never previewed ahead; you meet each season on
+        // arrival. (The current season DOES carry its identity — you are playing it.)
+        foreach (var locked in timeline.Where(e => e.State == CampaignSeasonState.Locked))
+        {
+            Assert.Equal("", locked.Title);
+            Assert.Equal("", locked.Era);
+            Assert.Null(locked.Year);
+        }
+        Assert.Equal(CampaignSeasonState.Current, timeline[0].State);
+        Assert.Contains(timeline, e => e.State == CampaignSeasonState.Locked); // 16 of them, fresh
+    }
+
+    [Fact]
     public void AfterSeasonOne_TheArcAdvances_CompletedThenCurrentThenLocked()
     {
         PlaySmgpSeasonOneAndSign("advance");

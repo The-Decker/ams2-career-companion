@@ -6040,17 +6040,19 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             .Select(e => e.SeasonOrdinal)
             .ToHashSet();
 
-        // Every SMGP season carries its authored identity — locked seasons show their title/era
-        // (spoiler-light: titles and eras, never outcomes, which the lore doesn't assert anyway).
+        // A season's authored identity (title/era) is revealed ONLY once it is reached: the current
+        // season and completed ones carry it, LOCKED future seasons carry NOTHING — no title, no
+        // era, no year — so no surface can spoil what is coming. The campaign is never previewed
+        // ahead of the player; they meet each season when they arrive at it.
         var lore = IsSmgpPack ? _environment.Rules?.SmgpSeasonLore : null;
 
         var entries = new List<CampaignTimelineEntry>(horizon);
         for (int ordinal = 1; ordinal <= horizon; ordinal++)
         {
-            var seasonLore = lore?.ForOrdinal(ordinal);
             if (ordinal <= cards.Count)
             {
                 var card = cards[ordinal - 1];
+                var seasonLore = lore?.ForOrdinal(ordinal);
                 entries.Add(new CampaignTimelineEntry
                 {
                     Ordinal = ordinal,
@@ -6065,15 +6067,12 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             }
             else
             {
+                // Locked/future season: an anonymous placeholder only — its identity stays hidden
+                // until the player reaches it (no title, era, or year leaks the future).
                 entries.Add(new CampaignTimelineEntry
                 {
                     Ordinal = ordinal,
                     State = CampaignSeasonState.Locked,
-                    Year = plan is not null && ordinal <= plan.PinnedSeasonSequence.Count
-                        ? plan.PinnedSeasonSequence[ordinal - 1].Year
-                        : null,
-                    Title = seasonLore?.Title ?? "",
-                    Era = seasonLore?.Era ?? "",
                 });
             }
         }
