@@ -141,12 +141,12 @@
                             </Border.BorderBrush>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="34" />
+                                    <ColumnDefinition Width="60" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Image x:Name="SmgpTeamLogoImage" Width="28" Height="28"
-                                       Stretch="Uniform" VerticalAlignment="Center"
-                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                <Image x:Name="SmgpTeamLogoImage" Width="52" Height="52"
+                                       Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,4,0"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
                                        Source="{Binding TeamId, Mode=OneWay, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
