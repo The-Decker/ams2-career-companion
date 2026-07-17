@@ -50,8 +50,8 @@ public sealed class DynastyEconomyRulesTests
     {
         var rules = Load();
         Assert.Equal(Rational.Parse("40000"), rules.SeasonPrize(1, 1967));
-        Assert.Equal(Rational.Parse("4000"), rules.SeasonPrize(9, 1967)); // beyond the table
-        Assert.Equal(Rational.Parse("600000"), rules.SeasonPrize(3, 1995)); // 20000 × 30
+        Assert.Equal(Rational.Parse("3000"), rules.SeasonPrize(9, 1967)); // beyond the table
+        Assert.Equal(Rational.Parse("540000"), rules.SeasonPrize(3, 1995)); // 18000 × 30
         Assert.Equal(Rational.Zero, rules.SeasonPrize(null, 1967));
     }
 
@@ -143,7 +143,7 @@ public sealed class DynastyEconomyRulesTests
     {
         var rules = Load();
         Assert.Equal(Rational.Parse("100000"), rules.StartingFunds(5, 1967));
-        Assert.Equal(Rational.Parse("18000"), rules.StartingFunds(1, 1967));
+        Assert.Equal(Rational.Parse("15000"), rules.StartingFunds(1, 1967));
         Assert.Equal(Rational.Parse("135000"), rules.StartingFunds(3, 1974)); // 45000 × 3
         Assert.Equal(rules.StartingFunds(1, 1967), rules.StartingFunds(0, 1967)); // tier clamps
     }

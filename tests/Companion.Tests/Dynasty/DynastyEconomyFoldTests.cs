@@ -46,20 +46,20 @@ public sealed class DynastyEconomyFoldTests
     public void SettleRound_RetainedDeal_ExactStatement()
     {
         // P3 + teammate P5, tier 5, 2-round season, no sponsors/staff:
-        // income  = 5000 (P3) + 2500 (P5) + 1500 (appearance) = 9000
-        // costs   = 500 + 1200 + 2000 + 32000/2 (second salary) = 19700
+        // income  = 5000 (P3) + 2000 (P5) + 1100 (appearance) = 8100
+        // costs   = 500 + 1500 + 2500 + 38000/2 (second salary) = 23500
         var result = DynastyEconomyFold.SettleRound(Settle(Fresh(), [3], [5]));
 
-        Assert.Equal(Rational.Parse("89300"), result.State.Balance); // 100000 − 10700
+        Assert.Equal(Rational.Parse("84600"), result.State.Balance); // 100000 − 15400
         Assert.Equal(0, result.State.DeficitRounds);
         Assert.False(result.WentBankrupt);
         var row = Assert.Single(result.Events);
         Assert.Equal(JournalPhases.EconomyRound, row.Phase);
         Assert.Equal("surplus", row.Cause);
-        Assert.Contains("\"net\":\"-10700\"", row.DeltaJson, StringComparison.Ordinal);
+        Assert.Contains("\"net\":\"-15400\"", row.DeltaJson, StringComparison.Ordinal);
         Assert.Contains("\"racePrize\":\"5000\"", row.DeltaJson, StringComparison.Ordinal);
-        Assert.Contains("\"secondCarPrize\":\"2500\"", row.DeltaJson, StringComparison.Ordinal);
-        Assert.Contains("\"secondSalary\":\"16000\"", row.DeltaJson, StringComparison.Ordinal);
+        Assert.Contains("\"secondCarPrize\":\"2000\"", row.DeltaJson, StringComparison.Ordinal);
+        Assert.Contains("\"secondSalary\":\"19000\"", row.DeltaJson, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -69,8 +69,8 @@ public sealed class DynastyEconomyFoldTests
             "sponsor.apex-lubricants", new DynastySponsorContract { SeasonsRemaining = 2 });
         var result = DynastyEconomyFold.SettleRound(Settle(state, [3], [5]));
 
-        // The base statement above (−10700) plus perRace 150 + podium 150.
-        Assert.Equal(Rational.Parse("89600"), result.State.Balance);
+        // The base statement above (−15400) plus perRace 150 + podium 150.
+        Assert.Equal(Rational.Parse("84900"), result.State.Balance);
     }
 
     [Fact]
@@ -80,9 +80,9 @@ public sealed class DynastyEconomyFoldTests
             "sponsor.apex-lubricants", new DynastySponsorContract { SeasonsRemaining = 2 });
         var result = DynastyEconomyFold.SettleRound(Settle(state, [1], [5]));
 
-        // income = 10000 (P1) + 2500 + 1500 + 150 (perRace) + 150 (podium) + 300 (win) = 14600
-        // costs  = 19700 → net = −5100
-        Assert.Equal(Rational.Parse("94900"), result.State.Balance);
+        // income = 10000 (P1) + 2000 + 1100 + 150 (perRace) + 150 (podium) + 300 (win) = 13700
+        // costs  = 23500 → net = −9800
+        Assert.Equal(Rational.Parse("90200"), result.State.Balance);
     }
 
     [Fact]
@@ -91,8 +91,8 @@ public sealed class DynastyEconomyFoldTests
         var state = Fresh() with { SecondSeat = SecondSeatDeal.PayDriver };
         var result = DynastyEconomyFold.SettleRound(Settle(state, [3], [5]));
 
-        // income = 5000 + 1500 + 12000/2 (backing) = 12500; costs = 3700 (no salary, prize forfeit)
-        Assert.Equal(Rational.Parse("108800"), result.State.Balance);
+        // income = 5000 + 1100 + 10000/2 (backing) = 11100; costs = 4500 (no salary, prize forfeit)
+        Assert.Equal(Rational.Parse("106600"), result.State.Balance);
     }
 
     [Fact]
@@ -101,8 +101,8 @@ public sealed class DynastyEconomyFoldTests
         var result = DynastyEconomyFold.SettleRound(Settle(
             Fresh(), [null], [null], dnf: DnfCause.DriverError, severity: AccidentSeverity.Heavy));
 
-        // income = 1500 (appearance only); costs = 3700 + 16000 + 9000 (heavy) + 2000 (2nd car DNF)
-        Assert.Equal(Rational.Parse("100000") + Rational.Parse("1500") - Rational.Parse("30700"),
+        // income = 1100 (appearance only); costs = 4500 + 19000 + 9000 (heavy) + 2000 (2nd car DNF)
+        Assert.Equal(Rational.Parse("100000") + Rational.Parse("1100") - Rational.Parse("34500"),
             result.State.Balance);
         Assert.Equal("surplus", Assert.Single(result.Events).Cause);
     }
@@ -113,9 +113,8 @@ public sealed class DynastyEconomyFoldTests
         var result = DynastyEconomyFold.SettleRound(Settle(
             Fresh(), [], [4], playerStarted: false));
 
-        // income = 2500 (second car P4... position 4 pays 3500) — recompute: P4 = 3500.
-        // income = 3500; costs = 3700 + 16000 = 19700 → net −16200.
-        Assert.Equal(Rational.Parse("83800"), result.State.Balance);
+        // income = 3000 (second car P4); costs = 4500 + 19000 = 23500 → net −20500.
+        Assert.Equal(Rational.Parse("79500"), result.State.Balance);
     }
 
     [Fact]
@@ -126,6 +125,7 @@ public sealed class DynastyEconomyFoldTests
         var result = DynastyEconomyFold.SettleRound(Settle(
             state, [], [], playerStarted: false, hasSecondCar: false));
 
+        Assert.Equal(Rational.Parse("-4600"), result.State.Balance); // −100 − 4500 in fees
         Assert.Equal(5, result.State.DeficitRounds);
         Assert.True(result.State.Bankrupt);
         Assert.True(result.WentBankrupt);
@@ -151,7 +151,7 @@ public sealed class DynastyEconomyFoldTests
         var result = DynastyEconomyFold.SettleRound(Settle(
             Fresh("-22000"), [], [], playerStarted: false, hasSecondCar: false));
 
-        Assert.Equal(Rational.Parse("-25700"), result.State.Balance); // −22000 − 3700
+        Assert.Equal(Rational.Parse("-26500"), result.State.Balance); // −22000 − 4500
         Assert.Equal(1, result.State.DeficitRounds);
         Assert.True(result.State.Bankrupt);
     }
@@ -254,8 +254,8 @@ public sealed class DynastyEconomyFoldTests
             DriversPosition = 2,
         });
 
-        // 28000 (C2) + 1000 + 1100 (perSeason) = 30100; no title bonus at P2.
-        Assert.Equal(Rational.Parse("130100"), result.State.Balance);
+        // 26000 (C2) + 1000 + 1100 (perSeason) = 28100; no title bonus at P2.
+        Assert.Equal(Rational.Parse("128100"), result.State.Balance);
         Assert.Equal(1, result.State.SponsorContract("sponsor.apex-lubricants")!.SeasonsRemaining);
         Assert.Null(result.State.SponsorContract("sponsor.corsa-tyres")); // 1 → 0 → expired
         Assert.Equal(1, result.State.DevelopmentLevel); // floor(3 × 1/2)
@@ -294,7 +294,7 @@ public sealed class DynastyEconomyFoldTests
             DriversPosition = 3,
         });
 
-        Assert.Equal(Rational.Parse("120000"), result.State.Balance); // + 20000 (position 3)
+        Assert.Equal(Rational.Parse("118000"), result.State.Balance); // + 18000 (position 3)
     }
 
     [Fact]

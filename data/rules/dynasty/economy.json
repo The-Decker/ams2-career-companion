@@ -10,20 +10,20 @@
     { "fromYear": 2010, "toYear": 2029, "index": "150" }
   ],
   "startingFundsByTier": {
-    "1": "18000",
-    "2": "30000",
+    "1": "15000",
+    "2": "28000",
     "3": "45000",
     "4": "70000",
     "5": "100000"
   },
-  "racePrizeByPosition": ["10000", "7000", "5000", "3500", "2500", "1800", "1200", "900", "600", "400"],
+  "racePrizeByPosition": ["10000", "7000", "5000", "3000", "2000", "1500", "1100", "800", "600", "400"],
   "racePrizeClassifiedDefault": "250",
-  "seasonPrizeByConstructorPosition": ["40000", "28000", "20000", "14000", "10000", "7000"],
-  "seasonPrizeDefault": "4000",
-  "appearanceMoney": "1500",
+  "seasonPrizeByConstructorPosition": ["40000", "26000", "18000", "12000", "8000", "5000"],
+  "seasonPrizeDefault": "3000",
+  "appearanceMoney": "1100",
   "entryFee": "500",
-  "logisticsPerRound": "1200",
-  "upkeepPerRound": "2000",
+  "logisticsPerRound": "1500",
+  "upkeepPerRound": "2500",
   "repairs": {
     "accidentLight": "1500",
     "accidentMedium": "4000",
@@ -47,13 +47,13 @@
   ],
   "secondSeat": {
     "retainedSalaryPerSeasonByTier": {
-      "1": "6000",
-      "2": "10000",
-      "3": "15000",
-      "4": "22000",
-      "5": "32000"
+      "1": "8000",
+      "2": "12000",
+      "3": "18000",
+      "4": "26000",
+      "5": "38000"
     },
-    "payDriverBackingPerSeason": "12000"
+    "payDriverBackingPerSeason": "10000"
   },
   "sponsors": {
     "slots": { "title": 1, "major": 2, "minor": 3 },
