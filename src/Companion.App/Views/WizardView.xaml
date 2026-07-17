@@ -1116,7 +1116,9 @@
                 <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,4,0,16" TextWrapping="Wrap"
                            Text="Creating the career pins the pack into the career file — later pack edits never touch a running season." />
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
-                    <StackPanel MaxWidth="640" HorizontalAlignment="Center">
+                    <!-- Fixed width, not MaxWidth+Center: a centered panel sizes to its content, so a
+                         longer mortality description would otherwise widen the whole form on selection. -->
+                    <StackPanel Width="640" HorizontalAlignment="Center">
                         <TextBlock Text="Career name" Style="{StaticResource Muted}" Margin="0,0,0,4" />
                         <TextBox Text="{Binding CareerName, UpdateSourceTrigger=PropertyChanged}" FontSize="15" />
 
