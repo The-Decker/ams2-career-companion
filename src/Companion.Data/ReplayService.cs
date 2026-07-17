@@ -1171,6 +1171,15 @@ public static class ReplayService
                 // The Setup Gamble is a per-round commitment resolved against the race — like the
                 // qualifying anchor, only the first race of a weekend carries it.
                 CalledShot = i == 0 ? envelope.CalledShot : null,
+                // Dynasty economy §6: bought development makes the car genuinely quicker in the
+                // expectation. The level is post-decision folded state (decisions applied at the
+                // top of this fold), so a buy declared over the break is felt THIS round; 0.0 for
+                // every non-economy career keeps the shipped expectation bit-exact.
+                DynastyDevelopmentStrength =
+                    player.Economy is { Bankrupt: false } devEconomy
+                    && inputs.DynastyEconomy is { } devRules
+                        ? devRules.Development.StrengthPerLevel * devEconomy.DevelopmentLevel
+                        : 0.0,
             });
 
             events.AddRange(update.Events);

@@ -1514,7 +1514,31 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
         return playerIndex < 0
             ? null
             : SeatStrengthModel.ExpectedFinish(
-                grid, playerIndex, priorOpi, modelVersion, teamTiers);
+                grid, playerIndex, priorOpi, modelVersion, teamTiers,
+                CurrentDynastyDevelopmentStrength(player));
+    }
+
+    /// <summary>The Dynasty development strength the NEXT fold will score with (economy §6):
+    /// the folded level PLUS any pending buy-development decisions declared for the current
+    /// round — the fold applies those at its top, so the briefing's expected finish stays
+    /// contractually equal to the number the Setup Gamble is staked against. 0 for every
+    /// non-economy career (and after bankruptcy).</summary>
+    private double CurrentDynastyDevelopmentStrength(PlayerCareerState? player)
+    {
+        if (player?.Economy is not { Bankrupt: false } economy
+            || _environment.RulesDirectory is null)
+        {
+            return 0.0;
+        }
+        var rules = _environment.Rules.DynastyEconomy;
+        int pendingBuys = 0;
+        if (ReplayService.ReadEconomyDecisions(_database, _seasonId)
+            .TryGetValue(CurrentRoundNumber, out var pending))
+        {
+            pendingBuys = pending.Count(d =>
+                d.Kind == Companion.Core.Dynasty.DynastyEconomyDecisionKind.BuyDevelopment);
+        }
+        return rules.Development.StrengthPerLevel * (economy.DevelopmentLevel + pendingBuys);
     }
 
     /// <summary>What skin every car on the current round's grid will show — the read-only skin

@@ -82,6 +82,12 @@ public sealed record RoundUpdateContext
     /// finish only when it is a real gamble (called better than expected); otherwise a no-op, so a
     /// round without a gamble is byte-identical. (Setup Gamble, 4b.)</summary>
     public int? CalledShot { get; init; }
+
+    /// <summary>The Dynasty car-development strength bonus for the player's seat
+    /// (economy §6: development level × the rules' strengthPerLevel), applied to the expected
+    /// finish only. 0 (the default) for every non-economy career — the shipped expectation math
+    /// is then bit-exact, so existing careers replay byte-identically.</summary>
+    public double DynastyDevelopmentStrength { get; init; }
 }
 
 public sealed record RoundUpdateResult
@@ -117,7 +123,8 @@ public static class RoundUpdate
         var mods = context.Modifiers;
         int expectationModelVersion = player.Character?.ExpectationModelVersion ?? 0;
         int expected = SeatStrengthModel.ExpectedFinish(
-            grid, playerIndex, player.Opi, expectationModelVersion, context.TeamTiers);
+            grid, playerIndex, player.Opi, expectationModelVersion, context.TeamTiers,
+            context.DynastyDevelopmentStrength);
         double effective = OpiMath.EffectiveFinish(expected, context.PlayerFinish, context.PlayerDnf, gridSize, mods);
 
         double newOpi = OpiMath.Update(player.Opi, expected, effective, mods);
