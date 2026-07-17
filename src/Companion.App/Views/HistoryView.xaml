@@ -605,13 +605,18 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="154" MinHeight="116" Padding="10,9" Margin="0,0,8,4"
-                                        CornerRadius="7" BorderThickness="1">
+                                <Border Padding="9,7" Margin="0,0,6,4"
+                                        CornerRadius="7" BorderThickness="1" VerticalAlignment="Top">
                                     <Border.Style>
                                         <Style TargetType="Border">
+                                            <!-- Locked/future seasons are anonymous placeholders: a compact
+                                                 chip, so 16 of them don't blow out the strip. Current and
+                                                 completed seasons carry real content, so they get a full card. -->
                                             <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
                                             <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
-                                            <Setter Property="Opacity" Value="0.58" />
+                                            <Setter Property="Opacity" Value="0.5" />
+                                            <Setter Property="Width" Value="88" />
+                                            <Setter Property="MinHeight" Value="46" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding State}"
                                                              Value="{x:Static services:CampaignSeasonState.Current}">
@@ -619,12 +624,16 @@
                                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                                                     <Setter Property="BorderThickness" Value="2" />
                                                     <Setter Property="Opacity" Value="1" />
+                                                    <Setter Property="Width" Value="168" />
+                                                    <Setter Property="MinHeight" Value="104" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding State}"
                                                              Value="{x:Static services:CampaignSeasonState.Completed}">
                                                     <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
                                                     <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
                                                     <Setter Property="Opacity" Value="1" />
+                                                    <Setter Property="Width" Value="168" />
+                                                    <Setter Property="MinHeight" Value="104" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -638,9 +647,11 @@
                                                        Style="{StaticResource PixelBadge}" />
                                         </DockPanel>
                                         <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12"
-                                                   TextWrapping="Wrap" TextTrimming="None" Margin="0,5,0,0" />
+                                                   TextWrapping="Wrap" TextTrimming="None" Margin="0,5,0,0"
+                                                   Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
                                         <TextBlock Text="{Binding Era}" Style="{StaticResource Faint}" FontSize="9.5"
-                                                   TextWrapping="Wrap" TextTrimming="None" Margin="0,2,0,0" />
+                                                   TextWrapping="Wrap" TextTrimming="None" Margin="0,2,0,0"
+                                                   Visibility="{Binding Era, Converter={StaticResource StringVisible}}" />
                                         <WrapPanel Margin="0,7,0,0">
                                             <Border Style="{StaticResource CompactChip}" Margin="0,0,5,4"
                                                     Background="{DynamicResource AccentDimBrush}"
