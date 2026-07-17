@@ -12,7 +12,7 @@ namespace Companion.Tests.Dynasty;
 public sealed class DynastyEconomyRulesTests
 {
     private static DynastyEconomyRules Load() =>
-        DynastyEconomyRules.Load(CareerTestData.RulesDirectory);
+        DynastyEconomyRules.Load(CareerTestData.RulesDirectory)!;
 
     [Fact]
     public void ShippedFile_ParsesAtTheCurrentSchemaVersion()

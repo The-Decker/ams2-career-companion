@@ -11,7 +11,7 @@ namespace Companion.Tests.Dynasty;
 public sealed class DynastyEconomyFoldTests
 {
     private static readonly DynastyEconomyRules Rules =
-        DynastyEconomyRules.Load(CareerTestData.RulesDirectory);
+        DynastyEconomyRules.Load(CareerTestData.RulesDirectory)!;
 
     private static DynastyEconomyState Fresh(string balance = "100000") => new()
     {
