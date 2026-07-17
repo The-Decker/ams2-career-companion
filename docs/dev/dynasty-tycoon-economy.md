@@ -202,6 +202,11 @@ decisions, and decision commands that call the resolve service. Additive default
 5. **Second-driver hire/fire does not change the grid occupant** — the pack teammate is
    authored (faithful-season rule); the decision is the contract-economics lever (§4). True
    seat control belongs to a future pass alongside the seat-market rework.
+6. **Sign/drop sponsor churn re-credits the signing bonus** (a drop is free, a re-sign pays the
+   bonus again). Left as-is for Alpha: it has no gameplay payoff — the balance report shows money
+   is trophyless beyond a comfortable margin, and it would take ~20 manual decisions per race
+   window to farm a few thousand units. A one-time-per-career signing bonus is the future closer
+   if churn ever becomes attractive.
 
 ## 11. Balance evidence
 
