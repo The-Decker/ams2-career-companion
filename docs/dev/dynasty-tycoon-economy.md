@@ -148,12 +148,16 @@ against balance − pending spend. Decisions are append-only; the fold applies t
 
 ## 6. Competitiveness feedback
 
-Development level feeds the sim's existing expectation channel: a versioned, Dynasty-gated
-modifier on the player's seat strength (implemented in the seat-strength/expectation path; the
-exact seam and math are recorded here once built — bounded, monotonic, and zero for level 0 so
-an unfunded team is exactly as fast as the pack authored it). Auto-simulated rounds genuinely
-respond; manually-entered results are scored against the improved expectation. Non-Dynasty
-careers hit the identity path — guard-tested.
+Development level feeds the sim's existing expectation channel through
+`SeatStrengthModel.ExpectedFinish`'s `playerStrengthBonus` parameter (inert 0.0 default —
+bit-exact shipped math for every other career): the fold passes
+`DevelopmentLevel × development.strengthPerLevel` (0.015; 8 levels ≈ one budget-tier step) from
+the POST-decision state, so an increment bought over the break is felt the same round. The
+briefing's `CurrentExpectedFinish` counts pending buy-development declarations too, preserving
+the Setup-Gamble parity contract (the shown number IS the staked number), and
+`SeatExpectationBreakdown.DevelopmentAdjustment` explains the term. Zero for level 0 — an
+unfunded team is exactly as fast as the pack authored it. Non-Dynasty careers hit the identity
+path — guard-tested.
 
 ## 7. Bankruptcy
 
@@ -199,5 +203,13 @@ decisions, and decision commands that call the resolve service. Additive default
    authored (faithful-season rule); the decision is the contract-economics lever (§4). True
    seat control belongs to a future pass alongside the seat-market rework.
 
-_§4/§5/§6/§7 numbers and formulas are normative once the balance harness (§ the mission brief's
-definition of done) has tuned them; the harness report is the evidence._
+## 11. Balance evidence
+
+The tables shipped in `data/rules/dynasty/economy.json` are the TUNED values (two harness
+iterations): `docs/DYNASTY_ECONOMY_BALANCE_REPORT.md` carries the measured distributions from
+135 multi-decade careers (profiles × strategies through the real machinery) — over-hiring folds
+73–100% of mid/tail teams inside 1–3 seasons, matched spending never went bankrupt, development
+converts money into titles (~10 vs ~2 at identical driving), and the era boundary accelerates
+the healthy while killing the bleeding. Re-run with
+`COMPANION_ECONOMY_SIM=<n> dotnet test --filter EconomySweep_RunsWhenConfigured`
+(`tests/Companion.Tests/Scenarios/DynastyEconomyBalanceHarness.cs`; dormant otherwise).
