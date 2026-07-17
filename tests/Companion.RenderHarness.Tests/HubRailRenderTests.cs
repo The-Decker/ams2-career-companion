@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.App.Audio;
@@ -39,6 +40,9 @@ public sealed partial class HubRailRenderTests
                 .Where(button => AutomationProperties.GetHelpText(button) ==
                     "Select this career workspace")
                 .ToArray();
+            Path[] destinationIcons = Descendants<Path>(view)
+                .Where(path => path.Name == "RailDestinationIcon")
+                .ToArray();
 
             Assert.InRange(rail.ActualWidth, 176, 224);
             Assert.Equal(Visibility.Visible, levelChip.Visibility);
@@ -56,6 +60,17 @@ public sealed partial class HubRailRenderTests
                 Assert.True(button.Focusable);
                 Assert.NotNull(button.Command);
                 Assert.Equal(SoundEffectCue.Navigate, SoundAssist.GetCue(button));
+            });
+            Assert.Equal(host.Tabs.Count, destinationIcons.Length);
+            Assert.Equal(host.Tabs.Count,
+                destinationIcons.Select(icon => icon.Data.ToString())
+                    .Distinct(StringComparer.Ordinal)
+                    .Count());
+            Assert.All(destinationIcons, icon =>
+            {
+                Assert.False(icon.Data.Bounds.IsEmpty);
+                Assert.True(icon.ActualWidth > 0);
+                Assert.True(icon.ActualHeight > 0);
             });
 
             Button first = destinations[0];

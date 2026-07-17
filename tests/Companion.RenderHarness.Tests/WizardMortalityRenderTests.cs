@@ -40,6 +40,30 @@ public sealed class WizardMortalityRenderTests
         });
     }
 
+    [Theory]
+    [InlineData(false, Visibility.Visible)]
+    [InlineData(true, Visibility.Collapsed)]
+    public void WizardView_SmgpHidesInstalledBaselineImplementationDetails(
+        bool isSmgpPack,
+        Visibility expectedVisibility)
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var host = new WizardHost { IsSmgpPack = isSmgpPack };
+            var view = new WizardView { DataContext = host };
+            view.Measure(new Size(1100, 820));
+            view.Arrange(new Rect(0, 0, 1100, 820));
+            view.UpdateLayout();
+
+            var baselineOptions = (FrameworkElement)view.FindName("InstalledBaselineOptions");
+
+            Assert.Equal(expectedVisibility, baselineOptions.Visibility);
+        });
+    }
+
     private sealed class WizardHost : INotifyPropertyChanged
     {
         private MortalityMode _mortalityMode;
@@ -47,6 +71,7 @@ public sealed class WizardMortalityRenderTests
         public WizardStep Step => WizardStep.Confirm;
         public string CareerName { get; set; } = "Nova's career";
         public string MasterSeedText { get; set; } = "1967";
+        public bool IsSmgpPack { get; init; }
         public IReadOnlyList<MortalityMode> MortalityOptions { get; } =
             [MortalityMode.Off, MortalityMode.Normal, MortalityMode.Hardcore];
 
