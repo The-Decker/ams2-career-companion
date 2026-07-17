@@ -36,6 +36,8 @@ public class NewsroomComposerTests
             "polePosition", "championshipLeadTaken", "championshipLeadLost", "championCrowned",
             "titleClinchedEarly", "seasonStarted", "seasonCompleted", "careerCreated",
             "playerInjured", "playerDied", "aiWinStreak", "upsetWinner", "winStreak",
+            "sponsorSigned", "majorRepairBill", "nearBankruptcy", "financialWindfall",
+            "bankruptcyDeclared", "developmentMilestone",
         ];
         foreach (var kind in common)
         {

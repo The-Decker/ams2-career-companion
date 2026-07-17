@@ -104,6 +104,16 @@ public enum NewsEventKind
     // Fiction-provenance (SmgpFiction) — the SEGA canon must never read as verified history.
     SmgpCanonDiverged,
     SmgpCanonHeld,
+
+    // Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md §8): display projections of the
+    // folded money ledger — never fold inputs. Emitted only for careers carrying the economy, so
+    // every other career's event set is unchanged.
+    SponsorSigned,
+    MajorRepairBill,
+    NearBankruptcy,
+    FinancialWindfall,
+    BankruptcyDeclared,
+    DevelopmentMilestone,
 }
 
 /// <summary>
@@ -142,6 +152,14 @@ public sealed record NewsEventFacts
     public int WinnerTeamTier { get; init; }
     public string RetirementReason { get; init; } = "";
     public int MissRaces { get; init; }
+
+    /// <summary>The sponsor a Dynasty economy story concerns (display name). Empty elsewhere.</summary>
+    public string SponsorName { get; init; } = "";
+
+    /// <summary>A pre-formatted, invariant, DISPLAY-ONLY money amount for Dynasty economy stories
+    /// (the fold's exact Rational is rendered to a whole-unit string at the shaping boundary —
+    /// Rational never enters the newsroom). Empty elsewhere.</summary>
+    public string MoneyAmount { get; init; } = "";
 }
 
 /// <summary>

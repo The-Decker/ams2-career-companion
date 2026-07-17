@@ -169,6 +169,9 @@ public static class NewsroomComposer
             ["missRaces"] = f.MissRaces > 0 ? Invariant(f.MissRaces) : "",
             ["wet"] = f.IsWet ? "wet" : "",
             ["finale"] = f.IsFinalRound ? "finale" : "",
+            // Dynasty economy tokens (economy §8) — empty for every non-economy story.
+            ["sponsor"] = f.SponsorName,
+            ["amount"] = f.MoneyAmount,
         };
     }
 
@@ -218,13 +221,20 @@ public static class NewsroomCategories
             or NewsEventKind.SmgpCanonDiverged
             or NewsEventKind.SmgpCanonHeld => NewsroomCategory.HistoricalRetrospective,
         NewsEventKind.DnqDrama => NewsroomCategory.RaceReport,
+        // Dynasty economy (economy §8)
+        NewsEventKind.SponsorSigned => NewsroomCategory.ContractNews,
+        NewsEventKind.MajorRepairBill => NewsroomCategory.MechanicalReliability,
+        NewsEventKind.NearBankruptcy or NewsEventKind.BankruptcyDeclared => NewsroomCategory.OperationalPressure,
+        NewsEventKind.FinancialWindfall => NewsroomCategory.ContractNews,
+        NewsEventKind.DevelopmentMilestone => NewsroomCategory.TechnicalDevelopments,
         _ => NewsroomCategory.RaceReport,
     };
 
     public static EditorialStatus StatusFor(NewsEventKind kind) => kind switch
     {
         NewsEventKind.RetirementConsidered or NewsEventKind.SeatVacancy => EditorialStatus.Reported,
-        NewsEventKind.TitleFightTightens or NewsEventKind.FinalRoundShowdown => EditorialStatus.Developing,
+        NewsEventKind.TitleFightTightens or NewsEventKind.FinalRoundShowdown
+            or NewsEventKind.NearBankruptcy => EditorialStatus.Developing,
         NewsEventKind.Overperformed or NewsEventKind.Underperformed or NewsEventKind.DominantDisplay
             or NewsEventKind.StandingsClimb => EditorialStatus.Analysis,
         NewsEventKind.HistoryDiverged or NewsEventKind.HistoryHeld

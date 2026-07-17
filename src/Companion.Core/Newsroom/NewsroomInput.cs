@@ -33,6 +33,16 @@ public sealed record NewsroomSeason
     /// 17, or the final pinned season of a bounded historical campaign) — the career-retrospective
     /// trigger.</summary>
     public bool IsCampaignFinale { get; init; }
+
+    // Dynasty owner economy (from the economy.season journal row; all empty/default for every
+    // non-economy career, so older careers stay quieter, never wrong)
+
+    /// <summary>The season settlement's total money in, pre-formatted for display ("" = none).</summary>
+    public string EconomySeasonAmount { get; init; } = "";
+
+    /// <summary>The season settlement was a WINDFALL (a front-running constructors' cheque
+    /// and/or title bonuses — the session decides against the rules tables).</summary>
+    public bool EconomyWindfall { get; init; }
 }
 
 /// <summary>One applied round's facts. Only championship rounds drive standings triggers.</summary>
@@ -89,6 +99,35 @@ public sealed record NewsroomRound
 
     // SMGP colour (empty for historical careers)
     public string RivalName { get; init; } = "";
+
+    // Dynasty owner economy (from the economy.applied / economy.round / economy.bankruptcy
+    // journal rows; all empty/default for every non-economy career)
+
+    /// <summary>Sponsors SIGNED at this round (display names), in journal seq order.</summary>
+    public IReadOnlyList<string> EconomySponsorsSigned { get; init; } = [];
+
+    /// <summary>The round's repair bill, pre-formatted for display ("" = no repairs).</summary>
+    public string EconomyRepairAmount { get; init; } = "";
+
+    /// <summary>The repair bill was MAJOR (the session compares against the era-scaled heavy-crash
+    /// rate; false when the rules are unavailable).</summary>
+    public bool EconomyMajorRepair { get; init; }
+
+    /// <summary>The settlement left the team ON THE BRINK: the deficit streak has consumed the
+    /// whole grace window — one more deficit round folds the team.</summary>
+    public bool EconomyOnTheBrink { get; init; }
+
+    /// <summary>The team's balance after this round, pre-formatted ("" = no economy).</summary>
+    public string EconomyBalance { get; init; } = "";
+
+    /// <summary>This round's settlement BANKRUPTED the team — terminal.</summary>
+    public bool EconomyBankrupt { get; init; }
+
+    /// <summary>Car development level after this round's decisions, or null (no economy).</summary>
+    public int? EconomyDevelopmentLevel { get; init; }
+
+    /// <summary>The development programme is at its cap after this round (the rules' max level).</summary>
+    public bool EconomyDevelopmentMaxed { get; init; }
 }
 
 /// <summary>

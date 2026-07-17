@@ -159,6 +159,11 @@ public sealed partial class CareerSessionService
     private IReadOnlyList<NewsroomSeason> BuildNewsroomSeasons()
     {
         var seasonsInput = new List<NewsroomSeason>();
+        // Dynasty economy shaping needs the balance tables (sponsor display names, the heavy-crash
+        // rate, the grace window, the dev cap). Null when this install has no rules directory —
+        // economy facts then shape empty and the detectors stay silent, never wrong.
+        Companion.Core.Dynasty.DynastyEconomyRules? economyRules =
+            _environment.RulesDirectory is null ? null : _environment.Rules.DynastyEconomy;
         int ordinal = 0;
         foreach (var season in CareerStore.ReadSeasons(_database))
         {
@@ -185,6 +190,13 @@ public sealed partial class CareerSessionService
             var accidentByRound = new Dictionary<int, (string Outcome, int MissRaces)>();
             var levelByRound = new Dictionary<int, int>();
             int? seasonEndLevel = null;
+            // Dynasty economy rows (empty maps for every non-economy career).
+            var economySponsorsByRound = new Dictionary<int, List<string>>();
+            var economyDevLevelByRound = new Dictionary<int, int>();
+            var economySettleByRound = new Dictionary<int, (string Repairs, bool Major, string Balance, bool OnBrink)>();
+            var economyBankruptRounds = new HashSet<int>();
+            string economySeasonAmount = "";
+            bool economyWindfall = false;
             foreach (var row in journalRows)
             {
                 // The player.xp rows journal the level AFTER each award: per-round rows feed the
@@ -206,8 +218,102 @@ public sealed partial class CareerSessionService
                     continue;
                 }
 
+                // The economy.season settlement rides the season boundary (round = null).
+                if (string.Equals(row.Phase, JournalPhases.EconomySeason, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        string net = root.TryGetProperty("net", out var nv) ? nv.GetString() ?? "" : "";
+                        economySeasonAmount = FormatMoney(net);
+                        // A windfall = title bonuses landed, or the constructors' cheque was
+                        // front-running money (at or above the C3 rate for the season's era).
+                        bool titleMoney = root.TryGetProperty("titleBonus", out var tv)
+                            && Companion.Core.Numerics.Rational.Parse(tv.GetString() ?? "0")
+                                > Companion.Core.Numerics.Rational.Zero;
+                        bool bigCheque = economyRules is not null
+                            && root.TryGetProperty("seasonPrize", out var pv)
+                            && Companion.Core.Numerics.Rational.Parse(pv.GetString() ?? "0")
+                                >= economyRules.SeasonPrize(3, season.Year);
+                        economyWindfall = titleMoney || bigCheque;
+                    }
+                    catch (Exception ex) when (ex is JsonException or FormatException or OverflowException)
+                    {
+                    }
+                    continue;
+                }
+
                 if (row.Round is not { } jr)
                 {
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.EconomyApplied, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        string kind = root.TryGetProperty("kind", out var kv) ? kv.GetString() ?? "" : "";
+                        if (kind == "signSponsor"
+                            && root.TryGetProperty("sponsorId", out var sv)
+                            && sv.GetString() is { Length: > 0 } sponsorId)
+                        {
+                            string display = economyRules?.SponsorById(sponsorId)?.Name ?? sponsorId;
+                            if (!economySponsorsByRound.TryGetValue(jr, out var list))
+                                economySponsorsByRound[jr] = list = [];
+                            list.Add(display);
+                        }
+                        if (root.TryGetProperty("developmentLevel", out var dv2)
+                            && dv2.ValueKind == JsonValueKind.Number)
+                        {
+                            economyDevLevelByRound[jr] = dv2.GetInt32(); // last write per round wins
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                    }
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.EconomyRound, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        var costs = root.GetProperty("costs");
+                        var repairs = Companion.Core.Numerics.Rational.Parse(
+                            costs.GetProperty("repairs").GetString() ?? "0");
+                        var secondRepairs = Companion.Core.Numerics.Rational.Parse(
+                            costs.GetProperty("secondRepairs").GetString() ?? "0");
+                        var bill = repairs + secondRepairs;
+                        bool major = economyRules is not null
+                            && bill >= economyRules.PlayerRepair(
+                                Companion.Core.Career.AccidentSeverity.Heavy, null, season.Year);
+                        string balance = root.TryGetProperty("balanceTo", out var bv)
+                            ? bv.GetString() ?? "" : "";
+                        int deficitRounds = root.TryGetProperty("deficitRounds", out var dr)
+                            && dr.ValueKind == JsonValueKind.Number ? dr.GetInt32() : 0;
+                        bool onBrink = economyRules is not null
+                            && deficitRounds >= economyRules.Bankruptcy.GraceRounds;
+                        economySettleByRound[jr] = (
+                            bill > Companion.Core.Numerics.Rational.Zero ? FormatMoney(bill.ToString()) : "",
+                            major,
+                            FormatMoney(balance),
+                            onBrink);
+                    }
+                    catch (Exception ex) when (ex is JsonException or FormatException or OverflowException
+                        or InvalidOperationException or KeyNotFoundException)
+                    {
+                    }
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.EconomyBankruptcy, StringComparison.Ordinal))
+                {
+                    economyBankruptRounds.Add(jr);
                     continue;
                 }
 
@@ -405,6 +511,22 @@ public sealed partial class CareerSessionService
                     AccidentMissRaces = accident.MissRaces,
                     PlayerLevelAfter = levelByRound.TryGetValue(s.Round, out var lvl) ? lvl : null,
                     RivalName = envelope.SmgpRival is { } rival ? DisplayName(rival.RivalDriverId) : "",
+                    EconomySponsorsSigned = economySponsorsByRound.TryGetValue(s.Round, out var signed)
+                        ? signed
+                        : [],
+                    EconomyRepairAmount = economySettleByRound.TryGetValue(s.Round, out var settle)
+                        ? settle.Repairs
+                        : "",
+                    EconomyMajorRepair = settle.Major,
+                    EconomyOnTheBrink = settle.OnBrink,
+                    EconomyBalance = settle.Balance ?? "",
+                    EconomyBankrupt = economyBankruptRounds.Contains(s.Round),
+                    EconomyDevelopmentLevel = economyDevLevelByRound.TryGetValue(s.Round, out var devLvl)
+                        ? devLvl
+                        : null,
+                    EconomyDevelopmentMaxed = economyRules is not null
+                        && economyDevLevelByRound.TryGetValue(s.Round, out var maxCheck)
+                        && maxCheck >= economyRules.Development.MaxLevel,
                 });
             }
 
@@ -431,6 +553,8 @@ public sealed partial class CareerSessionService
                     ? rounds.Where(r => r.PlayerLevelAfter is not null).Select(r => r.PlayerLevelAfter).LastOrDefault()
                     : null),
                 IsCampaignFinale = isCampaignFinale,
+                EconomySeasonAmount = economySeasonAmount,
+                EconomyWindfall = economyWindfall,
             });
 
             string DisplayName(string driverId) =>
@@ -547,6 +671,28 @@ public sealed partial class CareerSessionService
         }
 
         return notes;
+    }
+
+    /// <summary>Renders a fold Rational ("26400" / "20000/3" / "-5000") as a whole-unit display
+    /// amount ("26,400"); the raw text on any parse failure. DISPLAY-ONLY — exact money never
+    /// leaves the fold (economy §8).</summary>
+    private static string FormatMoney(string rationalText)
+    {
+        if (string.IsNullOrWhiteSpace(rationalText))
+        {
+            return "";
+        }
+        try
+        {
+            double value = Companion.Core.Numerics.Rational.Parse(rationalText).ToDouble();
+            string text = Math.Round(Math.Abs(value))
+                .ToString("#,0", System.Globalization.CultureInfo.InvariantCulture);
+            return value < 0 ? "-" + text : text;
+        }
+        catch (Exception ex) when (ex is FormatException or OverflowException or ArgumentException)
+        {
+            return rationalText;
+        }
     }
 
     private static int ReadIntProperty(string deltaJson, string property)

@@ -46,6 +46,7 @@ public static class EditorialImportance
     public static int BaseWeight(NewsEventKind kind) => kind switch
     {
         NewsEventKind.PlayerDied => 100,
+        NewsEventKind.BankruptcyDeclared => 90,
         NewsEventKind.TitleClinchedEarly => 85,
         NewsEventKind.CareerCompleted => 82,
         NewsEventKind.ChampionCrowned => 80,
@@ -58,6 +59,7 @@ public static class EditorialImportance
         NewsEventKind.ChampionshipLeadTaken => 54,
         NewsEventKind.HistoryDiverged => 52,
         NewsEventKind.PlayerInjured => 50,
+        NewsEventKind.NearBankruptcy => 50,
         NewsEventKind.WinDroughtEnded => 50,
         NewsEventKind.ChampionshipLeadLost => 48,
         NewsEventKind.TitleRaceLost => 48,
@@ -72,6 +74,8 @@ public static class EditorialImportance
         NewsEventKind.CareerMilestone => 40,
         NewsEventKind.WinStreak => 40,
         NewsEventKind.LevelMilestone => 36,
+        NewsEventKind.SponsorSigned => 35,
+        NewsEventKind.FinancialWindfall => 35,
         NewsEventKind.AiWinStreak => 38,
         NewsEventKind.PolePosition => 36,
         NewsEventKind.DriverRetired => 36,
@@ -80,6 +84,8 @@ public static class EditorialImportance
         NewsEventKind.Overperformed => 34,
         NewsEventKind.SeasonCompleted => 34,
         NewsEventKind.DominantDisplay => 32,
+        NewsEventKind.MajorRepairBill => 32,
+        NewsEventKind.DevelopmentMilestone => 30,
         NewsEventKind.TeamPromoted => 32,
         NewsEventKind.TeamRelegated => 32,
         NewsEventKind.RetirementConsidered => 30,

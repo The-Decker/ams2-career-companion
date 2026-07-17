@@ -120,11 +120,81 @@ public static class CareerNewsEvents
 
         EmitLevelMilestones(season, round.Round, round.Venue, round.PlayerLevelAfter, memory, events);
 
+        DetectEconomy(season, round, memory, perSeason, events);
+        if (memory.CareerEnded)
+        {
+            return;
+        }
+
         DetectAiWorld(season, round, perSeason, events);
 
         if (round.Championship)
         {
             DetectChampionshipMovement(season, round, memory, perSeason, events);
+        }
+    }
+
+    /// <summary>Dynasty owner-economy stories (economy §8) — pure projections of the shaped
+    /// ledger facts. Every field is empty/default for a non-economy career, so this emits
+    /// nothing there and older careers' event sets are unchanged.</summary>
+    private static void DetectEconomy(
+        NewsroomSeason season,
+        NewsroomRound round,
+        CareerMemory memory,
+        SeasonMemory perSeason,
+        List<NewsEvent> events)
+    {
+        // Sponsors signed at this round's decision window — one story each (the sponsor name
+        // disambiguates same-round signings).
+        foreach (string sponsor in round.EconomySponsorsSigned)
+        {
+            events.Add(Player(season, round.Round, NewsEventKind.SponsorSigned, season.PlayerTeamName,
+                new NewsEventFacts { SponsorName = sponsor }, round.Venue) with
+            {
+                Discriminator = sponsor,
+            });
+        }
+
+        if (round.EconomyMajorRepair && round.EconomyRepairAmount.Length > 0)
+        {
+            events.Add(Player(season, round.Round, NewsEventKind.MajorRepairBill, season.PlayerTeamName,
+                new NewsEventFacts { MoneyAmount = round.EconomyRepairAmount }, round.Venue));
+        }
+
+        // Terminal: the settlement folded the team — the economy's PlayerDied.
+        if (round.EconomyBankrupt)
+        {
+            events.Add(Player(season, round.Round, NewsEventKind.BankruptcyDeclared, season.PlayerTeamName,
+                new NewsEventFacts { MoneyAmount = round.EconomyBalance }, round.Venue));
+            memory.CareerEnded = true;
+            return;
+        }
+
+        // Edge-triggered brink coverage: one story per deficit streak that consumes the whole
+        // grace window; a recovery re-arms it so a later brush is its own story.
+        if (round.EconomyOnTheBrink)
+        {
+            if (!memory.EconomyBrinkAnnounced)
+            {
+                memory.EconomyBrinkAnnounced = true;
+                events.Add(Player(season, round.Round, NewsEventKind.NearBankruptcy, season.PlayerTeamName,
+                    new NewsEventFacts { MoneyAmount = round.EconomyBalance }, round.Venue));
+            }
+        }
+        else
+        {
+            memory.EconomyBrinkAnnounced = false;
+        }
+
+        if (round.EconomyDevelopmentMaxed && !perSeason.EconomyDevelopmentMaxedEmitted)
+        {
+            perSeason.EconomyDevelopmentMaxedEmitted = true;
+            events.Add(Player(season, round.Round, NewsEventKind.DevelopmentMilestone, season.PlayerTeamName,
+                new NewsEventFacts
+                {
+                    MilestoneValue = round.EconomyDevelopmentLevel ?? 0,
+                    MilestoneCounter = "development",
+                }, round.Venue));
         }
     }
 
@@ -653,6 +723,14 @@ public static class CareerNewsEvents
         // Season-end XP awards can cross milestone levels at the boundary too.
         EmitLevelMilestones(season, SeasonEndRound, "", season.PlayerLevelAtSeasonEnd, memory, events);
 
+        // Dynasty economy: a front-running constructors' cheque (and any title bonuses) is a
+        // WINDFALL story at the review. Empty/false for every non-economy career.
+        if (season.EconomyWindfall && season.EconomySeasonAmount.Length > 0)
+        {
+            events.Add(Player(season, SeasonEndRound, NewsEventKind.FinancialWindfall, season.PlayerTeamName,
+                new NewsEventFacts { MoneyAmount = season.EconomySeasonAmount }));
+        }
+
         if (season.IsCampaignFinale)
         {
             events.Add(Player(season, SeasonEndRound, NewsEventKind.CareerCompleted, season.PlayerTeamName,
@@ -818,6 +896,7 @@ public static class CareerNewsEvents
         public int? LastSeenLevel;
         public bool PendingInjuryReturn;
         public int MissedWhileInjured;
+        public bool EconomyBrinkAnnounced;
     }
 
     private sealed class SeasonMemory
@@ -833,5 +912,6 @@ public static class CareerNewsEvents
         public bool ShowdownEmitted;
         public string AiStreakWinnerId = "";
         public int AiStreakLength;
+        public bool EconomyDevelopmentMaxedEmitted;
     }
 }
