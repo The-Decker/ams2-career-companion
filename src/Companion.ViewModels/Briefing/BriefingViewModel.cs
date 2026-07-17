@@ -222,8 +222,20 @@ public sealed partial class BriefingViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SmgpActive), nameof(SmgpForced), nameof(SmgpRoundHeader),
         nameof(SmgpSeasonLine), nameof(SmgpCareerLine), nameof(SmgpAdviceLine), nameof(SmgpCareerOver), nameof(SmgpRivals),
-        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled), nameof(SmgpCampaignLine))]
+        nameof(SmgpRivalPrompt), nameof(SmgpPickEnabled), nameof(SmgpCampaignLine),
+        nameof(SmgpSeasonTitle), nameof(SmgpSeasonSubtitle), nameof(SmgpSeasonEra), nameof(HasSmgpSeasonLore))]
     private SmgpBriefingModel? _smgpBriefing;
+
+    /// <summary>The CURRENT season's authored identity (SMGP canon lore, seasons.json): the unique
+    /// title/theme/era that make "SEASON n / 17" a place in the campaign arc rather than a counter.
+    /// Empty off-SMGP or when the lore file is absent. Display-only.</summary>
+    public string SmgpSeasonTitle => _session.CurrentSeasonLore()?.Title ?? "";
+
+    public string SmgpSeasonSubtitle => _session.CurrentSeasonLore()?.Subtitle ?? "";
+
+    public string SmgpSeasonEra => _session.CurrentSeasonLore()?.Era ?? "";
+
+    public bool HasSmgpSeasonLore => SmgpSeasonTitle.Length > 0;
 
     /// <summary>The picker unlocks only for a free pick (forced challenges lock to the challenger).</summary>
     public bool SmgpPickEnabled => !SmgpForced;

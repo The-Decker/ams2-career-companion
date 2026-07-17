@@ -6040,9 +6040,14 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
             .Select(e => e.SeasonOrdinal)
             .ToHashSet();
 
+        // Every SMGP season carries its authored identity — locked seasons show their title/era
+        // (spoiler-light: titles and eras, never outcomes, which the lore doesn't assert anyway).
+        var lore = IsSmgpPack ? _environment.Rules?.SmgpSeasonLore : null;
+
         var entries = new List<CampaignTimelineEntry>(horizon);
         for (int ordinal = 1; ordinal <= horizon; ordinal++)
         {
+            var seasonLore = lore?.ForOrdinal(ordinal);
             if (ordinal <= cards.Count)
             {
                 var card = cards[ordinal - 1];
@@ -6051,6 +6056,8 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     Ordinal = ordinal,
                     State = card.IsComplete ? CampaignSeasonState.Completed : CampaignSeasonState.Current,
                     Year = card.SeasonYear,
+                    Title = seasonLore?.Title ?? "",
+                    Era = seasonLore?.Era ?? "",
                     PlayerPosition = card.PlayerPosition,
                     PlayerChampion = card.PlayerIsChampion,
                     MissedRounds = satOutOrdinals.Contains(ordinal),
@@ -6065,11 +6072,21 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
                     Year = plan is not null && ordinal <= plan.PinnedSeasonSequence.Count
                         ? plan.PinnedSeasonSequence[ordinal - 1].Year
                         : null,
+                    Title = seasonLore?.Title ?? "",
+                    Era = seasonLore?.Era ?? "",
                 });
             }
         }
 
         return entries;
+    }
+
+    /// <inheritdoc />
+    public Companion.Core.Smgp.SmgpSeasonLoreEntry? CurrentSeasonLore()
+    {
+        if (!IsSmgpPack || _environment.Rules?.SmgpSeasonLore is not { IsEmpty: false } lore)
+            return null;
+        return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count);
     }
 
     /// <inheritdoc />

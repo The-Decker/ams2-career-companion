@@ -54,6 +54,11 @@ public sealed record CareerRulesData
     /// History panel then simply hides).</summary>
     public required SmgpWhatReallyHappened SmgpWhatReallyHappened { get; init; }
 
+    /// <summary>The authored 17-season SMGP campaign lore (<c>data\rules\smgp\seasons.json</c>):
+    /// every season's unique title/era/context/arcs, outcome-agnostic SMGP canon. DISPLAY-ONLY —
+    /// never a fold input; empty when the file is absent (season headers then stay plain).</summary>
+    public required SmgpSeasonLore SmgpSeasonLore { get; init; }
+
     /// <summary>Per-team SMGP-world quotes + multi-paragraph history (<c>data\rules\smgp\team-profiles.json</c>),
     /// shown on the promotion/demotion screen when the player joins a team. DISPLAY-ONLY — never a fold
     /// input; empty when the file is absent (the team story then simply omits).</summary>
@@ -110,6 +115,7 @@ public sealed record CareerRulesData
             SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
             SmgpPitCrewAdvice = SmgpPitCrewAdvice.Load(rulesDirectory),
             SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
+            SmgpSeasonLore = SmgpSeasonLore.Load(rulesDirectory),
             SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
             SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
             SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),

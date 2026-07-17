@@ -494,6 +494,11 @@ public interface ICareerSession
     /// default: empty.</summary>
     IReadOnlyList<InjuryHistoryEntry> InjuryHistory() => [];
 
+    /// <summary>The authored SMGP lore for the CURRENT campaign season (title/era/context/arcs —
+    /// the season's unique identity), or null for non-SMGP careers and un-authored ordinals.
+    /// DISPLAY-ONLY canon; outcome-agnostic by authorship. Additive default: null.</summary>
+    Companion.Core.Smgp.SmgpSeasonLoreEntry? CurrentSeasonLore() => null;
+
     SeasonPack Pack { get; }
 }
 
@@ -715,6 +720,13 @@ public sealed record CampaignTimelineEntry
     /// <summary>The season's year when known (played seasons and pinned Dynasty seasons); null for
     /// a locked SMGP future season, whose chronology is its ordinal.</summary>
     public int? Year { get; init; }
+
+    /// <summary>The authored season title for SMGP ordinals ("The Tenth Summer"); empty when no
+    /// lore is shipped or the career is not SMGP.</summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>The authored era block ("The Iron Circus"); empty when no lore.</summary>
+    public string Era { get; init; } = "";
 
     /// <summary>The player's final championship position for a completed season; null otherwise.</summary>
     public int? PlayerPosition { get; init; }
