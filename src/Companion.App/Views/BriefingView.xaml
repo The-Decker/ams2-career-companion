@@ -146,19 +146,19 @@
                                         <StackPanel>
                                             <!-- section header; collapses for an ungrouped (empty-title) section -->
                                             <TextBlock Text="{Binding Title}" Style="{StaticResource Faint}"
-                                                       FontSize="12" FontWeight="SemiBold" Margin="0,12,0,3"
+                                                       FontSize="11" FontWeight="SemiBold" Margin="0,8,0,1"
                                                        ToolTip="AMS2 custom-race screen section"
                                                        Visibility="{Binding Title, Converter={StaticResource StringVisible}}" />
                                             <ItemsControl ItemsSource="{Binding Items}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <!-- the whole row is the toggle hit-target -->
-                                                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,2"
+                                                        <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0"
                                                                   HorizontalContentAlignment="Stretch"
                                                                   ToolTip="Click to tick this setting off (ticks reset each round)">
-                                                            <Grid Margin="8,2,0,2">
+                                                            <Grid Margin="8,1,0,1">
                                                                 <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" MinWidth="150" SharedSizeGroup="ChecklistLabel" />
+                                                                    <ColumnDefinition Width="Auto" MinWidth="130" SharedSizeGroup="ChecklistLabel" />
                                                                     <ColumnDefinition Width="*" />
                                                                 </Grid.ColumnDefinitions>
                                                                 <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="0,0,12,0"
@@ -167,7 +167,7 @@
                                                                 <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}"
                                                                          IsReadOnly="True" IsTabStop="False"
                                                                          BorderThickness="0" Background="Transparent" Padding="0"
-                                                                         FontFamily="{StaticResource MonoFont}" FontSize="19" FontWeight="SemiBold"
+                                                                         FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="SemiBold"
                                                                          VerticalAlignment="Center" TextWrapping="Wrap"
                                                                          ToolTip="Selectable — but AMS2 can't paste it; use the tick instead">
                                                                     <TextBox.Style>
