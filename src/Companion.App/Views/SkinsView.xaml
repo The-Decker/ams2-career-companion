@@ -135,24 +135,24 @@
                 </DockPanel>
             </Border>
 
-            <Border x:Name="SelectedCarPreview" Grid.Row="2" Margin="0,18,0,0" Padding="18"
+            <Border x:Name="SelectedCarPreview" Grid.Row="2" Margin="0,14,0,0" Padding="16"
                     CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
                     BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
                     Visibility="{Binding HasSelectedCar, Converter={StaticResource BoolVisible}}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="14" />
+                        <RowDefinition Height="10" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="14" />
-                        <RowDefinition Height="150" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="176" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220" />
-                        <ColumnDefinition Width="18" />
+                        <ColumnDefinition Width="236" />
+                        <ColumnDefinition Width="12" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="18" />
-                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="288" />
                     </Grid.ColumnDefinitions>
 
                     <DockPanel Grid.Row="0" Grid.ColumnSpan="5">
@@ -189,11 +189,11 @@
 
                     <StackPanel Grid.Row="2" Grid.Column="0">
                         <TextBlock Text="DRIVER PROFILE" Style="{StaticResource Eyebrow}" />
-                        <Border Style="{StaticResource PreviewFrame}" Width="166" Height="166"
+                        <Border Style="{StaticResource PreviewFrame}" Width="210" Height="210"
                                 HorizontalAlignment="Left" Margin="0,7,0,0">
                             <Grid>
                                 <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                           FontSize="48" />
+                                           FontSize="60" />
                                 <Image x:Name="SelectedDriverPortraitPreview" Stretch="UniformToFill"
                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                                        Source="{Binding SelectedCar.PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
@@ -204,16 +204,16 @@
 
                     <Grid Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="108" />
+                            <ColumnDefinition Width="140" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock Text="TEAM" Style="{StaticResource Eyebrow}" />
-                            <Border Style="{StaticResource PreviewFrame}" Width="94" Height="94"
+                            <Border Style="{StaticResource PreviewFrame}" Width="124" Height="124"
                                     HorizontalAlignment="Left" Margin="0,7,0,0">
                                 <Grid>
                                     <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                               FontSize="36" />
+                                               FontSize="46" />
                                     <Image x:Name="SelectedTeamLogoPreview" Stretch="Uniform" Margin="8"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                                            Source="{Binding SelectedCar.TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
@@ -244,7 +244,7 @@
 
                     <StackPanel Grid.Row="2" Grid.Column="4">
                         <TextBlock Text="TOP VIEW" Style="{StaticResource Eyebrow}" />
-                        <Border Style="{StaticResource PreviewFrame}" Height="166" Margin="0,7,0,0">
+                        <Border Style="{StaticResource PreviewFrame}" Height="210" Margin="0,7,0,0">
                             <Grid>
                                 <Image x:Name="SelectedTopCarPreview" Stretch="Uniform" Margin="14"
                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
@@ -256,7 +256,7 @@
 
                     <StackPanel Grid.Row="4" Grid.ColumnSpan="5">
                         <TextBlock Text="SIDE VIEW" Style="{StaticResource Eyebrow}" />
-                        <Border Style="{StaticResource PreviewFrame}" Height="128" Margin="0,7,0,0">
+                        <Border Style="{StaticResource PreviewFrame}" Height="150" Margin="0,7,0,0">
                             <Grid>
                                 <Image x:Name="SelectedSideCarPreview" Stretch="Uniform" Margin="16,4"
                                        RenderOptions.BitmapScalingMode="HighQuality"
