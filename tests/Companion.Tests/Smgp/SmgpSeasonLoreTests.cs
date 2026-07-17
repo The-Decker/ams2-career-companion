@@ -214,6 +214,42 @@ public sealed class SmgpSeasonLoreTests
     }
 
     [Fact]
+    public void WithoutReplacedDriver_DropsEveryLineNamingThatDriver()
+    {
+        // A player who takes Nono's Minarae seat benches him — the lore must not narrate Nono as an
+        // active participant. Season 17 gives him an arc and a hook in the raw lore.
+        var season17 = Lore.ForOrdinal(17)!;
+        Assert.Contains(season17.Arcs, a => a.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(season17.Hooks, h => h.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+
+        var reconciled = season17.WithoutReplacedDriver("Nono");
+        Assert.DoesNotContain(reconciled.Arcs, a => a.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(reconciled.Hooks, h => h.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(reconciled.Timeline, t => t.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(reconciled.Contenders, c => c.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(reconciled.Milestones, m => m.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(reconciled.Themes, t => t.Contains("Nono", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void WithoutReplacedDriver_LeavesUnnamedDriversAndUsesWholeWords()
+    {
+        var season17 = Lore.ForOrdinal(17)!;
+
+        // A driver the lore never names (the player's real Zeroforce seat) drops nothing.
+        var klinger = season17.WithoutReplacedDriver("Klinger");
+        Assert.Equal(season17.Arcs.Count, klinger.Arcs.Count);
+        Assert.Equal(season17.Hooks.Count, klinger.Hooks.Count);
+
+        // Empty surname is a no-op (same instance).
+        Assert.Same(season17, season17.WithoutReplacedDriver(""));
+        Assert.Same(season17, season17.WithoutReplacedDriver(null));
+
+        // Whole-word only: a surname embedded in a longer word never triggers a false drop.
+        Assert.Equal(season17.Arcs.Count, season17.WithoutReplacedDriver("No").Arcs.Count);
+    }
+
+    [Fact]
     public void WithPlayerTeam_EmptyName_FallsBackGrammatically()
     {
         var season1 = Lore.ForOrdinal(1)!.WithPlayerTeam("");

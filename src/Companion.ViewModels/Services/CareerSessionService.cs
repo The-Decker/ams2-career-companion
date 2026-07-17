@@ -6085,9 +6085,34 @@ public sealed partial class CareerSessionService : ICareerSession, IForceStaging
     {
         if (!IsSmgpPack || _environment.Rules?.SmgpSeasonLore is not { IsEmpty: false } lore)
             return null;
-        // Resolve the {playerTeam} token to the driver's ACTUAL current team, so the season header
-        // names the team the player is really on (dynamic across the campaign), not a baked-in one.
-        return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count)?.WithPlayerTeam(CurrentPlayerTeamName());
+        // Reconcile the authored lore with the player's REAL seat: fill {playerTeam} with the team
+        // they are actually on, then drop any line narrating the driver they replaced (that driver
+        // is benched — off the grid — so the lore must not show them racing). Both are per-career
+        // display projections; the authored lore is untouched.
+        return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count)
+            ?.WithPlayerTeam(CurrentPlayerTeamName())
+            .WithoutReplacedDriver(ReplacedDriverSurname());
+    }
+
+    /// <summary>The surname of the canon driver whose car the player currently occupies (they were
+    /// benched when the player took the seat), or null when the seat maps to no authored driver.
+    /// Used to keep the season lore from narrating a driver the player replaced.</summary>
+    private string? ReplacedDriverSurname()
+    {
+        string? livery = CurrentSmgpState()?.CurrentSeatLivery;
+        if (string.IsNullOrEmpty(livery))
+            return null;
+        var entry = Pack.Entries.FirstOrDefault(e =>
+            string.Equals(e.Ams2LiveryName, livery, StringComparison.Ordinal));
+        if (entry is null)
+            return null;
+        string? name = Pack.Drivers
+            .FirstOrDefault(d => string.Equals(d.Id, entry.DriverId, StringComparison.Ordinal))?.Name;
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+        // "Peter Klinger" → "Klinger"; matching by surname covers "Klinger" / "P. Klinger" / the full name.
+        int space = name.LastIndexOf(' ');
+        return space >= 0 ? name[(space + 1)..] : name;
     }
 
     /// <inheritdoc />

@@ -124,6 +124,68 @@ public sealed record SmgpSeasonLoreEntry
     /// <summary>Record/milestone opportunities plausible this season (2+).</summary>
     public IReadOnlyList<string> Milestones { get; init; } = [];
 
+    /// <summary>Reconciles the authored lore with the player's real seat: the driver whose car the
+    /// player took is BENCHED (off the grid entirely), so any line narrating them as an active
+    /// participant is inaccurate. This drops every list-field line (theme/timeline/arc/hook/
+    /// contender/milestone) that names <paramref name="driverSurname"/>, so the lore never claims a
+    /// driver the player replaced is out racing. The world-narrative PROSE (overview/preseason/…)
+    /// is the season's preseason canon and is left intact. Returns the same instance when the
+    /// surname is empty or unmatched (a career that replaced no named driver is untouched). The raw
+    /// authored lore is unchanged — this is a per-career display projection, like
+    /// <see cref="WithPlayerTeam"/>.</summary>
+    public SmgpSeasonLoreEntry WithoutReplacedDriver(string? driverSurname)
+    {
+        if (string.IsNullOrWhiteSpace(driverSurname))
+        {
+            return this;
+        }
+        string surname = driverSurname.Trim();
+
+        bool Names(string line) => ContainsWord(line, surname);
+
+        IReadOnlyList<string> Drop(IReadOnlyList<string> lines)
+        {
+            if (!lines.Any(Names))
+            {
+                return lines;
+            }
+            return lines.Where(l => !Names(l)).ToArray();
+        }
+
+        return this with
+        {
+            Themes = Drop(Themes),
+            Timeline = Drop(Timeline),
+            Arcs = Drop(Arcs),
+            Hooks = Drop(Hooks),
+            Contenders = Drop(Contenders),
+            Milestones = Drop(Milestones),
+        };
+    }
+
+    /// <summary>Whole-word (case-insensitive) containment, so "Nono" matches "Nono"/"J. Nono"/
+    /// "Julianno Nono" but never a longer word that merely embeds it.</summary>
+    private static bool ContainsWord(string text, string word)
+    {
+        int from = 0;
+        while (true)
+        {
+            int i = text.IndexOf(word, from, StringComparison.OrdinalIgnoreCase);
+            if (i < 0)
+            {
+                return false;
+            }
+            bool leftOk = i == 0 || !char.IsLetterOrDigit(text[i - 1]);
+            int end = i + word.Length;
+            bool rightOk = end >= text.Length || !char.IsLetterOrDigit(text[end]);
+            if (leftOk && rightOk)
+            {
+                return true;
+            }
+            from = i + 1;
+        }
+    }
+
     /// <summary>Resolves every <see cref="PlayerTeamToken"/> to the driver's ACTUAL team for the
     /// season being shown, so the lore names the player's real team (dynamic across the campaign)
     /// instead of a baked-in one. An empty team name (a career with no seat — never a live SMGP
