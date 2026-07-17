@@ -1,0 +1,1571 @@
+{
+  "source": "derived from data/history team strings + documented lineage",
+  "generatedOn": "2026-07-16",
+  "attribution": "Team name strings and year ranges enumerated from data/history/1967.json through data/history/2026.json, which derive from the f1db dataset (CC BY 4.0) - https://github.com/f1db/f1db. Lineage relationships and notes are authored from widely documented, uncontroversial motorsport history; no statistics are asserted beyond the year ranges observed in the data files.",
+  "aliasPolicy": "An alias list groups strings only when they are trivially the same constructor with sponsor or engine-suffix variations. No such variant strings occur in the current data, so every alias list contains exactly the canonical string. Historically connected but distinct team identities are kept separate, with the connection recorded as an explicit lineage relationship rather than a silent merge. Records whose single name string is known to conflate more than one historical entity are marked isComplete false with an explanatory note.",
+  "teamCount": 110,
+  "teams": [
+    {
+      "canonical": "AGS",
+      "aliases": ["AGS"],
+      "firstYear": 1986,
+      "lastYear": 1991,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Alfa Romeo",
+      "aliases": ["Alfa Romeo"],
+      "firstYear": 1979,
+      "lastYear": 2023,
+      "note": "This name string conflates two entities: the Alfa Romeo works team of 1979-1985 and the Sauber-operated entry that raced under the Alfa Romeo name in 2019-2023.",
+      "lineage": [
+        {
+          "relatedTo": "Sauber",
+          "relationship": "renamed",
+          "note": "The 2019-2023 Alfa Romeo entries are the Sauber team racing under a branding agreement; the team reverted to a Sauber identity for 2024."
+        }
+      ],
+      "isComplete": false,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "AlphaTauri",
+      "aliases": ["AlphaTauri"],
+      "firstYear": 2020,
+      "lastYear": 2023,
+      "lineage": [
+        {
+          "relatedTo": "Toro Rosso",
+          "relationship": "renamed",
+          "note": "Scuderia Toro Rosso was renamed AlphaTauri for 2020."
+        },
+        {
+          "relatedTo": "RB",
+          "relationship": "renamed",
+          "note": "AlphaTauri was renamed RB for 2024."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Alpine",
+      "aliases": ["Alpine"],
+      "firstYear": 2021,
+      "lastYear": 2026,
+      "lineage": [
+        {
+          "relatedTo": "Renault",
+          "relationship": "renamed",
+          "note": "The Enstone-based Renault team was rebranded Alpine for 2021."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Amon",
+      "aliases": ["Amon"],
+      "firstYear": 1974,
+      "lastYear": 1974,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Andrea Moda",
+      "aliases": ["Andrea Moda"],
+      "firstYear": 1992,
+      "lastYear": 1992,
+      "lineage": [
+        {
+          "relatedTo": "Coloni",
+          "relationship": "purchased",
+          "note": "Andrea Moda Formula was formed after Andrea Sassetti purchased the Coloni team ahead of the 1992 season."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Apollon",
+      "aliases": ["Apollon"],
+      "firstYear": 1977,
+      "lastYear": 1977,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Arrows",
+      "aliases": ["Arrows"],
+      "firstYear": 1978,
+      "lastYear": 2002,
+      "lineage": [
+        {
+          "relatedTo": "Footwork",
+          "relationship": "renamed",
+          "note": "Arrows raced as Footwork from 1991 to 1996 following investment by the Footwork Corporation, then reverted to the Arrows name for 1997."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Aston Martin",
+      "aliases": ["Aston Martin"],
+      "firstYear": 2021,
+      "lastYear": 2026,
+      "lineage": [
+        {
+          "relatedTo": "Racing Point",
+          "relationship": "renamed",
+          "note": "Racing Point was rebranded Aston Martin for 2021."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "ATS",
+      "aliases": ["ATS"],
+      "firstYear": 1978,
+      "lastYear": 1984,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Audi",
+      "aliases": ["Audi"],
+      "firstYear": 2026,
+      "lastYear": 2026,
+      "lineage": [
+        {
+          "relatedTo": "Kick Sauber",
+          "relationship": "purchased",
+          "note": "Audi acquired the Sauber Group and the Hinwil-based team became the Audi works entry for 2026."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "BAR",
+      "aliases": ["BAR"],
+      "firstYear": 1999,
+      "lastYear": 2005,
+      "lineage": [
+        {
+          "relatedTo": "Tyrrell",
+          "relationship": "purchased",
+          "note": "British American Racing purchased Tyrrell and took over its entry for 1999."
+        },
+        {
+          "relatedTo": "Honda",
+          "relationship": "renamed",
+          "note": "Honda took full ownership of BAR and the team raced as Honda from 2006."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Bellasi",
+      "aliases": ["Bellasi"],
+      "firstYear": 1970,
+      "lastYear": 1971,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Benetton",
+      "aliases": ["Benetton"],
+      "firstYear": 1986,
+      "lastYear": 2001,
+      "lineage": [
+        {
+          "relatedTo": "Toleman",
+          "relationship": "purchased",
+          "note": "The Benetton family purchased Toleman and the team raced as Benetton from 1986."
+        },
+        {
+          "relatedTo": "Renault",
+          "relationship": "renamed",
+          "note": "Benetton was rebranded Renault for 2002 following Renault's purchase of the Enstone team."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "BMW",
+      "aliases": ["BMW"],
+      "firstYear": 1969,
+      "lastYear": 1969,
+      "note": "The 1969 BMW entries are the marque's Formula 2 works cars that ran in the German Grand Prix's combined field; they are unrelated to the later BMW Sauber entry.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "BMW Sauber",
+      "aliases": ["BMW Sauber"],
+      "firstYear": 2006,
+      "lastYear": 2009,
+      "lineage": [
+        {
+          "relatedTo": "Sauber",
+          "relationship": "renamed",
+          "note": "Sauber raced as BMW Sauber from 2006 to 2009 after BMW purchased a majority stake; following BMW's withdrawal the team reverted to the Sauber name for 2010."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Boro",
+      "aliases": ["Boro"],
+      "firstYear": 1976,
+      "lastYear": 1977,
+      "note": "The Boro entries are a former Ensign chassis raced independently by its Dutch backers after a dispute with Ensign; recorded as a separate constructor.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Brabham",
+      "aliases": ["Brabham"],
+      "firstYear": 1967,
+      "lastYear": 1992,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Brawn",
+      "aliases": ["Brawn"],
+      "firstYear": 2009,
+      "lastYear": 2009,
+      "lineage": [
+        {
+          "relatedTo": "Honda",
+          "relationship": "purchased",
+          "note": "Brawn GP was formed through a management buyout of the Honda team ahead of the 2009 season."
+        },
+        {
+          "relatedTo": "Mercedes",
+          "relationship": "purchased",
+          "note": "Mercedes-Benz purchased Brawn GP and the team raced as Mercedes from 2010."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "BRM",
+      "aliases": ["BRM"],
+      "firstYear": 1967,
+      "lastYear": 1977,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Cadillac",
+      "aliases": ["Cadillac"],
+      "firstYear": 2026,
+      "lastYear": 2026,
+      "note": "New constructor entry first appearing in the 2026 season data; no predecessor in this dataset.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Caterham",
+      "aliases": ["Caterham"],
+      "firstYear": 2012,
+      "lastYear": 2014,
+      "lineage": [
+        {
+          "relatedTo": "Lotus Racing",
+          "relationship": "renamed",
+          "note": "The Fernandes-led team that had raced as Lotus Racing and Team Lotus was renamed Caterham for 2012."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Coloni",
+      "aliases": ["Coloni"],
+      "firstYear": 1987,
+      "lastYear": 1991,
+      "lineage": [
+        {
+          "relatedTo": "Andrea Moda",
+          "relationship": "purchased",
+          "note": "Andrea Sassetti purchased the Coloni team ahead of 1992 and it raced as Andrea Moda."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Connew",
+      "aliases": ["Connew"],
+      "firstYear": 1972,
+      "lastYear": 1972,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Cooper",
+      "aliases": ["Cooper"],
+      "firstYear": 1967,
+      "lastYear": 1969,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Dallara",
+      "aliases": ["Dallara"],
+      "firstYear": 1988,
+      "lastYear": 1992,
+      "note": "The 1988-1992 Dallara entries are the BMS Scuderia Italia team racing Dallara-built chassis.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "De Tomaso",
+      "aliases": ["De Tomaso"],
+      "firstYear": 1970,
+      "lastYear": 1970,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Eagle",
+      "aliases": ["Eagle"],
+      "firstYear": 1967,
+      "lastYear": 1969,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Eifelland",
+      "aliases": ["Eifelland"],
+      "firstYear": 1972,
+      "lastYear": 1972,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Ensign",
+      "aliases": ["Ensign"],
+      "firstYear": 1973,
+      "lastYear": 1982,
+      "lineage": [
+        {
+          "relatedTo": "Theodore",
+          "relationship": "merged",
+          "note": "Ensign merged into Theodore Racing for the 1983 season."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "EuroBrun",
+      "aliases": ["EuroBrun"],
+      "firstYear": 1988,
+      "lastYear": 1990,
+      "note": "Formed as a merger of the Euroracing and Brun Motorsport organizations; neither predecessor appears in this dataset.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Ferrari",
+      "aliases": ["Ferrari"],
+      "firstYear": 1967,
+      "lastYear": 2026,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Fittipaldi",
+      "aliases": ["Fittipaldi"],
+      "firstYear": 1975,
+      "lastYear": 1982,
+      "lineage": [
+        {
+          "relatedTo": "Wolf",
+          "relationship": "merged",
+          "note": "Fittipaldi Automotive absorbed the Wolf team's assets and entry ahead of the 1980 season."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Fondmetal",
+      "aliases": ["Fondmetal"],
+      "firstYear": 1991,
+      "lastYear": 1992,
+      "lineage": [
+        {
+          "relatedTo": "Osella",
+          "relationship": "purchased",
+          "note": "Fondmetal owner Gabriele Rumi purchased Osella and the team raced as Fondmetal from 1991."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Footwork",
+      "aliases": ["Footwork"],
+      "firstYear": 1991,
+      "lastYear": 1996,
+      "lineage": [
+        {
+          "relatedTo": "Arrows",
+          "relationship": "renamed",
+          "note": "The Arrows team raced as Footwork from 1991 to 1996 following investment by the Footwork Corporation, then reverted to the Arrows name for 1997."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Force India",
+      "aliases": ["Force India"],
+      "firstYear": 2008,
+      "lastYear": 2018,
+      "lineage": [
+        {
+          "relatedTo": "Spyker",
+          "relationship": "renamed",
+          "note": "Spyker was renamed Force India for 2008 after its purchase by a consortium led by Vijay Mallya."
+        },
+        {
+          "relatedTo": "Racing Point",
+          "relationship": "succeeded",
+          "note": "A consortium led by Lawrence Stroll purchased Force India's assets during 2018; the operation raced as Racing Point from 2019."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Forti",
+      "aliases": ["Forti"],
+      "firstYear": 1995,
+      "lastYear": 1996,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Frank Williams Racing Cars",
+      "aliases": ["Frank Williams Racing Cars"],
+      "firstYear": 1975,
+      "lastYear": 1975,
+      "lineage": [
+        {
+          "relatedTo": "Iso-Marlboro",
+          "relationship": "renamed",
+          "note": "The same Frank Williams operation entered its cars under the Iso-Marlboro name in 1973-1974 and under the Frank Williams Racing Cars name in 1975."
+        },
+        {
+          "relatedTo": "Wolf-Williams",
+          "relationship": "purchased",
+          "note": "Walter Wolf bought a majority of Frank Williams Racing Cars for 1976 and the team raced as Wolf-Williams; Frank Williams later left to found the separate Williams Grand Prix Engineering."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Haas",
+      "aliases": ["Haas"],
+      "firstYear": 2016,
+      "lastYear": 2026,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Hesketh",
+      "aliases": ["Hesketh"],
+      "firstYear": 1974,
+      "lastYear": 1978,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Hill",
+      "aliases": ["Hill"],
+      "firstYear": 1975,
+      "lastYear": 1975,
+      "note": "The 1975 Hill entries are Graham Hill's Embassy Hill team, which had previously raced customer Shadow and Lola chassis credited to those constructors.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Honda",
+      "aliases": ["Honda"],
+      "firstYear": 1967,
+      "lastYear": 2008,
+      "note": "This name string conflates two entities: the Honda works team of the 1960s (the 1967-1968 entries here) and the Brackley-based team Honda owned and ran from 2006 to 2008.",
+      "lineage": [
+        {
+          "relatedTo": "BAR",
+          "relationship": "renamed",
+          "note": "The 2006-2008 Honda entries are the former BAR team after Honda took full ownership."
+        },
+        {
+          "relatedTo": "Brawn",
+          "relationship": "purchased",
+          "note": "The Honda team was sold in a management buyout and raced as Brawn GP in 2009."
+        }
+      ],
+      "isComplete": false,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "HRT",
+      "aliases": ["HRT"],
+      "firstYear": 2010,
+      "lastYear": 2012,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Iso-Marlboro",
+      "aliases": ["Iso-Marlboro"],
+      "firstYear": 1973,
+      "lastYear": 1974,
+      "lineage": [
+        {
+          "relatedTo": "Politoys",
+          "relationship": "renamed",
+          "note": "Frank Williams' cars were entered as Politoys in 1972 and as Iso-Marlboro from 1973 under new sponsorship."
+        },
+        {
+          "relatedTo": "Frank Williams Racing Cars",
+          "relationship": "renamed",
+          "note": "The same operation's cars were entered under the Frank Williams Racing Cars name in 1975."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Jaguar",
+      "aliases": ["Jaguar"],
+      "firstYear": 2000,
+      "lastYear": 2004,
+      "lineage": [
+        {
+          "relatedTo": "Stewart",
+          "relationship": "renamed",
+          "note": "Ford purchased Stewart Grand Prix and rebranded it Jaguar Racing for 2000."
+        },
+        {
+          "relatedTo": "Red Bull",
+          "relationship": "purchased",
+          "note": "Red Bull purchased Jaguar Racing at the end of 2004 and the team raced as Red Bull from 2005."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Jordan",
+      "aliases": ["Jordan"],
+      "firstYear": 1991,
+      "lastYear": 2005,
+      "lineage": [
+        {
+          "relatedTo": "Midland",
+          "relationship": "purchased",
+          "note": "The Midland Group purchased Jordan in 2005 and the team raced as Midland in 2006."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Kauhsen",
+      "aliases": ["Kauhsen"],
+      "firstYear": 1979,
+      "lastYear": 1979,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Kick Sauber",
+      "aliases": ["Kick Sauber"],
+      "firstYear": 2024,
+      "lastYear": 2025,
+      "lineage": [
+        {
+          "relatedTo": "Sauber",
+          "relationship": "renamed",
+          "note": "The Sauber team raced under the Kick Sauber name in 2024-2025 after its Alfa Romeo branding period ended."
+        },
+        {
+          "relatedTo": "Audi",
+          "relationship": "purchased",
+          "note": "The team became the Audi works entry for 2026 following Audi's acquisition of the Sauber Group."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Kojima",
+      "aliases": ["Kojima"],
+      "firstYear": 1976,
+      "lastYear": 1977,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Larrousse",
+      "aliases": ["Larrousse"],
+      "firstYear": 1993,
+      "lastYear": 1994,
+      "note": "Larrousse's earlier seasons appear under other names in this data: its Lola-chassis years are credited to Lola and its 1992 season to Venturi.",
+      "lineage": [
+        {
+          "relatedTo": "Venturi",
+          "relationship": "renamed",
+          "note": "The Larrousse team's 1992 cars were entered under the Venturi name through a partnership with the marque; the team raced as Larrousse from 1993."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "LDS",
+      "aliases": ["LDS"],
+      "firstYear": 1967,
+      "lastYear": 1968,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "LEC",
+      "aliases": ["LEC"],
+      "firstYear": 1977,
+      "lastYear": 1977,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Leyton House",
+      "aliases": ["Leyton House"],
+      "firstYear": 1990,
+      "lastYear": 1991,
+      "lineage": [
+        {
+          "relatedTo": "March",
+          "relationship": "renamed",
+          "note": "March Engineering's team raced as Leyton House in 1990-1991 after its purchase by the Leyton House group, reverting to the March name for 1992."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Life",
+      "aliases": ["Life"],
+      "firstYear": 1990,
+      "lastYear": 1990,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Ligier",
+      "aliases": ["Ligier"],
+      "firstYear": 1976,
+      "lastYear": 1996,
+      "lineage": [
+        {
+          "relatedTo": "Prost",
+          "relationship": "purchased",
+          "note": "Alain Prost purchased Ligier and the team raced as Prost Grand Prix from 1997."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Lola",
+      "aliases": ["Lola"],
+      "firstYear": 1967,
+      "lastYear": 1997,
+      "note": "This name string groups unrelated programmes that raced Lola-built chassis across three decades, including Larrousse in its Lola-chassis years, Scuderia Italia in 1993, and the works Lola entry of 1997; it is not a single continuous team.",
+      "lineage": [],
+      "isComplete": false,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Lotus",
+      "aliases": ["Lotus"],
+      "firstYear": 1967,
+      "lastYear": 2015,
+      "note": "This name string conflates Team Lotus (entries from 1967 to 1994) with the unrelated Enstone-based Lotus F1 Team of 2012-2015; the 2010-2011 Lotus Racing entries are a third, separate operation listed under Lotus Racing.",
+      "lineage": [
+        {
+          "relatedTo": "Renault",
+          "relationship": "renamed",
+          "note": "The Enstone team raced as Lotus F1 Team in 2012-2015 between its two Renault identities; this link covers only the 2012-2015 portion of the Lotus entries."
+        }
+      ],
+      "isComplete": false,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Lotus Racing",
+      "aliases": ["Lotus Racing"],
+      "firstYear": 2010,
+      "lastYear": 2011,
+      "note": "The Fernandes-led team raced as Lotus Racing in 2010 and Team Lotus in 2011; it is not a continuation of the original Team Lotus entries listed under Lotus.",
+      "lineage": [
+        {
+          "relatedTo": "Caterham",
+          "relationship": "renamed",
+          "note": "The team was renamed Caterham for 2012."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Lyncar",
+      "aliases": ["Lyncar"],
+      "firstYear": 1974,
+      "lastYear": 1975,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Maki",
+      "aliases": ["Maki"],
+      "firstYear": 1974,
+      "lastYear": 1976,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Manor",
+      "aliases": ["Manor"],
+      "firstYear": 2016,
+      "lastYear": 2016,
+      "lineage": [
+        {
+          "relatedTo": "Marussia",
+          "relationship": "renamed",
+          "note": "The Marussia operation raced as Manor Racing in 2016 after emerging from administration."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "March",
+      "aliases": ["March"],
+      "firstYear": 1970,
+      "lastYear": 1992,
+      "note": "This name string covers more than one operation: March Engineering from 1970, a separate March-badged Grand Prix operation in the early 1980s, and the Leyton House organization renamed back to March for 1992.",
+      "lineage": [
+        {
+          "relatedTo": "Leyton House",
+          "relationship": "renamed",
+          "note": "The March team raced as Leyton House in 1990-1991, reverting to the March name for 1992."
+        }
+      ],
+      "isComplete": false,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Martini",
+      "aliases": ["Martini"],
+      "firstYear": 1978,
+      "lastYear": 1978,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Marussia",
+      "aliases": ["Marussia"],
+      "firstYear": 2012,
+      "lastYear": 2015,
+      "lineage": [
+        {
+          "relatedTo": "Virgin",
+          "relationship": "renamed",
+          "note": "Virgin Racing was renamed Marussia for 2012 after the Russian marque took a controlling interest."
+        },
+        {
+          "relatedTo": "Manor",
+          "relationship": "renamed",
+          "note": "The operation raced as Manor Racing in 2016 after emerging from administration."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Matra",
+      "aliases": ["Matra"],
+      "firstYear": 1967,
+      "lastYear": 1972,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "McGuire",
+      "aliases": ["McGuire"],
+      "firstYear": 1977,
+      "lastYear": 1977,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "McLaren",
+      "aliases": ["McLaren"],
+      "firstYear": 1967,
+      "lastYear": 2026,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Mercedes",
+      "aliases": ["Mercedes"],
+      "firstYear": 2010,
+      "lastYear": 2026,
+      "lineage": [
+        {
+          "relatedTo": "Brawn",
+          "relationship": "purchased",
+          "note": "Mercedes-Benz purchased Brawn GP and the team raced as Mercedes from 2010."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Merzario",
+      "aliases": ["Merzario"],
+      "firstYear": 1978,
+      "lastYear": 1979,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Midland",
+      "aliases": ["Midland"],
+      "firstYear": 2006,
+      "lastYear": 2006,
+      "lineage": [
+        {
+          "relatedTo": "Jordan",
+          "relationship": "purchased",
+          "note": "The Midland Group purchased Jordan in 2005 and the team raced as Midland in 2006."
+        },
+        {
+          "relatedTo": "Spyker",
+          "relationship": "purchased",
+          "note": "Spyker Cars purchased the Midland team late in 2006 and it raced as Spyker in 2007."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Minardi",
+      "aliases": ["Minardi"],
+      "firstYear": 1985,
+      "lastYear": 2005,
+      "lineage": [
+        {
+          "relatedTo": "Toro Rosso",
+          "relationship": "purchased",
+          "note": "Red Bull purchased Minardi at the end of 2005 and the team raced as Scuderia Toro Rosso from 2006."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Modena",
+      "aliases": ["Modena"],
+      "firstYear": 1991,
+      "lastYear": 1991,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Onyx",
+      "aliases": ["Onyx"],
+      "firstYear": 1989,
+      "lastYear": 1990,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Osella",
+      "aliases": ["Osella"],
+      "firstYear": 1980,
+      "lastYear": 1990,
+      "lineage": [
+        {
+          "relatedTo": "Fondmetal",
+          "relationship": "purchased",
+          "note": "Fondmetal owner Gabriele Rumi purchased Osella and the team raced as Fondmetal from 1991."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Pacific",
+      "aliases": ["Pacific"],
+      "firstYear": 1994,
+      "lastYear": 1995,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Parnelli",
+      "aliases": ["Parnelli"],
+      "firstYear": 1974,
+      "lastYear": 1976,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Penske",
+      "aliases": ["Penske"],
+      "firstYear": 1974,
+      "lastYear": 1977,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Politoys",
+      "aliases": ["Politoys"],
+      "firstYear": 1972,
+      "lastYear": 1972,
+      "note": "The 1972 Politoys entry was built and run by Frank Williams' organization.",
+      "lineage": [
+        {
+          "relatedTo": "Iso-Marlboro",
+          "relationship": "renamed",
+          "note": "Frank Williams' cars were entered as Iso-Marlboro from 1973 under new sponsorship."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Prost",
+      "aliases": ["Prost"],
+      "firstYear": 1997,
+      "lastYear": 2001,
+      "lineage": [
+        {
+          "relatedTo": "Ligier",
+          "relationship": "purchased",
+          "note": "Alain Prost purchased Ligier and the team raced as Prost Grand Prix from 1997."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Protos",
+      "aliases": ["Protos"],
+      "firstYear": 1967,
+      "lastYear": 1967,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Racing Bulls",
+      "aliases": ["Racing Bulls"],
+      "firstYear": 2025,
+      "lastYear": 2026,
+      "lineage": [
+        {
+          "relatedTo": "RB",
+          "relationship": "renamed",
+          "note": "The team raced as RB in 2024 and as Racing Bulls from 2025."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Racing Point",
+      "aliases": ["Racing Point"],
+      "firstYear": 2019,
+      "lastYear": 2020,
+      "lineage": [
+        {
+          "relatedTo": "Force India",
+          "relationship": "succeeded",
+          "note": "A consortium led by Lawrence Stroll purchased Force India's assets during 2018; the operation raced as Racing Point from 2019."
+        },
+        {
+          "relatedTo": "Aston Martin",
+          "relationship": "renamed",
+          "note": "Racing Point was rebranded Aston Martin for 2021."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "RAM",
+      "aliases": ["RAM"],
+      "firstYear": 1983,
+      "lastYear": 1985,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "RB",
+      "aliases": ["RB"],
+      "firstYear": 2024,
+      "lastYear": 2024,
+      "lineage": [
+        {
+          "relatedTo": "AlphaTauri",
+          "relationship": "renamed",
+          "note": "AlphaTauri was renamed RB for 2024."
+        },
+        {
+          "relatedTo": "Racing Bulls",
+          "relationship": "renamed",
+          "note": "The team raced as Racing Bulls from 2025."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Rebaque",
+      "aliases": ["Rebaque"],
+      "firstYear": 1979,
+      "lastYear": 1979,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Red Bull",
+      "aliases": ["Red Bull"],
+      "firstYear": 2005,
+      "lastYear": 2026,
+      "lineage": [
+        {
+          "relatedTo": "Jaguar",
+          "relationship": "purchased",
+          "note": "Red Bull purchased Jaguar Racing at the end of 2004 and the team raced as Red Bull from 2005."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Renault",
+      "aliases": ["Renault"],
+      "firstYear": 1977,
+      "lastYear": 2020,
+      "note": "This name string conflates the Renault works team of 1977-1985 with the separate Enstone-based team that raced as Renault in 2002-2011 and 2016-2020.",
+      "lineage": [
+        {
+          "relatedTo": "Benetton",
+          "relationship": "renamed",
+          "note": "Renault purchased Benetton and the Enstone team raced as Renault from 2002."
+        },
+        {
+          "relatedTo": "Lotus",
+          "relationship": "renamed",
+          "note": "The Enstone team raced as Lotus F1 Team in 2012-2015 before returning to the Renault name in 2016."
+        },
+        {
+          "relatedTo": "Alpine",
+          "relationship": "renamed",
+          "note": "The Enstone team was rebranded Alpine for 2021."
+        }
+      ],
+      "isComplete": false,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Rial",
+      "aliases": ["Rial"],
+      "firstYear": 1988,
+      "lastYear": 1989,
+      "note": "Founded by Guenter Schmid, who had previously owned the ATS team; recorded as a separate constructor with no corporate continuation asserted.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Sauber",
+      "aliases": ["Sauber"],
+      "firstYear": 1993,
+      "lastYear": 2018,
+      "lineage": [
+        {
+          "relatedTo": "BMW Sauber",
+          "relationship": "renamed",
+          "note": "Sauber raced as BMW Sauber from 2006 to 2009 after BMW purchased a majority stake; the team reverted to the Sauber name for 2010."
+        },
+        {
+          "relatedTo": "Alfa Romeo",
+          "relationship": "renamed",
+          "note": "Sauber raced under the Alfa Romeo name from 2019 to 2023 through a branding agreement."
+        },
+        {
+          "relatedTo": "Kick Sauber",
+          "relationship": "renamed",
+          "note": "The team raced as Kick Sauber in 2024-2025 before becoming the Audi works entry."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Shadow",
+      "aliases": ["Shadow"],
+      "firstYear": 1973,
+      "lastYear": 1980,
+      "lineage": [
+        {
+          "relatedTo": "Theodore",
+          "relationship": "purchased",
+          "note": "Theodore's Teddy Yip purchased the Shadow team during 1980 and absorbed it into Theodore Racing."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Simtek",
+      "aliases": ["Simtek"],
+      "firstYear": 1994,
+      "lastYear": 1995,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Spirit",
+      "aliases": ["Spirit"],
+      "firstYear": 1983,
+      "lastYear": 1985,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Spyker",
+      "aliases": ["Spyker"],
+      "firstYear": 2007,
+      "lastYear": 2007,
+      "lineage": [
+        {
+          "relatedTo": "Midland",
+          "relationship": "purchased",
+          "note": "Spyker Cars purchased the Midland team late in 2006 and it raced as Spyker in 2007."
+        },
+        {
+          "relatedTo": "Force India",
+          "relationship": "renamed",
+          "note": "Spyker was renamed Force India for 2008 after its purchase by a consortium led by Vijay Mallya."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Stewart",
+      "aliases": ["Stewart"],
+      "firstYear": 1997,
+      "lastYear": 1999,
+      "lineage": [
+        {
+          "relatedTo": "Jaguar",
+          "relationship": "renamed",
+          "note": "Ford purchased Stewart Grand Prix and rebranded it Jaguar Racing for 2000."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Super Aguri",
+      "aliases": ["Super Aguri"],
+      "firstYear": 2006,
+      "lastYear": 2008,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Surtees",
+      "aliases": ["Surtees"],
+      "firstYear": 1970,
+      "lastYear": 1978,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Tecno",
+      "aliases": ["Tecno"],
+      "firstYear": 1969,
+      "lastYear": 1973,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Theodore",
+      "aliases": ["Theodore"],
+      "firstYear": 1978,
+      "lastYear": 1983,
+      "lineage": [
+        {
+          "relatedTo": "Shadow",
+          "relationship": "purchased",
+          "note": "Theodore's Teddy Yip purchased the Shadow team during 1980 and absorbed it into Theodore Racing."
+        },
+        {
+          "relatedTo": "Ensign",
+          "relationship": "merged",
+          "note": "Ensign merged into Theodore Racing for the 1983 season."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Token",
+      "aliases": ["Token"],
+      "firstYear": 1974,
+      "lastYear": 1974,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Toleman",
+      "aliases": ["Toleman"],
+      "firstYear": 1981,
+      "lastYear": 1985,
+      "lineage": [
+        {
+          "relatedTo": "Benetton",
+          "relationship": "purchased",
+          "note": "The Benetton family purchased Toleman and the team raced as Benetton from 1986."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Toro Rosso",
+      "aliases": ["Toro Rosso"],
+      "firstYear": 2006,
+      "lastYear": 2019,
+      "lineage": [
+        {
+          "relatedTo": "Minardi",
+          "relationship": "purchased",
+          "note": "Red Bull purchased Minardi at the end of 2005 and the team raced as Scuderia Toro Rosso from 2006."
+        },
+        {
+          "relatedTo": "AlphaTauri",
+          "relationship": "renamed",
+          "note": "Scuderia Toro Rosso was renamed AlphaTauri for 2020."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Toyota",
+      "aliases": ["Toyota"],
+      "firstYear": 2002,
+      "lastYear": 2009,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Trojan",
+      "aliases": ["Trojan"],
+      "firstYear": 1974,
+      "lastYear": 1974,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    },
+    {
+      "canonical": "Tyrrell",
+      "aliases": ["Tyrrell"],
+      "firstYear": 1970,
+      "lastYear": 1998,
+      "lineage": [
+        {
+          "relatedTo": "BAR",
+          "relationship": "purchased",
+          "note": "British American Racing purchased Tyrrell and took over its entry for 1999."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Venturi",
+      "aliases": ["Venturi"],
+      "firstYear": 1992,
+      "lastYear": 1992,
+      "lineage": [
+        {
+          "relatedTo": "Larrousse",
+          "relationship": "renamed",
+          "note": "The 1992 Venturi entries are the Larrousse team's cars entered under the Venturi name through a partnership with the marque; the team raced as Larrousse from 1993."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Virgin",
+      "aliases": ["Virgin"],
+      "firstYear": 2010,
+      "lastYear": 2011,
+      "lineage": [
+        {
+          "relatedTo": "Marussia",
+          "relationship": "renamed",
+          "note": "Virgin Racing was renamed Marussia for 2012 after the Russian marque took a controlling interest."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Williams",
+      "aliases": ["Williams"],
+      "firstYear": 1978,
+      "lastYear": 2026,
+      "note": "Williams Grand Prix Engineering, founded by Frank Williams and Patrick Head; a separate company from the earlier Frank Williams Racing Cars operation, which is listed under its own name.",
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Wolf",
+      "aliases": ["Wolf"],
+      "firstYear": 1977,
+      "lastYear": 1979,
+      "lineage": [
+        {
+          "relatedTo": "Wolf-Williams",
+          "relationship": "renamed",
+          "note": "Wolf-Williams became Walter Wolf Racing for 1977 and its cars were entered as Wolf."
+        },
+        {
+          "relatedTo": "Fittipaldi",
+          "relationship": "merged",
+          "note": "The Wolf team's assets and entry were absorbed by Fittipaldi Automotive ahead of the 1980 season."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Wolf-Williams",
+      "aliases": ["Wolf-Williams"],
+      "firstYear": 1976,
+      "lastYear": 1976,
+      "lineage": [
+        {
+          "relatedTo": "Frank Williams Racing Cars",
+          "relationship": "purchased",
+          "note": "Walter Wolf bought a majority of Frank Williams Racing Cars for 1976 and the team raced as Wolf-Williams."
+        },
+        {
+          "relatedTo": "Wolf",
+          "relationship": "renamed",
+          "note": "The team became Walter Wolf Racing for 1977 and its cars were entered as Wolf."
+        }
+      ],
+      "isComplete": true,
+      "provenance": "derivedFromData+authoredLineage",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)", "documented F1 constructor lineage (uncontroversial general motorsport history)"]
+    },
+    {
+      "canonical": "Zakspeed",
+      "aliases": ["Zakspeed"],
+      "firstYear": 1985,
+      "lastYear": 1989,
+      "lineage": [],
+      "isComplete": true,
+      "provenance": "derivedFromData",
+      "sources": ["data/history/*.json (f1db dataset, CC BY 4.0)"]
+    }
+  ]
+}

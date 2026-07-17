@@ -46,6 +46,10 @@ public sealed record SeatExpectationBreakdown
 
     public required double TotalStrength { get; init; }
 
+    /// <summary>The Dynasty car-development bonus added to the player's total strength
+    /// (docs/dev/dynasty-tycoon-economy.md §6). 0 for every non-economy career.</summary>
+    public double DevelopmentAdjustment { get; init; }
+
     /// <summary>The team-controlled car and reliability contribution (70% of the model).</summary>
     public double TeamContribution => CarContribution + ReliabilityContribution;
 }
@@ -132,13 +136,17 @@ public static class SeatStrengthModel
     /// Versioned expected finish for the player seat. Only that seat receives the performance
     /// adjustment. Version 2 also applies the same folded team-tier fallback to every opponent when
     /// the pack's non-player cars are all neutral, so a Level-D car cannot rank like a front-runner.
+    /// <paramref name="playerStrengthBonus"/> is the Dynasty car-development term (economy §6),
+    /// added to the PLAYER's strength only in every version arm; the 0.0 default reproduces every
+    /// shipped formula exactly, so non-economy careers are byte-identical.
     /// </summary>
     public static int ExpectedFinish(
         GridPlan grid,
         int seatIndex,
         double priorOpi,
         int modelVersion,
-        IReadOnlyDictionary<string, int>? teamTiers = null)
+        IReadOnlyDictionary<string, int>? teamTiers = null,
+        double playerStrengthBonus = 0.0)
     {
         if (seatIndex < 0 || seatIndex >= grid.Seats.Count)
             throw new ArgumentOutOfRangeException(nameof(seatIndex));
@@ -151,7 +159,7 @@ public static class SeatStrengthModel
             priorOpi,
             modelVersion,
             TeamTier(player, teamTiers),
-            useTierFallback);
+            useTierFallback) + playerStrengthBonus;
         int rank = 1;
         for (int i = 0; i < grid.Seats.Count; i++)
         {
@@ -178,7 +186,8 @@ public static class SeatStrengthModel
         int seatIndex,
         double priorOpi,
         int modelVersion,
-        IReadOnlyDictionary<string, int>? teamTiers = null)
+        IReadOnlyDictionary<string, int>? teamTiers = null,
+        double playerStrengthBonus = 0.0)
     {
         if (seatIndex < 0 || seatIndex >= grid.Seats.Count)
             throw new ArgumentOutOfRangeException(nameof(seatIndex));
@@ -207,7 +216,8 @@ public static class SeatStrengthModel
         return new SeatExpectationBreakdown
         {
             ModelVersion = modelVersion,
-            ExpectedFinish = ExpectedFinish(grid, seatIndex, priorOpi, modelVersion, teamTiers),
+            ExpectedFinish = ExpectedFinish(
+                grid, seatIndex, priorOpi, modelVersion, teamTiers, playerStrengthBonus),
             BaseCarScore = baseCarScore,
             TeamTier = teamTier,
             UsesTeamTierFallback = useTierFallback,
@@ -221,7 +231,9 @@ public static class SeatStrengthModel
             PerformanceAdjustment = performanceAdjustment,
             AdjustedRaceSkill = adjustedRaceSkill,
             DriverContribution = driverContribution,
-            TotalStrength = carContribution + driverContribution + reliabilityContribution,
+            TotalStrength = carContribution + driverContribution + reliabilityContribution
+                + playerStrengthBonus,
+            DevelopmentAdjustment = playerStrengthBonus,
         };
     }
 
@@ -236,10 +248,11 @@ public static class SeatStrengthModel
         GridPlan grid,
         double priorOpi,
         int modelVersion,
-        IReadOnlyDictionary<string, int>? teamTiers = null)
+        IReadOnlyDictionary<string, int>? teamTiers = null,
+        double playerStrengthBonus = 0.0)
     {
         int index = PlayerSeatIndex(grid);
-        return ExpectedFinish(grid, index, priorOpi, modelVersion, teamTiers);
+        return ExpectedFinish(grid, index, priorOpi, modelVersion, teamTiers, playerStrengthBonus);
     }
 
     public static int PlayerSeatIndex(GridPlan grid)

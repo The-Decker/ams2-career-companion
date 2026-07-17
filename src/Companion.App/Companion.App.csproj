@@ -114,10 +114,18 @@
          Small committed text files; the README documents provenance. -->
     <None Include="..\..\data\ams2\skin-seasons\**\*.*" Link="data\ams2\skin-seasons\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\data\rules\news\*.json" Link="data\rules\news\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The living-newsroom template packs + desks: the editorial feed's read-side corpus
+         (docs/dev/newsroom-authoring.md). Loose beside the exe like every other rules file —
+         absent packs degrade the feed to empty, so shipping them here is what turns it on. -->
+    <None Include="..\..\data\rules\newsroom\*.json" Link="data\rules\newsroom\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- SMGP replica-mode rules subtree (the dispatch corpus, sponsors, driver/team profiles + stats,
          rival quotes, what-really-happened). Previously only reached the deployed dist via a manual copy;
          copied beside the exe so a dev/publish run also loads them (else SmgpDispatchCorpus etc. fall back). -->
     <None Include="..\..\data\rules\smgp\*.json" Link="data\rules\smgp\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Grand Prix Dynasty owner-economy rules (a REQUIRED fold input for Dynasty economy careers).
+         The rules copy-globs are per-folder and NON-recursive, so this subtree needs its own line —
+         the exact packaging gap the smgp folder documents above. -->
+    <None Include="..\..\data\rules\dynasty\*.json" Link="data\rules\dynasty\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\packs\**\*.*" Link="packs\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

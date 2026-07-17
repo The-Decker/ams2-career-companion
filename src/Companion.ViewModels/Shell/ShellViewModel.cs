@@ -1,5 +1,7 @@
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Companion.ViewModels.Debug;
 using Companion.ViewModels.Hub;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Settings;
@@ -24,6 +26,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
 
     private HubViewModel? _hub;
     private ObservableObject? _beforeSettings;
+    private ObservableObject? _beforeDebug;
     private string? _currentCareerPath;
 
     public ShellViewModel(
@@ -95,9 +98,22 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
     private void OnCareerCreated(object? sender, CareerCreatedEventArgs e)
     {
         Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName, e.Session.Summary.SeasonYear,
-            e.Session.Pack.Manifest.CareerStyle);
+            e.Session.Pack.Manifest.CareerStyle, TerminalState(e.Session));
         _currentCareerPath = e.CareerFilePath;
         AttachHome(e.Session);
+    }
+
+    /// <summary>The gallery badge state for a career as observed from its opened session:
+    /// "deceased" (Normal-mode death — the file stays as a viewable archive), "careerOver" (the
+    /// SMGP floor knock-out), "bankrupt" (the Dynasty team folded), or null for a live career.</summary>
+    private static string? TerminalState(ICareerSession session)
+    {
+        var mortality = session.PlayerMortality();
+        if (mortality.Deceased || mortality.CareerFileDeleted)
+            return "deceased";
+        if (session.CurrentSmgpBriefing()?.CareerOver == true)
+            return "careerOver";
+        return session.BankruptcyScreen() is not null ? "bankrupt" : null;
     }
 
     private void OpenCareer(string path)
@@ -117,7 +133,7 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         }
 
         Start.RecordCareer(path, session.Summary.CareerName, session.Summary.SeasonYear,
-            session.Pack.Manifest.CareerStyle);
+            session.Pack.Manifest.CareerStyle, TerminalState(session));
         _currentCareerPath = path;
         AttachHome(session);
     }
@@ -206,6 +222,109 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         _beforeSettings = null;
     }
 
+    // ---------- developer debug menu (dynasty-passport-roadmap Piece 2) ----------
+
+    /// <summary>The app-wide developer debug menu gate (default OFF, not in the normal Settings UI).
+    /// Reads live from the settings seam. When false the debug keybind is a no-op and nothing renders;
+    /// unlock it with Ctrl+Shift+F12 (persists here) or the <c>AMS2_DEVMODE=1</c> environment
+    /// variable at startup.</summary>
+    public bool DeveloperMode => _settings.Current.DeveloperMode;
+
+    /// <summary>Directory the debug menu creates throwaway (real) careers under. A subfolder of
+    /// Documents so the real factory can write a genuine .ams2career the gallery can reopen.</summary>
+    private string DebugCareersDirectory =>
+        Path.Combine(_environment.DocumentsDirectory, "AMS2CareerCompanion", "DebugCareers");
+
+    /// <summary>The hidden UNLOCK chord (Ctrl+Shift+F12): flips <see cref="DeveloperMode"/> and
+    /// PERSISTS it. Turning it on opens the debug overlay so the unlock is visibly confirmed; turning
+    /// it off closes the overlay if it is showing.</summary>
+    [RelayCommand]
+    private void ToggleDeveloperMode()
+    {
+        bool next = !_settings.Current.DeveloperMode;
+        _settings.Update(s => s with { DeveloperMode = next });
+        OnPropertyChanged(nameof(DeveloperMode));
+
+        if (next)
+            OpenDebug();
+        else if (Current is DebugMenuViewModel)
+            CloseDebug();
+    }
+
+    /// <summary>The debug OPEN/CLOSE chord (Ctrl+Shift+D): opens the overlay over the current screen,
+    /// or closes it when it is already open. A NO-OP while <see cref="DeveloperMode"/> is off — a
+    /// shipped Release with the flag off shows nothing and costs nothing.</summary>
+    [RelayCommand]
+    private void ToggleDebug()
+    {
+        if (!DeveloperMode)
+            return;
+        if (Current is DebugMenuViewModel)
+        {
+            CloseDebug();
+            return;
+        }
+        OpenDebug();
+    }
+
+    private void OpenDebug()
+    {
+        if (Current is DebugMenuViewModel)
+            return;
+
+        var debug = new DebugMenuViewModel(
+            _environment,
+            _factory,
+            DebugCareersDirectory,
+            currentSession: () => _hub?.Home.Session);
+        debug.CloseRequested += (_, _) => CloseDebug();
+        debug.RealCareerRequested += OnDebugRealCareerRequested;
+        debug.PreviewRequested += OnDebugPreviewRequested;
+        debug.ScreenRequested += OnDebugScreenRequested;
+
+        // Stash the pre-debug screen ONLY when opening from a non-debug context. Re-opening the menu
+        // from a debug-spawned leaf (a promotion/demotion preview) must not overwrite the real
+        // location with that transient leaf — so closing later still returns where the user was.
+        _beforeDebug ??= Current;
+        Current = debug;
+    }
+
+    private void CloseDebug()
+    {
+        if (Current is not DebugMenuViewModel)
+            return;
+        Current = _beforeDebug ?? Start;
+        _beforeDebug = null;
+    }
+
+    /// <summary>Tier-1: a REAL throwaway career the debug menu created — recorded in the gallery and
+    /// opened exactly like any career (it reopens, signs, and resimulates like a normal save).</summary>
+    private void OnDebugRealCareerRequested(object? sender, DebugCareerOpenedEventArgs e)
+    {
+        _beforeDebug = null;
+        StatusError = null;
+        Start.RecordCareer(e.CareerFilePath, e.Session.Summary.CareerName, e.Session.Summary.SeasonYear,
+            e.Session.Pack.Manifest.CareerStyle, TerminalState(e.Session));
+        _currentCareerPath = e.CareerFilePath;
+        AttachHome(e.Session);
+    }
+
+    /// <summary>Tier-2: a display-only preview session hosted in a hub. It is pathless (never signs or
+    /// reopens) and is NOT recorded in the gallery — nothing about it touches disk.</summary>
+    private void OnDebugPreviewRequested(object? sender, ICareerSession session)
+    {
+        _beforeDebug = null;
+        StatusError = null;
+        _currentCareerPath = null;
+        AttachHome(session);
+    }
+
+    /// <summary>Tier-2: a single leaf screen (promotion / demotion), or a reopen of the debug overlay
+    /// itself. Set directly as the current screen; the debug overlay underneath stays stashed so
+    /// closing it later restores wherever the user was.</summary>
+    private void OnDebugScreenRequested(object? sender, ObservableObject screen) =>
+        Current = screen;
+
     // ---------- Esc = back (ux-round contract: everywhere non-destructive) ----------
 
     /// <summary>Shell-level Esc: one non-destructive step back. Settings → previous screen;
@@ -218,6 +337,10 @@ public sealed partial class ShellViewModel : ObservableObject, IDisposable
         {
             case SettingsViewModel:
                 CloseSettings();
+                return true;
+
+            case DebugMenuViewModel:
+                CloseDebug();
                 return true;
 
             case NewCareerWizardViewModel wizard:

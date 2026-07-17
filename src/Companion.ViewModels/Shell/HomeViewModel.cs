@@ -99,13 +99,28 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             _careerOver = mortality;
             _deathScreen = session.DeathScreen();
         }
+        // Reopening a bankrupt Dynasty career lands on the same terminal screen as the live
+        // handoff (economy §7). Death outranks the ledger when both ended the same round.
+        else if (session.BankruptcyScreen() is { } bankrupt)
+        {
+            _bankruptcyScreen = bankrupt;
+        }
 
-        // Both terminal routes keep the ordinary hub content inert underneath the App-owned takeover:
-        // mortality through CareerOver/DeathScreen, and the SMGP floor through Briefing.SmgpCareerOver.
+        // All terminal routes keep the ordinary hub content inert underneath the App-owned takeover:
+        // mortality through CareerOver/DeathScreen, the SMGP floor through Briefing.SmgpCareerOver,
+        // and Dynasty bankruptcy through BankruptcyScreen.
         if (IsCareerTerminal)
             _currentContent = Briefing;
         else if (_summary.SeasonComplete)
-            ShowSeasonReview();
+        {
+            // A beaten campaign summit leads with the FINALE on reopen too — closing the app right
+            // after the final fold must not be the only chance to ever see the celebration. Its
+            // Continue advances into the review exactly like the live handoff in AdvanceAfterRound.
+            if (_session.SmgpFinale() is { } finale)
+                ShowFinale(finale);
+            else
+                ShowSeasonReview();
+        }
         else if (_session.CurrentSitOut() is { } sitOut)
             // Opened onto an injured round (e.g. reopened mid-suspension): the player sits out, so the
             // auto-sim screen leads — never manual result entry. (Character death & injury §5.)
@@ -132,8 +147,24 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(
         nameof(HeaderTitle), nameof(SeasonYearText), nameof(RoundText), nameof(StandingText),
         nameof(IsSeasonReview), nameof(FormText), nameof(HasForm),
-        nameof(PlayerCarWeatherChoiceRequired), nameof(PlayerCarIsWet))]
+        nameof(PlayerCarWeatherChoiceRequired), nameof(PlayerCarIsWet),
+        nameof(DriverLevelText), nameof(DriverAvailabilityLabel))]
     private CareerSummary _summary;
+
+    /// <summary>What the LAST applied round did to the player's progression (XP applied, level
+    /// movement, banked Skill Points) — announced where it happens instead of waiting to be found
+    /// on the Driver tab. Null before any apply this session or for a character-free career.</summary>
+    [ObservableProperty]
+    private RoundProgressionSummary? _lastProgression;
+
+    /// <summary>Header chip: the driver's current level ("LV 137"), or null for a character-free
+    /// career (the chip collapses).</summary>
+    public string? DriverLevelText =>
+        _session.CharacterDossier() is { } dossier ? $"LV {dossier.Level}" : null;
+
+    /// <summary>Header chip: the driver's availability ("Fit", "Injured — out 2 races", …), or null
+    /// for a character-free career. An injury is visible at a glance, not two tabs deep.</summary>
+    public string? DriverAvailabilityLabel => _session.CharacterDossier()?.AvailabilityLabel;
 
     /// <summary>Bind contract for the pre-race wet/dry chooser. True means the authored weather is
     /// mixed/dynamic/unknown and a conditional v2 player-car build cannot stage until the player
@@ -237,11 +268,22 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private DeathScreenModel? _deathScreen;
 
-    /// <summary>One additive terminal predicate over the two existing, frozen GUI bind contracts:
-    /// fatal mortality uses <see cref="CareerOver"/>, while the SMGP Level-D floor uses
-    /// <see cref="BriefingViewModel.SmgpCareerOver"/>. It changes navigation only; each ending keeps its
+    /// <summary>The Dynasty bankruptcy game-over projection (economy §7) — the collapse facts, the
+    /// career record, and (when saves exist) the restore slots. Set on the fatal settlement's
+    /// handoff and on reopening a bankrupt career; the App-owned bankruptcy takeover binds this.
+    /// Bankruptcy never deletes the file, so its reads are ordinary DB-backed ones.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsCareerTerminal))]
+    [NotifyCanExecuteChangedFor(nameof(ShowBriefingCommand), nameof(EnterResultCommand))]
+    private BankruptcyScreenModel? _bankruptcyScreen;
+
+    /// <summary>One additive terminal predicate over the three purpose-built projections:
+    /// fatal mortality uses <see cref="CareerOver"/>, the SMGP Level-D floor uses
+    /// <see cref="BriefingViewModel.SmgpCareerOver"/>, and Dynasty bankruptcy uses
+    /// <see cref="BankruptcyScreen"/>. It changes navigation only; each ending keeps its
     /// purpose-built projection and view.</summary>
-    public bool IsCareerTerminal => CareerOver is not null || Briefing.SmgpCareerOver;
+    public bool IsCareerTerminal =>
+        CareerOver is not null || Briefing.SmgpCareerOver || BankruptcyScreen is not null;
 
     public bool IsBriefingState => CurrentContent is BriefingViewModel;
     public bool IsResultEntryState => CurrentContent is ResultEntryViewModel;
@@ -737,6 +779,7 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         // Captured BEFORE the fold so a forced demotion this round (a seat move with no pending
         // offer) can be detected by the team changing. Null for every non-SMGP career.
         string? smgpTeamBefore = _session.CurrentSmgpTeamId();
+        int appliedRound = Summary.CurrentRound;
 
         try
         {
@@ -764,6 +807,20 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
             DeathScreen = _session.DeathScreen();
             return;
         }
+
+        // Dynasty bankruptcy (economy §7): the settlement that folded the team hands off to its own
+        // takeover. The file survives (an ordinary DB-backed read), and death above outranks it.
+        if (_session.BankruptcyScreen() is { } wentBankrupt)
+        {
+            BankruptcyScreen = wentBankrupt;
+            return;
+        }
+
+        // Progression feedback where it happens: what THIS round did to XP/level/Skill Points, read
+        // from the fold's own journaled audit row. Placed AFTER the mortality hand-off above — a
+        // Hardcore death has already disposed the DB, and this read queries it. Null for a
+        // character-free career.
+        LastProgression = _session.RoundProgression(appliedRound);
 
         Summary = _session.Summary;
         Briefing.Refresh();
@@ -862,7 +919,20 @@ public sealed partial class HomeViewModel : ObservableObject, IDisposable
         }
 
         ClearRoundEntryState();
-        Summary = _session.Summary; // an auto-sim never kills, so the DB is always live here
+
+        // An auto-sim never kills the DRIVER (the DB is always live here), but the sat-out round
+        // still settles the books, so it CAN fold the team (economy §7). Hand off to the bankruptcy
+        // takeover exactly as the confirm path does — otherwise a sit-out bankruptcy would advance
+        // into the season review instead of the ending. The file survives, so this is an ordinary
+        // DB-backed read.
+        if (_session.BankruptcyScreen() is { } bankrupt)
+        {
+            BankruptcyScreen = bankrupt;
+            RefreshRoundCommands();
+            return;
+        }
+
+        Summary = _session.Summary;
         Briefing.Refresh();
         AdvanceAfterRound();
         RefreshRoundCommands();

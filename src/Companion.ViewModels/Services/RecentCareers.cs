@@ -31,6 +31,26 @@ public sealed record RecentCareer
     /// so a missing/moved file simply falls back to the era art — see
     /// <see cref="UserImageResolver"/> for the shared user-asset convention.</summary>
     public string? CustomImagePath { get; init; }
+
+    /// <summary>The career's terminal state as last observed at open/create: <c>"deceased"</c>
+    /// (the driver died — the archive stays viewable), <c>"careerOver"</c> (the SMGP floor
+    /// knock-out), <c>"bankrupt"</c> (the Dynasty team folded — economy §7), or <c>null</c> for a
+    /// live career. Recorded so the gallery can badge a finished career honestly instead of
+    /// presenting it as playable. Not <c>required</c> — an older <c>recent.json</c> reads it as
+    /// null, back-compat.</summary>
+    public string? TerminalState { get; init; }
+
+    public bool IsTerminal => TerminalState is { Length: > 0 };
+
+    /// <summary>The gallery badge for a finished career ("IN MEMORIAM" / "CAREER OVER" /
+    /// "BANKRUPT"); empty for a live one.</summary>
+    public string TerminalBadge => TerminalState switch
+    {
+        "deceased" => "IN MEMORIAM",
+        "careerOver" => "CAREER OVER",
+        "bankrupt" => "BANKRUPT",
+        _ => "",
+    };
 }
 
 public interface IRecentCareersStore
@@ -44,6 +64,15 @@ public interface IRecentCareersStore
     /// <see cref="RecentCareer.CustomImagePath"/> is CARRIED FORWARD (re-touching a career — Continue,
     /// rename, re-open — never wipes the card image); set it with <see cref="SetCustomImage"/>.</summary>
     void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null);
+
+    /// <summary>The badge-aware overload (called by open/create with the terminal state OBSERVED
+    /// from the live session): authoritative — a null observed state CLEARS the badge, so a
+    /// bankruptcy or death undone via save-restore un-badges the revived card. The unobserved
+    /// overloads (rename / copy / plain Continue) carry the existing badge forward instead. Default
+    /// drops the badge so lightweight test doubles need not implement it; the real store overrides
+    /// it.</summary>
+    void Touch(string path, string careerName, int seasonYear, string? careerStyle,
+        string? terminalState) => Touch(path, careerName, seasonYear, careerStyle);
 
     void Remove(string path);
 
@@ -91,7 +120,15 @@ public sealed class RecentCareersStore : IRecentCareersStore
     public IReadOnlyList<RecentCareer> Load() =>
         ReadFile().Where(entry => _careerFileExists(entry.Path)).ToList();
 
-    public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null)
+    public void Touch(string path, string careerName, int seasonYear = 0, string? careerStyle = null) =>
+        TouchInternal(path, careerName, seasonYear, careerStyle, observed: false, terminalState: null);
+
+    public void Touch(string path, string careerName, int seasonYear, string? careerStyle,
+        string? terminalState) =>
+        TouchInternal(path, careerName, seasonYear, careerStyle, observed: true, terminalState);
+
+    private void TouchInternal(string path, string careerName, int seasonYear, string? careerStyle,
+        bool observed, string? terminalState)
     {
         var all = ReadFile();
         // Carry the user's chosen card image (and the pack careerStyle) forward across a re-touch
@@ -109,6 +146,12 @@ public sealed class RecentCareersStore : IRecentCareersStore
             SeasonYear = seasonYear,
             CustomImagePath = existing?.CustomImagePath,
             CareerStyle = careerStyle ?? existing?.CareerStyle,
+            // An OBSERVED touch (open/create — the shell computed the badge from the live session)
+            // is AUTHORITATIVE: a session found alive clears a stale badge, so a bankruptcy or death
+            // undone via save-restore un-badges the revived, fully playable card. An UNOBSERVED
+            // touch (rename / copy / plain Continue) never knows the terminal state, so it carries
+            // the existing badge forward — a memorial card must survive a re-touch.
+            TerminalState = observed ? terminalState : existing?.TerminalState,
         });
         WriteFile(entries.Take(Capacity).ToList());
     }

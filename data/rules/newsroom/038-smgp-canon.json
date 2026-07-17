@@ -1,0 +1,55 @@
+{
+  "$comment": "SMGP canon-divergence pack (prefix sc.): the career's venue winners measured against the almanac's remembered rulers (what-really-happened.json). SMGP UNIVERSE provenance — the SEGA canon is fiction and these cards keep the two ledgers visibly separate, never merged. Follows 010-core.json format; read-side only.",
+  "version": 1,
+  "pools": {
+    "scLedger": {
+      "smgp": [
+        "THE BIG BOARD KEEPS BOTH LINES.",
+        "CANON IN ONE COLUMN, CAREER IN THE OTHER.",
+        "THE ALMANAC DOES NOT FLINCH. NEITHER DOES THE TIMING SHEET."
+      ],
+      "default": [
+        "Legend and ledger are different books, and the archive shelves both.",
+        "What the world remembers and what the season recorded now differ by one name.",
+        "The almanac keeps its story; the career keeps its result."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "sc.diverged.card",
+      "event": "smgpCanonDiverged",
+      "headline": "New name over an old legend[[?venue: at {venue}]]",
+      "deck": "SMGP canon card, season {season}: the remembered ruler is beaten",
+      "summary": "SMGP legend remembers {rival}[[?venue: ruling {venue}]]; this career filed {winner}.",
+      "sections": {
+        "lead": "The almanac's page[[?venue: for {venue}]] names its remembered ruler: {rival}. This career's timing sheet types a different name: {winner}[[?winnerTeam: of {winnerTeam}]]. The archive now keeps both columns side by side.",
+        "context": "The legend loses nothing; that is how canon works in this universe. But a career is its own book, and its pages get written at racing speed by whoever arrives first.",
+        "close": "{pool:scLedger}"
+      }
+    },
+    {
+      "id": "sc.diverged.feature",
+      "event": "smgpCanonDiverged",
+      "headline": "{winner} rewrites the local legend[[?venue: at {venue}]]",
+      "deck": "SMGP universe feature, season {season}",
+      "summary": "Canon gave this circuit to {rival}; the race answered to {winner}.",
+      "sections": {
+        "lead": "Every circuit in this universe has a remembered ruler[[?venue: , and {venue}'s is {rival}]]. Remembered — not eternal. The demonstration came from {winner}[[?winnerTeam: and {winnerTeam}]], in front of everyone.",
+        "impact": "The old page stays printed; the new page starts an argument. The paddock will happily conduct it all season.",
+        "close": "{pool:scLedger}"
+      }
+    },
+    {
+      "id": "sc.held.card",
+      "event": "smgpCanonHeld",
+      "headline": "The legend holds[[?venue: at {venue}]]",
+      "deck": "SMGP canon card, season {season}: the remembered ruler rules again",
+      "summary": "Canon remembers {rival}[[?venue: ruling {venue}]], and this career's race agreed.",
+      "sections": {
+        "lead": "Some pages do not need revising. The almanac remembers {rival}[[?venue: ruling {venue}]], and this career's running of the race reached the same verdict, in the present tense.",
+        "close": "{pool:scLedger}"
+      }
+    }
+  ]
+}

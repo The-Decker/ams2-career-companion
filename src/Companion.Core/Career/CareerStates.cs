@@ -157,6 +157,18 @@ public sealed record PlayerCareerState
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Companion.Core.Smgp.SmgpState? Smgp { get; init; }
 
+    // ---- Grand Prix Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md) ----
+
+    /// <summary>The Dynasty owner-economy's folded state (balance, development, staff, sponsor
+    /// contracts, the bankruptcy flag), or null for every career outside the mode — including
+    /// Dynasty careers created before the economy shipped. Seeded at creation ONLY when the
+    /// campaign mode is <c>grandPrixDynasty</c> AND the creation request opted in — mirroring
+    /// <see cref="Smgp"/> — and carried forward each round via record <c>with</c>, so
+    /// rollover/season-end re-derive it identically. Omitted when null (WhenWritingNull): every
+    /// existing career's player_state blob is byte-identical and the whole economy stays inert.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Companion.Core.Dynasty.DynastyEconomyState? Economy { get; init; }
+
     // ---- Character death & injury (docs/dev/character-death-injury.md, Slice 1) ----
 
     /// <summary>The career's mortality mode (Off / Normal / Hardcore), seeded ONCE at creation and

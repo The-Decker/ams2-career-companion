@@ -62,7 +62,12 @@ public static class DataJournalPhases
         // smgp.swap is the player's post-race promotion decision (3c-2) — a two-phase INPUT the round
         // fold never regenerates (it is READ back to resolve the pending offer, like the stat spends),
         // so the byte-compare must exclude it. Its DERIVED effect (the smgp.seat row) IS compared.
-        || string.Equals(phase, JournalPhases.SmgpSwap, StringComparison.Ordinal);
+        || string.Equals(phase, JournalPhases.SmgpSwap, StringComparison.Ordinal)
+        // economy.decision is a Dynasty player economic choice declared for a not-yet-folded round —
+        // an INPUT the round fold never regenerates (it is READ back and applied in seq order, like
+        // the smgp.swap decision). Its DERIVED effects (economy.applied / economy.round rows and the
+        // carried DynastyEconomyState) ARE compared.
+        || string.Equals(phase, JournalPhases.EconomyDecision, StringComparison.Ordinal);
 }
 
 /// <summary>One persisted journal row: a <see cref="JournalEvent"/> plus the storage-assigned

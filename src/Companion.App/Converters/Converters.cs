@@ -708,6 +708,25 @@ public sealed class SmgpPlayerTeamConverter : IMultiValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>The public campaign timeline read projection on an <c>ICareerSession</c>. History
+/// supplies the live Hub session (or the tear-off window's tagged Hub) plus RoundText as a refresh
+/// token; the converter intentionally ignores the token and simply re-reads the deterministic,
+/// display-only projection whenever WPF invalidates the MultiBinding.</summary>
+public sealed class CampaignTimelineConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var session = values
+            .OfType<Companion.ViewModels.Services.ICareerSession>()
+            .FirstOrDefault();
+        return session?.CampaignTimeline()
+            ?? Array.Empty<Companion.ViewModels.Services.CampaignTimelineEntry>();
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Joins the Calendar card already projected by the shared ViewModel to Task 3's richer
 /// <see cref="Companion.ViewModels.Services.SeasonScheduleEntry"/> from the public session read side.
 /// The round label is stable, and the refresh-token value makes the join re-run after every fold.

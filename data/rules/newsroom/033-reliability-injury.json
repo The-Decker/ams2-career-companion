@@ -1,0 +1,375 @@
+{
+  "$comment": "Reliability and injury desk pack (prefix ri.) - mechanical failures voiced by era (1960s oil-and-metal through 2010s sensors-and-shutdowns, plus SMGP arcade), honest driver-error assessments, retirement-streak coverage, sit-out and medical bulletins, and two measured memoriam variants. Follows 010-core.json format; read-side only.",
+  "version": 1,
+  "pools": {
+    "riGarage": {
+      "1960s": [
+        "The mechanics drained the oil and found the story written in bright metal.",
+        "The offending assembly travels home in a wooden crate, to be argued over at the works."
+      ],
+      "1980s": [
+        "The broken bits came back to the garage in a box. Nobody spoke over it.",
+        "Somewhere tonight a designer is being asked hard questions at high volume."
+      ],
+      "2010s": [
+        "The telemetry is already uploaded - somewhere a factory screen is replaying the failure frame by frame.",
+        "Overnight, the data will name the guilty part. It always does."
+      ],
+      "smgp": [
+        "THE WRENCH CREW SWARMS. THE PART GETS BENCHED. THE LADDER KEEPS SCROLLING.",
+        "GARAGE DOORS DOWN. TOOLBOXES OPEN. THE COMEBACK STARTS TONIGHT."
+      ],
+      "default": [
+        "In the garage, the failed component is already on the bench, giving up its story in fragments.",
+        "The team will strip the car to its last bolt before it turns a wheel again.",
+        "Warranties do not exist at this level - only long nights and second guesses."
+      ]
+    },
+    "riBulletin": {
+      "1960s": [
+        "The doctors' report is couched in careful language, as such reports are, and the paddock reads between its lines.",
+        "Word from the infirmary is guarded but not grave."
+      ],
+      "2010s": [
+        "The team's medical update ran to three sentences and was shared a thousand times within the hour.",
+        "Further scans are scheduled; further statements are not."
+      ],
+      "smgp": [
+        "THE MEDICAL BAY DOORS SLIDE SHUT. THE WHOLE PADDOCK LEANS IN.",
+        "HEALING BAR ON SCREEN. IT FILLS SLOWER THAN ANYONE WANTS."
+      ],
+      "default": [
+        "The medical team's statement is brief and its tone is calm - which, in this sport, is the good kind of bulletin.",
+        "Recovery has its own calendar, and it does not consult the championship's.",
+        "The advice from the medical room is the same as it always is: patience, then patience again."
+      ]
+    },
+    "wrenchNote": {
+      "1960s": [
+        "The works will want the crankcase on the bench before the transporter is cold.",
+        "Metal fails; the question is always why, and the answer is always in the metal."
+      ],
+      "2010s": [
+        "The failure is already a ticket in the factory system, stamped urgent.",
+        "The reliability group does not sleep after days like this; the rigs run all night."
+      ],
+      "smgp": [
+        "THE GARAGE LIGHTS STAY ON ALL NIGHT.",
+        "EVERY BOLT GETS THE STARE-DOWN TONIGHT."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "ri.mech.oil-and-metal",
+      "event": "retiredMechanical",
+      "eras": ["1960s", "1970s"],
+      "headline": "The machinery gives out under {subject}[[?venue: at {venue}]]",
+      "deck": "A mechanical retirement[[?round: from round {round}]], reported from the paddock",
+      "summary": "{subject} retired[[?round: from round {round}]] when the car failed[[?reason: - {reason}]].",
+      "sections": {
+        "lead": "{pool:dateline} It is the oldest ending in the sport: {subject} pressing on, the instruments telling their bad news, and then the long walk back[[?venue: at {venue}]]. The car gave out[[?reason: - {reason}, the mechanics say]], and no urging from the cockpit could argue with it.",
+        "reliability": "{pool:riGarage} {pool:wrenchNote}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.mech.back-page-bang",
+      "event": "retiredMechanical",
+      "eras": ["1980s", "1990s"],
+      "headline": "BANG. {player's} race goes up in smoke",
+      "deck": "Mechanical failure ends it[[?venue: at {venue}]]",
+      "summary": "{subject} was running when the car quit[[?round: in round {round}]][[?reason: - {reason}]].",
+      "sections": {
+        "lead": "{pool:dateline} No warning, no mercy. One moment {subject} is racing, the next the car is coasting[[?venue: at {venue}]] and the marshals are waving it somewhere safe to die[[?reason: - the verdict from the garage reads {reason}]].",
+        "reliability": "The points {subject} came for are still out on the circuit. {pool:riGarage}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.mech.shutdown",
+      "event": "retiredMechanical",
+      "eras": ["2000s", "2010s"],
+      "headline": "Shutdown: {player's} car switches itself off[[?venue: at {venue}]]",
+      "deck": "Alarms, a slowing car, and a very modern retirement",
+      "summary": "A systems failure ended {player's} race[[?round: in round {round}]][[?reason: - {reason}]].",
+      "sections": {
+        "lead": "{pool:dateline} The failure arrived as a number before it arrived as a feeling: an alarm on the wheel, a procedure recited over the radio, and {subject} rolling to a stop[[?venue: at {venue}]] in a car that had already decided the argument[[?reason: - preliminary word points to {reason}]].",
+        "reliability": "{pool:riGarage} The part flies back to the factory tonight; the explanation will land before the freight does.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.mech.smgp-ko",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "headline": "SMOKE ON THE CIRCUIT! {player's} machine calls it quits",
+      "deck": "MECHANICAL K.O.[[?venue: AT {venue}]]",
+      "summary": "{player's} machine broke[[?round: in round {round}]] and the day ended early.",
+      "sections": {
+        "lead": "{pool:dateline} THE ENGINE NOTE WOBBLES, THE CROWD GROANS, AND {player's} DAY IS DONE[[?venue: AT {venue}]]. NO CONTINUE SCREEN FOR MACHINERY - WHEN IT BREAKS, IT BREAKS.",
+        "reliability": "{pool:riGarage}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.mech.pattern-forming",
+      "event": "retiredMechanical",
+      "when": { "minStreak": 2 },
+      "headline": "Twice is a trend: another failure strands {subject}",
+      "deck": "{streak} non-finishes in a row, and the garage knows the difference between bad luck and a problem",
+      "summary": "{subject} retired again[[?round: in round {round}]] - now {streak} retirements in succession.",
+      "sections": {
+        "lead": "{pool:dateline} One breakage is an anecdote. {streak} in a row is evidence. {player's} car failed again[[?venue: at {venue}]][[?reason: - {reason} this time]], and the word 'again' is doing heavy work in every sentence spoken in that garage tonight.",
+        "stats": "Reliability is arithmetic: every non-finish is points surrendered at a rate no driving can buy back. The championship does not record excuses, only zeros.",
+        "reliability": "{pool:wrenchNote} {pool:riGarage}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.mech.finale-heartbreak",
+      "event": "retiredMechanical",
+      "when": { "isFinalRound": true },
+      "headline": "Cruel to the last: {player's} car fails at the season finale",
+      "deck": "The last day of the year ends in the garage",
+      "summary": "{player's} season closed with a mechanical failure at the final round[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Seasons are supposed to end with a flag. {player's} ended with a tow rope: the car broke at the last round of the year[[?venue: at {venue}]][[?reason: - {reason}]], and there is no next weekend to make it right.",
+        "context": "A winter is a long time to sit with a failure. The one mercy of a finale breakdown is that everyone else's season is over too.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.mech.opener-undone",
+      "event": "retiredMechanical",
+      "when": { "isSeasonOpener": true },
+      "headline": "Broken before it began: {subject} retires from the season opener",
+      "deck": "A winter of work undone in an afternoon",
+      "summary": "{player's} new season opened with a mechanical retirement[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Every winter promise met the same afternoon: {player's} car failed at the very first round of the year[[?venue: at {venue}]][[?reason: - {reason}]], and a garage that spent months preparing for this day packed it away early.",
+        "reliability": "Openers are the sport's honesty test - the round where winter's claims meet a stopwatch. {team} left with a data set instead of a result. {pool:riGarage}",
+        "close": "The season is long. Tonight, that is both the consolation and the sentence."
+      }
+    },
+    {
+      "id": "ri.error.honest-owned",
+      "event": "retiredDriverError",
+      "headline": "No excuses offered: {subject} out through driver error",
+      "deck": "An honest mistake, honestly owned",
+      "summary": "{subject} retired after a driving error[[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} The stewards will not need long and neither will the driver: {subject} got it wrong[[?venue: at {venue}]], the car went where physics sent it, and the afternoon ended in gravel and honesty.",
+        "context": "There is a difference between a driver who blames the tools and one who reads the moment back plainly. The second kind tends to make the same mistake exactly once.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.error.judgement",
+      "event": "retiredDriverError",
+      "eras": ["1960s", "1970s"],
+      "headline": "An error of judgement ends {player's} race",
+      "deck": "The driver, not the machine, at fault[[?venue: at {venue}]]",
+      "summary": "{subject} retired after a driving error[[?round: in round {round}]], the car sound until the moment it was not.",
+      "sections": {
+        "lead": "{pool:dateline} The report is a plain one: {subject} asked the car a question it could not answer[[?venue: at {venue}]] and paid the customary price. The machinery bore no blame; the paddock's sympathy is of the quieter kind reserved for self-inflicted wounds.",
+        "context": "The old hands hold that a driver learns the true dimensions of a corner only by exceeding them once. By that measure, today counted as education, expensively bought.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.error.one-bad-input",
+      "event": "retiredDriverError",
+      "eras": ["2000s", "2010s"],
+      "headline": "One bad input: {subject} crashes out[[?venue: at {venue}]]",
+      "deck": "The data will name the corner; the driver already has",
+      "summary": "{subject} retired from the race after an error[[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} By tonight the overlay will show it to the metre: the brake released a fraction early, the line a hand's width wrong, and {player's} race ending at racing speed[[?venue: at {venue}]]. Modern racing leaves no privacy for mistakes.",
+        "stats": "The margin between committed and crashed at this level is measured in tenths of a degree and hundredths of a second. Today {subject} landed on the wrong side of a number that small.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.error.pressure-tells",
+      "event": "retiredDriverError",
+      "when": { "rivalInvolved": true },
+      "headline": "Pressure tells: {subject} cracks in the fight[[?rival: with {rival}]]",
+      "deck": "A mistake made at close quarters",
+      "summary": "{subject} retired after an error made in traffic[[?rival: while racing {rival}]].",
+      "sections": {
+        "lead": "{pool:dateline} Mistakes rarely happen in empty air. This one came in the thick of a fight[[?rival: with {rival}]][[?venue: at {venue}]] - the kind of wheel-to-wheel arithmetic where the margin for error is loaned, not owned, and {subject} spent one tenth too many.",
+        "rivalry": "[[?rival: {rival} drove on. That is the cruelty of these duels: one driver gets the corner, the other gets the walk back. ]]Rivalries are decided as much by the mistakes they force as by the passes they produce.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.error.smgp-spin",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "headline": "SPIN AND OUT! {subject} bins it[[?venue: at {venue}]]",
+      "deck": "DRIVER ERROR. GAME OVER FOR TODAY.",
+      "summary": "{subject} spun out of the race[[?round: in round {round}]] - driver error, no arguments.",
+      "sections": {
+        "lead": "{pool:dateline} FULL SEND, WRONG RESULT. {subject} asked for one slice of grip too many[[?venue: at {venue}]] and the circuit said NO. THE MACHINE IS FINE. THE PRIDE NEEDS A RESPRAY.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.streak.climate",
+      "event": "retirementStreak",
+      "headline": "The zeros pile up: {streak} straight non-finishes for {subject}",
+      "deck": "A run that is starting to define the season",
+      "summary": "{subject} has now retired from {streak} consecutive races.",
+      "sections": {
+        "lead": "{pool:dateline} There is a moment when a bad patch stops being weather and becomes climate. At {streak} retirements in succession, {player's} season has crossed it - the paddock no longer asks what went wrong this week, only what will go wrong next.",
+        "stats": "Streaks like this compound: points lost, momentum lost, and a car developed on guesswork because it never runs long enough to learn anything.",
+        "reliability": "{pool:wrenchNote}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.streak.failure-analysis",
+      "event": "retirementStreak",
+      "desks": ["apex"],
+      "headline": "Failure analysis: the anatomy of {player's} {streak}-race collapse",
+      "deck": "A technical reading of a reliability crisis",
+      "summary": "An engineering view of {player's} {streak} consecutive retirements.",
+      "sections": {
+        "lead": "Set sentiment aside and read the pattern like an engineer: {streak} consecutive non-finishes is not misfortune, it is a system producing the same output from the same inputs. Somewhere in {team's} process - design, assembly, operation - a truth is going unheard.",
+        "reliability": "Components rarely lie. They fail along the load paths they are given, at the margins they are set. {pool:riGarage}",
+        "next": "The fix will be found the way these fixes are always found: instrumented, itemised, and admitted. Until then, every green light is a hypothesis test.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.streak.siege",
+      "event": "retirementStreak",
+      "when": { "minStreak": 4 },
+      "headline": "A season under siege: {streak} straight retirements and counting",
+      "deck": "This is no longer a rough patch. It is the story of the year.",
+      "summary": "{player's} retirement run has reached {streak} races.",
+      "sections": {
+        "lead": "{pool:dateline} Somewhere around the third one it stopped being a slump and became a siege. {streak} consecutive retirements have hollowed out {player's} season - the championship arithmetic wrecked, the garage running on grim routine, the driver rehearsing starts for races the car will not finish.",
+        "context": "Runs like this test the parts of a team no wind tunnel measures: the willingness to keep bolting the car together carefully when carelessness would be understood.",
+        "stats": "The ledger makes brutal reading: {streak} rounds, zero finishes, and a points column frozen while every rival's ticks upward.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.sitout.pit-wall",
+      "event": "satOutRound",
+      "headline": "The hardest laps are the missed ones: {subject} sits out[[?round: round {round}]]",
+      "deck": "Recovery continues on its own schedule",
+      "summary": "{subject} was not in the car[[?round: for round {round}]], still recovering.",
+      "sections": {
+        "lead": "{pool:dateline} There is no lonelier place in the sport than the pit wall during a race you were meant to run. {subject} watched[[?round: round {round}]][[?venue: at {venue}]] from the wrong side of the barrier, the recovery clock still turning.",
+        "context": "[[?missRaces: The medical schedule shows {missRaces} more rounds before a return can even be discussed. ]]{pool:riBulletin}",
+        "close": "The stopwatch never asks how you feel. It only asks when you are back."
+      }
+    },
+    {
+      "id": "ri.sitout.smgp-benched",
+      "event": "satOutRound",
+      "eras": ["smgp"],
+      "headline": "BENCHED! {subject} sits this one out",
+      "deck": "RECOVERY MODE[[?round: - ROUND {round} RUNS WITHOUT ITS HEADLINER]]",
+      "summary": "{subject} missed[[?round: round {round}]] - still healing up.",
+      "sections": {
+        "lead": "{pool:dateline} THE GRID FORMED UP[[?venue: AT {venue}]] WITH ONE NAME MISSING. {subject} SPENT THE RACE ON THE SIDELINES, HEALING BAR CREEPING RIGHT[[?missRaces: - {missRaces} MORE ROUNDS UNTIL THE RELAUNCH]].",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ri.injured.wire-bulletin",
+      "event": "playerInjured",
+      "desks": ["wire"],
+      "headline": "Medical bulletin: {subject} hurt[[?venue: at {venue}]][[?missRaces: , out {missRaces} rounds]]",
+      "deck": "Injury update[[?round: after round {round}]]",
+      "summary": "{subject} sustained injuries in an accident[[?missRaces: and is expected to miss {missRaces} races]].",
+      "sections": {
+        "lead": "{pool:dateline} The facts first, as the wire prefers them: {subject} was injured in an accident[[?venue: at {venue}]][[?round: during round {round}]]. The driver was attended promptly and is in the care of the medical staff[[?missRaces: - the early estimate is {missRaces} rounds on the sidelines]].",
+        "context": "{pool:riBulletin}",
+        "next": "[[?missRaces: The comeback date has a number on it now, which is more than most weeks like this get. ]]Further bulletins as the doctors issue them - and not before.",
+        "close": "The sport holds its breath briefly, then holds its schedule. Both are true at once."
+      }
+    },
+    {
+      "id": "ri.injured.the-bill",
+      "event": "playerInjured",
+      "headline": "The body pays the bill: {subject} injured[[?venue: at {venue}]]",
+      "deck": "[[?missRaces:{missRaces} races to heal. ]]A reminder of what the speed costs",
+      "summary": "{subject} was hurt in a racing accident[[?missRaces: and faces {missRaces} rounds out]].",
+      "sections": {
+        "lead": "Racing drivers talk about their bodies the way engineers talk about components: inputs, tolerances, service intervals. Today the toughest component took the hit. {subject} is hurt[[?venue: after an accident at {venue}]], and the machinery of a season suddenly matters less than the person who operates it.",
+        "impact": "[[?missRaces: {missRaces} rounds is the official estimate, and every driver alive will privately try to beat it. ]]The team's plans bend around an empty seat; the championship does not wait, which is the cruellest thing about it and also the most honest.",
+        "context": "{pool:riBulletin}",
+        "close": "Cars are rebuilt to a deadline. People are rebuilt to their own."
+      }
+    },
+    {
+      "id": "ri.injured.infirmary",
+      "event": "playerInjured",
+      "eras": ["1960s", "1970s"],
+      "headline": "{subject} hurt in racing accident; recovery expected",
+      "deck": "A bulletin from the circuit infirmary[[?round: , round {round}]]",
+      "summary": "{subject} suffered injuries[[?venue: at {venue}]][[?missRaces: and will be absent some {missRaces} rounds]].",
+      "sections": {
+        "lead": "{pool:dateline} It falls to this page to report that {subject} came to grief[[?venue: at {venue}]] and has been placed in the doctors' charge. The word from the infirmary is measured: injuries, yes; danger, no[[?missRaces: - an absence of perhaps {missRaces} rounds]].",
+        "context": "{pool:riBulletin} Such bulletins are read twice in every garage, and the paddock does not exhale until the second reading matches the first.",
+        "close": "The car is secondary, which is the only correct order of concern."
+      }
+    },
+    {
+      "id": "ri.season-over.calendar",
+      "event": "seasonEndingInjury",
+      "headline": "No more racing this year: {player's} season ends in the medical room",
+      "deck": "The injury will heal. The calendar will not wait for it.",
+      "summary": "{subject} will take no further part in the {year} season through injury.",
+      "sections": {
+        "lead": "Some seasons end with mathematics and some with a flag. {player's} {year} season ended with a doctor choosing words carefully: the injuries[[?venue: from the accident at {venue}]] will mend, but not on any timeline that includes another race this year.",
+        "impact": "The entry list adjusts, the garage repurposes its months, and a championship campaign becomes, overnight, a rehabilitation plan with a racing driver attached to it.",
+        "next": "One date matters now and it is not on this year's calendar: the first test of next season, and the answering of the only question that counts - is the speed still there? The paddock's long experience says yes more often than no.",
+        "close": "{pool:riBulletin}"
+      }
+    },
+    {
+      "id": "ri.season-over.ruled",
+      "event": "seasonEndingInjury",
+      "eras": ["1960s", "1970s"],
+      "headline": "{player's} season is ended by injury",
+      "deck": "The doctors have ruled; the paddock accepts",
+      "summary": "{subject} will not race again in {year}, on medical instruction.",
+      "sections": {
+        "lead": "{pool:dateline} The bulletin is final in the way only medical bulletins can be: {subject} will take no further part in the {year} championship[[?venue: , the price of the accident at {venue}]]. In a sport that keeps harder ledgers than this one, the paddock received the news with something close to relief - a season lost is the mild version of the story.",
+        "context": "{pool:riBulletin} The transporters will carry one car fewer and the entry lists one name fewer, until spring restores both.",
+        "close": "Winter comes early for some. It is still only winter."
+      }
+    },
+    {
+      "id": "ri.died.saddest-duty",
+      "event": "playerDied",
+      "eras": ["1960s", "1970s"],
+      "headline": "{subject} dies in racing accident",
+      "deck": "A life given to the sport, and taken by it",
+      "summary": "{subject} lost their life in an accident[[?venue: at {venue}]][[?round: during round {round}]].",
+      "sections": {
+        "lead": "It is the saddest duty this page carries, and it is carried today: {subject} lost their life in an accident[[?venue: at {venue}]][[?round: during round {round}]]. The circumstances will be examined in due course and reported plainly. Today is not for circumstances.",
+        "context": "The paddock knows the weight of such mornings too well, and it bears them the only way it knows: quietly, together, with the engines silent and the flags at half mast.",
+        "close": "The championship will resume, because it always does. It will carry the name with it, because it always does that too."
+      }
+    },
+    {
+      "id": "ri.died.remembered",
+      "event": "playerDied",
+      "headline": "{subject}, remembered",
+      "deck": "The paddock stops",
+      "summary": "{subject} died following a racing accident[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "There is no headline that carries this properly, so here it is plainly: {subject} has died[[?venue: , after an accident at {venue}]]. The garages went quiet one by one as the word moved down the lane, and quiet is how this sport says what it cannot say.",
+        "impact": "What remains is what always remains: the laps, the results in their columns[[?team: , the people at {team} who worked alongside a friend]], and the space a person leaves in the rooms they used to fill.",
+        "close": "Racing goes on. That has never once meant forgetting."
+      }
+    }
+  ]
+}

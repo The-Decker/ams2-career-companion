@@ -39,6 +39,13 @@ public partial class App : Application
         {
             string ams2DataDirectory = Path.Combine(AppContext.BaseDirectory, "data", "ams2");
             var settings = new SettingsService(JsonSettingsStore.CreateDefault());
+
+            // Alternate developer-mode unlock (dynasty-passport-roadmap Piece 2): AMS2_DEVMODE=1
+            // flips the runtime gate at startup and persists it, so the debug menu is reachable via
+            // Ctrl+Shift+D. The chord Ctrl+Shift+F12 is the in-app equivalent. Default OFF — a
+            // shipped Release with neither set shows nothing.
+            if (IsDevModeEnvSet() && !settings.Current.DeveloperMode)
+                settings.Update(static s => s with { DeveloperMode = true });
             var environment = CareerEnvironment.CreateDefault(ams2DataDirectory);
             // Era-transition pack discovery (M6) searches the same roots as the wizard:
             // the defaults plus the settings screen's live custom pack folders.
@@ -97,6 +104,21 @@ public partial class App : Application
     /// 100), which every window's root LayoutTransform multiplies by so ALL text and spacing scale
     /// uniformly — inline sizes, headings and tear-off windows included, not just inherited body
     /// text. Mutating the brush instances / replacing the resources updates every reference live.</summary>
+    /// <summary>True when the AMS2_DEVMODE environment variable requests the developer debug menu
+    /// (accepts "1"/"true"/"yes"/"on", case-insensitively). Any read failure degrades to off.</summary>
+    private static bool IsDevModeEnvSet()
+    {
+        try
+        {
+            string? value = Environment.GetEnvironmentVariable("AMS2_DEVMODE")?.Trim();
+            return value is "1" or "true" or "yes" or "on" or "TRUE" or "True" or "Yes" or "On" or "YES" or "ON";
+        }
+        catch (System.Security.SecurityException)
+        {
+            return false;
+        }
+    }
+
     private void ApplyAppearance(AppSettings settings)
     {
         // The base body font stays 14; the root UI-scale transform applies the scale (so an inline
@@ -151,7 +173,11 @@ public partial class App : Application
         try
         {
             audio = new AppAudioController(settings);
-            SoundAssist.Connect((cue, source) => audio.PlayEffect(cue, source));
+            // Bind the delegate to the controller INSTANCE before the transfer-local is cleared.
+            // Capturing `audio` in a lambda made every click dereference null after `_audio = audio;
+            // audio = null`, and SoundAssist correctly swallowed that decorative-audio exception.
+            Action<SoundEffectCue, object?> effectPlayer = audio.PlayEffect;
+            SoundAssist.Connect(effectPlayer);
             Activated += OnApplicationActivated;
             Deactivated += OnApplicationDeactivated;
 

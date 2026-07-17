@@ -1,0 +1,436 @@
+{
+  "$comment": "World of SMGP voice pack - the SEGA-universe newsroom brightened. Every template is era-restricted to 'smgp' (arcade-caps exuberance: the big board, the D.P. board, the LEVEL A-D ladder, the Preliminary Race, the circus). In-world colour only - generic sponsor/paddock flavour, no new canon names. New pools: swBoard (big-board lines), swCrowd (crowd/atmosphere), swLadder (ladder chatter); smgp era variants appended to shared champChatter/paddockBuzz/wrenchNote. Ids are stable rendezvous keys - never rename.",
+  "version": 1,
+  "pools": {
+    "swBoard": {
+      "smgp": [
+        "THE BIG BOARD FLASHES THE NAME IN LETTERS TEN FEET TALL.",
+        "Up on the big board the numbers shuffle, settle, and start meaning things.",
+        "Down in the square the big board flickers, and the whole town reads it at once.",
+        "The big board holds the score long after the engines cool.",
+        "INSERT NOTHING - THE BIG BOARD ALREADY KNOWS.",
+        "The record board keeps its own counsel; the big board shouts."
+      ],
+      "default": [
+        "The scoreboard tells the story.",
+        "The results board settles the argument.",
+        "The numbers are up for everyone to read."
+      ]
+    },
+    "swCrowd": {
+      "smgp": [
+        "The grandstand is a wall of noise from first corner to last.",
+        "Somewhere over the hairpin, the tannoy gives up competing with the crowd.",
+        "Flags of every colour on the calendar wave over the fences.",
+        "The crowd spills down to the fences and stays until the floodlights go out.",
+        "The grandstand does not sit down all afternoon.",
+        "Programme sellers give up entirely; nobody is reading tonight."
+      ],
+      "default": [
+        "The crowd made itself heard.",
+        "The grandstands had their afternoon.",
+        "The fences were lined three deep."
+      ]
+    },
+    "swLadder": {
+      "smgp": [
+        "On the ladder, every result is a rung - up or down, never sideways.",
+        "The LEVEL boards get a fresh coat of chalk tonight.",
+        "Somewhere between the LEVEL D floor and the summit, a challenge list just got rewritten.",
+        "The seat-swap whispers start before the champagne dries.",
+        "Challenge lists come out of jacket pockets all down the pit lane.",
+        "From the LEVEL D floor to the crown seat, the whole ladder felt that one."
+      ],
+      "default": [
+        "The pecking order takes note.",
+        "The field recalculates.",
+        "The order of things shifted a little today."
+      ]
+    },
+    "champChatter": {
+      "smgp": [
+        "THE D.P. BOARD DOES THE TALKING NOW.",
+        "Every garage on the ladder is counting D.P. on its fingers tonight.",
+        "The title arithmetic scrolls across the big board all evening."
+      ]
+    },
+    "paddockBuzz": {
+      "smgp": [
+        "The transporters buzz like a struck hive tonight.",
+        "Half the paddock talks; the other half updates its challenge list.",
+        "The circus will chew on this one all the way to the next circuit."
+      ]
+    },
+    "wrenchNote": {
+      "smgp": [
+        "The all-night lamps burn over one garage tonight.",
+        "Torque wrenches click like crickets down the pit lane after dark.",
+        "The parts trucks will be unloaded twice before the next flag."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "sw.race-won.big-board",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "headline": "{subject} WINS[[?venue: AT {venue}]] AND THE BIG BOARD SINGS",
+      "deck": "Victory[[?round: in round {round}]] of the {year} World Championship, {team} colours over the flag",
+      "summary": "{subject} took the flag first[[?venue: at {venue}]][[?round: in round {round}]], and the whole circus knew it.",
+      "sections": {
+        "lead": "{pool:dateline} {subject} WINS! The {team} machine ran the sharp end like it was rented for the day[[?venue: , and {venue} belonged to one car from lights to flag]]. {pool:swCrowd}",
+        "impact": "{pool:swBoard} [[?champPosition: The D.P. column ticks over, and the championship account now reads {ord:champPosition}.]] {pool:swLadder}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.race-won.wet",
+      "event": "raceWon",
+      "when": { "isWet": true },
+      "eras": ["smgp"],
+      "headline": "RAIN MASTER: {subject} TAMES THE STORM[[?venue: AT {venue}]]",
+      "deck": "A wet-weather win[[?round: in round {round}]] while half the ladder swam",
+      "summary": "{subject} won in the rain[[?venue: at {venue}]], the field left paddling in the spray.",
+      "sections": {
+        "lead": "{pool:dateline} The sky opened, the ladder flipped, and {subject} simply VANISHED up the road. Wet days are honest days in this world - horsepower counts for less, nerve for everything - and the {team} car danced where the rest aquaplaned.",
+        "context": "The old hands say rain is the great leveller of the LEVEL boards: it cannot read a budget and it holds no favourites. Today it picked its driver all the same. {pool:swCrowd}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.race-won.opener",
+      "event": "raceWon",
+      "when": { "isSeasonOpener": true },
+      "eras": ["smgp"],
+      "headline": "OPENING FLAG TO {subject}! THE SEASON STARTS AT THE SUMMIT",
+      "deck": "First blood in the {year} World Championship[[?venue: at {venue}]]",
+      "summary": "{subject} won the season opener[[?venue: at {venue}]] - and rules the big board for a fortnight.",
+      "sections": {
+        "lead": "{pool:dateline} They say win the opening flag and your name rules the big board for a fortnight - worth more than the raw D.P. in pure swagger. {subject} collected both[[?venue: at {venue}]]: first flag of the campaign, first name at the summit.",
+        "next": "The calendar stretches long from here, and this circus keeps a cruel memory. But every ladder is climbed a rung at a time, and the first one is already behind the {team} garage.",
+        "close": "{pool:swLadder}"
+      }
+    },
+    {
+      "id": "sw.race-won.finale",
+      "event": "raceWon",
+      "when": { "isFinalRound": true },
+      "eras": ["smgp"],
+      "headline": "LAST FLAG OF THE YEAR, AND {subject} TAKES IT",
+      "deck": "The {year} season signs off with {team} colours out front",
+      "summary": "{subject} won the final round[[?venue: at {venue}]] - the year's last word, said loudest.",
+      "sections": {
+        "lead": "{pool:dateline} The final flag of the season falls, and it falls on the {team} car first. {subject} closes the campaign the way every driver on the ladder dreams about: with the year's last picture showing one machine clear of the pack[[?venue: at {venue}]].",
+        "championship": "[[?champPosition: The final D.P. board files {subject} away at {ord:champPosition} for the winter.]] {pool:champChatter}",
+        "close": "The transporters roll home with a win strapped on top of the load. {pool:swCrowd}"
+      }
+    },
+    {
+      "id": "sw.race-won.crown",
+      "event": "raceWon",
+      "when": { "clinchedTitle": true },
+      "eras": ["smgp"],
+      "headline": "GAME, SET, CROWN: {subject} WINS AND TAKES THE TITLE",
+      "deck": "The {year} World Championship is decided at full throttle",
+      "summary": "{subject} sealed the {year} crown with victory[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} There are two ways to take a crown in this world: on a slide rule, or at full throttle with the flag falling first. {subject} chose the loud way[[?venue: at {venue}]], and the {year} World Championship is OVER.",
+        "championship": "{pool:swBoard} [[?gap: The final margin reads {gap} D.P., and the mathematics have stopped arguing.]] The record board takes a new name tonight, and record boards never give one back.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.podium.rostrum",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "headline": "{subject} CLIMBS THE ROSTRUM[[?venue: AT {venue}]]",
+      "deck": "Champagne[[?position: for {ord:position}]][[?round: in round {round}]] of the World Championship",
+      "summary": "{subject} finished on the podium[[?position: in {ord:position}]][[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Champagne over the {team} garage! {subject} carried the car onto the rostrum[[?position: , {ord:position} at the flag,]] and the podium clock ticked off one more name for its collection.",
+        "context": "[[?expected: The form guide had pencilled in {ord:expected}, which only makes the silverware taste sweeter.]] Podiums are the hard currency of the climb in this world - the LEVEL boards do not count near-misses. {pool:swLadder}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.podium.duel",
+      "event": "podiumFinish",
+      "when": { "rivalInvolved": true },
+      "eras": ["smgp"],
+      "headline": "WHEEL TO WHEEL: {subject} TAKES A PODIUM OUT OF THE DUEL",
+      "deck": "The rostrum settles an argument[[?round: in round {round}]]",
+      "summary": "{subject} claimed a podium[[?rival: with {rival} filling the mirrors the whole way]].",
+      "sections": {
+        "lead": "{pool:dateline} This one was PERSONAL. {subject} banked a rostrum finish[[?venue: at {venue}]][[?position: , {ord:position} at the flag]], and every lap of it was fought at arm's length[[?rival: with {rival} in the mirrors]].",
+        "rivalry": "[[?rival: The ladder keeps score of duels the way a bookmaker keeps a ledger: {rival} will want this one back, and both challenge lists know it.]] The grandstand got the show it queued for. {pool:swCrowd}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.dnf.smoke",
+      "event": "retiredMechanical",
+      "eras": ["smgp"],
+      "headline": "SMOKE ON THE STRAIGHT: THE MACHINE QUITS ON {subject}",
+      "deck": "A mechanical retirement[[?round: in round {round}]][[?venue: at {venue}]]",
+      "summary": "{subject} retired[[?venue: at {venue}]] when the {team} machine gave out underneath a good drive.",
+      "sections": {
+        "lead": "{pool:dateline} The cruellest sound in this world is not the crash - it is the COUGH. The {team} machine cried enough underneath {subject}[[?venue: at {venue}]], and a day's honest work rolled to a stop on the grass.",
+        "reliability": "{pool:wrenchNote} Somewhere in a hospitality box a title sponsor studies the telemetry with a long face; machinery is the one rung of the ladder money is supposed to guarantee.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "sw.dnf.barriers",
+      "event": "retiredDriverError",
+      "eras": ["smgp"],
+      "headline": "THE HAIRPIN BITES: {subject} PUTS IT IN THE BARRIERS",
+      "deck": "Driver error ends the day[[?round: in round {round}]]",
+      "summary": "{subject} crashed out[[?venue: at {venue}]] - and the only culprit was in the cockpit.",
+      "sections": {
+        "lead": "{pool:dateline} Every circuit on this calendar keeps a trophy cabinet of broken pride, and today it collected from {subject}. One corner asked for more than the {team} car had grip to give, and the barriers did the paperwork.",
+        "context": "The arcade truth of this world: the wall pays no D.P. and hands out no continues. The drive home is long, and the debrief will be longer. {pool:swBoard}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "sw.pole.preliminary",
+      "event": "polePosition",
+      "eras": ["smgp"],
+      "headline": "{subject} OWNS THE PRELIMINARY: POLE POSITION",
+      "deck": "Fastest of all when the clock ran alone[[?venue: at {venue}]]",
+      "summary": "{subject} put the {team} car on pole[[?round: for round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} One lap, one chance, the whole circuit to yourself - the Preliminary Race is this world's purest test, and {subject} aced it. The {team} machine starts from the very front[[?venue: at {venue}]], nothing ahead but clean road and the flag.",
+        "next": "Track position is gold on this calendar, and pole is the mint. Sunday will ask what {subject} intends to spend it on. {pool:swLadder}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.streak.rolling",
+      "event": "winStreak",
+      "when": { "minStreak": 2 },
+      "eras": ["smgp"],
+      "headline": "THE RUN ROLLS ON: {subject} WINS AGAIN[[?streak: - {streak} STRAIGHT]]",
+      "deck": "Back-to-back and counting for the {team} garage",
+      "summary": "{subject} kept the winning run alive[[?venue: at {venue}]][[?streak: - {streak} in a row now]].",
+      "sections": {
+        "lead": "{pool:dateline} AGAIN! {subject} takes another flag[[?venue: at {venue}]][[?streak: , number {streak} in an unbroken line,]] and the rest of the ladder is quietly checking the rulebook for a way out.",
+        "stats": "{pool:swBoard} Streaks bend this whole world around them: challenge lists get redrawn, seat-swap whispers change key, and the D.P. column compounds like interest.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.streak.legend",
+      "event": "winStreak",
+      "when": { "minStreak": 5 },
+      "eras": ["smgp"],
+      "headline": "CAN ANYBODY STOP {subject}?[[?streak: {streak} STRAIGHT AND COUNTING]]",
+      "deck": "A winning run headed for the record board",
+      "summary": "{subject} stretched one of the great winning runs[[?streak: to {streak}]].",
+      "sections": {
+        "lead": "{pool:dateline} There is a point where a streak stops being form and becomes WEATHER - something the rest of the grid has to plan around. {subject} passed that point some flags ago[[?streak: ; the board now reads {streak} wins without an answer]].",
+        "impact": "The paddock has seen benchmarks before, and it knows the shape of an era when one starts. {pool:swLadder} {pool:paddockBuzz}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.lead-taken.summit",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "headline": "{subject} TAKES THE TOP OF THE D.P. BOARD",
+      "deck": "A new name at the summit[[?round: after round {round}]]",
+      "summary": "{subject} leads the World Championship, and the whole ladder tilts to look.",
+      "sections": {
+        "lead": "{pool:dateline} The top line of the big board changes hands! {subject} climbs to the summit of the D.P. board[[?round: after round {round}]], and every garage below cranes its neck at a new silhouette up top.",
+        "championship": "{pool:champChatter} [[?gap: The cushion reads {gap} D.P. - a ledge, not a fortress.]] Leading in this world paints a number on your engine cover, and every challenge list on the ladder just circled it.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.lead-lost.slip",
+      "event": "championshipLeadLost",
+      "eras": ["smgp"],
+      "headline": "THE SUMMIT SLIPS: {subject} LOSES THE CHAMPIONSHIP LEAD",
+      "deck": "The D.P. board turns over[[?round: after round {round}]]",
+      "summary": "{subject} dropped off the top of the standings[[?rival: as {rival} climbed past]].",
+      "sections": {
+        "lead": "{pool:dateline} The big board giveth, and the big board taketh away. {subject} wakes tomorrow one line lower[[?rival: , {rival} now wearing the top of the D.P. board,]] and the view from second is mostly gearbox.",
+        "championship": "{pool:champChatter} Nobody rents the summit in this world; you hold it flag by flag, or you hand it over.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "sw.clinch.early-crown",
+      "event": "titleClinchedEarly",
+      "eras": ["smgp"],
+      "headline": "CROWNED EARLY: {subject} SEALS THE {year} TITLE WITH FLAGS TO SPARE",
+      "deck": "The mathematics surrender before the calendar does",
+      "summary": "{subject} clinched the {year} World Championship with rounds still to run.",
+      "sections": {
+        "lead": "{pool:dateline} The season is not finished, but the argument is. {subject} has the {year} crown locked away with flags still on the calendar[[?gap: , the gap of {gap} D.P. beyond any right foot on the grid]].",
+        "championship": "{pool:swBoard} The remaining rounds are exhibition nights now - the floodlit kind the sponsor boxes love best - but the record board has already gone to print.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.champion.record-board",
+      "event": "championCrowned",
+      "eras": ["smgp"],
+      "headline": "{subject}: WORLD CHAMPION OF {year}",
+      "deck": "The record board takes a new name",
+      "summary": "{subject} is the {year} World Champion - struck into the record board for good.",
+      "sections": {
+        "lead": "{pool:dateline} Strike it into the record board: {subject}, WORLD CHAMPION, {year}. A whole campaign of preliminaries, hairpins and knife-fight Sundays, and when the noise finally died there was one name left standing at the summit.",
+        "championship": "{pool:champChatter} The crown seat is the one rung of the ladder nobody can challenge for - it has to be taken the long way, flag by flag, exactly the way it was taken this year.",
+        "close": "{pool:cheerClose} {pool:swCrowd}"
+      }
+    },
+    {
+      "id": "sw.season.press-start",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "headline": "PRESS START: THE {year} WORLD CHAMPIONSHIP BEGINS",
+      "deck": "Season {season} of the long climb - {player} suits up with {team}",
+      "summary": "The {year} season begins with {player} in {team} colours and every D.P. column at zero.",
+      "sections": {
+        "lead": "{pool:dateline} PRESS START. The transporters roll out, the LEVEL boards are chalked fresh, and every D.P. column on the big board reads zero - the one morning a year the whole ladder stands equal. For {player} and {team}, the climb starts now.",
+        "next": "The first Preliminary Race will sort the brave from the merely loud soon enough. {pool:swLadder}",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "sw.season.lights-down",
+      "event": "seasonCompleted",
+      "eras": ["smgp"],
+      "headline": "GAME OVER FOR {year} - AND WHAT A GAME IT WAS",
+      "deck": "Season {season} enters the record board",
+      "summary": "The {year} season is complete; the columns are frozen where they stand.",
+      "sections": {
+        "lead": "{pool:dateline} The big board runs its final scroll of {year} and goes dark. The circus breaks camp, the floodlights come down, and a season's worth of noise settles into columns of D.P. that will never move again.",
+        "context": "{pool:swBoard} Winter in this world is not rest - it is the quiet trading floor where seats change hands and challenge lists get drafted by lamplight.",
+        "close": "The flag drops anew in spring. It always does."
+      }
+    },
+    {
+      "id": "sw.career.new-challenger",
+      "event": "careerCreated",
+      "eras": ["smgp"],
+      "headline": "A NEW CHALLENGER ENTERS: {player} JOINS THE WORLD CHAMPIONSHIP",
+      "deck": "An empty line on the big board gets a name - destination {team}",
+      "summary": "{player} begins the climb with {team}, from the bottom rung with the summit in view.",
+      "sections": {
+        "lead": "{pool:dateline} A NEW CHALLENGER ENTERS THE CIRCUS! The entry list grows by one name nobody on the ladder recognises - yet. {player} arrives in {team} colours with zero D.P., zero scalps, and a challenge list still smelling of fresh ink.",
+        "next": "This world keeps a simple ledger: beat the driver above you, or make peace with the view. The first Preliminary Race will open the audit. {pool:swLadder}",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "sw.injury.tannoy-quiet",
+      "event": "playerInjured",
+      "eras": ["smgp"],
+      "headline": "INJURY IN THE CIRCUS: {subject} HURT[[?missRaces: - OUT {missRaces} ROUNDS]]",
+      "deck": "Medical bulletin from the paddock",
+      "summary": "{subject} was injured in an accident[[?missRaces: and will miss the next {missRaces} rounds]].",
+      "sections": {
+        "lead": "{pool:dateline} The tannoy goes quiet mid-sentence, and the paddock learns the news the slow way: {subject} is hurt[[?venue: after an accident at {venue}]][[?missRaces: , ruled out for the next {missRaces} rounds]]. The {team} garage packs the car away without a word.",
+        "context": "Even this bright, loud world has its cold corners. The ladder pauses for nobody, but tonight the crowd files out softer than it came in.",
+        "close": "Machines keep deadlines. Healing keeps its own."
+      }
+    },
+    {
+      "id": "sw.sat-out.pit-wall",
+      "event": "satOutRound",
+      "eras": ["smgp"],
+      "headline": "{subject} WATCHES ONE GO BY[[?round: - ROUND {round} FROM THE WALL]]",
+      "deck": "The recovery clock outranks the racing one",
+      "summary": "{subject} sat out[[?round: round {round}]] through injury, the climb on hold.",
+      "sections": {
+        "lead": "{pool:dateline} The hardest seat in the circus has no belts: {subject} spent the day on the pit wall[[?round: while round {round} ran without the name on the entry list]], watching somebody else keep the cockpit warm.",
+        "context": "In a world built on ladders, standing still feels like falling. The old hands know better: rounds missed heal over, and comebacks are this circus's favourite story. {pool:swCrowd}",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "sw.ai-streak.watch",
+      "event": "aiWinStreak",
+      "when": { "minStreak": 2 },
+      "eras": ["smgp"],
+      "headline": "THE GRID HAS A PROBLEM, AND ITS NAME IS {subject}",
+      "deck": "The winning run the whole ladder is chasing",
+      "summary": "{subject} keeps on winning[[?streak: - {streak} in a row now]], and nobody has an answer.",
+      "sections": {
+        "lead": "{pool:dateline} Somewhere down the pit lane a rival snaps another pencil: {subject} has won AGAIN[[?venue: , this time at {venue}]][[?streak: - win number {streak} in an unbroken run]][[?winnerTeam: , and the {winnerTeam} garage has stopped pretending to be surprised]].",
+        "impact": "This is how benchmarks get made in this world: not announced, ACCUMULATED. Every flag lays another brick, and the rest of the grid chooses between chasing and watching. {pool:swLadder}",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "sw.ai-streak.reign",
+      "event": "aiWinStreak",
+      "when": { "minStreak": 5 },
+      "eras": ["smgp"],
+      "headline": "A REIGN IN FULL SWING: {subject} WILL NOT STOP WINNING",
+      "deck": "The ladder measures itself against one machine now",
+      "summary": "{subject} stretched a monstrous winning run[[?streak: to {streak}]], and the grid can only witness it.",
+      "sections": {
+        "lead": "{pool:dateline} Stop calling it a streak.[[?streak: {streak} straight flags is not form - it is GEOGRAPHY, a mountain the calendar has to route around.]] {subject} owns the sharp end of this World Championship until further notice.",
+        "context": "The grandstand has settled into its role: witnesses. {pool:swCrowd} Every age of this world gets its untouchable - the name the LEVEL boards bend toward - and the current one is writing itself in capital letters.",
+        "close": "{pool:swBoard}"
+      }
+    },
+    {
+      "id": "sw.upset.ladder-flips",
+      "event": "upsetWinner",
+      "eras": ["smgp"],
+      "headline": "THE LADDER FLIPS: {subject} WINS FROM NOWHERE",
+      "deck": "An upset for the ages[[?winnerTeam: - {winnerTeam} on the top step]]",
+      "summary": "{subject} took a shock win[[?winnerTeam: for {winnerTeam}]], and the form book went in the bin.",
+      "sections": {
+        "lead": "{pool:dateline} READ THE BOARD TWICE - it is not a misprint. {subject} took the flag[[?venue: at {venue}]][[?winnerTeam: , {winnerTeam} colours on the top step,]] and the LEVEL boards spun like slot reels.",
+        "impact": "This is what keeps the grandstands full in this world: the rule that says money and horsepower decide everything, and the days that tear the rule up. {pool:swCrowd}",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "sw.upset.giant-killer",
+      "event": "upsetWinner",
+      "when": { "minUpset": 6 },
+      "eras": ["smgp"],
+      "headline": "GIANT DOWN! {subject} PULLS OFF THE SHOCK OF THE SEASON",
+      "deck": "The aristocracy of the grid gets ambushed[[?venue: at {venue}]]",
+      "summary": "{subject} scored one of the great upset wins[[?winnerTeam: for {winnerTeam}]].",
+      "sections": {
+        "lead": "{pool:dateline} Once a season, if the circus is lucky, a race happens that nobody bought a ticket for: {subject} beat the whole aristocracy of the grid[[?expected: from a card marked {ord:expected}]][[?winnerTeam: and hauled {winnerTeam} onto a top step it had no appointment with]].",
+        "impact": "Up at the sharp end the grandees will file it as a freak result. Down the pit lane they know better: the ladder just proved it can be climbed at ANY speed. {pool:swLadder}",
+        "close": "{pool:cheerClose} {pool:swCrowd}"
+      }
+    },
+    {
+      "id": "sw.dominant.perfect",
+      "event": "dominantDisplay",
+      "eras": ["smgp"],
+      "headline": "PERFECT GAME: {subject} LEADS EVERY LAP THAT MATTERED",
+      "deck": "Pole, flag, and everything in between[[?venue: at {venue}]]",
+      "summary": "{subject} dominated[[?round: round {round}]] from the very front, start to finish.",
+      "sections": {
+        "lead": "{pool:dateline} Fastest in the Preliminary, first off the line, first at the flag - the kind of afternoon this world stamps PERFECT and the rest of the grid remembers as a long drive in someone else's shadow. {subject} left no crumbs[[?venue: at {venue}]].",
+        "stats": "{pool:swBoard} The timing screens tell a flat, brutal story: one car at the top of every sheet that matters, and a pack racing hard for the honour of second.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "sw.first-win.in-lights",
+      "event": "firstWin",
+      "eras": ["smgp"],
+      "headline": "REMEMBER THE DATE: {player's} FIRST WIN GOES UP IN LIGHTS",
+      "deck": "A maiden victory[[?round: in round {round}]] of {year}",
+      "summary": "A first career win for {subject}[[?venue: at {venue}]] - the day a name became a result.",
+      "sections": {
+        "lead": "{pool:dateline} Every big board in this world keeps one line free for a day like this. {subject} took a FIRST career victory[[?venue: at {venue}]], and somewhere between the flag and the podium the name stopped being a rumour and became a RESULT.",
+        "impact": "The {team} garage will not be sweeping up tonight; confetti earns a stay of execution. First wins move ladders: rivals reread their challenge lists, and the seats above suddenly check their mirrors. {pool:swLadder}",
+        "next": "The question the circus asks over the champagne is the only one worth asking: first of one, or first of MANY?",
+        "close": "{pool:cheerClose}"
+      }
+    }
+  ]
+}

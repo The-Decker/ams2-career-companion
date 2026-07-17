@@ -1,0 +1,470 @@
+{
+  "$comment": "Championship desk pack - Title Watch's beat. Era-voiced title-race coverage: lead changes, the pressure of leading, tightening fights, finale showdowns, clinches, crownings, and season preview/review. Ids are stable rendezvous keys prefixed 'ch.' - never renamed, never reused. Read-side only.",
+  "version": 1,
+  "pools": {
+    "chTable": {
+      "1960s": [
+        "The championship table, duly amended, accompanies this dispatch.",
+        "The scorers have re-drawn the table, and it makes instructive reading."
+      ],
+      "1980s": [
+        "CHECK THE TABLE. Then check it again.",
+        "The points do not lie, and this morning they are shouting."
+      ],
+      "smgp": [
+        "THE BIG BOARD RECALCULATES. EVERY PIXEL OF IT MATTERS.",
+        "SCORE UPDATE LOGGED. THE LADDER REMEMBERS EVERYTHING."
+      ],
+      "default": [
+        "The table does not editorialize; it simply keeps the score.",
+        "Points are the only opinion poll this sport recognizes.",
+        "The standings column is where every argument goes to be settled."
+      ]
+    },
+    "chPressure": {
+      "1960s": [
+        "The man at the head of the table sleeps no better for it, the old hands insist.",
+        "Leading a championship, the veterans say, is a burden dressed as an honour."
+      ],
+      "2010s": [
+        "Every session now comes with a live gap graphic and a million second-guesses.",
+        "The leader's mistakes trend within minutes. That is the tax on top spot."
+      ],
+      "smgp": [
+        "TOP OF THE LADDER MEANS EVERY CHALLENGER SEES YOUR NAME FIRST.",
+        "THE CROWN IS HEAVY AND THE TIMER NEVER STOPS."
+      ],
+      "default": [
+        "Leading a championship is the loudest quiet job in sport.",
+        "The front of the table is the one place where every result gets measured twice.",
+        "Pressure never shows on a points table, only on the people carrying it."
+      ]
+    },
+    "champChatter": {
+      "1960s": [
+        "The title reckoning has altered, as the tables published herewith attest.",
+        "A good deal of arithmetic was done in the paddock before the lamps went out."
+      ],
+      "1980s": [
+        "The title race just changed gear.",
+        "Somebody's championship maths got torn up today."
+      ],
+      "smgp": [
+        "THE TITLE METER JUST MOVED.",
+        "CHAMPIONSHIP STATUS: RECALCULATED."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "ch.lead-taken.opener",
+      "event": "championshipLeadTaken",
+      "when": { "isSeasonOpener": true },
+      "headline": "First blood: {subject} leads the championship from day one",
+      "deck": "The season opener installs an early leader",
+      "summary": "{subject} left the opening round at the top of the standings.",
+      "sections": {
+        "lead": "{pool:dateline} One round in, one name on top: {subject} leaves the season opener holding the championship lead[[?venue: after the meeting at {venue}]].",
+        "context": "Opening-day leads are written in pencil - there is a whole calendar left to erase them. But every title run in history began with a first week on top, and {subject} has claimed this one[[?gap: , {gap} points to the good]].",
+        "next": "The season will decide whether this was an omen or an accident of the calendar. {pool:chTable}"
+      }
+    },
+    {
+      "id": "ch.lead-taken.midseason",
+      "event": "championshipLeadTaken",
+      "when": { "isSeasonOpener": false },
+      "headline": "{subject} hits the front of the title race",
+      "deck": "Round {round} redraws the top of the table",
+      "summary": "{subject} took over the championship lead after round {round}.",
+      "sections": {
+        "lead": "{pool:dateline} This lead was not handed out with the season's first trophies - it was earned the long way, round by round. After round {round}[[?venue: at {venue}]], the championship belongs, for now, to {subject}.",
+        "championship": "Mid-season leads carry a weight that opening-day leads do not: the sample is real, the rivals are known, and the arithmetic has stopped being theoretical[[?gap: - the margin stands at {gap} points]]. {pool:chTable}",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.lead-taken.pressure",
+      "event": "championshipLeadTaken",
+      "desks": ["titlewatch", "slipstream"],
+      "headline": "The heaviest trophy: what the lead now asks of {subject}",
+      "deck": "Analysis: life at the top of the standings",
+      "summary": "{subject} leads the championship - and leading is its own discipline.",
+      "sections": {
+        "lead": "Taking a championship lead is a result. Keeping one is a temperament. From round {round} onward, {subject} is racing a different sport to everyone else on the grid.",
+        "context": "{pool:chPressure} Chasers get to gamble; leaders have to defend. Every strategy call now carries two prices - the one on the stopwatch and the one on the table.",
+        "championship": "[[?gap: The cushion is {gap} points, which is exactly as comfortable as it sounds.]] {pool:chTable}",
+        "close": "The chasing pack understands all of this perfectly. That is rather the point."
+      }
+    },
+    {
+      "id": "ch.lead-taken.1960s",
+      "event": "championshipLeadTaken",
+      "eras": ["1960s"],
+      "headline": "{subject} assumes the head of the championship table",
+      "deck": "The title reckoning after round {round}",
+      "summary": "{subject} now heads the drivers' table.",
+      "sections": {
+        "lead": "It falls to this correspondent to report a change at the head of the World Championship table: {subject} now leads the reckoning after round {round}[[?venue: , the meeting at {venue} having done the arithmetic's work]].",
+        "context": "Those who follow the tables closely will note[[?gap: the margin of {gap} points and]] the length of season yet to run. Championships, as ever, are won in autumn and merely discussed in spring.",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.lead-taken.smgp",
+      "event": "championshipLeadTaken",
+      "eras": ["smgp"],
+      "headline": "NEW LEADER: {subject} TAKES THE TOP OF THE LADDER",
+      "deck": "CHAMPIONSHIP LEAD ACQUIRED IN ROUND {round}",
+      "summary": "{subject} grabbed the championship lead.",
+      "sections": {
+        "lead": "THE BIG BOARD FLASHES AND THE WHOLE PADDOCK LOOKS UP: {subject} IS THE NEW CHAMPIONSHIP LEADER[[?venue: AFTER THE SHOWDOWN AT {venue}]]!",
+        "championship": "{pool:chTable} [[?gap: LEAD MARGIN: {gap} POINTS. ]]EVERY RIVAL ON THE LADDER NOW HUNTS ONE NAME.",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.lead-lost.rival",
+      "event": "championshipLeadLost",
+      "when": { "rivalInvolved": true },
+      "headline": "{subject} loses the lead[[?rival: - and {rival} is the one who took it]]",
+      "deck": "The title fight's sharpest edge turns after round {round}",
+      "summary": "{subject} lost the championship lead[[?rival: to {rival}]].",
+      "sections": {
+        "lead": "{pool:dateline} Of all the ways to lose a championship lead, losing it to the one name that never leaves the pit board hurts most. After round {round}, {subject} looks up at the table[[?rival: and finds {rival} on top of it]].",
+        "rivalry": "Rivalries are scored in seasons, not weekends, and this one just swung. The reply will matter more than the blow - the whole paddock knows it, and so do the two people involved.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ch.lead-lost.chase",
+      "event": "championshipLeadLost",
+      "desks": ["titlewatch"],
+      "headline": "Hunted no more: {subject} returns to the chase",
+      "deck": "Championship watch: the lead changes address after round {round}",
+      "summary": "{subject} dropped off the top of the standings.",
+      "sections": {
+        "lead": "The strange mercy of losing a championship lead is that the target comes off your back. From round {round}, {subject} is the hunter again[[?rival: , with {rival} now carrying the weight]].",
+        "championship": "{pool:chTable} Chasing is the simpler job: nothing to defend, everything to take. The season will now test whether simpler is actually better.",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.lead-lost.smgp",
+      "event": "championshipLeadLost",
+      "eras": ["smgp"],
+      "headline": "LEAD LOST! {subject} DROPS FROM THE TOP",
+      "deck": "THE LADDER TURNS AFTER ROUND {round}",
+      "summary": "{subject} lost the championship lead.",
+      "sections": {
+        "lead": "THE BIG BOARD BLINKS AND THE NAME ON TOP CHANGES: {subject} IS OFF THE TOP STEP OF THE LADDER[[?rival: AND {rival} STANDS ON IT]].",
+        "championship": "{pool:chTable} NO CONTINUES SPENT YET - THE SEASON HAS ROUNDS LEFT AND THE CROWN HAS NO NAME ON IT.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ch.lead-swap.table",
+      "event": "leadChangedHands",
+      "desks": ["titlewatch"],
+      "headline": "Change at the top: {subject} now leads the championship",
+      "deck": "The title table turns over after round {round}",
+      "summary": "{subject} took over the championship lead[[?rival: from {rival}]].",
+      "sections": {
+        "lead": "The top line of the championship changed hands after round {round}: {subject} up[[?rival: , {rival} down]], and every line beneath them suddenly reading differently.",
+        "championship": "{pool:chTable} [[?gap: The new margin at the top is {gap} points.]] Leads traded this way have a habit of being traded back - the table is volatile precisely because the field is close."
+      }
+    },
+    {
+      "id": "ch.tightens.arithmetic",
+      "event": "titleFightTightens",
+      "desks": ["titlewatch"],
+      "headline": "{gap} points: the title race is now a knife fight",
+      "deck": "Championship watch after round {round}",
+      "summary": "The gap at the top of the championship is down to {gap} points.",
+      "sections": {
+        "lead": "Somewhere in the last few rounds the championship stopped being a procession and became a contest. {gap} points now cover the top of the table, and the calendar is running out of room for either side to breathe.",
+        "stats": "At this range every small number is a big one: a single retirement swings it, one wet afternoon rewrites it, one mistake pays for the other side's winter.",
+        "championship": "{pool:chTable}",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.tightens.1980s",
+      "event": "titleFightTightens",
+      "eras": ["1980s"],
+      "headline": "GAME ON! Title gap down to {gap}",
+      "deck": "Round {round}: the championship just got interesting",
+      "summary": "The title gap has closed to {gap} points.",
+      "sections": {
+        "lead": "Rip up the coronation plans - this title race is BACK ON. The gap at the top reads {gap} points after round {round}, and the back pages finally have a proper fight to sell.",
+        "championship": "{pool:champChatter} {pool:chTable}",
+        "close": "Strap in. The run-in starts now."
+      }
+    },
+    {
+      "id": "ch.tightens.smgp",
+      "event": "titleFightTightens",
+      "eras": ["smgp"],
+      "headline": "TITLE FIGHT ALERT: {gap} POINTS IN IT",
+      "deck": "THE METER TIGHTENS AFTER ROUND {round}",
+      "summary": "The championship gap is down to {gap} points.",
+      "sections": {
+        "lead": "WARNING: TITLE FIGHT DETECTED. THE GAP ON THE BIG BOARD IS DOWN TO {gap} POINTS AND EVERY REMAINING ROUND IS A BOSS STAGE.",
+        "championship": "{pool:chTable} NOBODY COASTS FROM HERE. NOBODY.",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.showdown.preview",
+      "event": "finalRoundShowdown",
+      "desks": ["titlewatch"],
+      "headline": "One round. {gap} points. Everything.",
+      "deck": "The championship goes to the wire",
+      "summary": "The title will be settled at the final round, {gap} points in it.",
+      "sections": {
+        "lead": "Every season secretly wants to end this way, and this one gets to: a final round with the championship live and {gap} points covering the contenders[[?subject: , {subject} holding the better hand]].",
+        "context": "Finales compress a year into an afternoon. Every winter test, every pit call, every point given away in the spring - all of it is now either just enough or not quite.",
+        "championship": "{pool:chTable} There are no second chances after this one; the table that leaves the final round is the table that goes in the record books.",
+        "close": "{pool:chPressure}"
+      }
+    },
+    {
+      "id": "ch.showdown.1960s",
+      "event": "finalRoundShowdown",
+      "eras": ["1960s"],
+      "headline": "The championship goes to the final meeting",
+      "deck": "{gap} points separate the principals",
+      "summary": "The title will be decided at the last round of the season.",
+      "sections": {
+        "lead": "The season's long argument will be settled at the final meeting of the year. {gap} points stand between the principal contenders[[?subject: , with {subject} holding the advantage of position]], and no one in the paddock pretends to know the outcome.",
+        "context": "This correspondent has seen titles settled by brilliance and by broken half-shafts alike. The final round respects neither reputation nor arithmetic - only the flag.",
+        "close": "One afternoon of motoring now stands for the whole year's work."
+      }
+    },
+    {
+      "id": "ch.showdown.smgp",
+      "event": "finalRoundShowdown",
+      "eras": ["smgp"],
+      "headline": "FINAL STAGE: THE CROWN IS DECIDED AT THE LAST ROUND",
+      "deck": "{gap} POINTS BETWEEN GLORY AND GAME OVER",
+      "summary": "The championship goes to the final round with {gap} points in it.",
+      "sections": {
+        "lead": "THIS IS IT. FINAL ROUND. CHAMPIONSHIP LIVE. {gap} POINTS ON THE BOARD[[?subject: AND {subject} HOLDING THE HIGH GROUND]]. THE WHOLE SEASON COMES DOWN TO ONE GREEN LIGHT.",
+        "championship": "{pool:chTable} WINNER TAKES THE CROWN. EVERYONE ELSE TAKES THE LOADING SCREEN.",
+        "close": "INSERT COURAGE TO CONTINUE."
+      }
+    },
+    {
+      "id": "ch.clinch.statement",
+      "event": "titleClinchedEarly",
+      "headline": "No contest: {subject} clinches the {year} title early",
+      "deck": "A championship won with rounds still on the calendar",
+      "summary": "{subject} sealed the {year} championship with races to spare.",
+      "sections": {
+        "lead": "{pool:dateline} The season just conceded. {subject} has clinched the {year} championship with rounds still to run[[?gap: , the gap of {gap} points now beyond mathematics]], and what remains of the calendar is a lap of honour.",
+        "stats": "Titles sealed early are not lucky; they are cumulative. Round after round the margin grew until the table simply ran out of counter-arguments.",
+        "championship": "{pool:chTable}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "ch.clinch.long-road",
+      "event": "titleClinchedEarly",
+      "headline": "Sealed: {subject} closes out the {year} championship",
+      "deck": "The title is decided before the season is done",
+      "summary": "{subject} is the {year} champion, confirmed with rounds remaining.",
+      "sections": {
+        "lead": "There was no single knockout blow - just a season of pressure applied until the arithmetic gave way. {subject} is the {year} champion, confirmed with racing still left on the calendar.",
+        "context": "Championships like this are built on the unglamorous weekends: the damage-limitation drives, the points salvaged from bad Saturdays[[?gap: , a margin of {gap} points assembled a handful at a time]].",
+        "impact": "[[?team: For {team}, the title validates every decision that looked cautious at the time.]] {pool:champChatter}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "ch.clinch.smgp",
+      "event": "titleClinchedEarly",
+      "eras": ["smgp"],
+      "headline": "CHAMPION CONFIRMED: {subject} LOCKS THE CROWN EARLY",
+      "deck": "TITLE SECURED WITH ROUNDS TO SPARE",
+      "summary": "{subject} clinched the championship early.",
+      "sections": {
+        "lead": "STAGE CLEAR - SEASON CLEARED EARLY! {subject} HAS LOCKED THE CROWN WITH ROUNDS STILL ON THE BOARD[[?gap: , {gap} POINTS CLEAR AND MATHEMATICALLY UNTOUCHABLE]].",
+        "championship": "{pool:chTable} THE REMAINING ROUNDS ARE A VICTORY LAP AND EVERYBODY IN THE HALL KNOWS IT.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "ch.title-lost.postmortem",
+      "event": "titleRaceLost",
+      "desks": ["titlewatch", "slipstream"],
+      "headline": "The arithmetic closes: {player's} title bid is over",
+      "deck": "Post-mortem on a championship that got away",
+      "summary": "{subject} is mathematically out of the {year} title race.",
+      "sections": {
+        "lead": "Championships rarely die on the day they are lost. Somewhere back down the calendar - a retirement here, a ninth place that should have been a fifth there - the {year} title quietly slipped out of reach, and after round {round} the mathematics finally said so out loud.",
+        "context": "The post-mortem will find no single wound. Title bids bleed out in increments, which is why the good teams grieve for exactly one evening and then start itemizing.",
+        "next": "What survives is the baseline: a season spent at the sharp end changes what everyone - rivals included - expects of the next one.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "ch.title-lost.smgp",
+      "event": "titleRaceLost",
+      "eras": ["smgp"],
+      "headline": "CROWN OUT OF REACH FOR {subject}",
+      "deck": "TITLE RUN ENDS - THE LADDER GOES ON",
+      "summary": "{subject} can no longer win the crown this season.",
+      "sections": {
+        "lead": "THE METER SAYS IT PLAIN: THE CROWN IS OUT OF REACH THIS SEASON. {subject} FOUGHT THE NUMBERS AND THE NUMBERS WON[[?rival: - {rival} CANNOT BE CAUGHT]].",
+        "context": "BUT HEAR THIS: THE LADDER KEEPS EVERY SCORE. A SEASON AT THE SHARP END IS SAVED PROGRESS, NOT A WASTED RUN.",
+        "close": "CONTINUE? THE ANSWER IS ALWAYS YES."
+      }
+    },
+    {
+      "id": "ch.crowned.player",
+      "event": "championCrowned",
+      "when": { "clinchedTitle": true },
+      "headline": "{subject}: World Champion. Say it slowly.",
+      "deck": "The {year} title belongs to the name this paper has followed all season",
+      "summary": "{subject} is the {year} World Champion.",
+      "sections": {
+        "lead": "Careers are long lists of results, and then - if absolutely everything holds - one line that outranks all of them. {subject} is the {year} World Champion, and nothing written about {player} before today reads the same way again.",
+        "impact": "[[?team: {team} takes its share of the glory, and every mechanic in that garage knows which title they will be telling their grandchildren about.]] The champion's name changes the paddock's whole geometry: the benchmark now has an address.",
+        "championship": "{pool:chTable}",
+        "close": "Tonight the record book is the only journalism that matters: one season, one name, in ink."
+      }
+    },
+    {
+      "id": "ch.crowned.watcher",
+      "event": "championCrowned",
+      "when": { "clinchedTitle": false },
+      "headline": "The season's verdict: {subject} takes the {year} crown",
+      "deck": "The championship has its answer - and the rest of the grid has its target",
+      "summary": "{subject} won the {year} drivers' championship.",
+      "sections": {
+        "lead": "The {year} championship belongs to {subject}, and the rest of the field now gets a whole winter to study exactly how it happened.",
+        "context": "From the outside, a rival's title is a syllabus: where the points came from, which weekends were stolen rather than inherited, what it costs to sustain a season without a soft middle.",
+        "next": "Champions set the standard the field must answer. The first question of next season was written today, and it has {subject's} name in it.",
+        "close": "{pool:champChatter}"
+      }
+    },
+    {
+      "id": "ch.crowned.player.smgp",
+      "event": "championCrowned",
+      "when": { "clinchedTitle": true },
+      "eras": ["smgp"],
+      "headline": "CHAMPION OF THE WORLD: {subject} TAKES THE CROWN",
+      "deck": "THE LADDER HAS A NAME AT THE VERY TOP",
+      "summary": "{subject} is this season's champion.",
+      "sections": {
+        "lead": "CUE THE FANFARE AND ROLL THE CREDITS: {subject} IS THE CHAMPION! THE NAME GOES UP IN LIGHTS ON THE BIG BOARD AND EVERY CABINET IN THE HALL PLAYS THE VICTORY THEME.",
+        "impact": "[[?team: {team} PAINTS THE CROWN ON THE GARAGE DOOR. ]]FROM TOMORROW, EVERY CHALLENGER ON THE LADDER IS CLIMBING TOWARD ONE NAME.",
+        "close": "HIGH SCORE. NEW RECORD. SAVED FOREVER."
+      }
+    },
+    {
+      "id": "ch.climb.ledger",
+      "event": "standingsClimb",
+      "desks": ["titlewatch"],
+      "headline": "Moving up: {subject} climbs to {ord:champPosition}",
+      "deck": "Championship watch: the table shuffles after round {round}",
+      "summary": "{subject} rose to {ord:champPosition} in the standings.",
+      "sections": {
+        "lead": "The middle of a points table is a queue, and {subject} just moved up it: {ord:champPosition} in the championship after round {round}.",
+        "stats": "Climbs like this are what title challenges look like three months before anyone dares call them that - position by position, weekend by weekend, until the table has no choice.",
+        "championship": "{pool:chTable}"
+      }
+    },
+    {
+      "id": "ch.climb.smgp",
+      "event": "standingsClimb",
+      "eras": ["smgp"],
+      "headline": "{subject} CLIMBS THE LADDER TO {ord:champPosition}",
+      "deck": "RANK UP AFTER ROUND {round}",
+      "summary": "{subject} moved up to {ord:champPosition} on the ladder.",
+      "sections": {
+        "lead": "RANK UP! {subject} MOVES TO {ord:champPosition} ON THE LADDER AFTER ROUND {round}, AND THE NAMES ABOVE JUST FELT THE FOOTSTEPS.",
+        "championship": "{pool:chTable} THE ONLY DIRECTION THAT COUNTS IS UP."
+      }
+    },
+    {
+      "id": "ch.preview.1960s",
+      "event": "seasonStarted",
+      "eras": ["1960s"],
+      "headline": "The {year} season opens: form, machinery and expectation",
+      "deck": "A preview of the championship year[[?team: - {player} entered with {team}]]",
+      "summary": "The {year} championship season has begun.",
+      "sections": {
+        "lead": "The entry lists are lodged, the transporters have crossed their borders, and the {year} World Championship season stands ready. The winter's work - new machinery, new alliances, quiet defections - will now be examined in public.",
+        "context": "The formbook, as in every new year, is a document of faith rather than fact[[?team: . In the {team} camp the faith is that this is their year; every other camp holds the identical conviction]].",
+        "next": "The opening meeting will retire half the paddock's theories by Sunday evening. It always does.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "ch.preview.2010s",
+      "event": "seasonStarted",
+      "eras": ["2010s"],
+      "headline": "{year} is live: everything you need before lights out",
+      "deck": "Season preview[[?team: - {player} starts the year at {team}]]",
+      "summary": "The {year} season is underway.",
+      "sections": {
+        "lead": "New season, clean table, zero points of separation: {year} is live. Preseason talk is now officially worthless[[?team: , and nobody at {team} is sorry about that]].",
+        "context": "The winter data all says the same thing: nobody knows anything until the first stint of the first race. That data point finally lands this weekend.",
+        "next": "First question of the year: who actually found lap time over the winter, and who found a marketing department?",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "ch.preview.smgp",
+      "event": "seasonStarted",
+      "eras": ["smgp"],
+      "headline": "SEASON {season} START: PRESS START TO RACE",
+      "deck": "A NEW CAMPAIGN LIGHTS UP THE BOARD",
+      "summary": "Season {season} is underway.",
+      "sections": {
+        "lead": "THE CABINET HUMS, THE BOARD RESETS, AND SEASON {season} BEGINS: EVERY SCORE AT ZERO, EVERY DREAM AT FULL HEALTH[[?team: , AND {player} SUITED UP FOR {team}]].",
+        "next": "THE LADDER IS TALL AND THE LEGEND AT THE TOP DOES NOT COME DOWN TO MEET ANYBODY. CLIMB.",
+        "close": "READY? GO!"
+      }
+    },
+    {
+      "id": "ch.review.1960s",
+      "event": "seasonCompleted",
+      "eras": ["1960s"],
+      "headline": "The {year} season closes its account",
+      "deck": "A review of the championship year",
+      "summary": "The {year} season has concluded.",
+      "sections": {
+        "lead": "The final flag of {year} has fallen, and the season passes from the timekeepers to the historians. The tables are settled; the arguments, naturally, are not.",
+        "context": "It was a year, as all years are, of machinery vindicated and machinery betrayed, of reputations made at speed and unmade at leisure. The winter will re-litigate every meeting of it in the club rooms and the drawing offices alike.",
+        "close": "The transporters turn for home. The {year} chapter is bound and shelved."
+      }
+    },
+    {
+      "id": "ch.review.smgp",
+      "event": "seasonCompleted",
+      "eras": ["smgp"],
+      "headline": "SEASON {season} COMPLETE",
+      "deck": "RESULTS SAVED TO THE BIG BOARD",
+      "summary": "Season {season} is in the books.",
+      "sections": {
+        "lead": "FINAL FLAG. FINAL SCORE. SEASON {season} IS COMPLETE AND EVERY LINE OF IT IS BURNED INTO THE BIG BOARD FOREVER.",
+        "stats": "THE LADDER TAKES THE WINTER TO MEMORIZE THE NUMBERS. IT FORGETS NOTHING AND FORGIVES LESS.",
+        "close": "NEXT SEASON IS LOADING."
+      }
+    },
+    {
+      "id": "ch.debut.smgp",
+      "event": "careerCreated",
+      "eras": ["smgp"],
+      "headline": "NEW CHALLENGER: {player} ENTERS THE CHAMPIONSHIP",
+      "deck": "A NEW NAME JOINS THE LADDER[[?team: WITH {team}]]",
+      "summary": "{player} begins the climb[[?team: with {team}]].",
+      "sections": {
+        "lead": "A NEW CHALLENGER APPROACHES! {player} JOINS THE GRID[[?team: IN {team} COLOURS]] WITH AN EMPTY SCORE LINE AND A FULL TANK OF INTENT.",
+        "context": "THE LADDER DOES NOT CARE WHERE YOU CAME FROM. IT ONLY COUNTS WHAT YOU DO NEXT.",
+        "close": "WELCOME TO THE SHOW. THE CLOCK IS ALREADY RUNNING."
+      }
+    }
+  ]
+}

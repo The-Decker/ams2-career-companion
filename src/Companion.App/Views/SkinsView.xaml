@@ -4,7 +4,7 @@
              xmlns:audio="clr-namespace:Companion.App.Audio"
              Focusable="False">
     <UserControl.Resources>
-        <Style x:Key="SkinStatusChip" TargetType="Border">
+        <Style x:Key="GridStatusChip" TargetType="Border">
             <Setter Property="CornerRadius" Value="7" />
             <Setter Property="Padding" Value="8,4" />
             <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
@@ -17,7 +17,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="SkinStatusText" TargetType="TextBlock" BasedOn="{StaticResource Faint}">
+        <Style x:Key="GridStatusText" TargetType="TextBlock" BasedOn="{StaticResource Faint}">
             <Setter Property="FontWeight" Value="SemiBold" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Tone}" Value="Good">
@@ -28,44 +28,48 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="SkinPreviewFrame" TargetType="Border">
-            <Setter Property="Background" Value="{DynamicResource FieldBrush}" />
+        <Style x:Key="PreviewFrame" TargetType="Border">
             <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="CornerRadius" Value="9" />
             <Setter Property="ClipToBounds" Value="True" />
+            <Setter Property="Background" Value="Transparent" />
         </Style>
-        <Style x:Key="SkinEditorItem" TargetType="ListBoxItem">
-            <Setter Property="Margin" Value="0,0,0,7" />
+        <Style x:Key="GridSelectorItem" TargetType="ListBoxItem">
+            <Setter Property="Width" Value="258" />
+            <Setter Property="Height" Value="82" />
+            <Setter Property="Margin" Value="0,0,8,8" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="EditorRailFrame" Padding="12,10" CornerRadius="9"
+                        <Border x:Name="GridSelectorFrame" Padding="10,8" CornerRadius="9"
                                 Background="{DynamicResource SurfaceAltBrush}"
                                 BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1">
                             <ContentPresenter />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="EditorRailFrame" Property="BorderBrush"
-                                        Value="{DynamicResource AccentBrush}" />
-                                <Setter TargetName="EditorRailFrame" Property="Background"
+                                <Setter TargetName="GridSelectorFrame" Property="Background"
                                         Value="{DynamicResource HoverBrush}" />
+                                <Setter TargetName="GridSelectorFrame" Property="BorderBrush"
+                                        Value="{DynamicResource AccentBrush}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="EditorRailFrame" Property="BorderBrush"
-                                        Value="{DynamicResource AccentBrush}" />
-                                <Setter TargetName="EditorRailFrame" Property="Background"
+                                <Setter TargetName="GridSelectorFrame" Property="Background"
                                         Value="{DynamicResource AccentDimBrush}" />
+                                <Setter TargetName="GridSelectorFrame" Property="BorderBrush"
+                                        Value="{DynamicResource AccentBrush}" />
+                                <Setter TargetName="GridSelectorFrame" Property="BorderThickness"
+                                        Value="2" />
                             </Trigger>
                             <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                <Setter TargetName="EditorRailFrame" Property="BorderBrush"
+                                <Setter TargetName="GridSelectorFrame" Property="BorderBrush"
                                         Value="{DynamicResource AccentBrush}" />
-                                <Setter TargetName="EditorRailFrame" Property="BorderThickness" Value="2" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -74,523 +78,312 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer x:Name="SkinsScrollViewer" HorizontalScrollBarVisibility="Disabled"
-                  VerticalScrollBarVisibility="Auto" Focusable="False">
-        <Grid Margin="34,28,34,44" HorizontalAlignment="Stretch" MaxWidth="1480">
+    <ScrollViewer x:Name="SkinsScrollViewer"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  Focusable="False">
+        <Grid Margin="30,26,30,40" HorizontalAlignment="Stretch" MaxWidth="1420">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="LIVERY CONTROL" Style="{StaticResource Eyebrow}"
+                    <TextBlock Text="PRE-QUALIFYING REFERENCE" Style="{StaticResource Eyebrow}"
                                Foreground="{DynamicResource AccentTextBrush}" />
-                    <TextBlock Text="Skin Workshop" Style="{StaticResource H1}" Margin="0,2,0,0" />
+                    <TextBlock x:Name="GridPreviewTitle" Text="Grid Preview"
+                               Style="{StaticResource H1}" Margin="0,2,0,0" />
                     <TextBlock Text="{Binding Summary}" Style="{StaticResource Muted}"
                                TextWrapping="Wrap" Margin="0,3,0,0" />
                 </StackPanel>
-                <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="20,0,0,0">
-                    <Border Style="{StaticResource CompactChip}" HorizontalAlignment="Right"
-                            Visibility="{Binding LiveryBudget, Converter={StaticResource StringVisible}}">
-                        <TextBlock Text="{Binding LiveryBudget}" Style="{StaticResource Mono}" />
+                <StackPanel Grid.Column="1" Margin="20,0,0,0"
+                            HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Border Style="{StaticResource CompactChip}"
+                            Visibility="{Binding GridLabel, Converter={StaticResource StringVisible}}">
+                        <TextBlock x:Name="GridPreviewMeta" Text="{Binding GridLabel}"
+                                   Style="{StaticResource Mono}" />
                     </Border>
-                    <TextBlock Text="PREVIEW • VERIFY • STAGE" Style="{StaticResource Faint}"
-                               HorizontalAlignment="Right" Margin="0,6,0,0" />
+                    <TextBlock Text="PORTRAIT  •  TEAM  •  TOP  •  SIDE"
+                               Style="{StaticResource Faint}" HorizontalAlignment="Right"
+                               Margin="0,6,0,0" />
                 </StackPanel>
             </Grid>
 
-            <StackPanel Grid.Row="1" Margin="0,16,0,0">
-                <Border Padding="14,10" CornerRadius="8" Background="{DynamicResource WarningDimBrush}"
-                        Visibility="{Binding ExceedsCap, Converter={StaticResource BoolVisible}}">
+            <Border x:Name="StagingOverridesNotice" Grid.Row="1" Style="{StaticResource WarningCallout}"
+                    Margin="0,14,0,0" Padding="14,10"
+                    Visibility="{Binding HasStagingOverrides, Converter={StaticResource BoolVisible}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="CLEAR LEGACY EDITS"
+                            Style="{StaticResource SubtleButton}" Margin="14,0,0,0"
+                            Foreground="{DynamicResource WarningBrush}"
+                            Command="{Binding ClearStagingOverridesCommand}"
+                            AutomationProperties.Name="Clear legacy grid staging overrides" />
                     <StackPanel>
-                        <TextBlock Text="LIVERY LIMIT EXCEEDED" Style="{StaticResource Eyebrow}"
+                        <TextBlock Text="LEGACY GRID EDITS ARE ACTIVE" Style="{StaticResource Eyebrow}"
                                    Foreground="{DynamicResource WarningBrush}" />
-                        <TextBlock Text="{Binding CapWarning}" Style="{StaticResource Body}"
+                        <TextBlock Text="{Binding StagingOverridesNote}" Style="{StaticResource Muted}"
                                    TextWrapping="Wrap" Margin="0,3,0,0" />
                     </StackPanel>
-                </Border>
-            </StackPanel>
-            <Border x:Name="PlayerSkinHero" Grid.Row="2" Margin="0,18,0,0" Padding="20"
+                </DockPanel>
+            </Border>
+
+            <Border x:Name="SelectedCarPreview" Grid.Row="2" Margin="0,14,0,0" Padding="16"
                     CornerRadius="12" Background="{DynamicResource SurfaceAltBrush}"
                     BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
-                    Visibility="{Binding HasPlayerCar, Converter={StaticResource BoolVisible}}">
+                    Visibility="{Binding HasSelectedCar, Converter={StaticResource BoolVisible}}">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="176" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="18" />
+                        <ColumnDefinition Width="236" />
+                        <ColumnDefinition Width="12" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="18" />
-                        <ColumnDefinition Width="220" />
-                        <ColumnDefinition Width="18" />
-                        <ColumnDefinition Width="280" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="288" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="YOUR DRIVER" Style="{StaticResource Eyebrow}"
-                                   HorizontalAlignment="Center" />
-                        <Border Style="{StaticResource SkinPreviewFrame}" Width="136" Height="136" Margin="0,8,0,0">
-                            <Grid>
-                                <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="44" />
-                                <Image x:Name="PlayerPortraitPreview" Stretch="UniformToFill"
-                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                       Source="{Binding PlayerPortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                            </Grid>
-                        </Border>
-                        <TextBlock Text="{Binding PlayerDriverName}" FontFamily="{StaticResource DisplayFont}"
-                                   FontWeight="Bold" FontSize="16" TextAlignment="Center"
-                                   TextWrapping="Wrap" Margin="0,8,0,0" />
-                    </StackPanel>
 
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                        <DockPanel Margin="0,0,0,7">
-                            <TextBlock Text="SIDE PROFILE" Style="{StaticResource Eyebrow}" />
-                            <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}">
-                                <TextBlock Text="{Binding PlayerCarNumber, StringFormat=CAR #{0}}" Style="{StaticResource Mono}" />
+                    <DockPanel Grid.Row="0" Grid.ColumnSpan="5">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button x:Name="PreviewPreviousCarButton" Width="40" Height="34"
+                                    Padding="0" Content="‹" FontSize="23"
+                                    ToolTip="Previous grid car"
+                                    AutomationProperties.Name="Previous grid car"
+                                    audio:SoundAssist.Cue="Navigate"
+                                    Command="{Binding PreviousCarCommand}" />
+                            <Border Style="{StaticResource CompactChip}" Margin="7,0"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{Binding SelectedPositionLabel}"
+                                           Style="{StaticResource PixelBadge}" />
                             </Border>
-                        </DockPanel>
-                        <Border Style="{StaticResource SkinPreviewFrame}" Height="170">
-                            <Grid>
-                                <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="48" />
-                                <Image x:Name="PlayerSideCarPreview" Stretch="Uniform" Margin="14"
-                                       RenderOptions.BitmapScalingMode="HighQuality"
-                                       Source="{Binding PlayerCarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                            </Grid>
-                        </Border>
-                    </StackPanel>
+                            <Button x:Name="PreviewNextCarButton" Width="40" Height="34"
+                                    Padding="0" Content="›" FontSize="23"
+                                    ToolTip="Next grid car"
+                                    AutomationProperties.Name="Next grid car"
+                                    audio:SoundAssist.Cue="Navigate"
+                                    Command="{Binding NextCarCommand}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding SelectedCar.Number, StringFormat=CAR #{0}}"
+                                       Style="{StaticResource Mono}" FontSize="13" Margin="0,0,10,0" />
+                            <TextBlock Text="{Binding SelectedCar.DriverName}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontWeight="Bold" FontSize="18" />
+                            <TextBlock Text="  YOU" Style="{StaticResource PixelBadge}"
+                                       Foreground="{DynamicResource AccentTextBrush}"
+                                       Visibility="{Binding SelectedCar.IsPlayer, Converter={StaticResource BoolVisible}}" />
+                        </StackPanel>
+                    </DockPanel>
 
-                    <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                        <TextBlock Text="TOP VIEW" Style="{StaticResource Eyebrow}" Margin="0,0,0,7" />
-                        <Border Style="{StaticResource SkinPreviewFrame}" Height="170">
+                    <StackPanel Grid.Row="2" Grid.Column="0">
+                        <TextBlock Text="DRIVER PROFILE" Style="{StaticResource Eyebrow}" />
+                        <Border Style="{StaticResource PreviewFrame}" Width="210" Height="210"
+                                HorizontalAlignment="Left" Margin="0,7,0,0">
                             <Grid>
-                                <TextBlock Text="&#xE7C0;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="42" />
-                                <Image x:Name="PlayerTopCarPreview" Stretch="Uniform" Margin="20"
+                                <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                           FontSize="60" />
+                                <Image x:Name="SelectedDriverPortraitPreview" Stretch="UniformToFill"
                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                       Source="{Binding PlayerTopCarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars}"
+                                       Source="{Binding SelectedCar.PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                             </Grid>
                         </Border>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="6" VerticalAlignment="Center">
-                        <TextBlock Text="SELECT THIS SKIN IN AMS2" Style="{StaticResource Eyebrow}"
-                                   Foreground="{DynamicResource AccentTextBrush}" />
-                        <TextBlock Text="{Binding PlayerLiveryName}" Style="{StaticResource Mono}"
-                                   FontSize="14" TextWrapping="Wrap" Margin="0,7,0,0" />
-                        <Border Style="{StaticResource CompactChip}" HorizontalAlignment="Left" Margin="0,10,0,0">
-                            <TextBlock Text="{Binding PlayerSkinSlot, StringFormat=SKIN SLOT {0}}"
-                                       Style="{StaticResource PixelBadge}" />
+                    <Grid Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="TEAM" Style="{StaticResource Eyebrow}" />
+                            <Border Style="{StaticResource PreviewFrame}" Width="124" Height="124"
+                                    HorizontalAlignment="Left" Margin="0,7,0,0">
+                                <Grid>
+                                    <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                               FontSize="46"
+                                               Visibility="{Binding ElementName=SelectedTeamLogoPreview, Path=Source, Converter={StaticResource NullVisible}}" />
+                                    <Image x:Name="SelectedTeamLogoPreview" Stretch="Uniform" Margin="8"
+                                           Style="{StaticResource TeamLogoImage}"
+                                           Source="{Binding SelectedCar.TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
+                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding SelectedCar.TeamName}" Style="{StaticResource H2}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding SelectedCar.LiveryName}" Style="{StaticResource Mono}"
+                                       FontSize="13" TextWrapping="Wrap" Margin="0,6,0,0" />
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <Border Style="{StaticResource GridStatusChip}">
+                                    <TextBlock Text="{Binding SelectedCar.StatusLabel}"
+                                               Style="{StaticResource GridStatusText}" />
+                                </Border>
+                                <Border Style="{StaticResource CompactChip}" Margin="8,0,0,0"
+                                        Visibility="{Binding SelectedCar.SkinSlot, Converter={StaticResource StringVisible}}">
+                                    <TextBlock Text="{Binding SelectedCar.SkinSlot, StringFormat=SKIN SLOT {0}}"
+                                               Style="{StaticResource PixelBadge}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{Binding SelectedCar.Detail}" Style="{StaticResource Faint}"
+                                       TextWrapping="Wrap" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="2" Grid.Column="4">
+                        <TextBlock Text="TOP VIEW" Style="{StaticResource Eyebrow}" />
+                        <Border Style="{StaticResource PreviewFrame}" Height="210" Margin="0,7,0,0">
+                            <Grid>
+                                <Image x:Name="SelectedTopCarPreview" Stretch="Uniform" Margin="14"
+                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                       Source="{Binding SelectedCar.TopCarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            </Grid>
                         </Border>
-                        <TextBlock Text="{Binding PlayerStatusNote}" Style="{StaticResource Faint}"
-                                   TextWrapping="Wrap" Margin="0,10,0,0"
-                                   Visibility="{Binding PlayerStatusNote, Converter={StaticResource NullCollapsed}}" />
-                        <TextBlock Text="Choose this exact livery on the AMS2 vehicle screen. The slot is the skin number, not the team's racing number."
-                                   Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="4" Grid.ColumnSpan="5">
+                        <TextBlock Text="SIDE VIEW" Style="{StaticResource Eyebrow}" />
+                        <Border Style="{StaticResource PreviewFrame}" Height="150" Margin="0,7,0,0">
+                            <Grid>
+                                <Image x:Name="SelectedSideCarPreview" Stretch="Uniform" Margin="16,4"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="{Binding SelectedCar.CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                            </Grid>
+                        </Border>
                     </StackPanel>
                 </Grid>
             </Border>
-            <Grid Grid.Row="3" Margin="0,22,0,0"
-                  Visibility="{Binding Editors.Count, Converter={StaticResource CountVisible}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <DockPanel>
+
+            <StackPanel Grid.Row="3" Margin="0,22,0,0">
+                <DockPanel Margin="0,0,0,10">
+                    <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
+                            VerticalAlignment="Bottom">
+                        <TextBlock Text="{Binding Cars.Count, StringFormat={}{0} GRID CARS}"
+                                   Style="{StaticResource PixelBadge}" />
+                    </Border>
                     <StackPanel>
-                        <TextBlock Text="Skin replacement workbench" Style="{StaticResource H2}" />
-                        <TextBlock Text="Choose one seat, then compare the current skin with its replacement before staging."
-                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,3,0,0" />
-                    </StackPanel>
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Button Content="Set up this race in AMS2" MinWidth="190"
-                                audio:SoundAssist.Cue="Confirm" Command="{Binding StageGridCommand}" />
-                        <Button Content="Overwrite safely" MinWidth="150" Margin="8,0,0,0"
-                                audio:SoundAssist.Cue="Destructive" Command="{Binding ForceStageGridCommand}"
-                                Visibility="{Binding StageBlocked, Converter={StaticResource BoolVisible}}" />
+                        <TextBlock Text="Choose a car to preview" Style="{StaticResource H2}" />
+                        <TextBlock Text="Selection changes only the reference panel above."
+                                   Style="{StaticResource Muted}" Margin="0,3,0,0" />
                     </StackPanel>
                 </DockPanel>
 
-                <Border Grid.Row="1" Margin="0,11,0,0" Padding="10" CornerRadius="12"
-                        Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource EdgeBrush}"
-                        BorderThickness="1">
-                    <Grid Height="510">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="310" />
-                            <ColumnDefinition Width="12" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ListBox x:Name="SkinEditorRoster" ItemsSource="{Binding Editors}"
-                                 SelectedItem="{Binding SelectedEditor, Mode=TwoWay}"
-                                 ItemContainerStyle="{StaticResource SkinEditorItem}"
-                                 Background="Transparent" BorderThickness="0"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.VirtualizationMode="Recycling"
-                                 AutomationProperties.Name="Skin replacement seats">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="44" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Border Width="36" Height="36" CornerRadius="18"
-                                                Background="{DynamicResource FieldBrush}">
-                                            <TextBlock Text="{Binding OriginalPreview.CarNumber, StringFormat=#{0}}"
-                                                       Style="{StaticResource Mono}" HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center" />
-                                        </Border>
-                                        <StackPanel Grid.Column="1" Margin="9,0,8,0">
-                                            <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding SelectedLivery}" Style="{StaticResource Faint}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                        </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{Binding SelectedPreview.SkinSlot, StringFormat=SLOT {0}}"
-                                                   Style="{StaticResource PixelBadge}" VerticalAlignment="Center" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-
-                        <Border x:Name="SkinReplacementWorkbench" Grid.Column="2" Padding="16" CornerRadius="10"
-                                Background="{DynamicResource SurfaceAltBrush}"
-                                DataContext="{Binding SelectedEditor}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Margin="0,0,8,0">
-                                        <TextBlock Text="DRIVER NAME" Style="{StaticResource Eyebrow}" />
-                                        <TextBox x:Name="SkinDriverNameEditor"
-                                                 Text="{Binding DriverName, UpdateSourceTrigger=LostFocus}"
-                                                 AutomationProperties.Name="Driver name"
-                                                 Margin="0,5,0,0" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                        <TextBlock Text="REPLACEMENT SKIN" Style="{StaticResource Eyebrow}" />
-                                        <ComboBox x:Name="SkinReplacementSelector"
-                                                  ItemsSource="{Binding LiveryOptions}"
-                                                  SelectedItem="{Binding ReplacementSelection, Mode=TwoWay}"
-                                                  IsEnabled="{Binding HasLiveryOptions}"
-                                                  AutomationProperties.Name="Replacement skin"
-                                                  AutomationProperties.HelpText="Only active custom skins for this exact car model are listed. Stock liveries and skins for other car models are excluded."
-                                                  Margin="0,5,0,0" />
-                                        <TextBlock Text="Custom skins for this exact car model only."
-                                                   Style="{StaticResource Faint}" Margin="0,4,0,0" />
-                                        <TextBlock Text="No compatible custom skins are active for this car model."
-                                                   Style="{StaticResource Faint}" Margin="0,3,0,0"
-                                                   Foreground="{DynamicResource WarningBrush}"
-                                                   Visibility="{Binding HasLiveryOptions, Converter={StaticResource BoolCollapsed}}" />
-                                    </StackPanel>
-                                </Grid>
-
-                                <Grid Grid.Row="1" Margin="0,14,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="50" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border x:Name="CurrentSkinComparisonCard"
-                                            Style="{StaticResource SkinPreviewFrame}" Padding="12">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="148" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Text="CURRENT SKIN" Style="{StaticResource Eyebrow}" />
-
-                                            <Grid Grid.Row="1" Margin="0,8,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="3*" />
-                                                    <ColumnDefinition Width="2*" />
-                                                </Grid.ColumnDefinitions>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="124" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border Style="{StaticResource SkinPreviewFrame}"
-                                                            Width="116" Height="116" HorizontalAlignment="Left"
-                                                            VerticalAlignment="Top">
-                                                        <Grid>
-                                                            <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="40" />
-                                                            <Image x:Name="CurrentSkinPortraitPreview"
-                                                                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                                   Source="{Binding OriginalPreview.PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                                        </Grid>
-                                                    </Border>
-                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,8,0">
-                                                        <TextBlock Text="{Binding OriginalPreview.DriverName}" FontWeight="SemiBold"
-                                                                   FontSize="15" TextWrapping="Wrap" />
-                                                        <TextBlock Text="{Binding OriginalPreview.LiveryName}" Style="{StaticResource Faint}"
-                                                                   TextWrapping="Wrap" Margin="0,4,0,0" />
-                                                        <TextBlock Text="{Binding OriginalPreview.SkinSlot, StringFormat=SKIN SLOT {0}}"
-                                                                   Style="{StaticResource PixelBadge}" Margin="0,6,0,0" />
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="1" Margin="8,0,0,0">
-                                                    <TextBlock Text="TOP VIEW" Style="{StaticResource Eyebrow}"
-                                                               HorizontalAlignment="Center" />
-                                                    <TextBlock Text="TOP" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                               FontSize="18" Margin="0,22,0,0" />
-                                                    <Image x:Name="CurrentSkinTopPreview"
-                                                           Stretch="Uniform" Margin="2,20,2,0"
-                                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                           Source="{Binding OriginalPreview.TopCarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars}"
-                                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid Grid.Row="2" Margin="0,6,0,0" MinHeight="138">
-                                                <TextBlock Text="SIDE PROFILE" Style="{StaticResource Eyebrow}" />
-                                                <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                           FontSize="38" Margin="0,20,0,0" />
-                                                <Image x:Name="CurrentSkinSidePreview" Stretch="Uniform"
-                                                       Margin="4,18,4,0" RenderOptions.BitmapScalingMode="HighQuality"
-                                                       Source="{Binding OriginalPreview.CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
-                                    <TextBlock Grid.Column="1" Text="→" FontSize="28" FontWeight="Bold"
-                                               Foreground="{DynamicResource AccentTextBrush}"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <Border x:Name="ReplacementSkinComparisonCard"
-                                            Grid.Column="2" Style="{StaticResource SkinPreviewFrame}" Padding="12"
-                                            BorderBrush="{DynamicResource AccentBrush}">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="148" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <DockPanel>
-                                                <TextBlock Text="REPLACEMENT PREVIEW" Style="{StaticResource Eyebrow}"
-                                                           Foreground="{DynamicResource AccentTextBrush}" />
-                                                <Border DockPanel.Dock="Right" Style="{StaticResource CompactChip}"
-                                                        Visibility="{Binding IsReplacement, Converter={StaticResource BoolVisible}}">
-                                                    <TextBlock Text="CHANGED" Style="{StaticResource PixelBadge}"
-                                                               Foreground="{DynamicResource AccentTextBrush}" />
-                                                </Border>
-                                            </DockPanel>
-
-                                            <Grid Grid.Row="1" Margin="0,8,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="3*" />
-                                                    <ColumnDefinition Width="2*" />
-                                                </Grid.ColumnDefinitions>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="124" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border Style="{StaticResource SkinPreviewFrame}"
-                                                            Width="116" Height="116" HorizontalAlignment="Left"
-                                                            VerticalAlignment="Top">
-                                                        <Grid>
-                                                            <TextBlock Text="&#xE77B;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="40" />
-                                                            <Image x:Name="ReplacementSkinPortraitPreview"
-                                                                   Stretch="UniformToFill" RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                                   Source="{Binding SelectedPreview.PortraitKey, Converter={StaticResource AssetImage}, ConverterParameter=portraits}"
-                                                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                                        </Grid>
-                                                    </Border>
-                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,8,0">
-                                                        <TextBlock Text="{Binding SelectedPreview.DriverName}" FontWeight="SemiBold"
-                                                                   FontSize="15" TextWrapping="Wrap" />
-                                                        <TextBlock Text="{Binding SelectedPreview.LiveryName}" Style="{StaticResource Faint}"
-                                                                   TextWrapping="Wrap" Margin="0,4,0,0" />
-                                                        <TextBlock Text="{Binding SelectedPreview.SkinSlot, StringFormat=SKIN SLOT {0}}"
-                                                                   Style="{StaticResource PixelBadge}" Margin="0,6,0,0" />
-                                                    </StackPanel>
-                                                </Grid>
-                                                <Grid Grid.Column="1" Margin="8,0,0,0">
-                                                    <TextBlock Text="TOP VIEW" Style="{StaticResource Eyebrow}"
-                                                               HorizontalAlignment="Center" />
-                                                    <TextBlock Text="TOP" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                               FontSize="18" Margin="0,22,0,0" />
-                                                    <Image x:Name="ReplacementSkinTopPreview"
-                                                           Stretch="Uniform" Margin="2,20,2,0"
-                                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                                           Source="{Binding SelectedPreview.TopCarKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/grid-cars}"
-                                                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid Grid.Row="2" Margin="0,6,0,0" MinHeight="138">
-                                                <TextBlock Text="SIDE PROFILE" Style="{StaticResource Eyebrow}" />
-                                                <TextBlock Text="&#xE804;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                           FontSize="38" Margin="0,20,0,0" />
-                                                <Image x:Name="ReplacementSkinSidePreview" Stretch="Uniform"
-                                                       Margin="4,18,4,0" RenderOptions.BitmapScalingMode="HighQuality"
-                                                       Source="{Binding SelectedPreview.CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
-                                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
-                                </Grid>
-                                <TextBlock Grid.Row="2"
-                                           Text="Changes are cosmetic and saved immediately. Staging writes the selected driver names and skins to AMS2 after making a timestamped backup."
-                                           Style="{StaticResource Faint}" TextWrapping="Wrap" />
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <Border Grid.Row="2" Margin="0,9,0,0" Padding="12,9" CornerRadius="8"
-                        Visibility="{Binding StageBanner, Converter={StaticResource NullCollapsed}}">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding StageSucceeded}" Value="True">
-                                    <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{Binding StageBanner}" Style="{StaticResource Body}" TextWrapping="Wrap" />
-                </Border>
-            </Grid>
-            <StackPanel Grid.Row="4" Margin="0,24,0,0">
-                <TextBlock Text="This round's cars" Style="{StaticResource H2}" />
-                <TextBlock Text="A compact verification roster. Use the workbench above when a seat needs a different skin."
-                           Style="{StaticResource Muted}" Margin="0,3,0,9" />
-                <ItemsControl x:Name="CurrentRoundCompactRoster" ItemsSource="{Binding Cars}">
-                    <ItemsControl.ItemsPanel>
+                <ListBox x:Name="GridEntrySelector"
+                         ItemsSource="{Binding Cars}"
+                         SelectedItem="{Binding SelectedCar, Mode=TwoWay}"
+                         ItemContainerStyle="{StaticResource GridSelectorItem}"
+                         Background="Transparent" BorderThickness="0" Padding="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="2" />
+                            <WrapPanel />
                         </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border Style="{StaticResource Panel}" Padding="12,9" Margin="0,0,8,8">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="46" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="38" Height="38" CornerRadius="8"
-                                            Background="{DynamicResource FieldBrush}" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Number, StringFormat=#{0}}" Style="{StaticResource Mono}"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <StackPanel Grid.Column="1" Margin="8,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="38" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="78" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="32" Height="32" CornerRadius="6"
+                                        Background="{DynamicResource FieldBrush}"
+                                        VerticalAlignment="Top">
+                                    <Grid>
+                                        <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
+                                                   FontSize="16"
+                                                   Visibility="{Binding ElementName=RowTeamLogo, Path=Source, Converter={StaticResource NullVisible}}" />
+                                        <Image x:Name="RowTeamLogo" Stretch="Uniform" Margin="3"
+                                               Style="{StaticResource TeamLogoImage}"
+                                               Source="{Binding TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                    </Grid>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="7,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Number, StringFormat=#{0}}"
+                                                   Style="{StaticResource Mono}" Margin="0,0,5,0" />
                                         <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold"
                                                    TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Style="{StaticResource Faint}" TextTrimming="CharacterEllipsis">
-                                            <Run Text="{Binding TeamName, Mode=OneWay}" /><Run Text="  •  " />
-                                            <Run Text="{Binding LiveryName, Mode=OneWay}" />
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding SkinSlot, StringFormat=Skin slot {0}}"
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding TeamName}" Style="{StaticResource Faint}"
+                                               TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+                                    <TextBlock Text="{Binding StatusLabel}" Style="{StaticResource Faint}"
+                                               TextTrimming="CharacterEllipsis" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <Border Grid.Column="2" Background="Transparent">
+                                    <Grid>
+                                        <Image Stretch="Uniform" Margin="2"
+                                               RenderOptions.BitmapScalingMode="HighQuality"
+                                               Source="{Binding CarKey, Converter={StaticResource AssetImage}, ConverterParameter=cars}"
+                                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Border Style="{StaticResource Panel}" Padding="16" Margin="0,2,0,0"
+                        Visibility="{Binding Cars.Count, Converter={StaticResource CountCollapsed}}">
+                    <TextBlock Text="No next-race grid is available to preview."
+                               Style="{StaticResource Muted}" HorizontalAlignment="Center" />
+                </Border>
+            </StackPanel>
+
+            <Border x:Name="DidNotQualifyStrip" Grid.Row="4" Style="{StaticResource Panel}"
+                    Padding="14,11" Margin="0,14,0,0" Opacity="0.78"
+                    Visibility="{Binding HasDnq, Converter={StaticResource BoolVisible}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DnqHeader}" Style="{StaticResource Eyebrow}" />
+                        <TextBlock Text="Outside this round's cut"
+                                   Style="{StaticResource Faint}" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <ItemsControl Grid.Column="1" ItemsSource="{Binding DidNotQualify}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource FieldBrush}" CornerRadius="7"
+                                        Padding="9,6" Margin="0,0,7,6">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding NumberLabel}" Style="{StaticResource Mono}"
+                                                   Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding DriverName}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding TeamName, StringFormat={}  •  {0}}"
                                                    Style="{StaticResource Faint}" />
                                     </StackPanel>
-                                    <Border Grid.Column="2" Style="{StaticResource SkinStatusChip}" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding StatusLabel}" Style="{StaticResource SkinStatusText}" />
-                                    </Border>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <TextBlock Text="No current grid is available to preview."
-                           Style="{StaticResource Muted}" Margin="0,5,0,0"
-                           Visibility="{Binding Cars.Count, Converter={StaticResource CountCollapsed}}" />
-            </StackPanel>
-            <Grid Grid.Row="5" Margin="0,22,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="16" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Border Style="{StaticResource Panel}" Padding="15"
-                        Visibility="{Binding HasActivatable, Converter={StaticResource BoolVisible}}">
-                    <StackPanel>
-                        <TextBlock Text="Activate installed skins" Style="{StaticResource H2}" />
-                        <TextBlock Text="These skins are installed but still use a ## placeholder. Activation assigns a real slot after making a backup."
-                                   Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,3,0,9" />
-                        <Border Padding="10,7" CornerRadius="7" Margin="0,0,0,8"
-                                Visibility="{Binding ActivationBanner, Converter={StaticResource NullCollapsed}}">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ActivationSucceeded}" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <TextBlock Text="{Binding ActivationBanner}" Style="{StaticResource Body}"
-                                       TextWrapping="Wrap" />
-                        </Border>
-                        <ItemsControl ItemsSource="{Binding ActivatableLiveries}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <DockPanel Margin="0,0,0,7">
-                                        <Button DockPanel.Dock="Right" Content="Activate" MinWidth="82"
-                                                audio:SoundAssist.Cue="Confirm"
-                                                Command="{Binding DataContext.ActivateLiveryCommand,
-                                                          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                CommandParameter="{Binding}" />
-                                        <TextBlock Text="{Binding}" Style="{StaticResource Mono}"
-                                                   TextWrapping="Wrap" VerticalAlignment="Center" />
-                                    </DockPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-
-                <Border Grid.Column="2" Style="{StaticResource Panel}" Padding="15"
-                        Visibility="{Binding HasMissingSkins, Converter={StaticResource BoolVisible}}">
-                    <StackPanel>
-                        <TextBlock Text="Required skin packs" Style="{StaticResource H2}" />
-                        <TextBlock Text="Missing paint falls back safely, but these packs complete the intended field."
-                                   Style="{StaticResource Faint}" TextWrapping="Wrap" Margin="0,3,0,9" />
-                        <ItemsControl ItemsSource="{Binding RequiredSkinPacks}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8"
-                                            Padding="11,8" Margin="0,0,0,7">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
-                                            <TextBlock Text="{Binding OverridesFolder, StringFormat=Folder: {0}}"
-                                                       Style="{StaticResource Faint}" TextWrapping="Wrap"
-                                                       Visibility="{Binding OverridesFolder, Converter={StaticResource NullCollapsed}}" />
-                                            <TextBlock Text="{Binding Url}" Style="{StaticResource Faint}"
-                                                       TextWrapping="Wrap"
-                                                       Visibility="{Binding Url, Converter={StaticResource NullCollapsed}}" />
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-            </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
         </Grid>
     </ScrollViewer>
 </UserControl>

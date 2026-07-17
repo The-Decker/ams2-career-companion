@@ -31,6 +31,22 @@
                             <TextBlock Text="{Binding SmgpCampaignLine}" Style="{StaticResource Faint}"
                                        FontWeight="SemiBold" Margin="0,3,0,0"
                                        Visibility="{Binding SmgpCampaignLine, Converter={StaticResource StringVisible}}" />
+                            <StackPanel Margin="0,8,0,0"
+                                        Visibility="{Binding HasSmgpSeasonLore, Converter={StaticResource BoolVisible}}">
+                                <WrapPanel>
+                                    <Border Style="{StaticResource CompactChip}" Margin="0,0,7,4"
+                                            Background="{DynamicResource AccentDimBrush}"
+                                            BorderBrush="{DynamicResource AccentBrush}">
+                                        <TextBlock Text="{Binding SmgpSeasonEra}" Style="{StaticResource PixelBadge}"
+                                                   Foreground="{DynamicResource AccentTextBrush}" />
+                                    </Border>
+                                    <TextBlock Text="{Binding SmgpSeasonTitle}" FontFamily="{StaticResource DisplayFont}"
+                                               FontSize="17" FontWeight="Bold" VerticalAlignment="Center" />
+                                </WrapPanel>
+                                <TextBlock Text="{Binding SmgpSeasonSubtitle}" Style="{StaticResource Muted}"
+                                           TextWrapping="Wrap" Margin="0,2,0,0"
+                                           Visibility="{Binding SmgpSeasonSubtitle, Converter={StaticResource StringVisible}}" />
+                            </StackPanel>
                         </StackPanel>
                         <!-- the player's live readout (replaces the old "D.P."): season standing + the
                              career record they're building from zero -->

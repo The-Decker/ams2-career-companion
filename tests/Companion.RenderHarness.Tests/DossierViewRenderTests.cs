@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -11,6 +12,7 @@ using Companion.App.Views;
 using Companion.Core.Character;
 using Companion.Core.Smgp;
 using Companion.ViewModels.Hub;
+using Companion.ViewModels.Services;
 
 namespace Companion.RenderHarness.Tests;
 
@@ -76,6 +78,9 @@ public sealed class DossierViewRenderTests
         public bool HasSmgpNarrative { get; init; }
         public string NarrativeIntro { get; init; } = "";
         public IReadOnlyList<SmgpCareerBeat> Timeline { get; init; } = [];
+        public string MortalityLabel { get; init; } = "MORTALITY: NORMAL";
+        public IReadOnlyList<InjuryHistoryEntry> InjuryHistory { get; init; } = [];
+        public bool HasInjuryHistory => InjuryHistory.Count > 0;
 
         public bool LevelUpPending { get; init; } = true;
         public int LevelsGained { get; init; } = 1;
@@ -214,15 +219,17 @@ public sealed class DossierViewRenderTests
         public void Execute(object? parameter) => execute(parameter);
     }
 
-    private static CharacterDossier Dossier() => new()
+    private static CharacterDossier Dossier(bool atLevelCap = false) => new()
     {
         Name = "Nova Reyes",
         CountryCode = "BRA",
         Age = 24,
-        Level = 3,
-        Xp = 250,
-        XpIntoLevel = 15,
-        XpForNextLevel = 182,
+        Level = atLevelCap ? 300 : 3,
+        Xp = atLevelCap ? 1_250_000 : 250,
+        AvailableResetXp = atLevelCap ? 1_100_000 : 250,
+        XpIntoLevel = atLevelCap ? 0 : 15,
+        XpForNextLevel = atLevelCap ? 0 : 182,
+        LevelCap = 300,
         CpUnspent = 2,
         Stats =
         [
@@ -271,6 +278,11 @@ public sealed class DossierViewRenderTests
             ChoiceValue = "technical",
         },
         InjuryRisk = "Moderate",
+        ActiveModifiers =
+        [
+            new DossierModifierLine("+0.30 wet-weather pace", "Wet rounds"),
+            new DossierModifierLine("+0.020 car power", null),
+        ],
         Availability = AvailabilityStatus.Injured,
         AvailabilityLabel = "Injured — out 2 races",
     };
@@ -406,9 +418,13 @@ public sealed class DossierViewRenderTests
 
     private static string RequirementLabel(string id) => string.Join(' ', id.Split('_'));
 
-    private static DossierHost Host(bool withNarrative = false, bool withCountry = true)
+    private static DossierHost Host(
+        bool withNarrative = false,
+        bool withCountry = true,
+        bool atLevelCap = false,
+        bool withInjuryHistory = true)
     {
-        var dossier = Dossier();
+        var dossier = Dossier(atLevelCap);
         return new DossierHost
         {
             Dossier = dossier,
@@ -420,6 +436,21 @@ public sealed class DossierViewRenderTests
             MetaStatsView = dossier.Stats.Where(stat => !stat.Talent).ToArray(),
             HasSmgpNarrative = withNarrative,
             NarrativeIntro = withNarrative ? "A rookie season is becoming a real campaign." : "",
+            InjuryHistory = withInjuryHistory
+                ?
+                [
+                    new InjuryHistoryEntry
+                    {
+                        SeasonOrdinal = 2,
+                        SeasonYear = 1991,
+                        Round = 6,
+                        Outcome = "minorInjury",
+                        MissRaces = 2,
+                        Label = "Injured - missed 2 races",
+                        Description = "Bruised ribs",
+                    },
+                ]
+                : [],
             Timeline = withNarrative
                 ?
                 [
@@ -433,6 +464,60 @@ public sealed class DossierViewRenderTests
                 ]
                 : [],
         };
+    }
+
+    [Fact]
+    public void DossierView_LevelCapUsesMaxStateInsteadOfPhantomLevelProgress()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var view = new DossierView { DataContext = Host(atLevelCap: true) };
+            Arrange(view);
+
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(view.FindName("MaxLevelBadge")).Visibility);
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<ProgressBar>(view.FindName("LevelProgressBar")).Visibility);
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<TextBlock>(view.FindName("NextLevelXpLine")).Visibility);
+            Assert.Contains(Descendants<TextBlock>(view),
+                block => InlineText(block).Contains("LEVEL 300", StringComparison.Ordinal));
+        });
+    }
+
+    [Fact]
+    public void DossierView_RendersActiveEffectsAndMedicalRecord_AndCollapsesEmptyHistory()
+    {
+        if (!WpfRenderHarness.IsSupported)
+            return;
+
+        WpfRenderHarness.RunSta(() =>
+        {
+            var current = new DossierView { DataContext = Host() };
+            Arrange(current);
+
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(current.FindName("ActiveEffectsPanel")).Visibility);
+            Assert.Equal(Visibility.Visible,
+                Assert.IsType<Border>(current.FindName("MedicalRecordPanel")).Visibility);
+            Assert.Contains(Descendants<TextBlock>(current),
+                block => block.Text.Contains("+0.30 wet-weather pace", StringComparison.Ordinal));
+            Assert.Contains(Descendants<TextBlock>(current),
+                block => block.Text.Contains("Bruised ribs", StringComparison.Ordinal));
+            Assert.Contains(Descendants<TextBlock>(current),
+                block => block.Text.Contains("MORTALITY: NORMAL", StringComparison.Ordinal));
+
+            var clean = new DossierView
+            {
+                DataContext = Host(withInjuryHistory: false),
+            };
+            Arrange(clean);
+            Assert.Equal(Visibility.Collapsed,
+                Assert.IsType<Border>(clean.FindName("MedicalRecordPanel")).Visibility);
+        });
     }
 
     [Fact]
@@ -812,4 +897,7 @@ public sealed class DossierViewRenderTests
                 yield return descendant;
         }
     }
+
+    private static string InlineText(TextBlock block) =>
+        block.Text + string.Concat(block.Inlines.OfType<Run>().Select(run => run.Text));
 }

@@ -31,11 +31,22 @@ public sealed record CharacterDossier
     /// their lifetime total because they never spend this pool.</summary>
     public long AvailableResetXp { get; init; }
 
-    /// <summary>XP accumulated INTO the current level (0 at a fresh level).</summary>
+    /// <summary>XP accumulated INTO the current level (0 at a fresh level, and 0 at the level cap —
+    /// a capped driver banks further XP as <see cref="LifetimeXp"/>/<see cref="AvailableResetXp"/>,
+    /// never as progress toward a level 301).</summary>
     public required long XpIntoLevel { get; init; }
 
     /// <summary>XP required to advance from the current level to the next; 0 at the max level.</summary>
     public required long XpForNextLevel { get; init; }
+
+    /// <summary>The effective level ceiling for this driver (300 for progression v2; the era/rules
+    /// cap for legacy versions). <see cref="Build"/> always sets it; the un-capped default keeps
+    /// hand-built test dossiers compiling with <see cref="IsAtLevelCap"/> false.</summary>
+    public int LevelCap { get; init; } = int.MaxValue;
+
+    /// <summary>True when the driver sits at the effective level cap — the MAX-LEVEL display state.
+    /// The progress bar reads complete and no "XP to next level" line is meaningful.</summary>
+    public bool IsAtLevelCap => Level >= LevelCap;
 
     /// <summary>Development currency banked for between-season spending: legacy Character Points
     /// for v0/v1, or Skill Points for v2. The stable member name preserves the VM bind contract.</summary>
@@ -53,6 +64,12 @@ public sealed record CharacterDossier
     /// when neither a legacy injury-stream perk nor a mastery injury-base drawback exposes the
     /// character to the roll.</summary>
     public string? InjuryRisk { get; init; }
+
+    /// <summary>The rating effects the character's perks/mastery actually apply in the sim, split
+    /// base-vs-active: unconditional rating deltas and car scalars always apply; conditional lines
+    /// carry the round condition they wait on. A pure display projection of the SAME resolved
+    /// modifiers the fold consumes — never a second rules engine.</summary>
+    public IReadOnlyList<DossierModifierLine> ActiveModifiers { get; init; } = [];
 
     /// <summary>The driver's CURRENT availability, folded from the accident/injury state
     /// (docs/dev/character-death-injury.md §6): Fit / Injured / Season over / Deceased. A healthy
@@ -143,8 +160,11 @@ public sealed record CharacterDossier
             Level = level,
             Xp = xp,
             AvailableResetXp = Math.Max(0L, xp - character.XpSpentOnResets),
-            XpIntoLevel = Math.Max(0, xp - cumulativeToLevel),
+            // At the cap "XP into the level" would grow without bound (xp − cumulative-to-cap);
+            // the capped state reads 0 so the UI shows MAX rather than a runaway counter.
+            XpIntoLevel = level >= effectiveCap ? 0 : Math.Max(0, xp - cumulativeToLevel),
             XpForNextLevel = forNext,
+            LevelCap = effectiveCap,
             CpUnspent = CharacterProgress.AvailableSkillPoints(
                 character,
                 level,
@@ -155,10 +175,70 @@ public sealed record CharacterDossier
             Perks = perks,
             RacingDna = racingDna,
             InjuryRisk = injuryRisk,
+            ActiveModifiers = ProjectModifierLines(character, rules, modifiers),
             Availability = availability,
             AvailabilityLabel = availabilityLabel,
         };
     }
+
+    /// <summary>Projects the resolved sim modifiers into readable base-vs-active lines: the
+    /// unconditional rating deltas and car scalars (always on), then every dormant conditional
+    /// rating/car effect with the round condition it waits on. Only rating-and-car levers are
+    /// surfaced — the career/economy levers already speak through the perk benefit lines.</summary>
+    private static IReadOnlyList<DossierModifierLine> ProjectModifierLines(
+        CharacterProfile character, CharacterRules rules, PlayerPerkModifiers modifiers)
+    {
+        var lines = new List<DossierModifierLine>();
+
+        foreach (var (field, delta) in modifiers.TalentDeltas.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            if (delta != 0.0)
+                lines.Add(new DossierModifierLine($"{delta:+0.00;-0.00} {CharacterLabels.Rating(field)}", null));
+        }
+
+        if (modifiers.WeightScalarDelta != 0.0)
+            lines.Add(new DossierModifierLine($"{modifiers.WeightScalarDelta:+0.000;-0.000} car weight", null));
+        if (modifiers.PowerScalarDelta != 0.0)
+            lines.Add(new DossierModifierLine($"{modifiers.PowerScalarDelta:+0.000;-0.000} car power", null));
+        if (modifiers.DragScalarDelta != 0.0)
+            lines.Add(new DossierModifierLine($"{modifiers.DragScalarDelta:+0.000;-0.000} car drag", null));
+
+        string flavor = modifiers.LockedFlavorRating
+            ?? (PerkResolver.IsEligibleChosenFlavor(character.ChosenFlavor)
+                ? character.ChosenFlavor!
+                : PerkResolver.DefaultChosenFlavor);
+        foreach (var effect in modifiers.Conditional)
+        {
+            if (effect.Lever == "statDelta" && effect.Target is { } rating)
+            {
+                string field = rating == "chosenFlavor" ? flavor : rating;
+                lines.Add(new DossierModifierLine(
+                    $"{effect.Magnitude:+0.00;-0.00} {CharacterLabels.Rating(field)}",
+                    ConditionLabel(effect.Condition)));
+            }
+            else if (effect.Lever == "carScalar" && effect.Target is { } axis)
+            {
+                lines.Add(new DossierModifierLine(
+                    $"{effect.Magnitude:+0.000;-0.000} car {axis}",
+                    ConditionLabel(effect.Condition)));
+            }
+        }
+
+        return lines;
+    }
+
+    /// <summary>Friendly label for a perk-effect round-condition token; falls back to the raw
+    /// token so a new condition never renders as nothing.</summary>
+    private static string ConditionLabel(string condition) => condition switch
+    {
+        "wetRound" => "Wet rounds",
+        "dryRound" => "Dry rounds",
+        "longRace" => "Long races",
+        "shortRace" => "Short races",
+        "ageLtPeak" => "Before peak age",
+        "ageGtePeak" => "From peak age",
+        _ => condition,
+    };
 
     private static DossierRacingDna? ProjectRacingDna(
         CharacterProfile character,
@@ -214,6 +294,15 @@ public enum AvailabilityStatus
 /// <summary>One stat row of the dossier: id, display label, current value, and whether it is a
 /// talent stat (writes ratings) or a career meta-stat.</summary>
 public sealed record DossierStat(string Id, string Label, double Value, bool Talent);
+
+/// <summary>One resolved sim-modifier line of the dossier: the readable effect ("+0.04 wet-weather
+/// pace") and the round condition it waits on, or null when it always applies. Base stats stay in
+/// <see cref="DossierStat"/>; these are the deltas the sim layers on top.</summary>
+public sealed record DossierModifierLine(string Effect, string? Condition)
+{
+    /// <summary>True for an effect that applies on every round rather than waiting on a condition.</summary>
+    public bool AlwaysActive => Condition is null;
+}
 
 /// <summary>One perk row of the dossier: what it is, what it costs, and — in plain language — the
 /// good things it does and the costs it carries.</summary>

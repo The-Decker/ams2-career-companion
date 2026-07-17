@@ -1,0 +1,413 @@
+{
+  "$comment": "Race results desk pack (prefix rr.) - everyday result coverage grown past 010-core: era-voiced generics for raceWon/podiumFinish/pointsFinish/midfieldResult/overperformed/underperformed (1960s-70s formal report, 1980s-90s back page, 2000s-10s digital, smgp arcade board), plus situational specials core lacks (season-closing win, opener win, back-to-back, rival-beaten, wet podium, giant-killing overdelivery, flat finale). Read-side only: editing this file changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "rr.race-won.period-report",
+      "event": "raceWon",
+      "eras": ["1960s", "1970s"],
+      "headline": "Victory[[?venue: at {venue}]] for {subject}",
+      "deck": "The honours of the day[[?round: in round {round}]] go to {subject}",
+      "summary": "{subject} won[[?venue: at {venue}]][[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} It is the pleasant duty of this correspondent to report a victory for {subject}[[?team: , with the {team} entry running faultlessly from flag to flag]]. {pool:rrColor}",
+        "context": "[[?expected: The form book had suggested {ord:expected}; the driver evidently had not read it.]] [[?quali: From {ord:quali} on the grid, the win was made on the road, in the old style.]] [[?champPosition: The championship account now stands at {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.race-won.headline-act",
+      "event": "raceWon",
+      "eras": ["1980s", "1990s"],
+      "headline": "No arguments: {subject} takes the big one[[?venue: at {venue}]]",
+      "deck": "Fastest when it counted[[?round: in round {round}]]",
+      "summary": "{subject} won[[?round: round {round}]][[?venue: at {venue}]] and made it look like a plan.",
+      "sections": {
+        "lead": "{pool:dateline} Forget the subplots. {subject} hit the front, stayed there when it mattered, and banked the points everyone else spent the weekend talking about. {pool:rrColor}",
+        "stats": "{pool:rrStatLine} [[?champPosition: Championship account now reads {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.race-won.live-feed",
+      "event": "raceWon",
+      "eras": ["2000s", "2010s"],
+      "headline": "{subject} wins[[?venue: at {venue}]] - as it happened",
+      "deck": "Race report[[?round: , round {round}]]: control from lights to flag",
+      "summary": "{subject} converted the whole weekend into victory[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} The win looked inevitable from about half distance, which is exactly how {subject} wanted it to look. The gaps were managed, the tyres lasted, and the pit wall's tone never changed. {pool:rrColor}",
+        "stats": "{pool:rrStatLine} [[?quali: The weekend arc: {ord:quali} on Saturday, first on Sunday.]]",
+        "next": "The next round's storylines write themselves now[[?champPosition: - {ord:champPosition} in the table and the momentum metrics all pointing one way]].",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.race-won.smgp-board",
+      "event": "raceWon",
+      "eras": ["smgp"],
+      "headline": "{subject} TAKES THE CHECKER. FLAWLESS.",
+      "deck": "VICTORY LAP UNLOCKED[[?venue: AT {venue}]]",
+      "summary": "{subject} won[[?round: round {round}]] and the big board knows it.",
+      "sections": {
+        "lead": "{pool:dateline} GREEN LIGHTS. FULL SEND. {subject} DROVE THE PERFECT LINE[[?venue: AROUND {venue}]] AND THE FIELD SAW NOTHING BUT SLIPSTREAM. {pool:rrColor}",
+        "impact": "[[?team: {team} PIT CREW: MAXIMUM COMBO. ]]THE LADDER MOVES. THE CROWD KNOWS THE NAME.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.race-won.season-closer",
+      "event": "raceWon",
+      "when": { "isFinalRound": true },
+      "headline": "{subject} signs off the {year} season with victory",
+      "deck": "The final round[[?venue: at {venue}]] goes to {subject}",
+      "summary": "{subject} won the {year} season finale[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Seasons are remembered by how they end, and {year} ends with {subject} on the top step[[?venue: at {venue}]]. The last flag of the year fell on a win.",
+        "context": "Final-round wins carry their own currency: they are the result everyone replays over the winter, the note a season holds until the next one begins. Whatever else {year} was, its closing line now belongs to {subject}.",
+        "close": "The transporters pack for the last time this year, and one garage packs happy."
+      }
+    },
+    {
+      "id": "rr.race-won.opener",
+      "event": "raceWon",
+      "when": { "isSeasonOpener": true },
+      "headline": "First blood of {year}: {subject} wins the opener",
+      "deck": "The new season has an early author",
+      "summary": "{subject} won the opening round of the {year} season[[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} A winter of promises met its first stopwatch today, and {subject} answered loudest: victory in the {year} season opener[[?venue: at {venue}]].",
+        "context": "Openers set tables and tones. Nobody wins a championship in the first round, but somebody always leaves it holding the early script[[?team: , and this year the script sits in {team's} garage]].",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.race-won.back-to-back",
+      "event": "raceWon",
+      "when": { "minStreak": 2 },
+      "headline": "No let-up: {subject} wins again",
+      "deck": "[[?streak: That is {streak} in a row now]]",
+      "summary": "{subject} won again[[?venue: at {venue}]][[?streak: - {ord:streak} straight]].",
+      "sections": {
+        "lead": "{pool:dateline} The paddock waited for the reply, and it came from the same garage as last time: {subject} won again[[?venue: at {venue}]][[?streak: , a {ord:streak} victory in succession]], and the rest of the field is officially on notice.",
+        "context": "One win can be a weekend. Two in a row is a direction. Teams do not stumble into consecutive victories - they build them, and the building is the frightening part for everyone else.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.race-won.rival-beaten",
+      "event": "raceWon",
+      "when": { "rivalInvolved": true },
+      "headline": "{subject} wins the one that mattered[[?rival: - {rival} beaten]]",
+      "deck": "A victory with a name attached",
+      "summary": "{subject} won[[?venue: at {venue}]][[?rival: with {rival} in the mirrors]].",
+      "sections": {
+        "lead": "{pool:dateline} Some wins are worth more than the points[[?rival: , and beating {rival} to the flag is one of them]]. {subject} took the victory[[?venue: at {venue}]] in a straight fight, the kind both camps will remember.",
+        "rivalry": "[[?rival: {rival} will call it one round of a long argument, and that is exactly what it is - but the scoreboard in this rivalry moved today, and it moved {player's} way. ]]{pool:paddockBuzz}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.podium.period-report",
+      "event": "podiumFinish",
+      "eras": ["1960s", "1970s"],
+      "headline": "{subject} among the honours[[?venue: at {venue}]]",
+      "deck": "A rostrum finish[[?round: in round {round}]] of the {year} season",
+      "summary": "{subject} took a place on the rostrum[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} drove a measured race into the honours[[?position: , classified {ord:position} at the flag,]] and collected the sort of result upon which sound seasons are built. {pool:rrColor}",
+        "context": "[[?team: The {team} crew will take quiet satisfaction from the day's work.]] [[?champPosition: The championship table now shows {ord:champPosition}.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.podium.backpage",
+      "event": "podiumFinish",
+      "eras": ["1980s", "1990s"],
+      "headline": "Champagne again: {subject} on the box[[?position: in {ord:position}]]",
+      "summary": "{subject} finished on the podium[[?venue: at {venue}]] - silverware and points.",
+      "sections": {
+        "lead": "{pool:dateline} {subject} muscled onto the podium[[?venue: at {venue}]] and let the champagne do the talking. No gifts, no luck - just a driver taking what the race offered and not a scrap less. {pool:rrColor}",
+        "stats": "{pool:rrStatLine}",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.podium.digital",
+      "event": "podiumFinish",
+      "eras": ["2000s", "2010s"],
+      "headline": "Podium delivered: {subject}[[?position: takes {ord:position}]][[?venue: at {venue}]]",
+      "deck": "The strategy paid off in full[[?round: in round {round}]]",
+      "summary": "{subject} finished on the podium[[?position: in {ord:position}]][[?venue: at {venue}]].",
+      "sections": {
+        "lead": "{pool:dateline} Podiums like this are engineered across every session of the weekend, and {subject} closed the deal on Sunday[[?position: with {ord:position}]]. Track position, tyre life, clean air at the right moments - the whole checklist, ticked. {pool:rrColor}",
+        "stats": "{pool:rrStatLine} [[?expected: The pre-race model said {ord:expected}. The driver had other data.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.podium.smgp",
+      "event": "podiumFinish",
+      "eras": ["smgp"],
+      "headline": "{subject} HITS THE PODIUM. CONFETTI EVERYWHERE.",
+      "deck": "TOP THREE[[?venue: AT {venue}]]. THE LADDER APPROVES.",
+      "summary": "{subject} landed on the podium[[?position: in P{position}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} CARVED THROUGH THE PACK AND PLANTED THE CAR ON THE ROSTRUM[[?position: - P{position} IN LIGHTS TEN FEET TALL]]. {pool:rrColor}",
+        "impact": "PODIUM POINTS BANKED. MOMENTUM METER: RISING. [[?team: {team} GARAGE IS LOUD TONIGHT.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.podium.wet",
+      "event": "podiumFinish",
+      "when": { "isWet": true },
+      "headline": "Rain-tamer: {subject} on the podium in the wet",
+      "deck": "A soaked afternoon[[?venue: at {venue}]] rewards the brave",
+      "summary": "{subject} took a podium in the rain[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} The rain turned the circuit into a lottery for most of the field. {subject} declined the ticket, kept the car pointed the right way, and drove onto the podium[[?position: in {ord:position}]] while others aquaplaned out of the story.",
+        "context": "Wet podiums are scouting reports written in public: car control, judgment, nerve, all measured under the worst conditions the sport can offer. The paddock files these results away and remembers them at contract time.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.points.period-ledger",
+      "event": "pointsFinish",
+      "eras": ["1960s", "1970s"],
+      "headline": "Points for {subject}[[?venue: at {venue}]]",
+      "summary": "{subject} added to the season's account[[?position: with {ord:position}]].",
+      "sections": {
+        "lead": "{pool:dateline} {subject} brought the car home[[?position: in {ord:position}]] and entered points in the ledger - unglamorous, essential work of the kind championships are quietly assembled from.",
+        "context": "[[?champPosition: The table stands at {ord:champPosition} with the season in motion.]] {pool:champChatter}",
+        "close": "The machinery is loaded; the season moves to its next appointment."
+      }
+    },
+    {
+      "id": "rr.points.backpage",
+      "event": "pointsFinish",
+      "eras": ["1980s", "1990s"],
+      "headline": "{subject} cashes in[[?position: with {ord:position}]]",
+      "summary": "Points in the bank for {subject}[[?round: in round {round}]].",
+      "sections": {
+        "lead": "{pool:dateline} No fireworks, no drama, no complaints: {subject} kept it clean, kept it quick, and left with points while half the paddock left with excuses. {pool:rrColor}",
+        "stats": "{pool:rrStatLine} [[?champPosition: The table says {ord:champPosition}. The table is the only critic that counts.]]",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.points.smgp",
+      "event": "pointsFinish",
+      "eras": ["smgp"],
+      "headline": "{subject} BANKS THE POINTS. THE COUNTER TICKS UP.",
+      "summary": "Points on the board for {subject}[[?position: from P{position}]].",
+      "sections": {
+        "lead": "{pool:dateline} NOT EVERY RACE IS A HIGHLIGHT REEL. {subject} TOOK THE POINTS ON OFFER[[?position: FROM P{position}]] AND FED THE SEASON TOTAL. THE LADDER COUNTS EVERYTHING.",
+        "impact": "EVERY POINT FEEDS THE LADDER. THE LADDER FEEDS THE LEGEND.",
+        "close": "{pool:cheerClose}"
+      }
+    },
+    {
+      "id": "rr.midfield.period-report",
+      "event": "midfieldResult",
+      "eras": ["1960s", "1970s"],
+      "headline": "A workmanlike day for {subject}",
+      "summary": "{subject} finished[[?position: {ord:position}]] - a day of honest motoring, no more.",
+      "sections": {
+        "lead": "{pool:dateline} Not every Sunday furnishes a tale for the grandchildren. {subject} circulated[[?position: to {ord:position}]], the machinery held together, and the season's education continued by a page or two.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "rr.midfield.backpage",
+      "event": "midfieldResult",
+      "eras": ["1980s", "1990s"],
+      "headline": "Nothing doing: {subject} stuck in the pack",
+      "summary": "{subject} came home[[?position: {ord:position}]] - one of those Sundays.",
+      "sections": {
+        "lead": "{pool:dateline} Some races you win, some you survive, and some just happen around you. {subject} spent the afternoon in traffic[[?position: and came out of it {ord:position}]], with nothing to show but mileage and a tyre bill.",
+        "context": "The garage will not panic over a day like this. They will, however, remember it at the next upgrade meeting.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "rr.midfield.digital",
+      "event": "midfieldResult",
+      "eras": ["2000s", "2010s"],
+      "headline": "{subject} anonymous in the midfield[[?venue: at {venue}]]",
+      "summary": "{subject} finished[[?position: {ord:position},]] out of the points and out of the broadcast.",
+      "sections": {
+        "lead": "{pool:dateline} The world feed barely found {subject} all afternoon. The car ran[[?position: to {ord:position}]], the strategy options never opened, and the race simply expired. {pool:rrColor}",
+        "next": "Debrief question of the week: was that the car's ceiling, or the weekend's?",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "rr.midfield.smgp",
+      "event": "midfieldResult",
+      "eras": ["smgp"],
+      "headline": "MID-PACK FINISH. THE BOARD BARELY BLINKS.",
+      "summary": "{subject} ran the race[[?position: to P{position}]]. No fireworks.",
+      "sections": {
+        "lead": "{pool:dateline} NOT EVERY ROUND IS A BOSS STAGE. {subject} TOOK THE FLAG[[?position: IN P{position}]], POCKETED THE EXPERIENCE, AND LIVED TO CLIMB ANOTHER DAY.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "rr.overperformed.backpage",
+      "event": "overperformed",
+      "eras": ["1980s", "1990s"],
+      "headline": "Where did THAT come from? {subject} stuns the pit lane",
+      "deck": "Analysis: the result the form book refused to print",
+      "summary": "{subject} finished far above the car's station[[?position: in {ord:position}]].",
+      "sections": {
+        "lead": "The form book said one thing[[?expected: - {ord:expected}, no arguments -]] and {subject} spent Sunday afternoon tearing the page out[[?position: , hauling the thing to {ord:position}]]. {pool:rrColor}",
+        "stats": "{pool:rrStatLine} Overdeliveries get noticed in every garage on the pit lane, especially the ones with faster cars and slower drivers.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "rr.overperformed.digital",
+      "event": "overperformed",
+      "eras": ["2000s", "2010s"],
+      "headline": "Outlier alert: {subject} beats the model[[?position: with {ord:position}]]",
+      "deck": "The projection had one number. The stopwatch had another.",
+      "summary": "{subject} outran the car's pace[[?expected: - expected {ord:expected}]][[?position: , delivered {ord:position}]].",
+      "sections": {
+        "lead": "Every team runs predictive models, and every model had the same blind spot this weekend: the driver. {subject} finished[[?position: {ord:position}]][[?expected: against a projected {ord:expected}]], and the delta is all driver.",
+        "stats": "{pool:rrStatLine}",
+        "next": "Watch the engineers' body language next weekend: results like this reset what a team believes its package can do."
+      }
+    },
+    {
+      "id": "rr.overperformed.giant-killing",
+      "event": "overperformed",
+      "when": { "minUpset": 6 },
+      "headline": "Giant-killing: {subject} drags the impossible out of the car",
+      "deck": "The overdelivery of the season[[?venue: at {venue}]]",
+      "summary": "{subject} beat the car's true pace by the best part of a grid[[?expected: - {ord:expected} expected]][[?position: , {ord:position} delivered]].",
+      "sections": {
+        "lead": "There are good drives, there are great drives, and then there are days when a driver simply refuses the equipment's verdict. {subject} produced one of those[[?venue: at {venue}]][[?position: , carrying the car to {ord:position}]][[?expected: when every honest measure said {ord:expected}]].",
+        "impact": "Results like this change careers. Team managers with faster cars watch them twice; engineers pull the data to check it is real; and somewhere up the pit lane, a contract conversation just changed its tone.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "rr.underperformed.backpage",
+      "event": "underperformed",
+      "eras": ["1980s", "1990s"],
+      "headline": "Flat as a Monday: {subject} goes missing",
+      "deck": "Analysis: the pace was there. The result was not.",
+      "summary": "{subject} fell short of the car[[?position: with {ord:position}]][[?expected: against an expected {ord:expected}]].",
+      "sections": {
+        "lead": "The car turned up. The stopwatch says the driver did not[[?position: - {ord:position} at the flag]][[?expected: from machinery worth {ord:expected}]]. Days like this cost more than points; they cost the benefit of the doubt.",
+        "context": "The garage kept its counsel afterwards, which is its own kind of verdict.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "rr.underperformed.digital",
+      "event": "underperformed",
+      "eras": ["2000s", "2010s"],
+      "headline": "Under the line: {subject} leaves points on the table",
+      "deck": "Post-race data review[[?round: , round {round}]]",
+      "summary": "{subject} finished below the car's pace[[?expected: - projected {ord:expected}]][[?position: , classified {ord:position}]].",
+      "sections": {
+        "lead": "The overlays make uncomfortable viewing: the pace was in the car[[?expected: for {ord:expected} or better]], and the result sheet[[?position: - {ord:position} -]] says otherwise. Somewhere between Saturday night and the chequered flag, a weekend leaked away.",
+        "stats": "{pool:rrStatLine} The debrief will be data-driven, thorough, and no fun at all.",
+        "close": "{pool:groanClose}"
+      }
+    },
+    {
+      "id": "rr.underperformed.flat-finale",
+      "event": "underperformed",
+      "when": { "isFinalRound": true },
+      "headline": "A season ends with a shrug: {subject} fades in the finale",
+      "deck": "The last round deserved better",
+      "summary": "{subject} closed the {year} season below expectations[[?position: in {ord:position}]].",
+      "sections": {
+        "lead": "Final rounds are for statements, and {subject} left this one unsigned[[?position: , drifting home {ord:position}]][[?expected: where the car was good for {ord:expected}]]. The season's last impression is a flat one, and last impressions winter badly.",
+        "context": "Every driver knows the arithmetic of memory: the paddock forgets a quiet May, never a quiet finale. There are months now to think about that.",
+        "close": "{pool:groanClose}"
+      }
+    }
+  ],
+  "pools": {
+    "rrColor": {
+      "1960s": [
+        "The public address crackled over a full house, and the crowd pressed ten deep at the fences.",
+        "Straw bales, rope lines, and a paddock you could walk through with a programme and a pencil.",
+        "The smell of castor oil hung over the pits all afternoon."
+      ],
+      "1980s": [
+        "Turbo shriek, sponsor caps, and a pit lane shouting arithmetic at itself.",
+        "The grandstands were a wall of flags, and none of them neutral.",
+        "Money and noise everywhere - the sport at full volume."
+      ],
+      "2010s": [
+        "The timing screens told the story before the commentary could catch up.",
+        "The paddock's phones were out before the cars reached parc ferme.",
+        "Every sector time hit the feed in real time, and the feed did not blink."
+      ],
+      "smgp": [
+        "THE NEON GRANDSTANDS SHOOK.",
+        "COIN-BRIGHT SKIES. PERFECT RACING WEATHER. MAXIMUM CROWD.",
+        "THE BIG BOARD FLASHED EVERY LAP OF IT."
+      ],
+      "default": [
+        "The grandstands had their money's worth long before the flag.",
+        "It was one of those afternoons the calendar circles for you.",
+        "The weekend gave nothing away for free."
+      ]
+    },
+    "rrStatLine": {
+      "1960s": [
+        "The timekeepers' sheets will be studied by lamplight tonight.",
+        "The record of it is entered in ink[[?position: : {ord:position} at the fall of the flag]]."
+      ],
+      "2010s": [
+        "The data engineers will strip this one back to the microsecond.",
+        "The sector traces all tell the same story[[?position: : {ord:position}, earned the hard way]]."
+      ],
+      "smgp": [
+        "THE NUMBERS DO NOT LIE. THE BOARD NEVER DOES.",
+        "[[?position: P{position} GOES UP IN LIGHTS. ]]THE LADDER RECALCULATES."
+      ],
+      "default": [
+        "The stopwatch keeps the only honest ledger in this sport[[?position: , and today it wrote {ord:position}]].",
+        "Strip away the noise and the numbers remain[[?quali: : {ord:quali} on Saturday]][[?position: , {ord:position} on Sunday]].",
+        "Statisticians live for weekends like this one."
+      ]
+    },
+    "dateline": {
+      "1970s": [
+        "Filed from a paddock loud with sponsor money[[?venue: at {venue}]].",
+        "From the motorhome steps[[?venue: at {venue}]]."
+      ],
+      "1990s": [
+        "From the media centre[[?venue: at {venue}]].",
+        "Faxed from the paddock[[?venue: at {venue}]] before the presses rolled."
+      ],
+      "2000s": [
+        "Filed from the media centre[[?venue: at {venue}]], laptops still warm.",
+        "Trackside[[?venue: at {venue}]], timing feed refreshing."
+      ]
+    },
+    "cheerClose": {
+      "1980s": [
+        "Somebody in that garage is buying tonight.",
+        "Back page sorted. Front page pending."
+      ],
+      "2010s": [
+        "The highlights package will not do it justice.",
+        "Trending for all the right reasons."
+      ]
+    },
+    "groanClose": {
+      "1990s": [
+        "The motorhome blinds came down early.",
+        "Monday's debrief already looms, and nobody is looking forward to it."
+      ]
+    }
+  }
+}

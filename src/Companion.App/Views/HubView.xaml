@@ -4,6 +4,20 @@
              xmlns:audio="clr-namespace:Companion.App.Audio"
              xmlns:views="clr-namespace:Companion.App.Views"
              Focusable="False">
+    <UserControl.Resources>
+        <!-- Rail navigation uses code-native vector geometry instead of platform font glyphs.
+             Every destination stays distinct, sharp at any DPI, and independent of OS font coverage. -->
+        <Geometry x:Key="RailRaceIcon">M3,18 L3,3 M3,4 C6,2 9,5 12,4 C14,3 16,3 18,4 L18,12 C15,11 13,11 11,12 C8,13 6,10 3,11</Geometry>
+        <Geometry x:Key="RailStandingsIcon">M2,18 L18,18 M3,18 L3,12 L7,12 L7,18 M8,18 L8,7 L12,7 L12,18 M13,18 L13,10 L17,10 L17,18</Geometry>
+        <Geometry x:Key="RailDriverIcon">M4,13 C4,7 6,3 10,3 C14,3 17,6 17,11 L13,11 L11,8 L17,8 M4,13 L4,17 L12,17 C14,17 16,15 16,12 L12,12 L10,15 L4,15</Geometry>
+        <Geometry x:Key="RailCalendarIcon">M4,5 L16,5 L16,17 L4,17 Z M4,8 L16,8 M7,3 L7,6 M13,3 L13,6 M7,11 L9,11 M11,11 L13,11 M7,14 L9,14 M11,14 L13,14</Geometry>
+        <Geometry x:Key="RailGridIcon">M3,3 L7,3 L7,7 L3,7 Z M13,3 L17,3 L17,7 L13,7 Z M8,8 L12,8 L12,12 L8,12 Z M3,13 L7,13 L7,17 L3,17 Z M13,13 L17,13 L17,17 L13,17 Z</Geometry>
+        <Geometry x:Key="RailHistoryIcon">M4,7 A7,7 0 1 1 3,13 M4,7 L4,3 M4,7 L8,7 M10,6 L10,10 L13,12</Geometry>
+        <Geometry x:Key="RailPaddockIcon">M3,17 L3,8 L10,3 L17,8 L17,17 M6,17 L6,9 L14,9 L14,17 M6,12 L14,12 M8,15 L12,15</Geometry>
+        <Geometry x:Key="RailNewsIcon">M3,8 L7,8 L15,4 L15,15 L7,11 L3,11 Z M7,11 L9,16 L12,16 L10,12 M17,7 C18,8 18,11 17,12</Geometry>
+        <Geometry x:Key="RailStartIcon">M3,4 L11,4 L11,7 M3,4 L3,17 L11,17 L11,14 M8,10 L18,10 M15,7 L18,10 L15,13</Geometry>
+        <Geometry x:Key="RailPopOutIcon">M4,5 L4,16 L15,16 L15,12 M9,4 L16,4 L16,11 M10,10 L16,4</Geometry>
+    </UserControl.Resources>
     <Grid x:Name="HubStage">
     <!-- Remove the ordinary Hub from BOTH layout and binding scope for either terminal path.
          That matters in Hardcore: collapsed controls still keep WPF bindings alive, while clearing
@@ -95,6 +109,43 @@
                                    Text="{Binding Home.FormText}"
                                    ToolTip="Reputation and overperformance index after the last folded round"
                                    Visibility="{Binding Home.HasForm, Converter={StaticResource BoolVisible}}" />
+                        <WrapPanel Margin="0,5,0,0">
+                            <Border x:Name="DriverLevelChip" Style="{StaticResource CompactChip}"
+                                    Margin="0,0,6,3" Padding="7,2"
+                                    Background="{DynamicResource AccentDimBrush}"
+                                    BorderBrush="{DynamicResource AccentBrush}"
+                                    Visibility="{Binding Home.DriverLevelText, Converter={StaticResource NullCollapsed}}">
+                                <TextBlock Text="{Binding Home.DriverLevelText}" Style="{StaticResource PixelBadge}"
+                                           Foreground="{DynamicResource AccentTextBrush}" />
+                            </Border>
+                            <Border x:Name="DriverAvailabilityChip" Margin="0,0,6,3" Padding="7,2"
+                                    Visibility="{Binding Home.DriverAvailabilityLabel, Converter={StaticResource NullCollapsed}}">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource CompactChip}">
+                                        <Setter Property="Background" Value="{DynamicResource WarningDimBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WarningBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Home.DriverAvailabilityLabel}" Value="Fit">
+                                                <Setter Property="Background" Value="{DynamicResource SuccessDimBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding Home.DriverAvailabilityLabel}" FontSize="10" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                            <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Home.DriverAvailabilityLabel}" Value="Fit">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
                     </StackPanel>
                 </DockPanel>
 
@@ -178,8 +229,11 @@
                         AutomationProperties.Name="Back to start screen"
                         Command="{Binding DataContext.GoToStartCommand, RelativeSource={RelativeSource AncestorType=Window}}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE80F;" FontSize="12"
-                                   VerticalAlignment="Center" Margin="2,1,8,0" />
+                        <Path Data="{StaticResource RailStartIcon}" Width="14" Height="14"
+                              Stretch="Uniform" Stroke="{DynamicResource TextMutedBrush}"
+                              StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round" VerticalAlignment="Center" Margin="2,1,8,0"
+                              IsHitTestVisible="False" />
                         <TextBlock Text="START SCREEN" FontFamily="{StaticResource DisplayFont}"
                                    FontSize="11" FontWeight="SemiBold" />
                     </StackPanel>
@@ -232,12 +286,43 @@
                                                 HorizontalAlignment="Left"
                                                 Background="{DynamicResource AccentBrush}"
                                                 Visibility="{Binding IsSelected, Converter={StaticResource BoolVisible}}" />
-                                        <Border Grid.Column="1" Width="25" Height="25" CornerRadius="6"
-                                                Background="{DynamicResource SurfaceAltBrush}"
-                                                BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1">
-                                            <TextBlock Text="{Binding Glyph}" FontFamily="{StaticResource IconFont}"
-                                                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border x:Name="RailIconFrame" Grid.Column="1" Width="25" Height="25"
+                                                CornerRadius="6" BorderThickness="1">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource EdgeBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                            <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
+                                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <Path x:Name="RailDestinationIcon" Tag="{Binding Key}"
+                                                  Width="15" Height="15" Stretch="Uniform"
+                                                  StrokeThickness="1.45" StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  IsHitTestVisible="False">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Setter Property="Data" Value="{StaticResource RailRaceIcon}" />
+                                                        <Setter Property="Stroke" Value="{DynamicResource TextMutedBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Key}" Value="standings"><Setter Property="Data" Value="{StaticResource RailStandingsIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="driver"><Setter Property="Data" Value="{StaticResource RailDriverIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="calendar"><Setter Property="Data" Value="{StaticResource RailCalendarIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="skins"><Setter Property="Data" Value="{StaticResource RailGridIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="history"><Setter Property="Data" Value="{StaticResource RailHistoryIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="paddock"><Setter Property="Data" Value="{StaticResource RailPaddockIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding Key}" Value="news"><Setter Property="Data" Value="{StaticResource RailNewsIcon}" /></DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter Property="Stroke" Value="{DynamicResource AccentTextBrush}" /></DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
                                         </Border>
                                         <TextBlock Grid.Column="2" Text="{Binding Title}" FontSize="13.5"
                                                    FontWeight="SemiBold" VerticalAlignment="Center"
@@ -246,14 +331,21 @@
                                 </Button>
                                 <!-- tear-off affordance: a Button OVER the row button (WPF routes the
                                      click to the inner Button, so it never also selects the tab) -->
-                                <Button Content="&#xE8A7;" Style="{StaticResource IconButton}" FontSize="11"
+                                <Button Style="{StaticResource IconButton}" FontSize="11"
                                         audio:SoundAssist.Cue="Navigate"
                                         HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,7,0"
                                         Padding="6,5"
                                         Click="OnPopOutTab"
                                         AutomationProperties.Name="Pop out this tab"
                                         ToolTip="Open this lens in an always-on-top companion window"
-                                        Visibility="{Binding CanPopOut, Converter={StaticResource BoolVisible}}" />
+                                        Visibility="{Binding CanPopOut, Converter={StaticResource BoolVisible}}">
+                                    <Path x:Name="RailPopOutGlyph" Data="{StaticResource RailPopOutIcon}"
+                                          Width="11" Height="11" Stretch="Uniform"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.5" StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                          IsHitTestVisible="False" />
+                                </Button>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -331,8 +423,10 @@
                                             Margin="8" Background="{DynamicResource SurfaceBrush}" CornerRadius="7"
                                             BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
                                         <Grid>
-                                            <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="21" />
-                                            <Image Stretch="Uniform" Margin="5" IsHitTestVisible="False"
+                                            <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="21"
+                                                       Visibility="{Binding ElementName=HubTeamLogo, Path=Source, Converter={StaticResource NullVisible}}" />
+                                            <Image x:Name="HubTeamLogo" Stretch="Uniform" Margin="5" IsHitTestVisible="False"
+                                                   Style="{StaticResource TeamLogoImage}"
                                                    Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                         </Grid>

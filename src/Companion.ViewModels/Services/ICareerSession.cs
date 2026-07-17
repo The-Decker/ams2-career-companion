@@ -170,15 +170,18 @@ public interface ICareerSession
         Message = "This career session cannot switch skin seasons.",
     };
 
-    /// <summary>The grid editor's current per-seat COSMETIC overrides for this season, keyed by the
-    /// seat's original <c>ams2LiveryName</c>: a custom driver name and/or a rebound livery, applied
-    /// only to the staged custom-AI file (never the sim). Empty default so existing fakes compile.</summary>
+    /// <summary>The per-seat COSMETIC staging overrides this season still carries (renamed drivers /
+    /// rebound liveries), keyed by the seat's original <c>ams2LiveryName</c> and applied only to the
+    /// staged custom-AI file (never the sim). The grid EDITOR that wrote these was retired by the
+    /// read-only Grid Preview; stored rows keep applying, so the preview surfaces a count and a
+    /// clear affordance rather than hiding a silent edit. Empty default so existing fakes compile.</summary>
     IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
         new Dictionary<string, SeatStagingOverride>(StringComparer.Ordinal);
 
-    /// <summary>Saves one seat's grid-editor override (rename / rebind livery), keyed by its original
-    /// livery; an empty override clears it. Persisted per season OUTSIDE the journal, so the sim/fold
-    /// stay byte-identical. Applied at the next stage. Additive default: a no-op so fakes compile.</summary>
+    /// <summary>Saves one seat's cosmetic staging override, keyed by its original livery; an EMPTY
+    /// override clears the stored row (the Grid Preview's "clear legacy edits" path). Persisted per
+    /// season OUTSIDE the journal, so the sim/fold stay byte-identical. Applied at the next stage.
+    /// Additive default: a no-op so fakes compile.</summary>
     void SetSeatStagingOverride(string liveryKey, SeatStagingOverride seatOverride) { }
 
     /// <summary>Score a draft without committing — feeds the confirm screen.</summary>
@@ -198,6 +201,44 @@ public interface ICareerSession
     /// rows; the generative multi-slot article grammar is a later slice. Additive default:
     /// sessions without a news projection report an empty feed, so existing fakes compile.</summary>
     IReadOnlyList<NewsDispatch> ReadFeed() => [];
+
+    /// <summary>Every detected newsroom trigger for the whole career, chronological — the
+    /// mode-agnostic event spine (docs/dev/newsroom-history-overhaul.md D4) the editorial
+    /// layers select from and voice. A pure display-only projection over stored results,
+    /// journal, and folded states; deterministic per career; never a fold input. Additive
+    /// default: sessions without the projection report no events, so existing fakes compile.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.NewsEvent> NewsroomEvents() => [];
+
+    /// <summary>The rendered living newsroom: every detected event voiced through the template
+    /// library (data\rules\newsroom), newest first. Display-only, deterministic per master
+    /// seed, re-rendered on read (never stored). Additive default: empty feed.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.NewsroomArticle> NewsroomFeed() => [];
+
+    /// <summary>Developing narrative threads over the event spine. Additive default: none.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.StoryThread> StoryThreads() => [];
+
+    /// <summary>The rumour ledger with honest resolution links. Additive default: none.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.RumorRecord> RumorBoard() => [];
+
+    /// <summary>The importance-selected editorial package for one round. Additive default: none.</summary>
+    IReadOnlyList<Companion.Core.Newsroom.EditorialSelection> WeekendPackage(int seasonOrdinal, int round) => [];
+
+    /// <summary>The computed history archive (entity profiles, eras, subjects, timeline —
+    /// verified history only, never mixed with career results). Additive default: empty.</summary>
+    HistoryArchiveIndex HistoryArchive() => HistoryArchiveIndex.Empty;
+
+    /// <summary>Real history vs the career universe for one season — separate, labeled sides,
+    /// never blended. Null for SMGP (fiction) or undocumented years. Additive default: null.</summary>
+    SeasonDivergenceReport? SeasonDivergence(int seasonOrdinal) => null;
+
+    /// <summary>Per-story read/bookmark state (schema v6, user preference — survives replay).
+    /// Additive defaults so existing fakes compile; the no-op setters suit fakes fine.</summary>
+    IReadOnlyDictionary<string, Companion.Data.NewsReadingState> ReadingState() =>
+        new Dictionary<string, Companion.Data.NewsReadingState>();
+
+    void MarkStoryRead(string storyKey) { }
+
+    void SetStoryBookmark(string storyKey, bool bookmarked) { }
 
     /// <summary>The total-recall History/Scrapbook projection (career-hub-design.md §4/decision
     /// 18): one lineage-aware card per season in the career — its year, the player's final
@@ -388,6 +429,25 @@ public interface ICareerSession
     /// Hardcore death, so it is safe to read after the DB is gone. Additive default: null, so fakes compile.</summary>
     DeathScreenModel? DeathScreen() => null;
 
+    /// <summary>The Dynasty bankruptcy game-over projection (docs/dev/dynasty-tycoon-economy.md §7)
+    /// when the team's economy folded — the collapse facts, the whole-career record, and (when saves
+    /// exist) the restore slots. Null while the team is solvent and for every non-economy career.
+    /// Additive default: null, so fakes compile.</summary>
+    BankruptcyScreenModel? BankruptcyScreen() => null;
+
+    /// <summary>The Dynasty owner-economy dashboard (economy §9): balance, statement, sponsor
+    /// board with eligibility, development, staff/second-seat, and the pending decision plan.
+    /// A pure display read; null for every non-economy career. Additive default: null.</summary>
+    DynastyEconomyDashboard? EconomyDashboard() => null;
+
+    /// <summary>Journals one validated Dynasty economy decision for the next unfolded round
+    /// (economy §5): the session is the affordability/availability authority and throws
+    /// <see cref="InvalidOperationException"/> with the player-facing reason on refusal. The
+    /// throwing default is deliberate for a money-moving seam — a silent-no-op fake could mask
+    /// unwired tests.</summary>
+    void DeclareEconomyDecision(Companion.Core.Dynasty.DynastyEconomyDecision decision) =>
+        throw new NotSupportedException("This career session does not run the Dynasty economy.");
+
     /// <summary>The player's SIT-OUT status when an injury forces the CURRENT round to be auto-simulated
     /// (character death &amp; injury §5), or null when the player races this round normally. The shell shows
     /// the sit-out screen (an "INJURED — auto-simulating" / "SEASON OVER — recovering" banner) with a
@@ -431,6 +491,32 @@ public interface ICareerSession
     /// <summary>Deletes a save slot (Normal only). A no-op when saves are disabled or the slot is
     /// unknown. Additive default: no-op, so fakes compile.</summary>
     void DeleteSlot(string slotId) { }
+
+    // ---- SMGP-300: progression feedback + career-arc surfaces (display-only projections) ----
+
+    /// <summary>What one applied round did to the player's progression — XP applied, the level
+    /// movement, and the Skill Points now banked — projected from that round's journaled
+    /// <c>player.xp</c> row so the results flow can announce gains where they happen instead of
+    /// leaving them to be discovered on the Driver tab. Null for a career with no character, a
+    /// round with no XP row, or a not-yet-applied round. Additive default: null.</summary>
+    RoundProgressionSummary? RoundProgression(int round) => null;
+
+    /// <summary>The whole campaign arc as one timeline — every pinned season (SMGP's 17, or a
+    /// bounded Dynasty plan's horizon) with its Completed / Current / Locked state and, for played
+    /// seasons, the outcome. Legacy careers with no pinned horizon list played seasons only.
+    /// Additive default: empty.</summary>
+    IReadOnlyList<CampaignTimelineEntry> CampaignTimeline() => [];
+
+    /// <summary>The career's medical record: every journaled accident outcome (injury, season-ending,
+    /// fatal) with the round it landed on and the races it cost, oldest first. A pure projection of
+    /// the persisted accident rows — history never rewrites what the fold decided. Additive
+    /// default: empty.</summary>
+    IReadOnlyList<InjuryHistoryEntry> InjuryHistory() => [];
+
+    /// <summary>The authored SMGP lore for the CURRENT campaign season (title/era/context/arcs —
+    /// the season's unique identity), or null for non-SMGP careers and un-authored ordinals.
+    /// DISPLAY-ONLY canon; outcome-agnostic by authorship. Additive default: null.</summary>
+    Companion.Core.Smgp.SmgpSeasonLoreEntry? CurrentSeasonLore() => null;
 
     SeasonPack Pack { get; }
 }
@@ -509,6 +595,27 @@ public sealed record SeasonScheduleEntry
     /// <summary>Progress marker: this round is Done (a result applied), Next (the upcoming round), or a
     /// later Upcoming round — so the calendar can walk the season.</summary>
     public SeasonRoundStatus Status { get; init; } = SeasonRoundStatus.Upcoming;
+
+    /// <summary>The PLAYER's participation for this round (SMGP-300): raced it, sat it out injured
+    /// (from the stored envelope — an absence is never rewritten as participation), will miss it
+    /// under the active injury, or an ordinary future round.</summary>
+    public SchedulePlayerStatus PlayerStatus { get; init; } = SchedulePlayerStatus.Upcoming;
+}
+
+/// <summary>The player's participation state for one calendar round.</summary>
+public enum SchedulePlayerStatus
+{
+    /// <summary>A future round the fit driver is expected to race.</summary>
+    Upcoming = 0,
+
+    /// <summary>An applied round the player started.</summary>
+    Raced = 1,
+
+    /// <summary>An applied round the injured player sat out (auto-simulated, DNS).</summary>
+    SatOut = 2,
+
+    /// <summary>A future round the active injury will force the player to miss.</summary>
+    WillMiss = 3,
 }
 
 /// <summary>One driver the pack pinned OUT of a round's grid (a DNQ), for the calendar's round detail.</summary>
@@ -598,6 +705,93 @@ public sealed record SitOutStatus
     /// <summary>The banner headline, e.g. "INJURED — auto-simulating round (2 remaining)" or
     /// "SEASON OVER — recovering".</summary>
     public required string Headline { get; init; }
+}
+
+/// <summary>What one applied round did to the player's progression — projected from that round's
+/// journaled <c>player.xp</c> row (the fold's own audit record), never recomputed.</summary>
+public sealed record RoundProgressionSummary
+{
+    public required int Round { get; init; }
+
+    /// <summary>XP the round actually applied (post campaign-scale for v2; the raw signed award
+    /// for legacy careers — legacy rounds can be negative).</summary>
+    public required long XpGained { get; init; }
+
+    public required int LevelBefore { get; init; }
+    public required int LevelAfter { get; init; }
+
+    /// <summary>Levels crossed by this one round (multi-level gains group into one number).</summary>
+    public int LevelsGained => Math.Max(0, LevelAfter - LevelBefore);
+
+    /// <summary>Development currency banked AFTER the round (Skill Points for v2, CP for legacy).</summary>
+    public required int SkillPointsAvailable { get; init; }
+}
+
+/// <summary>One season slot of the campaign timeline: 17 for SMGP, the pinned horizon for a
+/// bounded Dynasty plan, or only the played seasons for a legacy career.</summary>
+public sealed record CampaignTimelineEntry
+{
+    /// <summary>1-based career season ordinal.</summary>
+    public required int Ordinal { get; init; }
+
+    public required CampaignSeasonState State { get; init; }
+
+    /// <summary>The season's year when known (played seasons and pinned Dynasty seasons); null for
+    /// a locked SMGP future season, whose chronology is its ordinal.</summary>
+    public int? Year { get; init; }
+
+    /// <summary>The authored season title for SMGP ordinals ("The Tenth Summer"); empty when no
+    /// lore is shipped or the career is not SMGP.</summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>The authored era block ("The Iron Circus"); empty when no lore.</summary>
+    public string Era { get; init; } = "";
+
+    /// <summary>The player's final championship position for a completed season; null otherwise.</summary>
+    public int? PlayerPosition { get; init; }
+
+    public bool PlayerChampion { get; init; }
+
+    /// <summary>True when the player sat out at least one round of this season through injury —
+    /// the timeline never rewrites an absence as participation.</summary>
+    public bool MissedRounds { get; init; }
+}
+
+/// <summary>Where a campaign timeline season stands.</summary>
+public enum CampaignSeasonState
+{
+    /// <summary>Not yet reachable — later than the active season.</summary>
+    Locked = 0,
+
+    /// <summary>The active season.</summary>
+    Current = 1,
+
+    /// <summary>Fully in the record books.</summary>
+    Completed = 2,
+}
+
+/// <summary>One entry of the career's medical record — a journaled accident outcome, verbatim.</summary>
+public sealed record InjuryHistoryEntry
+{
+    /// <summary>1-based career season ordinal the accident landed in.</summary>
+    public required int SeasonOrdinal { get; init; }
+
+    public required int SeasonYear { get; init; }
+    public required int Round { get; init; }
+
+    /// <summary>"minorInjury" | "seasonEnding" | "death" — the fold's persisted outcome token.</summary>
+    public required string Outcome { get; init; }
+
+    /// <summary>Races the outcome cost at the time it was rolled (0 for season-ending/death).</summary>
+    public int MissRaces { get; init; }
+
+    /// <summary>Ready-to-show label ("Injured — missed 2 races", "Season-ending injury", "Fatal accident").</summary>
+    public required string Label { get; init; }
+
+    /// <summary>A non-graphic deterministic injury description ("bruised ribs") — display flavour
+    /// hashed from the persisted outcome's identity, never a reroll and never clinical advice.
+    /// Empty for a fatality (no clinical caption) and for legacy rows.</summary>
+    public string Description { get; init; } = "";
 }
 
 public sealed record CareerSummary
@@ -741,6 +935,14 @@ public sealed record CareerSeasonCard
     /// the player's finish, the rival they named that round + the rival's finish, the leader after the round
     /// and the player's running points. Empty for a season with no applied round. Additive display-only.</summary>
     public IReadOnlyList<CareerSeasonRoundLine> RoundLines { get; init; } = [];
+
+    /// <summary>The player's character level when the season opened (the season-start snapshot);
+    /// null for a career with no character. Additive display-only (SMGP-300 §9.1).</summary>
+    public int? PlayerLevelAtStart { get; init; }
+
+    /// <summary>The player's character level after the season-end pipeline closed the season; null
+    /// while the season is in progress or for a career with no character.</summary>
+    public int? PlayerLevelAtEnd { get; init; }
 }
 
 /// <summary>One applied round in a season's "my career" breakdown for the History screen: the player's own

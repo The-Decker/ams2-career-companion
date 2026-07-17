@@ -1,0 +1,742 @@
+using System.Text.Json;
+using Companion.Core.Career;
+using Companion.Core.Newsroom;
+using Companion.Core.Packs;
+using Companion.Core.Scoring;
+using Companion.Data;
+
+namespace Companion.ViewModels.Services;
+
+/// <summary>
+/// The newsroom half of the session: shapes the mode-agnostic per-season/per-round facts the
+/// <see cref="CareerNewsEvents"/> detector reads (the same shape-in-the-session, detect-in-Core
+/// split as <c>BuildSmgpNarrativeSeasons</c>). A pure display-only projection over the immutable
+/// stored results, journal, and folded states — never a fold input, so replay stays
+/// byte-identical by construction (docs/dev/newsroom-history-overhaul.md D1/D4).
+/// </summary>
+public sealed partial class CareerSessionService
+{
+    private IReadOnlyList<NewsEvent>? _newsroomEventsCache;
+    private ProjectionFingerprint _newsroomEventsFingerprint;
+
+    /// <summary>Every detected newsroom event for the whole career, chronological — the spine
+    /// triggers plus, for historical-style careers with a documented reference year, the
+    /// real-history divergence events. Deterministic per career. Memoized per stored-state
+    /// fingerprint: detection is a pure projection over the immutable journal/results (D1/D4),
+    /// so the cache is exactly as fresh as the underlying rows — one refresh per fold/rollover
+    /// instead of a full-career recompute on every News/History/thread read.</summary>
+    public IReadOnlyList<NewsEvent> NewsroomEvents()
+    {
+        var fingerprint = ProjectionFingerprint.Read(_database);
+        if (_newsroomEventsCache is not null && fingerprint == _newsroomEventsFingerprint)
+        {
+            return _newsroomEventsCache;
+        }
+
+        var seasons = BuildNewsroomSeasons();
+        var events = new List<NewsEvent>(CareerNewsEvents.Detect(seasons));
+
+        if (!IsSmgpPack) // the SMGP universe is fiction; it never compares against real history
+        {
+            foreach (var season in seasons)
+            {
+                if (HistoricalSeason(season.Year) is { } historical)
+                {
+                    events.AddRange(CareerDivergence.ToNewsEvents(
+                        CareerDivergence.Compare(season, historical)));
+                }
+            }
+        }
+        else if (_environment.Rules?.SmgpWhatReallyHappened is { } almanac)
+        {
+            // The SMGP career diverges against its OWN canon (D9): the almanac's remembered venue
+            // rulers, labeled SmgpFiction — the fiction layer never touches the real-history path.
+            events.AddRange(Companion.Core.Smgp.SmgpCanonDivergence.Compare(seasons, almanac));
+        }
+
+        _newsroomEventsCache = events.OrderBy(e => e.SeasonOrdinal).ThenBy(e => e.Round).ToList();
+        _newsroomEventsFingerprint = fingerprint;
+        return _newsroomEventsCache;
+    }
+
+
+    /// <summary>The real-history-vs-career-universe comparison for one season: what really
+    /// happened, what this universe produced, and where they part. Null for SMGP careers
+    /// (fictional canon) and for years without a documented reference season.</summary>
+    public SeasonDivergenceReport? SeasonDivergence(int seasonOrdinal)
+    {
+        if (IsSmgpPack)
+        {
+            return null;
+        }
+        var season = BuildNewsroomSeasons().FirstOrDefault(s => s.Ordinal == seasonOrdinal);
+        if (season is null)
+        {
+            return null;
+        }
+        return HistoricalSeason(season.Year) is { } historical
+            ? CareerDivergence.Compare(season, historical)
+            : null;
+    }
+
+    /// <summary>The rendered newsroom: every career event voiced through the template library,
+    /// newest first. Bodies re-render deterministically from the master seed on every call —
+    /// never stored, never a fold input. Empty when the newsroom packs are absent.</summary>
+    public IReadOnlyList<NewsroomArticle> NewsroomFeed()
+    {
+        var rules = _environment.Rules;
+        if (rules is null || rules.NewsroomCorpus.IsEmpty)
+        {
+            return [];
+        }
+
+        var identity = new NewsroomIdentity
+        {
+            PlayerName = PlayerDisplayName() ?? "",
+            PreferredEra = SmgpNewsEra,
+        };
+
+        var articles = new List<NewsroomArticle>();
+        foreach (var e in NewsroomEvents())
+        {
+            var article = NewsroomComposer.Compose(e, rules.NewsroomCorpus, rules.NewsDesks, identity, MasterSeedU);
+            if (article is not null)
+            {
+                articles.Add(article);
+            }
+        }
+
+        articles.Reverse(); // detection is chronological; the newsroom reads newest first
+        return articles;
+    }
+
+    /// <summary>The developing narrative threads (title fight, reliability crisis, rivalry,
+    /// injury recovery, driver market...) derived from the event spine. Display-only.</summary>
+    public IReadOnlyList<StoryThread> StoryThreads() =>
+        Companion.Core.Newsroom.StoryThreads.Build(NewsroomEvents());
+
+    /// <summary>The rumour ledger: fact-backed whispers with honest resolution links. The
+    /// original rumour story is never rewritten; resolution links the settling story.</summary>
+    public IReadOnlyList<RumorRecord> RumorBoard() =>
+        RumorBook.Build(NewsroomEvents());
+
+    /// <summary>The controlled editorial package for one round: importance-selected stories
+    /// (quiet 5 / busy 8 / big 12, capped 14) rather than everything the spine detected.</summary>
+    public IReadOnlyList<EditorialSelection> WeekendPackage(int seasonOrdinal, int round) =>
+        EditorialSelector.SelectRound(
+            NewsroomEvents().Where(e => e.SeasonOrdinal == seasonOrdinal && e.Round == round).ToList());
+
+    /// <summary>Read/bookmark state for every story key the user has touched. USER PREFERENCE
+    /// (schema v6): never journaled, never a fold input, survives re-simulation.</summary>
+    public IReadOnlyDictionary<string, NewsReadingState> ReadingState() =>
+        NewsReadingStateStore.ReadAll(_database);
+
+    public void MarkStoryRead(string storyKey) =>
+        NewsReadingStateStore.MarkRead(_database, storyKey, NowUtc());
+
+    public void SetStoryBookmark(string storyKey, bool bookmarked) =>
+        NewsReadingStateStore.SetBookmark(_database, storyKey, bookmarked, NowUtc());
+
+    private HistoryArchiveIndex? _historyArchive;
+
+    /// <summary>The computed history archive: driver/team/circuit profiles aggregated from the
+    /// shipped verified season files, the authored eras/subjects/team-identity reference data,
+    /// and the verified-history timeline. Static app data — built once per session and cached.
+    /// Real history only; career-universe records never enter this index.</summary>
+    public HistoryArchiveIndex HistoryArchive()
+    {
+        if (_historyArchive is null)
+        {
+            var directory = _environment.HistoryDirectory;
+            var store = new HistoricalSeasonStore(directory);
+            _historyArchive = HistoryEntityIndex.Build(
+                store.ForYear,
+                Companion.Core.HistoryArchive.HistoryArchiveData.Load(directory));
+        }
+        return _historyArchive;
+    }
+
+    private IReadOnlyList<NewsroomSeason> BuildNewsroomSeasons()
+    {
+        var seasonsInput = new List<NewsroomSeason>();
+        // Dynasty economy shaping needs the balance tables (sponsor display names, the heavy-crash
+        // rate, the grace window, the dev cap). Null when this install has no rules directory —
+        // economy facts then shape empty and the detectors stay silent, never wrong.
+        Companion.Core.Dynasty.DynastyEconomyRules? economyRules =
+            _environment.RulesDirectory is null ? null : _environment.Rules.DynastyEconomy;
+        int ordinal = 0;
+        foreach (var season in CareerStore.ReadSeasons(_database))
+        {
+            ordinal++;
+            var seasonPack = SeasonPackFor(season);
+            string pid = PlayerDriverIdFor(season, seasonPack);
+            var venueByRound = seasonPack.Season.Rounds.ToDictionary(r => r.Round, VenueLabel);
+            var driverNames = seasonPack.Drivers.ToDictionary(d => d.Id, d => d.Name, StringComparer.Ordinal);
+            var teamsById = seasonPack.Teams.ToDictionary(t => t.Id, StringComparer.Ordinal);
+            var championshipRounds = seasonPack.Season.Rounds.Where(r => r.Championship).Select(r => r.Round).ToList();
+
+            // The player's season-start seat → team identity (SMGP seats ride CurrentSeatLivery).
+            var startState = StateStore.ReadPlayerState(_database, season.Id, StateStore.StageStart);
+            string? startLivery = startState?.Smgp?.CurrentSeatLivery ?? startState?.LiveryName;
+            var (startTeamName, _) = TeamOfLiveryInPack(seasonPack, startLivery);
+            string startTeamId = startLivery is { Length: > 0 }
+                ? seasonPack.Entries.FirstOrDefault(e =>
+                    string.Equals(e.Ams2LiveryName, startLivery, StringComparison.Ordinal))?.TeamId ?? ""
+                : "";
+
+            // One journal read feeds result causes, accidents, level facts, and the season notes below.
+            var journalRows = JournalStore.ReadSeason(_database, season.Id);
+            var resultRowByRound = new Dictionary<int, (string Cause, int? Expected, int? Actual, bool Dnf)>();
+            var accidentByRound = new Dictionary<int, (string Outcome, int MissRaces)>();
+            var levelByRound = new Dictionary<int, int>();
+            int? seasonEndLevel = null;
+            // Dynasty economy rows (empty maps for every non-economy career).
+            var economySponsorsByRound = new Dictionary<int, List<string>>();
+            var economyDevLevelByRound = new Dictionary<int, int>();
+            var economySettleByRound = new Dictionary<int, (string Repairs, bool Major, string Balance, bool OnBrink)>();
+            var economyBankruptRounds = new HashSet<int>();
+            string economySeasonAmount = "";
+            bool economyWindfall = false;
+            foreach (var row in journalRows)
+            {
+                // The player.xp rows journal the level AFTER each award: per-round rows feed the
+                // round facts, the season-end award row (round = null) feeds the boundary fact.
+                if (string.Equals(row.Phase, JournalPhases.PlayerXp, StringComparison.Ordinal))
+                {
+                    int levelAfter = ReadIntProperty(row.DeltaJson, "level");
+                    if (levelAfter > 0)
+                    {
+                        if (row.Round is { } xpRound)
+                        {
+                            levelByRound[xpRound] = levelAfter;
+                        }
+                        else
+                        {
+                            seasonEndLevel = levelAfter;
+                        }
+                    }
+                    continue;
+                }
+
+                // The economy.season settlement rides the season boundary (round = null).
+                if (string.Equals(row.Phase, JournalPhases.EconomySeason, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        string net = root.TryGetProperty("net", out var nv) ? nv.GetString() ?? "" : "";
+                        economySeasonAmount = FormatMoney(net);
+                        // A windfall = title bonuses landed, or the constructors' cheque was
+                        // front-running money (at or above the C3 rate for the season's era).
+                        bool titleMoney = root.TryGetProperty("titleBonus", out var tv)
+                            && Companion.Core.Numerics.Rational.Parse(tv.GetString() ?? "0")
+                                > Companion.Core.Numerics.Rational.Zero;
+                        bool bigCheque = economyRules is not null
+                            && root.TryGetProperty("seasonPrize", out var pv)
+                            && Companion.Core.Numerics.Rational.Parse(pv.GetString() ?? "0")
+                                >= economyRules.SeasonPrize(3, season.Year);
+                        economyWindfall = titleMoney || bigCheque;
+                    }
+                    catch (Exception ex) when (ex is JsonException or FormatException or OverflowException)
+                    {
+                    }
+                    continue;
+                }
+
+                if (row.Round is not { } jr)
+                {
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.EconomyApplied, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        string kind = root.TryGetProperty("kind", out var kv) ? kv.GetString() ?? "" : "";
+                        if (kind == "signSponsor"
+                            && root.TryGetProperty("sponsorId", out var sv)
+                            && sv.GetString() is { Length: > 0 } sponsorId)
+                        {
+                            string display = economyRules?.SponsorById(sponsorId)?.Name ?? sponsorId;
+                            if (!economySponsorsByRound.TryGetValue(jr, out var list))
+                                economySponsorsByRound[jr] = list = [];
+                            list.Add(display);
+                        }
+                        if (root.TryGetProperty("developmentLevel", out var dv2)
+                            && dv2.ValueKind == JsonValueKind.Number)
+                        {
+                            economyDevLevelByRound[jr] = dv2.GetInt32(); // last write per round wins
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                    }
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.EconomyRound, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        var costs = root.GetProperty("costs");
+                        var repairs = Companion.Core.Numerics.Rational.Parse(
+                            costs.GetProperty("repairs").GetString() ?? "0");
+                        var secondRepairs = Companion.Core.Numerics.Rational.Parse(
+                            costs.GetProperty("secondRepairs").GetString() ?? "0");
+                        var bill = repairs + secondRepairs;
+                        bool major = economyRules is not null
+                            && bill >= economyRules.PlayerRepair(
+                                Companion.Core.Career.AccidentSeverity.Heavy, null, season.Year);
+                        string balance = root.TryGetProperty("balanceTo", out var bv)
+                            ? bv.GetString() ?? "" : "";
+                        int deficitRounds = root.TryGetProperty("deficitRounds", out var dr)
+                            && dr.ValueKind == JsonValueKind.Number ? dr.GetInt32() : 0;
+                        bool onBrink = economyRules is not null
+                            && deficitRounds >= economyRules.Bankruptcy.GraceRounds;
+                        economySettleByRound[jr] = (
+                            bill > Companion.Core.Numerics.Rational.Zero ? FormatMoney(bill.ToString()) : "",
+                            major,
+                            FormatMoney(balance),
+                            onBrink);
+                    }
+                    catch (Exception ex) when (ex is JsonException or FormatException or OverflowException
+                        or InvalidOperationException or KeyNotFoundException)
+                    {
+                    }
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.EconomyBankruptcy, StringComparison.Ordinal))
+                {
+                    economyBankruptRounds.Add(jr);
+                    continue;
+                }
+
+                if (string.Equals(row.Phase, JournalPhases.RaceResult, StringComparison.Ordinal)
+                    && string.Equals(row.Entity, "player", StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        int? expected = root.TryGetProperty("expectedFinish", out var ev) && ev.ValueKind == JsonValueKind.Number
+                            ? ev.GetInt32() : null;
+                        int? actual = root.TryGetProperty("actualFinish", out var av) && av.ValueKind == JsonValueKind.Number
+                            ? av.GetInt32() : null;
+                        bool dnf = root.TryGetProperty("dnf", out var dv)
+                            && (dv.ValueKind == JsonValueKind.True || dv.ValueKind == JsonValueKind.String);
+                        resultRowByRound[jr] = (row.Cause, expected, actual, dnf);
+                    }
+                    catch (JsonException)
+                    {
+                        // A malformed delta cell never breaks the display feed.
+                    }
+                }
+                else if (string.Equals(row.Phase, JournalPhases.PlayerAccident, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(row.DeltaJson);
+                        var root = doc.RootElement;
+                        string? outcome = root.TryGetProperty("outcome", out var ov) ? ov.GetString() : null;
+                        if (outcome is "minorInjury" or "seasonEnding" or "death")
+                        {
+                            int miss = root.TryGetProperty("missRaces", out var mv) && mv.ValueKind == JsonValueKind.Number
+                                ? mv.GetInt32() : 0;
+                            accidentByRound[jr] = (outcome, miss);
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                    }
+                }
+            }
+
+            // Standings snapshots over the championship rounds stored so far.
+            var stored = ResultStore.ReadSeasonResults(_database, season.Id).OrderBy(r => r.Round).ToList();
+            var champStored = stored
+                .Where(r => seasonPack.Season.Rounds.FirstOrDefault(rd => rd.Round == r.Round)?.Championship ?? false)
+                .ToList();
+            var scoring = ChampionshipCalendar.ResolveScoring(seasonPack);
+            IReadOnlyList<StandingsSnapshot> snapshots = champStored.Count > 0
+                ? StandingsEngine.ComputeSeason(scoring, champStored.Select(r => r.ToRoundResult()).ToList()).Snapshots
+                : [];
+            var snapshotByRound = new Dictionary<int, StandingsSnapshot>();
+            for (int i = 0; i < snapshots.Count && i < champStored.Count; i++)
+            {
+                snapshotByRound[champStored[i].Round] = snapshots[i];
+            }
+
+            // Gross points are monotonic — the honest "scored this round" signal even under
+            // dropped-scores rules (counted points can shrink late-season).
+            var grossAfterRound = new Dictionary<int, double>();
+            for (int i = 0; i < snapshots.Count && i < champStored.Count; i++)
+            {
+                var ps = snapshots[i].Drivers.FirstOrDefault(d => string.Equals(d.DriverId, pid, StringComparison.Ordinal));
+                grossAfterRound[champStored[i].Round] = ps?.GrossPoints.ToDouble() ?? 0.0;
+            }
+
+            double maxPerRound = MaxPointsPerRound(scoring.PointsSystem);
+            bool complete = string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
+            var finalSnapshot = snapshots.Count > 0 ? snapshots[^1] : null;
+            string championId = "";
+            string championName = "";
+            bool playerChampion = false;
+            if (complete && finalSnapshot?.Drivers.FirstOrDefault(d => d.Position == 1) is { } champRow)
+            {
+                championId = champRow.DriverId;
+                championName = DisplayName(champRow.DriverId);
+                playerChampion = string.Equals(champRow.DriverId, pid, StringComparison.Ordinal);
+            }
+
+            double previousGross = 0.0;
+            var rounds = new List<NewsroomRound>();
+            foreach (var s in stored)
+            {
+                var envelope = s.ToEnvelope();
+                var race = envelope.Result.Sessions.FirstOrDefault(x => x.Kind == SessionKind.Race)
+                    ?? envelope.Result.Sessions.FirstOrDefault();
+                var entries = race?.Entries ?? [];
+                int? finish = race is not null ? FinishPosition(entries, pid) : null;
+                bool playerEntered = entries.Any(e => string.Equals(e.DriverId, pid, StringComparison.Ordinal));
+
+                var resultRow = resultRowByRound.TryGetValue(s.Round, out var rr) ? rr : default;
+                string dnfCause = playerEntered && finish is null && !envelope.PlayerDidNotStart
+                    ? resultRow.Cause switch
+                    {
+                        "dnf-mechanical" => "mechanical",
+                        "dnf-driver-error" => "driverError",
+                        _ => envelope.PlayerDnfCause == DnfCause.Mechanical ? "mechanical" : "driverError",
+                    }
+                    : "";
+
+                bool isChampionshipRound = seasonPack.Season.Rounds
+                    .FirstOrDefault(rd => rd.Round == s.Round)?.Championship ?? false;
+
+                double grossNow = grossAfterRound.TryGetValue(s.Round, out var g) ? g : previousGross;
+                bool scoredThisRound = grossNow > previousGross;
+                previousGross = grossNow;
+
+                // Winner identity + team (entry covering this calendar round wins attribution).
+                var winnerRow = entries.FirstOrDefault(e => e.Status == FinishStatus.Classified && e.Position == 1);
+                string winnerId = winnerRow?.DriverId ?? "";
+                string winnerTeamId = "";
+                if (winnerId.Length > 0)
+                {
+                    winnerTeamId = seasonPack.Entries.FirstOrDefault(e =>
+                            string.Equals(e.DriverId, winnerId, StringComparison.Ordinal)
+                            && RoundsRange.TryParse(e.Rounds, out var range) && range.Contains(s.Round))?.TeamId
+                        ?? seasonPack.Entries.FirstOrDefault(e =>
+                            string.Equals(e.DriverId, winnerId, StringComparison.Ordinal))?.TeamId
+                        ?? "";
+                }
+                var winnerTeam = winnerTeamId.Length > 0 ? teamsById.GetValueOrDefault(winnerTeamId) : null;
+
+                // Qualifying facts (present only when the weekend ran qualifying).
+                int? playerQuali = null;
+                string poleDriverId = "";
+                if (envelope.QualifyingOrder is { Count: > 0 } order)
+                {
+                    poleDriverId = MapPlayer(order[0], pid);
+                    for (int qi = 0; qi < order.Count; qi++)
+                    {
+                        if (string.Equals(order[qi], pid, StringComparison.Ordinal))
+                        {
+                            playerQuali = qi + 1;
+                            break;
+                        }
+                    }
+                }
+
+                // Championship picture after this round.
+                string leaderId = "", leaderName = "";
+                double leaderPoints = 0, secondPoints = 0, playerPoints = 0;
+                int? playerPosition = null;
+                double maxRemaining = 0;
+                bool isFinal = false;
+                if (isChampionshipRound && snapshotByRound.TryGetValue(s.Round, out var snap))
+                {
+                    var leader = snap.Drivers.FirstOrDefault(d => d.Position == 1);
+                    if (leader is not null)
+                    {
+                        leaderId = MapPlayer(leader.DriverId, pid);
+                        leaderName = DisplayName(leader.DriverId);
+                        leaderPoints = leader.CountedPoints.ToDouble();
+                    }
+                    var second = snap.Drivers.Where(d => d.Position is > 1).OrderBy(d => d.Position).FirstOrDefault();
+                    secondPoints = second?.CountedPoints.ToDouble() ?? 0;
+                    var playerRow = snap.Drivers.FirstOrDefault(d => string.Equals(d.DriverId, pid, StringComparison.Ordinal));
+                    playerPosition = playerRow?.Position;
+                    playerPoints = playerRow?.CountedPoints.ToDouble() ?? 0;
+                    int remainingRounds = championshipRounds.Count(r => r > s.Round);
+                    maxRemaining = remainingRounds * maxPerRound;
+                    isFinal = remainingRounds == 0;
+                }
+
+                var accident = accidentByRound.TryGetValue(s.Round, out var acc) ? acc : default;
+
+                rounds.Add(new NewsroomRound
+                {
+                    Round = s.Round,
+                    Championship = isChampionshipRound,
+                    Venue = venueByRound.GetValueOrDefault(s.Round) ?? $"Round {s.Round}",
+                    IsFinalChampionshipRound = isFinal,
+                    PlayerFinish = finish,
+                    ExpectedFinish = resultRow.Expected,
+                    PlayerDnfCause = dnfCause,
+                    PlayerDidNotStart = envelope.PlayerDidNotStart,
+                    PlayerScoredPoints = scoredThisRound,
+                    IsWet = envelope.IsWet,
+                    PlayerQualifyingPosition = playerQuali,
+                    PoleDriverId = poleDriverId,
+                    WinnerId = MapPlayer(winnerId, pid),
+                    WinnerName = winnerId.Length > 0 ? DisplayName(winnerId) : "",
+                    WinnerTeamId = winnerTeamId,
+                    WinnerTeamName = winnerTeam?.Name ?? "",
+                    WinnerTeamTier = winnerTeam is null ? 0 : Math.Clamp(winnerTeam.Prestige, 1, 5),
+                    LeaderId = leaderId,
+                    LeaderName = leaderName,
+                    LeaderPoints = leaderPoints,
+                    SecondPoints = secondPoints,
+                    PlayerPosition = playerPosition,
+                    PlayerPoints = playerPoints,
+                    MaxRemainingPoints = maxRemaining,
+                    MaxPointsPerRound = maxPerRound,
+                    AccidentOutcome = accident.Outcome ?? "",
+                    AccidentMissRaces = accident.MissRaces,
+                    PlayerLevelAfter = levelByRound.TryGetValue(s.Round, out var lvl) ? lvl : null,
+                    RivalName = envelope.SmgpRival is { } rival ? DisplayName(rival.RivalDriverId) : "",
+                    EconomySponsorsSigned = economySponsorsByRound.TryGetValue(s.Round, out var signed)
+                        ? signed
+                        : [],
+                    EconomyRepairAmount = economySettleByRound.TryGetValue(s.Round, out var settle)
+                        ? settle.Repairs
+                        : "",
+                    EconomyMajorRepair = settle.Major,
+                    EconomyOnTheBrink = settle.OnBrink,
+                    EconomyBalance = settle.Balance ?? "",
+                    EconomyBankrupt = economyBankruptRounds.Contains(s.Round),
+                    EconomyDevelopmentLevel = economyDevLevelByRound.TryGetValue(s.Round, out var devLvl)
+                        ? devLvl
+                        : null,
+                    EconomyDevelopmentMaxed = economyRules is not null
+                        && economyDevLevelByRound.TryGetValue(s.Round, out var maxCheck)
+                        && maxCheck >= economyRules.Development.MaxLevel,
+                });
+            }
+
+            // The campaign-finale flag: SMGP's fixed 17-season summit, or the final pinned season
+            // of a bounded progression-v2 campaign plan. Display-only detection input.
+            bool isCampaignFinale = IsSmgpPack
+                ? ordinal == Companion.Core.Smgp.SmgpRules.CampaignSeasons
+                : startState?.CampaignProgressionPlan is { } plan && ordinal == plan.TotalSeasons;
+
+            seasonsInput.Add(new NewsroomSeason
+            {
+                Ordinal = ordinal,
+                Year = season.Year,
+                ChampionshipRoundCount = championshipRounds.Count,
+                Complete = complete,
+                ChampionId = championId,
+                ChampionName = championName,
+                PlayerChampion = playerChampion,
+                PlayerTeamId = startTeamId,
+                PlayerTeamName = startTeamName,
+                Rounds = rounds,
+                SeasonNotes = BuildSeasonNotes(journalRows, driverNames, teamsById),
+                PlayerLevelAtSeasonEnd = seasonEndLevel ?? (rounds.Count > 0
+                    ? rounds.Where(r => r.PlayerLevelAfter is not null).Select(r => r.PlayerLevelAfter).LastOrDefault()
+                    : null),
+                IsCampaignFinale = isCampaignFinale,
+                EconomySeasonAmount = economySeasonAmount,
+                EconomyWindfall = economyWindfall,
+            });
+
+            string DisplayName(string driverId) =>
+                string.Equals(driverId, pid, StringComparison.Ordinal)
+                    ? PlayerDisplayName() ?? driverNames.GetValueOrDefault(driverId, driverId)
+                    : driverNames.GetValueOrDefault(driverId, driverId);
+        }
+
+        return seasonsInput;
+    }
+
+    private static string MapPlayer(string driverId, string pid) =>
+        string.Equals(driverId, pid, StringComparison.Ordinal) ? "player" : driverId;
+
+    /// <summary>A generous single-round ceiling (win + fastest lap + sprint + best alternate
+    /// table) — generous keeps the clinch bound conservative: a title is only called when the
+    /// gap exceeds even this ceiling times the remaining rounds.</summary>
+    private static double MaxPointsPerRound(PointsSystem system)
+    {
+        double best = system.RacePoints.Count > 0 ? system.RacePoints[0].ToDouble() : 0;
+        if (system.AlternateRaceTables is { } tables)
+        {
+            foreach (var table in tables.Values)
+            {
+                if (table.Count > 0)
+                {
+                    best = Math.Max(best, table[0].ToDouble());
+                }
+            }
+        }
+        if (system.SprintPoints is { Count: > 0 } sprint)
+        {
+            best += sprint[0].ToDouble();
+        }
+        if (system.FastestLap is { } fl)
+        {
+            best += fl.Points.ToDouble();
+        }
+        return best;
+    }
+
+    private static IReadOnlyList<NewsroomSeasonNote> BuildSeasonNotes(
+        IReadOnlyList<JournalRow> journalRows,
+        IReadOnlyDictionary<string, string> driverNames,
+        IReadOnlyDictionary<string, PackTeam> teamsById)
+    {
+        var notes = new List<NewsroomSeasonNote>();
+        foreach (var row in journalRows)
+        {
+            if (row.Round is not null)
+            {
+                continue;
+            }
+
+            switch (row.Phase)
+            {
+                case JournalPhases.TeamTier when row.Cause is "promoted" or "relegated":
+                    notes.Add(new NewsroomSeasonNote
+                    {
+                        Kind = row.Cause == "promoted"
+                            ? NewsroomSeasonNoteKind.TeamPromoted
+                            : NewsroomSeasonNoteKind.TeamRelegated,
+                        SubjectId = row.Entity,
+                        SubjectName = teamsById.TryGetValue(row.Entity, out var team) ? team.Name : row.Entity,
+                    });
+                    break;
+
+                case JournalPhases.Retirement:
+                    notes.Add(new NewsroomSeasonNote
+                    {
+                        Kind = NewsroomSeasonNoteKind.DriverRetired,
+                        SubjectId = row.Entity,
+                        SubjectName = driverNames.GetValueOrDefault(row.Entity, row.Entity),
+                        Detail = row.Cause,
+                        Value = ReadIntProperty(row.DeltaJson, "age"),
+                    });
+                    break;
+
+                case JournalPhases.RetirementForeshadow:
+                    notes.Add(new NewsroomSeasonNote
+                    {
+                        Kind = NewsroomSeasonNoteKind.RetirementConsidered,
+                        SubjectId = row.Entity,
+                        SubjectName = driverNames.GetValueOrDefault(row.Entity, row.Entity),
+                        Value = ReadIntProperty(row.DeltaJson, "age"),
+                    });
+                    break;
+
+                case JournalPhases.SeatMarket when row.Cause is "vacancy-filled" or "vacancy-unfilled":
+                {
+                    string hired = ReadStringProperty(row.DeltaJson, "hired");
+                    string vacated = ReadStringProperty(row.DeltaJson, "vacatedBy");
+                    bool filled = row.Cause == "vacancy-filled" && hired.Length > 0;
+                    string subject = filled ? hired : vacated;
+                    notes.Add(new NewsroomSeasonNote
+                    {
+                        Kind = filled ? NewsroomSeasonNoteKind.SeatFilled : NewsroomSeasonNoteKind.SeatVacancy,
+                        SubjectId = subject,
+                        SubjectName = driverNames.GetValueOrDefault(subject, subject),
+                        Detail = teamsById.TryGetValue(row.Entity, out var seatTeam) ? seatTeam.Name : row.Entity,
+                    });
+                    break;
+                }
+
+                case JournalPhases.OfferExtended:
+                    notes.Add(new NewsroomSeasonNote
+                    {
+                        Kind = NewsroomSeasonNoteKind.OfferReceived,
+                        SubjectName = teamsById.TryGetValue(row.Entity, out var offerTeam) ? offerTeam.Name : row.Entity,
+                        Value = ReadIntProperty(row.DeltaJson, "tier"),
+                    });
+                    break;
+            }
+        }
+
+        return notes;
+    }
+
+    /// <summary>Renders a fold Rational ("26400" / "20000/3" / "-5000") as a whole-unit display
+    /// amount ("26,400"); the raw text on any parse failure. DISPLAY-ONLY — exact money never
+    /// leaves the fold (economy §8).</summary>
+    private static string FormatMoney(string rationalText)
+    {
+        if (string.IsNullOrWhiteSpace(rationalText))
+        {
+            return "";
+        }
+        try
+        {
+            double value = Companion.Core.Numerics.Rational.Parse(rationalText).ToDouble();
+            string text = Math.Round(Math.Abs(value))
+                .ToString("#,0", System.Globalization.CultureInfo.InvariantCulture);
+            return value < 0 ? "-" + text : text;
+        }
+        catch (Exception ex) when (ex is FormatException or OverflowException or ArgumentException)
+        {
+            return rationalText;
+        }
+    }
+
+    private static int ReadIntProperty(string deltaJson, string property)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(deltaJson);
+            return doc.RootElement.TryGetProperty(property, out var v) && v.ValueKind == JsonValueKind.Number
+                ? v.GetInt32()
+                : 0;
+        }
+        catch (JsonException)
+        {
+            return 0;
+        }
+    }
+
+    private static long ReadLongProperty(string deltaJson, string property)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(deltaJson);
+            return doc.RootElement.TryGetProperty(property, out var v) && v.ValueKind == JsonValueKind.Number
+                ? v.GetInt64()
+                : 0;
+        }
+        catch (JsonException)
+        {
+            return 0;
+        }
+    }
+
+    private static string ReadStringProperty(string deltaJson, string property)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(deltaJson);
+            return doc.RootElement.TryGetProperty(property, out var v) && v.ValueKind == JsonValueKind.String
+                ? v.GetString() ?? ""
+                : "";
+        }
+        catch (JsonException)
+        {
+            return "";
+        }
+    }
+}

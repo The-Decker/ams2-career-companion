@@ -502,6 +502,25 @@ internal sealed class FakeCareerSession : ICareerSession
         Promotion = null;
     }
 
+    /// <summary>The Dynasty economy dashboard the fake serves (null = not an economy career).</summary>
+    public DynastyEconomyDashboard? Economy { get; set; }
+
+    public DynastyEconomyDashboard? EconomyDashboard() => Economy;
+
+    /// <summary>Every accepted economy decision, in order.</summary>
+    public List<Companion.Core.Dynasty.DynastyEconomyDecision> EconomyDecisions { get; } = [];
+
+    /// <summary>When set, DeclareEconomyDecision throws it instead of recording — the
+    /// injectable-throw pattern for error-path tests.</summary>
+    public Exception? DeclareEconomyDecisionThrows { get; set; }
+
+    public void DeclareEconomyDecision(Companion.Core.Dynasty.DynastyEconomyDecision decision)
+    {
+        if (DeclareEconomyDecisionThrows is not null)
+            throw DeclareEconomyDecisionThrows;
+        EconomyDecisions.Add(decision);
+    }
+
     public int AvailableCharacterCpReadCount { get; private set; }
 
     public int AvailableCharacterCp()

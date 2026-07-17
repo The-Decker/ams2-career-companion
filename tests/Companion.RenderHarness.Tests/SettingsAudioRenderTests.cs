@@ -649,6 +649,24 @@ public sealed class SettingsAudioRenderTests
     }
 
     [Fact]
+    public void AppAudioComposition_BindsTheLiveControllerInsteadOfTheClearedTransferLocal()
+    {
+        string appPath = Path.Combine(
+            FindRepositoryRoot(), "src", "Companion.App", "App.xaml.cs");
+        string source = File.ReadAllText(appPath);
+
+        Assert.Contains(
+            "Action<SoundEffectCue, object?> effectPlayer = audio.PlayEffect;",
+            source,
+            StringComparison.Ordinal);
+        Assert.Contains("SoundAssist.Connect(effectPlayer);", source, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "SoundAssist.Connect((cue, source) => audio.PlayEffect(cue, source));",
+            source,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void SoundAssist_SuppressesNoOpButton_AndCarriesTheOriginatingControl()
     {
         if (!WpfRenderHarness.IsSupported)
@@ -876,7 +894,7 @@ public sealed class SettingsAudioRenderTests
             ["SessionIntroView.xaml"] = ["Confirm"],
             ["SettingsView.xaml"] =
                 ["Warning", "Back", "Confirm", "Navigate", "Navigate", "Navigate", "Navigate", "Navigate"],
-            ["SkinsView.xaml"] = ["Confirm", "Destructive", "Confirm"],
+            ["SkinsView.xaml"] = ["Navigate", "Navigate"],
             ["SmgpCareerOverView.xaml"] = ["Back"],
             ["SmgpFinaleView.xaml"] = ["Confirm"],
             ["StandingsView.xaml"] = ["Back"],

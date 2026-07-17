@@ -35,7 +35,7 @@ namespace Companion.ViewModels.Services;
 /// - Staging is backup-first and aborts (Success=false) on any preflight ERROR; a missing
 ///   AMS2 install degrades to a failed outcome with a clear message, never a crash.
 /// </summary>
-public sealed class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAms2GameLaunch, IAiFileRestore, IDisposable
+public sealed partial class CareerSessionService : ICareerSession, IForceStaging, IExplicitGridApply, IAms2GameLaunch, IAiFileRestore, IDisposable
 {
     /// <summary><see cref="BaselineSource"/> value: the pinned baseline is pack-authored.</summary>
     public const string BaselineSourcePack = "pack";
@@ -80,6 +80,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     /// death, captured just BEFORE the file is deleted so it renders with no DB. Null while the driver
     /// lives. Immutable once the driver is dead (a dead career takes no more rounds).</summary>
     private DeathScreenModel? _deathScreen;
+
+    /// <summary>The bankruptcy game-over model (economy §7), memoised on first read after the team
+    /// folds. Bankruptcy never deletes the career file, so it always builds live from the intact DB.
+    /// Null while solvent (and for every non-economy career).</summary>
+    private BankruptcyScreenModel? _bankruptcyScreen;
 
     public SeasonPack Pack { get; }
 
@@ -375,6 +380,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                     request.Mortality,
                     campaign?.Plan.Mode,
                     campaign?.Plan,
+                    // The Dynasty owner economy: both halves of the gate — the pinned campaign mode
+                    // AND the creation opt-in. The rules are resolved only for an opted-in Dynasty
+                    // career, so a rules-directory-free caller (most tests) never touches them; an
+                    // economy career on an install missing the tables fails HERE with a clear
+                    // message rather than seeding an economy it cannot fold.
+                    request.DynastyEconomy && campaign?.Plan.Mode == CareerExperienceModes.GrandPrixDynasty
+                        ? environment.Rules.DynastyEconomy
+                            ?? throw new InvalidOperationException(
+                                "The Dynasty owner economy is unavailable — data\\rules\\dynasty\\economy.json " +
+                                "is missing from this install. Reinstall the app's data folder to run an " +
+                                "economy career.")
+                        : null,
                     transaction);
 
                 transaction.Commit();
@@ -560,6 +577,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         MortalityMode mortality,
         string? experienceMode,
         CampaignProgressionPlan? campaignProgressionPlan,
+        Companion.Core.Dynasty.DynastyEconomyRules? economyRules,
         SqliteTransaction transaction)
     {
         int year = pack.Season.Year;
@@ -623,6 +641,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // nothing (WhenWritingDefault) so a non-opted career's start blob is byte-identical;
             // Normal/Hardcore are carried forward each round via record `with`, exactly like FormAware.
             Mortality = mortality,
+            // The Dynasty owner economy: the caller resolved rules ONLY for an opted-in Dynasty
+            // career, so a non-null value IS the gate (mode + opt-in). The opening balance is
+            // pinned here from the starting team's tier, era-scaled — start state is INPUT, so a
+            // later rules edit never rewrites an existing career's opening funds. Null serializes
+            // to nothing (WhenWritingNull): every other career's start blob is byte-identical.
+            Economy = economyRules is null
+                ? null
+                : new Companion.Core.Dynasty.DynastyEconomyState
+                {
+                    Version = economyRules.SchemaVersion,
+                    Balance = economyRules.StartingFunds(playerTier, year),
+                },
         };
 
         StateStore.UpsertDriverStates(database, seasonId, StateStore.StageStart, aiDrivers, transaction);
@@ -1318,6 +1348,22 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var teamNameById = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var t in Pack.Teams) teamNameById.TryAdd(t.Id, t.Name);
 
+        // Player availability per round (SMGP-300): applied rounds read the stored envelope's
+        // PlayerDidNotStart flag — an injury absence is never rewritten as participation — and
+        // future rounds project the ACTIVE suspension, so "you will miss the next 2 rounds" is
+        // visible on the calendar before it happens.
+        var satOutRounds = new HashSet<int>();
+        foreach (var stored in ResultStore.ReadSeasonResults(_database, _seasonId))
+        {
+            if (stored.ToEnvelope().PlayerDidNotStart)
+                satOutRounds.Add(stored.Round);
+        }
+        var availabilityState = CurrentPlayerState();
+        int projectedMisses = availabilityState?.Deceased == true || availabilityState?.SeasonEndingInjury == true
+            ? int.MaxValue
+            : availabilityState?.RaceSuspensionRemaining ?? 0;
+        int missesAssigned = 0;
+
         var schedule = new List<SeasonScheduleEntry>(Pack.Season.Rounds.Count);
         foreach (var round in Pack.Season.Rounds)
         {
@@ -1352,6 +1398,23 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             // An alternate that exists but is NOT the driven track (tick off / mod missing at creation).
             string? unusedAlternate = track.Alternate is { } alt && !alternateApplied ? TrackName(alt.Id) : null;
 
+            SchedulePlayerStatus playerStatus;
+            if (round.Round <= maxApplied)
+            {
+                playerStatus = satOutRounds.Contains(round.Round)
+                    ? SchedulePlayerStatus.SatOut
+                    : SchedulePlayerStatus.Raced;
+            }
+            else if (missesAssigned < projectedMisses)
+            {
+                playerStatus = SchedulePlayerStatus.WillMiss;
+                missesAssigned++;
+            }
+            else
+            {
+                playerStatus = SchedulePlayerStatus.Upcoming;
+            }
+
             schedule.Add(new SeasonScheduleEntry
             {
                 Round = round.Round,
@@ -1378,6 +1441,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 Status = round.Round <= maxApplied ? SeasonRoundStatus.Done
                     : round.Round == maxApplied + 1 ? SeasonRoundStatus.Next
                     : SeasonRoundStatus.Upcoming,
+                PlayerStatus = playerStatus,
             });
         }
         return schedule;
@@ -1461,7 +1525,31 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         return playerIndex < 0
             ? null
             : SeatStrengthModel.ExpectedFinish(
-                grid, playerIndex, priorOpi, modelVersion, teamTiers);
+                grid, playerIndex, priorOpi, modelVersion, teamTiers,
+                CurrentDynastyDevelopmentStrength(player));
+    }
+
+    /// <summary>The Dynasty development strength the NEXT fold will score with (economy §6):
+    /// the folded level PLUS any pending buy-development decisions declared for the current
+    /// round — the fold applies those at its top, so the briefing's expected finish stays
+    /// contractually equal to the number the Setup Gamble is staked against. 0 for every
+    /// non-economy career (and after bankruptcy).</summary>
+    private double CurrentDynastyDevelopmentStrength(PlayerCareerState? player)
+    {
+        if (player?.Economy is not { Bankrupt: false } economy
+            || _environment.RulesDirectory is null)
+        {
+            return 0.0;
+        }
+        var rules = _environment.Rules.DynastyEconomy;
+        int pendingBuys = 0;
+        if (ReplayService.ReadEconomyDecisions(_database, _seasonId)
+            .TryGetValue(CurrentRoundNumber, out var pending))
+        {
+            pendingBuys = pending.Count(d =>
+                d.Kind == Companion.Core.Dynasty.DynastyEconomyDecisionKind.BuyDevelopment);
+        }
+        return rules.Development.StrengthPerLevel * (economy.DevelopmentLevel + pendingBuys);
     }
 
     /// <summary>What skin every car on the current round's grid will show — the read-only skin
@@ -1582,8 +1670,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             _environment.Clock.GetUtcNow());
     }
 
-    /// <summary>The grid editor's per-seat cosmetic overrides for this season (v4 staging_override
-    /// table). Read-only projection over a non-journaled table — the sim never sees it.</summary>
+    /// <summary>The per-seat cosmetic staging overrides this season still carries (v4
+    /// staging_override table — written by the retired grid editor; the Grid Preview now surfaces
+    /// a count + clear affordance). Read-only projection over a non-journaled table — the sim
+    /// never sees it.</summary>
     public IReadOnlyDictionary<string, SeatStagingOverride> SeatStagingOverrides() =>
         StagingOverrideStore.Read(_database, _seasonId);
 
@@ -4076,8 +4166,21 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (beforePlayer?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over - a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal too (economy §7) — a folded team takes no more
+        // rounds, exactly like the two guards above.
+        if (beforePlayer?.Economy?.Bankrupt == true)
+            throw new InvalidOperationException(
+                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to score.");
+        // The inverse of AutoSimulateRound's fit-check: an injured driver's round is auto-simulated,
+        // never entered manually. The hub already routes to the sit-out screen; this makes the rule
+        // hold for EVERY caller, so no path can score an injured player or stall the healing
+        // countdown (character death & injury §5).
+        if (beforePlayer is not null
+            && (beforePlayer.RaceSuspensionRemaining > 0 || beforePlayer.SeasonEndingInjury))
+            throw new InvalidOperationException(
+                "The driver is injured — this round is auto-simulated. Continue from the sit-out screen.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -4193,8 +4296,21 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (beforePlayer?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal too (economy §7) — a folded team takes no more
+        // rounds. All three guard sites (Preview/Apply/AutoSimulateRound) repeat this chain: a new
+        // terminal state that skips one leaves a scoring hole (the SMGP floor's original bug).
+        if (beforePlayer?.Economy?.Bankrupt == true)
+            throw new InvalidOperationException(
+                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to apply.");
+        // Same availability gate as Preview: an injured driver's round only ever folds through
+        // AutoSimulateRound (which requires the inverse), so manual scoring of an unfit player is
+        // impossible at the service layer, not merely unreachable in the shipped UI.
+        if (beforePlayer is not null
+            && (beforePlayer.RaceSuspensionRemaining > 0 || beforePlayer.SeasonEndingInjury))
+            throw new InvalidOperationException(
+                "The driver is injured — this round is auto-simulated. Continue from the sit-out screen.");
 
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
@@ -4208,11 +4324,10 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var envelope = BuildEnvelope(draft, roundNumber, packRound);
         string nowUtc = NowUtc();
 
-        ReplayService.ImportAndFoldRound(
-            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc);
-
-        // App-level provenance row about the entry EVENT (excluded from the replay
-        // byte-compare like every provenance row) — the sim rows come from the fold.
+        // App-level provenance row about the entry EVENT (excluded from the replay byte-compare
+        // like every provenance row) — appended INSIDE the fold's atomic transaction, so a crash
+        // can never leave a folded round whose provenance (the news journal's dispatch source)
+        // silently vanished.
         var journalDelta = new ResultAppliedDelta
         {
             Round = roundNumber,
@@ -4222,15 +4337,18 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             DnfCount = draft.DidNotFinish.Count,
             DsqCount = draft.Disqualified.Count,
         };
-        JournalStore.Append(_database, _seasonId, roundNumber,
-            new JournalEvent
-            {
-                Phase = DataJournalPhases.ResultProvenance,
-                Entity = "round",
-                DeltaJson = JsonSerializer.Serialize(journalDelta, CoreJson.Options),
-                Cause = "result-entered",
-            },
-            nowUtc);
+        ReplayService.ImportAndFoldRound(
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc,
+            withTransaction: transaction => JournalStore.Append(_database, _seasonId, roundNumber,
+                new JournalEvent
+                {
+                    Phase = DataJournalPhases.ResultProvenance,
+                    Entity = "round",
+                    DeltaJson = JsonSerializer.Serialize(journalDelta, CoreJson.Options),
+                    Cause = "result-entered",
+                },
+                nowUtc,
+                transaction));
 
         // Character death & injury (Slice 3): detect a REAL Deceased transition this round. A Hardcore
         // death is the ONE destructive file op — physically delete the career file + every snapshot,
@@ -4250,8 +4368,12 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         }
 
         // A dead driver (Normal) banks no title and rolls no offers — the season does not "complete";
-        // the death screen (Slice 5) offers a restore instead.
-        if (SeasonComplete && !justDied)
+        // the death screen (Slice 5) offers a restore instead. A team that JUST went bankrupt
+        // (economy §7) is suppressed the same way: a folded team banks no title and rolls no
+        // offers; the bankruptcy screen (built lazily — the file survives) takes over.
+        bool justWentBankrupt = beforePlayer?.Economy?.Bankrupt != true
+            && CurrentPlayerState()?.Economy?.Bankrupt == true;
+        if (SeasonComplete && !justDied && !justWentBankrupt)
             EnsureSeasonEnd();
     }
 
@@ -4286,7 +4408,26 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             IsWet = roundConditions?.IsWet ?? draft.IsWet,
             CalledShot = draft.CalledShot,
             SmgpRival = draft.SmgpRival,
+            AiDnfCauses = AiDnfCausesFrom(draft),
         };
+    }
+
+    /// <summary>The AI drivers' raw DNF cause letters (v9, capture-only — the fold never reads
+    /// them; display readers name AI retirements). Null when no AI retired with a cause, so
+    /// such rounds serialize exactly as before.</summary>
+    private IReadOnlyDictionary<string, string>? AiDnfCausesFrom(ResultDraft draft)
+    {
+        Dictionary<string, string>? causes = null;
+        foreach (var (driverId, reason) in draft.DidNotFinish)
+        {
+            if (string.Equals(driverId, _playerDriverId, StringComparison.Ordinal)
+                || reason.Length == 0)
+            {
+                continue;
+            }
+            (causes ??= new Dictionary<string, string>(StringComparer.Ordinal))[driverId] = reason;
+        }
+        return causes;
     }
 
     /// <summary>The player's chosen accident severity, captured ONLY for the player's OWN accident ("a")
@@ -4333,6 +4474,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             PlayerAge = _playerFirstSeasonAge,
             CharacterRules = rules.Character,
             MasterySkills = rules.MasterySkills,
+            DynastyEconomy = rules.DynastyEconomy,
         };
     }
 
@@ -4350,6 +4492,11 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         var season = CareerStore.ReadSeasons(_database).FirstOrDefault(s => s.Id == _seasonId)
             ?? throw new InvalidOperationException($"Season {_seasonId} vanished from the career file.");
         if (string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal))
+            return;
+        // A bankrupt team banks no title and rolls no offers (economy §7) — the single chokepoint
+        // that keeps every caller (Apply, AutoSimulateRound, SeasonReview) from resurrecting the
+        // season end the fatal settlement suppressed. The bankruptcy takeover owns the ending.
+        if (CurrentPlayerState()?.Economy?.Bankrupt == true)
             return;
         // Two-phase (3c-2): a promotion offer deferred by the final round MUST be resolved on the
         // screen BEFORE season end folds — replay resolves it inline (inside the round fold, ahead of
@@ -5436,6 +5583,7 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
 
             bool complete = string.Equals(season.Status, SeasonStatus.Complete, StringComparison.Ordinal);
             var endState = complete ? StateStore.ReadPlayerState(_database, season.Id, StateStore.StageEnd) : null;
+            var startState = StateStore.ReadPlayerState(_database, season.Id, StateStore.StageStart);
 
             var headlines = JournalStore.ReadSeason(_database, season.Id)
                 .Where(r => string.Equals(r.Phase, JournalPhases.Headline, StringComparison.Ordinal))
@@ -5456,6 +5604,8 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
                 PlayerIsChampion = playerIsChampion,
                 Headlines = headlines,
                 RoundLines = roundLines,
+                PlayerLevelAtStart = startState?.HasCharacter == true ? startState.Level : null,
+                PlayerLevelAtEnd = endState?.HasCharacter == true ? endState.Level : null,
             });
         }
 
@@ -5843,6 +5993,68 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             timeline.Records, timeline.Seasons, SaveSlots());
     }
 
+    /// <inheritdoc />
+    public BankruptcyScreenModel? BankruptcyScreen()
+    {
+        if (_careerFileDeleted)
+            return null; // a Hardcore death outranks the ledger — the death screen owns the ending
+        var player = CurrentPlayerState();
+        if (player?.Economy?.Bankrupt != true)
+            return null;
+        // Memoised: a bankrupt career takes no more rounds, so it never changes.
+        return _bankruptcyScreen ??= BuildBankruptcyScreen(player);
+    }
+
+    /// <summary>Assemble the bankruptcy-screen model from the folded journal + state: the terminal
+    /// <c>economy.bankruptcy</c> row (round, final balance, the grace that ran out), the whole
+    /// career record, and any restore slots. A pure read — no fold change, no new persistence,
+    /// so replay stays byte-identical. Mirrors <see cref="BuildDeathScreen"/>.</summary>
+    private BankruptcyScreenModel BuildBankruptcyScreen(PlayerCareerState player)
+    {
+        int? round = null;
+        string balance = player.Economy!.Balance.ToString();
+        int deficitRounds = player.Economy.DeficitRounds;
+        int graceRounds = 0;
+        var terminal = JournalStore.ReadSeason(_database, _seasonId)
+            .LastOrDefault(r => string.Equals(
+                r.Phase, JournalPhases.EconomyBankruptcy, StringComparison.Ordinal));
+        if (terminal is not null)
+        {
+            round = terminal.Round;
+            try
+            {
+                using var doc = JsonDocument.Parse(terminal.DeltaJson);
+                if (doc.RootElement.TryGetProperty("balance", out var b) && b.ValueKind == JsonValueKind.String)
+                    balance = b.GetString() ?? balance;
+                if (doc.RootElement.TryGetProperty("deficitRounds", out var d) && d.ValueKind == JsonValueKind.Number)
+                    deficitRounds = d.GetInt32();
+                if (doc.RootElement.TryGetProperty("graceRounds", out var g) && g.ValueKind == JsonValueKind.Number)
+                    graceRounds = g.GetInt32();
+            }
+            catch (JsonException) { }
+        }
+
+        var timeline = CareerTimeline();
+        string name = player.Character?.Name is { Length: > 0 } n ? n : PlayerDisplayName() ?? "The owner-driver";
+        string teamName = Pack.Teams
+            .FirstOrDefault(t => string.Equals(t.Id, player.CurrentTeamId, StringComparison.Ordinal))
+            ?.Name ?? player.CurrentTeamId ?? "the team";
+
+        return new BankruptcyScreenModel
+        {
+            DriverName = name,
+            TeamName = teamName,
+            Year = _seasonYear,
+            Round = round,
+            FinalBalance = balance,
+            DeficitRounds = deficitRounds,
+            GraceRounds = graceRounds,
+            Record = timeline.Records,
+            Seasons = timeline.Seasons,
+            RestoreSlots = SaveSlots(),
+        };
+    }
+
     /// <summary>The venue label for a round of the CURRENT season pack — the real historical venue when the
     /// track carries one, else the round's display name.</summary>
     private string? VenueForRound(int round)
@@ -5906,6 +6118,185 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
     }
 
     /// <inheritdoc />
+    public RoundProgressionSummary? RoundProgression(int round)
+    {
+        if (CurrentPlayerState()?.HasCharacter != true)
+            return null;
+
+        // Walk this season's journaled player.xp rows in fold order: the level BEFORE the round is
+        // the last journaled level ahead of it (or the season-start snapshot), the movement is the
+        // row's own from→to — the fold's audit record, never recomputed.
+        var seasonStart = StateStore.ReadPlayerState(_database, _seasonId, StateStore.StageStart);
+        int previousLevel = seasonStart?.Level > 0 ? seasonStart.Level : 1;
+        foreach (var row in JournalStore.ReadSeason(_database, _seasonId))
+        {
+            if (!string.Equals(row.Phase, JournalPhases.PlayerXp, StringComparison.Ordinal)
+                || row.Round is not { } xpRound)
+            {
+                continue;
+            }
+
+            int levelAfter = ReadIntProperty(row.DeltaJson, "level");
+            if (xpRound == round)
+            {
+                long from = ReadLongProperty(row.DeltaJson, "from");
+                long to = ReadLongProperty(row.DeltaJson, "to");
+                return new RoundProgressionSummary
+                {
+                    Round = round,
+                    XpGained = to - from,
+                    LevelBefore = previousLevel,
+                    LevelAfter = levelAfter > 0 ? levelAfter : previousLevel,
+                    SkillPointsAvailable = CharacterDossier()?.CpUnspent ?? 0,
+                };
+            }
+
+            if (levelAfter > 0)
+                previousLevel = levelAfter;
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<CampaignTimelineEntry> CampaignTimeline()
+    {
+        var cards = CareerTimeline().Seasons;
+        var plan = CurrentPlayerState()?.CampaignProgressionPlan;
+        int horizon = IsSmgpPack
+            ? Companion.Core.Smgp.SmgpRules.CampaignSeasons
+            : plan?.TotalSeasons ?? cards.Count;
+        horizon = Math.Max(horizon, cards.Count);
+        if (horizon == 0)
+            return [];
+
+        // Sat-out rounds per season come from the (cached) event spine — the timeline never
+        // rewrites an injury absence as participation.
+        var satOutOrdinals = NewsroomEvents()
+            .Where(e => e.Kind == Companion.Core.Newsroom.NewsEventKind.SatOutRound)
+            .Select(e => e.SeasonOrdinal)
+            .ToHashSet();
+
+        // A season's authored identity (title/era) is revealed ONLY once it is reached: the current
+        // season and completed ones carry it, LOCKED future seasons carry NOTHING — no title, no
+        // era, no year — so no surface can spoil what is coming. The campaign is never previewed
+        // ahead of the player; they meet each season when they arrive at it.
+        var lore = IsSmgpPack ? _environment.Rules?.SmgpSeasonLore : null;
+
+        var entries = new List<CampaignTimelineEntry>(horizon);
+        for (int ordinal = 1; ordinal <= horizon; ordinal++)
+        {
+            if (ordinal <= cards.Count)
+            {
+                var card = cards[ordinal - 1];
+                var seasonLore = lore?.ForOrdinal(ordinal);
+                entries.Add(new CampaignTimelineEntry
+                {
+                    Ordinal = ordinal,
+                    State = card.IsComplete ? CampaignSeasonState.Completed : CampaignSeasonState.Current,
+                    Year = card.SeasonYear,
+                    Title = seasonLore?.Title ?? "",
+                    Era = seasonLore?.Era ?? "",
+                    PlayerPosition = card.PlayerPosition,
+                    PlayerChampion = card.PlayerIsChampion,
+                    MissedRounds = satOutOrdinals.Contains(ordinal),
+                });
+            }
+            else
+            {
+                // Locked/future season: an anonymous placeholder only — its identity stays hidden
+                // until the player reaches it (no title, era, or year leaks the future).
+                entries.Add(new CampaignTimelineEntry
+                {
+                    Ordinal = ordinal,
+                    State = CampaignSeasonState.Locked,
+                });
+            }
+        }
+
+        return entries;
+    }
+
+    /// <inheritdoc />
+    public Companion.Core.Smgp.SmgpSeasonLoreEntry? CurrentSeasonLore()
+    {
+        if (!IsSmgpPack || _environment.Rules?.SmgpSeasonLore is not { IsEmpty: false } lore)
+            return null;
+        // Reconcile the authored lore with the player's REAL seat: fill {playerTeam} with the team
+        // they are actually on, then drop any line narrating the driver they replaced (that driver
+        // is benched — off the grid — so the lore must not show them racing). Both are per-career
+        // display projections; the authored lore is untouched.
+        return lore.ForOrdinal(CareerStore.ReadSeasons(_database).Count)
+            ?.WithPlayerTeam(CurrentPlayerTeamName())
+            .WithoutReplacedDriver(ReplacedDriverSurname());
+    }
+
+    /// <summary>The surname of the canon driver whose car the player currently occupies (they were
+    /// benched when the player took the seat), or null when the seat maps to no authored driver.
+    /// Used to keep the season lore from narrating a driver the player replaced.</summary>
+    private string? ReplacedDriverSurname()
+    {
+        string? livery = CurrentSmgpState()?.CurrentSeatLivery;
+        if (string.IsNullOrEmpty(livery))
+            return null;
+        var entry = Pack.Entries.FirstOrDefault(e =>
+            string.Equals(e.Ams2LiveryName, livery, StringComparison.Ordinal));
+        if (entry is null)
+            return null;
+        string? name = Pack.Drivers
+            .FirstOrDefault(d => string.Equals(d.Id, entry.DriverId, StringComparison.Ordinal))?.Name;
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+        // "Peter Klinger" → "Klinger"; matching by surname covers "Klinger" / "P. Klinger" / the full name.
+        int space = name.LastIndexOf(' ');
+        return space >= 0 ? name[(space + 1)..] : name;
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<InjuryHistoryEntry> InjuryHistory()
+    {
+        var entries = new List<InjuryHistoryEntry>();
+        int ordinal = 0;
+        foreach (var season in CareerStore.ReadSeasons(_database))
+        {
+            ordinal++;
+            foreach (var row in JournalStore.ReadSeason(_database, season.Id))
+            {
+                if (!string.Equals(row.Phase, JournalPhases.PlayerAccident, StringComparison.Ordinal)
+                    || row.Round is not { } round)
+                {
+                    continue;
+                }
+
+                string outcome = ReadStringProperty(row.DeltaJson, "outcome");
+                if (outcome is not ("minorInjury" or "seasonEnding" or "death"))
+                {
+                    continue;
+                }
+
+                int miss = ReadIntProperty(row.DeltaJson, "missRaces");
+                entries.Add(new InjuryHistoryEntry
+                {
+                    SeasonOrdinal = ordinal,
+                    SeasonYear = season.Year,
+                    Round = round,
+                    Outcome = outcome,
+                    MissRaces = miss,
+                    Label = outcome switch
+                    {
+                        "minorInjury" => miss == 1 ? "Injured — missed 1 race" : $"Injured — missed {miss} races",
+                        "seasonEnding" => "Season-ending injury",
+                        _ => "Fatal accident",
+                    },
+                    Description = InjuryFlavor.Describe(outcome, ordinal, round),
+                });
+            }
+        }
+
+        return entries;
+    }
+
+    /// <inheritdoc />
     public void AutoSimulateRound()
     {
         if (_careerFileDeleted)
@@ -5916,11 +6307,16 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
         if (player?.Smgp?.CareerOver == true)
             throw new InvalidOperationException(
                 "The SMGP career is over — a rival took the last seat at the LEVEL D floor.");
+        // The Dynasty bankruptcy floor is terminal here too — the third of the three guard sites.
+        if (player?.Economy?.Bankrupt == true)
+            throw new InvalidOperationException(
+                "The team is bankrupt — the Dynasty is over. Restore a save to continue, if one exists.");
         if (SeasonComplete)
             throw new InvalidOperationException("The season is complete — there is no round to simulate.");
         if (player is null || (player.RaceSuspensionRemaining == 0 && !player.SeasonEndingInjury))
             throw new InvalidOperationException("The driver is fit — enter this round's result manually.");
 
+        var beforeEconomy = player?.Economy;
         int roundNumber = CurrentRoundNumber;
         var packRound = RoundByNumber(roundNumber);
         // The AI field races the round the injured player sits out — a deterministic classification with
@@ -5942,30 +6338,38 @@ public sealed class CareerSessionService : ICareerSession, IForceStaging, IExpli
             SliderUsed = ReplayService.NeutralSlider,
         };
         string nowUtc = NowUtc();
+        // The provenance row joins the fold's atomic transaction (same contract as Apply): a
+        // crash can never leave an auto-simulated round without its journal-feed dispatch row.
         ReplayService.ImportAndFoldRound(
-            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc);
+            _database, _seasonId, Pack, MasterSeedU, SimInputs(), roundNumber, envelope, nowUtc,
+            withTransaction: transaction => JournalStore.Append(_database, _seasonId, roundNumber,
+                new JournalEvent
+                {
+                    Phase = DataJournalPhases.ResultProvenance,
+                    Entity = "round",
+                    DeltaJson = JsonSerializer.Serialize(
+                        new ResultAppliedDelta
+                        {
+                            Round = roundNumber,
+                            RoundName = packRound.Name,
+                            WinnerDriverId = aiOrder.Count > 0 ? aiOrder[0] : null,
+                            ClassifiedCount = aiOrder.Count,
+                            DnfCount = 0,
+                            DsqCount = 0,
+                        },
+                        CoreJson.Options),
+                    Cause = "auto-simulated",
+                },
+                nowUtc,
+                transaction));
 
-        JournalStore.Append(_database, _seasonId, roundNumber,
-            new JournalEvent
-            {
-                Phase = DataJournalPhases.ResultProvenance,
-                Entity = "round",
-                DeltaJson = JsonSerializer.Serialize(
-                    new ResultAppliedDelta
-                    {
-                        Round = roundNumber,
-                        RoundName = packRound.Name,
-                        WinnerDriverId = aiOrder.Count > 0 ? aiOrder[0] : null,
-                        ClassifiedCount = aiOrder.Count,
-                        DnfCount = 0,
-                        DsqCount = 0,
-                    },
-                    CoreJson.Options),
-                Cause = "auto-simulated",
-            },
-            nowUtc);
-
-        if (SeasonComplete)
+        // The sat-out round still settles the books (SettleEconomy runs on the DNS path), so it CAN
+        // fold the team — a Dynasty owner earning nothing while injured marches into the deficit
+        // floor. Suppress the season end on that fatal settlement exactly as Apply does (a folded
+        // team banks no title and rolls no offers); the bankruptcy takeover then owns the ending.
+        bool justWentBankrupt = beforeEconomy?.Bankrupt != true
+            && CurrentPlayerState()?.Economy?.Bankrupt == true;
+        if (SeasonComplete && !justWentBankrupt)
             EnsureSeasonEnd();
     }
 

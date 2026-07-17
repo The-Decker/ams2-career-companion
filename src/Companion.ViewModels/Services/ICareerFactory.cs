@@ -82,6 +82,15 @@ public sealed record CareerCreationRequest
     /// injury/death — byte-identical to before. The wizard surfaces Off/Normal/Hardcore as an explicit
     /// creation choice. Persisted on the <c>career</c> table AND mirrored into the start player state.</summary>
     public Companion.Core.Career.MortalityMode Mortality { get; init; }
+
+    /// <summary>The Dynasty owner economy (docs/dev/dynasty-tycoon-economy.md): when true AND the
+    /// campaign mode is <c>grandPrixDynasty</c>, the start state seeds
+    /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/> — the per-career gate the whole
+    /// team ledger hangs off. Mirrors <see cref="SmgpMode"/>: default false, so existing creation
+    /// callers (and every test that does not opt in) seed nothing and fold byte-identically; the
+    /// wizard sets it for new Dynasty careers. On any other mode the flag is ignored — the mode is
+    /// the other half of the gate (a legacy/SMGP/Passport career can never gain the economy).</summary>
+    public bool DynastyEconomy { get; init; }
 }
 
 /// <summary>

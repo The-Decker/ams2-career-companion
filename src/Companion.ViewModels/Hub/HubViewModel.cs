@@ -25,6 +25,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     public const string CalendarTabKey = "calendar";
     public const string DriverTabKey = "driver";
     public const string PaddockTabKey = "paddock";
+    public const string EconomyTabKey = "economy";
     public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
     public const string SkinsTabKey = "skins";
@@ -55,6 +56,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         Calendar = new CalendarViewModel(session);
         Dossier = new DossierViewModel(session);
         Paddock = new PaddockViewModel(session);
+        Economy = new EconomyViewModel(session);
         Skins = new SkinsViewModel(session);
 
         Tabs =
@@ -62,7 +64,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
             new HubTabViewModel(RaceTabKey, "Upcoming Race", "", Home, showInRail: true),
             new HubTabViewModel(StandingsTabKey, "Standings", "", NewStandings()),
             new HubTabViewModel(CalendarTabKey, "Calendar", "", Calendar),
-            new HubTabViewModel(SkinsTabKey, "Skins", "", Skins),
+            new HubTabViewModel(SkinsTabKey, "Grid Preview", "", Skins),
             new HubTabViewModel(HistoryTabKey, "History", "", History),
             new HubTabViewModel(NewsTabKey, "News", "", News),
         ];
@@ -75,6 +77,11 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         // data loaded — it fields the whole SEGA-world grid's bios + predetermined stats + team stories.
         if (Paddock.HasPaddock)
             Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(PaddockTabKey, "Paddock", "", Paddock));
+
+        // The Team Ledger (Dynasty owner economy, economy §9) is present only for a career
+        // carrying the folded economy state — the driver-owner's money side of the same loop.
+        if (Economy.HasEconomy)
+            Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(EconomyTabKey, "Team Ledger", "", Economy));
 
         SelectTab(Tabs[0]); // auto-select Race on open
     }
@@ -101,8 +108,12 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// career stats + team stories. Present as a tab only for an SMGP career with reference data.</summary>
     public PaddockViewModel Paddock { get; }
 
-    /// <summary>The Skins lens: what livery/skin every car will show in AMS2, plus the crib for the
-    /// player own-car pick. Always present (every career has a grid); refreshed per round.</summary>
+    /// <summary>The Team Ledger lens (Dynasty owner economy §9) — balance, statement, sponsors,
+    /// development, staff and the decision commands. Present only for an economy career.</summary>
+    public EconomyViewModel Economy { get; }
+
+    /// <summary>The read-only next-race grid preview: driver, team, car and livery at a glance.
+    /// Always present (every career has a grid); refreshed per round.</summary>
     public SkinsViewModel Skins { get; }
 
     /// <summary>The period skin resolved from the pack's decade (telegram/fax/email) — drives
@@ -193,6 +204,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         Calendar.Refresh();
         Dossier.Refresh();
         Paddock.Refresh();
+        Economy.Refresh();
         Skins.Refresh();
 
         if (RaceTab is { } race)

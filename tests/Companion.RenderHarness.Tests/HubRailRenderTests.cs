@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.App.Audio;
@@ -33,12 +34,21 @@ public sealed partial class HubRailRenderTests
 
             var rail = Assert.IsType<Border>(view.FindName("HubRail"));
             var scroll = Assert.IsType<ScrollViewer>(view.FindName("HubRailScrollViewer"));
+            var levelChip = Assert.IsType<Border>(view.FindName("DriverLevelChip"));
+            var availabilityChip = Assert.IsType<Border>(view.FindName("DriverAvailabilityChip"));
             Button[] destinations = Descendants<Button>(view)
                 .Where(button => AutomationProperties.GetHelpText(button) ==
                     "Select this career workspace")
                 .ToArray();
+            Path[] destinationIcons = Descendants<Path>(view)
+                .Where(path => path.Name == "RailDestinationIcon")
+                .ToArray();
 
             Assert.InRange(rail.ActualWidth, 176, 224);
+            Assert.Equal(Visibility.Visible, levelChip.Visibility);
+            Assert.Equal(Visibility.Visible, availabilityChip.Visibility);
+            Assert.True(levelChip.ActualWidth > 0);
+            Assert.True(availabilityChip.ActualWidth > 0);
             Assert.True(scroll.ActualHeight > 0);
             Assert.True(scroll.ScrollableHeight > 0,
                 "The compact 130% viewport must scroll instead of clipping a rail destination.");
@@ -50,6 +60,17 @@ public sealed partial class HubRailRenderTests
                 Assert.True(button.Focusable);
                 Assert.NotNull(button.Command);
                 Assert.Equal(SoundEffectCue.Navigate, SoundAssist.GetCue(button));
+            });
+            Assert.Equal(host.Tabs.Count, destinationIcons.Length);
+            Assert.Equal(host.Tabs.Count,
+                destinationIcons.Select(icon => icon.Data.ToString())
+                    .Distinct(StringComparer.Ordinal)
+                    .Count());
+            Assert.All(destinationIcons, icon =>
+            {
+                Assert.False(icon.Data.Bounds.IsEmpty);
+                Assert.True(icon.ActualWidth > 0);
+                Assert.True(icon.ActualHeight > 0);
             });
 
             Button first = destinations[0];
@@ -95,7 +116,7 @@ public sealed partial class HubRailRenderTests
                 Tab(HubViewModel.StandingsTabKey, "Standings", "\uE9D9"),
                 Tab(HubViewModel.DriverTabKey, "Driver", "\uE77B"),
                 Tab(HubViewModel.CalendarTabKey, "Calendar", "\uE787"),
-                Tab(HubViewModel.SkinsTabKey, "Skins", "\uE790"),
+                Tab(HubViewModel.SkinsTabKey, "Grid Preview", "\uE790"),
                 Tab(HubViewModel.HistoryTabKey, "History", "\uE81C"),
                 Tab(HubViewModel.PaddockTabKey, "Paddock", "\uE716"),
                 Tab(HubViewModel.NewsTabKey, "News", "\uE789"),
@@ -140,6 +161,8 @@ public sealed partial class HubRailRenderTests
         public string StandingText => "P12";
         public string FormText => "";
         public bool HasForm => false;
+        public string DriverLevelText => "LV 137";
+        public string DriverAvailabilityLabel => "Injured — out 2 races";
     }
 
     private sealed class BriefingHost { public bool SmgpCareerOver => false; }

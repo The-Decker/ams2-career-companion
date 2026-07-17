@@ -1222,6 +1222,10 @@ public sealed partial class NewCareerWizardViewModel : ObservableObject
             // Off (default) = no injury/death (classic). Normal adds the save & reload safety net;
             // Hardcore has no saves and death deletes the file.
             Mortality = MortalityMode,
+            // The Dynasty owner economy: every NEW Dynasty career runs the team ledger (the mode's
+            // required product pillar). Other modes ignore the flag; Dynasty careers created before
+            // the economy shipped stay inert (their start state has no DynastyEconomyState).
+            DynastyEconomy = ExperienceMode == CareerExperienceModes.GrandPrixDynasty,
         };
 
         ICareerSession session;

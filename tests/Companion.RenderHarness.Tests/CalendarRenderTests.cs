@@ -32,12 +32,14 @@ public sealed class CalendarRenderTests
             new() { Round = 1, Name = "San Marino GP", Date = "1988-05-01",
                     RealVenue = "Autodromo Internazionale Enzo e Dino Ferrari",
                     TrackId = "imola_88", Ams2TrackName = "Imola_GP_1988", Laps = 61,
-                    Kind = SeasonTrackKind.RealVenue },
+                    Kind = SeasonTrackKind.RealVenue,
+                    PlayerStatus = SchedulePlayerStatus.SatOut },
             new() { Round = 2, Name = "Belgian GP", Date = "1978-05-21", RealVenue = "Circuit Zolder",
                     TrackId = "Heusden", Ams2TrackName = "Zolder", Laps = 74, Kind = SeasonTrackKind.Alternate,
                     CircuitLayoutId = "zolder", CircuitCaption = "Zolder · 4.01 km · 10 turns",
                     CircuitHistory = "Zolder hosted the Belgian GP 1973-1984.",
-                    CircuitFacts = ["Most wins here: Niki Lauda (2).", "Home-crowd wins: 1."] },
+                    CircuitFacts = ["Most wins here: Niki Lauda (2).", "Home-crowd wins: 1."],
+                    PlayerStatus = SchedulePlayerStatus.WillMiss },
             new() { Round = 3, Name = "Dutch GP", Date = "1978-08-27", RealVenue = "Circuit Zandvoort",
                     TrackId = "hockenheim_1988", Ams2TrackName = "Hockenheim 1988", Laps = 44,
                     Kind = SeasonTrackKind.StandIn,
@@ -79,6 +81,11 @@ public sealed class CalendarRenderTests
             var vm = new CalendarViewModel(new CalendarSession());
             Assert.Equal(3, vm.Rounds.Count);
             Assert.True(vm.HasUnusedAlternates);
+            Assert.Equal("SAT OUT — injured", vm.Rounds[0].PlayerStatusLabel);
+            Assert.Equal("WILL MISS — injured", vm.Rounds[1].PlayerStatusLabel);
+            Assert.True(vm.Rounds[0].HasPlayerStatus);
+            Assert.True(vm.Rounds[1].HasPlayerStatus);
+            Assert.False(vm.Rounds[2].HasPlayerStatus);
 
             // Expand the round with circuit data so the original-circuit map + facts + history render.
             vm.Rounds[1].ToggleCommand.Execute(null);
@@ -91,6 +98,8 @@ public sealed class CalendarRenderTests
 
             Assert.True(view.ActualWidth > 0);
             Assert.True(view.ActualHeight > 0);
+            Assert.True(CountText(view, "SAT OUT — injured") >= 1);
+            Assert.True(CountText(view, "WILL MISS — injured") >= 1);
         });
     }
 

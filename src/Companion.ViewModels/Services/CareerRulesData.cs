@@ -54,6 +54,11 @@ public sealed record CareerRulesData
     /// History panel then simply hides).</summary>
     public required SmgpWhatReallyHappened SmgpWhatReallyHappened { get; init; }
 
+    /// <summary>The authored 17-season SMGP campaign lore (<c>data\rules\smgp\seasons.json</c>):
+    /// every season's unique title/era/context/arcs, outcome-agnostic SMGP canon. DISPLAY-ONLY —
+    /// never a fold input; empty when the file is absent (season headers then stay plain).</summary>
+    public required SmgpSeasonLore SmgpSeasonLore { get; init; }
+
     /// <summary>Per-team SMGP-world quotes + multi-paragraph history (<c>data\rules\smgp\team-profiles.json</c>),
     /// shown on the promotion/demotion screen when the player joins a team. DISPLAY-ONLY — never a fold
     /// input; empty when the file is absent (the team story then simply omits).</summary>
@@ -84,6 +89,23 @@ public sealed record CareerRulesData
     /// DISPLAY-ONLY — never a fold input; empty when the file is absent (the card then collapses).</summary>
     public required CarSpecCatalog CarSpecs { get; init; }
 
+    /// <summary>The Grand Prix Dynasty owner-economy balance tables
+    /// (<c>data\rules\dynasty\economy.json</c>) — an OPTIONAL-MODE fold input: required for an
+    /// economy career (the creation seed and every economy fold/decision path refuse when it is
+    /// null) but null when the file is absent, so a legacy/SMGP career on a stale-data install that
+    /// ships no dynasty subfolder still loads and folds untouched (the dormancy contract). A
+    /// non-economy career never reads it.</summary>
+    public required Companion.Core.Dynasty.DynastyEconomyRules? DynastyEconomy { get; init; }
+
+    /// <summary>The living-newsroom template library (<c>data\rules\newsroom\*.json</c>): multi-
+    /// section article templates + era pools voicing the mode-agnostic event spine. DISPLAY-ONLY —
+    /// never a fold input; empty when the folder is absent (the newsroom feed then simply omits).</summary>
+    public required Companion.Core.Newsroom.NewsroomCorpus NewsroomCorpus { get; init; }
+
+    /// <summary>The fictional editorial desks (<c>data\rules\newsroom\desks.json</c>). DISPLAY-ONLY;
+    /// empty when absent (articles then carry no masthead).</summary>
+    public required Companion.Core.Newsroom.NewsDesks NewsDesks { get; init; }
+
     public static CareerRulesData Load(string rulesDirectory)
     {
         var character = CharacterRules.Parse(Read(rulesDirectory, "perks.json"));
@@ -101,12 +123,18 @@ public sealed record CareerRulesData
             SmgpRivalQuotes = SmgpRivalQuotes.Load(rulesDirectory),
             SmgpPitCrewAdvice = SmgpPitCrewAdvice.Load(rulesDirectory),
             SmgpWhatReallyHappened = SmgpWhatReallyHappened.Load(rulesDirectory),
+            SmgpSeasonLore = SmgpSeasonLore.Load(rulesDirectory),
             SmgpTeamProfiles = SmgpTeamProfiles.Load(rulesDirectory),
             SmgpDriverProfiles = SmgpDriverProfiles.Load(rulesDirectory),
             SmgpDriverStats = SmgpDriverStats.Load(rulesDirectory),
             SmgpSponsors = SmgpSponsors.Load(rulesDirectory),
             SmgpDispatchCorpus = SmgpDispatchCorpus.Load(rulesDirectory),
+            DynastyEconomy = Companion.Core.Dynasty.DynastyEconomyRules.Load(rulesDirectory),
             CarSpecs = CarSpecCatalog.Load(rulesDirectory),
+            NewsroomCorpus = Companion.Core.Newsroom.NewsroomCorpus.LoadDirectory(
+                Path.Combine(rulesDirectory, "newsroom")),
+            NewsDesks = Companion.Core.Newsroom.NewsDesks.Load(
+                Path.Combine(rulesDirectory, "newsroom")),
         };
     }
 

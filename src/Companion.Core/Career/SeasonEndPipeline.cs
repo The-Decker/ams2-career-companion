@@ -68,6 +68,12 @@ public sealed record SeasonEndContext
     /// value completely; a version-one character that owns mastery nodes requires it so replay and
     /// live season-end folds resolve the same authored effects.</summary>
     public MasterySkillCatalog? MasterySkills { get; init; }
+
+    /// <summary>The Dynasty owner-economy balance tables, or null for a build/test without them.
+    /// The season settlement requires BOTH this and a player carrying
+    /// <see cref="Companion.Core.Dynasty.DynastyEconomyState"/>; null (or a non-economy career)
+    /// runs the exact pre-economy pipeline, byte-identical.</summary>
+    public Companion.Core.Dynasty.DynastyEconomyRules? EconomyRules { get; init; }
 }
 
 public sealed record SeasonEndResult
@@ -417,6 +423,31 @@ public static class SeasonEndPipeline
                 });
             }
             player = player with { Smgp = smgpNext };
+        }
+
+        // ---- Dynasty owner economy: the season settlement (docs/dev/dynasty-tycoon-economy.md §3)
+        // — constructors' prize + sponsor season/title money, then contract run-down and the
+        // development carryover. Gated on the carried economy state (+ rules present), so every
+        // other career emits no row and folds byte-identically. SeasonRollover copies the end
+        // state, so the carried-over ledger IS next season's opening position — re-derived
+        // identically on replay, exactly like the SMGP season fold above.
+        if (player.Economy is { Bankrupt: false } economyState && context.EconomyRules is { } economyRules)
+        {
+            int? constructorsPosition = final.Constructors
+                ?.FirstOrDefault(c => string.Equals(
+                    c.ConstructorId, player.CurrentTeamId, StringComparison.Ordinal))
+                ?.Position;
+            var settle = Companion.Core.Dynasty.DynastyEconomyFold.SettleSeason(
+                new Companion.Core.Dynasty.DynastySeasonSettleContext
+                {
+                    State = economyState,
+                    Rules = economyRules,
+                    Year = year,
+                    ConstructorsPosition = constructorsPosition,
+                    DriversPosition = playerPosition,
+                });
+            events.AddRange(settle.Events);
+            player = player with { Economy = settle.State };
         }
 
         // ---- step 3: aging -------------------------------------------------------------

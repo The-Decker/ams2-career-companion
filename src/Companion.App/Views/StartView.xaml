@@ -181,6 +181,10 @@
                                         <TextBlock Text="{Binding RecentCareers[0].CareerName, Mode=OneWay, FallbackValue=NO RECENT CAREER}"
                                                    FontSize="9" Opacity="0.78"
                                                    TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding RecentCareers[0].TerminalBadge}" FontSize="8"
+                                                   FontWeight="Bold" Foreground="{DynamicResource ErrorBrush}"
+                                                   Visibility="{Binding RecentCareers[0].IsTerminal,
+                                                                        Converter={StaticResource BoolVisible}}" />
                                     </StackPanel>
                                     <TextBlock Grid.Column="2" Text="&#xE76C;"
                                                FontFamily="{StaticResource IconFont}"
@@ -514,6 +518,16 @@
                                                                Visibility="{Binding DataContext.EraThemingEnabled,
                                                                                     RelativeSource={RelativeSource AncestorType=ListBox},
                                                                                     Converter={StaticResource BoolVisible}}" />
+                                                    <Border x:Name="TerminalCareerBadge" Style="{StaticResource CompactChip}"
+                                                            HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                            Margin="10" Padding="8,4"
+                                                            Background="{DynamicResource ErrorDimBrush}"
+                                                            BorderBrush="{DynamicResource ErrorBrush}"
+                                                            Visibility="{Binding IsTerminal, Converter={StaticResource BoolVisible}}"
+                                                            AutomationProperties.Name="{Binding TerminalBadge}">
+                                                        <TextBlock Text="{Binding TerminalBadge}" Style="{StaticResource PixelBadge}"
+                                                                   Foreground="{DynamicResource ErrorBrush}" />
+                                                    </Border>
                                                     <Button Content="&#xE711;" Style="{StaticResource IconButton}"
                                                             VerticalAlignment="Top" HorizontalAlignment="Right"
                                                             Margin="4" Foreground="{DynamicResource OnMediaMutedBrush}"

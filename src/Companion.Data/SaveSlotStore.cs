@@ -25,6 +25,12 @@ public sealed record SaveSlotInfo
 
     /// <summary>True for an automatic season-start snapshot, false for a manual save.</summary>
     public required bool IsAutosave { get; init; }
+
+    /// <summary>True for a snapshot whose metadata sidecar is missing or unreadable: the save is
+    /// still restorable (only the snapshot file matters to <see cref="SaveSlotStore.Restore"/>),
+    /// but its label/year/round are reconstructed from the file itself. Restorable data is
+    /// surfaced as degraded, never silently hidden. Not <c>required</c> — older sidecars omit it.</summary>
+    public bool IsDegraded { get; init; }
 }
 
 /// <summary>
@@ -115,8 +121,10 @@ public static class SaveSlotStore
         return info;
     }
 
-    /// <summary>Every slot with an intact snapshot + readable metadata, NEWEST FIRST. A corrupt or
-    /// orphaned sidecar is skipped rather than throwing.</summary>
+    /// <summary>Every restorable slot, NEWEST FIRST. A snapshot with readable metadata lists
+    /// normally; a snapshot whose sidecar is corrupt or missing lists as a DEGRADED entry (label
+    /// from the file stem, timestamp from the file clock) — restorable data is surfaced, never
+    /// silently hidden. A sidecar with no surviving snapshot is stale and is not offered.</summary>
     public static IReadOnlyList<SaveSlotInfo> List(string careerFilePath)
     {
         string savesDir = SavesDirectoryFor(careerFilePath);
@@ -124,6 +132,7 @@ public static class SaveSlotStore
             return [];
 
         var slots = new List<SaveSlotInfo>();
+        var described = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (string metaPath in Directory.EnumerateFiles(savesDir, "*" + MetadataExtension))
         {
             SaveSlotInfo? info;
@@ -139,8 +148,41 @@ public static class SaveSlotStore
                 continue;
             // A metadata sidecar with no surviving snapshot is stale — do not offer it.
             if (File.Exists(Path.Combine(savesDir, info.SlotId + SnapshotExtension)))
+            {
                 slots.Add(info);
+                described.Add(info.SlotId);
+            }
         }
+
+        // Orphaned snapshots (damaged/missing sidecar) are still complete career files that
+        // Restore can use — list them as degraded instead of hiding a restorable save.
+        foreach (string snapshotPath in Directory.EnumerateFiles(savesDir, "*" + SnapshotExtension))
+        {
+            string slotId = Path.GetFileNameWithoutExtension(snapshotPath);
+            if (described.Contains(slotId))
+                continue;
+            string createdUtc;
+            try
+            {
+                createdUtc = File.GetLastWriteTimeUtc(snapshotPath).ToString(
+                    "yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                createdUtc = "";
+            }
+            slots.Add(new SaveSlotInfo
+            {
+                SlotId = slotId,
+                Label = $"{slotId} (recovered — details unreadable)",
+                SeasonYear = 0,
+                Round = 0,
+                CreatedUtc = createdUtc,
+                IsAutosave = slotId.StartsWith("autosave", StringComparison.OrdinalIgnoreCase),
+                IsDegraded = true,
+            });
+        }
+
         return slots
             .OrderByDescending(s => s.CreatedUtc, StringComparer.Ordinal)
             .ThenBy(s => s.SlotId, StringComparer.Ordinal)

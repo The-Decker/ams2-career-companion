@@ -1,0 +1,206 @@
+{
+  "$comment": "Dynasty owner-economy pack (prefix ec.): sponsor signings, repair bills, the brink, windfalls, development milestones, and the bankruptcy ending (docs/dev/dynasty-tycoon-economy.md section 8). Follows 010-core.json format exactly; read-side only - these voice display projections of the folded money ledger, never fold inputs. All amounts arrive pre-formatted; every non-guaranteed token stays inside optional segments.",
+  "version": 1,
+  "pools": {
+    "ecMoney": {
+      "1960s": [
+        "Motor racing has always burned money; the trick is burning it slower than the prize fund refills.",
+        "The books are kept in pencil in this paddock, and the pencil works hard."
+      ],
+      "1990s": [
+        "The commercial department has its own pit wall now, and its own lap charts.",
+        "Sponsorship is the second championship, and it never rains itself off."
+      ],
+      "2010s": [
+        "The finance model updates in real time; the racing still settles it on Sundays.",
+        "Cash flow is the one telemetry channel every team watches."
+      ],
+      "default": [
+        "A racing team is a company that happens to be measured in laps.",
+        "The ledger never takes a weekend off.",
+        "Money is lap time wearing a suit."
+      ]
+    },
+    "ecPressure": {
+      "1960s": [
+        "Teams have vanished from entry lists for less; the paddock remembers every one.",
+        "The bank manager does not care who held the apex."
+      ],
+      "1990s": [
+        "Administrators do not do slow out-laps. When the money stops, everything stops.",
+        "The paddock has watched famous names fold mid-season; nobody is exempt."
+      ],
+      "2010s": [
+        "The insolvency spreadsheet has no sentiment column.",
+        "Racing debt compounds faster than downforce."
+      ],
+      "default": [
+        "An empty tank stops a car; an empty account stops a team.",
+        "Every deficit round is a lap closer to the wall.",
+        "The grid takes no prisoners and the ledger takes fewer."
+      ]
+    },
+    "ecGarage": {
+      "1960s": [
+        "The fabricators will work the nights; the invoices will work the mornings.",
+        "Sheet metal is cheap; finished race cars are not."
+      ],
+      "2010s": [
+        "The parts list prices itself; the crash structure does not negotiate.",
+        "Carbon repairs are billed by the layer."
+      ],
+      "default": [
+        "Every shunt is itemised eventually.",
+        "The garage fixes the car; the office absorbs the rest.",
+        "Development is bought in increments and proven in laps."
+      ]
+    }
+  },
+  "templates": [
+    {
+      "id": "ec.sponsor.card",
+      "event": "sponsorSigned",
+      "headline": "New backing lands at {team}[[?sponsor: — {sponsor} signs on]]",
+      "deck": "Commercial desk, season {season}: the livery gains a name",
+      "summary": "{team} signed new sponsorship[[?sponsor: with {sponsor}]].",
+      "sections": {
+        "lead": "The commercial ledger at {team} gains a line[[?sponsor: : {sponsor} has signed]]. Signing money lands now; the per-race payments follow every start, and the bonuses follow the results.",
+        "context": "{pool:ecMoney}",
+        "close": "Backing is bought with results and repaid the same way."
+      }
+    },
+    {
+      "id": "ec.sponsor.feature",
+      "event": "sponsorSigned",
+      "headline": "The deal behind the decal[[?sponsor: — inside the {sponsor} agreement]]",
+      "deck": "Commercial feature, season {season}",
+      "summary": "A commercial feature on {team}'s newest sponsorship deal[[?sponsor: with {sponsor}]].",
+      "sections": {
+        "lead": "Sponsorships are courtships with invoices. {team} closed one[[?sponsor: with {sponsor}]] — and in this paddock a signature is worth more than a season of promises.",
+        "impact": "The money changes the arithmetic: entry fees stop stinging, the development queue moves, and a bad Sunday costs sleep instead of survival.",
+        "close": "{pool:ecMoney}"
+      }
+    },
+    {
+      "id": "ec.repair.card",
+      "event": "majorRepairBill",
+      "headline": "The bill arrives: {team} counts the cost[[?venue: of {venue}]]",
+      "deck": "Garage desk, season {season}: a heavy weekend for the fabricators",
+      "summary": "{team} faces a major repair bill[[?amount: of {amount}]][[?venue: after {venue}]].",
+      "sections": {
+        "lead": "Some weekends are paid for twice: once on the stopwatch, once at the parts bin. {team}'s garage has a rebuild on its hands[[?amount: — the invoice reads {amount}]][[?venue: after the damage done at {venue}]].",
+        "context": "{pool:ecGarage}",
+        "close": "The car will be ready. The ledger takes longer to straighten."
+      }
+    },
+    {
+      "id": "ec.repair.feature",
+      "event": "majorRepairBill",
+      "headline": "What a shunt really costs",
+      "deck": "Garage feature, season {season}: the anatomy of a rebuild",
+      "summary": "A feature on the price {team} pays to rebuild[[?amount: — {amount} this time]].",
+      "sections": {
+        "lead": "Accident damage is the sport's least negotiable invoice. At {team} the fabricators have started the long nights[[?venue: after {venue}]][[?amount: , and the office has logged {amount} against a column that had other plans]].",
+        "reliability": "Every rebuilt corner must be as true as the jig can make it; nobody refunds a chassis that drives crooked.",
+        "close": "{pool:ecGarage}"
+      }
+    },
+    {
+      "id": "ec.brink.card",
+      "event": "nearBankruptcy",
+      "headline": "{team} on the financial brink",
+      "deck": "Paddock desk, season {season}: the grace is spent",
+      "summary": "{team}'s deficit has run its full grace[[?amount: — the balance reads {amount}]].",
+      "sections": {
+        "lead": "The paddock's quietest crisis is a red column. {team} has raced through its financial grace[[?amount: — the account stands at {amount}]] — and the arithmetic is now brutally simple: the next deficit weekend is the last.",
+        "context": "{pool:ecPressure}",
+        "close": "Prize money, a sponsor cheque, a saved repair bill — anything positive buys another Sunday."
+      }
+    },
+    {
+      "id": "ec.brink.feature",
+      "event": "nearBankruptcy",
+      "headline": "Racing on empty: inside {team}'s survival weekend",
+      "deck": "Paddock feature, season {season}",
+      "summary": "A feature on {team} racing while the money runs out[[?amount: — {amount} on the books]].",
+      "sections": {
+        "lead": "There are two races at {team} now. One is on the circuit. The other is in a ledger[[?amount: showing {amount}]], and it does not wait for the flag.",
+        "impact": "Everything is triaged: development stops, the spares list shrinks, and every classified finish is measured first in prize money.",
+        "close": "{pool:ecPressure}"
+      }
+    },
+    {
+      "id": "ec.windfall.card",
+      "event": "financialWindfall",
+      "headline": "The cheque clears: a windfall season for {team}",
+      "deck": "Commercial desk, season {season}: the review pays out",
+      "summary": "{team} banked a season windfall[[?amount: of {amount}]].",
+      "sections": {
+        "lead": "Season reviews are usually about points. This one at {team} was about the other column[[?amount: — {amount} landed at the settlement]], the kind of money that turns next year from a hope into a plan.",
+        "context": "{pool:ecMoney}",
+        "close": "Windfalls are spent twice: once on the car, once on the confidence."
+      }
+    },
+    {
+      "id": "ec.windfall.feature",
+      "event": "financialWindfall",
+      "headline": "How the front pays: {team}'s season settlement",
+      "deck": "Commercial feature, season {season}",
+      "summary": "A feature on {team}'s front-running season money[[?amount: — {amount} banked]].",
+      "sections": {
+        "lead": "The sharp end of a championship is also its payroll. {team}'s season settled rich[[?amount: — {amount} across prize money and bonuses]] — the compounding reward for running where the cameras point.",
+        "impact": "Money is the sport's quietest lap time: it becomes development increments, retained staff, and the margin to survive a bad crash without flinching.",
+        "close": "{pool:ecMoney}"
+      }
+    },
+    {
+      "id": "ec.development.card",
+      "event": "developmentMilestone",
+      "headline": "{team}'s development programme reaches its ceiling",
+      "deck": "Technical desk, season {season}: the increments are spent",
+      "summary": "{team}'s car development reached its cap[[?milestone: at stage {milestone}]].",
+      "sections": {
+        "lead": "The technical office at {team} has run out of drawings to buy: the season's development programme is at its ceiling[[?milestone: — stage {milestone}]]. Whatever pace was purchasable has been purchased; the rest belongs to the driver.",
+        "context": "{pool:ecGarage}",
+        "close": "Next season the regulations shuffle and the ladder resets. For now: maximum car."
+      }
+    },
+    {
+      "id": "ec.development.feature",
+      "event": "developmentMilestone",
+      "headline": "Bought speed: the {team} upgrade story",
+      "deck": "Technical feature, season {season}",
+      "summary": "A feature on {team} completing its development programme[[?milestone: — stage {milestone}]].",
+      "sections": {
+        "lead": "Development money is the most honest money in racing: it either shows on the stopwatch or it shouts at you from the ledger. {team} has spent its way to the top of the programme[[?milestone: — stage {milestone}]], increment by audited increment.",
+        "stats": "Each stage cost more than the last; the escalation is the sport's oldest pricing model.",
+        "close": "{pool:ecGarage}"
+      }
+    },
+    {
+      "id": "ec.bankruptcy.report",
+      "event": "bankruptcyDeclared",
+      "headline": "{team} is bankrupt: the Dynasty ends",
+      "deck": "Breaking: the money is gone and the entry is withdrawn",
+      "summary": "{team} folded[[?amount: with the account at {amount}]] — the career ends.",
+      "sections": {
+        "lead": "It ends not with a chequered flag but with a ledger that will not balance. {team} is bankrupt[[?amount: — the final account reads {amount}]][[?venue: , the collapse sealed at {venue}]]. The entry is withdrawn; the garage goes quiet.",
+        "context": "{pool:ecPressure}",
+        "impact": "The cars, the drawings, the unpaid ambitions — all of it passes to the administrators. The championship continues without waiting.",
+        "close": "Every racing ledger ends at zero eventually. This one just arrived early."
+      }
+    },
+    {
+      "id": "ec.bankruptcy.retrospective",
+      "event": "bankruptcyDeclared",
+      "headline": "The team that ran out of road",
+      "deck": "Retrospective: how the money ended before the racing did",
+      "summary": "A retrospective on the collapse of {team}[[?amount: — final balance {amount}]].",
+      "sections": {
+        "lead": "Race teams rarely die of one bill. They die of arithmetic — deficit Sundays stacking quietly until the grace runs out. So it went at {team}[[?amount: , the books closing at {amount}]].",
+        "context": "{pool:ecPressure}",
+        "close": "The results stand. The debts, for once, do not transfer to the record book."
+      }
+    }
+  ]
+}

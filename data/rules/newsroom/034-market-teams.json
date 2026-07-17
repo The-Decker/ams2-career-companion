@@ -1,0 +1,419 @@
+{
+  "$comment": "Market and teams pack (mt.*): the whispers desk's driver-market coverage (offers, transfers, vacancies, signings, retirement talk - speculative stories are REPORTED, never asserted), era-voiced transfer confirmations, team rise/fall season reviews, and AI-world features (dominance eras, upsets, pole-to-flag clinics, lead changes). Follows 010-core.json exactly; eras are declared there. Read-side only - editing changes display, never replay.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "mt.offer.sourced",
+      "event": "offerReceived",
+      "desks": ["whispers"],
+      "headline": "Offer on the table: {subject} moves for {player}",
+      "deck": "Paddock Whispers: the approach is real, whatever gets denied by Friday",
+      "summary": "{subject} has put a contract offer in front of {player} for next season.",
+      "sections": {
+        "lead": "This column has watched {subject} circle for weeks; the circling is over. An offer for {player's} services now exists on actual paper - signed at one end, waiting at the other.",
+        "context": "The usual denials will be issued and should be filed where the usual denials go. Teams do not put ink on a page for drivers they are not serious about, and they do not leak it unless they want the pressure public.",
+        "next": "The only signature that matters now is {player's}. Until it lands, every motorhome on the pit lane counts itself an interested party.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.offer.1960s",
+      "event": "offerReceived",
+      "eras": ["1960s"],
+      "headline": "An approach from {subject}: {player} invited to discuss terms",
+      "deck": "Word from the driver market, {year}",
+      "summary": "{subject} has made a formal approach for the services of {player}.",
+      "sections": {
+        "lead": "It can now be reported that {subject} has approached {player} regarding a drive. The invitation was extended quietly, as these things are - over a handshake and a table, rather than through the newspapers.",
+        "context": "The market of this era runs on a driver's word: once given, that is the contract, and the paperwork follows at its leisure. {player} has given no word yet, and the better teams know not to hurry a man deciding his future.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.offer.smgp",
+      "event": "offerReceived",
+      "eras": ["smgp"],
+      "headline": "TRANSFER ALERT! {subject} WANTS {player}!",
+      "deck": "THE MARKET SCREEN IS FLASHING",
+      "summary": "{subject} has slid a contract across the table with {player's} name on it.",
+      "sections": {
+        "lead": "STOP THE PODIUM MUSIC: {subject} just made its move, and the contract on the table has {player's} name printed in the biggest font the printer had. The offer is REAL. The ink is WET. The whole ladder is watching.",
+        "impact": "SIGN IT? BIN IT? The choice screen is open and there is no countdown clock - but this market never waits long for anyone, and everybody in the paddock knows it.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.transfer.1960s",
+      "event": "playerTeamChanged",
+      "eras": ["1960s"],
+      "headline": "{player} to drive for {team} in {year}",
+      "deck": "The driver market resolves itself in {team's} favour",
+      "summary": "{player} will campaign the {year} season with {team}[[?rival: , the association with {rival} concluded]].",
+      "sections": {
+        "lead": "The matter is settled. {player} will drive for {team} in {year}, the agreement concluded in the manner of the age: a conversation, a handshake, and a quiet word to the press afterwards.[[?rival: The association with {rival} ends with courtesies observed on both sides.]]",
+        "context": "Drivers change teams the way ships change flags - what matters is the machinery below decks, not the colours above. What {team} has offered is a different set of promises about next year's motor car, and {player} has judged them the more convincing.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.transfer.backpage",
+      "event": "playerTeamChanged",
+      "eras": ["1970s", "1980s"],
+      "headline": "DONE DEAL! {player} signs for {team}",
+      "deck": "The worst-kept secret in the paddock is finally official",
+      "summary": "{player} has signed for {team} for {year}[[?rival: , walking out on {rival}]].",
+      "sections": {
+        "lead": "Clear the back page: {player} is {a:team} driver now, and everyone who swore blind it would never happen can start rehearsing their excuses.[[?rival: {rival} loses the name over its garage door and gains a hole in its plans the size of a cockpit.]]",
+        "impact": "Deals like this redraw the pit lane. Mechanics change shirts, engineers change loyalties, and somewhere this evening a team manager is already briefing against the move over a warm drink.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.transfer.digital",
+      "event": "playerTeamChanged",
+      "eras": ["1990s", "2000s", "2010s"],
+      "headline": "OFFICIAL: {player} joins {team} for {year}",
+      "deck": "Confirmed - the move the paddock called weeks ago",
+      "summary": "{player} to {team} is done[[?rival: ; the {rival} chapter is closed]].",
+      "sections": {
+        "lead": "The announcement dropped at nine sharp and spread faster than the press office could refresh: {player} to {team}, confirmed, effective {year}.[[?rival: {rival} released the standard hundred words of gratitude, which is how these marriages end now.]]",
+        "context": "Strip away the launch graphics and the move is pure racing logic: new engineers, new data, new political capital to spend. The stopwatch will audit the decision by the third round, and the stopwatch does not read press releases.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.transfer.smgp",
+      "event": "playerTeamChanged",
+      "eras": ["smgp"],
+      "headline": "{player} JUMPS TO {team}!",
+      "deck": "NEW COLOURS! NEW GARAGE! SAME MISSION!",
+      "summary": "{player} takes the wheel at {team} for the new campaign.",
+      "sections": {
+        "lead": "CONTRACT SIGNED! HELMET PACKED! {player} walks into {team's} garage tomorrow morning and the paint shop is already on overtime.[[?rival: {rival} waves goodbye to the name on the door - the ladder giveth, the ladder taketh away.]]",
+        "impact": "NEW TEAM MEANS NEW MACHINE: fresh mechanics, fresh setup sheets, and a fresh stack of promises about the season ahead. The scoreboard decides who won this trade, and the scoreboard has no favourites.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.seat-open.frame",
+      "event": "seatVacancy",
+      "desks": ["whispers"],
+      "headline": "Who gets the drive? The paddock's emptiest seat[[?subject: after {subject's} exit]]",
+      "deck": "Paddock Whispers: a shortlist is forming, whether the team admits it or not",
+      "summary": "A race seat is open, and this column hears the shortlist is already three names long.",
+      "sections": {
+        "lead": "An open cockpit is the loudest silence in racing[[?subject: , and {subject's} departure has left exactly that]]. Officially there is no shortlist. Unofficially, this column understands the first telephone calls were made before the seat was cold.",
+        "context": "Treat what follows as what it is - paddock talk, not paperwork. But the talk is consistent: a proven name looking for a way back, a young charger with backing attached, and a wildcard nobody will confirm over the record. It is understood the team would rather sign quickly than sign perfectly.",
+        "next": "Nothing is decided, and this column asserts nothing. Watch the motorhomes instead: the candidate seen at breakfast twice is usually the one who signs.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.seat-open.smgp",
+      "event": "seatVacancy",
+      "eras": ["smgp"],
+      "headline": "SEAT OPEN! WHO TAKES THE WHEEL?",
+      "deck": "ONE EMPTY COCKPIT - A LADDER FULL OF VOLUNTEERS",
+      "summary": "A cockpit is going spare somewhere on the grid. Rumour levels: MAXIMUM.",
+      "sections": {
+        "lead": "AN EMPTY SLOT ON THE BIG BOARD![[?subject: {subject} has stepped away, and]] somewhere in this paddock a race seat is going spare - and every hopeful on the ladder heard the same rumour at the same second.",
+        "impact": "RUMOUR METER: RISING. Half the paddock claims to know nothing, which on this ladder means everybody knows something. Applications, as ever, are accepted at racing speed only.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.seat-filled.dominoes",
+      "event": "seatFilled",
+      "headline": "Musical chairs ends: {subject} lands the vacant drive",
+      "deck": "Driver market: one signature, several consequences",
+      "summary": "{subject} has been confirmed in the open seat[[?reason: at {reason}]].",
+      "sections": {
+        "lead": "Every silly season ends the same way - suddenly. {subject} has the vacant drive[[?reason: at {reason}]], the announcement brief, the negotiations behind it anything but.",
+        "context": "One signing settles nothing; it reprices everyone. The drivers who wanted that seat now want somebody else's, and the teams that hesitated are quietly working out what the hesitation cost.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.seat-filled.column-called-it",
+      "event": "seatFilled",
+      "desks": ["whispers"],
+      "headline": "As whispered here first: {subject} takes the seat",
+      "deck": "Paddock Whispers: the rumour becomes a signature",
+      "summary": "{subject} signs for the open drive[[?reason: at {reason}]] - much as the paddock murmured.",
+      "sections": {
+        "lead": "Regular readers will permit this column one small bow. The name murmured over coffee weeks ago is the name on the contract today: {subject}, confirmed in the open seat[[?reason: at {reason}]].",
+        "context": "For the record, the team denied it twice. Denials in this paddock are best read as timetables - they tell you not whether, but when.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.retire-talk.sourced",
+      "event": "retirementConsidered",
+      "headline": "Quiet talk: is {subject} thinking about stopping?",
+      "deck": "Veteran watch - reported, not confirmed",
+      "summary": "Paddock sources suggest {subject} may be weighing retirement. Nothing is announced, and nothing may be.",
+      "sections": {
+        "lead": "This is reported as talk, because talk is all it is: people who know {subject} well say the subject of stopping has come up more than once lately[[?milestone: , and the number {milestone} keeps featuring in the arithmetic]].",
+        "context": "It must be said plainly - there is no announcement, no decision, and those closest to the driver insist none is imminent. But veterans do their sums in private long before they share the total, and the sums, it is said, are being done.",
+        "next": "If it is true, the paddock will know soon enough; these things announce themselves in testing lists and contract lengths. If it is not, {subject} has a grid full of doubters to answer the only way drivers ever have.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.retire-talk.non-denial",
+      "event": "retirementConsidered",
+      "headline": "{subject} declines to say the one word that would end the story",
+      "deck": "Veteran watch: a non-denial keeps the question alive",
+      "summary": "Asked about the future, {subject} is understood to have left every door open. The paddock noticed.",
+      "sections": {
+        "lead": "The story is not what was said; it is what was not. Offered every chance to close the retirement question for good, {subject} is understood to have answered with everything except the word no.",
+        "context": "Non-denials are a currency this paddock knows how to value. Perhaps the driver is genuinely undecided. Perhaps the silence is tactical - contracts read differently when walking away is plausible. This column reports the silence and declines to fill it.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.retire-talk.smgp",
+      "event": "retirementConsidered",
+      "eras": ["smgp"],
+      "headline": "RETIREMENT RUMOUR! IS {subject} HANGING UP THE HELMET?",
+      "deck": "SOURCES SAY MAYBE! SOURCES ALSO SAY MAYBE NOT!",
+      "summary": "The ladder is buzzing that {subject} might be done. Nobody has confirmed a single thing.",
+      "sections": {
+        "lead": "RUMOUR KLAXON! Word is racing round the paddock that {subject} has been eyeing the exit door[[?milestone: - something about the number {milestone}]]. Is it true? UNCONFIRMED. Is everyone talking about it anyway? ABSOLUTELY.",
+        "context": "FACT CHECK: no statement, no farewell tour, no cardboard boxes stacked outside the garage. Until the big board says otherwise, this stays filed under RUMOUR - in the largest letters available.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.farewell.long-view",
+      "event": "driverRetired",
+      "desks": ["slipstream"],
+      "headline": "The long goodbye: {subject} steps out of the cockpit",
+      "deck": "A career closes, and the paddock starts measuring it",
+      "summary": "{subject} has retired from the championship. The stopwatch has lost an old adversary.",
+      "sections": {
+        "lead": "Careers in this sport do not really end at a press conference; they end quietly, in the moment a driver stops believing the next lap will be faster than the last. {subject} has reached that moment, and had the grace to say so out loud.",
+        "context": "The record will be argued over all winter - the wins weighed against the misfortunes, the seasons of promise against the seasons of patience. The paddock measures its own more honestly than any statistician: by who lifted when the flags came out, and who did not.",
+        "next": "The cockpit passes on, as cockpits always do. Somewhere down the ladder a young driver just moved up a rung without knowing why.",
+        "close": "The garages will tell {subject} stories for years. That is the only retirement fund this sport has ever guaranteed."
+      }
+    },
+    {
+      "id": "mt.farewell.1960s",
+      "event": "driverRetired",
+      "eras": ["1960s"],
+      "headline": "{subject} retires from Grand Prix racing",
+      "deck": "A respected name withdraws from the entry lists",
+      "summary": "{subject} has announced retirement from the sport.",
+      "sections": {
+        "lead": "It is announced, with the customary brevity, that {subject} will not race again. The statement ran to a few lines; the career it closed ran rather longer.",
+        "context": "In an era when drivers climb from these motor cars and count themselves fortunate, one who chooses the manner of departure has won something the tables do not record.",
+        "close": "The paddock raises a glass, and the entry lists grow one name shorter."
+      }
+    },
+    {
+      "id": "mt.farewell.smgp",
+      "event": "driverRetired",
+      "eras": ["smgp"],
+      "headline": "LEGEND LOGS OFF: {subject} RETIRES!",
+      "deck": "ONE LAST LAP OF HONOUR FOR A LADDER GREAT",
+      "summary": "{subject} has retired. The big board dims one name tonight.",
+      "sections": {
+        "lead": "GAME OVER - AND WHAT A GAME IT WAS. {subject} is parking the machine for good, and the whole ladder is on its feet for the send-off.",
+        "impact": "The rulebook says the grid refills itself. The grandstand says some slots are never really refilled. Both are correct, and only one of them is worth printing.",
+        "close": "THANK YOU FOR PLAYING, CHAMP. THE HIGH SCORE TABLE REMEMBERS."
+      }
+    },
+    {
+      "id": "mt.team-rise.review",
+      "event": "teamPromoted",
+      "headline": "On the way up: the season {subject} turned the corner",
+      "deck": "Team performance review, {year}",
+      "summary": "{subject} ends {year} demonstrably quicker than it started - and the order above has noticed.",
+      "sections": {
+        "lead": "Progress in this sport is invisible right up until it is not. {subject} spent the season stacking unglamorous gains - a tenth found here, a cleaner weekend there - and the {year} order has now paid out the compound interest.",
+        "stats": "The garages measure a rising team by boring numbers: fewer failures, tidier stops, grid slots that stopped being lottery tickets. On every one of those ledgers, {subject} closed {year} in credit.",
+        "next": "The hard part starts now. The midfield forgives ambition; the front rank taxes it. This season earned {subject} a seat at a far more expensive table.",
+        "close": "{pool:mtShop}"
+      }
+    },
+    {
+      "id": "mt.team-rise.shopfloor",
+      "event": "teamPromoted",
+      "headline": "Built, not bought: the machinery behind {subject's} rise",
+      "deck": "Inside the operation the competitive order now takes seriously",
+      "summary": "{subject's} climb up the order was manufactured on the shop floor, one revision at a time.",
+      "sections": {
+        "lead": "Ask the drivers why {subject} moved up the order and they will talk about grip. Ask the engineers and they will show you a parts log: revisions shipped on schedule, failures chased to root cause, a machine that ended the season a different animal from the one that started it.",
+        "reliability": "{pool:wrenchNote}",
+        "impact": "A rival can copy a wing in a fortnight. Copying an operation takes years, and that is the moat {subject} spent this season digging.",
+        "close": "{pool:mtShop}"
+      }
+    },
+    {
+      "id": "mt.team-fall.review",
+      "event": "teamRelegated",
+      "headline": "The slide: {subject's} season of losing ground",
+      "deck": "Team performance review, {year}",
+      "summary": "{subject} ends {year} lower in the competitive order than it began, and the reasons are not mysterious.",
+      "sections": {
+        "lead": "Decline in racing is rarely one disaster; it is a season of Sundays that each cost half a step. {subject} finishes {year} looking up at teams it used to run alongside, and the timing sheets have been saying so for months.",
+        "context": "Standing still is this sport's most expensive activity. While {subject} consolidated, the order behind invested - and the order does not send warnings, only invoices.",
+        "next": "Winter is the only transfer window that matters for a team in this position: budget, people, and an honest reckoning of which of the two ran out first.",
+        "close": "{pool:mtShop}"
+      }
+    },
+    {
+      "id": "mt.team-fall.pressure",
+      "event": "teamRelegated",
+      "headline": "Money, mood and {subject}: the questions behind the slump",
+      "deck": "The slide down the order has the paddock asking who pays for it",
+      "summary": "{subject's} lost season has consequences beyond the timing sheets - or so the paddock believes.",
+      "sections": {
+        "lead": "The stopwatch delivered its verdict on {subject} some time ago; the interesting arguments are the ones that verdict has started. Sponsors notice a slide long before headline writers do, and the mood inside the operation is reported as somewhere between determined and tense.",
+        "context": "None of what follows is confirmed, and all of it is being said: that budgets are under review, that patience upstairs is thinner than the press releases, that more than one CV has been quietly refreshed. Slumps write this same story every time; only the letterhead changes.",
+        "close": "{pool:mtBuzz}"
+      }
+    },
+    {
+      "id": "mt.ai-streak.dominance-era",
+      "event": "aiWinStreak",
+      "when": { "minStreak": 4 },
+      "headline": "An era, not a streak: {streak} straight for {subject}",
+      "deck": "The championship has a defining force now[[?team: , and it wears {team's} colours]]",
+      "summary": "{subject} has won {streak} in a row. The word for that is no longer form; it is an era.",
+      "sections": {
+        "lead": "There is a point where a run of wins stops being a statistic and starts being the weather - something every other team plans around rather than against. {subject} passed that point today[[?venue: at {venue}]]: {streak} consecutive victories, and no forecast of change.",
+        "context": "Eras of dominance need three things at once: the fastest car, the driver extracting all of it, and an organisation making zero unforced errors. Remove any one and the run dies. Nobody has removed any of the three.",
+        "stats": "History is blunt about sequences like this: they end, but rarely because the chasing pack catches up. They end from within - a rule change, a broken part, a bad winter. The rest of the grid is now officially waiting for one of those.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "mt.ai-streak.smgp",
+      "event": "aiWinStreak",
+      "eras": ["smgp"],
+      "when": { "minStreak": 2 },
+      "headline": "{subject} WINS AGAIN! {streak} IN A ROW!",
+      "deck": "SOMEBODY CHECK THAT MACHINE FOR CHEAT CODES",
+      "summary": "{subject} makes it {streak} straight. The rest of the grid is officially on notice.",
+      "sections": {
+        "lead": "{pool:dateline} SAME NAME! TOP SLOT! AGAIN! {subject} took another one[[?venue: at {venue}]] and the streak counter clicks over to {streak}. The big board is running out of ways to spell the same result.",
+        "impact": "EVERYBODY ELSE: consider this your official wake-up siren. Streaks on this ladder do not break themselves - somebody has to walk up and take one.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "mt.upset.1960s",
+      "event": "upsetWinner",
+      "eras": ["1960s"],
+      "headline": "A famous upset: victory for {subject}[[?winnerTeam: and {winnerTeam}]]",
+      "deck": "The order of things is overturned[[?venue: at {venue}]]",
+      "summary": "{subject} has won a race the form book had assigned to grander garages.",
+      "sections": {
+        "lead": "Let it be recorded that the established order was overturned[[?venue: at {venue}]]: victory for {subject}[[?winnerTeam: , and for the modest garage of {winnerTeam}]], against machinery of considerably deeper purse.",
+        "context": "The grand teams will call it an aberration, which is what grand teams call every result they did not author. The privateers will call it proof, and toast it accordingly.",
+        "close": "Results such as this are the reason the entry lists stay full."
+      }
+    },
+    {
+      "id": "mt.upset.backpage",
+      "event": "upsetWinner",
+      "eras": ["1970s", "1980s"],
+      "headline": "GIANT-KILLERS! {subject} stuns the big boys[[?venue: at {venue}]]",
+      "deck": "The result nobody priced[[?winnerTeam: - and {winnerTeam} will dine on it for a decade]]",
+      "summary": "{subject} won. Yes, really. The paddock is still checking the timing monitors.",
+      "sections": {
+        "lead": "Somebody photocopy the results sheet before it changes its mind: {subject} beat the lot of them[[?venue: at {venue}]][[?winnerTeam: in {winnerTeam} colours]], and the big-budget motorhomes have gone very quiet indeed.",
+        "impact": "Upsets are this sport's tax on arrogance. Every giant on that grid just got the bill, and every little team got a poster for the workshop wall.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "mt.upset.smgp",
+      "event": "upsetWinner",
+      "eras": ["smgp"],
+      "headline": "UPSET! UPSET! {subject} SHOCKS THE LADDER!",
+      "deck": "THE FORM BOOK JUST GOT THROWN IN THE HARBOUR",
+      "summary": "{subject} wins from nowhere[[?winnerTeam: for {winnerTeam}]]. Crowd status: DELIRIOUS.",
+      "sections": {
+        "lead": "{pool:dateline} NOBODY SAW THIS COMING - NOT THE ODDS BOARD, NOT THE PADDOCK, POSSIBLY NOT EVEN {subject}! The flag drops[[?venue: at {venue}]] and the name at the top of the tower is the wrong one in the best possible way.",
+        "impact": "THIS is why the little garages keep turning up: one perfect day and the whole ladder has to learn your name. Consider it learned.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "mt.clinic.anatomy",
+      "event": "dominantDisplay",
+      "desks": ["titlewatch"],
+      "headline": "Anatomy of a rout: {subject} from the front[[?venue: at {venue}]]",
+      "deck": "Post-race analysis: what total control actually looks like",
+      "summary": "Pole, the start, every lap that mattered: {subject} owned the weekend end to end.",
+      "sections": {
+        "lead": "Strip the romance off and read it like a ledger: fastest on Saturday, first through the opening corner, never headed when it counted. {subject} did not so much win this race as administer it.",
+        "stats": "Dominance shows up in the numbers nobody prints: gaps managed rather than chased, no scrambles, no favours needed from anyone else's misfortune. Every line of the timing sheet says the same quiet thing - control.",
+        "impact": "[[?team: For {team}, the message travels beyond one Sunday: this package converts a front-row Saturday into an untouchable Sunday, and every rival strategist now has to plan for that.]] The rest of the field left with points. {subject} left with an argument.",
+        "close": "{pool:paddockBuzz}"
+      }
+    },
+    {
+      "id": "mt.lead-swap.ledger",
+      "event": "leadChangedHands",
+      "desks": ["titlewatch"],
+      "headline": "The table turns: {subject} now heads the championship ledger",
+      "deck": "Title Watch: the standings crown a new frontrunner[[?rival: at {rival's} expense]]",
+      "summary": "{subject} takes over the championship lead[[?rival: from {rival}]].",
+      "sections": {
+        "lead": "Championships are decided in the spring rounds as much as the autumn ones; the table just declines to admit it until later. Today the ledger flipped: {subject} is the new name at the top[[?rival: , and {rival} is suddenly the pursuer]][[?round: after round {round}]].",
+        "championship": "{pool:champChatter} [[?gap: The working margin is {gap} points - which is a fact, not a cushion.]]",
+        "next": "Front-running changes a team's arithmetic: strategy turns conservative, rivals turn brave, and every small mistake is suddenly priced in points. The new leader learns this immediately or expensively.",
+        "close": "{pool:paddockBuzz}"
+      }
+    }
+  ],
+  "pools": {
+    "mtBuzz": {
+      "1960s": [
+        "The gentlemen of the press have been asked, politely, not to speculate. They will, of course.",
+        "Much was discussed over dinner, and very little of it was the wine."
+      ],
+      "1980s": [
+        "The motorhome curtains are drawn, which tells you everything.",
+        "Somebody's manager spent an hour on the payphone. Draw your own conclusions."
+      ],
+      "2010s": [
+        "The announcement account is drafting something; the paddock can feel it.",
+        "The denials are already written. So, reportedly, is the announcement."
+      ],
+      "smgp": [
+        "THE RUMOUR TICKER HAS NOT STOPPED SCROLLING SINCE.",
+        "MARKET STATUS: EXTREMELY OPEN FOR BUSINESS."
+      ],
+      "default": [
+        "The driver market never closes; it only lowers its voice.",
+        "Managers were seen comparing notes afterwards, which is never nothing.",
+        "Every contract in the paddock just got quietly re-read.",
+        "The silly season keeps its own calendar, and it shows nobody the whole page."
+      ]
+    },
+    "mtShop": {
+      "1960s": [
+        "The lathes will turn late into the winter.",
+        "In the workshops the kettles are on and the panel beaters have opinions."
+      ],
+      "2010s": [
+        "The wind tunnel booking sheet is full through the new year.",
+        "The factory floor heard the news by simulation run, not press release."
+      ],
+      "smgp": [
+        "BACK AT THE WORKSHOP, THE WRENCHES ARE ALREADY SINGING.",
+        "THE GARAGE LIGHTS STAY ON ALL NIGHT ON THIS LADDER."
+      ],
+      "default": [
+        "Championships are won in winter, in buildings without grandstands.",
+        "The shop floor knew before the press release did; it always does.",
+        "Somewhere in the factory, next season is already on a drawing board."
+      ]
+    }
+  }
+}
