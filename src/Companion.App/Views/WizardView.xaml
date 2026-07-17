@@ -820,11 +820,12 @@
                                             <StackPanel Grid.Column="4" VerticalAlignment="Center">
                                                 <Grid Width="112" Height="112" HorizontalAlignment="Center">
                                                     <Border Style="{StaticResource AssetPlaceholderFrame}"
-                                                            BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1">
+                                                            BorderBrush="{DynamicResource EdgeBrush}" BorderThickness="1"
+                                                            Visibility="{Binding ElementName=WizTeamCardLogo, Path=Source, Converter={StaticResource NullVisible}}">
                                                         <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
                                                                    FontSize="36" />
                                                     </Border>
-                                                    <Image Stretch="Uniform" Margin="10" IsHitTestVisible="False"
+                                                    <Image x:Name="WizTeamCardLogo" Stretch="Uniform" Margin="10" IsHitTestVisible="False"
                                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                                                            Source="{Binding TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
@@ -910,9 +911,6 @@
                                                 <DataTrigger Binding="{Binding IsIncluded}" Value="True">
                                                     <Setter Property="Background" Value="{DynamicResource AccentDimBrush}" />
                                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsUnlocked}" Value="False">
-                                                    <Setter Property="Opacity" Value="0.72" />
                                                 </DataTrigger>
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="BorderBrush" Value="{DynamicResource AccentHoverBrush}" />
@@ -1015,11 +1013,12 @@
                                     <Grid Width="44" Height="44" HorizontalAlignment="Left"
                                           VerticalAlignment="Top" Margin="-5,-5,0,0">
                                         <Border Style="{StaticResource AssetPlaceholderFrame}"
-                                                BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1">
+                                                BorderBrush="{DynamicResource EdgeStrongBrush}" BorderThickness="1"
+                                                Visibility="{Binding ElementName=WizSeatTeamLogo, Path=Source, Converter={StaticResource NullVisible}}">
                                             <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
                                                        FontSize="18" />
                                         </Border>
-                                        <Image Stretch="Uniform" Margin="4" IsHitTestVisible="False"
+                                        <Image x:Name="WizSeatTeamLogo" Stretch="Uniform" Margin="4" IsHitTestVisible="False"
                                                RenderOptions.BitmapScalingMode="NearestNeighbor"
                                                Source="{Binding SelectedSeat.TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
@@ -1121,7 +1120,7 @@
                         <TextBlock Text="Career name" Style="{StaticResource Muted}" Margin="0,0,0,4" />
                         <TextBox Text="{Binding CareerName, UpdateSourceTrigger=PropertyChanged}" FontSize="15" />
 
-                        <TextBlock Text="Master seed (drives every generated grid — same seed, same season)"
+                        <TextBlock Text="Master seed"
                                    Style="{StaticResource Muted}" Margin="0,14,0,4" />
                         <DockPanel>
                             <Button DockPanel.Dock="Right" Content="Randomize" Margin="10,0,0,0"
@@ -1251,6 +1250,10 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- SMGP resolves its authored field and installed skin state automatically.
+                             Keep the optional AI-file baseline controls as a historical-career detail. -->
+                        <StackPanel x:Name="InstalledBaselineOptions"
+                                    Visibility="{Binding IsSmgpPack, Converter={StaticResource BoolCollapsed}}">
                         <!-- NAMeS-first baseline import (locked decision #7a): DEFAULT ON when
                              the installed class XML parses; shows the import diff summary -->
                         <Border Style="{StaticResource Panel}" Margin="0,18,0,0"
@@ -1275,6 +1278,7 @@
                                        Text="{Binding BaselineImportError, StringFormat='Your installed AI file could not be read — the pack baseline will be used instead. ({0})'}" />
                         </Border>
 
+                        </StackPanel>
                         <Border Style="{StaticResource Panel}" Margin="0,18,0,0">
                             <StackPanel>
                                 <TextBlock Text="Season rules" FontWeight="SemiBold" Margin="0,0,0,6" />
@@ -1287,9 +1291,6 @@
                                 </ItemsControl>
                             </StackPanel>
                         </Border>
-
-                        <TextBlock Style="{StaticResource Faint}" Margin="0,12,0,0" TextWrapping="Wrap"
-                                   Text="Difficulty note: choose one in-game AI strength and keep it for the whole season so the competitive order stays consistent." />
 
                         <TextBlock Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap" Margin="0,12,0,0"
                                    Text="{Binding CreateError}"

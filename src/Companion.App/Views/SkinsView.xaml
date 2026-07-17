@@ -213,7 +213,8 @@
                                     HorizontalAlignment="Left" Margin="0,7,0,0">
                                 <Grid>
                                     <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                               FontSize="46" />
+                                               FontSize="46"
+                                               Visibility="{Binding ElementName=SelectedTeamLogoPreview, Path=Source, Converter={StaticResource NullVisible}}" />
                                     <Image x:Name="SelectedTeamLogoPreview" Stretch="Uniform" Margin="8"
                                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                                            Source="{Binding SelectedCar.TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
@@ -307,8 +308,9 @@
                                         VerticalAlignment="Top">
                                     <Grid>
                                         <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}"
-                                                   FontSize="16" />
-                                        <Image Stretch="Uniform" Margin="3"
+                                                   FontSize="16"
+                                                   Visibility="{Binding ElementName=RowTeamLogo, Path=Source, Converter={StaticResource NullVisible}}" />
+                                        <Image x:Name="RowTeamLogo" Stretch="Uniform" Margin="3"
                                                RenderOptions.BitmapScalingMode="NearestNeighbor"
                                                Source="{Binding TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
