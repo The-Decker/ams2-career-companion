@@ -216,7 +216,7 @@
                                                FontSize="46"
                                                Visibility="{Binding ElementName=SelectedTeamLogoPreview, Path=Source, Converter={StaticResource NullVisible}}" />
                                     <Image x:Name="SelectedTeamLogoPreview" Stretch="Uniform" Margin="8"
-                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                           Style="{StaticResource TeamLogoImage}"
                                            Source="{Binding SelectedCar.TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                 </Grid>
@@ -311,7 +311,7 @@
                                                    FontSize="16"
                                                    Visibility="{Binding ElementName=RowTeamLogo, Path=Source, Converter={StaticResource NullVisible}}" />
                                         <Image x:Name="RowTeamLogo" Stretch="Uniform" Margin="3"
-                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                               Style="{StaticResource TeamLogoImage}"
                                                Source="{Binding TeamLogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                     </Grid>

@@ -62,6 +62,7 @@
                     </Border>
                     <Border CornerRadius="6" ClipToBounds="True">
                         <Image Stretch="Uniform" Margin="4"
+                               Style="{StaticResource TeamLogoImage}"
                                Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                     </Border>
@@ -342,6 +343,7 @@
                             </Border>
                             <Border CornerRadius="10" ClipToBounds="True">
                                 <Image Stretch="Uniform" Margin="10"
+                                       Style="{StaticResource TeamLogoImage}"
                                        Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                             </Border>

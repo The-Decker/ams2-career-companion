@@ -264,6 +264,13 @@
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
+    <!-- Team crests are smooth, transparent renders (not pixel art), so they scale best with
+         high-quality (Fant) filtering. Every team-logo Image references this one style so the
+         crisp look from the starting grid is applied identically app-wide — one dial to tune. -->
+    <Style x:Key="TeamLogoImage" TargetType="Image">
+        <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
+    </Style>
+
     <!-- ===== buttons ===== -->
     <Style TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />

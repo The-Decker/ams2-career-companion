@@ -826,7 +826,7 @@
                                                                    FontSize="36" />
                                                     </Border>
                                                     <Image x:Name="WizTeamCardLogo" Stretch="Uniform" Margin="10" IsHitTestVisible="False"
-                                                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                           Style="{StaticResource TeamLogoImage}"
                                                            Source="{Binding TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                            Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                                 </Grid>
@@ -1019,7 +1019,7 @@
                                                        FontSize="18" />
                                         </Border>
                                         <Image x:Name="WizSeatTeamLogo" Stretch="Uniform" Margin="4" IsHitTestVisible="False"
-                                               RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                               Style="{StaticResource TeamLogoImage}"
                                                Source="{Binding SelectedSeat.TeamId, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                     </Grid>

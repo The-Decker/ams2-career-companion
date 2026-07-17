@@ -426,6 +426,7 @@
                                             <TextBlock Text="&#xE7C1;" Style="{StaticResource AssetPlaceholderGlyph}" FontSize="21"
                                                        Visibility="{Binding ElementName=HubTeamLogo, Path=Source, Converter={StaticResource NullVisible}}" />
                                             <Image x:Name="HubTeamLogo" Stretch="Uniform" Margin="5" IsHitTestVisible="False"
+                                                   Style="{StaticResource TeamLogoImage}"
                                                    Source="{Binding LogoKey, Converter={StaticResource AssetImage}, ConverterParameter=smgp/logos}"
                                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=Source, Converter={StaticResource NullCollapsed}}" />
                                         </Grid>
