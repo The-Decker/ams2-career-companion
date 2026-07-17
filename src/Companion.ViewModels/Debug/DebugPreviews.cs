@@ -34,15 +34,33 @@ public static class DebugPreviews
     /// <summary>An arbitrary character level (1–300) on the Driver tab — the classic "preview a
     /// progression screen I cannot grind to". Builds a real <see cref="CharacterDossier"/> at the
     /// requested level from the character rules, so the projection is authentic even though no fold
-    /// ever produced it.</summary>
+    /// ever produced it. <paramref name="racingDnaId"/> swaps the preview character's Racing DNA to
+    /// any catalog identity (a contextual DNA would fail REAL creation validation — a preview never
+    /// creates, and the dossier renders the authored identity straight from the catalog);
+    /// <paramref name="completedSeasons"/> sets the mastery-track position (&lt; 0 = fully mastered).</summary>
     public static PreviewCareerSession Level(
         SeasonPack pack,
         CharacterRules characterRules,
         RacingDnaCatalog? dna,
         MasterySkillCatalog? mastery,
-        int level)
+        int level,
+        string? racingDnaId = null,
+        int completedSeasons = -1)
     {
         var character = DebugCareerFactory.DefaultCharacter($"Level {level} Driver");
+        if (racingDnaId is not null &&
+            dna?.Definitions.FirstOrDefault(
+                d => string.Equals(d.Id, racingDnaId, StringComparison.Ordinal)) is { } definition)
+        {
+            character = character with
+            {
+                RacingDnaId = definition.Id,
+                RacingDnaVersion = definition.Version,
+                RacingDnaChoice = definition.Choice is { Required: true } choice
+                    ? choice.Options.FirstOrDefault()
+                    : null,
+            };
+        }
         int clamped = Math.Clamp(level, 1, CharacterLevelProgression.Level300Max);
         long xp = CharacterLevelProgression.CumulativeXpToLevel(
             character.ProgressionVersion, clamped, characterRules);
@@ -58,12 +76,16 @@ public static class DebugPreviews
             Year = 1990,
             ChampionshipRoundCount = 16,
         });
+        int seasons = Math.Clamp(
+            completedSeasons < 0 ? plan.MasterySeason : completedSeasons,
+            0,
+            plan.MasterySeason);
 
         var dossier = CharacterDossier.Build(
             character, clamped, xp, characterRules,
             age: character.Age,
             campaignProgressionPlan: plan,
-            completedSeasons: plan.MasterySeason,
+            completedSeasons: seasons,
             masterySkills: mastery,
             racingDnaCatalog: dna);
 

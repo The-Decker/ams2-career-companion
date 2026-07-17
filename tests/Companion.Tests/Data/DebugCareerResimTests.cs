@@ -79,11 +79,153 @@ public sealed class DebugCareerResimTests : IDisposable
             $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
     }
 
-    private CareerEnvironment Environment()
+    [Fact]
+    public void DebugCreatedSmgpCareer_JumpedToSeasonThree_ResimulatesByteIdentical()
+    {
+        const long seed = 20260717;
+        string packDirectory = Path.Combine(PacksRoot, "smgp-ladder");
+        TestPackBuilder.Write(SmgpLadderPack(), packDirectory);
+        var environment = Environment(FiveSeatLibrary());
+
+        string careerPath = Path.Combine(_root, "careers", "debug-smgp.ams2career");
+        var request = DebugCareerFactory.BuildRequest(
+            packDirectory, careerPath, CareerExperienceModes.Smgp, seed, playerLivery: PlayerSeat);
+
+        ICareerSession session = CareerSessionService.CreateCareer(request, environment);
+        try
+        {
+            session = DebugCareerFactory.AdvanceSmgpToSeason(session, 3, old =>
+            {
+                (old as IDisposable)?.Dispose();
+                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+                return CareerSessionService.OpenCareer(careerPath, environment);
+            }, out string note);
+
+            // Reached the target through real INPUT seams only, with no early-stop note.
+            Assert.Equal("", note);
+            Assert.Equal(3, session.CurrentSmgpBriefing()?.SeasonOrdinal);
+        }
+        finally
+        {
+            (session as IDisposable)?.Dispose();
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+        }
+
+        using var db = CareerDatabase.Open(careerPath);
+        var rules = environment.Rules;
+        var report = ReplayService.Resimulate(db, unchecked((ulong)seed), new ReplaySimInputs
+        {
+            AgingCurves = rules.AgingCurves,
+            Archetypes = rules.Archetypes,
+            Headlines = rules.Headlines,
+            PlayerDriverId = Companion.Core.Grid.RoundGridResolver.SyntheticPlayerDriverId,
+            PlayerAge = 22,
+            CharacterRules = rules.Character,
+            MasterySkills = rules.MasterySkills,
+        });
+
+        Assert.True(
+            report.Identical,
+            $"diverged: {report.FirstDivergence?.Reason} " +
+            $"stored={report.FirstDivergence?.StoredDeltaJson} " +
+            $"regenerated={report.FirstDivergence?.RegeneratedDeltaJson}");
+        Assert.True(report.ComparedRows > 0);
+    }
+
+    // ---------- SMGP scaffolding (mirrors SmgpMultiSeasonDnqTests' ladder shape) ----------
+
+    private const string PlayerSeat = "Stock Livery #3"; // team.c — a midfield start on the ladder
+
+    /// <summary>Five one-driver teams down the ladder over the REQUIRED 16-round replica season
+    /// (the bounded SMGP campaign plan rejects any other round count), each round capping the grid
+    /// at 4 — the minimal SMGP-shape pack a real SMGP career can be created from.</summary>
+    private static SeasonPack SmgpLadderPack()
+    {
+        var basePack = TestPackBuilder.TwoRoundPack();
+        var grid = new PackRoundGrid
+        {
+            Size = 4,
+            StarterDriverIds = ["driver.a", "driver.b", "driver.c", "driver.d"],
+        };
+        var template = basePack.Season.Rounds[0] with { Grid = grid };
+        return basePack with
+        {
+            Manifest = basePack.Manifest with
+            {
+                PackId = "smgp-ladder",
+                Name = "SMGP Ladder",
+                CareerStyle = Companion.Core.Smgp.SmgpRules.CareerStyle,
+            },
+            Teams =
+            [
+                SmgpTeam("team.a", 5), SmgpTeam("team.b", 4), SmgpTeam("team.c", 3),
+                SmgpTeam("team.d", 2), SmgpTeam("team.e", 3),
+            ],
+            Drivers =
+            [
+                TestPackBuilder.Driver("driver.a"), TestPackBuilder.Driver("driver.b"),
+                TestPackBuilder.Driver("driver.c"), TestPackBuilder.Driver("driver.d"),
+                TestPackBuilder.Driver("driver.e"),
+            ],
+            Entries = new[]
+            {
+                TestPackBuilder.Entry("team.a", "driver.a", "1", "Stock Livery #1"),
+                TestPackBuilder.Entry("team.b", "driver.b", "2", "Stock Livery #2"),
+                TestPackBuilder.Entry("team.c", "driver.c", "3", PlayerSeat),
+                TestPackBuilder.Entry("team.d", "driver.d", "4", "Stock Livery #4"),
+                TestPackBuilder.Entry("team.e", "driver.e", "5", "Stock Livery #5"),
+            }.Select(entry => entry with { Rounds = "1-16" }).ToArray(),
+            Season = basePack.Season with
+            {
+                Year = 1990,
+                Rounds = Enumerable.Range(1, 16).Select(round => template with
+                {
+                    Round = round,
+                    Name = round == 16 ? "Monaco" : $"Campaign Round {round}",
+                    Date = $"1990-01-{round:00}",
+                }).ToArray(),
+            },
+        };
+    }
+
+    private static PackTeam SmgpTeam(string id, int prestige) => new()
+    {
+        Id = id,
+        Name = id,
+        CarVehicleIds = [TestPackBuilder.VintageCar],
+        Reliability = 0.93,
+        Prestige = prestige,
+        BudgetTier = prestige,
+    };
+
+    private static Companion.Ams2.ContentLibrary.Ams2ContentLibrary FiveSeatLibrary()
+    {
+        var library = TestPackBuilder.Library();
+        return new()
+        {
+            ExtractedFrom = library.ExtractedFrom,
+            Classes = library.Classes,
+            Vehicles = library.Vehicles,
+            Tracks = library.Tracks,
+            Liveries = new Dictionary<string, Companion.Ams2.ContentLibrary.Ams2LiveryClassEntry>(
+                StringComparer.Ordinal)
+            {
+                [TestPackBuilder.VintageClass] = new()
+                {
+                    Name = TestPackBuilder.VintageClass,
+                    StockLib1563 =
+                        ["Stock Livery #1", "Stock Livery #2", PlayerSeat, "Stock Livery #4", "Stock Livery #5"],
+                },
+            },
+        };
+    }
+
+    private CareerEnvironment Environment(
+        Companion.Ams2.ContentLibrary.Ams2ContentLibrary? library = null)
     {
         var environment = ViewModelTestData.Environment(
             documentsDirectory: Path.Combine(_root, "documents"),
-            library: TestPackBuilder.Library());
+            library: library ?? TestPackBuilder.Library());
         environment.PackSearchRoots = () => [PacksRoot];
         return environment;
     }

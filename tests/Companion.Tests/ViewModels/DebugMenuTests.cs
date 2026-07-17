@@ -244,6 +244,132 @@ public sealed class DebugMenuTests : IDisposable
     }
 
     [Fact]
+    public void OpenSmgpAtSeason_RoutesThroughTheRealFactoryWithTheSmgpGate()
+    {
+        TestPackBuilder.Write(SmgpPack(), Path.Combine(PacksRoot, "smgp"));
+        var factory = new FakeCareerFactory();
+        var menu = NewMenu(factory);
+        DebugCareerOpenedEventArgs? opened = null;
+        menu.RealCareerRequested += (_, e) => opened = e;
+
+        menu.TargetSmgpSeason = 4;
+        menu.OpenSmgpAtSeasonCommand.Execute(null);
+
+        Assert.Equal(CareerExperienceModes.Smgp, factory.LastRequest!.ExperienceMode);
+        Assert.True(factory.LastRequest.SmgpMode);
+        Assert.Contains("debug-smgp-s4", opened!.CareerFilePath, StringComparison.Ordinal);
+        // The fake session has no grid and no review, so the jump stops with an honest note —
+        // the command must surface it instead of hanging or throwing.
+        Assert.Contains("Stopped", menu.InspectorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void DumpEconomy_WithNoLiveCareerSaysSo()
+    {
+        var menu = NewMenu(new FakeCareerFactory(), current: static () => null);
+        menu.DumpEconomyCommand.Execute(null);
+        Assert.Contains("No live career", menu.InspectorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void DumpEconomy_WithANonEconomyCareerSaysSo()
+    {
+        var factory = new FakeCareerFactory();
+        var menu = NewMenu(factory, current: () => factory.Session);
+        menu.DumpEconomyCommand.Execute(null);
+        Assert.Contains("not a Dynasty owner-economy career", menu.InspectorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void DumpEconomy_FormatsTheLiveDashboard()
+    {
+        var factory = new FakeCareerFactory();
+        factory.Session.Economy = SampleDashboard();
+        var menu = NewMenu(factory, current: () => factory.Session);
+
+        menu.DumpEconomyCommand.Execute(null);
+
+        Assert.Contains("Balance: 88,000", menu.InspectorText, StringComparison.Ordinal);
+        Assert.Contains("Apex Lubricants", menu.InspectorText, StringComparison.Ordinal);
+        Assert.Contains("Round 3", menu.InspectorText, StringComparison.Ordinal);
+        Assert.Contains("Buy development", menu.InspectorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void PreviewLevel_AppliesTheSelectedDnaAndMasteryTrackPosition()
+    {
+        var menu = NewMenu(new FakeCareerFactory());
+        var dna = menu.DnaOptions.FirstOrDefault(d => d.Id != "dna_circuit_specialist");
+        Assert.NotNull(dna); // the shipped racing-dna-v2 catalog is loaded
+        menu.PreviewLevel = 120;
+        menu.SelectedDnaId = dna.Id;
+
+        PreviewCareerSession? previewed = null;
+        menu.PreviewRequested += (_, s) => previewed = (PreviewCareerSession)s;
+        menu.PreviewCompletedSeasons = 0;
+        menu.PreviewLevelScreenCommand.Execute(null);
+        var dossier = previewed!.CharacterDossier()!;
+        Assert.Equal(dna.Id, dossier.RacingDna?.Id);
+        Assert.Equal(dna.Name, dossier.RacingDna?.Name);
+        int unspentAtZeroSeasons = dossier.CpUnspent;
+
+        menu.PreviewCompletedSeasons = 16;
+        menu.PreviewLevelScreenCommand.Execute(null);
+        int unspentAtSixteenSeasons = previewed!.CharacterDossier()!.CpUnspent;
+
+        // The 499-SP pool gate credits mastery-track seasons: more seasons, more spendable points.
+        Assert.True(unspentAtSixteenSeasons > unspentAtZeroSeasons,
+            $"expected the mastery track to gate SP ({unspentAtZeroSeasons} at 0 seasons vs " +
+            $"{unspentAtSixteenSeasons} at 16)");
+        Assert.False(AnyCareerFileExists());
+    }
+
+    private static Companion.ViewModels.Services.DynastyEconomyDashboard SampleDashboard() => new()
+    {
+        Balance = "88,000",
+        InDeficit = false,
+        DeficitRounds = 0,
+        GraceRounds = 2,
+        HardFloor = "-50,000",
+        Bankrupt = false,
+        DevelopmentLevel = 2,
+        DevelopmentMaxLevel = 5,
+        NextDevelopmentCost = "40,000",
+        DevelopmentAtCap = false,
+        StaffTier = 1,
+        StaffOptions =
+        [
+            new Companion.ViewModels.Services.DynastyStaffOptionModel
+                { Tier = 0, UpkeepPerSeason = "0", IsCurrent = false },
+            new Companion.ViewModels.Services.DynastyStaffOptionModel
+                { Tier = 1, UpkeepPerSeason = "12,000", IsCurrent = true },
+        ],
+        SecondSeat = Companion.Core.Dynasty.SecondSeatDeal.Retained,
+        SecondSeatSalaryPerSeason = "30,000",
+        PayDriverBackingPerSeason = "55,000",
+        ActiveSponsors =
+        [
+            new Companion.ViewModels.Services.DynastySponsorContractModel
+            {
+                Id = "apex", Name = "Apex Lubricants", TierSlot = "major", SeasonsRemaining = 2,
+                PerRace = "3,000", PerSeason = "20,000",
+            },
+        ],
+        SponsorBoard = [],
+        Statement =
+        [
+            new Companion.ViewModels.Services.DynastyLedgerLineModel
+                { Label = "Round 3", Round = 3, Net = "+9,500", BalanceAfter = "88,000", IsDeficit = false },
+        ],
+        PendingDecisions =
+        [
+            new Companion.ViewModels.Services.DynastyPendingDecisionModel
+                { Description = "Buy development (stage 3)", Amount = "-40,000", Seq = 41 },
+        ],
+        NextRound = 4,
+    };
+
+    [Fact]
     public void Close_RaisesCloseRequested()
     {
         var menu = NewMenu(new FakeCareerFactory());

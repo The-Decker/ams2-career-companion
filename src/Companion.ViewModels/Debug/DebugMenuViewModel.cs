@@ -4,6 +4,7 @@ using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Companion.Core.Career;
+using Companion.Core.Character;
 using Companion.Core.Smgp;
 using Companion.ViewModels.Services;
 using Companion.ViewModels.Shell;
@@ -63,6 +64,7 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         _factory = factory;
         _debugCareersDirectory = debugCareersDirectory;
         _currentSession = currentSession ?? (static () => null);
+        _dnaOptions = new Lazy<IReadOnlyList<RacingDnaDefinition>>(LoadDnaOptions);
 
         Packs = new ObservableCollection<DebugPackEntry>(DiscoverPacks());
     }
@@ -94,9 +96,30 @@ public sealed partial class DebugMenuViewModel : ObservableObject
     private int _previewLevel = 250;
 
     /// <summary>The inspector / dump panel text (SMGP future lore, journal + determinism dump,
-    /// or the last error). Empty until a dump command runs.</summary>
+    /// economy dump, or the last error). Empty until a dump command runs.</summary>
     [ObservableProperty]
     private string _inspectorText = "";
+
+    /// <summary>The SMGP season ordinal (1–17) <see cref="OpenSmgpAtSeasonCommand"/> fast-forwards
+    /// a throwaway SMGP career to — through the real INPUT seams, so it resimulates honestly.</summary>
+    [ObservableProperty]
+    private int _targetSmgpSeason = 5;
+
+    /// <summary>The Racing DNA identity the level preview renders (an id from the shipped catalog;
+    /// null = the default circuit specialist). Preview-only — never validated for real creation.</summary>
+    [ObservableProperty]
+    private string? _selectedDnaId;
+
+    /// <summary>The completed-seasons position on the mastery track the level preview carries
+    /// (clamped to the synthesized plan's mastery season — 499-SP pool gate).</summary>
+    [ObservableProperty]
+    private int _previewCompletedSeasons = 16;
+
+    /// <summary>Every shipped Racing DNA identity for the level-preview picker. Loaded lazily and
+    /// failure-tolerant: a dev box without the rules catalog gets an empty picker, not a crash.</summary>
+    public IReadOnlyList<RacingDnaDefinition> DnaOptions => _dnaOptions.Value;
+
+    private readonly Lazy<IReadOnlyList<RacingDnaDefinition>> _dnaOptions;
 
     public bool HasPacks => Packs.Count > 0;
 
@@ -133,6 +156,53 @@ public sealed partial class DebugMenuViewModel : ObservableObject
             return;
         string mode = pack.IsSmgp ? CareerExperienceModes.Smgp : CareerExperienceModes.GrandPrixDynasty;
         CreateThrowaway(pack.Directory, mode, advance: false);
+    }
+
+    /// <summary>Create a throwaway SMGP career and FAST-FORWARD it to the start of season
+    /// <see cref="TargetSmgpSeason"/> — the only way to preview the 17-ordinal campaign without
+    /// grinding. Every season advances through the real INPUT seams (Apply player-wins,
+    /// ResolveSmgpOffer, AcceptOffer, StartNextSeason + reopen), so the result resimulates
+    /// byte-identical; <see cref="DebugCareerFactory.AdvanceSmgpToSeason"/> reports early stops
+    /// (knock-out, finale) in the inspector.</summary>
+    [RelayCommand]
+    private void OpenSmgpAtSeason()
+    {
+        var pack = Packs.FirstOrDefault(p => p.IsSmgp);
+        if (pack is null)
+        {
+            InspectorText = "No SMGP pack found on disk.";
+            return;
+        }
+        try
+        {
+            Directory.CreateDirectory(_debugCareersDirectory);
+            string path = Path.Combine(
+                _debugCareersDirectory,
+                $"debug-smgp-s{TargetSmgpSeason}-{Guid.NewGuid():N}.ams2career");
+            var request = DebugCareerFactory.BuildRequest(
+                pack.Directory, path, CareerExperienceModes.Smgp, MasterSeed,
+                careerName: $"[DEBUG] smgp season {TargetSmgpSeason}",
+                playerLivery: DebugCareerFactory.ResolvePlayerLivery(pack.Directory));
+
+            var session = _factory.Create(request);
+            session = DebugCareerFactory.AdvanceSmgpToSeason(
+                session,
+                TargetSmgpSeason,
+                reopen: old =>
+                {
+                    (old as IDisposable)?.Dispose();
+                    return _factory.Open(path);
+                },
+                out string note);
+            if (note.Length > 0)
+                InspectorText = note;
+
+            RealCareerRequested?.Invoke(this, new DebugCareerOpenedEventArgs(session, path));
+        }
+        catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
+        {
+            InspectorText = $"SMGP season jump failed: {ex.Message}";
+        }
     }
 
     /// <summary>Create a throwaway career and FAST-FORWARD it to season end (auto-winning every round
@@ -192,7 +262,9 @@ public sealed partial class DebugMenuViewModel : ObservableObject
                 rules.Character,
                 rules.RacingDna,
                 rules.MasterySkills,
-                PreviewLevel));
+                PreviewLevel,
+                racingDnaId: SelectedDnaId,
+                completedSeasons: PreviewCompletedSeasons));
         }
         catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
         {
@@ -345,6 +417,34 @@ public sealed partial class DebugMenuViewModel : ObservableObject
         }
     }
 
+    /// <summary>Dump the live career's Dynasty owner-economy dashboard (balance, sponsors, statement,
+    /// pending decisions) as inspector text. READ-ONLY — and the declared SEAM for the future tycoon
+    /// debug levers (build brief §2): force-money commands, when that workstream wants them, go through
+    /// <c>DeclareEconomyDecision</c> (the validated, journaled INPUT seam) so the economy still
+    /// resimulates byte-identical. Never a direct state poke.</summary>
+    [RelayCommand]
+    private void DumpEconomy()
+    {
+        var session = _currentSession();
+        if (session is null)
+        {
+            InspectorText = "No live career is open — open a Tier-1 career first, then dump the economy.";
+            return;
+        }
+
+        try
+        {
+            var dashboard = session.EconomyDashboard();
+            InspectorText = dashboard is null
+                ? "The live career is not a Dynasty owner-economy career (EconomyDashboard is null)."
+                : DebugEconomyDump.Format(dashboard);
+        }
+        catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
+        {
+            InspectorText = $"Economy dump failed: {ex.Message}";
+        }
+    }
+
     [RelayCommand]
     private void Close() => CloseRequested?.Invoke(this, EventArgs.Empty);
 
@@ -369,6 +469,18 @@ public sealed partial class DebugMenuViewModel : ObservableObject
                 .ToList();
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return [];
+        }
+    }
+
+    private IReadOnlyList<RacingDnaDefinition> LoadDnaOptions()
+    {
+        try
+        {
+            return _environment.Rules.RacingDna?.Definitions ?? (IReadOnlyList<RacingDnaDefinition>)[];
+        }
+        catch (Exception ex) when (ex is not (OutOfMemoryException or StackOverflowException))
         {
             return [];
         }

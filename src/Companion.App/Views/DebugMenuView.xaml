@@ -56,6 +56,16 @@
                                     Command="{Binding OpenSmgpCommand}" />
                         </WrapPanel>
 
+                        <WrapPanel Margin="0,0,0,4">
+                            <TextBlock Text="SMGP season (1–17)" VerticalAlignment="Center" Margin="0,0,8,8"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <TextBox Width="60" Text="{Binding TargetSmgpSeason, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <Button Content="Open SMGP at season" Style="{StaticResource DebugButton}"
+                                    Command="{Binding OpenSmgpAtSeasonCommand}"
+                                    ToolTip="Fast-forward a throwaway SMGP career to this season through the real INPUT seams — resimulates byte-identical" />
+                        </WrapPanel>
+
                         <TextBlock Text="Open a specific pack" Margin="0,8,0,4"
                                    Foreground="{DynamicResource TextSecondaryBrush}" />
                         <ItemsControl ItemsSource="{Binding Packs}">
@@ -114,14 +124,24 @@
                                     Command="{Binding PreviewDemotionCommand}" />
                         </WrapPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <TextBlock Text="Driver level" VerticalAlignment="Center" Margin="0,0,8,0"
+                        <WrapPanel Margin="0,4,0,0">
+                            <TextBlock Text="Driver level" VerticalAlignment="Center" Margin="0,0,8,8"
                                        Foreground="{DynamicResource TextSecondaryBrush}" />
-                            <TextBox Width="80" Text="{Binding PreviewLevel, UpdateSourceTrigger=PropertyChanged}"
-                                     VerticalAlignment="Center" Margin="0,0,8,0" />
-                            <Button Content="Preview level screen" Padding="12,6"
+                            <TextBox Width="60" Text="{Binding PreviewLevel, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <TextBlock Text="Racing DNA" VerticalAlignment="Center" Margin="0,0,8,8"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <ComboBox Width="210" VerticalAlignment="Center" Margin="0,0,8,8"
+                                      ItemsSource="{Binding DnaOptions}" DisplayMemberPath="Name"
+                                      SelectedValuePath="Id" SelectedValue="{Binding SelectedDnaId}"
+                                      ToolTip="The Racing DNA identity the preview renders (default: circuit specialist)" />
+                            <TextBlock Text="Completed seasons" VerticalAlignment="Center" Margin="0,0,8,8"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <TextBox Width="50" Text="{Binding PreviewCompletedSeasons, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalAlignment="Center" Margin="0,0,8,8" />
+                            <Button Content="Preview level screen" Padding="12,6" Margin="0,0,8,8"
                                     Command="{Binding PreviewLevelScreenCommand}" />
-                        </StackPanel>
+                        </WrapPanel>
                     </StackPanel>
                 </Border>
 
@@ -136,6 +156,9 @@
                                     Command="{Binding RevealSmgpLoreCommand}" />
                             <Button Content="Dump journal / determinism" Style="{StaticResource DebugButton}"
                                     Command="{Binding DumpJournalCommand}" />
+                            <Button Content="Dump economy (Dynasty)" Style="{StaticResource DebugButton}"
+                                    Command="{Binding DumpEconomyCommand}"
+                                    ToolTip="Read-only dashboard dump — the seam for future tycoon levers, which must route through DeclareEconomyDecision" />
                         </WrapPanel>
                         <TextBox Text="{Binding InspectorText, Mode=OneWay}" IsReadOnly="True"
                                  FontFamily="Consolas, Cascadia Mono, monospace" FontSize="12"
