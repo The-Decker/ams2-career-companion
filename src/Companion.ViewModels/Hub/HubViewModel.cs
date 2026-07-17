@@ -25,6 +25,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     public const string CalendarTabKey = "calendar";
     public const string DriverTabKey = "driver";
     public const string PaddockTabKey = "paddock";
+    public const string EconomyTabKey = "economy";
     public const string HistoryTabKey = "history";
     public const string NewsTabKey = "news";
     public const string SkinsTabKey = "skins";
@@ -55,6 +56,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         Calendar = new CalendarViewModel(session);
         Dossier = new DossierViewModel(session);
         Paddock = new PaddockViewModel(session);
+        Economy = new EconomyViewModel(session);
         Skins = new SkinsViewModel(session);
 
         Tabs =
@@ -75,6 +77,11 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         // data loaded — it fields the whole SEGA-world grid's bios + predetermined stats + team stories.
         if (Paddock.HasPaddock)
             Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(PaddockTabKey, "Paddock", "", Paddock));
+
+        // The Team Ledger (Dynasty owner economy, economy §9) is present only for a career
+        // carrying the folded economy state — the driver-owner's money side of the same loop.
+        if (Economy.HasEconomy)
+            Tabs.Insert(Tabs.Count - 1, new HubTabViewModel(EconomyTabKey, "Team Ledger", "", Economy));
 
         SelectTab(Tabs[0]); // auto-select Race on open
     }
@@ -100,6 +107,10 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
     /// <summary>The Paddock lens (SMGP driver/team preview) — the whole grid's bios + predetermined
     /// career stats + team stories. Present as a tab only for an SMGP career with reference data.</summary>
     public PaddockViewModel Paddock { get; }
+
+    /// <summary>The Team Ledger lens (Dynasty owner economy §9) — balance, statement, sponsors,
+    /// development, staff and the decision commands. Present only for an economy career.</summary>
+    public EconomyViewModel Economy { get; }
 
     /// <summary>The read-only next-race grid preview: driver, team, car and livery at a glance.
     /// Always present (every career has a grid); refreshed per round.</summary>
@@ -193,6 +204,7 @@ public sealed partial class HubViewModel : ObservableObject, IDisposable
         Calendar.Refresh();
         Dossier.Refresh();
         Paddock.Refresh();
+        Economy.Refresh();
         Skins.Refresh();
 
         if (RaceTab is { } race)

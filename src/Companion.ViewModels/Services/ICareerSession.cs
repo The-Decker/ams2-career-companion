@@ -435,6 +435,19 @@ public interface ICareerSession
     /// Additive default: null, so fakes compile.</summary>
     BankruptcyScreenModel? BankruptcyScreen() => null;
 
+    /// <summary>The Dynasty owner-economy dashboard (economy §9): balance, statement, sponsor
+    /// board with eligibility, development, staff/second-seat, and the pending decision plan.
+    /// A pure display read; null for every non-economy career. Additive default: null.</summary>
+    DynastyEconomyDashboard? EconomyDashboard() => null;
+
+    /// <summary>Journals one validated Dynasty economy decision for the next unfolded round
+    /// (economy §5): the session is the affordability/availability authority and throws
+    /// <see cref="InvalidOperationException"/> with the player-facing reason on refusal. The
+    /// throwing default is deliberate for a money-moving seam — a silent-no-op fake could mask
+    /// unwired tests.</summary>
+    void DeclareEconomyDecision(Companion.Core.Dynasty.DynastyEconomyDecision decision) =>
+        throw new NotSupportedException("This career session does not run the Dynasty economy.");
+
     /// <summary>The player's SIT-OUT status when an injury forces the CURRENT round to be auto-simulated
     /// (character death &amp; injury §5), or null when the player races this round normally. The shell shows
     /// the sit-out screen (an "INJURED — auto-simulating" / "SEASON OVER — recovering" banner) with a
